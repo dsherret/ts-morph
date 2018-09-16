@@ -3,7 +3,7 @@ import { AmbientableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind } from "../../typescript";
 import { isNodeAmbientOrInAmbientContext, TypeGuards } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -61,8 +61,8 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
             return this;
         }
 
-        fill(structure: Partial<AmbientableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<AmbientableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.hasDeclareKeyword != null)
                 this.setHasDeclareKeyword(structure.hasDeclareKeyword);

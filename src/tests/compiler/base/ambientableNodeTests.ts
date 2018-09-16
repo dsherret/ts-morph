@@ -118,10 +118,10 @@ describe(nameof(AmbientableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+    describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: AmbientableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 

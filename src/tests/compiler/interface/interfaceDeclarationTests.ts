@@ -57,10 +57,10 @@ describe(nameof(InterfaceDeclaration), () => {
         });
     });
 
-    describe(nameof<InterfaceDeclaration>(d => d.fill), () => {
+    describe(nameof<InterfaceDeclaration>(d => d.set), () => {
         function doTest(startingCode: string, structure: InterfaceDeclarationSpecificStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 

@@ -9,10 +9,10 @@ describe(nameof(CallSignatureDeclaration), () => {
         return { ...opts, firstCallSignature: opts.firstChild.getCallSignatures()[0] };
     }
 
-    describe(nameof<CallSignatureDeclaration>(n => n.fill), () => {
+    describe(nameof<CallSignatureDeclaration>(n => n.set), () => {
         function doTest(code: string, structure: Partial<CallSignatureDeclarationStructure>, expectedCode: string) {
             const {firstCallSignature, sourceFile} = getFirstCallSignatureWithInfo(code);
-            firstCallSignature.fill(structure);
+            firstCallSignature.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

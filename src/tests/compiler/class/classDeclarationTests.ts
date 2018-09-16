@@ -8,31 +8,6 @@ import { TypeGuards } from "../../../utils";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
-    describe(nameof<ClassDeclaration>(c => c.fill), () => {
-        function doTest(startingCode: string, structure: ClassDeclarationSpecificStructure, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
-            firstChild.fill(structure);
-            expect(firstChild.getText()).to.equal(expectedCode);
-        }
-
-        it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("class Identifier {\n}", {}, "class Identifier {\n}");
-        });
-
-        it("should modify when changed", () => {
-            const structure: MakeRequired<ClassDeclarationSpecificStructure> = {
-                extends: "Other",
-                ctors: [{}],
-                properties: [{ name: "p" }],
-                getAccessors: [{ name: "g" }],
-                setAccessors: [{ name: "s", parameters: [{ name: "value", type: "string" }] }],
-                methods: [{ name: "m" }]
-            };
-            doTest("class Identifier {\n}", structure, "class Identifier extends Other {\n    constructor() {\n    }\n\n    p;\n\n    get g() {\n    }" +
-                "\n\n    set s(value: string) {\n    }\n\n    m() {\n    }\n}");
-        });
-    });
-
     describe(nameof<ClassDeclaration>(d => d.getExtends), () => {
         it("should return undefined when no extends clause exists", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { }");
@@ -1349,6 +1324,90 @@ class Child extends Mixin(Base) {}
 
         it("should remove the class declaration", () => {
             doTest("class I {}\n\nclass J {}\n\nclass K {}", 1, "class I {}\n\nclass K {}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(c => c.set), () => {
+        function doTest(startingCode: string, structure: ClassDeclarationSpecificStructure, expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            firstChild.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            const code = `
+class Identifier extends Test {
+    constructor() {}
+    method() {}
+    property: string;
+    get prop() {}
+    set prop() {}
+}
+`;
+            doTest(code, {}, code);
+        });
+
+        it("should replace the existing items when specified", () => {
+            const code = `
+class Identifier extends Test {
+    constructor() {}
+    method() {}
+    property: string;
+    get prop() {}
+    set prop() {}
+}
+`;
+            const expectedCode = `
+class Identifier extends Other {
+    constructor() {
+    }
+
+    p;
+
+    get g() {
+    }
+
+    set s(value: string) {
+    }
+
+    m() {
+    }
+}
+`;
+            const structure: MakeRequired<ClassDeclarationSpecificStructure> = {
+                extends: "Other",
+                ctors: [{}],
+                properties: [{ name: "p" }],
+                getAccessors: [{ name: "g" }],
+                setAccessors: [{ name: "s", parameters: [{ name: "value", type: "string" }] }],
+                methods: [{ name: "m" }]
+            };
+            doTest(code, structure, expectedCode);
+        });
+
+        it("should remove the existing items when specifying empty values", () => {
+            const code = `
+class Identifier extends Test {
+    constructor() {}
+    method() {}
+    property: string;
+    get prop() {}
+    set prop() {}
+}
+`;
+            const expectedCode = `
+class Identifier {
+}
+`;
+            const structure: MakeRequired<ClassDeclarationSpecificStructure> = {
+                extends: undefined,
+                ctors: [],
+                properties: [],
+                getAccessors: [],
+                setAccessors: [],
+                methods: []
+            };
+            doTest(code, structure, expectedCode);
         });
     });
 

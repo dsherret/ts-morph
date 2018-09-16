@@ -155,10 +155,10 @@ describe(nameof(TypeParameteredNode), () => {
         });
     });
 
-    describe(nameof<TypeAliasDeclaration>(n => n.fill), () => {
+    describe(nameof<TypeAliasDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: TypeParameteredNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 
@@ -167,7 +167,15 @@ describe(nameof(TypeParameteredNode), () => {
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("type myAlias = string;", {}, "type myAlias = string;");
+            doTest("type myAlias<T> = string;", {}, "type myAlias<T> = string;");
+        });
+
+        it("should replace existing values", () => {
+            doTest("type myAlias<T, U> = string;", { typeParameters: [{ name: "V" }] }, "type myAlias<V> = string;");
+        });
+
+        it("should remove when specifying an empty array", () => {
+            doTest("type myAlias<T> = string;", { typeParameters: [] }, "type myAlias = string;");
         });
     });
 

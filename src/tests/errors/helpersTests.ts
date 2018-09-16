@@ -15,24 +15,24 @@ describe("helpers", () => {
         });
     });
 
-    describe(nameof(errors.throwIfNotStringOrWhitespace), () => {
+    describe(nameof(errors.throwIfWhitespaceOrNotString), () => {
         it("should throw when not a string", () => {
-            expect(() => errors.throwIfNotStringOrWhitespace(4 as any, "argName")).to.throw(errors.ArgumentTypeError,
+            expect(() => errors.throwIfWhitespaceOrNotString(4 as any, "argName")).to.throw(errors.ArgumentTypeError,
                 "Argument Error (argName): Expected type 'string', but was 'number'.");
         });
 
         it("should throw when null", () => {
-            expect(() => errors.throwIfNotStringOrWhitespace(null as any, "argName")).to.throw(errors.ArgumentTypeError,
+            expect(() => errors.throwIfWhitespaceOrNotString(null as any, "argName")).to.throw(errors.ArgumentTypeError,
                 "Argument Error (argName): Expected type 'string', but was 'object'.");
         });
 
         it("should throw when whitespace string", () => {
-            expect(() => errors.throwIfNotStringOrWhitespace(" ", "argName")).to.throw(errors.ArgumentNullOrWhitespaceError,
+            expect(() => errors.throwIfWhitespaceOrNotString(" ", "argName")).to.throw(errors.ArgumentNullOrWhitespaceError,
                 "Argument Error (argName): Cannot be null or whitespace.");
         });
 
         it("should throw when string that's not a whitespace string", () => {
-            expect(() => errors.throwIfNotStringOrWhitespace("str", "argName")).to.not.throw();
+            expect(() => errors.throwIfWhitespaceOrNotString("str", "argName")).to.not.throw();
         });
     });
 

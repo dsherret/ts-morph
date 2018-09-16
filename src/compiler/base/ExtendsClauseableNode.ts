@@ -4,7 +4,7 @@ import { CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../s
 import { ExtendsClauseableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind } from "../../typescript";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ExpressionWithTypeArguments } from "../type/ExpressionWithTypeArguments";
 import { HeritageClauseableNode } from "./HeritageClauseableNode";
@@ -67,7 +67,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
         insertExtends(index: number, texts: string | ReadonlyArray<string>): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
             const length = texts instanceof Array ? texts.length : 0;
             if (typeof texts === "string") {
-                errors.throwIfNotStringOrWhitespace(texts, nameof(texts));
+                errors.throwIfWhitespaceOrNotString(texts, nameof(texts));
                 texts = [texts];
             }
             else if (texts.length === 0) {
@@ -120,11 +120,13 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             return this;
         }
 
-        fill(structure: Partial<ExtendsClauseableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<ExtendsClauseableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
-            if (structure.extends != null && structure.extends.length > 0)
+            if (structure.extends != null) {
+                this.getExtends().forEach(e => this.removeExtends(e));
                 this.addExtends(structure.extends);
+            }
 
             return this;
         }

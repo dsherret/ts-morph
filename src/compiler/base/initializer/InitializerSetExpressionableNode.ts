@@ -4,7 +4,7 @@ import { InitializerSetExpressionableNodeStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { getTextFromStringOrWriter } from "../../../utils";
-import { callBaseFill } from "../../callBaseFill";
+import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 import { InitializerGetExpressionableNode } from "./InitializerGetExpressionableNode";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
@@ -40,7 +40,7 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
 
         setInitializer(textOrWriterFunction: string | WriterFunction) {
             const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
-            errors.throwIfNotStringOrWhitespace(text, nameof(textOrWriterFunction));
+            errors.throwIfWhitespaceOrNotString(text, nameof(textOrWriterFunction));
 
             if (this.hasInitializer())
                 this.removeInitializer();
@@ -55,8 +55,8 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
             return this;
         }
 
-        fill(structure: Partial<InitializerSetExpressionableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<InitializerSetExpressionableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.initializer != null)
                 this.setInitializer(structure.initializer);

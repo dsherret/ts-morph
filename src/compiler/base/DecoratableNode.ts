@@ -4,7 +4,7 @@ import { DecoratableNodeStructure, DecoratorStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Decorator } from "../decorator/Decorator";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -116,11 +116,13 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             return getNodesToReturn(this.getDecorators(), index, structures.length);
         }
 
-        fill(structure: Partial<DecoratableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<DecoratableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
-            if (structure.decorators != null && structure.decorators.length > 0)
+            if (structure.decorators != null) {
+                this.getDecorators().forEach(d => d.remove());
                 this.addDecorators(structure.decorators);
+            }
 
             return this;
         }

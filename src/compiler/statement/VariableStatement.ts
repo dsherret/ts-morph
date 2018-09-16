@@ -1,7 +1,7 @@
 import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure } from "../../structures";
 import { ts } from "../../typescript";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../namespace";
 import { Statement } from "./Statement";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../variable";
@@ -80,16 +80,16 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
     }
 
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<VariableStatementStructure>) {
-        callBaseFill(VariableStatementBase.prototype, this, structure);
+    set(structure: Partial<VariableStatementStructure>) {
+        callBaseSet(VariableStatementBase.prototype, this, structure);
 
-        if (structure.declarationKind != null)
-            this.setDeclarationKind(structure.declarationKind);
-        if (structure.declarations != null)
-            this.addDeclarations(structure.declarations);
+        this.getDeclarationList().set({
+            declarationKind: structure.declarationKind,
+            declarations: structure.declarations
+        });
 
         return this;
     }

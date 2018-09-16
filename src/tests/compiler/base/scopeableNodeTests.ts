@@ -69,10 +69,10 @@ describe(nameof(ScopeableNode), () => {
         });
     });
 
-    describe(nameof<ParameterDeclaration>(p => p.fill), () => {
+    describe(nameof<ParameterDeclaration>(p => p.set), () => {
         function doTest(startCode: string, structure: ScopeableNodeStructure, expectedCode: string) {
             const {firstParam, sourceFile} = getFirstParameter(startCode);
-            firstParam.fill(structure);
+            firstParam.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 

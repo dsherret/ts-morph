@@ -54,10 +54,10 @@ describe(nameof(AbstractableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.fill), () => {
+    describe(nameof<ClassDeclaration>(d => d.set), () => {
         function doTest(startingCode: string, structure: AbstractableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 

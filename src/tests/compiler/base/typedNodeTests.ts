@@ -1,5 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, Node, PropertyDeclaration, TypeAliasDeclaration, TypedNode, VariableStatement } from "../../../compiler";
+import * as errors from "../../../errors";
+import { TypeGuards } from "../../../utils";
 import { TypedNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
@@ -191,11 +193,12 @@ describe(nameof(TypedNode), () => {
         });
     });
 
-    describe(nameof<TypeAliasDeclaration>(t => t.fill), () => {
+    describe(nameof<TypeAliasDeclaration>(t => t.set), () => {
         function doTest(startingCode: string, structure: TypedNodeStructure, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<TypeAliasDeclaration>(startingCode);
-            firstChild.fill(structure);
-            expect(firstChild.getText()).to.equal(expectedCode);
+            const { sourceFile } = getInfoFromText(startingCode);
+            const firstTyped = sourceFile.getFirstDescendant(TypeGuards.isTypedNode);
+            (firstTyped as TypeAliasDeclaration).set(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
         }
 
         it("should modify when setting", () => {
@@ -208,6 +211,15 @@ describe(nameof(TypedNode), () => {
 
         it("should not modify anything if the structure doesn't change anything", () => {
             doTest("type myAlias = string;", {}, "type myAlias = string;");
+        });
+
+        it("should remove when specifying undefined", () => {
+            doTest("var s: string;", { type: undefined }, "var s;");
+        });
+
+        it("should throw if specifying undefined for a type alias", () => {
+            const { firstChild } = getInfoFromText<TypeAliasDeclaration>("type myAlias = string;");
+            expect(() => firstChild.set({ type: undefined })).to.throw(errors.NotSupportedError);
         });
     });
 

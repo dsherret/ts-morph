@@ -9,10 +9,10 @@ describe(nameof(PropertyDeclaration), () => {
         return { ...opts, firstProperty: opts.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
     }
 
-    describe(nameof<PropertyDeclaration>(n => n.fill), () => {
+    describe(nameof<PropertyDeclaration>(n => n.set), () => {
         function doTest(code: string, structure: Partial<PropertyDeclarationStructure>, expectedCode: string) {
             const {firstProperty, sourceFile} = getFirstPropertyWithInfo(code);
-            firstProperty.fill(structure);
+            firstProperty.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

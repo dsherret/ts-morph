@@ -2,7 +2,7 @@ import { TypeAliasDeclarationStructure, TypeAliasDeclarationSpecificStructure } 
 import { ts } from "../../typescript";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TypedNode,
     TypeParameteredNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Statement } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
@@ -12,11 +12,11 @@ export const TypeAliasDeclarationBase = ChildOrderableNode(TypeParameteredNode(T
 )))));
 export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<TypeAliasDeclarationStructure>) {
-        callBaseFill(TypeAliasDeclarationBase.prototype, this, structure);
+    set(structure: Partial<TypeAliasDeclarationStructure>) {
+        callBaseSet(TypeAliasDeclarationBase.prototype, this, structure);
 
         return this;
     }

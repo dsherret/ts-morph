@@ -592,18 +592,19 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
     });
 
-    describe(nameof<InterfaceDeclaration>(n => n.fill), () => {
+    describe(nameof<InterfaceDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: TypeElementMemberedNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 
-        it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("interface Identifier {\n}", {}, "interface Identifier {\n}");
+        it("should not modify anything if the structure doesn't specify the members", () => {
+            const code = "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}";
+            doTest(code, {}, code);
         });
 
-        it("should modify when changed", () => {
+        it("should modify and replace existing when changed", () => {
             const structure: MakeRequired<TypeElementMemberedNodeStructure> = {
                 callSignatures: [{ returnType: "string" }],
                 constructSignatures: [{ returnType: "string" }],
@@ -611,12 +612,25 @@ describe(nameof(TypeElementMemberedNode), () => {
                 properties: [{ name: "p" }],
                 methods: [{ name: "m" }]
             };
-            doTest("interface Identifier {\n}", structure,
+            doTest("interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n}",
+                structure,
                 "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}");
+        });
+
+        it("should remove when specifying empty values", () => {
+            const structure: MakeRequired<TypeElementMemberedNodeStructure> = {
+                callSignatures: [],
+                constructSignatures: [],
+                indexSignatures: [],
+                properties: [],
+                methods: []
+            };
+            const code = "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}";
+            doTest(code, structure, "interface Identifier {\n}");
         });
     });
 
-    describe(nameof<InterfaceDeclaration>(n => n.fill), () => {
+    describe(nameof<InterfaceDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, expectedStructure: TypeElementMemberedNodeStructure) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
             const structure = firstChild.getStructure();

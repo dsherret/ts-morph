@@ -1917,14 +1917,9 @@ export interface BodiedNode {
     getBody(): Node;
     /**
      * Sets the body text.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to set as the body.
      */
-    setBodyText(writerFunction: WriterFunction): this;
-    /**
-     * Sets the body text.
-     * @param text - Text to set as the body.
-     */
-    setBodyText(text: string): this;
+    setBodyText(textOrWriterFunction: string | WriterFunction): this;
 }
 
 export declare type BodiedNodeExtensionType = Node<ts.Node & {
@@ -1948,14 +1943,9 @@ export interface BodyableNode {
     hasBody(): boolean;
     /**
      * Sets the body text. A body is required to do this operation.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to set as the body.
      */
-    setBodyText(writerFunction: WriterFunction): this;
-    /**
-     * Sets the body text. A body is required to do this operation.
-     * @param text - Text to set as the body.
-     */
-    setBodyText(text: string): this;
+    setBodyText(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Adds a body if it doesn't exists.
      */
@@ -3216,10 +3206,10 @@ declare const ClassDeclarationBase: Constructor<ChildOrderableNode> & Constructo
 
 export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<ClassDeclarationStructure>): this;
+    set(structure: Partial<ClassDeclarationStructure>): this;
     /**
      * Sets the extends expression.
      * @param text - Text to set as the extends expression.
@@ -3650,10 +3640,10 @@ declare const ConstructorDeclarationOverloadBase: Constructor<TypeParameteredNod
 
 export declare class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<ConstructorDeclarationStructure>): this;
+    set(structure: Partial<ConstructorDeclarationStructure>): this;
     /**
      * Add a constructor overload.
      * @param structure - Structure to add.
@@ -3690,10 +3680,10 @@ declare const GetAccessorDeclarationBase: Constructor<ChildOrderableNode> & Cons
 
 export declare class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAccessorDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<GetAccessorDeclarationStructure>): this;
+    set(structure: Partial<GetAccessorDeclarationStructure>): this;
     /**
      * Gets the corresponding set accessor if one exists.
      */
@@ -3718,10 +3708,10 @@ declare const MethodDeclarationOverloadBase: Constructor<JSDocableNode> & Constr
 
 export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<MethodDeclarationStructure>): this;
+    set(structure: Partial<MethodDeclarationStructure>): this;
     /**
      * Add a method overload.
      * @param structure - Structure to add.
@@ -3758,10 +3748,10 @@ declare const PropertyDeclarationBase: Constructor<ChildOrderableNode> & Constru
 
 export declare class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<PropertyDeclarationStructure>): this;
+    set(structure: Partial<PropertyDeclarationStructure>): this;
     /**
      * Removes the property.
      */
@@ -3776,10 +3766,10 @@ declare const SetAccessorDeclarationBase: Constructor<ChildOrderableNode> & Cons
 
 export declare class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<SetAccessorDeclarationStructure>): this;
+    set(structure: Partial<SetAccessorDeclarationStructure>): this;
     /**
      * Gets the corresponding get accessor if one exists.
      */
@@ -4163,8 +4153,9 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     getTrailingTriviaEnd(): number;
     /**
      * Gets the text without leading trivia (comments and whitespace).
+     * @param includeJsDocComment
      */
-    getText(): string;
+    getText(includeJsDocComment?: boolean): string;
     /**
      * Gets the full text with leading trivia (comments and whitespace).
      */
@@ -4854,10 +4845,10 @@ declare const EnumDeclarationBase: Constructor<ChildOrderableNode> & Constructor
 
 export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<EnumDeclarationStructure>): this;
+    set(structure: Partial<EnumDeclarationStructure>): this;
     /**
      * Adds a member to the enum.
      * @param structure - Structure of the enum.
@@ -4939,10 +4930,10 @@ export declare class EnumMember extends EnumMemberBase<ts.EnumMember> {
      */
     remove(): void;
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<EnumMemberStructure>): this;
+    set(structure: Partial<EnumMemberStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -5976,10 +5967,10 @@ declare const SourceFileBase: Constructor<StatementedNode> & Constructor<TextIns
 
 export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<SourceFileStructure>): this;
+    set(structure: Partial<SourceFileStructure>): this;
     /**
      * Gets the file path.
      */
@@ -6384,11 +6375,6 @@ declare const FunctionDeclarationOverloadBase: Constructor<ChildOrderableNode> &
 
 export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<FunctionDeclarationStructure>): this;
-    /**
      * Adds a function overload.
      * @param structure - Structure of the overload.
      */
@@ -6414,6 +6400,11 @@ export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.Func
      * Removes this function declaration.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<FunctionDeclarationStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -6466,11 +6457,6 @@ declare const ParameterDeclarationBase: Constructor<QuestionTokenableNode> & Con
 
 export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<ParameterDeclarationStructure>): this;
-    /**
      * Gets the dot dot dot token (...) if it exists, for a rest parameter.
      */
     getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
@@ -6495,6 +6481,11 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
      * Remove this parameter.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ParameterDeclarationStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -6541,10 +6532,10 @@ declare const CallSignatureDeclarationBase: Constructor<TypeParameteredNode> & C
 
 export declare class CallSignatureDeclaration extends CallSignatureDeclarationBase<ts.CallSignatureDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<CallSignatureDeclarationStructure>): this;
+    set(structure: Partial<CallSignatureDeclarationStructure>): this;
     /**
      * Removes this call signature.
      */
@@ -6559,10 +6550,10 @@ declare const ConstructSignatureDeclarationBase: Constructor<TypeParameteredNode
 
 export declare class ConstructSignatureDeclaration extends ConstructSignatureDeclarationBase<ts.ConstructSignatureDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<ConstructSignatureDeclarationStructure>): this;
+    set(structure: Partial<ConstructSignatureDeclarationStructure>): this;
     /**
      * Removes this construct signature.
      */
@@ -6576,11 +6567,6 @@ export declare class ConstructSignatureDeclaration extends ConstructSignatureDec
 declare const IndexSignatureDeclarationBase: Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & typeof TypeElement;
 
 export declare class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.IndexSignatureDeclaration> {
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<IndexSignatureDeclarationStructure>): this;
     /**
      * Gets the key name.
      */
@@ -6630,6 +6616,11 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
      */
     remove(): void;
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<IndexSignatureDeclarationStructure>): this;
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): IndexSignatureDeclarationStructure;
@@ -6638,11 +6629,6 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
 declare const InterfaceDeclarationBase: Constructor<TypeElementMemberedNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ExtendsClauseableNode> & Constructor<HeritageClauseableNode> & Constructor<TypeParameteredNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<InterfaceDeclarationStructure>): this;
     /**
      * Gets the base types.
      */
@@ -6658,6 +6644,11 @@ export declare class InterfaceDeclaration extends InterfaceDeclarationBase<ts.In
      */
     getImplementations(): ImplementationLocation[];
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<InterfaceDeclarationStructure>): this;
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): InterfaceDeclarationStructure;
@@ -6667,14 +6658,14 @@ declare const MethodSignatureBase: Constructor<ChildOrderableNode> & Constructor
 
 export declare class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<MethodSignatureStructure>): this;
-    /**
      * Removes this method signature.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<MethodSignatureStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -6685,14 +6676,14 @@ declare const PropertySignatureBase: Constructor<ChildOrderableNode> & Construct
 
 export declare class PropertySignature extends PropertySignatureBase<ts.PropertySignature> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<PropertySignatureStructure>): this;
-    /**
      * Removes this property signature.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<PropertySignatureStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -7312,11 +7303,6 @@ declare const NamespaceDeclarationBase: Constructor<ChildOrderableNode> & Constr
 
 export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<NamespaceDeclarationStructure>): this;
-    /**
      * Gets the full name of the namespace.
      */
     getName(): string;
@@ -7356,6 +7342,11 @@ export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.Na
      * Gets the namespace or module keyword.
      */
     getDeclarationKindKeyword(): Node<ts.Node>;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<NamespaceDeclarationStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -7626,31 +7617,18 @@ export interface StatementedNode {
      */
     getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
     /**
-     * Adds statements.
-     * @param text - Text of the statement or statements to add.
-     * @returns The statements that were added.
-     */
-    addStatements(text: string): Statement[];
-    /**
      * Add statements.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
      * @returns The statements that were added.
      */
-    addStatements(writerFunction: WriterFunction): Statement[];
+    addStatements(textOrWriterFunction: string | WriterFunction): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Child index to insert at.
-     * @param text - Text of the statement or statements to insert.
+     * @param textOrWriterFunction - Text or writer function to write the statement or statements with.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, text: string): Statement[];
-    /**
-     * Inserts statements at the specified index.
-     * @param index - Child index to insert at.
-     * @param writerFunction - Write the text using the provided writer.
-     * @returns The statements that were inserted.
-     */
-    insertStatements(index: number, writerFunction: WriterFunction): Statement[];
+    insertStatements(index: number, textOrWriterFunction: string | WriterFunction): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Child index to remove the statement at.
@@ -8111,10 +8089,10 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
      */
     insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<VariableStatementStructure>): this;
+    set(structure: Partial<VariableStatementStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -9156,10 +9134,10 @@ declare const TypeAliasDeclarationBase: Constructor<ChildOrderableNode> & Constr
 
 export declare class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<TypeAliasDeclarationStructure>): this;
+    set(structure: Partial<TypeAliasDeclarationStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -9272,14 +9250,14 @@ declare const VariableDeclarationBase: Constructor<ExclamationTokenableNode> & C
 
 export declare class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
     /**
-     * Fills this node with the specified structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<VariableDeclarationStructure>): this;
-    /**
      * Removes this variable declaration.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<VariableDeclarationStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -9334,10 +9312,10 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
      */
     insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<VariableDeclarationListStructure>): this;
+    set(structure: Partial<VariableDeclarationListStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */

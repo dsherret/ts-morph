@@ -5,7 +5,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode,
     TextInsertableNode, UnwrappableNode } from "../base";
 import { TypeGuards } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Identifier } from "../common";
 import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
@@ -15,19 +15,6 @@ export const NamespaceDeclarationBase = ChildOrderableNode(UnwrappableNode(TextI
     AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))
 )))))));
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<NamespaceDeclarationStructure>) {
-        callBaseFill(NamespaceDeclarationBase.prototype, this, structure);
-
-        if (structure.hasModuleKeyword != null)
-            this.setHasModuleKeyword(structure.hasModuleKeyword);
-
-        return this;
-    }
-
     /**
      * Gets the full name of the namespace.
      */
@@ -134,6 +121,19 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         if (keyword == null)
             throw new errors.NotImplementedError("Expected the declaration kind keyword to exist on a namespace.");
         return keyword;
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<NamespaceDeclarationStructure>) {
+        callBaseSet(NamespaceDeclarationBase.prototype, this, structure);
+
+        if (structure.hasModuleKeyword != null)
+            this.setHasModuleKeyword(structure.hasModuleKeyword);
+
+        return this;
     }
 
     /**

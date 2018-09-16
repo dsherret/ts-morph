@@ -6,7 +6,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../utils";
 import { AmbientableNode, ChildOrderableNode, DecoratableNode, ExportableNode, HeritageClauseableNode, ImplementsClauseableNode,
     JSDocableNode, ModifierableNode, NameableNode, TextInsertableNode, TypeParameteredNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function";
 import { NamespaceChildableNode } from "../namespace";
@@ -32,24 +32,37 @@ export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(Implem
 )))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<ClassDeclarationStructure>) {
-        callBaseFill(ClassDeclarationBase.prototype, this, structure);
+    set(structure: Partial<ClassDeclarationStructure>) {
+        callBaseSet(ClassDeclarationBase.prototype, this, structure);
 
         if (structure.extends != null)
             this.setExtends(structure.extends);
-        if (structure.ctors != null)
+        else if (structure.hasOwnProperty(nameof(structure.extends)))
+            this.removeExtends();
+
+        if (structure.ctors != null) {
+            this.getConstructors().forEach(c => c.remove());
             this.addConstructors(structure.ctors);
-        if (structure.properties != null)
+        }
+        if (structure.properties != null) {
+            this.getProperties().forEach(p => p.remove());
             this.addProperties(structure.properties);
-        if (structure.getAccessors != null)
+        }
+        if (structure.getAccessors != null) {
+            this.getGetAccessors().forEach(a => a.remove());
             this.addGetAccessors(structure.getAccessors);
-        if (structure.setAccessors != null)
+        }
+        if (structure.setAccessors != null) {
+            this.getSetAccessors().forEach(a => a.remove());
             this.addSetAccessors(structure.setAccessors);
-        if (structure.methods != null)
+        }
+        if (structure.methods != null) {
+            this.getMethods().forEach(m => m.remove());
             this.addMethods(structure.methods);
+        }
 
         return this;
     }

@@ -300,10 +300,10 @@ describe(nameof(ExportableNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.fill), () => {
+    describe(nameof<FunctionDeclaration>(f => f.set), () => {
         function doTest(startingCode: string, structure: ExportableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 

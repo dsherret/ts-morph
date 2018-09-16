@@ -4,7 +4,7 @@ import { PropertyDeclarationSpecificStructure, PropertyDeclarationStructure } fr
 import { SyntaxKind, ts } from "../../typescript";
 import { ChildOrderableNode, DecoratableNode, ExclamationTokenableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode,
     PropertyNamedNode, QuestionTokenableNode, ReadonlyableNode, ScopedNode, StaticableNode, TypedNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common";
 import { AbstractableNode } from "./base";
@@ -14,11 +14,11 @@ export const PropertyDeclarationBase = ChildOrderableNode(DecoratableNode(Abstra
 ))))));
 export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<PropertyDeclarationStructure>) {
-        callBaseFill(PropertyDeclarationBase.prototype, this, structure);
+    set(structure: Partial<PropertyDeclarationStructure>) {
+        callBaseSet(PropertyDeclarationBase.prototype, this, structure);
 
         return this;
     }

@@ -141,10 +141,10 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.fill), () => {
+    describe(nameof<VariableStatement>(d => d.set), () => {
         function doTest(text: string, fillStructure: Partial<VariableStatementStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
-            sourceFile.getVariableStatements()[0].fill(fillStructure);
+            sourceFile.getVariableStatements()[0].set(fillStructure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
@@ -152,8 +152,12 @@ describe(nameof(VariableStatement), () => {
             doTest("const t = '';", { declarationKind: VariableDeclarationKind.Let }, "let t = '';");
         });
 
-        it("should add declarations", () => {
-            doTest("const t = '';", { declarations: [{ name: "v2" }, { name: "v3" }] }, "const t = '', v2, v3;");
+        it("should replace the existing declarations when setting new ones", () => {
+            doTest("const t = '';", { declarations: [{ name: "v2" }, { name: "v3" }] }, "const v2, v3;");
+        });
+
+        it("should remove the statement when specifying an empty declarations array", () => {
+            doTest("const t = '';", { declarations: [] }, "");
         });
     });
 

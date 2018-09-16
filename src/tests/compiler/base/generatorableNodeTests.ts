@@ -76,10 +76,10 @@ describe(nameof(GeneratorableNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.fill), () => {
+    describe(nameof<FunctionDeclaration>(f => f.set), () => {
         function doTest(startCode: string, structure: GeneratorableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 

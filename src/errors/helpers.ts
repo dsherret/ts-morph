@@ -31,7 +31,7 @@ export function throwIfNotString(value: string, argName: string) {
  * @param value - Value to check.
  * @param argName - Arg name.
  */
-export function throwIfNotStringOrWhitespace(value: string, argName: string) {
+export function throwIfWhitespaceOrNotString(value: string, argName: string) {
     throwIfNotString(value, argName);
     if (value.trim().length === 0)
         throw new ArgumentNullOrWhitespaceError(argName);

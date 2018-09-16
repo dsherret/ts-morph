@@ -141,10 +141,10 @@ describe(nameof(NamespaceDeclaration), () => {
         });
     });
 
-    describe(nameof<NamespaceDeclaration>(n => n.fill), () => {
+    describe(nameof<NamespaceDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: NamespaceDeclarationSpecificStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 

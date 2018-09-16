@@ -4,7 +4,7 @@ import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, Fun
 import { SyntaxKind, ts } from "../../typescript";
 import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode,
     TextInsertableNode, UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { NamespaceChildableNode } from "../namespace";
 import { StatementedNode } from "../statement";
@@ -20,19 +20,6 @@ export const FunctionDeclarationOverloadBase = ChildOrderableNode(UnwrappableNod
 ))))));
 
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<FunctionDeclarationStructure>) {
-        callBaseFill(FunctionDeclarationBase.prototype, this, structure);
-
-        if (structure.overloads != null && structure.overloads.length > 0)
-            this.addOverloads(structure.overloads);
-
-        return this;
-    }
-
     /**
      * Adds a function overload.
      * @param structure - Structure of the overload.
@@ -73,7 +60,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
             structures,
             childCodes,
             getThisStructure: getStructureFuncs.fromFunctionDeclarationOverload,
-            fillNodeFromStructure: (node, structure) => node.fill(structure),
+            setNodeFromStructure: (node, structure) => node.set(structure),
             expectedSyntaxKind: SyntaxKind.FunctionDeclaration
         });
     }
@@ -83,6 +70,21 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      */
     remove() {
         removeOverloadableStatementedNodeChild(this);
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<FunctionDeclarationStructure>) {
+        callBaseSet(FunctionDeclarationBase.prototype, this, structure);
+
+        if (structure.overloads != null) {
+            this.getOverloads().forEach(o => o.remove());
+            this.addOverloads(structure.overloads);
+        }
+
+        return this;
     }
 
     /**

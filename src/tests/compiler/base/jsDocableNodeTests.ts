@@ -135,10 +135,10 @@ describe(nameof(JSDocableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+    describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: JSDocableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
@@ -146,8 +146,17 @@ describe(nameof(JSDocableNode), () => {
             doTest("class Identifier {}", { docs: [{ description: "Desc1" }, "Desc2"] }, "/**\n * Desc1\n */\n/**\n * Desc2\n */\nclass Identifier {}");
         });
 
-        it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("class Identifier {}", {}, "class Identifier {}");
+        it("should not modify anything if the structure doesn't specify a value", () => {
+            doTest("/** Test */\nclass Identifier {}", {}, "/** Test */\nclass Identifier {}");
+        });
+
+        it("should replace existing", () => {
+            doTest("/** Test */\nclass Identifier {}", { docs: [{ description: "New" }] },
+                "/**\n * New\n */\nclass Identifier {}");
+        });
+
+        it("should remove existing when structure specifies a value", () => {
+            doTest("/** Test */\nclass Identifier {}", { docs: [] }, "class Identifier {}");
         });
     });
 

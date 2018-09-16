@@ -7,7 +7,7 @@ import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
 import { TypeElementTypes } from "../aliases";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "../interface";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -412,19 +412,29 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.compilerNode.members.map(m => this.getNodeFromCompilerNode(m)) as TypeElementTypes[];
         }
 
-        fill(structure: Partial<TypeElementMemberedNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<TypeElementMemberedNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
-            if (structure.callSignatures != null)
+            if (structure.callSignatures != null) {
+                this.getCallSignatures().forEach(c => c.remove());
                 this.addCallSignatures(structure.callSignatures);
-            if (structure.constructSignatures != null)
+            }
+            if (structure.constructSignatures != null) {
+                this.getConstructSignatures().forEach(c => c.remove());
                 this.addConstructSignatures(structure.constructSignatures);
-            if (structure.indexSignatures != null)
+            }
+            if (structure.indexSignatures != null) {
+                this.getIndexSignatures().forEach(c => c.remove());
                 this.addIndexSignatures(structure.indexSignatures);
-            if (structure.properties != null)
+            }
+            if (structure.properties != null) {
+                this.getProperties().forEach(c => c.remove());
                 this.addProperties(structure.properties);
-            if (structure.methods != null)
+            }
+            if (structure.methods != null) {
+                this.getMethods().forEach(c => c.remove());
                 this.addMethods(structure.methods);
+            }
 
             return this;
         }
@@ -441,7 +451,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
     };
 }
 
-function insertChildren<TNode extends Node & { fill(structure: TStructure): void; }, TStructure>(opts: {
+function insertChildren<TNode extends Node & { set(structure: TStructure): void; }, TStructure>(opts: {
     thisNode: Node & TypeElementMemberedNode,
     index: number;
     structures: ReadonlyArray<TStructure>;

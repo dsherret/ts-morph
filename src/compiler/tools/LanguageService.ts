@@ -114,7 +114,7 @@ export class LanguageService {
      * @param options - Options for renaming the node.
      */
     renameNode(node: Node, newName: string, options: RenameOptions = {}) {
-        errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
+        errors.throwIfWhitespaceOrNotString(newName, nameof(newName));
 
         if (node.getText() === newName)
             return;

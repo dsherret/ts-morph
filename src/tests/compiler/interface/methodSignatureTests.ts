@@ -9,10 +9,10 @@ describe(nameof(MethodSignature), () => {
         return { ...opts, firstMethod: opts.firstChild.getMethods()[0] };
     }
 
-    describe(nameof<MethodSignature>(n => n.fill), () => {
+    describe(nameof<MethodSignature>(n => n.set), () => {
         function doTest(code: string, structure: Partial<MethodSignatureStructure>, expectedCode: string) {
             const {firstMethod, sourceFile} = getFirstMethodWithInfo(code);
-            firstMethod.fill(structure);
+            firstMethod.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

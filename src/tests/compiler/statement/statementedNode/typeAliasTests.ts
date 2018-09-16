@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { StatementedNode, TypeAliasDeclaration } from "../../../../compiler";
+import { StatementedNode, TypeAliasDeclaration, Node } from "../../../../compiler";
 import { TypeAliasDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -120,6 +120,11 @@ describe(nameof(StatementedNode), () => {
 
         it("should have correct type", () => {
             expect(typeAliases[0]).to.be.instanceOf(TypeAliasDeclaration);
+        });
+
+        it("should not throw when getting from an empty body", () => {
+            const { firstChild } = getInfoFromText<StatementedNode & Node>("function test();");
+            expect(firstChild.getTypeAliases()).to.deep.equal([]);
         });
     });
 

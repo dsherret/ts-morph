@@ -3,7 +3,7 @@ import { AbstractableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
 import { ModifierableNode } from "../../base";
-import { callBaseFill } from "../../callBaseFill";
+import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { Node } from "../../common";
 
@@ -48,8 +48,8 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
             return this;
         }
 
-        fill(structure: Partial<AbstractableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<AbstractableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.isAbstract != null)
                 this.setIsAbstract(structure.isAbstract);

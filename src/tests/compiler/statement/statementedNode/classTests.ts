@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { FunctionDeclaration, ClassDeclaration, StatementedNode } from "../../../../compiler";
+import { FunctionDeclaration, ClassDeclaration, StatementedNode, Node } from "../../../../compiler";
 import { ClassDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -152,6 +152,11 @@ describe(nameof(StatementedNode), () => {
 
         it("should have correct type", () => {
             expect(classes[0]).to.be.instanceOf(ClassDeclaration);
+        });
+
+        it("should not throw when getting from an empty body", () => {
+            const { firstChild } = getInfoFromText<StatementedNode & Node>("function test();");
+            expect(firstChild.getClasses()).to.deep.equal([]);
         });
     });
 

@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { NamespaceDeclaration, StatementedNode } from "../../../../compiler";
+import { NamespaceDeclaration, StatementedNode, Node } from "../../../../compiler";
 import { NamespaceDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -138,6 +138,11 @@ describe(nameof(StatementedNode), () => {
 
         it("should have correct type", () => {
             expect(namespaces[0]).to.be.instanceOf(NamespaceDeclaration);
+        });
+
+        it("should not throw when getting from an empty body", () => {
+            const { firstChild } = getInfoFromText<StatementedNode & Node>("function test();");
+            expect(firstChild.getNamespaces()).to.deep.equal([]);
         });
     });
 

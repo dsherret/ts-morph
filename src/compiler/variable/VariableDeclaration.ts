@@ -3,21 +3,12 @@ import { removeChildren, removeCommaSeparatedChild } from "../../manipulation";
 import { VariableDeclarationStructure, VariableDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { BindingNamedNode, ExclamationTokenableNode, InitializerExpressionableNode, TypedNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const VariableDeclarationBase = ExclamationTokenableNode(TypedNode(InitializerExpressionableNode(BindingNamedNode(Node))));
 export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
-    /**
-     * Fills this node with the specified structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<VariableDeclarationStructure>) {
-        callBaseFill(VariableDeclarationBase.prototype, this, structure);
-        return this;
-    }
-
     /**
      * Removes this variable declaration.
      */
@@ -54,6 +45,15 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
                 removePrecedingSpaces: true
             });
         }
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<VariableDeclarationStructure>) {
+        callBaseSet(VariableDeclarationBase.prototype, this, structure);
+        return this;
     }
 
     /**

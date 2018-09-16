@@ -43,11 +43,11 @@ describe(nameof(VariableDeclaration), () => {
         });
     });
 
-    describe(nameof<VariableDeclaration>(d => d.fill), () => {
+    describe(nameof<VariableDeclaration>(d => d.set), () => {
         function doTest(startCode: string, structure: Partial<VariableDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const variableDeclaration = sourceFile.getVariableDeclarations()[0];
-            variableDeclaration.fill(structure);
+            variableDeclaration.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 

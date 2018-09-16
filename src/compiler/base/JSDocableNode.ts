@@ -3,7 +3,7 @@ import { JSDocableNodeStructure, JSDocStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { WriterFunction } from "../../types";
 import { Node } from "../common";
 import { JSDoc } from "../doc/JSDoc";
@@ -83,11 +83,13 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             return getNodesToReturn(this.getJsDocs(), index, structures.length);
         }
 
-        fill(structure: Partial<JSDocableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<JSDocableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
-            if (structure.docs != null && structure.docs.length > 0)
+            if (structure.docs != null) {
+                this.getJsDocs().forEach(doc => doc.remove());
                 this.addJsDocs(structure.docs);
+            }
 
             return this;
         }

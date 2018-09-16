@@ -1,33 +1,17 @@
 import { removeInterfaceMember } from "../../manipulation";
 import { IndexSignatureDeclarationStructure, IndexSignatureDeclarationSpecificStructure } from "../../structures";
+import * as errors from "../../errors";
 import { WriterFunction } from "../../types";
 import { ts } from "../../typescript";
 import { getTextFromStringOrWriter } from "../../utils";
 import { ChildOrderableNode, JSDocableNode, ModifierableNode, ReadonlyableNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Type, TypeNode } from "../type";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const IndexSignatureDeclarationBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(ModifierableNode(TypeElement))));
 export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.IndexSignatureDeclaration> {
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<IndexSignatureDeclarationStructure>) {
-        callBaseFill(IndexSignatureDeclarationBase.prototype, this, structure);
-
-        if (structure.keyName != null)
-            this.setKeyName(structure.keyName);
-        if (structure.keyType != null)
-            this.setKeyType(structure.keyType);
-        if (structure.returnType != null)
-            this.setReturnType(structure.returnType);
-
-        return this;
-    }
-
     /**
      * Gets the key name.
      */
@@ -40,6 +24,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      * @param name - New name.
      */
     setKeyName(name: string) {
+        errors.throwIfWhitespaceOrNotString(name, nameof(name));
         if (this.getKeyName() === name)
             return;
 
@@ -66,6 +51,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      * @param type - Type.
      */
     setKeyType(type: string) {
+        errors.throwIfWhitespaceOrNotString(type, nameof(type));
         if (this.getKeyTypeNode().getText() === type)
             return;
         this.getKeyTypeNode().replaceWithText(type, this.getWriterWithQueuedChildIndentation());
@@ -108,6 +94,9 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
     setReturnType(textOrWriterFunction: string | WriterFunction) {
         const returnTypeNode = this.getReturnTypeNode();
         const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
+
+        errors.throwIfWhitespaceOrNotString(text, nameof(textOrWriterFunction));
+
         if (returnTypeNode.getText() === text)
             return this;
 
@@ -120,6 +109,23 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      */
     remove() {
         removeInterfaceMember(this);
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<IndexSignatureDeclarationStructure>) {
+        callBaseSet(IndexSignatureDeclarationBase.prototype, this, structure);
+
+        if (structure.keyName != null)
+            this.setKeyName(structure.keyName);
+        if (structure.keyType != null)
+            this.setKeyType(structure.keyType);
+        if (structure.returnType != null)
+            this.setReturnType(structure.returnType);
+
+        return this;
     }
 
     /**

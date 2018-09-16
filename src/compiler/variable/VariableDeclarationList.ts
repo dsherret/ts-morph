@@ -4,7 +4,7 @@ import { CommaSeparatedStructuresPrinter } from "../../structurePrinters";
 import { VariableDeclarationListStructure, VariableDeclarationStructure, VariableDeclarationListSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { ModifierableNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { VariableDeclaration } from "./VariableDeclaration";
 import { VariableDeclarationKind } from "./VariableDeclarationKind";
@@ -118,16 +118,19 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
     }
 
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<VariableDeclarationListStructure>) {
-        callBaseFill(VariableDeclarationListBase.prototype, this, structure);
+    set(structure: Partial<VariableDeclarationListStructure>) {
+        callBaseSet(VariableDeclarationListBase.prototype, this, structure);
 
         if (structure.declarationKind != null)
             this.setDeclarationKind(structure.declarationKind);
-        if (structure.declarations != null)
+        if (structure.declarations != null) {
+            const existingDeclarations = this.getDeclarations();
             this.addDeclarations(structure.declarations);
+            existingDeclarations.forEach(d => d.remove());
+        }
 
         return this;
     }

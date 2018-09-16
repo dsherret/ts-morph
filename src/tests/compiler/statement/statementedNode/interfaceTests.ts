@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { InterfaceDeclaration, StatementedNode } from "../../../../compiler";
+import { InterfaceDeclaration, StatementedNode, Node } from "../../../../compiler";
 import { InterfaceDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -122,6 +122,11 @@ describe(nameof(StatementedNode), () => {
 
         it("should have correct type", () => {
             expect(interfaces[0]).to.be.instanceOf(InterfaceDeclaration);
+        });
+
+        it("should not throw when getting from an empty body", () => {
+            const { firstChild } = getInfoFromText<StatementedNode & Node>("function test();");
+            expect(firstChild.getInterfaces()).to.deep.equal([]);
         });
     });
 

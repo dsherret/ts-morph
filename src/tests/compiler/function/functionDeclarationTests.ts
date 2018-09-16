@@ -96,25 +96,6 @@ describe(nameof(FunctionDeclaration), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.fill), () => {
-        function doTest(startingCode: string, structure: FunctionDeclarationSpecificStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
-            firstChild.fill(structure);
-            expect(sourceFile.getText()).to.equal(expectedCode);
-        }
-
-        it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("function identifier() {\n}", {}, "function identifier() {\n}");
-        });
-
-        it("should modify when changed", () => {
-            const structure: MakeRequired<FunctionDeclarationSpecificStructure> = {
-                overloads: [{ returnType: "string" }]
-            };
-            doTest("function identifier() {\n}", structure, "function identifier(): string;\nfunction identifier() {\n}");
-        });
-    });
-
     describe(nameof<FunctionDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);
@@ -147,6 +128,35 @@ describe(nameof(FunctionDeclaration), () => {
         it("should remove the function declaration overload when last", () => {
             doOverloadTest("function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J() {}\n\nfunction K() {}", 1, 1,
                 "function I() {}\n\nfunction J(first): void;\nfunction J() {}\n\nfunction K() {}");
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(f => f.set), () => {
+        function doTest(startingCode: string, structure: FunctionDeclarationSpecificStructure, expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startingCode);
+            sourceFile.getFunctions()[0].set(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            const code = `funciton identifier(): string;\nfunction identifier() {\n}`;
+            doTest(code, {}, code);
+        });
+
+        it("should replace overloads when changed", () => {
+            const structure: MakeRequired<FunctionDeclarationSpecificStructure> = {
+                overloads: [{ returnType: "string" }]
+            };
+            doTest("function identifier(p): number;\nfunction identifier() {\n}", structure,
+                "function identifier(): string;\nfunction identifier() {\n}");
+        });
+
+        it("should remove overloads when specifying an empty array", () => {
+            const structure: MakeRequired<FunctionDeclarationSpecificStructure> = {
+                overloads: []
+            };
+            doTest("function identifier(p): number;\nfunction identifier() {\n}", structure,
+                "function identifier() {\n}");
         });
     });
 

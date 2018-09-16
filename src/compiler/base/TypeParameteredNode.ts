@@ -5,7 +5,7 @@ import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards } from "../../utils";
 import { NamedNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { TypeParameterDeclaration } from "../type/TypeParameterDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -120,11 +120,13 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             return getNodesToReturn(this.getTypeParameters(), index, structures.length);
         }
 
-        fill(structure: Partial<TypeParameteredNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<TypeParameteredNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
-            if (structure.typeParameters != null && structure.typeParameters.length > 0)
+            if (structure.typeParameters != null) {
+                this.getTypeParameters().forEach(t => t.remove());
                 this.addTypeParameters(structure.typeParameters);
+            }
 
             return this;
         }

@@ -4,7 +4,7 @@ import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodD
 import { SyntaxKind, ts } from "../../typescript";
 import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode,
     TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node, Signature } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";
@@ -19,14 +19,16 @@ export const MethodDeclarationOverloadBase = JSDocableNode(ChildOrderableNode(Te
 
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<MethodDeclarationStructure>) {
-        callBaseFill(MethodDeclarationBase.prototype, this, structure);
+    set(structure: Partial<MethodDeclarationStructure>) {
+        callBaseSet(MethodDeclarationBase.prototype, this, structure);
 
-        if (structure.overloads != null && structure.overloads.length > 0)
+        if (structure.overloads != null) {
+            this.getOverloads().forEach(o => o.remove());
             this.addOverloads(structure.overloads);
+        }
 
         return this;
     }
@@ -71,7 +73,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
             structures,
             childCodes,
             getThisStructure: getStructureFuncs.fromMethodDeclarationOverload,
-            fillNodeFromStructure: (node, structure) => node.fill(structure),
+            setNodeFromStructure: (node, structure) => node.set(structure),
             expectedSyntaxKind: SyntaxKind.MethodDeclaration
         });
     }

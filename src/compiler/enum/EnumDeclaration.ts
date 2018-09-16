@@ -4,7 +4,7 @@ import { EnumDeclarationStructure, EnumMemberStructure, EnumDeclarationSpecificS
 import { SyntaxKind, ts } from "../../typescript";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../namespace";
 import { Statement } from "../statement";
 import { EnumMember } from "./EnumMember";
@@ -15,16 +15,18 @@ export const EnumDeclarationBase = ChildOrderableNode(TextInsertableNode(Namespa
 ))))));
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<EnumDeclarationStructure>) {
-        callBaseFill(EnumDeclarationBase.prototype, this, structure);
+    set(structure: Partial<EnumDeclarationStructure>) {
+        callBaseSet(EnumDeclarationBase.prototype, this, structure);
 
         if (structure.isConst != null)
             this.setIsConstEnum(structure.isConst);
-        if (structure.members != null && structure.members.length > 0)
+        if (structure.members != null) {
+            this.getMembers().forEach(m => m.remove());
             this.addMembers(structure.members);
+        }
 
         return this;
     }

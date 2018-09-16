@@ -5,10 +5,10 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(DeclarationNamedNode), () => {
     // todo: other tests
 
-    describe(nameof<ParameterDeclaration>(n => n.fill), () => {
+    describe(nameof<ParameterDeclaration>(n => n.set), () => {
         it("should fill the node with a new name via a rename", () => {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>("function test(p) {}");
-            firstChild.getParameters()[0].fill({ name: "newName" });
+            firstChild.getParameters()[0].set({ name: "newName" });
             expect(sourceFile.getFullText()).to.equal("function test(newName) {}");
         });
     });

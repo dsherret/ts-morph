@@ -182,10 +182,10 @@ describe(nameof(DecoratableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+    describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: DecoratableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 
@@ -195,6 +195,14 @@ describe(nameof(DecoratableNode), () => {
 
         it("should not modify anything if the structure doesn't change anything", () => {
             doTest("class Identifier {}", {}, "class Identifier {}");
+        });
+
+        it("should replace existing decorators", () => {
+            doTest("@old1 @old2 class Identifier {}", { decorators: [{ name: "newDec" }] }, "@newDec\nclass Identifier {}");
+        });
+
+        it("should remove existing decorators when specifying a value", () => {
+            doTest("@old1 @old2 class Identifier {}", { decorators: [] }, "class Identifier {}");
         });
     });
 

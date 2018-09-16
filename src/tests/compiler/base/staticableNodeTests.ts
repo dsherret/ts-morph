@@ -60,10 +60,10 @@ describe(nameof(StaticableNode), () => {
         return {firstMethod, ...result};
     }
 
-    describe(nameof<MethodDeclaration>(n => n.fill), () => {
+    describe(nameof<MethodDeclaration>(n => n.set), () => {
         function doTest(startCode: string, structure: StaticableNodeStructure, expectedCode: string) {
             const {firstMethod, sourceFile} = getFirstMethod(startCode);
-            firstMethod.fill(structure);
+            firstMethod.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 

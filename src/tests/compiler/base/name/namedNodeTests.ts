@@ -100,10 +100,10 @@ describe(nameof(NamedNode), () => {
         });
     });
 
-    describe(nameof<EnumDeclaration>(n => n.fill), () => {
+    describe(nameof<EnumDeclaration>(n => n.set), () => {
         it("should fill the node with a new name via a rename", () => {
             const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
-            firstChild.fill({ name: "MyNewEnum" });
+            firstChild.set({ name: "MyNewEnum" });
             expect(sourceFile.getFullText()).to.equal("enum MyNewEnum {}\nlet myEnum: MyNewEnum;");
         });
     });

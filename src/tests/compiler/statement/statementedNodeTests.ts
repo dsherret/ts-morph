@@ -342,18 +342,33 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.fill), () => {
+    describe(nameof<SourceFile>(s => s.set), () => {
         function doTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
             const {sourceFile} = getInfoFromText(startingCode);
-            sourceFile.fill(structure);
-            expect(sourceFile.getText()).to.equal(expectedCode);
+            sourceFile.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("", {}, "");
+            const code = `
+class C {}
+interface I {}
+enum E {}
+function F() {}
+namespace N {}
+type T = string;
+`;
+            doTest(code, {}, code);
         });
 
-        it("should modify when changed", () => {
+        it("should replace existing when specifying non-empty arrays", () => {
+            const code = `class C {}
+interface I {}
+enum E {}
+function F() {}
+namespace N {}
+type T = string;
+`;
             const structure: MakeRequired<StatementedNodeStructure> = {
                 classes: [{ name: "Identifier1" }],
                 enums: [{ name: "Identifier2" }],
@@ -362,9 +377,28 @@ describe(nameof(StatementedNode), () => {
                 namespaces: [{ name: "Identifier5" }],
                 typeAliases: [{ name: "Identifier6", type: "string" }]
             };
-            doTest("", structure,
+            doTest(code, structure,
                 "class Identifier1 {\n}\n\nenum Identifier2 {\n}\n\nfunction Identifier3() {\n}\n\ninterface Identifier4 {\n}\n\nnamespace Identifier5 {\n}\n\n" +
                 "type Identifier6 = string;\n");
+        });
+
+        it("should remove existing when specifying empty arrays", () => {
+            const code = `class C {}
+interface I {}
+enum E {}
+function F() {}
+namespace N {}
+type T = string;
+`;
+            const structure: MakeRequired<StatementedNodeStructure> = {
+                classes: [],
+                enums: [],
+                functions: [],
+                interfaces: [],
+                namespaces: [],
+                typeAliases: []
+            };
+            doTest(code, structure, "");
         });
     });
 });

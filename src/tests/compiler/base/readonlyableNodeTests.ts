@@ -59,10 +59,10 @@ describe(nameof(ReadonlyableNode), () => {
         });
     });
 
-    describe(nameof<PropertyDeclaration>(n => n.fill), () => {
+    describe(nameof<PropertyDeclaration>(n => n.set), () => {
         function doTest(startCode: string, structure: ReadonlyableNodeStructure, expectedCode: string) {
             const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
-            firstProperty.fill(structure);
+            firstProperty.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 

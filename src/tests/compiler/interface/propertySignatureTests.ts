@@ -9,10 +9,10 @@ describe(nameof(PropertySignature), () => {
         return { ...opts, firstProperty: opts.firstChild.getProperties()[0] };
     }
 
-    describe(nameof<PropertySignature>(n => n.fill), () => {
+    describe(nameof<PropertySignature>(n => n.set), () => {
         function doTest(code: string, structure: Partial<PropertySignatureStructure>, expectedCode: string) {
             const {firstProperty, sourceFile} = getFirstPropertyWithInfo(code);
-            firstProperty.fill(structure);
+            firstProperty.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

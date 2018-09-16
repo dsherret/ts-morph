@@ -3,7 +3,7 @@ import { EnumMemberStructure, EnumMemberSpecificStructure, EnumDeclarationStruct
 import { SyntaxKind, ts } from "../../typescript";
 import { StringUtils } from "../../utils";
 import { InitializerExpressionableNode, JSDocableNode, PropertyNamedNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
@@ -49,11 +49,11 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     }
 
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<EnumMemberStructure>) {
-        callBaseFill(EnumMemberBase.prototype, this, structure);
+    set(structure: Partial<EnumMemberStructure>) {
+        callBaseSet(EnumMemberBase.prototype, this, structure);
 
         if (structure.value != null)
             this.setValue(structure.value);

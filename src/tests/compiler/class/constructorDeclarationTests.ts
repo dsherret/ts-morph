@@ -125,23 +125,33 @@ describe(nameof(ConstructorDeclaration), () => {
         });
     });
 
-    describe(nameof<ConstructorDeclaration>(n => n.fill), () => {
+    describe(nameof<ConstructorDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: ConstructorDeclarationSpecificStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const ctor = firstChild.getConstructors()[0];
-            ctor.fill(structure);
+            ctor.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("class identifier {\n    constructor() {}\n}", {}, "class identifier {\n    constructor() {}\n}");
+            const code = "class identifier {\n    constructor();\n    constructor() {}\n}";
+            doTest(code, {}, code);
         });
 
-        it("should modify when changed", () => {
+        it("should replace existing overloads when changed", () => {
             const structure: MakeRequired<ConstructorDeclarationSpecificStructure> = {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
-            doTest("class identifier {\n    constructor() {}\n}", structure, "class identifier {\n    constructor(param);\n    constructor() {}\n}");
+            doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
+                "class identifier {\n    constructor(param);\n    constructor() {}\n}");
+        });
+
+        it("should remove existing overloads when specifying an empty array", () => {
+            const structure: MakeRequired<ConstructorDeclarationSpecificStructure> = {
+                overloads: []
+            };
+            doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
+                "class identifier {\n    constructor() {}\n}");
         });
     });
 

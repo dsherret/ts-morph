@@ -2,18 +2,18 @@ import { removeInterfaceMember } from "../../manipulation";
 import { ConstructSignatureDeclarationStructure, ConstructSignatureDeclarationSpecificStructure } from "../../structures";
 import { ts } from "../../typescript";
 import { ChildOrderableNode, JSDocableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const ConstructSignatureDeclarationBase = TypeParameteredNode(ChildOrderableNode(JSDocableNode(SignaturedDeclaration(TypeElement))));
 export class ConstructSignatureDeclaration extends ConstructSignatureDeclarationBase<ts.ConstructSignatureDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<ConstructSignatureDeclarationStructure>) {
-        callBaseFill(ConstructSignatureDeclarationBase.prototype, this, structure);
+    set(structure: Partial<ConstructSignatureDeclarationStructure>) {
+        callBaseSet(ConstructSignatureDeclarationBase.prototype, this, structure);
 
         return this;
     }

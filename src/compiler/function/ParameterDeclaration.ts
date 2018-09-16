@@ -5,7 +5,7 @@ import { WriterFunction } from "../../types";
 import { ts, SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { DeclarationNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
@@ -13,19 +13,6 @@ export const ParameterDeclarationBase = QuestionTokenableNode(DecoratableNode(Sc
     TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node)))
 )))));
 export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<ParameterDeclarationStructure>) {
-        callBaseFill(ParameterDeclarationBase.prototype, this, structure);
-
-        if (structure.isRestParameter != null)
-            this.setIsRestParameter(structure.isRestParameter);
-
-        return this;
-    }
-
     /**
      * Gets the dot dot dot token (...) if it exists, for a rest parameter.
      */
@@ -81,6 +68,19 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
      */
     remove() {
         removeCommaSeparatedChild(this);
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ParameterDeclarationStructure>) {
+        callBaseSet(ParameterDeclarationBase.prototype, this, structure);
+
+        if (structure.isRestParameter != null)
+            this.setIsRestParameter(structure.isRestParameter);
+
+        return this;
     }
 
     /**

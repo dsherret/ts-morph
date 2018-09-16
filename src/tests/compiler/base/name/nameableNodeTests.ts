@@ -142,10 +142,10 @@ describe(nameof(NameableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+    describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(text: string, structure: NameableNodeStructure, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 

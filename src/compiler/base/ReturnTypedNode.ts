@@ -4,7 +4,7 @@ import { ReturnTypedNodeStructure } from "../../structures";
 import { Constructor, WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { getTextFromStringOrWriter, StringUtils } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Type } from "../type/Type";
 import { TypeNode } from "../type/TypeNode";
@@ -79,8 +79,8 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             return this;
         }
 
-        fill(structure: Partial<ReturnTypedNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<ReturnTypedNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.returnType != null)
                 this.setReturnType(structure.returnType);

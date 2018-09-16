@@ -3,7 +3,7 @@ import { ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, ExtendsClauseableNode, HeritageClauseableNode, JSDocableNode, ModifierableNode, NamedNode,
     TextInsertableNode, TypeElementMemberedNode, TypeParameteredNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { ClassDeclaration } from "../class";
 import { NamespaceChildableNode } from "../namespace";
 import { Statement } from "../statement";
@@ -15,15 +15,6 @@ export const InterfaceDeclarationBase = TypeElementMemberedNode(ChildOrderableNo
     TypeParameteredNode(JSDocableNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Statement)))))))
 )))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<InterfaceDeclarationStructure>) {
-        callBaseFill(InterfaceDeclarationBase.prototype, this, structure);
-        return this;
-    }
-
     /**
      * Gets the base types.
      */
@@ -48,6 +39,15 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getImplementations(): ImplementationLocation[] {
         return this.getNameNode().getImplementations();
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<InterfaceDeclarationStructure>) {
+        callBaseSet(InterfaceDeclarationBase.prototype, this, structure);
+        return this;
     }
 
     /**

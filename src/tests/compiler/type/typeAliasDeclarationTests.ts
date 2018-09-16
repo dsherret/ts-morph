@@ -4,10 +4,10 @@ import { TypeAliasDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypeAliasDeclaration), () => {
-    describe(nameof<TypeAliasDeclaration>(n => n.fill), () => {
+    describe(nameof<TypeAliasDeclaration>(n => n.set), () => {
         function doTest(code: string, structure: Partial<TypeAliasDeclarationStructure>, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(code);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

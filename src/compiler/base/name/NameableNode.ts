@@ -4,7 +4,7 @@ import { NameableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { StringUtils } from "../../../utils";
-import { callBaseFill } from "../../callBaseFill";
+import { callBaseSet } from "../../callBaseSet";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
@@ -96,8 +96,8 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
             return this;
         }
 
-        fill(structure: Partial<NameableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<NameableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.name != null)
                 this.rename(structure.name);

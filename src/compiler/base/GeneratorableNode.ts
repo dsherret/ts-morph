@@ -4,7 +4,7 @@ import { GeneratorableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { NamedNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
@@ -68,8 +68,8 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
             return this;
         }
 
-        fill(structure: Partial<GeneratorableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<GeneratorableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.isGenerator != null)
                 this.setIsGenerator(structure.isGenerator);

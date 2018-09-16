@@ -82,10 +82,10 @@ describe(nameof(QuestionTokenableNode), () => {
         });
     });
 
-    describe(nameof<PropertyDeclaration>(p => p.fill), () => {
+    describe(nameof<PropertyDeclaration>(p => p.set), () => {
         function doTest(startCode: string, structure: QuestionTokenableNodeStructure, expectedCode: string) {
             const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
-            firstProperty.fill(structure);
+            firstProperty.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 

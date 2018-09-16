@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../compiler";
+import { StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement, Node } from "../../../../compiler";
 import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -130,6 +130,11 @@ describe(nameof(StatementedNode), () => {
         it("should have correct type", () => {
             expect(statements[0]).to.be.instanceOf(VariableStatement);
         });
+
+        it("should not throw when getting from an empty body", () => {
+            const { firstChild } = getInfoFromText<StatementedNode & Node>("function test();");
+            expect(firstChild.getVariableStatements()).to.deep.equal([]);
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.getVariableStatement), () => {
@@ -163,6 +168,11 @@ describe(nameof(StatementedNode), () => {
 
         it("should have correct type", () => {
             expect(declarations[0]).to.be.instanceOf(VariableDeclaration);
+        });
+
+        it("should not throw when getting from an empty body", () => {
+            const { firstChild } = getInfoFromText<StatementedNode & Node>("function test();");
+            expect(firstChild.getVariableDeclarations()).to.deep.equal([]);
         });
     });
 

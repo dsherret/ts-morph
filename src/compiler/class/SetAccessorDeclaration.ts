@@ -3,7 +3,7 @@ import { removeClassMember } from "../../manipulation";
 import { SetAccessorDeclarationStructure, SetAccessorDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { FunctionLikeDeclaration } from "../function";
 import { AbstractableNode } from "./base";
@@ -15,11 +15,11 @@ export const SetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(
 )))))));
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<SetAccessorDeclarationStructure>) {
-        callBaseFill(SetAccessorDeclarationBase.prototype, this, structure);
+    set(structure: Partial<SetAccessorDeclarationStructure>) {
+        callBaseSet(SetAccessorDeclarationBase.prototype, this, structure);
         return this;
     }
 

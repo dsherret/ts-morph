@@ -1,7 +1,7 @@
 import { ScopeableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { ts } from "../../typescript";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Scope } from "../common/Scope";
 import { ModifierableNode } from "./ModifierableNode";
@@ -41,8 +41,8 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
             return this.getScope() != null;
         }
 
-        fill(structure: Partial<ScopeableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<ScopeableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.hasOwnProperty(nameof(structure.scope)))
                 this.setScope(structure.scope);

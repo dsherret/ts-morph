@@ -3,7 +3,7 @@ import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
 import { AwaitableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 
 export type AwaitableNodeExtensionType = Node<ts.Node & { awaitModifier?: ts.AwaitKeywordToken; }>;
@@ -67,8 +67,8 @@ export function AwaitableNode<T extends Constructor<AwaitableNodeExtensionType>>
             return this;
         }
 
-        fill(structure: Partial<AwaitableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<AwaitableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.isAwaited != null)
                 this.setIsAwaited(structure.isAwaited);

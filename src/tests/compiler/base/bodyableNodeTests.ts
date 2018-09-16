@@ -179,10 +179,10 @@ describe(nameof(BodyableNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(n => n.fill), () => {
+    describe(nameof<FunctionDeclaration>(n => n.set), () => {
         function doTest(startCode: string, structure: BodyableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 

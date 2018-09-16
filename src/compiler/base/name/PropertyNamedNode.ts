@@ -2,7 +2,6 @@ import { PropertyNamedNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { ts } from "../../../typescript";
 import { PropertyName } from "../../aliases";
-import { callBaseFill } from "../../callBaseFill";
 import { Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { RenameableNode } from "./RenameableNode";

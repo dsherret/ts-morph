@@ -47,10 +47,10 @@ describe(nameof(BodiedNode), () => {
         });
     });
 
-    describe(nameof<NamespaceDeclaration>(n => n.fill), () => {
+    describe(nameof<NamespaceDeclaration>(n => n.set), () => {
         function doTest(startCode: string, structure: BodiedNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>(startCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 

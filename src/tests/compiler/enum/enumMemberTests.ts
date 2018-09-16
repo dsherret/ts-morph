@@ -83,10 +83,10 @@ describe(nameof(EnumMember), () => {
         });
     });
 
-    describe(nameof<EnumMember>(d => d.fill), () => {
+    describe(nameof<EnumMember>(d => d.set), () => {
         function doTest(code: string, structure: Partial<EnumMemberSpecificStructure>, expectedCode: string) {
             const { firstEnumMember, sourceFile } = getInfoFromTextWithFirstMember(code);
-            firstEnumMember.fill(structure);
+            firstEnumMember.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

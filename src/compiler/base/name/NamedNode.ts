@@ -2,7 +2,6 @@ import { NamedNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { ts } from "../../../typescript";
 import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
-import { callBaseFill } from "../../callBaseFill";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { RenameableNode } from "./RenameableNode";

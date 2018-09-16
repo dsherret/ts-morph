@@ -3,7 +3,7 @@ import { insertIntoParentTextRange } from "../../manipulation";
 import { BodyableNodeStructure } from "../../structures";
 import { Constructor, WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common/Node";
 import { getBodyTextForStructure, setBodyTextForNode } from "./helpers";
@@ -25,14 +25,9 @@ export interface BodyableNode {
     hasBody(): boolean;
     /**
      * Sets the body text. A body is required to do this operation.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to set as the body.
      */
-    setBodyText(writerFunction: WriterFunction): this;
-    /**
-     * Sets the body text. A body is required to do this operation.
-     * @param text - Text to set as the body.
-     */
-    setBodyText(text: string): this;
+    setBodyText(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Adds a body if it doesn't exists.
      */
@@ -98,8 +93,8 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
             return this;
         }
 
-        fill(structure: Partial<BodyableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<BodyableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.bodyText != null)
                 this.setBodyText(structure.bodyText);

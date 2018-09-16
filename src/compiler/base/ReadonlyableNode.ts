@@ -2,7 +2,7 @@ import * as errors from "../../errors";
 import { ReadonlyableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind } from "../../typescript";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -48,8 +48,8 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
             return this;
         }
 
-        fill(structure: Partial<ReadonlyableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<ReadonlyableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.isReadonly != null)
                 this.setIsReadonly(structure.isReadonly);

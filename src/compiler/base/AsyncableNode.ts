@@ -2,7 +2,7 @@
 import { AsyncableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -48,8 +48,8 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
             return this;
         }
 
-        fill(structure: Partial<AsyncableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<AsyncableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.isAsync != null)
                 this.setIsAsync(structure.isAsync);

@@ -2,7 +2,7 @@ import * as errors from "../../errors";
 import { BodiedNodeStructure } from "../../structures";
 import { Constructor, WriterFunction } from "../../types";
 import { ts } from "../../typescript";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { getBodyTextForStructure, setBodyTextForNode } from "./helpers";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -16,14 +16,9 @@ export interface BodiedNode {
     getBody(): Node;
     /**
      * Sets the body text.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to set as the body.
      */
-    setBodyText(writerFunction: WriterFunction): this;
-    /**
-     * Sets the body text.
-     * @param text - Text to set as the body.
-     */
-    setBodyText(text: string): this;
+    setBodyText(textOrWriterFunction: string | WriterFunction): this;
 }
 
 export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base: T): Constructor<BodiedNode> & T {
@@ -42,8 +37,8 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
             return this;
         }
 
-        fill(structure: Partial<BodiedNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<BodiedNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.bodyText != null)
                 this.setBodyText(structure.bodyText);

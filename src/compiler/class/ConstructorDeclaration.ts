@@ -3,7 +3,7 @@ import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunct
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -15,14 +15,16 @@ export const ConstructorDeclarationOverloadBase = TypeParameteredNode(JSDocableN
 
 export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<ConstructorDeclarationStructure>) {
-        callBaseFill(ConstructorDeclarationBase.prototype, this, structure);
+    set(structure: Partial<ConstructorDeclarationStructure>) {
+        callBaseSet(ConstructorDeclarationBase.prototype, this, structure);
 
-        if (structure.overloads != null && structure.overloads.length > 0)
+        if (structure.overloads != null) {
+            this.getOverloads().forEach(o => o.remove());
             this.addOverloads(structure.overloads);
+        }
 
         return this;
     }
@@ -66,7 +68,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
             structures,
             childCodes,
             getThisStructure: getStructureFuncs.fromConstructorDeclarationOverload,
-            fillNodeFromStructure: (node, structure) => node.fill(structure),
+            setNodeFromStructure: (node, structure) => node.set(structure),
             expectedSyntaxKind: SyntaxKind.Constructor
         });
     }

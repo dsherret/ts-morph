@@ -10,7 +10,7 @@ import { LanguageVariant, ScriptTarget, SyntaxKind, ts } from "../../typescript"
 import { ArrayUtils, createHashSet, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../utils";
 import { getBodyTextForStructure } from "../base/helpers";
 import { TextInsertableNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node, Symbol } from "../common";
 import { StringLiteral } from "../literal";
 import { StatementedNode } from "../statement";
@@ -69,16 +69,20 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    fill(structure: Partial<SourceFileStructure>) {
-        callBaseFill(SourceFileBase.prototype, this, structure);
+    set(structure: Partial<SourceFileStructure>) {
+        callBaseSet(SourceFileBase.prototype, this, structure);
 
-        if (structure.imports != null)
+        if (structure.imports != null) {
+            this.getImportDeclarations().forEach(d => d.remove());
             this.addImportDeclarations(structure.imports);
-        if (structure.exports != null)
+        }
+        if (structure.exports != null) {
+            this.getExportDeclarations().forEach(d => d.remove());
             this.addExportDeclarations(structure.exports);
+        }
 
         return this;
     }

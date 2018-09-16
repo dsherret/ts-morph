@@ -77,7 +77,7 @@ describe(nameof(AwaitableNode), () => {
     describe("fill", () => {
         function doTest(startCode: string, structure: AwaitableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ForOfStatement>(startCode);
-            (firstChild as any).fill(structure); // nothing is using this yet
+            (firstChild as any).set(structure); // nothing is using this yet
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 

@@ -4,7 +4,7 @@ import { QuestionTokenableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
@@ -79,8 +79,8 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
             }
         }
 
-        fill(structure: Partial<QuestionTokenableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<QuestionTokenableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.hasQuestionToken != null)
                 this.setHasQuestionToken(structure.hasQuestionToken);

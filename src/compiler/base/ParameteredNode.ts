@@ -4,7 +4,7 @@ import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../s
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function/ParameterDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -109,11 +109,13 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             return getNodesToReturn(this.getParameters(), index, structures.length);
         }
 
-        fill(structure: Partial<ParameteredNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<ParameteredNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
-            if (structure.parameters != null && structure.parameters.length > 0)
+            if (structure.parameters != null) {
+                this.getParameters().forEach(p => p.remove());
                 this.addParameters(structure.parameters);
+            }
 
             return this;
         }

@@ -3,7 +3,7 @@ import { PropertySignatureStructure, PropertySignatureSpecificStructure } from "
 import { ts } from "../../typescript";
 import { ChildOrderableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
     QuestionTokenableNode, ReadonlyableNode, TypedNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
@@ -12,20 +12,20 @@ export const PropertySignatureBase = ChildOrderableNode(JSDocableNode(Readonlyab
 ))))));
 export class PropertySignature extends PropertySignatureBase<ts.PropertySignature> {
     /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<PropertySignatureStructure>) {
-        callBaseFill(PropertySignatureBase.prototype, this, structure);
-
-        return this;
-    }
-
-    /**
      * Removes this property signature.
      */
     remove() {
         removeInterfaceMember(this);
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<PropertySignatureStructure>) {
+        callBaseSet(PropertySignatureBase.prototype, this, structure);
+
+        return this;
     }
 
     /**

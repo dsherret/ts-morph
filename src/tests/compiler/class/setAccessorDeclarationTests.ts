@@ -72,10 +72,10 @@ describe(nameof(SetAccessorDeclaration), () => {
         });
     });
 
-    describe(nameof<SetAccessorDeclaration>(c => c.fill), () => {
+    describe(nameof<SetAccessorDeclaration>(c => c.set), () => {
         function doTest(startingCode: string, structure: Partial<SetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
-            firstChild.getSetAccessors()[0].fill(structure);
+            firstChild.getSetAccessors()[0].set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

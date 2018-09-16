@@ -3,8 +3,8 @@ import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
 import { TypedNodeStructure } from "../../structures";
 import { Constructor, WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
-import { getTextFromStringOrWriter, StringUtils } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { getTextFromStringOrWriter, StringUtils, TypeGuards } from "../../utils";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { TypeNode } from "../type/TypeNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -94,11 +94,13 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             }
         }
 
-        fill(structure: Partial<TypedNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<TypedNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.type != null)
                 this.setType(structure.type);
+            else if (structure.hasOwnProperty(nameof(structure.type)))
+                this.removeType();
 
             return this;
         }

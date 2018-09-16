@@ -130,10 +130,10 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
     });
 
-    describe(nameof<InterfaceDeclaration>(n => n.fill), () => {
+    describe(nameof<InterfaceDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: ExtendsClauseableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 
@@ -146,11 +146,15 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("interface Identifier {}", {}, "interface Identifier {}");
+            doTest("interface Identifier extends Test {}", {}, "interface Identifier extends Test {}");
         });
 
-        it("should not modify anything if the structure has an empty array", () => {
-            doTest("interface Identifier {}", { extends: [] }, "interface Identifier {}");
+        it("should replace existing extends", () => {
+            doTest("interface Identifier extends Test {}", { extends: ["Test1"] }, "interface Identifier extends Test1 {}");
+        });
+
+        it("should remove existing extends when specifying a value", () => {
+            doTest("interface Identifier extends Test {}", { extends: [] }, "interface Identifier {}");
         });
     });
 

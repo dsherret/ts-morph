@@ -73,7 +73,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * @param text - Text to set as the default import.
      */
     setDefaultImport(text: string) {
-        errors.throwIfNotStringOrWhitespace(text, nameof(text));
+        errors.throwIfWhitespaceOrNotString(text, nameof(text));
 
         const defaultImport = this.getDefaultImport();
         if (defaultImport != null) {

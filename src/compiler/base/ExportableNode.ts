@@ -3,7 +3,7 @@ import { ExportableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -176,8 +176,8 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             return this;
         }
 
-        fill(structure: Partial<ExportableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<ExportableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.isExported != null)
                 this.setIsExported(structure.isExported);

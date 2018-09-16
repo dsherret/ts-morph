@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../compiler";
+import * as errors from "../../../errors";
 import { IndexSignatureDeclarationStructure } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
@@ -9,35 +10,6 @@ describe(nameof(IndexSignatureDeclaration), () => {
         const opts = getInfoFromText<InterfaceDeclaration>(code);
         return { ...opts, firstIndexSignature: opts.firstChild.getIndexSignatures()[0] };
     }
-
-    describe(nameof<IndexSignatureDeclaration>(n => n.fill), () => {
-        function doTest(code: string, structure: Partial<IndexSignatureDeclarationStructure>, expectedCode: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
-            firstIndexSignature.fill(structure);
-            expect(sourceFile.getFullText()).to.equal(expectedCode);
-        }
-
-        it("should not change when nothing is set", () => {
-            doTest("interface Identifier { [key: string]: number; }", {}, "interface Identifier { [key: string]: number; }");
-        });
-
-        it("should change when setting", () => {
-            const allProps: MakeRequired<IndexSignatureDeclarationStructure> = {
-                docs: [{ description: "Desc" }],
-                keyName: "newKeyName",
-                keyType: "number",
-                returnType: "Date",
-                isReadonly: true
-            };
-            doTest("interface Identifier {\n    [key: string]: SomeReference;\n}", allProps,
-                "interface Identifier {\n    /**\n     * Desc\n     */\n    readonly [newKeyName: number]: Date;\n}");
-        });
-
-        it("should change the return type when using a writer", () => {
-            doTest("interface Identifier { [key: string]: number; }", { returnType: writer => writer.write("string") },
-                "interface Identifier { [key: string]: string; }");
-        });
-    });
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getKeyName), () => {
         function doTest(code: string, expectedName: string) {
@@ -71,6 +43,15 @@ describe(nameof(IndexSignatureDeclaration), () => {
         it("should set the key name", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "newKeyName", "interface Identifier { [newKeyName: string]: number; }");
         });
+
+        function doThrowTest(name: string) {
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo("interface Identifier { [keyName: string]: number; }");
+            expect(() => firstIndexSignature.setKeyName(name)).to.throw(errors.ArgumentNullOrWhitespaceError);
+        }
+
+        it("should throw when specifying an empty string", () => {
+            doThrowTest("");
+        });
     });
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getKeyType), () => {
@@ -97,13 +78,22 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.setKeyType), () => {
         function doTest(code: string, name: string, expectedCode: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.setKeyType(name);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should set the key type", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "number", "interface Identifier { [keyName: number]: number; }");
+        });
+
+        function doThrowTest(name: string) {
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo("interface Identifier { [keyName: string]: number; }");
+            expect(() => firstIndexSignature.setKeyType(name)).to.throw(errors.ArgumentNullOrWhitespaceError);
+        }
+
+        it("should throw when specifying an empty string", () => {
+            doThrowTest("");
         });
     });
 
@@ -142,6 +132,15 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
         it("should set the return type with a writer function", () => {
             doTest("interface Identifier { [keyName: string]: number; }", writer => writer.write("Date"), "interface Identifier { [keyName: string]: Date; }");
+        });
+
+        function doThrowTest(name: string) {
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo("interface Identifier { [keyName: string]: number; }");
+            expect(() => firstIndexSignature.setReturnType(name)).to.throw(errors.ArgumentNullOrWhitespaceError);
+        }
+
+        it("should throw when specifying an empty string", () => {
+            doThrowTest("");
         });
     });
 
@@ -190,6 +189,35 @@ describe(nameof(IndexSignatureDeclaration), () => {
         it("should only remove the new signature specified", () => {
             doTest("interface Identifier {\n    [key: string]: string;\n    [key2: number]: string;\n    [key3: number]: Date;\n}", 1,
                 "interface Identifier {\n    [key: string]: string;\n    [key3: number]: Date;\n}");
+        });
+    });
+
+    describe(nameof<IndexSignatureDeclaration>(n => n.set), () => {
+        function doTest(code: string, structure: Partial<IndexSignatureDeclarationStructure>, expectedCode: string) {
+            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            firstIndexSignature.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should not change when nothing is set", () => {
+            doTest("interface Identifier { [key: string]: number; }", {}, "interface Identifier { [key: string]: number; }");
+        });
+
+        it("should change when setting", () => {
+            const allProps: MakeRequired<IndexSignatureDeclarationStructure> = {
+                docs: [{ description: "Desc" }],
+                keyName: "newKeyName",
+                keyType: "number",
+                returnType: "Date",
+                isReadonly: true
+            };
+            doTest("interface Identifier {\n    [key: string]: SomeReference;\n}", allProps,
+                "interface Identifier {\n    /**\n     * Desc\n     */\n    readonly [newKeyName: number]: Date;\n}");
+        });
+
+        it("should change the return type when using a writer", () => {
+            doTest("interface Identifier { [key: string]: number; }", { returnType: writer => writer.write("string") },
+                "interface Identifier { [key: string]: string; }");
         });
     });
 

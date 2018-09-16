@@ -2,7 +2,7 @@ import * as errors from "../../errors";
 import { StaticableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind } from "../../typescript";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -48,8 +48,8 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
             return this;
         }
 
-        fill(structure: Partial<StaticableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<StaticableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
             if (structure.isStatic != null)
                 this.setIsStatic(structure.isStatic);

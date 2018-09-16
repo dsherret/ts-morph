@@ -140,10 +140,10 @@ describe(nameof(ParameteredNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(n => n.fill), () => {
+    describe(nameof<FunctionDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: ParameteredNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 
@@ -152,7 +152,15 @@ describe(nameof(ParameteredNode), () => {
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("function identifier() {}", {}, "function identifier() {}");
+            doTest("function identifier(p) {}", {}, "function identifier(p) {}");
+        });
+
+        it("should replace existing", () => {
+            doTest("function identifier(p) {}", { parameters: [{ name: "c" }] }, "function identifier(c) {}");
+        });
+
+        it("should remove when specifying a value", () => {
+            doTest("function identifier(p) {}", { parameters: [] }, "function identifier() {}");
         });
     });
 

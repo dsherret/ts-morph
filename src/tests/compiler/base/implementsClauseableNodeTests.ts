@@ -138,10 +138,10 @@ describe(nameof(ImplementsClauseableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+    describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: ImplementsClauseableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 
@@ -154,11 +154,15 @@ describe(nameof(ImplementsClauseableNode), () => {
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("class MyClass {}", {}, "class MyClass {}");
+            doTest("class MyClass implements Test {}", {}, "class MyClass implements Test {}");
         });
 
-        it("should not modify anything if the structure has an empty array", () => {
-            doTest("class MyClass {}", { implements: [] }, "class MyClass {}");
+        it("should replace existing", () => {
+            doTest("class MyClass implements Test, Test2 {}", { implements: ["New1", "New2"] }, "class MyClass implements New1, New2 {}");
+        });
+
+        it("should remove existing when specifying a value", () => {
+            doTest("class MyClass implements Test {}", { implements: [] }, "class MyClass {}");
         });
     });
 

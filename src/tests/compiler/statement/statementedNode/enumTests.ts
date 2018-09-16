@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { EnumDeclaration, StatementedNode } from "../../../../compiler";
+import { EnumDeclaration, StatementedNode, Node } from "../../../../compiler";
 import { EnumDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -111,6 +111,11 @@ describe(nameof(StatementedNode), () => {
 
         it("should have correct type", () => {
             expect(enums[0]).to.be.instanceOf(EnumDeclaration);
+        });
+
+        it("should not throw when getting from an empty body", () => {
+            const { firstChild } = getInfoFromText<StatementedNode & Node>("function test();");
+            expect(firstChild.getEnums()).to.deep.equal([]);
         });
     });
 

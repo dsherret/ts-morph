@@ -91,26 +91,6 @@ describe(nameof(MethodDeclaration), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(m => m.fill), () => {
-        function doTest(startingCode: string, structure: MethodDeclarationSpecificStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-            const method = firstChild.getInstanceMethods()[0];
-            method.fill(structure);
-            expect(sourceFile.getText()).to.equal(expectedCode);
-        }
-
-        it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("class identifier {\n    method() {}\n}", {}, "class identifier {\n    method() {}\n}");
-        });
-
-        it("should modify when changed", () => {
-            const structure: MakeRequired<MethodDeclarationSpecificStructure> = {
-                overloads: [{ parameters: [{ name: "param" }] }]
-            };
-            doTest("class identifier {\n    method() {}\n}", structure, "class identifier {\n    method(param);\n    method() {}\n}");
-        });
-    });
-
     describe(nameof<MethodDeclaration>(m => m.remove), () => {
         describe("no overload", () => {
             function doTest(code: string, nameToRemove: string, expectedCode: string) {
@@ -202,6 +182,36 @@ describe(nameof(MethodDeclaration), () => {
                 doTest("declare class Identifier {\n    method(): void;\n    method(): void;\n}", "method", 1,
                     "declare class Identifier {\n    method(): void;\n}");
             });
+        });
+    });
+
+    describe(nameof<MethodDeclaration>(m => m.set), () => {
+        function doTest(startingCode: string, structure: MethodDeclarationSpecificStructure, expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            const method = firstChild.getInstanceMethods()[0];
+            method.set(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            const code = "class identifier {\n    method();\n    method() {}\n}";
+            doTest(code, {}, code);
+        });
+
+        it("should replace existing overloads when changed", () => {
+            const structure: MakeRequired<MethodDeclarationSpecificStructure> = {
+                overloads: [{ parameters: [{ name: "param" }] }]
+            };
+            doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure,
+                "class identifier {\n    method(param);\n    method() {}\n}");
+        });
+
+        it("should remove existing overloads when specifying an empty array", () => {
+            const structure: MakeRequired<MethodDeclarationSpecificStructure> = {
+                overloads: []
+            };
+            doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure,
+                "class identifier {\n    method() {}\n}");
         });
     });
 

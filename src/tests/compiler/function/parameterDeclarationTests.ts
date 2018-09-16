@@ -94,11 +94,11 @@ describe(nameof(ParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<ParameterDeclaration>(d => d.fill), () => {
+    describe(nameof<ParameterDeclaration>(d => d.set), () => {
         function doTest(startCode: string, structure: Partial<ParameterDeclarationStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
-            firstParam.fill(structure);
+            firstParam.set(structure);
             expect(sourceFile.getFullText()).to.be.equal(expectedCode);
         }
 

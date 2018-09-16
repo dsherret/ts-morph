@@ -4,7 +4,7 @@ import { CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../s
 import { ImplementsClauseableNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind } from "../../typescript";
-import { callBaseFill } from "../callBaseFill";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ExpressionWithTypeArguments } from "../type/ExpressionWithTypeArguments";
 import { HeritageClauseableNode } from "./HeritageClauseableNode";
@@ -67,7 +67,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
         insertImplements(index: number, texts: string | ReadonlyArray<string>): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
             const length = texts instanceof Array ? texts.length : 0;
             if (typeof texts === "string") {
-                errors.throwIfNotStringOrWhitespace(texts, nameof(texts));
+                errors.throwIfWhitespaceOrNotString(texts, nameof(texts));
                 texts = [texts];
             }
             else if (texts.length === 0) {
@@ -122,11 +122,13 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             return this;
         }
 
-        fill(structure: Partial<ImplementsClauseableNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
+        set(structure: Partial<ImplementsClauseableNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
 
-            if (structure.implements != null && structure.implements.length > 0)
+            if (structure.implements != null) {
+                this.getImplements().forEach(expr => this.removeImplements(expr));
                 this.addImplements(structure.implements);
+            }
 
             return this;
         }

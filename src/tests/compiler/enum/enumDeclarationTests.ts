@@ -178,25 +178,34 @@ describe(nameof(EnumDeclaration), () => {
         });
     });
 
-    describe(nameof<EnumDeclaration>(n => n.fill), () => {
+    describe(nameof<EnumDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: EnumDeclarationSpecificStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startingCode);
-            firstChild.fill(structure);
+            firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("enum Identifier {\n}", {}, "enum Identifier {\n}");
+            const code = "enum Identifier {\n    member\n}";
+            doTest(code, {}, code);
         });
 
-        it("should modify when changed", () => {
+        it("should replace existing members when changed", () => {
             const structure: MakeRequired<EnumDeclarationSpecificStructure> = {
                 isConst: true,
                 members: [{
                     name: "member"
                 }]
             };
-            doTest("enum Identifier {\n}", structure, "const enum Identifier {\n    member\n}");
+            doTest("enum Identifier {\n    m\n}", structure, "const enum Identifier {\n    member\n}");
+        });
+
+        it("should remove existing members when specifying an empty array", () => {
+            const structure: MakeRequired<EnumDeclarationSpecificStructure> = {
+                isConst: true,
+                members: []
+            };
+            doTest("enum Identifier {\n    m\n}", structure, "const enum Identifier {\n}");
         });
     });
 

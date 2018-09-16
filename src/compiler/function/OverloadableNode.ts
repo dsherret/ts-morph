@@ -90,7 +90,7 @@ export interface InsertOverloadsOptions<TNode extends OverloadableNode & Node, T
     structures: ReadonlyArray<TStructure>;
     childCodes: string[];
     getThisStructure: (node: TNode) => TStructure;
-    fillNodeFromStructure: (node: TNode, structure: TStructure) => void;
+    setNodeFromStructure: (node: TNode, structure: TStructure) => void;
     expectedSyntaxKind: SyntaxKind;
 }
 
@@ -126,9 +126,9 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     });
 
     const children = getRangeFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);
-    // todo: Do not fill here... this should be printed
+    // todo: Do not set here... this should be printed
     children.forEach((child, i) => {
-        opts.fillNodeFromStructure(child, structures[i]);
+        opts.setNodeFromStructure(child, structures[i]);
     });
     return children;
 }

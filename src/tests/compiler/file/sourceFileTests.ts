@@ -938,15 +938,16 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.fill), () => {
+    describe(nameof<SourceFile>(n => n.set), () => {
         function doTest(startingCode: string, structure: SourceFileSpecificStructure, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
-            sourceFile.fill(structure);
-            expect(sourceFile.getText()).to.equal(expectedCode);
+            sourceFile.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("", {}, "");
+            const code = "import t from 'test'; export * from 'test';";
+            doTest(code, {}, code);
         });
 
         it("should modify when changed", () => {
@@ -954,7 +955,15 @@ describe(nameof(SourceFile), () => {
                 imports: [{ moduleSpecifier: "module" }],
                 exports: [{ moduleSpecifier: "export-module" }]
             };
-            doTest("", structure, `import "module";\n\nexport * from "export-module";\n`);
+            doTest("import t from 'test'; export { test };", structure, `import "module";\n\nexport * from "export-module";\n`);
+        });
+
+        it("should remove when specifying empty arrays", () => {
+            const structure: MakeRequired<SourceFileSpecificStructure> = {
+                imports: [],
+                exports: []
+            };
+            doTest("import t from 'test'; export { test };", structure, "");
         });
     });
 

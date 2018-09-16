@@ -3,12 +3,12 @@ import * as errors from "../../errors";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../manipulation";
 import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
-    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure } from "../../structures";
+    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, BodiedNodeStructure } from "../../structures";
 import { Constructor, WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
-    TypeGuards } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+    TypeGuards, printTextFromStringOrWriter } from "../../utils";
+import { callBaseSet } from "../callBaseSet";
 import { ClassDeclaration } from "../class";
 import { Node } from "../common";
 import { EnumDeclaration } from "../enum";
@@ -48,31 +48,18 @@ export interface StatementedNode {
      */
     getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
     /**
-     * Adds statements.
-     * @param text - Text of the statement or statements to add.
-     * @returns The statements that were added.
-     */
-    addStatements(text: string): Statement[];
-    /**
      * Add statements.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
      * @returns The statements that were added.
      */
-    addStatements(writerFunction: WriterFunction): Statement[];
+    addStatements(textOrWriterFunction: string | WriterFunction): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Child index to insert at.
-     * @param text - Text of the statement or statements to insert.
+     * @param textOrWriterFunction - Text or writer function to write the statement or statements with.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, text: string): Statement[];
-    /**
-     * Inserts statements at the specified index.
-     * @param index - Child index to insert at.
-     * @param writerFunction - Write the text using the provided writer.
-     * @returns The statements that were inserted.
-     */
-    insertStatements(index: number, writerFunction: WriterFunction): Statement[];
+    insertStatements(index: number, textOrWriterFunction: string | WriterFunction): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Child index to remove the statement at.
@@ -421,6 +408,8 @@ export interface StatementedNode {
     _insertChildren<TNode extends Node, TStructure>(opts: InsertChildrenOptions<TStructure>): TNode[];
     /** @internal */
     _standardWrite(writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void, opts?: StandardWriteOptions): void;
+    /** @internal */
+    getCompilerStatements(): ts.NodeArray<ts.Statement>;
 }
 
 /** @internal */
@@ -462,15 +451,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`);
         }
 
-        addStatements(text: string): Statement[];
-        addStatements(writerFunction: WriterFunction): Statement[];
         addStatements(textOrWriterFunction: string | WriterFunction) {
             return this.insertStatements(this.getCompilerStatements().length, textOrWriterFunction);
         }
 
-        insertStatements(index: number, text: string): Statement[];
-        insertStatements(index: number, writerFunction: WriterFunction): Statement[];
-        insertStatements(index: number, textOrWriterFunction: string | WriterFunction): Statement[];
         insertStatements(index: number, textOrWriterFunction: string | WriterFunction) {
             addBodyIfNotExists(this);
 
@@ -532,8 +516,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getClasses(): ClassDeclaration[] {
-            // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ClassDeclaration);
+            const childSyntaxList = this.getChildSyntaxList();
+            if (childSyntaxList == null)
+                return []; // no body
+            return childSyntaxList.getChildrenOfKind(SyntaxKind.ClassDeclaration);
         }
 
         getClass(name: string): ClassDeclaration | undefined;
@@ -577,8 +563,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getEnums(): EnumDeclaration[] {
-            // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.EnumDeclaration);
+            const childSyntaxList = this.getChildSyntaxList();
+            if (childSyntaxList == null)
+                return []; // no body
+            return childSyntaxList.getChildrenOfKind(SyntaxKind.EnumDeclaration);
         }
 
         getEnum(name: string): EnumDeclaration | undefined;
@@ -627,7 +615,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getFunctions(): FunctionDeclaration[] {
-            return (this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.FunctionDeclaration))
+            const childSyntaxList = this.getChildSyntaxList();
+            if (childSyntaxList == null)
+                return []; // no body
+            return (childSyntaxList.getChildrenOfKind(SyntaxKind.FunctionDeclaration))
                 .filter(f => f.isAmbient() || f.isImplementation());
         }
 
@@ -672,8 +663,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getInterfaces(): InterfaceDeclaration[] {
-            // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.InterfaceDeclaration);
+            const childSyntaxList = this.getChildSyntaxList();
+            if (childSyntaxList == null)
+                return []; // no body
+            return childSyntaxList.getChildrenOfKind(SyntaxKind.InterfaceDeclaration);
         }
 
         getInterface(name: string): InterfaceDeclaration | undefined;
@@ -717,7 +710,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getNamespaces(): NamespaceDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ModuleDeclaration);
+            const childSyntaxList = this.getChildSyntaxList();
+            if (childSyntaxList == null)
+                return []; // no body
+            return childSyntaxList.getChildrenOfKind(SyntaxKind.ModuleDeclaration);
         }
 
         getNamespace(name: string): NamespaceDeclaration | undefined;
@@ -764,8 +760,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getTypeAliases(): TypeAliasDeclaration[] {
-            // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.TypeAliasDeclaration);
+            const childSyntaxList = this.getChildSyntaxList();
+            if (childSyntaxList == null)
+                return []; // no body
+            return childSyntaxList.getChildrenOfKind(SyntaxKind.TypeAliasDeclaration);
         }
 
         getTypeAlias(name: string): TypeAliasDeclaration | undefined;
@@ -784,7 +782,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /* Variable statements */
 
         getVariableStatements(): VariableStatement[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.VariableStatement);
+            const childSyntaxList = this.getChildSyntaxList();
+            if (childSyntaxList == null)
+                return []; // no body
+            return childSyntaxList.getChildrenOfKind(SyntaxKind.VariableStatement);
         }
 
         getVariableStatement(findFunction: (declaration: VariableStatement) => boolean): VariableStatement | undefined {
@@ -849,47 +850,65 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 () => getNotFoundErrorMessageForNameOrFindFunction("variable declaration", nameOrFindFunction));
         }
 
-        fill(structure: Partial<StatementedNodeStructure>) {
-            callBaseFill(Base.prototype, this, structure);
-            const childSyntaxList = this.getChildSyntaxList();
-            const insertIndex = getInsertIndex();
+        set(structure: Partial<StatementedNodeStructure>) {
+            const structureCopy: BodiedNodeStructure & StatementedNodeStructure = { ...structure };
 
-            if (structure.typeAliases != null && structure.typeAliases.length > 0)
-                this.insertTypeAliases(insertIndex, structure.typeAliases);
-            if (structure.namespaces != null && structure.namespaces.length > 0)
-                this.insertNamespaces(insertIndex, structure.namespaces);
-            if (structure.interfaces != null && structure.interfaces.length > 0)
-                this.insertInterfaces(insertIndex, structure.interfaces);
-            if (structure.functions != null && structure.functions.length > 0)
-                this.insertFunctions(insertIndex, structure.functions);
-            if (structure.enums != null && structure.enums.length > 0)
-                this.insertEnums(insertIndex, structure.enums);
-            if (structure.classes != null && structure.classes.length > 0)
-                this.insertClasses(insertIndex, structure.classes);
+            // remove the body text first if necessary
+            const bodyText = structureCopy.bodyText;
+            if (TypeGuards.isBodiedNode(this) || TypeGuards.isBodyableNode(this)) {
+                if (structureCopy.bodyText != null) {
+                    const statementCount = this.getCompilerStatements().length;
+                    if (statementCount > 0)
+                        this.removeStatements([0, statementCount - 1]);
+                }
+                else if (TypeGuards.isBodyableNode(this) && structureCopy.hasOwnProperty(nameof(structureCopy.bodyText)))
+                    this.removeBody();
+            }
+
+            delete structureCopy.bodyText; // do not set this in BodiedNode or BodyableNode, set it below
+            callBaseSet(Base.prototype, this, structureCopy);
+
+            if (structure.classes != null) {
+                this.getClasses().forEach(c => c.remove());
+                this.addClasses(structure.classes);
+            }
+            if (structure.enums != null) {
+                this.getEnums().forEach(e => e.remove());
+                this.addEnums(structure.enums);
+            }
+            if (structure.functions != null) {
+                this.getFunctions().forEach(i => i.remove());
+                this.addFunctions(structure.functions);
+            }
+            if (structure.interfaces != null) {
+                this.getInterfaces().forEach(i => i.remove());
+                this.addInterfaces(structure.interfaces);
+            }
+            if (structure.namespaces != null) {
+                this.getNamespaces().forEach(n => n.remove());
+                this.addNamespaces(structure.namespaces);
+            }
+            if (structure.typeAliases != null) {
+                this.getTypeAliases().forEach(t => t.remove());
+                this.addTypeAliases(structure.typeAliases);
+            }
+
+            // set the body text after adding everything else
+            if (TypeGuards.isBodiedNode(this) || TypeGuards.isBodyableNode(this)) {
+                if (bodyText != null)
+                    this.addStatements(writer => {
+                        writer.conditionalNewLine(this.getCompilerStatements().length > 0);
+                        printTextFromStringOrWriter(writer, bodyText);
+                    });
+            }
 
             return this;
-
-            function getInsertIndex() {
-                if (childSyntaxList == null)
-                    return 0;
-
-                const children = childSyntaxList.getCompilerChildren();
-                for (let i = children.length - 1; i > 0; i--) {
-                    const kind = children[i].kind;
-                    if (kind === SyntaxKind.TypeAliasDeclaration || kind === SyntaxKind.ModuleDeclaration || kind === SyntaxKind.InterfaceDeclaration
-                        || kind === SyntaxKind.FunctionDeclaration || kind === SyntaxKind.EnumDeclaration || kind === SyntaxKind.ClassDeclaration)
-                    {
-                        return i;
-                    }
-                }
-                return 0;
-            }
         }
 
         /**
          * @internal
          */
-        private getCompilerStatements(): ts.NodeArray<ts.Statement> {
+        getCompilerStatements(): ts.NodeArray<ts.Statement> {
             if (TypeGuards.isSourceFile(this) || TypeGuards.isCaseClause(this) || TypeGuards.isDefaultClause(this))
                 return this.compilerNode.statements;
             else if (TypeGuards.isNamespaceDeclaration(this)) {
