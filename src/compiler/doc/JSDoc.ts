@@ -7,11 +7,13 @@ import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
 import { JSDocStructure } from "../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 
+export const JSDocBase = Node;
 /**
  * JS doc node.
  */
-export class JSDoc extends Node<ts.JSDoc> {
+export class JSDoc extends JSDocBase<ts.JSDoc> {
     /**
      * Gets the tags of the JSDoc.
      */
@@ -46,14 +48,8 @@ export class JSDoc extends Node<ts.JSDoc> {
 
     /**
      * Sets the comment.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to set.
      */
-    setComment(writerFunction: WriterFunction): this;
-    /**
-     * Sets the comment.
-     * @param text - Text of the comment.
-     */
-    setComment(text: string): this;
     setComment(textOrWriterFunction: string | WriterFunction) {
         const tags = this.getTags();
         const startEditPos = this.getStart() + 3;
@@ -85,10 +81,23 @@ export class JSDoc extends Node<ts.JSDoc> {
     }
 
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<JSDocStructure>) {
+        callBaseSet(JSDocBase.prototype, this, structure);
+
+        if (structure.description != null)
+            this.setComment(structure.description);
+
+        return this;
+    }
+
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): JSDocStructure {
-        return callBaseGetStructure<JSDocStructure>({}, this, {
+        return callBaseGetStructure<JSDocStructure>(JSDocBase.prototype, this, {
             description: this.getInnerText() // good enough for now
         });
     }
