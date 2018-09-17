@@ -413,6 +413,40 @@ describe(nameof(Decorator), () => {
         });
     });
 
+    describe(nameof<Decorator>(n => n.set), () => {
+        function doTest(text: string, structure: Partial<DecoratorStructure>, expectedText: string) {
+            const { sourceFile } = getInfoFromText<ClassDeclaration>(text);
+            sourceFile.getClasses()[0].getDecorators()[0].set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should not change anything when nothing's set", () => {
+            const code = "@dec class T {}";
+            doTest(code, {}, code);
+        });
+
+        it("should set the name without renaming the decorator", () => {
+            const code = (name: string) => `function dec(target: Object) {} @${name} class Test {}`;
+            doTest(code("dec"), { name: "newDec" }, code("newDec"));
+        });
+
+        it("should make as decorator factory when specifying an empty array of arguments", () => {
+            doTest("@dec class T {}", { arguments: [] }, "@dec() class T {}");
+        });
+
+        it("should not make as decorator factory when specifying an empty array of type arguments", () => {
+            const code = "@dec class T {}";
+            doTest(code, { typeArguments: [] }, code);
+        });
+
+        it("should set everything when specifying", () => {
+            const structure: MakeRequired<DecoratorStructure> = {
+                name: "NewName", arguments: ["1"], typeArguments: ["T"]
+            };
+            doTest("@dec class T {}", structure, "@NewName<T>(1) class T {}");
+        });
+    });
+
     describe(nameof<Decorator>(n => n.getStructure), () => {
         function doTest(text: string, expectedStructure: MakeRequired<DecoratorStructure>) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
@@ -423,14 +457,16 @@ describe(nameof(Decorator), () => {
         it("should get when has nothing", () => {
             doTest("@dec class T {}", {
                 name: "dec",
-                arguments: undefined
+                arguments: undefined,
+                typeArguments: undefined
             });
         });
 
         it("should get when has everything", () => {
-            doTest("@dec(test) class T {}", {
+            doTest("@dec<T>(test) class T {}", {
                 name: "dec",
-                arguments: ["test"]
+                arguments: ["test"],
+                typeArguments: ["T"]
             });
         });
     });

@@ -2,12 +2,14 @@ import * as errors from "../../errors";
 import { FormattingKind, insertIntoParentTextRange, removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList } from "../../manipulation";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
+import { WriterFunction } from "../../types";
 import { Node } from "../common/Node";
 import { Identifier } from "../common/Identifier";
 import { CallExpression, Expression } from "../expression";
 import { TypeNode } from "../type";
 import { DecoratorStructure } from "../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 
 export const DecoratorBase = Node;
 export class Decorator extends DecoratorBase<ts.Decorator> {
@@ -208,7 +210,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds an argument.
      * @param argumentTexts - Argument text.
      */
-    addArgument(argumentText: string) {
+    addArgument(argumentText: string| WriterFunction) {
         return this.addArguments([argumentText])[0];
     }
 
@@ -216,7 +218,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds arguments.
      * @param argumentTexts - Argument texts.
      */
-    addArguments(argumentTexts: ReadonlyArray<string>) {
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>) {
         return this.insertArguments(this.getArguments().length, argumentTexts);
     }
 
@@ -225,7 +227,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument text.
      */
-    insertArgument(index: number, argumentText: string) {
+    insertArgument(index: number, argumentText: string | WriterFunction) {
         return this.insertArguments(index, [argumentText])[0];
     }
 
@@ -234,7 +236,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
-    insertArguments(index: number, argumentTexts: ReadonlyArray<string>) {
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>) {
         this.setIsDecoratorFactory(true);
         return this.getCallExpressionOrThrow().insertArguments(index, argumentTexts);
     }
@@ -279,12 +281,37 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     }
 
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<DecoratorStructure>) {
+        callBaseSet(DecoratorBase.prototype, this, structure);
+
+        if (structure.name != null)
+            this.getNameNode().replaceWithText(structure.name);
+        if (structure.arguments != null) {
+            this.setIsDecoratorFactory(true);
+            this.getArguments().map(a => this.removeArgument(a));
+            this.addArguments(structure.arguments);
+        }
+        if (structure.typeArguments != null && structure.typeArguments.length > 0) {
+            this.setIsDecoratorFactory(true);
+            this.getTypeArguments().map(a => this.removeTypeArgument(a));
+            this.addTypeArguments(structure.typeArguments);
+        }
+
+        return this;
+    }
+
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): DecoratorStructure {
+        const isDecoratorFactory = this.isDecoratorFactory();
         return callBaseGetStructure<DecoratorStructure>(DecoratorBase.prototype, this, {
             name: this.getName(),
-            arguments: this.isDecoratorFactory() ? this.getArguments().map(arg => arg.getText()) : undefined
+            arguments: isDecoratorFactory ? this.getArguments().map(arg => arg.getText()) : undefined,
+            typeArguments: isDecoratorFactory ? this.getTypeArguments().map(arg => arg.getText()) : undefined
         }) as DecoratorStructure;
     }
 }
