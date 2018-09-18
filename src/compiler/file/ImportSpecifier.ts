@@ -1,11 +1,13 @@
-import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText } from "../../manipulation";
+import { insertIntoParentTextRange, removeCommaSeparatedChild, removeChildren } from "../../manipulation";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { ImportSpecifierStructure } from "../../structures";
 
-export class ImportSpecifier extends Node<ts.ImportSpecifier> {
+export const ImportSpecifierBase = Node;
+export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
     /**
      * Sets the identifier being imported.
      * @param name - Name being imported.
@@ -15,13 +17,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
         if (nameNode.getText() === name)
             return this;
 
-        const start = nameNode.getStart();
-        replaceNodeText({
-            sourceFile: this.sourceFile,
-            start,
-            replacingLength: nameNode.getWidth(),
-            newText: name
-        });
+        nameNode.replaceWithText(name);
 
         return this;
     }
@@ -48,15 +44,24 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
         let aliasIdentifier = this.getAliasNode();
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
-            const nameNode = this.getNameNode();
-            insertIntoParentTextRange({
-                insertPos: nameNode.getEnd(),
-                parent: this,
-                newText: ` as ${nameNode.getText()}`
-            });
+            addAlias(this, this.getName());
             aliasIdentifier = this.getAliasNode()!;
         }
         aliasIdentifier.rename(alias);
+        return this;
+    }
+
+    /**
+     * Removes the alias.
+     */
+    removeAlias() {
+        const aliasIdentifier = this.getAliasNode();
+        if (aliasIdentifier == null)
+            return this;
+
+        aliasIdentifier.rename(this.getName());
+        removeAlias(this, aliasIdentifier);
+
         return this;
     }
 
@@ -90,13 +95,62 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     }
 
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ImportSpecifierStructure>) {
+        callBaseSet(ImportSpecifierBase.prototype, this, structure);
+
+        if (structure.name != null && structure.hasOwnProperty(nameof(structure.alias))) {
+            this.setName(structure.name);
+            const aliasNode = this.getAliasNode();
+
+            if (structure.alias != null) {
+                if (aliasNode == null)
+                    addAlias(this, structure.alias);
+                else
+                    aliasNode.replaceWithText(structure.alias);
+            }
+            else if (aliasNode != null)
+                removeAlias(this, aliasNode);
+        }
+        else {
+            if (structure.name != null)
+                this.setName(structure.name);
+            if (structure.alias != null)
+                this.setAlias(structure.alias);
+            else if (structure.hasOwnProperty(nameof(structure.alias)))
+                this.removeAlias();
+        }
+
+        return this;
+    }
+
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure() {
         const alias = this.getAliasNode();
-        return callBaseGetStructure<ImportSpecifierStructure>(Node.prototype, this, {
+        return callBaseGetStructure<ImportSpecifierStructure>(ImportSpecifierBase.prototype, this, {
             name: this.getName(),
             alias: alias ? alias.getText() : undefined
         }) as ImportSpecifierStructure;
     }
+}
+
+function addAlias(node: ImportSpecifier, alias: string) {
+    const nameNode = node.getNameNode();
+    insertIntoParentTextRange({
+        insertPos: nameNode.getEnd(),
+        parent: node,
+        newText: ` as ${alias}`
+    });
+}
+
+function removeAlias(node: ImportSpecifier, aliasIdentifier: Node) {
+    removeChildren({
+        children: [node.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
+        removePrecedingSpaces: true,
+        removePrecedingNewLines: true
+    });
 }
