@@ -64,6 +64,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
 
     /**
      * Removes the alias without renaming.
+     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the import specifier.
      */
     removeAlias() {
         const aliasIdentifier = this.getAliasNode();
@@ -75,6 +76,20 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
             removePrecedingSpaces: true,
             removePrecedingNewLines: true
         });
+
+        return this;
+    }
+
+    /**
+     * Removes the alias and renames any usages to the name of the import specifier.
+     */
+    removeAliasWithRename() {
+        const aliasIdentifier = this.getAliasNode();
+        if (aliasIdentifier == null)
+            return this;
+
+        aliasIdentifier.rename(this.getName());
+        this.removeAlias();
 
         return this;
     }

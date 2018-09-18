@@ -155,6 +155,28 @@ describe(nameof(ExportSpecifier), () => {
         });
     });
 
+    describe(nameof<ExportSpecifier>(n => n.removeAliasWithRename), () => {
+        function doTest(text: string, expected: string, expectedImportName: string) {
+            const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text);
+            const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
+            const importingFile = project.createSourceFile("importingFile.ts", `import { name } from './testFile';`);
+            const namedImport = sourceFile.getExportDeclarations()[0].getNamedExports()[0];
+            namedImport.removeAliasWithRename();
+            expect(sourceFile.getText()).to.equal(expected);
+            expect(importingFile.getImportDeclarations()[0].getNamedImports()[0].getName()).to.equal(expectedImportName);
+            expect(otherSourceFile.getText()).to.equal("export class name {}");
+        }
+
+        it("should do nothing when there is no alias", () => {
+            doTest("export {name} from './file';", "export {name} from './file';", "name");
+        });
+
+        it("should be remove and update the current file when there is an alias", () => {
+            doTest("import {name as alias} from './file'; export { alias as name};",
+                "import {name as alias} from './file'; export { alias};", "alias");
+        });
+    });
+
     function setupLocalTargetSymbolTest() {
         const project = getProject();
         const mainFile = project.createSourceFile("main.ts", `export { MyClass, OtherClass } from "./MyClass";`);

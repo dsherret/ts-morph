@@ -99,6 +99,25 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
+    describe(nameof<ImportSpecifier>(n => n.removeAliasWithRename), () => {
+        function doTest(text: string, expected: string) {
+            const { firstChild, sourceFile, project } = getInfoFromText<ImportDeclaration>(text);
+            const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
+            const namedImport = firstChild.getNamedImports()[0];
+            namedImport.removeAliasWithRename();
+            expect(sourceFile.getText()).to.equal(expected);
+            expect(otherSourceFile.getText()).to.equal("export class name {}");
+        }
+
+        it("should do nothing when there is no alias", () => {
+            doTest("import {name} from './file';", "import {name} from './file';");
+        });
+
+        it("should be remove and update the current file when there is an alias", () => {
+            doTest("import {name as alias} from './file'; const t = alias;", "import {name} from './file'; const t = name;");
+        });
+    });
+
     describe(nameof<ImportSpecifier>(n => n.getAliasNode), () => {
         function doTest(text: string, alias: string | undefined) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);
