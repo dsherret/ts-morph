@@ -1,10 +1,12 @@
 import * as errors from "../../errors";
-import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText } from "../../manipulation";
+import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText, removeChildren } from "../../manipulation";
 import { SyntaxKind, ts } from "../../typescript";
-import { TypeGuards } from "../../utils";
+import { StringUtils } from "../../utils";
 import { Node, Symbol } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ExportSpecifierStructure } from "../../structures";
+
+// todo: There's a lot of common code that could be shared with ImportSpecifier. It could be moved to a mixin.
 
 export class ExportSpecifier extends Node<ts.ExportSpecifier> {
     /**
@@ -57,6 +59,23 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
             aliasIdentifier = this.getAliasNode()!;
         }
         aliasIdentifier.rename(alias);
+        return this;
+    }
+
+    /**
+     * Removes the alias without renaming.
+     */
+    removeAlias() {
+        const aliasIdentifier = this.getAliasNode();
+        if (aliasIdentifier == null)
+            return this;
+
+        removeChildren({
+            children: [this.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
+            removePrecedingSpaces: true,
+            removePrecedingNewLines: true
+        });
+
         return this;
     }
 
