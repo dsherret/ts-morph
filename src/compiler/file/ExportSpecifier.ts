@@ -9,8 +9,6 @@ import { ExportSpecifierStructure } from "../../structures";
 
 // todo: There's a lot of common code that could be shared with ImportSpecifier. It could be moved to a mixin.
 
-export class ExportSpecifier extends Node<ts.ExportSpecifier> {
-
 export const ExportSpecifierBase = Node;
 export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
     /**
@@ -184,16 +182,11 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
 
         if (structure.name != null)
             this.setName(structure.name);
-        const aliasNode = this.getAliasNode();
 
-        if (structure.alias != null) {
-            if (aliasNode == null)
-                addAlias(this, structure.alias);
-            else
-                aliasNode.replaceWithText(structure.alias);
-        }
-        else if (structure.hasOwnProperty(nameof(structure.alias)) && aliasNode != null)
-            removeAlias(this, aliasNode);
+        if (structure.alias != null)
+            this.setAlias(structure.alias);
+        else if (structure.hasOwnProperty(nameof(structure.alias)))
+            this.removeAlias();
 
         return this;
     }
