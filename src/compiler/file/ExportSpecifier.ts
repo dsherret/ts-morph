@@ -27,6 +27,13 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
     }
 
     /**
+     * Gets the name of the export specifier.
+     */
+    getName() {
+        return this.getNameNode().getText();
+    }
+
+    /**
      * Gets the name node of what's being exported.
      */
     getNameNode() {

@@ -31,6 +31,18 @@ describe(nameof(ExportSpecifier), () => {
         });
     });
 
+    describe(nameof<ExportSpecifier>(n => n.getName), () => {
+        function doTest(text: string, name: string) {
+            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const namedImport = firstChild.getNamedExports()[0];
+            expect(namedImport.getName()).to.equal(name);
+        }
+
+        it("should get the name", () => {
+            doTest(`export {name} from "./test";`, "name");
+        });
+    });
+
     describe(nameof<ExportSpecifier>(n => n.setName), () => {
         it("should change what's imported, but not change anything in the other files", () => {
             const project = getProject();

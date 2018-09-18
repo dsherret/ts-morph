@@ -45,7 +45,7 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
-    describe(nameof<ImportSpecifier>(n => n.getNameNode), () => {
+    describe(nameof<ImportSpecifier>(n => n.getName), () => {
         function doTest(text: string, name: string) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);
             const namedImport = firstChild.getNamedImports()[0];
