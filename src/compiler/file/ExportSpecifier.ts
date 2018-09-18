@@ -1,11 +1,13 @@
 import * as errors from "../../errors";
-import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText } from "../../manipulation";
+import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText, removeChildren } from "../../manipulation";
 import { SyntaxKind, ts } from "../../typescript";
-import { TypeGuards } from "../../utils";
+import { StringUtils } from "../../utils";
 import { Node, Symbol } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { ExportSpecifierStructure } from "../../structures";
+
+// todo: There's a lot of common code that could be shared with ImportSpecifier. It could be moved to a mixin.
 
 export class ExportSpecifier extends Node<ts.ExportSpecifier> {
 
@@ -31,6 +33,13 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
     }
 
     /**
+     * Gets the name of the export specifier.
+     */
+    getName() {
+        return this.getNameNode().getText();
+    }
+
+    /**
      * Gets the name node of what's being exported.
      */
     getNameNode() {
@@ -38,22 +47,78 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
     }
 
     /**
-     * Sets the alias for the name being exported.
+     * Sets the alias for the name being exported and renames all the usages.
      * @param alias - Alias to set.
      */
-    setAlias(alias: string) {
+    renameAlias(alias: string) {
+        if (StringUtils.isNullOrWhitespace(alias)) {
+            this.removeAliasWithRename();
+            return this;
+        }
+
         let aliasIdentifier = this.getAliasNode();
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
-            const nameNode = this.getNameNode();
-            insertIntoParentTextRange({
-                insertPos: nameNode.getEnd(),
-                parent: this,
-                newText: ` as ${nameNode.getText()}`
-            });
+            this.setAlias(this.getName());
             aliasIdentifier = this.getAliasNode()!;
         }
         aliasIdentifier.rename(alias);
+        return this;
+    }
+
+    /**
+     * Sets the alias without renaming all the usages.
+     * @param alias - Alias to set.
+     */
+    setAlias(alias: string) {
+        if (StringUtils.isNullOrWhitespace(alias)) {
+            this.removeAlias();
+            return this;
+        }
+
+        const aliasIdentifier = this.getAliasNode();
+        if (aliasIdentifier == null) {
+            insertIntoParentTextRange({
+                insertPos: this.getNameNode().getEnd(),
+                parent: this,
+                newText: ` as ${alias}`
+            });
+        }
+        else
+            aliasIdentifier.replaceWithText(alias);
+
+        return this;
+    }
+
+    /**
+     * Removes the alias without renaming.
+     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the export specifier.
+     */
+    removeAlias() {
+        const aliasIdentifier = this.getAliasNode();
+        if (aliasIdentifier == null)
+            return this;
+
+        removeChildren({
+            children: [this.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
+            removePrecedingSpaces: true,
+            removePrecedingNewLines: true
+        });
+
+        return this;
+    }
+
+    /**
+     * Removes the alias and renames any usages to the name of the export specifier.
+     */
+    removeAliasWithRename() {
+        const aliasIdentifier = this.getAliasNode();
+        if (aliasIdentifier == null)
+            return this;
+
+        aliasIdentifier.rename(this.getName());
+        this.removeAlias();
+
         return this;
     }
 
