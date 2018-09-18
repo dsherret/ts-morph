@@ -1,4 +1,4 @@
-import { insertIntoParentTextRange, removeCommaSeparatedChild, removeChildren } from "../../manipulation";
+import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText } from "../../manipulation";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { Node } from "../common";
@@ -44,24 +44,15 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
         let aliasIdentifier = this.getAliasNode();
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
-            addAlias(this, this.getName());
+            const nameNode = this.getNameNode();
+            insertIntoParentTextRange({
+                insertPos: nameNode.getEnd(),
+                parent: this,
+                newText: ` as ${nameNode.getText()}`
+            });
             aliasIdentifier = this.getAliasNode()!;
         }
         aliasIdentifier.rename(alias);
-        return this;
-    }
-
-    /**
-     * Removes the alias.
-     */
-    removeAlias() {
-        const aliasIdentifier = this.getAliasNode();
-        if (aliasIdentifier == null)
-            return this;
-
-        aliasIdentifier.rename(this.getName());
-        removeAlias(this, aliasIdentifier);
-
         return this;
     }
 
@@ -101,27 +92,18 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
     set(structure: Partial<ImportSpecifierStructure>) {
         callBaseSet(ImportSpecifierBase.prototype, this, structure);
 
-        if (structure.name != null && structure.hasOwnProperty(nameof(structure.alias))) {
+        if (structure.name != null)
             this.setName(structure.name);
-            const aliasNode = this.getAliasNode();
 
-            if (structure.alias != null) {
-                if (aliasNode == null)
-                    addAlias(this, structure.alias);
-                else
-                    aliasNode.replaceWithText(structure.alias);
-            }
-            else if (aliasNode != null)
-                removeAlias(this, aliasNode);
+        const aliasNode = this.getAliasNode();
+        if (structure.alias != null) {
+            if (aliasNode == null)
+                addAlias(this, structure.alias);
+            else
+                aliasNode.replaceWithText(structure.alias);
         }
-        else {
-            if (structure.name != null)
-                this.setName(structure.name);
-            if (structure.alias != null)
-                this.setAlias(structure.alias);
-            else if (structure.hasOwnProperty(nameof(structure.alias)))
-                this.removeAlias();
-        }
+        else if (structure.hasOwnProperty(nameof(structure.alias)) && aliasNode != null)
+            removeAlias(this, aliasNode);
 
         return this;
     }
@@ -136,21 +118,4 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
             alias: alias ? alias.getText() : undefined
         }) as ImportSpecifierStructure;
     }
-}
-
-function addAlias(node: ImportSpecifier, alias: string) {
-    const nameNode = node.getNameNode();
-    insertIntoParentTextRange({
-        insertPos: nameNode.getEnd(),
-        parent: node,
-        newText: ` as ${alias}`
-    });
-}
-
-function removeAlias(node: ImportSpecifier, aliasIdentifier: Node) {
-    removeChildren({
-        children: [node.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
-        removePrecedingSpaces: true,
-        removePrecedingNewLines: true
-    });
 }

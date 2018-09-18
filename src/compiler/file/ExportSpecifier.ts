@@ -4,9 +4,13 @@ import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { Node, Symbol } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { ExportSpecifierStructure } from "../../structures";
 
 export class ExportSpecifier extends Node<ts.ExportSpecifier> {
+
+export const ExportSpecifierBase = Node;
+export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
     /**
      * Sets the name of what's being exported.
      */
@@ -104,6 +108,29 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
             exportDeclaration.toNamespaceExport();
         else
             exportDeclaration.remove();
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportSpecifierStructure>) {
+        callBaseSet(ExportSpecifierBase.prototype, this, structure);
+
+        if (structure.name != null)
+            this.setName(structure.name);
+        const aliasNode = this.getAliasNode();
+
+        if (structure.alias != null) {
+            if (aliasNode == null)
+                addAlias(this, structure.alias);
+            else
+                aliasNode.replaceWithText(structure.alias);
+        }
+        else if (structure.hasOwnProperty(nameof(structure.alias)) && aliasNode != null)
+            removeAlias(this, aliasNode);
+
+        return this;
     }
 
     /**

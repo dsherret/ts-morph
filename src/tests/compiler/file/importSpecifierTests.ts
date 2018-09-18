@@ -103,25 +103,6 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
-    describe(nameof<ImportSpecifier>(n => n.removeAlias), () => {
-        function doTest(text: string, expected: string) {
-            const { firstChild, sourceFile, project } = getInfoFromText<ImportDeclaration>(text);
-            const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
-            const namedImport = firstChild.getNamedImports()[0];
-            namedImport.removeAlias();
-            expect(sourceFile.getText()).to.equal(expected);
-            expect(otherSourceFile.getText()).to.equal("export class name {}");
-        }
-
-        it("should do nothing when there is no alias", () => {
-            doTest("import {name} from './file';", "import {name} from './file';");
-        });
-
-        it("should be remove and update the current file when there is an alias", () => {
-            doTest("import {name as alias} from './file'; const t = alias;", "import {name} from './file'; const t = name;");
-        });
-    });
-
     describe(nameof<ImportSpecifier>(n => n.getImportDeclaration), () => {
         it("should get the parent import declaration", () => {
             const {firstChild} = getInfoFromText<ImportDeclaration>(`import {name} from "./test";`);
@@ -168,37 +149,32 @@ describe(nameof(ImportSpecifier), () => {
             expect(otherSourceFile.getText()).to.equal("export class name {}");
         }
 
-        it("should not change anything when nothing is changed", () => {
+        it("should not change anything when nothing is specified", () => {
             const code = `import { a as b } from './file'`;
             doTest(code, {}, code);
         });
 
-        it("should not rename in the current file when adding an alias and changing the name", () => {
+        it("should not rename when adding an alias and changing the name", () => {
             doTest(`import { name } from './file'; const t = name;`, { name: "a", alias: "alias" },
                 `import { a as alias } from './file'; const t = name;`);
         });
 
-        it("should rename in the current file when adding an alias", () => {
+        it("should not rename when adding an alias", () => {
             doTest(`import { name } from './file'; const t = name;`, { alias: "alias" },
-                `import { name as alias } from './file'; const t = alias;`);
+                `import { name as alias } from './file'; const t = name;`);
         });
 
-        it("should rename in the current file when adding an alias", () => {
-            doTest(`import { name } from './file'; const t = name;`, { alias: "alias" },
-                `import { name as alias } from './file'; const t = alias;`);
-        });
-
-        it("should rename in the current file when removing an alias", () => {
+        it("should not rename when removing an alias", () => {
             doTest(`import { name as alias } from './file'; const t = alias;`, { alias: undefined },
-                `import { name } from './file'; const t = name;`);
+                `import { name } from './file'; const t = alias;`);
         });
 
-        it("should not rename in the current file when changing the alias and name", () => {
+        it("should not rename when changing the alias and name", () => {
             doTest(`import { name as alias } from './file'; const t = alias;`, { name: "name2", alias: "alias2" },
                 `import { name2 as alias2 } from './file'; const t = alias;`);
         });
 
-        it("should not rename in the current file when removing the alias and changing the name", () => {
+        it("should not rename when removing the alias and changing the name", () => {
             doTest(`import { name as alias } from './file'; const t = alias;`, { name: "name2", alias: undefined },
                 `import { name2 } from './file'; const t = alias;`);
         });
