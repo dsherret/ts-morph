@@ -7,6 +7,7 @@ import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
 import { TypeParameterDeclarationStructure, TypeParameterDeclarationSpecificStructure } from "../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 
 export const TypeParameterDeclarationBase = NamedNode(Node);
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
@@ -143,6 +144,26 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
 
             removeChildren({ children });
         }
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<TypeParameterDeclarationStructure>) {
+        callBaseSet(TypeParameterDeclarationBase.prototype, this, structure);
+
+        if (structure.constraint != null)
+            this.setConstraint(structure.constraint);
+        else if (structure.hasOwnProperty(nameof(structure.constraint)))
+            this.removeConstraint();
+
+        if (structure.default != null)
+            this.setDefault(structure.default);
+        else if (structure.hasOwnProperty(nameof(structure.default)))
+            this.removeDefault();
+
+        return this;
     }
 
     /**
