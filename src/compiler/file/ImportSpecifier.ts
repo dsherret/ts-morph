@@ -43,10 +43,10 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     }
 
     /**
-     * Sets the alias for the name being imported.
+     * Sets the alias for the name being imported and renames all the usages.
      * @param alias - Alias to set.
      */
-    setAlias(alias: string) {
+    renameAlias(alias: string) {
         if (StringUtils.isNullOrWhitespace(alias)) {
             this.removeAliasWithRename();
             return this;

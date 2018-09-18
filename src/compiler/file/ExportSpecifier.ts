@@ -43,10 +43,10 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
     }
 
     /**
-     * Sets the alias for the name being exported.
+     * Sets the alias for the name being exported and renames all the usages.
      * @param alias - Alias to set.
      */
-    setAlias(alias: string) {
+    renameAlias(alias: string) {
         if (StringUtils.isNullOrWhitespace(alias)) {
             this.removeAliasWithRename();
             return this;

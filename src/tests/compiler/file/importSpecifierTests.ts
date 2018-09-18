@@ -57,12 +57,12 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
-    describe(nameof<ImportSpecifier>(n => n.setAlias), () => {
+    describe(nameof<ImportSpecifier>(n => n.renameAlias), () => {
         function doTest(text: string, alias: string, expected: string) {
             const {firstChild, sourceFile, project} = getInfoFromText<ImportDeclaration>(text);
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
             const namedImport = firstChild.getNamedImports()[0];
-            namedImport.setAlias(alias);
+            namedImport.renameAlias(alias);
             expect(sourceFile.getText()).to.equal(expected);
             expect(otherSourceFile.getText()).to.equal("export class name {}");
         }
