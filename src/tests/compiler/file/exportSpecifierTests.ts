@@ -130,6 +130,34 @@ describe(nameof(ExportSpecifier), () => {
         });
     });
 
+    describe(nameof<ExportSpecifier>(n => n.setAlias), () => {
+        function doTest(text: string, newAlias: string, expected: string, expectedImportName: string) {
+            const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text);
+            const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
+            const importingFile = project.createSourceFile("importingFile.ts", `import { name } from './testFile';`);
+            const namedImport = sourceFile.getExportDeclarations()[0].getNamedExports()[0];
+            namedImport.setAlias(newAlias);
+            expect(sourceFile.getText()).to.equal(expected);
+            expect(importingFile.getImportDeclarations()[0].getNamedImports()[0].getName()).to.equal(expectedImportName);
+            expect(otherSourceFile.getText()).to.equal("export class name {}");
+        }
+
+        it("should update existing alias and not update the usages", () => {
+            doTest("import {name as alias} from './file'; export { alias as name };", "newAlias",
+                "import {name as alias} from './file'; export { alias as newAlias };", "name");
+        });
+
+        it("should add new alias and not update the usages", () => {
+            doTest("import {name} from './file'; export { name };", "newAlias",
+                "import {name} from './file'; export { name as newAlias };", "name");
+        });
+
+        it("should remove existing alias when specifying an empty string and not update the usages", () => {
+            doTest("import {name as alias} from './file'; export { alias as name };", "",
+                "import {name as alias} from './file'; export { alias };", "name");
+        });
+    });
+
     describe(nameof<ExportSpecifier>(n => n.removeAlias), () => {
         function doTest(text: string, expected: string, expectedImportName: string) {
             const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text);

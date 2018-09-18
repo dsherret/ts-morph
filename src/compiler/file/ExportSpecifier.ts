@@ -55,15 +55,34 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
         let aliasIdentifier = this.getAliasNode();
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
-            const nameNode = this.getNameNode();
-            insertIntoParentTextRange({
-                insertPos: nameNode.getEnd(),
-                parent: this,
-                newText: ` as ${nameNode.getText()}`
-            });
+            this.setAlias(this.getName());
             aliasIdentifier = this.getAliasNode()!;
         }
         aliasIdentifier.rename(alias);
+        return this;
+    }
+
+    /**
+     * Sets the alias without renaming all the usages.
+     * @param alias - Alias to set.
+     */
+    setAlias(alias: string) {
+        if (StringUtils.isNullOrWhitespace(alias)) {
+            this.removeAlias();
+            return this;
+        }
+
+        const aliasIdentifier = this.getAliasNode();
+        if (aliasIdentifier == null) {
+            insertIntoParentTextRange({
+                insertPos: this.getNameNode().getEnd(),
+                parent: this,
+                newText: ` as ${alias}`
+            });
+        }
+        else
+            aliasIdentifier.replaceWithText(alias);
+
         return this;
     }
 

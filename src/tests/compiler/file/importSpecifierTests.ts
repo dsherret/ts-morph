@@ -79,8 +79,35 @@ describe(nameof(ImportSpecifier), () => {
             doTest("import {name as alias} from './file'; const t = alias;", "newAlias", "import {name as newAlias} from './file'; const t = newAlias;");
         });
 
-        it("should be remove and update the current file when specifying an empty string", () => {
+        it("should be remove and update the usages when specifying an empty string", () => {
             doTest("import {name as alias} from './file'; const t = alias;", "", "import {name} from './file'; const t = name;");
+        });
+    });
+
+    describe(nameof<ImportSpecifier>(n => n.setAlias), () => {
+        function doTest(text: string, alias: string, expected: string) {
+            const {firstChild, sourceFile, project} = getInfoFromText<ImportDeclaration>(text);
+            const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
+            const namedImport = firstChild.getNamedImports()[0];
+            namedImport.setAlias(alias);
+            expect(sourceFile.getText()).to.equal(expected);
+            expect(otherSourceFile.getText()).to.equal("export class name {}");
+        }
+
+        it("should be set when there is no alias", () => {
+            doTest("import {name} from './file';", "alias", "import {name as alias} from './file';");
+        });
+
+        it("should be set and not rename anything in the current file to the alias", () => {
+            doTest("import {name} from './file'; const t = name;", "alias", "import {name as alias} from './file'; const t = name;");
+        });
+
+        it("should not rename when there is an alias", () => {
+            doTest("import {name as alias} from './file'; const t = alias;", "newAlias", "import {name as newAlias} from './file'; const t = alias;");
+        });
+
+        it("should be remove and not update the usages when specifying an empty string", () => {
+            doTest("import {name as alias} from './file'; const t = alias;", "", "import {name} from './file'; const t = alias;");
         });
     });
 
