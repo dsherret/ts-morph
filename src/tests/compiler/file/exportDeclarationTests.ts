@@ -127,6 +127,27 @@ describe(nameof(ExportDeclaration), () => {
         });
     });
 
+    describe(nameof<ExportDeclaration>(n => n.removeModuleSpecifier), () => {
+        function doTest(text: string, expected: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
+            firstChild.removeModuleSpecifier();
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should remove the module specifier when it's a named export", () => {
+            doTest(`export {name} from "./test";`, `export {name};`);
+        });
+
+        it("should do nothing when it doesn't exist", () => {
+            doTest(`export {name};`, `export {name};`);
+        });
+
+        it("should throw when removing from a namespace export", () => {
+            const { firstChild } = getInfoFromText<ExportDeclaration>("export * from './test';");
+            expect(() => firstChild.removeModuleSpecifier()).to.throw(errors.InvalidOperationError);
+        });
+    });
+
     describe(nameof<ExportDeclaration>(n => n.getModuleSpecifierSourceFileOrThrow), () => {
         it("should get the source file when it exists", () => {
             const project = new Project({ useVirtualFileSystem: true });

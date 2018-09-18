@@ -78,6 +78,7 @@ exportDeclaration.getModuleSpecifier(); // returns: StringLiteral | undefined
 exportDeclaration.getModuleSpecifierValue(); // returns: string | undefined
 exportDeclaration.setModuleSpecifier("./new-file");
 exportDeclaration.setModuleSpecifier(sourceFile);
+exportDeclaration.removeModuleSpecifier();
 exportDeclaration.hasModuleSpecifier(); // returns: boolean
 exportDeclaration.isModuleSpecifierRelative(); // if the module specifier starts with ./ or ../
 exportDeclaration.getModuleSpecifierSourceFile(); // returns: SourceFile | undefined
@@ -157,9 +158,10 @@ namedExport.setName("NewName");
 ```ts
 namedExport.getAliasNode(); // returns: Identifier | undefined
 namedExport.setAlias("NewAliasName");
+namedExport.renameAlias("NewAliasName");
 ```
 
-_Note:_ Setting the alias will rename any uses of the alias or identifier to the new value.
+_Note:_ Renaming the alias will set or rename any uses of the alias or identifier to the new value.
 
 ##### Local Target Declarations
 

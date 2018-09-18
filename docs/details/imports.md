@@ -176,9 +176,10 @@ namedImport.setName("NewName");
 ```ts
 namedImport.getAliasNode(); // returns: Identifier | undefined
 namedImport.setAlias("NewAliasName");
+namedImport.renameAlias("NewAliasName");
 ```
 
-_Note:_ Setting the alias will rename any uses of the alias or identifier in the current file to the new value.
+_Note:_ Renaming the alias will set or rename any uses of the alias or identifier in the current file to the new value.
 
 ##### Parent import declaration
 
