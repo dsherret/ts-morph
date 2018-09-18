@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration } from "../../../compiler";
+import { TypeParameterDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
-import { TypeParameterDeclarationStructure } from '../../../../dist/main';
 
 describe(nameof(TypeParameterDeclaration), () => {
     function getTypeParameterFromText(text: string, index = 0) {
