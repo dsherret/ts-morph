@@ -78,6 +78,10 @@ describe(nameof(ImportSpecifier), () => {
         it("should rename when there is an alias", () => {
             doTest("import {name as alias} from './file'; const t = alias;", "newAlias", "import {name as newAlias} from './file'; const t = newAlias;");
         });
+
+        it("should be remove and update the current file when specifying an empty string", () => {
+            doTest("import {name as alias} from './file'; const t = alias;", "", "import {name} from './file'; const t = name;");
+        });
     });
 
     describe(nameof<ImportSpecifier>(n => n.removeAlias), () => {

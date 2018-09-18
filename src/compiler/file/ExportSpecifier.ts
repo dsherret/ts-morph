@@ -47,6 +47,11 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * @param alias - Alias to set.
      */
     setAlias(alias: string) {
+        if (StringUtils.isNullOrWhitespace(alias)) {
+            this.removeAliasWithRename();
+            return this;
+        }
+
         let aliasIdentifier = this.getAliasNode();
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
