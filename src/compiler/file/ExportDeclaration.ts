@@ -1,8 +1,8 @@
 import * as errors from "../../errors";
-import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex, removeChildren } from "../../manipulation";
 import { ExportSpecifierStructure, ExportDeclarationStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import { ArrayUtils, ModuleUtils, TypeGuards } from "../../utils";
+import { ArrayUtils, ModuleUtils, TypeGuards, StringUtils } from "../../utils";
 import { StringLiteral } from "../literal";
 import { Statement } from "../statement";
 import { ExportSpecifier } from "./ExportSpecifier";
@@ -22,6 +22,12 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     setModuleSpecifier(sourceFile: SourceFile): this;
     setModuleSpecifier(textOrSourceFile: string | SourceFile) {
         const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
+
+        if (StringUtils.isNullOrWhitespace(text)) {
+            this.removeModuleSpecifier();
+            return this;
+        }
+
         const stringLiteral = this.getModuleSpecifier();
 
         if (stringLiteral == null) {
@@ -90,6 +96,24 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
         if (moduleSpecifierValue == null)
             return false;
         return ModuleUtils.isModuleSpecifierRelative(moduleSpecifierValue);
+    }
+
+    /**
+     * Removes the module specifier.
+     */
+    removeModuleSpecifier() {
+        const moduleSpecifier = this.getModuleSpecifier();
+        if (moduleSpecifier == null)
+            return this;
+        if (!this.hasNamedExports())
+            throw new errors.InvalidOperationError(`Cannot remove the module specifier from an export declaration that has no named exports.`);
+
+        removeChildren({
+            children: [this.getFirstChildByKindOrThrow(SyntaxKind.FromKeyword), moduleSpecifier],
+            removePrecedingNewLines: true,
+            removePrecedingSpaces: true
+        });
+        return this;
     }
 
     /**
