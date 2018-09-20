@@ -63,6 +63,10 @@ describe(nameof(ExportDeclaration), () => {
             doTest(`export {test}`, "./new-test", `export {test} from "./new-test"`);
         });
 
+        it("should remove when specifying an empty string", () => {
+            doTest(`export {test} from './test';`, "", `export {test};`);
+        });
+
         it("should set the module specifier when it's provided a source file", () => {
             doTest(`export {test}`, "./new-test", `export {test} from "./new-test"`);
             const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(`export {test} from "./other";`);

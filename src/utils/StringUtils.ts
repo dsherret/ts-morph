@@ -11,6 +11,10 @@ export class StringUtils {
         return typeof str !== "string" || str.trim().length === 0;
     }
 
+    static isNullOrEmpty(str: string | undefined): str is undefined {
+        return typeof str !== "string" || str.length === 0;
+    }
+
     static repeat(str: string, times: number) {
         let newStr = "";
         for (let i = 0; i < times; i++)

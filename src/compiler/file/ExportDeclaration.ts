@@ -26,7 +26,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
     setModuleSpecifier(textOrSourceFile: string | SourceFile) {
         const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
 
-        if (StringUtils.isNullOrWhitespace(text)) {
+        if (StringUtils.isNullOrEmpty(text)) {
             this.removeModuleSpecifier();
             return this;
         }
