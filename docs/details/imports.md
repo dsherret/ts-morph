@@ -80,6 +80,7 @@ Set it:
 
 ```ts
 importDeclaration.setDefaultImport("MyClass");
+importDeclaration.renameDefaultImport("MyClass2");
 importDeclaration.removeDefaultImport();
 ```
 
@@ -97,7 +98,7 @@ Doing the following:
 
 ```ts
 const importDeclaration = sourceFile.getImportDeclarations()[0];
-importDeclaration.setDefaultImport("NewName");
+importDeclaration.renameDefaultImport("NewName");
 ````
 
 Will rename the default import and all its usages:

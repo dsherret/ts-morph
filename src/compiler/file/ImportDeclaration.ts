@@ -71,6 +71,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Sets the default import.
      * @param text - Text to set as the default import.
+     * @remarks Use renameDefaultImport to rename.
      */
     setDefaultImport(text: string) {
         if (StringUtils.isNullOrWhitespace(text))
@@ -78,7 +79,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
 
         const defaultImport = this.getDefaultImport();
         if (defaultImport != null) {
-            defaultImport.rename(text);
+            defaultImport.replaceWithText(text);
             return this;
         }
 

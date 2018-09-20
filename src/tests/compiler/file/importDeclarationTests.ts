@@ -145,11 +145,11 @@ describe(nameof(ImportDeclaration), () => {
         }
 
         it("should remove when empty", () => {
-            doTest(`import identifier from './file'; const t = identifier;`, "", `import './file'; const t = newName;`);
+            doTest(`import identifier from './file'; const t = identifier;`, "", `import './file'; const t = identifier;`);
         });
 
-        it("should rename when exists", () => {
-            doTest(`import identifier from './file'; const t = identifier;`, "newName", `import newName from './file'; const t = newName;`);
+        it("should not rename when exists", () => {
+            doTest(`import identifier from './file'; const t = identifier;`, "newName", `import newName from './file'; const t = identifier;`);
         });
 
         it("should set the default import when importing for side effects", () => {
