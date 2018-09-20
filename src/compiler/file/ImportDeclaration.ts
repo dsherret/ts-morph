@@ -104,6 +104,24 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     }
 
     /**
+     * Renames or sets the provided default import.
+     * @param text - Text to set or rename the default import with.
+     */
+    renameDefaultImport(text: string) {
+        if (StringUtils.isNullOrWhitespace(text))
+            return this.removeDefaultImport();
+
+        const defaultImport = this.getDefaultImport();
+        if (defaultImport != null) {
+            defaultImport.rename(text);
+            return this;
+        }
+
+        this.setDefaultImport(text);
+        return this;
+    }
+
+    /**
      * Gets the default import or throws if it doesn't exit.
      */
     getDefaultImportOrThrow() {
