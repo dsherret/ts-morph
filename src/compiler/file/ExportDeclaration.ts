@@ -4,12 +4,15 @@ import { ExportSpecifierStructure, ExportDeclarationStructure } from "../../stru
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, ModuleUtils, TypeGuards, StringUtils } from "../../utils";
 import { StringLiteral } from "../literal";
+import { Node } from "../common";
 import { Statement } from "../statement";
 import { ExportSpecifier } from "./ExportSpecifier";
 import { SourceFile } from "./SourceFile";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 
-export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
+export const ExportDeclarationBase = Statement;
+export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaration> {
     /**
      * Sets the import specifier.
      * @param text - Text to set as the module specifier.
@@ -194,7 +197,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
         index = verifyAndGetIndex(index, namedExports.length);
 
-        if (namedExports.length === 0) {
+        if (this.getNodeProperty("exportClause") == null) {
             namedExportStructurePrinter.printTextsWithBraces(writer, structuresOrNames);
             const asteriskToken = this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
             insertIntoParentTextRange({
@@ -237,7 +240,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
         if (!this.hasModuleSpecifier())
             throw new errors.InvalidOperationError("Cannot change to a namespace export when no module specifier exists.");
 
-        const namedExportsNode = this.getFirstChildByKind(SyntaxKind.NamedExports);
+        const namedExportsNode = this.getNodeProperty("exportClause");
         if (namedExportsNode == null)
             return this;
 
@@ -253,13 +256,60 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     }
 
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportDeclarationStructure>) {
+        callBaseSet(ExportDeclarationBase.prototype, this, structure);
+
+        if (structure.namedExports != null) {
+            setEmptyNamedExport(this);
+            this.addNamedExports(structure.namedExports);
+        }
+        else if (structure.hasOwnProperty(nameof(structure.namedExports)) && structure.moduleSpecifier == null)
+            this.toNamespaceExport();
+
+        if (structure.moduleSpecifier != null)
+            this.setModuleSpecifier(structure.moduleSpecifier);
+        else if (structure.hasOwnProperty(nameof(structure.moduleSpecifier)))
+            this.removeModuleSpecifier();
+
+        if (structure.namedExports == null && structure.hasOwnProperty(nameof(structure.namedExports)))
+            this.toNamespaceExport();
+
+        return this;
+    }
+
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): ExportDeclarationStructure {
         const moduleSpecifier = this.getModuleSpecifier();
-        return callBaseGetStructure<ExportDeclarationStructure>(Statement.prototype, this, {
+        return callBaseGetStructure<ExportDeclarationStructure>(ExportDeclarationBase.prototype, this, {
             moduleSpecifier: moduleSpecifier ? moduleSpecifier.getText() : undefined,
             namedExports: this.getNamedExports().map(node => node.getStructure())
         });
     }
+}
+
+function setEmptyNamedExport(node: ExportDeclaration) {
+    const namedExportsNode = node.getNodeProperty("exportClause");
+    let replaceNode: Node;
+
+    if (namedExportsNode != null) {
+        if (node.getNamedExports().length === 0)
+            return;
+        replaceNode = namedExportsNode;
+    }
+    else
+        replaceNode = node.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
+
+    insertIntoParentTextRange({
+        parent: node,
+        newText: "{ }",
+        insertPos: replaceNode.getStart(),
+        replacing: {
+            textLength: replaceNode.getWidth()
+        }
+    });
 }
