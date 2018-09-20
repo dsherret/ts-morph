@@ -71,13 +71,15 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Sets the default import.
      * @param text - Text to set as the default import.
+     * @remarks Use renameDefaultImport to rename.
      */
     setDefaultImport(text: string) {
-        errors.throwIfWhitespaceOrNotString(text, nameof(text));
+        if (StringUtils.isNullOrWhitespace(text))
+            return this.removeDefaultImport();
 
         const defaultImport = this.getDefaultImport();
         if (defaultImport != null) {
-            defaultImport.rename(text);
+            defaultImport.replaceWithText(text);
             return this;
         }
 
@@ -98,6 +100,24 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
             parent: importClause,
             newText: ` ${text},`
         });
+        return this;
+    }
+
+    /**
+     * Renames or sets the provided default import.
+     * @param text - Text to set or rename the default import with.
+     */
+    renameDefaultImport(text: string) {
+        if (StringUtils.isNullOrWhitespace(text))
+            return this.removeDefaultImport();
+
+        const defaultImport = this.getDefaultImport();
+        if (defaultImport != null) {
+            defaultImport.rename(text);
+            return this;
+        }
+
+        this.setDefaultImport(text);
         return this;
     }
 

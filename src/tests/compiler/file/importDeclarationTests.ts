@@ -144,12 +144,39 @@ describe(nameof(ImportDeclaration), () => {
             expect(sourceFile.getText()).to.equal(expected);
         }
 
-        it("should throw when whitespace", () => {
-            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>("import d from './file';");
-            expect(() => firstChild.setDefaultImport(" ")).to.throw(errors.ArgumentNullOrWhitespaceError);
+        it("should remove when empty", () => {
+            doTest(`import identifier from './file'; const t = identifier;`, "", `import './file'; const t = identifier;`);
         });
 
-        it("should rename when exists", () => {
+        it("should not rename when exists", () => {
+            doTest(`import identifier from './file'; const t = identifier;`, "newName", `import newName from './file'; const t = identifier;`);
+        });
+
+        it("should set the default import when importing for side effects", () => {
+            doTest(`import './file';`, "identifier", `import identifier from './file';`);
+        });
+
+        it("should set the default import when named import exists", () => {
+            doTest(`import {named} from './file';`, "identifier", `import identifier, {named} from './file';`);
+        });
+
+        it("should set the default import when namespace import exists", () => {
+            doTest(`import * as name from './file';`, "identifier", `import identifier, * as name from './file';`);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.renameDefaultImport), () => {
+        function doTest(text: string, newDefaultImport: string, expected: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
+            firstChild.renameDefaultImport(newDefaultImport);
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should remove when empty", () => {
+            doTest(`import identifier from './file'; const t = identifier;`, "", `import './file'; const t = identifier;`);
+        });
+
+        it("should not rename when exists", () => {
             doTest(`import identifier from './file'; const t = identifier;`, "newName", `import newName from './file'; const t = newName;`);
         });
 
