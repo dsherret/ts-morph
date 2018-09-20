@@ -144,9 +144,8 @@ describe(nameof(ImportDeclaration), () => {
             expect(sourceFile.getText()).to.equal(expected);
         }
 
-        it("should throw when whitespace", () => {
-            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>("import d from './file';");
-            expect(() => firstChild.setDefaultImport(" ")).to.throw(errors.ArgumentNullOrWhitespaceError);
+        it("should remove when empty", () => {
+            doTest(`import identifier from './file'; const t = identifier;`, "", `import './file'; const t = newName;`);
         });
 
         it("should rename when exists", () => {
