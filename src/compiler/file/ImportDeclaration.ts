@@ -115,10 +115,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         const importClause = this.getImportClause();
         if (importClause == null)
             return undefined;
-        const firstChild = importClause.getFirstChild();
-        if (firstChild == null || firstChild.getKind() !== SyntaxKind.Identifier)
-            return undefined;
-        return firstChild as Identifier;
+        return importClause.getNodeProperty("name");
     }
 
     /**
@@ -182,6 +179,34 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
             else
                 return [defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken), namespaceImport];
         }
+    }
+
+    /**
+     * Removes the default import.
+     */
+    removeDefaultImport() {
+        const importClause = this.getImportClause();
+        if (importClause == null)
+            return this;
+        const defaultImport = importClause.getNodeProperty("name");
+        if (defaultImport == null)
+            return;
+
+        const hasOnlyDefaultImport = importClause.getChildCount() === 1;
+        if (hasOnlyDefaultImport)
+            removeChildren({
+                children: [importClause, importClause.getNextSiblingIfKindOrThrow(SyntaxKind.FromKeyword)],
+                removePrecedingSpaces: true,
+                removePrecedingNewLines: true
+            });
+        else
+            removeChildren({
+                children: [defaultImport, defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken)],
+                removePrecedingSpaces: true,
+                removePrecedingNewLines: true
+            });
+
+        return this;
     }
 
     /**
@@ -337,14 +362,14 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Gets the import clause or throws if it doesn't exist.
      */
-    getImportClauseOrThrow(): Node {
+    getImportClauseOrThrow() {
         return errors.throwIfNullOrUndefined(this.getImportClause(), "Expected to find an import clause.");
     }
 
     /**
      * Gets the import clause or returns undefined if it doesn't exist.
      */
-    getImportClause(): Node | undefined {
+    getImportClause() {
         return this.getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
     }
 

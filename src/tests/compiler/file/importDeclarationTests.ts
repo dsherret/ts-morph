@@ -254,7 +254,31 @@ describe(nameof(ImportDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportDeclaration>(n => n.getNamespaceImportOrThrow), () => {
+    describe(nameof<ImportDeclaration>(n => n.removeDefaultImport), () => {
+        function doTest(text: string, expected: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
+            firstChild.removeDefaultImport();
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should remove it when it exists", () => {
+            doTest(`import identifier from './file';`, `import './file';`);
+        });
+
+        it("should do nothing when it doesn't exists", () => {
+            doTest(`import './file';`, `import './file';`);
+        });
+
+        it("should remove it when a namespace import exists", () => {
+            doTest(`import name, * as identifier from './file';`, `import * as identifier from './file';`);
+        });
+
+        it("should remove it when named imports exists", () => {
+            doTest(`import name, { test } from './file';`, `import { test } from './file';`);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.removeNamespaceImport), () => {
         function doTest(text: string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.removeNamespaceImport();

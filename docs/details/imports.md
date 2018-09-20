@@ -80,6 +80,7 @@ Set it:
 
 ```ts
 importDeclaration.setDefaultImport("MyClass");
+importDeclaration.removeDefaultImport();
 ```
 
 #### Example
