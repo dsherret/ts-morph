@@ -2734,33 +2734,17 @@ export interface TextInsertableNode {
      *
      * WARNING: This will forget any previously navigated descendant nodes.
      * @param pos - Position to insert at.
-     * @param text - Text to insert.
+     * @param textOrWriterFunction - Text to insert.
      */
-    insertText(pos: number, text: string): this;
-    /**
-     * Inserts text within the body of the node using a writer.
-     *
-     * WARNING: This will forget any previously navigated descendant nodes.
-     * @param pos - Position to insert at.
-     * @param writerFunction - Write the text using the provided writer.
-     */
-    insertText(pos: number, writerFunction: WriterFunction): this;
+    insertText(pos: number, textOrWriterFunction: string | WriterFunction): this;
     /**
      * Replaces text within the body of the node.
      *
      * WARNING: This will forget any previously navigated descendant nodes.
      * @param range - Start and end position of the text to replace.
-     * @param text - Text to replace the range with.
+     * @param textOrWriterFunction - Text to replace the range with.
      */
-    replaceText(range: [number, number], text: string): this;
-    /**
-     * Replaces text within the body of the node using a writer function.
-     *
-     * WARNING: This will forget any previously navigated descendant nodes.
-     * @param range - Start and end position of the text to replace.
-     * @param writerFunction - Write the text using the provided writer.
-     */
-    replaceText(range: [number, number], writerFunction: WriterFunction): this;
+    replaceText(range: [number, number], textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes all the text within the node
      */
@@ -4670,24 +4654,24 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds an argument.
      * @param argumentTexts - Argument text.
      */
-    addArgument(argumentText: string): Node<ts.Node>;
+    addArgument(argumentText: string | WriterFunction): Node<ts.Node>;
     /**
      * Adds arguments.
      * @param argumentTexts - Argument texts.
      */
-    addArguments(argumentTexts: ReadonlyArray<string>): Node<ts.Node>[];
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
     /**
      * Inserts an argument.
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument text.
      */
-    insertArgument(index: number, argumentText: string): Node<ts.Node>;
+    insertArgument(index: number, argumentText: string | WriterFunction): Node<ts.Node>;
     /**
      * Inserts arguments.
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
-    insertArguments(index: number, argumentTexts: ReadonlyArray<string>): Node<ts.Node>[];
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
     /**
      * Removes an argument based on the node.
      * @param node - Argument's node to remove.
@@ -4703,6 +4687,11 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      */
     remove(): void;
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<DecoratorStructure>): this;
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): DecoratorStructure;
@@ -4715,10 +4704,12 @@ export interface JSDocPropertyLikeTag {
 
 export declare type JSDocPropertyLikeTagExtensionType = Node;
 
+declare const JSDocBase: typeof Node;
+
 /**
  * JS doc node.
  */
-export declare class JSDoc extends Node<ts.JSDoc> {
+export declare class JSDoc extends JSDocBase<ts.JSDoc> {
     /**
      * Gets the tags of the JSDoc.
      */
@@ -4733,18 +4724,18 @@ export declare class JSDoc extends Node<ts.JSDoc> {
     getInnerText(): string;
     /**
      * Sets the comment.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to set.
      */
-    setComment(writerFunction: WriterFunction): this;
-    /**
-     * Sets the comment.
-     * @param text - Text of the comment.
-     */
-    setComment(text: string): this;
+    setComment(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes this JSDoc.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<JSDocStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -4982,21 +4973,12 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
     /**
      * Insert elements into the array.
      * @param index - Child index to insert at.
-     * @param texts - Texts to insert as elements.
+     * @param textsOrWriterFunction - Texts to insert as elements.
      * @param options - Options.
      */
-    insertElements(index: number, texts: ReadonlyArray<string>, options?: {
+    insertElements(index: number, textsOrWriterFunction: ReadonlyArray<string> | WriterFunction, options?: {
         useNewLines?: boolean;
-    }): Expression[];
-    /**
-     * Insert elements into the array.
-     * @param index - Child index to insert at.
-     * @param writerFunction - Write the text using the provided writer.
-     * @param options - Options.
-     */
-    insertElements(index: number, writerFunction: WriterFunction, options?: {
-        useNewLines?: boolean;
-    }): Expression[];
+    }): Expression<ts.Expression>[];
     /**
      * Removes an element from the array.
      * @param index - Index to remove from.
@@ -5120,6 +5102,11 @@ export interface ExpressionedNode {
      * Gets the expression.
      */
     getExpression(): Expression;
+    /**
+     * Sets the expression.
+     * @param textOrWriterFunction - Text to set the expression with.
+     */
+    setExpression(textOrWriterFunction: string | WriterFunction): this;
 }
 
 export declare type ExpressionedNodeExtensionType = Node<ts.Node & {
@@ -5394,18 +5381,18 @@ export declare class PropertyAssignment extends PropertyAssignmentBase<ts.Proper
     removeInitializer(): ShorthandPropertyAssignment;
     /**
      * Sets the initializer.
-     * @param text - New text to set for the initializer.
+     * @param textOrWriterFunction - New text ot set for the initializer.
      */
-    setInitializer(text: string): this;
-    /**
-     * Sets the initializer.
-     * @param writerFunction - Writer function to set the initializer with.
-     */
-    setInitializer(writerFunction: WriterFunction): this;
+    setInitializer(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes this property.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<PropertyAssignmentStructure>): this | ShorthandPropertyAssignment;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -5453,6 +5440,11 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
      */
     remove(): void;
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ShorthandPropertyAssignmentStructure>): this;
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): ShorthandPropertyAssignmentStructure;
@@ -5465,6 +5457,11 @@ export declare class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssi
      * Removes this property.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<SpreadAssignmentStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -5579,7 +5576,9 @@ export declare class YieldExpression extends YieldExpressionBase<ts.YieldExpress
     getExpressionOrThrow(): Expression<ts.Expression>;
 }
 
-export declare class ExportAssignment extends Statement<ts.ExportAssignment> {
+declare const ExportAssignmentBase: typeof Statement;
+
+export declare class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
     /**
      * Gets if this is an export equals assignment.
      *
@@ -5587,16 +5586,33 @@ export declare class ExportAssignment extends Statement<ts.ExportAssignment> {
      */
     isExportEquals(): boolean;
     /**
+     * Sets if this is an export equals assignment or export default.
+     * @param value - Whether it should be an export equals assignment.
+     */
+    setIsExportEquals(value: boolean): this;
+    /**
      * Gets the export assignment expression.
      */
     getExpression(): Expression;
+    /**
+     * Sets the expression of the export assignment.
+     * @param textOrWriterFunction - Text or writer function to set as the export assignment expression.
+     */
+    setExpression(textOrWriterFunction: string | WriterFunction): this;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportAssignmentStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): ExportAssignmentStructure;
 }
 
-export declare class ExportDeclaration extends Statement<ts.ExportDeclaration> {
+declare const ExportDeclarationBase: typeof Statement;
+
+export declare class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaration> {
     /**
      * Sets the import specifier.
      * @param text - Text to set as the module specifier.
@@ -5627,6 +5643,10 @@ export declare class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * Gets if the module specifier starts with `./` or `../`.
      */
     isModuleSpecifierRelative(): boolean;
+    /**
+     * Removes the module specifier.
+     */
+    removeModuleSpecifier(): this;
     /**
      * Gets if the module specifier exists
      */
@@ -5681,25 +5701,50 @@ export declare class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      */
     toNamespaceExport(): this;
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportDeclarationStructure>): this;
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): ExportDeclarationStructure;
 }
 
-export declare class ExportSpecifier extends Node<ts.ExportSpecifier> {
+declare const ExportSpecifierBase: typeof Node;
+
+export declare class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
     /**
      * Sets the name of what's being exported.
      */
     setName(name: string): this;
     /**
+     * Gets the name of the export specifier.
+     */
+    getName(): string;
+    /**
      * Gets the name node of what's being exported.
      */
     getNameNode(): Identifier;
     /**
-     * Sets the alias for the name being exported.
+     * Sets the alias for the name being exported and renames all the usages.
+     * @param alias - Alias to set.
+     */
+    renameAlias(alias: string): this;
+    /**
+     * Sets the alias without renaming all the usages.
      * @param alias - Alias to set.
      */
     setAlias(alias: string): this;
+    /**
+     * Removes the alias without renaming.
+     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the export specifier.
+     */
+    removeAlias(): this;
+    /**
+     * Removes the alias and renames any usages to the name of the export specifier.
+     */
+    removeAliasWithRename(): this;
     /**
      * Gets the alias identifier, if it exists.
      */
@@ -5724,6 +5769,11 @@ export declare class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Removes the export specifier.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportSpecifierStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -5764,7 +5814,9 @@ export declare enum FileSystemRefreshResult {
     Deleted = 2
 }
 
-export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
+declare const ImportDeclarationBase: typeof Statement;
+
+export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
     /**
      * Sets the import specifier.
      * @param text - Text to set as the module specifier.
@@ -5798,8 +5850,14 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Sets the default import.
      * @param text - Text to set as the default import.
+     * @remarks Use renameDefaultImport to rename.
      */
     setDefaultImport(text: string): this;
+    /**
+     * Renames or sets the provided default import.
+     * @param text - Text to set or rename the default import with.
+     */
+    renameDefaultImport(text: string): this;
     /**
      * Gets the default import or throws if it doesn't exit.
      */
@@ -5818,6 +5876,10 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * Removes the namespace import.
      */
     removeNamespaceImport(): this;
+    /**
+     * Removes the default import.
+     */
+    removeDefaultImport(): this;
     /**
      * Gets the namespace import if it exists or throws.
      */
@@ -5870,11 +5932,16 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Gets the import clause or throws if it doesn't exist.
      */
-    getImportClauseOrThrow(): Node;
+    getImportClauseOrThrow(): Node<ts.ImportClause>;
     /**
      * Gets the import clause or returns undefined if it doesn't exist.
      */
-    getImportClause(): Node | undefined;
+    getImportClause(): Node<ts.ImportClause> | undefined;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ImportDeclarationStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -5912,7 +5979,9 @@ export declare class ImportEqualsDeclaration extends ImportEqualsDeclarationBase
     getExternalModuleReferenceSourceFile(): SourceFile | undefined;
 }
 
-export declare class ImportSpecifier extends Node<ts.ImportSpecifier> {
+declare const ImportSpecifierBase: typeof Node;
+
+export declare class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
     /**
      * Sets the identifier being imported.
      * @param name - Name being imported.
@@ -5927,10 +5996,24 @@ export declare class ImportSpecifier extends Node<ts.ImportSpecifier> {
      */
     getNameNode(): Identifier;
     /**
-     * Sets the alias for the name being imported.
+     * Sets the alias for the name being imported and renames all the usages.
+     * @param alias - Alias to set.
+     */
+    renameAlias(alias: string): this;
+    /**
+     * Sets the alias without renaming all the usages.
      * @param alias - Alias to set.
      */
     setAlias(alias: string): this;
+    /**
+     * Removes the alias without renaming.
+     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the import specifier.
+     */
+    removeAlias(): this;
+    /**
+     * Removes the alias and renames any usages to the name of the import specifier.
+     */
+    removeAliasWithRename(): this;
     /**
      * Gets the alias identifier, if it exists.
      */
@@ -5943,6 +6026,11 @@ export declare class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * Remove the import specifier.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ImportSpecifierStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -6603,14 +6691,9 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
     getReturnTypeNode(): TypeNode;
     /**
      * Sets the return type.
-     * @param text - Text of the return type.
+     * @param textOrWriterFunction - Text to set as the return type.
      */
-    setReturnType(text: string): this;
-    /**
-     * Sets the return type.
-     * @param writerFunction - Writer function to write the return type with.
-     */
-    setReturnType(writerFunction: WriterFunction): this;
+    setReturnType(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes this index signature.
      */
@@ -6767,9 +6850,24 @@ export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
      */
     getInitializer(): StringLiteral | JsxExpression | undefined;
     /**
+     * Sets the initializer.
+     * @param textOrWriterFunction - Text or writer function to set the initializer with.
+     * @remarks You need to provide the quotes or braces.
+     */
+    setInitializer(textOrWriterFunction: string | WriterFunction): this;
+    /**
+     * Removes the initializer.
+     */
+    removeInitializer(): this;
+    /**
      * Removes the JSX attribute.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<JsxAttributeStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -6801,24 +6899,19 @@ export declare class JsxElement extends JsxElementBase<ts.JsxElement> {
     getClosingElement(): JsxClosingElement;
     /**
      * Sets the body text.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to set as the body.
      */
-    setBodyText(writerFunction: WriterFunction): this;
-    /**
-     * Sets the body text.
-     * @param text - Text to set as the body.
-     */
-    setBodyText(text: string): this;
+    setBodyText(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Sets the body text without surrounding new lines.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text to set as the body.
      */
-    setBodyTextInline(writerFunction: WriterFunction): this;
+    setBodyTextInline(textOrWriterFunction: string | WriterFunction): this;
     /**
-     * Sets the body text without surrounding new lines.
-     * @param text - Text to set as the body.
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
      */
-    setBodyTextInline(text: string): this;
+    set(structure: Partial<JsxElementStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -6871,6 +6964,11 @@ declare const JsxSelfClosingElementBase: Constructor<JsxAttributedNode> & Constr
 
 export declare class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfClosingElement> {
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<JsxElementStructure>): this;
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): JsxElementStructure;
@@ -6884,9 +6982,19 @@ export declare class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpr
      */
     getExpression(): Expression<ts.Expression>;
     /**
+     * Sets the expression.
+     * @param textOrWriterFunction - Text to set the expression with.
+     */
+    setExpression(textOrWriterFunction: string | WriterFunction): this;
+    /**
      * Removes the JSX spread attribute.
      */
     remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<JsxSpreadAttributeStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -9223,6 +9331,11 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
      */
     remove(): void;
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<TypeParameterDeclarationStructure>): this;
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): TypeParameterDeclarationStructure;
@@ -9649,6 +9762,20 @@ export interface SetAccessorDeclarationStructure extends SetAccessorDeclarationS
 interface SetAccessorDeclarationSpecificStructure {
 }
 
+export interface DecoratorStructure {
+    name: string;
+    arguments?: (string | WriterFunction)[];
+    typeArguments?: string[];
+}
+
+export interface JSDocStructure {
+    description: string | WriterFunction;
+}
+
+export interface ExpressionedNodeStructure {
+    expression: string | WriterFunction;
+}
+
 export interface PropertyAssignmentStructure extends PropertyAssignmentSpecificStructure, PropertyNamedNodeStructure {
 }
 
@@ -9662,17 +9789,7 @@ export interface ShorthandPropertyAssignmentStructure extends ShorthandPropertyA
 interface ShorthandPropertyAssignmentSpecificStructure {
 }
 
-export interface SpreadAssignmentStructure {
-    expression: string | WriterFunction;
-}
-
-export interface DecoratorStructure {
-    name: string;
-    arguments?: (string | WriterFunction)[];
-}
-
-export interface JSDocStructure {
-    description: string | WriterFunction;
+export interface SpreadAssignmentStructure extends ExpressionedNodeStructure {
 }
 
 export interface EnumDeclarationStructure extends NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
@@ -9852,7 +9969,10 @@ interface TypeAliasDeclarationSpecificStructure {
     type: string | WriterFunction;
 }
 
-export interface TypeParameterDeclarationStructure extends NamedNodeStructure {
+export interface TypeParameterDeclarationStructure extends TypeParameterDeclarationSpecificStructure, NamedNodeStructure {
+}
+
+interface TypeParameterDeclarationSpecificStructure {
     constraint?: string;
     default?: string;
 }
