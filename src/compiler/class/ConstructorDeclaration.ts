@@ -84,9 +84,10 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * Gets the structure equivalent to this node.
      */
     getStructure(): ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure {
+        const hasImplementation = this.getImplementation() != null;
         const isOverload = this.isOverload();
-        const basePrototype = isOverload ? ConstructorDeclarationOverloadBase.prototype : ConstructorDeclarationBase.prototype;
-        const structure: ConstructorDeclarationSpecificStructure = isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
+        const basePrototype = isOverload && hasImplementation ? ConstructorDeclarationOverloadBase.prototype : ConstructorDeclarationBase.prototype;
+        const structure: ConstructorDeclarationSpecificStructure = !hasImplementation || isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
 
         return callBaseGetStructure<any>(basePrototype, this, structure) as ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure;
     }

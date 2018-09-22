@@ -89,9 +89,10 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
      * Gets the structure equivalent to this node.
      */
     getStructure(): MethodDeclarationStructure | MethodDeclarationOverloadStructure {
+        const hasImplementation = this.getImplementation() != null;
         const isOverload = this.isOverload();
-        const basePrototype = isOverload ? MethodDeclarationOverloadBase.prototype : MethodDeclarationBase.prototype;
-        const structure = isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
+        const basePrototype = isOverload && hasImplementation ? MethodDeclarationOverloadBase.prototype : MethodDeclarationBase.prototype;
+        const structure = !hasImplementation || isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
 
         return callBaseGetStructure<any>(basePrototype, this,
             structure) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;

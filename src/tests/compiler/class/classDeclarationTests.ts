@@ -1477,5 +1477,36 @@ class Identifier {
                 typeParameters: [{ name: "T" }]
             });
         });
+
+        it("should get the structure of an ambient class", () => {
+            const code = `
+declare class Identifier {
+    constructor(): string;
+    constructor(): number;
+    method();
+    method(p);
+    prop: string;
+    get getAccessor();
+    set setAccessor(value: string);
+}
+`;
+            doTest(code, {
+                ctors: [{}, {}],
+                decorators: [],
+                docs: [],
+                extends: undefined,
+                implements: [],
+                getAccessors: [{ name: "getAccessor" }],
+                hasDeclareKeyword: true,
+                isAbstract: false,
+                isDefaultExport: false,
+                isExported: false,
+                methods: [{ name: "method" }, { name: "method" }],
+                name: "Identifier",
+                properties: [{ name: "prop" }],
+                setAccessors: [{ name: "setAccessor" }],
+                typeParameters: []
+            });
+        });
     });
 });
