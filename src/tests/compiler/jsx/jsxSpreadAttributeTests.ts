@@ -24,6 +24,18 @@ describe(nameof(JsxSpreadAttribute), () => {
         });
     });
 
+    describe(nameof<JsxSpreadAttribute>(n => n.setExpression), () => {
+        function doTest(text: string, expression: string, expected: string) {
+            const { descendant, sourceFile } = getInfo(text);
+            descendant.setExpression(expression);
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should set", () => {
+            doTest(`var t = (<jsx {...test} />);`, "newExpr", `var t = (<jsx {...newExpr} />);`);
+        });
+    });
+
     describe(nameof<JsxSpreadAttribute>(n => n.getStructure), () => {
         function doTest(text: string, expectedStructure: MakeRequired<JsxSpreadAttributeStructure>) {
             const { descendant } = getInfo(text);

@@ -1,5 +1,6 @@
 import { removeChildren } from "../../manipulation";
 import { JsxSpreadAttributeStructure } from "../../structures";
+import { WriterFunction } from "../../types";
 import { ts } from "../../typescript";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common";
@@ -11,6 +12,15 @@ export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttri
      */
     getExpression() {
         return this.getNodeFromCompilerNode(this.compilerNode.expression);
+    }
+
+    /**
+     * Sets the expression.
+     * @param textOrWriterFunction - Text to set the expression with.
+     */
+    setExpression(textOrWriterFunction: string | WriterFunction) {
+        this.getExpression().replaceWithText(textOrWriterFunction);
+        return this;
     }
 
     /**
