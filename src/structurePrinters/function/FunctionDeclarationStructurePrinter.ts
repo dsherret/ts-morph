@@ -1,9 +1,14 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { StructurePrinterFactory } from "../../factories";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure } from "../../structures";
 import { StringUtils, ObjectUtils, setValueIfUndefined } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter<FunctionDeclarationStructure> {
+    constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
+        super(factory);
+    }
+
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<FunctionDeclarationStructure> | undefined) {
         if (structures == null)
             return;
@@ -12,7 +17,7 @@ export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter
             const currentStructure = structures[i];
             if (i > 0) {
                 const previousStructure = structures[i - 1];
-                if (previousStructure.hasDeclareKeyword && currentStructure.hasDeclareKeyword)
+                if (this.options.isAmbient || previousStructure.hasDeclareKeyword && currentStructure.hasDeclareKeyword)
                     writer.newLine();
                 else
                     writer.blankLine();
@@ -25,7 +30,7 @@ export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter
     printText(writer: CodeBlockWriter, structure: FunctionDeclarationStructure) {
         this.printOverloads(writer, structure.name, getOverloadStructures());
         this.printBase(writer, structure.name, structure);
-        if (structure.hasDeclareKeyword)
+        if (this.options.isAmbient || structure.hasDeclareKeyword)
             writer.write(";");
         else
             writer.space().inlineBlock(() => {

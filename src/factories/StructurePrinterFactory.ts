@@ -125,8 +125,8 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forFunctionDeclaration(): structurePrinters.FunctionDeclarationStructurePrinter {
-        return new structurePrinters.FunctionDeclarationStructurePrinter(this);
+    forFunctionDeclaration(options: { isAmbient: boolean; }): structurePrinters.FunctionDeclarationStructurePrinter {
+        return new structurePrinters.FunctionDeclarationStructurePrinter(this, options);
     }
 
     @Memoize

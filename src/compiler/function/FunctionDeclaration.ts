@@ -92,8 +92,9 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      */
     getStructure(): FunctionDeclarationStructure | FunctionDeclarationOverloadStructure {
         const isOverload = this.isOverload();
-        const basePrototype = isOverload ? FunctionDeclarationOverloadBase.prototype : FunctionDeclarationBase.prototype;
-        const structure = isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
+        const hasImplementation = this.getImplementation();
+        const basePrototype = isOverload && hasImplementation ? FunctionDeclarationOverloadBase.prototype : FunctionDeclarationBase.prototype;
+        const structure = !hasImplementation || isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
 
         return callBaseGetStructure<any>(basePrototype, this, structure);
     }

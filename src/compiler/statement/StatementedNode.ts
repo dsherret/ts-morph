@@ -603,7 +603,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forFunctionDeclaration().printTexts(writer, structures);
+                        this.context.structurePrinterFactory.forFunctionDeclaration({
+                            isAmbient: isNodeAmbientOrInAmbientContext(this)
+                        }).printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember =>
                             structures[0].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,

@@ -20,7 +20,7 @@ export class StatementedNodeStructurePrinter extends FactoryStructurePrinter<Sta
         this.factory.forEnumDeclaration().printTexts(writer, structure.enums);
 
         conditionalBlankLine(structure.functions);
-        this.factory.forFunctionDeclaration().printTexts(writer, structure.functions);
+        this.factory.forFunctionDeclaration({ isAmbient: this.options.isAmbient }).printTexts(writer, structure.functions);
 
         conditionalBlankLine(structure.classes);
         this.factory.forClassDeclaration(this.options).printTexts(writer, structure.classes);

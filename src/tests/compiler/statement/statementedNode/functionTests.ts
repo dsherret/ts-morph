@@ -66,6 +66,16 @@ describe(nameof(StatementedNode), () => {
             doTest("", 0, [{ name: "func", bodyText: "console.log('testing');" }], "function func() {\n    console.log('testing');\n}\n");
         });
 
+        it("should insert into an ambient context", () => {
+            const {sourceFile} = getInfoFromText("declare namespace Namespace {\n}\n");
+            const namespaceDec = sourceFile.getNamespaces()[0];
+            namespaceDec.insertFunctions(0, [{
+                name: "Identifier"
+            }]);
+
+            expect(sourceFile.getFullText()).to.equal("declare namespace Namespace {\n    function Identifier();\n}\n");
+        });
+
         it("should insert all the properties of the structure", () => {
             const structure: MakeRequired<FunctionDeclarationStructure> = {
                 docs: [{ description: "Test" }],
