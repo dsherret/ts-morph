@@ -199,6 +199,12 @@ const isExportEquals = exportAssignment.isExportEquals();
 const expression = exportAssignment.getExpression();
 ```
 
+Set whether one is an export equals or export default:
+
+```ts
+exportAssignment.setIsExportEquals(false); // sets to export default
+```
+
 ### Add/Insert
 
 Add or insert use `insertExportAssignment`, `insertExportAssignments`, `addExportAssignment`, or `addExportAssignments`:

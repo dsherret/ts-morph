@@ -19,6 +19,26 @@ describe(nameof(ExportAssignment), () => {
         });
     });
 
+    describe(nameof<ExportAssignment>(n => n.setIsExportEquals), () => {
+        function doTest(text: string, value: boolean, expected: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ExportAssignment>(text);
+            firstChild.setIsExportEquals(value);
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should do nothing when is one", () => {
+            doTest("export = 5", true, "export = 5");
+        });
+
+        it("should change to export default", () => {
+            doTest("export = 5", false, "export default 5");
+        });
+
+        it("should change to export equals", () => {
+            doTest("export default 5", true, "export = 5");
+        });
+    });
+
     describe(nameof<ExportAssignment>(n => n.getExpression), () => {
         function doTest(text: string, expected: string) {
             const { firstChild } = getInfoFromText<ExportAssignment>(text);

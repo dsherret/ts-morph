@@ -1,4 +1,4 @@
-import { ts } from "../../typescript";
+import { ts, SyntaxKind } from "../../typescript";
 import { Expression } from "../expression";
 import { Statement } from "../statement";
 import { ExportAssignmentStructure } from "../../structures";
@@ -12,6 +12,22 @@ export class ExportAssignment extends Statement<ts.ExportAssignment> {
      */
     isExportEquals() {
         return this.compilerNode.isExportEquals || false;
+    }
+
+    /**
+     * Sets if this is an export equals assignment or export default.
+     * @param value - Whether it should be an export equals assignment.
+     */
+    setIsExportEquals(value: boolean) {
+        if (this.isExportEquals() === value)
+            return this;
+
+        if (value)
+            this.getFirstChildByKindOrThrow(SyntaxKind.DefaultKeyword).replaceWithText("=");
+        else
+            this.getFirstChildByKindOrThrow(SyntaxKind.EqualsToken).replaceWithText("default");
+
+        return this;
     }
 
     /**
