@@ -9283,11 +9283,6 @@ declare const TypeParameterDeclarationBase: Constructor<NamedNode> & typeof Node
 
 export declare class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
     /**
-     * Gets the constraint node of the type parameter.
-     * @deprecated - Use .getConstraint().
-     */
-    getConstraintNode(): TypeNode | undefined;
-    /**
      * Gets the constraint of the type parameter.
      */
     getConstraint(): TypeNode | undefined;
@@ -9312,11 +9307,6 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
      * Gets the default node of the type parameter or throws if it doesn't exist.
      */
     getDefaultOrThrow(): TypeNode<ts.TypeNode>;
-    /**
-     * Gets the default node of the type parameter.
-     * @deprecated Use .getDefault().
-     */
-    getDefaultNode(): TypeNode | undefined;
     /**
      * Sets the type parameter default type node.
      * @param text - Text to set as the default type node.

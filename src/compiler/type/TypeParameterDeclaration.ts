@@ -12,14 +12,6 @@ import { callBaseSet } from "../callBaseSet";
 export const TypeParameterDeclarationBase = NamedNode(Node);
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
     /**
-     * Gets the constraint node of the type parameter.
-     * @deprecated - Use .getConstraint().
-     */
-    getConstraintNode(): TypeNode | undefined {
-        return this.getConstraint();
-    }
-
-    /**
      * Gets the constraint of the type parameter.
      */
     getConstraint(): TypeNode | undefined {
@@ -79,14 +71,6 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      */
     getDefaultOrThrow() {
         return errors.throwIfNullOrUndefined(this.getDefault(), "Expected to find the type parameter's default.");
-    }
-
-    /**
-     * Gets the default node of the type parameter.
-     * @deprecated Use .getDefault().
-     */
-    getDefaultNode(): TypeNode | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.default);
     }
 
     /**
