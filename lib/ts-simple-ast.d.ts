@@ -558,6 +558,7 @@ export declare class Project {
      */
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
 }
+
 export default Project;
 
 export interface SourceFileCreateOptions {

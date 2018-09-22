@@ -5,11 +5,11 @@ interface CodeBlockWriterOptions {
     useSingleQuote: boolean;
 }
 declare class CodeBlockWriter {
-    private _indentationText;
-    private _newLine;
-    private _useTabs;
-    private _quoteChar;
-    private _indentNumberOfSpaces;
+    private readonly _indentationText;
+    private readonly _newLine;
+    private readonly _useTabs;
+    private readonly _quoteChar;
+    private readonly _indentNumberOfSpaces;
     private _currentIndentation;
     private _queuedIndentation;
     private _text;

@@ -735,7 +735,7 @@ export declare namespace ts {
      * ES6 Map interface, only read methods included.
      */
     interface ReadonlyMap<T> {
-        size: number;
+        readonly size: number;
         get(key: string): T | undefined;
         has(key: string): boolean;
         forEach(action: (value: T, key: string) => void): void;
@@ -767,7 +767,7 @@ export declare namespace ts {
      * Array that is only intended to be pushed to, never read.
      */
     interface Push<T> {
-        push(values: T[]): void;
+        push(...values: T[]): void;
     }
     interface TextRange {
         pos: number;
@@ -2200,7 +2200,7 @@ export declare namespace ts {
      * ReadonlyMap where keys are `__String`s.
      */
     interface ReadonlyUnderscoreEscapedMap<T> {
-        size: number;
+        readonly size: number;
         get(key: __String): T | undefined;
         has(key: __String): boolean;
         forEach(action: (value: T, key: __String) => void): void;
@@ -2519,7 +2519,7 @@ export declare namespace ts {
         version: string;
     }
     interface ResolvedModuleWithFailedLookupLocations {
-        resolvedModule: ResolvedModuleFull | undefined;
+        readonly resolvedModule: ResolvedModuleFull | undefined;
     }
     interface ResolvedTypeReferenceDirective {
         primary: boolean;
@@ -2527,8 +2527,8 @@ export declare namespace ts {
         packageId?: PackageId;
     }
     interface ResolvedTypeReferenceDirectiveWithFailedLookupLocations {
-        resolvedTypeReferenceDirective: ResolvedTypeReferenceDirective | undefined;
-        failedLookupLocations: ReadonlyArray<string>;
+        readonly resolvedTypeReferenceDirective: ResolvedTypeReferenceDirective | undefined;
+        readonly failedLookupLocations: ReadonlyArray<string>;
     }
     interface CompilerHost extends ModuleResolutionHost {
         writeFile: WriteFileCallback;
@@ -2563,10 +2563,10 @@ export declare namespace ts {
         skipTrivia?: (pos: number) => number;
     }
     interface EmitHelper {
-        name: string;
-        scoped: boolean;
-        text: string | ((node: EmitHelperUniqueNameCallback) => string);
-        priority?: number;
+        readonly name: string;
+        readonly scoped: boolean;
+        readonly text: string | ((node: EmitHelperUniqueNameCallback) => string);
+        readonly priority?: number;
     }
     interface TransformationContext {
         /**
@@ -2798,7 +2798,7 @@ export declare namespace ts {
         getMemoryUsage?(): number;
         exit(exitCode?: number): void;
         realpath?(path: string): string;
-        setTimeout?(callback: (...args: any[]) => void, ms: number, args: any[]): any;
+        setTimeout?(callback: (...args: any[]) => void, ms: number, ...args: any[]): any;
         clearTimeout?(timeoutId: any): void;
         clearScreen?(): void;
         base64decode?(input: string): string;
@@ -3063,7 +3063,7 @@ export declare namespace ts {
         /**
          * If provided, will be used to set delayed compilation, so that multiple changes in short span are compiled together
          */
-        setTimeout?(callback: (...args: any[]) => void, ms: number, args: any[]): any;
+        setTimeout?(callback: (...args: any[]) => void, ms: number, ...args: any[]): any;
         /**
          * If provided, will be used to reset existing delayed compilation
          */
@@ -3121,10 +3121,10 @@ export declare namespace ts {
         updateRootFileNames(fileNames: string[]): void;
     }
     interface BuildHost {
-        verbose(diag: DiagnosticMessage, args: string[]): void;
-        error(diag: DiagnosticMessage, args: string[]): void;
+        verbose(diag: DiagnosticMessage, ...args: string[]): void;
+        error(diag: DiagnosticMessage, ...args: string[]): void;
         errorDiagnostic(diag: Diagnostic): void;
-        message(diag: DiagnosticMessage, args: string[]): void;
+        message(diag: DiagnosticMessage, ...args: string[]): void;
     }
     /**
      * A BuildContext tracks what's going on during the course of a build.
@@ -3188,10 +3188,10 @@ export declare namespace ts {
         forEachChild<T>(cbNode: (node: Node) => T | undefined, cbNodeArray?: (nodes: NodeArray<Node>) => T | undefined): T | undefined;
     }
     interface Identifier {
-        text: string;
+        readonly text: string;
     }
     interface Symbol {
-        name: string;
+        readonly name: string;
         getFlags(): SymbolFlags;
         getEscapedName(): __String;
         getName(): string;
@@ -3320,12 +3320,12 @@ export declare namespace ts {
         installPackage?(options: InstallPackageOptions): Promise<ApplyCodeActionCommandResult>;
     }
     interface UserPreferences {
-        disableSuggestions?: boolean;
-        quotePreference?: "double" | "single";
-        includeCompletionsForModuleExports?: boolean;
-        includeCompletionsWithInsertText?: boolean;
-        importModuleSpecifierPreference?: "relative" | "non-relative";
-        allowTextChangesInNewFiles?: boolean;
+        readonly disableSuggestions?: boolean;
+        readonly quotePreference?: "double" | "single";
+        readonly includeCompletionsForModuleExports?: boolean;
+        readonly includeCompletionsWithInsertText?: boolean;
+        readonly importModuleSpecifierPreference?: "relative" | "non-relative";
+        readonly allowTextChangesInNewFiles?: boolean;
     }
     interface LanguageService {
         cleanupSemanticCache(): void;
@@ -3411,7 +3411,7 @@ export declare namespace ts {
         dispose(): void;
     }
     interface JsxClosingTagInfo {
-        newText: string;
+        readonly newText: string;
     }
     interface CombinedCodeFixScope {
         type: "file";
@@ -4028,6 +4028,9 @@ export declare namespace ts {
         Label = 12,
         Condition = 96
     }
+    /**
+     * Return code used by getEmitOutput function to indicate status of the function
+     */
     enum ExitStatus {
         Success = 0,
         DiagnosticsPresent_OutputsSkipped = 1,
