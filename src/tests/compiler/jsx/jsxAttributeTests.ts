@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { JsxAttribute, JsxSelfClosingElement } from "../../../compiler";
+import * as errors from "../../../errors";
 import { JsxAttributeStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { WriterFunction } from "../../../types";
@@ -145,6 +146,39 @@ describe(nameof(JsxAttribute), () => {
 
         it("should remove the attribute at the end when on a new line", () => {
             doTest(`var t = (<jsx a1\n    a2 />);`, 1, `var t = (<jsx a1 />);`);
+        });
+    });
+
+    describe(nameof<JsxAttribute>(n => n.set), () => {
+        function doTest(text: string, structure: Partial<JsxAttributeStructure>, expected: string) {
+            const { descendant, sourceFile } = getInfo(text);
+            descendant.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should do nothing when empty", () => {
+            const code = `var t = (<jsx a1={5} />);`;
+            doTest(code, {}, code);
+        });
+
+        it("should set everything when provided", () => {
+            const structure: MakeRequired<JsxAttributeStructure> = {
+                initializer: "{6}",
+                isSpreadAttribute: false,
+                name: "newName"
+            };
+            doTest(`var t = (<jsx a1={5} />);`, structure, `var t = (<jsx newName={6} />);`);
+        });
+
+        it("should remove the initializer when providing undefined", () => {
+            doTest(`var t = (<jsx a1={5} />);`, { initializer: undefined }, `var t = (<jsx a1 />);`);
+        });
+
+        it("should throw a not implemented error when providing isSpreadAttribute to true", () => {
+            const code = `var t = (<jsx a1={5} />);`;
+            const { descendant, sourceFile } = getInfo(code);
+            // force providing true
+            expect(() => descendant.set({ isSpreadAttribute: true as false })).to.throw(errors.NotImplementedError);
         });
     });
 

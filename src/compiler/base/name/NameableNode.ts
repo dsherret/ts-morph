@@ -71,17 +71,10 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
             }
 
             const nameNode = this.getNameNode();
-            if (nameNode == null) {
-                const openParenToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken);
-                insertIntoParentTextRange({
-                    insertPos: openParenToken.getStart(),
-                    newText: " " + newName,
-                    parent: this
-                });
-            }
-            else {
+            if (nameNode == null)
+                addNameNode(this, newName);
+            else
                 Base.prototype.rename.call(this, newName);
-            }
 
             return this;
         }
@@ -99,8 +92,14 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
         set(structure: Partial<NameableNodeStructure>) {
             callBaseSet(Base.prototype, this, structure);
 
-            if (structure.name != null)
-                this.rename(structure.name);
+            if (structure.name != null) {
+                errors.throwIfWhitespaceOrNotString(structure.name, nameof.full(structure.name));
+                const nameNode = this.getNameNode();
+                if (nameNode == null)
+                    addNameNode(this, structure.name);
+                else
+                    nameNode.replaceWithText(structure.name);
+            }
             else if (structure.hasOwnProperty(nameof(structure.name)))
                 this.removeName();
 
@@ -113,4 +112,13 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
             });
         }
     };
+}
+
+function addNameNode(node: Node, newName: string) {
+    const openParenToken = node.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken);
+    insertIntoParentTextRange({
+        insertPos: openParenToken.getStart(),
+        newText: " " + newName,
+        parent: node
+    });
 }

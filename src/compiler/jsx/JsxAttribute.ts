@@ -7,6 +7,7 @@ import { StringUtils, getTextFromStringOrWriter } from "../../utils";
 import { NamedNode } from "../base";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { StringLiteral } from "../literal";
 import { JsxExpression } from "./JsxExpression";
 
@@ -80,6 +81,24 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
             removePrecedingNewLines: true,
             removePrecedingSpaces: true
         });
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<JsxAttributeStructure>) {
+        callBaseSet(JsxAttributeBase.prototype, this, structure);
+
+        if (structure.isSpreadAttribute)
+            throw new errors.NotImplementedError("Not implemented ability to set a JsxAttribute as a spread attribute. Please open an issue if you need this.");
+
+        if (structure.initializer != null)
+            this.setInitializer(structure.initializer);
+        else if (structure.hasOwnProperty(nameof(structure.initializer)))
+            this.removeInitializer();
+
+        return this;
     }
 
     /**

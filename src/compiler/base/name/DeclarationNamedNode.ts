@@ -75,8 +75,12 @@ function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNode
         set(structure: Partial<DeclarationNamedNodeStructure>) {
             callBaseSet(Base.prototype, this, structure);
 
-            if (structure.name != null)
-                (this as any as RenameableNode).rename(structure.name);
+            if (structure.name != null) {
+                const nameNode = this.getNameNode();
+                if (nameNode == null)
+                    throw new errors.NotImplementedError("Not implemented scenario when a name node doesn't exist. Please open an issue if you need this functionality.");
+                nameNode.replaceWithText(structure.name);
+            }
 
             return this;
         }
