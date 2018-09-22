@@ -41,14 +41,8 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
 
     /**
      * Sets the initializer.
-     * @param text - New text to set for the initializer.
+     * @param textOrWriterFunction - New text ot set for the initializer.
      */
-    setInitializer(text: string): this;
-    /**
-     * Sets the initializer.
-     * @param writerFunction - Writer function to set the initializer with.
-     */
-    setInitializer(writerFunction: WriterFunction): this;
     setInitializer(textOrWriterFunction: string | WriterFunction): this {
         const initializer = this.getInitializerOrThrow();
 

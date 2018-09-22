@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import * as errors from "../../../errors";
 import { JsxElement } from "../../../compiler";
 import { JsxElementStructure, JsxAttributeStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
@@ -87,6 +88,43 @@ describe(nameof(JsxElement), () => {
 
         it("should indent if ending with a new line", () => {
             doTest("var t = (<jsx></jsx>);", "<element>\n</element>\n", "var t = (<jsx><element>\n    </element>\n</jsx>);");
+        });
+    });
+
+    describe(nameof<JsxElement>(n => n.set), () => {
+        function doTest(text: string, structure: Partial<JsxElementStructure>, expected: string) {
+            const { descendant, sourceFile } = getInfo(text);
+            descendant.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should not change when empty", () => {
+            const code = "const v = <div></div>";
+            doTest(code, {}, code);
+        });
+
+        it("should change when all set", () => {
+            const structure: MakeRequired<JsxElementStructure> = {
+                attributes: [{ name: "attr" }],
+                bodyText: "<newElement />",
+                children: undefined,
+                isSelfClosing: false,
+                name: "newName"
+            };
+            doTest("const v = <div a1 a2><inner /></div>", structure, "const v = <newName attr>\n    <newElement />\n</newName>");
+        });
+
+        function doNotImplementedTest(text: string, structure: Partial<JsxElementStructure>) {
+            const { descendant } = getInfo(text);
+            expect(() => descendant.set(structure)).to.throw(errors.NotImplementedError);
+        }
+
+        it("should throw when setting as self closing -- not implemented", () => {
+            doNotImplementedTest("const v = <element></element>;", { isSelfClosing: true });
+        });
+
+        it("should throw when setting children -- not implemented", () => {
+            doNotImplementedTest("const v = <element></element>;", { children: [] });
         });
     });
 

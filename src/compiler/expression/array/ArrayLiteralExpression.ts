@@ -45,17 +45,9 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
     /**
      * Insert elements into the array.
      * @param index - Child index to insert at.
-     * @param texts - Texts to insert as elements.
+     * @param textsOrWriterFunction - Texts to insert as elements.
      * @param options - Options.
      */
-    insertElements(index: number, texts: ReadonlyArray<string>, options?: { useNewLines?: boolean; }): Expression[];
-    /**
-     * Insert elements into the array.
-     * @param index - Child index to insert at.
-     * @param writerFunction - Write the text using the provided writer.
-     * @param options - Options.
-     */
-    insertElements(index: number, writerFunction: WriterFunction, options?: { useNewLines?: boolean; }): Expression[];
     insertElements(index: number, textsOrWriterFunction: ReadonlyArray<string> | WriterFunction, options: { useNewLines?: boolean; } = {}) {
         const elements = this.getElements();
         index = verifyAndGetIndex(index, elements.length);
