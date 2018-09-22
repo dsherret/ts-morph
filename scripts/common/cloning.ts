@@ -8,8 +8,8 @@ export function cloneNamespaces(node: StatementedNode, cloningNamespaces: Namesp
     })));
     for (let i = 0; i < cloningNamespaces.length; i++) {
         // todo: remove repetitiveness
-        namespaces[i].addInterfaces(cloningNamespaces[i].getInterfaces().map(i => ({
-            ...i.getStructure(),
+        namespaces[i].addInterfaces(cloningNamespaces[i].getInterfaces().map(interfaceDec => ({
+            ...interfaceDec.getStructure(),
            isExported: true
         })));
         namespaces[i].addClasses(cloningNamespaces[i].getClasses().map(c => ({

@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="15.0.1"></a>
+## [15.0.1](https://github.com/dsherret/ts-simple-ast/compare/15.0.0...15.0.1) (2018-09-22)
+
+
+### Bug Fixes
+
+* Fix getting an ambient class' structure. ([48c92b5](https://github.com/dsherret/ts-simple-ast/commit/48c92b5))
+* Fix inserting get and set accessors in an ambient context. ([a282765](https://github.com/dsherret/ts-simple-ast/commit/a282765))
+* Fix printing and getting structure of FunctionDeclaration in ambient contexts. ([9940658](https://github.com/dsherret/ts-simple-ast/commit/9940658))
+* Fix some issues in generated ts definitions. ([0d2c00d](https://github.com/dsherret/ts-simple-ast/commit/0d2c00d))
+* Getting TypeAliasDeclaration structure should use the type node and not the type. ([aea96a3](https://github.com/dsherret/ts-simple-ast/commit/aea96a3))
+* IndexSignatureDeclaration.getStructure() should use the node text and not the type text. ([61f1345](https://github.com/dsherret/ts-simple-ast/commit/61f1345))
+
+
+
 <a name="15.0.0"></a>
 # [15.0.0](https://github.com/dsherret/ts-simple-ast/compare/14.4.5...15.0.0) (2018-09-22)
 
