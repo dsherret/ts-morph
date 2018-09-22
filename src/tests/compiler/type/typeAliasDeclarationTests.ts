@@ -45,13 +45,13 @@ describe(nameof(TypeAliasDeclaration), () => {
         }
 
         it("should get when has nothing", () => {
-            doTest("type Identifier = string;", {
+            doTest("type Identifier = OtherType; type OtherType = { str: string; }", {
                 docs: [],
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
                 isExported: false,
                 name: "Identifier",
-                type: "string",
+                type: "OtherType",
                 typeParameters: []
             });
         });

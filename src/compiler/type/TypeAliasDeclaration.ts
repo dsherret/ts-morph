@@ -26,7 +26,7 @@ export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasD
      */
     getStructure(): TypeAliasDeclarationStructure {
         return callBaseGetStructure<TypeAliasDeclarationSpecificStructure>(TypeAliasDeclarationBase.prototype, this, {
-            type: this.getType().getText()
+            type: this.getTypeNodeOrThrow().getText()
         });
     }
 }
