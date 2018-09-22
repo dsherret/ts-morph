@@ -1,6 +1,7 @@
 ﻿import { expect } from "chai";
 import { ExportAssignment } from "../../../compiler";
 import { ExportAssignmentStructure } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExportAssignment), () => {
@@ -51,6 +52,22 @@ describe(nameof(ExportAssignment), () => {
 
         it("should get the expression for an export default", () => {
             doTest("export default 5;", "5");
+        });
+    });
+
+    describe(nameof<ExportAssignment>(n => n.setExpression), () => {
+        function doTest(text: string, textOrWriterFunction: string | WriterFunction, expected: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ExportAssignment>(text);
+            firstChild.setExpression(textOrWriterFunction);
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should set for an export equals", () => {
+            doTest("export = 5;", "6", "export = 6;");
+        });
+
+        it("should set for an export default", () => {
+            doTest("export default 5;", writer => writer.write("6"), "export default 6;");
         });
     });
 

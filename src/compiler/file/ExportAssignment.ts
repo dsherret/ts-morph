@@ -2,6 +2,7 @@ import { ts, SyntaxKind } from "../../typescript";
 import { Expression } from "../expression";
 import { Statement } from "../statement";
 import { ExportAssignmentStructure } from "../../structures";
+import { WriterFunction } from "../../types";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export class ExportAssignment extends Statement<ts.ExportAssignment> {
@@ -35,6 +36,15 @@ export class ExportAssignment extends Statement<ts.ExportAssignment> {
      */
     getExpression(): Expression {
         return this.getNodeFromCompilerNode(this.compilerNode.expression);
+    }
+
+    /**
+     * Sets the expression of the export assignment.
+     * @param textOrWriterFunction - Text or writer function to set as the export assignment expression.
+     */
+    setExpression(textOrWriterFunction: string | WriterFunction) {
+        this.getExpression().replaceWithText(textOrWriterFunction);
+        return this;
     }
 
     /**

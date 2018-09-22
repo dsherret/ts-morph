@@ -205,6 +205,13 @@ Set whether one is an export equals or export default:
 exportAssignment.setIsExportEquals(false); // sets to export default
 ```
 
+Set its expression:
+
+```ts
+exportAssignment.setExpression(writer => writer.write("5"));
+exportAssignment.setExpression("6");
+```
+
 ### Add/Insert
 
 Add or insert use `insertExportAssignment`, `insertExportAssignments`, `addExportAssignment`, or `addExportAssignments`:
