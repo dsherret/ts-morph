@@ -222,6 +222,11 @@ describe(nameof(ClassDeclaration), () => {
                 "class c {\n    m1() {\n    }\n\n    static get m2(): string {\n    }\n\n    get m3() {\n    }\n\n    m4() {\n    }\n}");
         });
 
+        it("should insert into ambient class", () => {
+            doTest("declare class c {\n}", 0, [{ name: "g1", returnType: "string" }],
+                "declare class c {\n    get g1(): string;\n}");
+        });
+
         it("should insert all the properties of the structure", () => {
             const structure: MakeRequired<GetAccessorDeclarationStructure> = {
                 decorators: [{ name: "dec" }],
@@ -471,6 +476,11 @@ describe(nameof(ClassDeclaration), () => {
         it("should insert multiple into other methods", () => {
             doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
                 "class c {\n    m1() {\n    }\n\n    static set m2(): string {\n    }\n\n    set m3() {\n    }\n\n    m4() {\n    }\n}");
+        });
+
+        it("should insert into ambient class", () => {
+            doTest("declare class c {\n}", 0, [{ name: "s1", returnType: "string" }],
+                "declare class c {\n    set s1(): string;\n}");
         });
 
         it("should insert all the properties of the structure", () => {

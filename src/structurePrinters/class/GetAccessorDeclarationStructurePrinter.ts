@@ -25,8 +25,12 @@ export class GetAccessorDeclarationStructurePrinter extends FactoryStructurePrin
         this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
         writer.write(")");
         this.factory.forReturnTypedNode().printText(writer, structure);
-        writer.spaceIfLastNot().inlineBlock(() => {
-            this.factory.forBodyText(this.options).printText(writer, structure);
-        });
+
+        if (this.options.isAmbient || structure.isAbstract)
+            writer.write(";");
+        else
+            writer.spaceIfLastNot().inlineBlock(() => {
+                this.factory.forBodyText(this.options).printText(writer, structure);
+            });
     }
 }
