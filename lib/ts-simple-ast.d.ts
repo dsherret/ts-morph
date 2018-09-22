@@ -9426,8 +9426,6 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
 }
 
 export declare class ArgumentError extends BaseError {
-    /** @deprecated Will be removed in next major. */
-    readonly argName: string;
 }
 
 export declare class ArgumentNullOrWhitespaceError extends ArgumentError {
@@ -9437,23 +9435,15 @@ export declare class ArgumentOutOfRangeError extends ArgumentError {
 }
 
 export declare class ArgumentTypeError extends ArgumentError {
-    /** @deprecated Will be removed in next major. */
-    readonly expectedType: string;
-    /** @deprecated Will be removed in next major. */
-    readonly actualType: string;
 }
 export declare abstract class BaseError extends Error {
     readonly message: string;
 }
 
 export declare class DirectoryNotFoundError extends PathNotFoundError {
-    /** @deprecated Use path. */
-    readonly dirPath: string;
 }
 
 export declare class FileNotFoundError extends PathNotFoundError {
-    /** @deprecated Use path. */
-    readonly filePath: string;
 }
 
 export declare class InvalidOperationError extends BaseError {
