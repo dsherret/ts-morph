@@ -60,14 +60,23 @@ describe(nameof(SpreadAssignment), () => {
         });
     });
 
-    describe(nameof<SpreadAssignment>(p => p.getStructure), () => {
-        function test(code: string, expectedStructure: MakeRequired<SpreadAssignmentStructure>) {
-            const { descendant } = getInfoFromTextWithDescendant<SpreadAssignment>(code, SyntaxKind.SpreadAssignment);
-            expect(descendant.getStructure()).to.deep.equals(expectedStructure);
+    describe(nameof<SpreadAssignment>(p => p.set), () => {
+        function test(code: string, structure: Partial<SpreadAssignmentStructure>, expected: string) {
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<SpreadAssignment>(code, SyntaxKind.SpreadAssignment);
+            descendant.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expected);
         }
 
-        it("should get the structure", () => {
-            test("const t = { ...assignment };", { expression: "assignment" });
+        it("should not changed when nothing specified", () => {
+            const code = "const t = { ...assignment };";
+            test(code, {}, code);
+        });
+
+        it("should set everything", () => {
+            const structure: MakeRequired<SpreadAssignmentStructure> = {
+                expression: "newExpression"
+            };
+            test("const t = { ...assignment };", structure, "const t = { ...newExpression };");
         });
     });
 
@@ -79,9 +88,7 @@ describe(nameof(SpreadAssignment), () => {
         }
 
         it("should get", () => {
-            doTest("const t = { ...assignment };", {
-                expression: "assignment"
-            });
+            doTest("const t = { ...assignment };", { expression: "assignment" });
         });
     });
 });

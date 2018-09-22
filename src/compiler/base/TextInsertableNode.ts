@@ -13,33 +13,17 @@ export interface TextInsertableNode {
      *
      * WARNING: This will forget any previously navigated descendant nodes.
      * @param pos - Position to insert at.
-     * @param text - Text to insert.
+     * @param textOrWriterFunction - Text to insert.
      */
-    insertText(pos: number, text: string): this;
-    /**
-     * Inserts text within the body of the node using a writer.
-     *
-     * WARNING: This will forget any previously navigated descendant nodes.
-     * @param pos - Position to insert at.
-     * @param writerFunction - Write the text using the provided writer.
-     */
-    insertText(pos: number, writerFunction: WriterFunction): this;
+    insertText(pos: number, textOrWriterFunction: string | WriterFunction): this;
     /**
      * Replaces text within the body of the node.
      *
      * WARNING: This will forget any previously navigated descendant nodes.
      * @param range - Start and end position of the text to replace.
-     * @param text - Text to replace the range with.
+     * @param textOrWriterFunction - Text to replace the range with.
      */
-    replaceText(range: [number, number], text: string): this;
-    /**
-     * Replaces text within the body of the node using a writer function.
-     *
-     * WARNING: This will forget any previously navigated descendant nodes.
-     * @param range - Start and end position of the text to replace.
-     * @param writerFunction - Write the text using the provided writer.
-     */
-    replaceText(range: [number, number], writerFunction: WriterFunction): this;
+    replaceText(range: [number, number], textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes all the text within the node
      */

@@ -5,8 +5,9 @@ import { StringUtils } from "../../utils";
 import { NamedNode } from "../base";
 import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
-import { TypeParameterDeclarationStructure } from "../../structures";
+import { TypeParameterDeclarationStructure, TypeParameterDeclarationSpecificStructure } from "../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 
 export const TypeParameterDeclarationBase = NamedNode(Node);
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
@@ -146,15 +147,34 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
     }
 
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<TypeParameterDeclarationStructure>) {
+        callBaseSet(TypeParameterDeclarationBase.prototype, this, structure);
+
+        if (structure.constraint != null)
+            this.setConstraint(structure.constraint);
+        else if (structure.hasOwnProperty(nameof(structure.constraint)))
+            this.removeConstraint();
+
+        if (structure.default != null)
+            this.setDefault(structure.default);
+        else if (structure.hasOwnProperty(nameof(structure.default)))
+            this.removeDefault();
+
+        return this;
+    }
+
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): TypeParameterDeclarationStructure {
         const constraintNode = this.getConstraint();
         const defaultNode = this.getDefault();
 
-        return callBaseGetStructure<TypeParameterDeclarationStructure>({}, this, {
+        return callBaseGetStructure<TypeParameterDeclarationSpecificStructure>(TypeParameterDeclarationBase.prototype, this, {
             constraint: constraintNode != null ? constraintNode.getText() : undefined,
-            name: this.getName(),
             default: defaultNode ? defaultNode.getText() : undefined
         });
     }

@@ -209,6 +209,46 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
+    describe(nameof<ImportSpecifier>(n => n.set), () => {
+        function doTest(text: string, structure: Partial<ImportSpecifierStructure>, expectedText: string) {
+            const { firstChild, sourceFile, project } = getInfoFromText<ImportDeclaration>(text);
+            const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
+            firstChild.getNamedImports()[0].set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(otherSourceFile.getText()).to.equal("export class name {}");
+        }
+
+        it("should not change anything when nothing is specified", () => {
+            const code = `import { a as b } from './file'`;
+            doTest(code, {}, code);
+        });
+
+        it("should not rename when adding an alias and changing the name", () => {
+            doTest(`import { name } from './file'; const t = name;`, { name: "a", alias: "alias" },
+                `import { a as alias } from './file'; const t = name;`);
+        });
+
+        it("should not rename when adding an alias", () => {
+            doTest(`import { name } from './file'; const t = name;`, { alias: "alias" },
+                `import { name as alias } from './file'; const t = name;`);
+        });
+
+        it("should not rename when removing an alias", () => {
+            doTest(`import { name as alias } from './file'; const t = alias;`, { alias: undefined },
+                `import { name } from './file'; const t = alias;`);
+        });
+
+        it("should not rename when changing the alias and name", () => {
+            doTest(`import { name as alias } from './file'; const t = alias;`, { name: "name2", alias: "alias2" },
+                `import { name2 as alias2 } from './file'; const t = alias;`);
+        });
+
+        it("should not rename when removing the alias and changing the name", () => {
+            doTest(`import { name as alias } from './file'; const t = alias;`, { name: "name2", alias: undefined },
+                `import { name2 } from './file'; const t = alias;`);
+        });
+    });
+
     describe(nameof<ImportSpecifier>(n => n.getStructure), () => {
         function doTest(text: string, expectedStructure: MakeRequired<ImportSpecifierStructure>) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);

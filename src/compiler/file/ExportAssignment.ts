@@ -4,8 +4,10 @@ import { Statement } from "../statement";
 import { ExportAssignmentStructure } from "../../structures";
 import { WriterFunction } from "../../types";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 
-export class ExportAssignment extends Statement<ts.ExportAssignment> {
+export const ExportAssignmentBase = Statement;
+export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
     /**
      * Gets if this is an export equals assignment.
      *
@@ -44,6 +46,21 @@ export class ExportAssignment extends Statement<ts.ExportAssignment> {
      */
     setExpression(textOrWriterFunction: string | WriterFunction) {
         this.getExpression().replaceWithText(textOrWriterFunction);
+        return this;
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportAssignmentStructure>) {
+        callBaseSet(ExportAssignmentBase.prototype, this, structure);
+
+        if (structure.expression != null)
+            this.setExpression(structure.expression);
+        if (structure.isExportEquals != null)
+            this.setIsExportEquals(structure.isExportEquals);
+
         return this;
     }
 

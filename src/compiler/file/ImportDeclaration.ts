@@ -9,8 +9,10 @@ import { Statement } from "../statement";
 import { ImportSpecifier } from "./ImportSpecifier";
 import { SourceFile } from "./SourceFile";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 
-export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
+export const ImportDeclarationBase = Statement;
+export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
     /**
      * Sets the import specifier.
      * @param text - Text to set as the module specifier.
@@ -210,7 +212,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
             return this;
         const defaultImport = importClause.getNodeProperty("name");
         if (defaultImport == null)
-            return;
+            return this;
 
         const hasOnlyDefaultImport = importClause.getChildCount() === 1;
         if (hasOnlyDefaultImport)
@@ -315,7 +317,18 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
                     newText: ` ${writer.toString()} from`
                 });
             else if (this.getNamespaceImport() != null)
-                throw new errors.InvalidOperationError("Cannot add a named import to an import declaration that has a namespace import.");
+                throw getErrorWhenNamespaceImportsExist();
+            else if (importClause.getNodeProperty("namedBindings") != null) {
+                const namedBindings = importClause.getNodeProperty("namedBindings")!;
+                insertIntoParentTextRange({
+                    insertPos: namedBindings.getStart(),
+                    replacing: {
+                        textLength: namedBindings.getWidth()
+                    },
+                    parent: importClause,
+                    newText: writer.toString()
+                });
+            }
             else
                 insertIntoParentTextRange({
                     insertPos: this.getDefaultImport()!.getEnd(),
@@ -365,7 +378,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         if (namedImportsNode == null)
             return this;
 
-        // ex. import defaultExport, {Export1} from "module-name";
+        // ex. import defaultExport, { Export1 } from "module-name";
         const defaultImport = this.getDefaultImport();
         if (defaultImport != null) {
             const commaToken = defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken);
@@ -373,7 +386,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
             return this;
         }
 
-        // ex. import {Export1} from "module-name";
+        // ex. import { Export1 } from "module-name";
         const fromKeyword = importClause.getNextSiblingIfKindOrThrow(SyntaxKind.FromKeyword);
         removeChildren({ children: [importClause, fromKeyword], removePrecedingSpaces: true });
         return this;
@@ -394,17 +407,95 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     }
 
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ImportDeclarationStructure>) {
+        callBaseSet(ImportDeclarationBase.prototype, this, structure);
+
+        if (structure.defaultImport != null)
+            this.setDefaultImport(structure.defaultImport);
+        else if (structure.hasOwnProperty(nameof(structure.defaultImport)))
+            this.removeDefaultImport();
+
+        if (structure.hasOwnProperty(nameof(structure.namedImports)))
+            this.removeNamedImports();
+
+        if (structure.namespaceImport != null)
+            this.setNamespaceImport(structure.namespaceImport);
+        else if (structure.hasOwnProperty(nameof(structure.namespaceImport)))
+            this.removeNamespaceImport();
+
+        if (structure.namedImports != null) {
+            setEmptyNamedImport(this);
+            this.addNamedImports(structure.namedImports);
+        }
+
+        if (structure.moduleSpecifier != null)
+            this.setModuleSpecifier(structure.moduleSpecifier);
+
+        return this;
+    }
+
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): ImportDeclarationStructure {
         const namespaceImport = this.getNamespaceImport();
         const defaultImport = this.getDefaultImport();
 
-        return callBaseGetStructure<ImportDeclarationStructure>(Statement.prototype, this, {
+        return callBaseGetStructure<ImportDeclarationStructure>(ImportDeclarationBase.prototype, this, {
             defaultImport: defaultImport ? defaultImport.getText() : undefined,
             moduleSpecifier: this.getModuleSpecifier().getText(),
             namedImports: this.getNamedImports().map(node => node.getStructure()),
             namespaceImport: namespaceImport ? namespaceImport.getText() : undefined
         });
     }
+}
+
+function setEmptyNamedImport(node: ImportDeclaration) {
+    const importClause = node.getNodeProperty("importClause");
+    const writer = node.getWriterWithQueuedChildIndentation();
+    const namedImportStructurePrinter = node.context.structurePrinterFactory.forNamedImportExportSpecifier();
+    namedImportStructurePrinter.printTextsWithBraces(writer, []);
+    const emptyBracesText = writer.toString();
+
+    if (node.getNamespaceImport() != null)
+        throw getErrorWhenNamespaceImportsExist();
+
+    if (importClause == null) {
+        insertIntoParentTextRange({
+            insertPos: node.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
+            parent: node,
+            newText: ` ${emptyBracesText} from`
+        });
+        return;
+    }
+
+    const replaceNode = importClause.getNodeProperty("namedBindings")!;
+    if (replaceNode != null) {
+        insertIntoParentTextRange({
+            parent: importClause,
+            newText: emptyBracesText,
+            insertPos: replaceNode.getStart(),
+            replacing: {
+                textLength: replaceNode.getWidth()
+            }
+        });
+        return;
+    }
+
+    const defaultImport = importClause.getNodeProperty("name");
+    if (defaultImport != null) {
+        insertIntoParentTextRange({
+            insertPos: defaultImport.getEnd(),
+            parent: importClause,
+            newText: `, ${emptyBracesText}`
+        });
+        return;
+    }
+}
+
+function getErrorWhenNamespaceImportsExist() {
+    return new errors.InvalidOperationError("Cannot add a named import to an import declaration that has a namespace import.");
 }

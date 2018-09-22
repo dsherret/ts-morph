@@ -142,6 +142,7 @@ describe(nameof(ParameterDeclaration), () => {
         function doTest(code: string, expectedStructure: MakeRequired<ParameterDeclarationStructure>) {
             const { descendant } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             const structure = descendant.getStructure();
+            structure.decorators = structure.decorators!.map(d => ({ name: d.name }));
             expect(structure).to.deep.include(expectedStructure);
         }
 
@@ -167,7 +168,7 @@ describe(nameof(ParameterDeclaration), () => {
                 scope: Scope.Public,
                 initializer: "true",
                 isReadonly: true,
-                decorators: [{ name: "dec", arguments: undefined }],
+                decorators: [{ name: "dec" }],
                 isRestParameter: true
             });
         });

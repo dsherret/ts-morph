@@ -4,6 +4,7 @@ import { ExpressionedNode } from "../expressioned";
 import { PropertyAssignment } from "./PropertyAssignment";
 import { removeCommaSeparatedChild } from "../../../manipulation";
 import { SpreadAssignmentStructure } from "../../../structures";
+import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 export const SpreadAssignmentBase = ExpressionedNode(Node);
@@ -13,6 +14,16 @@ export class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> 
      */
     remove() {
         removeCommaSeparatedChild(this);
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<SpreadAssignmentStructure>) {
+        callBaseSet(SpreadAssignmentBase.prototype, this, structure);
+
+        return this;
     }
 
     /**

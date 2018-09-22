@@ -290,6 +290,10 @@ describe(nameof(ExportDeclaration), () => {
         it("should insert named exports in the middle", () => {
             doTest(`export {name1, name4} from "./test";`, 1, [{ name: "name2" }, { name: "name3" }], `export {name1, name2, name3, name4} from "./test";`);
         });
+
+        it("should insert named exports when there are none", () => {
+            doTest(`export { } from "./test";`, 0, [{ name: "name1" }], `export { name1 } from "./test";`);
+        });
     });
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExport), () => {
@@ -366,6 +370,65 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should change to a namespace import when there's multiple to remove", () => {
             doTest(`export {name, name2, name3, name4} from "./test";`, `export * from "./test";`);
+        });
+    });
+
+    describe(nameof<ExportDeclaration>(n => n.getStructure), () => {
+        function doTest(text: string, structure: Partial<ExportDeclarationStructure>, expectedText: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
+            firstChild.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should not change when nothing is set and it's a namespace export", () => {
+            const code = "export * from 'test';";
+            doTest(code, {}, code);
+        });
+
+        it("should not change when nothing is set and it's has named exports", () => {
+            const code = "export { test } from 'test';";
+            doTest(code, {}, code);
+        });
+
+        it("should change to a namespace export when specifies undefined for named exports", () => {
+            doTest("export { test } from 'test';", { namedExports: undefined }, "export * from 'test';");
+        });
+
+        it("should remove the named exports when specifying an empty array", () => {
+            doTest("export { test1, test2 } from 'test';", { namedExports: [] }, "export { } from 'test';");
+        });
+
+        it("should remove the module specifier when specifying", () => {
+            doTest("export { test } from 'test';", { moduleSpecifier: undefined }, "export { test };");
+        });
+
+        it("should remove the namespace export and module specifier when specifying", () => {
+            doTest("export * from 'test';", { namedExports: [], moduleSpecifier: undefined }, "export { };");
+        });
+
+        it("should add the namespace export and set module specifier when specifying", () => {
+            doTest("export {};", { namedExports: undefined, moduleSpecifier: "test" }, `export * from "test";`);
+        });
+
+        it("should set everything when specified", () => {
+            const structure: MakeRequired<ExportDeclarationStructure> = {
+                namedExports: [{ name: "test" }, { name: "test2", alias: "alias" }],
+                moduleSpecifier: "asdf"
+            };
+            doTest("export * from 'test';", structure, "export { test, test2 as alias } from 'asdf';");
+        });
+
+        function doThrowTest(text: string, structure: Partial<ExportDeclarationStructure>) {
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
+            expect(() => firstChild.set(structure)).to.throw(errors.InvalidOperationError);
+        }
+
+        it("should throw when specifying no module specifier for a namespace export", () => {
+            doThrowTest("export * from 'test';", { moduleSpecifier: undefined });
+        });
+
+        it("should throw when specifying a namespace export with no module specifier", () => {
+            doThrowTest("export { } from 'test';", { namedExports: undefined, moduleSpecifier: undefined });
         });
     });
 

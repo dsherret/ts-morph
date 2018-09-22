@@ -3,11 +3,13 @@ import { SyntaxKind, ts } from "../../typescript";
 import { StringUtils } from "../../utils";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { ImportSpecifierStructure } from "../../structures";
 
 // todo: There's a lot of common code that could be shared with ExportSpecifier. It could be moved to a mixin.
 
-export class ImportSpecifier extends Node<ts.ImportSpecifier> {
+export const ImportSpecifierBase = Node;
+export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
     /**
      * Sets the identifier being imported.
      * @param name - Name being imported.
@@ -17,13 +19,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
         if (nameNode.getText() === name)
             return this;
 
-        const start = nameNode.getStart();
-        replaceNodeText({
-            sourceFile: this.sourceFile,
-            start,
-            replacingLength: nameNode.getWidth(),
-            newText: name
-        });
+        nameNode.replaceWithText(name);
 
         return this;
     }
@@ -148,11 +144,29 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     }
 
     /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ImportSpecifierStructure>) {
+        callBaseSet(ImportSpecifierBase.prototype, this, structure);
+
+        if (structure.name != null)
+            this.setName(structure.name);
+
+        if (structure.alias != null)
+            this.setAlias(structure.alias);
+        else if (structure.hasOwnProperty(nameof(structure.alias)))
+            this.removeAlias();
+
+        return this;
+    }
+
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure() {
         const alias = this.getAliasNode();
-        return callBaseGetStructure<ImportSpecifierStructure>(Node.prototype, this, {
+        return callBaseGetStructure<ImportSpecifierStructure>(ImportSpecifierBase.prototype, this, {
             name: this.getName(),
             alias: alias ? alias.getText() : undefined
         }) as ImportSpecifierStructure;

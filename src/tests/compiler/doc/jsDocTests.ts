@@ -129,6 +129,24 @@ describe(nameof(JSDoc), () => {
         });
     });
 
+    describe(nameof<JSDoc>(n => n.set), () => {
+        function doTest(text: string, structure: Partial<JSDocStructure>, expectedText: string) {
+            const { sourceFile } = getInfoFromText(text);
+            sourceFile.getClasses()[0].getJsDocs()[0].set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should not change when empty", () => {
+            const code = "/** Test */\nclass Test {}";
+            doTest(code, {}, code);
+        });
+
+        it("should change when specified", () => {
+            doTest("/**\n * Test\n */\nclass Test {}", { description: "New" },
+                "/**\n * New\n */\nclass Test {}");
+        });
+    });
+
     describe(nameof<JSDoc>(n => n.getStructure), () => {
         function doTest(text: string, expectedStructure: MakeRequired<JSDocStructure>) {
             const { sourceFile } = getInfoFromText(text);

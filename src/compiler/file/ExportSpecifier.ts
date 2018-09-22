@@ -4,11 +4,13 @@ import { SyntaxKind, ts } from "../../typescript";
 import { StringUtils } from "../../utils";
 import { Node, Symbol } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { ExportSpecifierStructure } from "../../structures";
 
 // todo: There's a lot of common code that could be shared with ImportSpecifier. It could be moved to a mixin.
 
-export class ExportSpecifier extends Node<ts.ExportSpecifier> {
+export const ExportSpecifierBase = Node;
+export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
     /**
      * Sets the name of what's being exported.
      */
@@ -169,6 +171,24 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
             exportDeclaration.toNamespaceExport();
         else
             exportDeclaration.remove();
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportSpecifierStructure>) {
+        callBaseSet(ExportSpecifierBase.prototype, this, structure);
+
+        if (structure.name != null)
+            this.setName(structure.name);
+
+        if (structure.alias != null)
+            this.setAlias(structure.alias);
+        else if (structure.hasOwnProperty(nameof(structure.alias)))
+            this.removeAlias();
+
+        return this;
     }
 
     /**

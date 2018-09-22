@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
-import { FunctionDeclaration, TypeParameterDeclaration } from "../../../compiler";
+import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration } from "../../../compiler";
+import { TypeParameterDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypeParameterDeclaration), () => {
@@ -179,6 +180,50 @@ describe(nameof(TypeParameterDeclaration), () => {
 
         it("should remove when it has a constraint", () => {
             doTest("function func<T extends Other, U>() {}", 0, "function func<U>() {}");
+        });
+    });
+
+    describe(nameof<TypeParameterDeclaration>(n => n.set), () => {
+        function doTest(text: string, structure: Partial<TypeParameterDeclarationStructure>, expectedText: string) {
+            const { sourceFile } = getInfoFromText<ClassDeclaration>(text);
+            sourceFile.getClasses()[0].getTypeParameters()[0].set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should not change when empty", () => {
+            const code = "class C<T extends string = number> {}";
+            doTest(code, {}, code);
+        });
+
+        it("should remove when specifying undefined for constraint and default", () => {
+            doTest("class C<T extends string = number> {}", { constraint: undefined, default: undefined },
+               "class C<T> {}");
+        });
+
+        it("should replace existing", () => {
+            doTest("class C<T extends string = number> {}", { name: "U", constraint: "number", default: "string" },
+                "class C<U extends number = string> {}");
+        });
+
+        it("should add constraint and default when not exists", () => {
+            doTest("class C<T> {}", { name: "U", constraint: "number", default: "string" },
+                "class C<U extends number = string> {}");
+        });
+    });
+
+    describe(nameof<TypeParameterDeclaration>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<TypeParameterDeclarationStructure>) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
+            const structure = firstChild.getTypeParameters()[0].getStructure();
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when it has nothing", () => {
+            doTest("class C<T> {}", { name: "T", constraint: undefined, default: undefined });
+        });
+
+        it("should get when it has everything", () => {
+            doTest("class C<T extends string = number> {}", { name: "T", constraint: "string", default: "number" });
         });
     });
 });

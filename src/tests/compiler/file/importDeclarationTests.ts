@@ -563,6 +563,104 @@ describe(nameof(ImportDeclaration), () => {
         });
     });
 
+    describe(nameof<ImportDeclaration>(n => n.set), () => {
+        function doTest(text: string, structure: Partial<ImportDeclarationStructure>, expectedText: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
+            firstChild.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should do nothing when empty", () => {
+            const code = `import asdf, * as test from "test";`;
+            doTest(code, { }, code);
+        });
+
+        it("should add default when nothing exists", () => {
+            doTest(`import "test";`, { defaultImport: "asdf" }, `import asdf from "test";`);
+        });
+
+        it("should add namespace when nothing exists", () => {
+            doTest(`import "test";`, { namespaceImport: "asdf" }, `import * as asdf from "test";`);
+        });
+
+        it("should add named imports when nothing exists", () => {
+            doTest(`import "test";`, { namedImports: [{ name: "asdf" }] }, `import { asdf } from "test";`);
+        });
+
+        it("should add named when a default exists", () => {
+            doTest(`import asdf from "test";`, { namedImports: [{ name: "asdf" }] }, `import asdf, { asdf } from "test";`);
+        });
+
+        it("should add namespace when a default exists", () => {
+            doTest(`import asdf from "test";`, { namespaceImport: "asdf" }, `import asdf, * as asdf from "test";`);
+        });
+
+        it("should replace namespace", () => {
+            doTest(`import * as test from "test";`, { namespaceImport: "asdf" }, `import * as asdf from "test";`);
+        });
+
+        it("should replace namespace when a default also exists", () => {
+            doTest(`import asdf, * as test from "test";`, { namespaceImport: "asdf" }, `import asdf, * as asdf from "test";`);
+        });
+
+        it("should replace named imports", () => {
+            doTest(`import { test } from "test";`, { namedImports: [{ name: "asdf" }] }, `import { asdf } from "test";`);
+        });
+
+        it("should replace named imports when a default also exists", () => {
+            doTest(`import asdf, { test } from "test";`, { namedImports: [{ name: "asdf" }] }, `import asdf, { asdf } from "test";`);
+        });
+
+        it("should add named imports when removing a namespace import", () => {
+            doTest(`import * as test from "test";`, { namedImports: [{ name: "asdf" }], namespaceImport: undefined },
+                `import { asdf } from "test";`);
+        });
+
+        it("should add namespace import when removing a named import", () => {
+            doTest(`import * as test from "test";`, { namedImports: [{ name: "asdf" }], namespaceImport: undefined },
+                `import { asdf } from "test";`);
+        });
+
+        it("should remove default specifying", () => {
+            doTest(`import asdf from "test";`, { defaultImport: undefined }, `import "test";`);
+        });
+
+        it("should remove named imports specifying", () => {
+            doTest(`import { test } from "test";`, { namedImports: undefined }, `import "test";`);
+        });
+
+        it("should remove namespace import when specifying", () => {
+            doTest(`import * as test from "test";`, { namespaceImport: undefined }, `import "test";`);
+        });
+
+        it("should change module specifier when specifying", () => {
+            doTest(`import * as test from "test";`, { moduleSpecifier: "new" }, `import * as test from "new";`);
+        });
+
+        it("should set everything when specified", () => {
+            const structure: MakeRequired<ImportDeclarationStructure> = {
+                defaultImport: "asdf",
+                moduleSpecifier: "new",
+                namedImports: undefined,
+                namespaceImport: "test"
+            };
+            doTest("import 'test';", structure, "import asdf, * as test from 'new';");
+        });
+
+        function doThrowTest(text: string, structure: Partial<ImportDeclarationStructure>) {
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
+            expect(() => firstChild.set(structure)).to.throw(errors.InvalidOperationError);
+        }
+
+        it("should throw when adding named imports when a namespace exists", () => {
+            doThrowTest(`import * as asdf from "test";`, { namedImports: [{ name: "test" }] });
+        });
+
+        it("should throw when adding namespace import when named exist", () => {
+            doThrowTest(`import { asdf } from "test";`, { namespaceImport: "test" });
+        });
+    });
+
     describe(nameof<ImportDeclaration>(n => n.getStructure), () => {
         function doTest(text: string, expectedStructure: MakeRequired<ImportDeclarationStructure>) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);

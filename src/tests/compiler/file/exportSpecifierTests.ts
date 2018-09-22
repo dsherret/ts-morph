@@ -282,6 +282,48 @@ describe(nameof(ExportSpecifier), () => {
         });
     });
 
+    describe(nameof<ExportSpecifier>(n => n.set), () => {
+        function doTest(text: string, structure: Partial<ExportSpecifierStructure>, expectedText: string, expectedImportName: string) {
+            const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text);
+            const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
+            const importingFile = project.createSourceFile("importingFile.ts", `import { name } from './testFile';`);
+            sourceFile.getExportDeclarations()[0].getNamedExports()[0].set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(otherSourceFile.getText()).to.equal("export class name {}");
+            expect(importingFile.getImportDeclarations()[0].getNamedImports()[0].getName()).to.equal(expectedImportName);
+        }
+
+        it("should not change anything when nothing is specified", () => {
+            const code = `import {name as alias} from './file'; export { alias as name};`;
+            doTest(code, {}, code, "name");
+        });
+
+        it("should not rename when adding an alias and changing the name", () => {
+            doTest(`import { name as alias } from './file'; export { alias as name};`, { name: "a", alias: "alias" },
+                `import { name as alias } from './file'; export { a as alias};`, "name");
+        });
+
+        it("should not rename when adding an alias", () => {
+            doTest(`import { name } from './file'; export { name };`, { alias: "alias" },
+                `import { name } from './file'; export { name as alias };`, "name");
+        });
+
+        it("should not rename when removing an alias", () => {
+            doTest(`import { name as alias } from './file'; export { alias as name };`, { alias: undefined },
+                `import { name as alias } from './file'; export { alias };`, "name");
+        });
+
+        it("should not rename when changing the alias and name", () => {
+            doTest(`import { name as alias } from './file'; export { alias as name };`, { name: "name2", alias: "alias2" },
+                `import { name as alias } from './file'; export { name2 as alias2 };`, "name");
+        });
+
+        it("should not rename when removing the alias and changing the name", () => {
+            doTest(`import { name as alias } from './file'; export { alias as name };`, { name: "name2", alias: undefined },
+                `import { name as alias } from './file'; export { name2 };`, "name");
+        });
+    });
+
     describe(nameof<ExportSpecifier>(n => n.getStructure), () => {
         function doTest(text: string, expectedStructure: MakeRequired<ExportSpecifierStructure>) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);

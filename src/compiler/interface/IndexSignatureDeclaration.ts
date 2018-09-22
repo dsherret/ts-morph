@@ -81,16 +81,8 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
 
     /**
      * Sets the return type.
-     * @param text - Text of the return type.
+     * @param textOrWriterFunction - Text to set as the return type.
      */
-    setReturnType(text: string): this;
-    /**
-     * Sets the return type.
-     * @param writerFunction - Writer function to write the return type with.
-     */
-    setReturnType(writerFunction: WriterFunction): this;
-    /** @internal */
-    setReturnType(textOrWriterFunction: string | WriterFunction): this;
     setReturnType(textOrWriterFunction: string | WriterFunction) {
         const returnTypeNode = this.getReturnTypeNode();
         const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);

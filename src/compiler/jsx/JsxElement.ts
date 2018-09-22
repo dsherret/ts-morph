@@ -1,11 +1,13 @@
+import * as errors from "../../errors";
 import { insertIntoParentTextRange } from "../../manipulation";
 import { WriterFunction } from "../../types";
 import { JsxElementStructure } from "../../structures";
 import { ts } from "../../typescript";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 import { printTextFromStringOrWriter } from "../../utils";
 import { JsxChild } from "../aliases";
 import { getBodyText, getBodyTextForStructure } from "../base/helpers";
+import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { PrimaryExpression } from "../expression";
 import { JsxClosingElement } from "./JsxClosingElement";
 import { JsxOpeningElement } from "./JsxOpeningElement";
@@ -35,14 +37,8 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
 
     /**
      * Sets the body text.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to set as the body.
      */
-    setBodyText(writerFunction: WriterFunction): this;
-    /**
-     * Sets the body text.
-     * @param text - Text to set as the body.
-     */
-    setBodyText(text: string): this;
     setBodyText(textOrWriterFunction: string | WriterFunction) {
         const newText = getBodyText(this.getWriterWithIndentation(), textOrWriterFunction);
         setText(this, newText);
@@ -51,14 +47,8 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
 
     /**
      * Sets the body text without surrounding new lines.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text to set as the body.
      */
-    setBodyTextInline(writerFunction: WriterFunction): this;
-    /**
-     * Sets the body text without surrounding new lines.
-     * @param text - Text to set as the body.
-     */
-    setBodyTextInline(text: string): this;
     setBodyTextInline(textOrWriterFunction: string | WriterFunction) {
         const writer = this.getWriterWithQueuedChildIndentation();
         printTextFromStringOrWriter(writer, textOrWriterFunction);
@@ -67,6 +57,38 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
             writer.write(""); // indentation
         }
         setText(this, writer.toString());
+        return this;
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<JsxElementStructure>) {
+        callBaseSet(JsxElementBase.prototype, this, structure);
+
+        if (structure.attributes != null) {
+            const openingElement = this.getOpeningElement();
+            openingElement.getAttributes().forEach(a => a.remove());
+            openingElement.addAttributes(structure.attributes);
+        }
+
+        if (structure.isSelfClosing)
+            throw new errors.NotImplementedError("Changing a JsxElement to be self closing is not implemented. Please open an issue if you need this.");
+
+        if (structure.children != null)
+            throw new errors.NotImplementedError("Setting JSX children is currently not implemented. Please open an issue if you need this.");
+
+        if (structure.bodyText != null)
+            this.setBodyText(structure.bodyText);
+        else if (structure.hasOwnProperty(nameof(structure.bodyText)))
+            this.setBodyTextInline("");
+
+        if (structure.name != null) {
+            this.getOpeningElement().getTagName().replaceWithText(structure.name);
+            this.getClosingElement().getTagName().replaceWithText(structure.name);
+        }
+
         return this;
     }
 

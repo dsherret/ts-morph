@@ -1,7 +1,9 @@
 import { removeChildren } from "../../manipulation";
+import * as errors from "../../errors";
 import { JsxSpreadAttributeStructure } from "../../structures";
 import { WriterFunction } from "../../types";
 import { ts } from "../../typescript";
+import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common";
 
@@ -32,6 +34,22 @@ export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttri
             removePrecedingNewLines: true,
             removePrecedingSpaces: true
         });
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<JsxSpreadAttributeStructure>) {
+        callBaseSet(JsxSpreadAttributeBase.prototype, this, structure);
+
+        if ((structure.isSpreadAttribute as boolean) === false)
+            throw new errors.NotImplementedError("Not implemented ability to convert a spread attribute to a regular attribute. Open up an issue if you need this.");
+
+        if (structure.expression != null)
+            this.setExpression(structure.expression);
+
+        return this;
     }
 
     /**

@@ -157,8 +157,8 @@ describe(nameof(NameableNode), () => {
             doTest("export default class Test {}", { }, "export default class Test {}");
         });
 
-        it("should rename when specifying name", () => {
-            doTest("class Test {} const t: Test;", { name: "NewName" }, "class NewName {} const t: NewName;");
+        it("should not rename when specifying name", () => {
+            doTest("class Test {} const t: Test;", { name: "NewName" }, "class NewName {} const t: Test;");
         });
     });
 
