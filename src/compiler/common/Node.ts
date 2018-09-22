@@ -1148,7 +1148,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     replaceWithText(textOrWriterFunction: string | WriterFunction, writer: CodeBlockWriter): Node;
     replaceWithText(textOrWriterFunction: string | WriterFunction, writer?: CodeBlockWriter): Node {
-        const newText = getTextFromStringOrWriter(writer || this.getWriter(), textOrWriterFunction);
+        const newText = getTextFromStringOrWriter(writer || this.getWriterWithQueuedIndentation(), textOrWriterFunction);
         if (TypeGuards.isSourceFile(this)) {
             this.replaceText([this.getPos(), this.getEnd()], newText);
             return this;
