@@ -52,6 +52,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     readonly _referenceContainer = new SourceFileReferenceContainer(this);
 
+    /** @internal */
+    _hasBom: true | undefined;
+
     /**
      * Initializes a new instance.
      * @internal
@@ -392,7 +395,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Asynchronously saves this file with any changes.
      */
     async save() {
-        await this.context.fileSystemWrapper.writeFile(this.getFilePath(), this.getFullText());
+        await this.context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
         this._isSaved = true;
     }
 
@@ -400,8 +403,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Synchronously saves this file with any changes.
      */
     saveSync() {
-        this.context.fileSystemWrapper.writeFileSync(this.getFilePath(), this.getFullText());
+        this.context.fileSystemWrapper.writeFileSync(this.getFilePath(), this._getTextForSave());
         this._isSaved = true;
+    }
+
+    /** @internal */
+    private _getTextForSave() {
+        const text = this.getFullText();
+        return this._hasBom ? "\uFEFF" + text : text;
     }
 
     /**

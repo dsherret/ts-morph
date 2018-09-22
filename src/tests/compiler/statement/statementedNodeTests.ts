@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import { CaseClause, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile, StatementedNode, Block } from "../../../compiler";
-import { Chars } from "../../../constants";
 import { StatementedNodeStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
@@ -117,7 +116,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert statements after a utf-8 bom", () => {
-            doSourceFileTest(Chars.BOM, 0, "newText;", 1, Chars.BOM + "newText;\n");
+            doSourceFileTest("\uFEFF", 0, "newText;", 1, "newText;\n");
         });
 
         it("should allow inserting nothing", () => {

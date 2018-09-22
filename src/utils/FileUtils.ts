@@ -1,6 +1,5 @@
 ﻿import * as toAbsoluteGlob from "@dsherret/to-absolute-glob";
 import * as path from "path";
-import { Chars } from "../constants";
 import { FileSystemHost, FileSystemWrapper } from "../fileSystem";
 import { ArrayUtils } from "./ArrayUtils";
 import { StringUtils } from "./StringUtils";
@@ -208,9 +207,9 @@ export class FileUtils {
      * @param text - Text.
      */
     static getTextWithByteOrderMark(text: string) {
-        if (text[0] === Chars.BOM)
+        if (StringUtils.hasBom(text))
             return text;
-        return Chars.BOM + text;
+        return "\uFEFF" + text;
     }
 
     /**

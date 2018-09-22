@@ -7,7 +7,7 @@ import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
 import { SyntaxKind, ScriptTarget, ts, TypeFlags } from "../typescript";
 import { replaceSourceFileForCacheUpdate } from "../manipulation";
-import { ArrayUtils, EventContainer, FileUtils, KeyValueCache, WeakCache } from "../utils";
+import { ArrayUtils, EventContainer, FileUtils, KeyValueCache, WeakCache, StringUtils } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
 import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
 import { kindToWrapperMappings } from "./kindToWrapperMappings";
@@ -271,7 +271,13 @@ export class CompilerFactory {
     }
 
     private createSourceFileFromTextInternal(filePath: string, text: string): SourceFile {
-        return this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text));
+        const hasBom = StringUtils.hasBom(text);
+        if (hasBom)
+            text = StringUtils.stripBom(text);
+        const sourceFile = this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text));
+        if (hasBom)
+            sourceFile._hasBom = true;
+        return sourceFile;
     }
 
     createCompilerSourceFileFromText(filePath: string, text: string): ts.SourceFile {

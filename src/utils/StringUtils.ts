@@ -7,6 +7,16 @@ export class StringUtils {
     private constructor() {
     }
 
+    static hasBom(text: string) {
+        return text.charCodeAt(0) === 0xFEFF;
+    }
+
+    static stripBom(text: string) {
+        if (StringUtils.hasBom(text))
+            return text.slice(1);
+        return text;
+    }
+
     static isNullOrWhitespace(str: string | undefined): str is undefined {
         return typeof str !== "string" || str.trim().length === 0;
     }
@@ -122,10 +132,12 @@ export class StringUtils {
 
 export class Es5StringUtils {
     static startsWith(str: string, startsWithString: string) {
+        // todo: don't allocate a string
         return str.substr(0, startsWithString.length) === startsWithString;
     }
 
     static endsWith(str: string, endsWithString: string) {
+        // todo: don't allocate a string
         return str.substr(str.length - endsWithString.length, endsWithString.length) === endsWithString;
     }
 }

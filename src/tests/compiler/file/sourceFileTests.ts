@@ -1,7 +1,6 @@
 ﻿import { expect } from "chai";
 import { Node, EmitResult, ExportAssignment, ExportDeclaration, FileSystemRefreshResult, FormatCodeSettings,
     ImportDeclaration, QuoteKind, SourceFile } from "../../../compiler";
-import { Chars } from "../../../constants";
 import * as errors from "../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../options";
 import { Project } from "../../../Project";
@@ -306,12 +305,11 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.save), () => {
-        const fileText = "    interface Identifier {}    ";
-        const filePath = "/Folder/File.ts";
-        const host = getFileSystemHostWithFiles([]);
-        const { sourceFile } = getInfoFromText(fileText, { filePath, host });
-
         it("should save the file", async () => {
+            const fileText = "    interface Identifier {}    ";
+            const filePath = "/Folder/File.ts";
+            const host = getFileSystemHostWithFiles([]);
+            const { sourceFile } = getInfoFromText(fileText, { filePath, host });
             expect(sourceFile.isSaved()).to.be.false;
 
             await sourceFile.save();
@@ -321,6 +319,45 @@ describe(nameof(SourceFile), () => {
             expect(entry.filePath).to.equal(filePath);
             expect(entry.fileText).to.equal(fileText);
             expect(writeLog.length).to.equal(1);
+        });
+
+        it("should write with BOM if read with BOM", async () => {
+            const host = getFileSystemHostWithFiles([]);
+            const fileText = "const t: string;";
+            const encodedFileText = `\uFEFF${fileText}`;
+            const { sourceFile } = getInfoFromText(encodedFileText, { filePath: "/file.ts", host });
+            await sourceFile.save();
+            expect(host.getWriteLog()[0].fileText).to.equal(encodedFileText);
+            expect(sourceFile.getFullText()).to.equal(fileText);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.saveSync), () => {
+        it("should save the file", () => {
+            const fileText = "    interface Identifier {}    ";
+            const filePath = "/Folder/File.ts";
+            const host = getFileSystemHostWithFiles([]);
+            const { sourceFile } = getInfoFromText(fileText, { filePath, host });
+
+            expect(sourceFile.isSaved()).to.be.false;
+
+            sourceFile.saveSync();
+            expect(sourceFile.isSaved()).to.be.true;
+            const writeLog = host.getWriteLog();
+            const entry = writeLog[0];
+            expect(entry.filePath).to.equal(filePath);
+            expect(entry.fileText).to.equal(fileText);
+            expect(writeLog.length).to.equal(1);
+        });
+
+        it("should write with BOM if read with BOM", () => {
+            const host = getFileSystemHostWithFiles([]);
+            const fileText = "const t: string;";
+            const encodedFileText = `\uFEFF${fileText}`;
+            const { sourceFile } = getInfoFromText(encodedFileText, { filePath: "/file.ts", host });
+            sourceFile.saveSync();
+            expect(host.getWriteLog()[0].fileText).to.equal(encodedFileText);
+            expect(sourceFile.getFullText()).to.equal(fileText);
         });
     });
 
@@ -400,25 +437,6 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.saveSync), () => {
-        const fileText = "    interface Identifier {}    ";
-        const filePath = "/Folder/File.ts";
-        const host = getFileSystemHostWithFiles([]);
-        const { sourceFile } = getInfoFromText(fileText, { filePath, host });
-
-        it("should save the file", () => {
-            expect(sourceFile.isSaved()).to.be.false;
-
-            sourceFile.saveSync();
-            expect(sourceFile.isSaved()).to.be.true;
-            const writeLog = host.getWriteLog();
-            const entry = writeLog[0];
-            expect(entry.filePath).to.equal(filePath);
-            expect(entry.fileText).to.equal(fileText);
-            expect(writeLog.length).to.equal(1);
-        });
-    });
-
     describe(nameof<SourceFile>(n => n.isDeclarationFile), () => {
         it("should be a source file when the file name ends with .d.ts", () => {
             const project = new Project({ useVirtualFileSystem: true });
@@ -491,8 +509,8 @@ describe(nameof(SourceFile), () => {
             }).to.throw();
         });
 
-        it("should insert an import after a utf-8 bom", () => {
-            doTest(Chars.BOM, 0, [{ moduleSpecifier: "./test" }], `${Chars.BOM}import "./test";\n`);
+        it("should insert an import if the file was read with a utf-8 bom", () => {
+            doTest("\uFEFF", 0, [{ moduleSpecifier: "./test" }], `import "./test";\n`);
         });
 
         it("should insert at the beginning and use single quotes when specified", () => {
