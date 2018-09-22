@@ -8,18 +8,18 @@ interface CodeBlockWriterOptions {
 }
 
 declare class CodeBlockWriter {
-    private _indentationText: any;
-    private _newLine: any;
-    private _useTabs: any;
-    private _quoteChar: any;
-    private _indentNumberOfSpaces: any;
-    private _currentIndentation: any;
-    private _queuedIndentation: any;
-    private _text: any;
-    private _newLineOnNextWrite: any;
-    private _stringCharStack: any;
-    private _isInRegEx: any;
-    private _isOnFirstLineOfBlock: any;
+    private readonly _indentationText;
+    private readonly _newLine;
+    private readonly _useTabs;
+    private readonly _quoteChar;
+    private readonly _indentNumberOfSpaces;
+    private _currentIndentation;
+    private _queuedIndentation;
+    private _text;
+    private _newLineOnNextWrite;
+    private _stringCharStack;
+    private _isInRegEx;
+    private _isOnFirstLineOfBlock;
     constructor(opts?: Partial<CodeBlockWriterOptions>);
     /**
      * Gets the options.

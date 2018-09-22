@@ -13,7 +13,7 @@ export class TsNode {
     }
 
     getNameForType() {
-        const typeParams = this.node.getTypeParameters().map(p => p.getDefaultNode() == null);
+        const typeParams = this.node.getTypeParameters().map(p => p.getDefault() == null);
         if (typeParams.length > 0)
             return this.node.getName() + "<" + typeParams.map(_ => "any").join(", ") + ">";
         return this.node.getName();

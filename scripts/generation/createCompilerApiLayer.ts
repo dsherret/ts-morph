@@ -10,7 +10,7 @@ import { rootFolder } from "../config";
 import { InspectorFactory } from "../inspectors";
 import { ArrayUtils } from "../../src/utils";
 import { removeImportTypes } from "../common";
-import { cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions, cloneVariables, cloneNamespaces } from "../common/cloning";
+import { cloneNamespaces } from "../common/cloning";
 
 const enumsToSeparate = ["SyntaxKind", "ScriptTarget", "ScriptKind", "LanguageVariant", "EmitHint", "JsxEmit", "ModuleKind", "ModuleResolutionKind",
     "NewLineKind", "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory", "IndentStyle"];
@@ -50,12 +50,33 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
         addEnumExports();
 
         cloneNamespaces(tsNamespace, ArrayUtils.flatten(tsNamespaces.map(n => n.getNamespaces())));
-        cloneInterfaces(tsNamespace, allInterfaces.filter(i => interfacesToSeparate.indexOf(i.getName()) === -1));
-        cloneEnums(tsNamespace, allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) === -1));
-        cloneTypeAliases(tsNamespace, allTypeAliases.filter(t => typeAliasesToSeparate.indexOf(t.getName()) === -1));
-        cloneClasses(tsNamespace, ArrayUtils.flatten(tsNamespaces.map(n => n.getClasses())));
-        cloneFunctions(tsNamespace, ArrayUtils.flatten(tsNamespaces.map(n => n.getFunctions())));
-        cloneVariables(tsNamespace, ArrayUtils.flatten(tsNamespaces.map(n => n.getVariableStatements())));
+        tsNamespace.addInterfaces(allInterfaces.filter(i => interfacesToSeparate.indexOf(i.getName()) === -1).map(i => ({
+            ...i.getStructure(),
+            isExported: true
+        })));
+        tsNamespace.addEnums(allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) === -1).map(e => ({
+            ...e.getStructure(),
+            isExported: true
+        })));
+        tsNamespace.addTypeAliases(allTypeAliases.filter(t => typeAliasesToSeparate.indexOf(t.getName()) === -1).map(t => ({
+            ...t.getStructure(),
+            isExported: true
+        })));
+        tsNamespace.addClasses(ArrayUtils.flatten(tsNamespaces.map(n => n.getClasses())).map(c => ({
+            ...c.getStructure(),
+            hasDeclareKeyword: true,
+            isExported: true
+        })));
+        tsNamespace.addFunctions(ArrayUtils.flatten(tsNamespaces.map(n => n.getFunctions())).map(f => ({
+            ...f.getStructure(),
+            hasDeclareKeyword: true,
+            isExported: true
+        })));
+        tsNamespace.addVariableStatements(ArrayUtils.flatten(tsNamespaces.map(n => n.getVariableStatements())).map(v => ({
+            ...v.getStructure(),
+            hasDeclareKeyword: true,
+            isExported: true
+        })));
 
         tsNamespace.getInterfaceOrThrow("Node").addProperty({
             docs: [{
@@ -90,14 +111,21 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
         removeImportTypes(sourceFile);
 
         function addSeparatedDeclarations() {
-            for (const enumDec of allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) >= 0))
-                cloneEnums(sourceFile, [enumDec]).forEach(e => e.setHasDeclareKeyword(true).setIsExported(false));
+            sourceFile.addEnums(allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) >= 0).map(enumDec => ({
+                ...enumDec.getStructure(),
+                hasDeclareKeyword: true,
+                isExported: false
+            })));
 
-            for (const interfaceDec of allInterfaces.filter(i => interfacesToSeparate.indexOf(i.getName()) >= 0))
-                cloneInterfaces(sourceFile, [interfaceDec]);
+            sourceFile.addInterfaces(allInterfaces.filter(i => interfacesToSeparate.indexOf(i.getName()) >= 0).map(i => ({
+                ...i.getStructure(),
+                isExported: true
+            })));
 
-            for (const typeAliasDec of allTypeAliases.filter(t => typeAliasesToSeparate.indexOf(t.getName()) >= 0))
-                cloneTypeAliases(sourceFile, [typeAliasDec]);
+            sourceFile.addTypeAliases(allTypeAliases.filter(t => typeAliasesToSeparate.indexOf(t.getName()) >= 0).map(t => ({
+                ...t.getStructure(),
+                isExported: true
+            })));
 
             // todo: need a better way of doing this in the future...
             const returnTypeNode = sourceFile.getInterfaceOrThrow("CompilerOptions").getIndexSignatures()[0].getReturnTypeNode() as UnionTypeNode;

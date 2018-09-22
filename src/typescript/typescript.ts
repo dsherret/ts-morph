@@ -775,7 +775,7 @@ export namespace ts {
      * ES6 Map interface, only read methods included.
      */
     export interface ReadonlyMap<T> {
-        size: number;
+        readonly size: number;
         get(key: string): T | undefined;
         has(key: string): boolean;
         forEach(action: (value: T, key: string) => void): void;
@@ -810,7 +810,7 @@ export namespace ts {
      * Array that is only intended to be pushed to, never read.
      */
     export interface Push<T> {
-        push(values: T[]): void;
+        push(...values: T[]): void;
     }
 
     export interface TextRange {
@@ -2497,7 +2497,7 @@ export namespace ts {
      * ReadonlyMap where keys are `__String`s.
      */
     export interface ReadonlyUnderscoreEscapedMap<T> {
-        size: number;
+        readonly size: number;
         get(key: __String): T | undefined;
         has(key: __String): boolean;
         forEach(action: (value: T, key: __String) => void): void;
@@ -2862,7 +2862,7 @@ export namespace ts {
     }
 
     export interface ResolvedModuleWithFailedLookupLocations {
-        resolvedModule: ResolvedModuleFull | undefined;
+        readonly resolvedModule: ResolvedModuleFull | undefined;
     }
 
     export interface ResolvedTypeReferenceDirective {
@@ -2872,8 +2872,8 @@ export namespace ts {
     }
 
     export interface ResolvedTypeReferenceDirectiveWithFailedLookupLocations {
-        resolvedTypeReferenceDirective: ResolvedTypeReferenceDirective | undefined;
-        failedLookupLocations: ReadonlyArray<string>;
+        readonly resolvedTypeReferenceDirective: ResolvedTypeReferenceDirective | undefined;
+        readonly failedLookupLocations: ReadonlyArray<string>;
     }
 
     export interface CompilerHost extends ModuleResolutionHost {
@@ -2912,10 +2912,10 @@ export namespace ts {
     }
 
     export interface EmitHelper {
-        name: string;
-        scoped: boolean;
-        text: string | ((node: EmitHelperUniqueNameCallback) => string);
-        priority?: number;
+        readonly name: string;
+        readonly scoped: boolean;
+        readonly text: string | ((node: EmitHelperUniqueNameCallback) => string);
+        readonly priority?: number;
     }
 
     export interface TransformationContext {
@@ -3157,7 +3157,7 @@ export namespace ts {
         getMemoryUsage?(): number;
         exit(exitCode?: number): void;
         realpath?(path: string): string;
-        setTimeout?(callback: (...args: any[]) => void, ms: number, args: any[]): any;
+        setTimeout?(callback: (...args: any[]) => void, ms: number, ...args: any[]): any;
         clearTimeout?(timeoutId: any): void;
         clearScreen?(): void;
         base64decode?(input: string): string;
@@ -3438,7 +3438,7 @@ export namespace ts {
         /**
          * If provided, will be used to set delayed compilation, so that multiple changes in short span are compiled together
          */
-        setTimeout?(callback: (...args: any[]) => void, ms: number, args: any[]): any;
+        setTimeout?(callback: (...args: any[]) => void, ms: number, ...args: any[]): any;
         /**
          * If provided, will be used to reset existing delayed compilation
          */
@@ -3502,10 +3502,10 @@ export namespace ts {
     }
 
     export interface BuildHost {
-        verbose(diag: DiagnosticMessage, args: string[]): void;
-        error(diag: DiagnosticMessage, args: string[]): void;
+        verbose(diag: DiagnosticMessage, ...args: string[]): void;
+        error(diag: DiagnosticMessage, ...args: string[]): void;
         errorDiagnostic(diag: Diagnostic): void;
-        message(diag: DiagnosticMessage, args: string[]): void;
+        message(diag: DiagnosticMessage, ...args: string[]): void;
     }
 
     /**
@@ -3575,11 +3575,11 @@ export namespace ts {
     }
 
     export interface Identifier {
-        text: string;
+        readonly text: string;
     }
 
     export interface Symbol {
-        name: string;
+        readonly name: string;
         getFlags(): SymbolFlags;
         getEscapedName(): __String;
         getName(): string;
@@ -3719,12 +3719,12 @@ export namespace ts {
     }
 
     export interface UserPreferences {
-        disableSuggestions?: boolean;
-        quotePreference?: "double" | "single";
-        includeCompletionsForModuleExports?: boolean;
-        includeCompletionsWithInsertText?: boolean;
-        importModuleSpecifierPreference?: "relative" | "non-relative";
-        allowTextChangesInNewFiles?: boolean;
+        readonly disableSuggestions?: boolean;
+        readonly quotePreference?: "double" | "single";
+        readonly includeCompletionsForModuleExports?: boolean;
+        readonly includeCompletionsWithInsertText?: boolean;
+        readonly importModuleSpecifierPreference?: "relative" | "non-relative";
+        readonly allowTextChangesInNewFiles?: boolean;
     }
 
     export interface LanguageService {
@@ -3812,7 +3812,7 @@ export namespace ts {
     }
 
     export interface JsxClosingTagInfo {
-        newText: string;
+        readonly newText: string;
     }
 
     export interface CombinedCodeFixScope {
@@ -4487,6 +4487,9 @@ export namespace ts {
         Condition = 96
     }
 
+    /**
+     * Return code used by getEmitOutput function to indicate status of the function
+     */
     export enum ExitStatus {
         Success = 0,
         DiagnosticsPresent_OutputsSkipped = 1,

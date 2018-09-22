@@ -8,7 +8,6 @@ import * as path from "path";
 import { ClassDeclaration } from "ts-simple-ast";
 import { rootFolder } from "../config";
 import { TsSimpleAstInspector } from "../inspectors";
-import { cloneClasses, cloneInterfaces } from "../common/cloning";
 
 export function createCodeBlockWriterFile(inspector: TsSimpleAstInspector) {
     const project = inspector.getProject();
@@ -30,10 +29,14 @@ export function createCodeBlockWriterFile(inspector: TsSimpleAstInspector) {
     function createDeclaration() {
         const defaultImport = sourceFile.getImportDeclarations()[0].getDefaultImport()!;
         const classDec = defaultImport.getDefinitionNodes()[0] as ClassDeclaration;
-        cloneInterfaces(sourceFile, [classDec.getSourceFile().getInterfaceOrThrow("Options")]);
-        cloneClasses(sourceFile, [classDec]);
-        sourceFile.getClassOrThrow("CodeBlockWriter").setIsExported(false);
-        sourceFile.getInterfaceOrThrow("Options").rename("CodeBlockWriterOptions").setIsExported(false);
+        const optionsInterface = sourceFile.addInterface(classDec.getSourceFile().getInterfaceOrThrow("Options").getStructure());
+        sourceFile.addClass({
+            ...classDec.getStructure(),
+            hasDeclareKeyword: true,
+            isDefaultExport: false,
+            isExported: false
+        });
+        optionsInterface.rename("CodeBlockWriterOptions").setIsExported(false);
     }
 
     function createExport() {
