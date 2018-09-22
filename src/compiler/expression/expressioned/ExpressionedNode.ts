@@ -1,6 +1,7 @@
-import { Constructor } from "../../../types";
+import { ExpressionedNodeStructure } from "../../../structures";
+import { Constructor, WriterFunction } from "../../../types";
 import { ts } from "../../../typescript";
-import { WriterFunction } from "../../../types";
+import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 import { Expression } from "../Expression";
 
@@ -26,6 +27,15 @@ export function ExpressionedNode<T extends Constructor<ExpressionedNodeExtension
 
         setExpression(textOrWriterFunction: string | WriterFunction) {
             this.getExpression().replaceWithText(textOrWriterFunction);
+            return this;
+        }
+
+        set(structure: Partial<ExpressionedNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
+
+            if (structure.expression != null)
+                this.setExpression(structure.expression);
+
             return this;
         }
     };
