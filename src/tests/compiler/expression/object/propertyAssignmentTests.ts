@@ -71,6 +71,31 @@ describe(nameof(PropertyAssignment), () => {
         });
     });
 
+    describe(nameof<PropertyAssignment>(p => p.set), () => {
+        function test(code: string, structure: Partial<PropertyAssignmentStructure>, expectedText: string) {
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<PropertyAssignment>(code, SyntaxKind.PropertyAssignment);
+            expect(descendant.set(structure).wasForgotten()).to.be.false;
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should not change when nothing is specified", () => {
+            const code = "const t = { prop1: 1 };";
+            test(code, { }, code);
+        });
+
+        it("should set when everything is specified", () => {
+            const structure: MakeRequired<PropertyAssignmentStructure> = {
+                name: "NewName",
+                initializer: "5"
+            };
+            test("const t = { prop1: 1 };", structure, "const t = { NewName: 5 };");
+        });
+
+        it("should remove initializer when specifying undefined", () => {
+            test("const t = { prop: 1 };", { initializer: undefined }, "const t = { prop };");
+        });
+    });
+
     describe(nameof<PropertyAssignment>(p => p.getStructure), () => {
         function test(code: string, expectedStructure: MakeRequired<PropertyAssignmentStructure>) {
             const { descendant } = getInfoFromTextWithDescendant<PropertyAssignment>(code, SyntaxKind.PropertyAssignment);

@@ -143,6 +143,26 @@ describe(nameof(ShorthandPropertyAssignment), () => {
         });
     });
 
+    describe(nameof<ShorthandPropertyAssignment>(p => p.set), () => {
+        function test(code: string, structure: Partial<ShorthandPropertyAssignmentStructure>, expectedText: string) {
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<ShorthandPropertyAssignment>(code, SyntaxKind.ShorthandPropertyAssignment);
+            expect(descendant.set(structure).wasForgotten()).to.be.false;
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should not change when nothing is specified", () => {
+            const code = "const t = { prop1 };";
+            test(code, {}, code);
+        });
+
+        it("should set when everything is specified", () => {
+            const structure: MakeRequired<ShorthandPropertyAssignmentStructure> = {
+                name: "NewName"
+            };
+            test("const t = { prop1 };", structure, "const t = { NewName };");
+        });
+    });
+
     describe(nameof<ShorthandPropertyAssignment>(p => p.getStructure), () => {
         function test(code: string, expectedStructure: MakeRequired<ShorthandPropertyAssignmentStructure>) {
             const { descendant } = getInfoFromTextWithDescendant<ShorthandPropertyAssignment>(code, SyntaxKind.ShorthandPropertyAssignment);

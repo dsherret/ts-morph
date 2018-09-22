@@ -6,6 +6,7 @@ import { InitializerGetExpressionableNode, PropertyNamedNode, QuestionTokenableN
 import { Node } from "../../common";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 import { PropertyAssignmentStructure, PropertyAssignmentSpecificStructure } from "../../../structures";
+import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 // This node only has a question token in order to tell the user about bad code.
@@ -62,6 +63,21 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
      */
     remove() {
         removeCommaSeparatedChild(this);
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<PropertyAssignmentStructure>) {
+        callBaseSet(PropertyAssignmentBase.prototype, this, structure);
+
+        if (structure.initializer != null)
+            this.setInitializer(structure.initializer);
+        else if (structure.hasOwnProperty(nameof(structure.initializer)))
+            return this.removeInitializer();
+
+        return this;
     }
 
     /**

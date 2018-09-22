@@ -7,6 +7,7 @@ import { Expression } from "../Expression";
 import { PropertyAssignment } from "./PropertyAssignment";
 import { ShorthandPropertyAssignmentStructure, ShorthandPropertyAssignmentSpecificStructure, QuestionTokenableNodeStructure } from "../../../structures";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { callBaseSet } from "../../callBaseSet";
 
 // This node only has an object assignment initializer, equals token, and question token, in order to tell the user about bad code
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)
@@ -95,6 +96,16 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
      */
     remove() {
         removeCommaSeparatedChild(this);
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ShorthandPropertyAssignmentStructure>) {
+        callBaseSet(ShorthandPropertyAssignmentBase.prototype, this, structure);
+
+        return this;
     }
 
     /**
