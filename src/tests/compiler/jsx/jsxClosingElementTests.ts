@@ -8,10 +8,10 @@ function getInfo(text: string) {
 }
 
 describe(nameof(JsxClosingElement), () => {
-    describe(nameof<JsxClosingElement>(n => n.getTagName), () => {
+    describe(nameof<JsxClosingElement>(n => n.getTagNameNode), () => {
         function doTest(text: string, expected: string) {
             const {descendant} = getInfo(text);
-            expect(descendant.getTagName().getText()).to.equal(expected);
+            expect(descendant.getTagNameNode().getText()).to.equal(expected);
         }
 
         it("should get the tag name", () => {

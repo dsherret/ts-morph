@@ -6831,7 +6831,7 @@ export interface JsxTagNamedNode {
     /**
      * Gets the tag name of the JSX closing element.
      */
-    getTagName(): JsxTagNameExpression;
+    getTagNameNode(): JsxTagNameExpression;
 }
 
 export declare type JsxTagNamedNodeExtensionType = Node<ts.Node & {

@@ -30,7 +30,7 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
             throw new errors.NotImplementedError("Changing a JsxSelfClosingElement to be non-self closing is not implemented. Please open an issue if you need this.");
 
         if (structure.name != null)
-            this.getTagName().replaceWithText(structure.name);
+            this.getTagNameNode().replaceWithText(structure.name);
 
         return this;
     }
@@ -40,7 +40,7 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
      */
     getStructure(): JsxElementStructure {
         const structure = callBaseGetStructure<JsxElementStructure>(JsxSelfClosingElementBase.prototype, this, {
-            name: this.getTagName().getText(),
+            name: this.getTagNameNode().getText(),
             attributes: this.getAttributes().map(a => a.getStructure()),
             children: undefined,
             isSelfClosing: true,

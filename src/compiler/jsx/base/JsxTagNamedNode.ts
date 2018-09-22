@@ -9,7 +9,7 @@ export interface JsxTagNamedNode {
     /**
      * Gets the tag name of the JSX closing element.
      */
-    getTagName(): JsxTagNameExpression;
+    getTagNameNode(): JsxTagNameExpression;
 }
 
 export function JsxTagNamedNode<T extends Constructor<JsxTagNamedNodeExtensionType>>(Base: T): Constructor<JsxTagNamedNode> & T {
@@ -17,7 +17,7 @@ export function JsxTagNamedNode<T extends Constructor<JsxTagNamedNodeExtensionTy
         /**
          * Gets the tag name of the JSX element.
          */
-        getTagName() {
+        getTagNameNode() {
             return this.getNodeFromCompilerNode(this.compilerNode.tagName) as JsxTagNameExpression;
         }
     };

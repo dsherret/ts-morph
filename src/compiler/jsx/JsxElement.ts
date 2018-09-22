@@ -85,8 +85,8 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
             this.setBodyTextInline("");
 
         if (structure.name != null) {
-            this.getOpeningElement().getTagName().replaceWithText(structure.name);
-            this.getClosingElement().getTagName().replaceWithText(structure.name);
+            this.getOpeningElement().getTagNameNode().replaceWithText(structure.name);
+            this.getClosingElement().getTagNameNode().replaceWithText(structure.name);
         }
 
         return this;
@@ -98,7 +98,7 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
     getStructure(): JsxElementStructure {
         const openingElement = this.getOpeningElement();
         const structure = callBaseGetStructure<JsxElementStructure>(JsxElementBase.prototype, this, {
-            name: openingElement.getTagName().getText(),
+            name: openingElement.getTagNameNode().getText(),
             attributes: openingElement.getAttributes().map(a => a.getStructure()),
             children: undefined,
             isSelfClosing: false,

@@ -87,7 +87,7 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
 
             index = verifyAndGetIndex(index, this.compilerNode.attributes.properties.length);
 
-            const insertPos = index === 0 ? this.getTagName().getEnd() : this.getAttributes()[index - 1].getEnd();
+            const insertPos = index === 0 ? this.getTagNameNode().getEnd() : this.getAttributes()[index - 1].getEnd();
             const writer = this.getWriterWithQueuedChildIndentation();
             const structuresPrinter = new SpaceFormattingStructuresPrinter(this.context.structurePrinterFactory.forJsxAttributeDecider());
             structuresPrinter.printText(writer, structures);
