@@ -72,6 +72,26 @@ describe(nameof(ExportAssignment), () => {
     });
 
     describe(nameof<ExportAssignment>(n => n.getStructure), () => {
+        function doTest(text: string, structure: Partial<ExportAssignmentStructure>, expected: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ExportAssignment>(text);
+            firstChild.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should do nothing when empty", () => {
+            doTest("export = 5;", {}, "export = 5;");
+        });
+
+        it("should set everything when specified", () => {
+            const structure: MakeRequired<ExportAssignmentStructure> = {
+                expression: "6",
+                isExportEquals: false
+            };
+            doTest("export = 5;", structure, "export default 6;");
+        });
+    });
+
+    describe(nameof<ExportAssignment>(n => n.getStructure), () => {
         function doTest(text: string, expected: MakeRequired<ExportAssignmentStructure>) {
             const structure = getInfoFromText<ExportAssignment>(text).firstChild.getStructure();
             expect(structure).to.deep.equals(expected);
