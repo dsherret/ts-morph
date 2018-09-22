@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { JsxAttribute, JsxSelfClosingElement } from "../../../compiler";
 import { JsxAttributeStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
+import { WriterFunction } from "../../../types";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 function getInfo(text: string) {
@@ -76,6 +77,46 @@ describe(nameof(JsxAttribute), () => {
 
         it("should throw when the initializer does not exists", () => {
             doTest(`var t = (<jsx attribute />);`, undefined);
+        });
+    });
+
+    describe(nameof<JsxAttribute>(n => n.setInitializer), () => {
+        function doTest(text: string, initializerText: string | WriterFunction, expected: string) {
+            const { descendant, sourceFile } = getInfoForSelfClosingElement(text);
+            (descendant.getAttributes()[0] as JsxAttribute).setInitializer(initializerText);
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should set when one doesn't exist", () => {
+            doTest(`var t = (<jsx attribute />);`, writer => writer.quote("5"), `var t = (<jsx attribute="5" />);`);
+        });
+
+        it("should set when is a quote", () => {
+            doTest(`var t = (<jsx attribute="5" />);`, "{6}", `var t = (<jsx attribute={6} />);`);
+        });
+
+        it("should remove when empty", () => {
+            doTest(`var t = (<jsx attribute="5" />);`, "", `var t = (<jsx attribute />);`);
+        });
+    });
+
+    describe(nameof<JsxAttribute>(n => n.removeInitializer), () => {
+        function doTest(text: string, expected: string) {
+            const { descendant, sourceFile } = getInfoForSelfClosingElement(text);
+            (descendant.getAttributes()[0] as JsxAttribute).removeInitializer();
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should remove the initializer when it is a string", () => {
+            doTest(`var t = (<jsx attribute="4" />);`, `var t = (<jsx attribute />);`);
+        });
+
+        it("should remove the initializer when it is an expression", () => {
+            doTest(`var t = (<jsx attribute={5} />);`, `var t = (<jsx attribute />);`);
+        });
+
+        it("should do nothing when it doesn't exist", () => {
+            doTest(`var t = (<jsx attribute />);`, `var t = (<jsx attribute />);`);
         });
     });
 
