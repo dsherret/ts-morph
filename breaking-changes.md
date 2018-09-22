@@ -2,6 +2,43 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 15
+
+* `TypeParameterDeclaration` - `getConstraintNode()` and `getDefaultNode()` are now `getConstraint()` and `getDefault()`.
+* `JsxTagNamedNode` - `getTagName()` is now `.getTagNameNode()` for consistency.
+
+## Import and Exports - No renaming for .setX methods
+
+Previously, the following methods would rename with the language service:
+
+* `ImportDeclaration.setDefaultImport`
+* `ImportSpecifier.setAlias`
+* `ExportSpecifier.setAlias`
+
+These no longer rename using the language service. Use the corresponding `renameX` methods instead.
+
+## `.fill` methods are now `.set`
+
+The `.fill` methods are now called `.set` and their behaviour has changed.
+
+### It replaces instead of adding
+
+Previously calling...
+
+```ts
+classDeclaration.fill({
+    properties: [{ name: "newProp" }]
+});
+```
+
+...would add a property. Now with `.set` it will remove all existing properties and replace it with the specified properties.
+
+If you want the `.fill` behaviour, use the `.addX` methods or provide the structures of the nodes by using `.getStructure()` (Ex. `classDeclaration.set({ properties: [...classDeclaration.getParameters().map(p => p.getStructure()), { name: "NewProperty" }] });`)`
+
+### It doesn't use the language service
+
+Previously, doing `classDeclaration.fill({ name: "NewName" })` would do a rename with the language service. Now with `.set({ name: "NewName" })` it sets the name without renaming.
+
 ## Version 14
 
 ### Deprecated `project/sourceFile.getDiagnostics()`
