@@ -1,6 +1,6 @@
 import * as errors from "../../errors";
 import { removeChildren, insertIntoParentTextRange } from "../../manipulation";
-import { JsxAttributeStructure, JsxAttributeStructureSpecific } from "../../structures";
+import { JsxAttributeStructure, JsxAttributeSpecificStructure } from "../../structures";
 import { ts, SyntaxKind } from "../../typescript";
 import { WriterFunction } from "../../types";
 import { StringUtils, getTextFromStringOrWriter } from "../../utils";
@@ -106,7 +106,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
      */
     getStructure(): JsxAttributeStructure {
         const initializer = this.getInitializer();
-        return callBaseGetStructure<JsxAttributeStructureSpecific>(JsxAttributeBase.prototype, this, {
+        return callBaseGetStructure<JsxAttributeSpecificStructure>(JsxAttributeBase.prototype, this, {
             initializer: initializer == null ? undefined : initializer.getText(),
             isSpreadAttribute: false
         });

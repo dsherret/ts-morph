@@ -2,6 +2,61 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="15.0.0"></a>
+# [15.0.0](https://github.com/dsherret/ts-simple-ast/compare/14.4.5...15.0.0) (2018-09-22)
+
+
+### Bug Fixes
+
+* [#420](https://github.com/dsherret/ts-simple-ast/issues/420) - Setting enum, namespace, or type alias as a default export should be done with a separate export assignment. ([e81412c](https://github.com/dsherret/ts-simple-ast/commit/e81412c))
+* [#424](https://github.com/dsherret/ts-simple-ast/issues/424) - UTF-8 bom causes incorrect indentation to be inserted. ([c4a63a1](https://github.com/dsherret/ts-simple-ast/commit/c4a63a1))
+* ImportSpecifier and ExportSpecifier - Specifying an empty string to setAlias should not crash. ([a7beb66](https://github.com/dsherret/ts-simple-ast/commit/a7beb66))
+
+
+### Code Refactoring
+
+* ImportDeclaration.setDefaultImport should not rename. ([f425bd8](https://github.com/dsherret/ts-simple-ast/commit/f425bd8))
+* JsxTagNamedNode.getTagName() is now getTagNameNode() for consistency. ([36d4907](https://github.com/dsherret/ts-simple-ast/commit/36d4907))
+* Remove accidentally exposed properties on errors. ([caa7e68](https://github.com/dsherret/ts-simple-ast/commit/caa7e68))
+* Remove typeParameter.getConstraintNode() and .getDefaultNode() ([e84c374](https://github.com/dsherret/ts-simple-ast/commit/e84c374))
+
+
+### Features
+
+* [#418](https://github.com/dsherret/ts-simple-ast/issues/418) - Add new .set methods and deprecate .fill ([da40d99](https://github.com/dsherret/ts-simple-ast/commit/da40d99))
+* [#423](https://github.com/dsherret/ts-simple-ast/issues/423) - Add node.getText(true) for getting text with js docs. ([0522510](https://github.com/dsherret/ts-simple-ast/commit/0522510))
+* [#45](https://github.com/dsherret/ts-simple-ast/issues/45) / [#346](https://github.com/dsherret/ts-simple-ast/issues/346) - Add .getStructure() ([2d7351c](https://github.com/dsherret/ts-simple-ast/commit/2d7351c)) -- Huge thanks to [@cancerberoSgx](https://github.com/cancerberoSgx) for all his help on this one!
+* [#46](https://github.com/dsherret/ts-simple-ast/issues/46) - Ability to set node from a structure using .set methods ([22d4753](https://github.com/dsherret/ts-simple-ast/commit/22d4753))
+* Add ExportAssignment.setExpression ([0c6fcf0](https://github.com/dsherret/ts-simple-ast/commit/0c6fcf0))
+* Add ExportAssignment.setIsExportEquals. ([43d3d84](https://github.com/dsherret/ts-simple-ast/commit/43d3d84))
+* Add ExportDeclaration.removeModuleSpecifier() ([b64c665](https://github.com/dsherret/ts-simple-ast/commit/b64c665))
+* Add ExportSpecifier.getName() ([b6357c6](https://github.com/dsherret/ts-simple-ast/commit/b6357c6))
+* Add ExpressionedNode.setExpression ([12e0ca7](https://github.com/dsherret/ts-simple-ast/commit/12e0ca7))
+* Add ImportDeclaration.removeDefaultImport() ([87dd9cf](https://github.com/dsherret/ts-simple-ast/commit/87dd9cf))
+* Add ImportDeclaration.renameDefaultImport. ([1ba29be](https://github.com/dsherret/ts-simple-ast/commit/1ba29be))
+* Add JsxAttribute .setInitializer & .removeInitializer ([9436954](https://github.com/dsherret/ts-simple-ast/commit/9436954))
+* Add JsxSpreadAttribute.setExpression ([532131f](https://github.com/dsherret/ts-simple-ast/commit/532131f))
+* Hide "Specific" structures in declaration file. ([db55c33](https://github.com/dsherret/ts-simple-ast/commit/db55c33))
+* ImportDeclaration.setDefaultImport should remove the default import when providing an empty string. ([f81f90a](https://github.com/dsherret/ts-simple-ast/commit/f81f90a))
+* ImportSpecifier and ExportSpecifier - .setAlias(...) does not the usages. ([5f2f7c8](https://github.com/dsherret/ts-simple-ast/commit/5f2f7c8))
+* ImportSpecifier and ExportSpecifier - Add .removeAlias(). ([b594113](https://github.com/dsherret/ts-simple-ast/commit/b594113))
+* ImportSpecifier and ExportSpecifier - Add removeAliasWithRename() ([576db34](https://github.com/dsherret/ts-simple-ast/commit/576db34))
+* ImportSpecifier and ExportSpecifier - Renamed .setAlias to .renameAlias ([0f446b6](https://github.com/dsherret/ts-simple-ast/commit/0f446b6))
+
+
+### BREAKING CHANGES
+
+* Some properties on thrown errors were removed. See commit for details.
+* TypeParameterDeclaration's getConstraintNode() and getDefaultNode() are deprecated. Use getConstraint() and getDefault().
+* JsxTagNamedNode.getTagName() is now .getTagNameNode()
+* ImportDeclaration.setDefaultImport no longer renames the identifier. Use `.renameDefaultImport` instead.
+* .setAlias(...) does not rename the usages.
+* .setAlias(...) is now .renameAlias(...).
+* `.fill(...)` is now `.set(...)` and will replace existing nodes.
+* Change to jsx spread attribute structure.
+
+
+
 <a name="14.4.5"></a>
 ## [14.4.5](https://github.com/dsherret/ts-simple-ast/compare/14.4.3...14.4.5) (2018-09-15)
 

@@ -1,9 +1,9 @@
 ﻿import { NamedNodeStructure } from "../base";
 
-export interface JsxAttributeStructure extends JsxAttributeStructureSpecific, NamedNodeStructure {
+export interface JsxAttributeStructure extends JsxAttributeSpecificStructure, NamedNodeStructure {
 }
 
-export interface JsxAttributeStructureSpecific {
+export interface JsxAttributeSpecificStructure {
     isSpreadAttribute?: false;
     initializer?: string;
 }

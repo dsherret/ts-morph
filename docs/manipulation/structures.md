@@ -20,33 +20,40 @@ In the example above, a class declaration like the following...
 
 ```ts
 export class MyClass {
-    myProp: string;
+    myProp = 5;
 }
 ```
 
-...would return the following structure object:
+...would return the following structure object similar to the following:
 
 ```js
 {
+    isAbstract: false,
     hasExportKeyword: true;
     name: "MyClass",
+    typeParameters: [],
+    constructors: [],
     properties: [{
         name: "myProp",
-        type: "string"
-    }]
+        initializer: "5",
+        type: undefined,
+        isReadonly: false,
+        isStatic: false
+    }],
+    methods: []
 }
 ```
 
-### Filling with structure
+### Setting with structure
 
 It's also possible to set the structure of a node with an existing structure:
 
-```ts
-classDeclaration.fill(classStructure);
+```ts setup: const classStructure = {};
+classDeclaration.set(classStructure);
 // sets the name
-classDeclaration.fill({ name: "NewName" });
-// adds a property
-classDeclaration.fill({ properties: [{ name: "newProperty" }] });
+classDeclaration.set({ name: "NewName" });
+// sets the properties
+classDeclaration.set({ properties: [{ name: "newProperty" }] });
 ```
 
 Or you can use the `addX` or `insertX` methods with a structure:

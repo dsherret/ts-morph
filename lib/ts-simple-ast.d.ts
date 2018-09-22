@@ -9714,7 +9714,7 @@ interface ConstructorDeclarationSpecificStructure {
 export interface ConstructorDeclarationOverloadStructure extends ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
 }
 
-export interface GetAccessorDeclarationStructure extends GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodiedNodeStructure {
+export interface GetAccessorDeclarationStructure extends GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
 }
 
 interface GetAccessorDeclarationSpecificStructure {
@@ -9736,7 +9736,7 @@ export interface PropertyDeclarationStructure extends PropertyDeclarationSpecifi
 interface PropertyDeclarationSpecificStructure {
 }
 
-export interface SetAccessorDeclarationStructure extends SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodiedNodeStructure {
+export interface SetAccessorDeclarationStructure extends SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
 }
 
 interface SetAccessorDeclarationSpecificStructure {
@@ -9880,10 +9880,10 @@ export interface PropertySignatureStructure extends PropertySignatureSpecificStr
 interface PropertySignatureSpecificStructure {
 }
 
-export interface JsxAttributeStructure extends JsxAttributeStructureSpecific, NamedNodeStructure {
+export interface JsxAttributeStructure extends JsxAttributeSpecificStructure, NamedNodeStructure {
 }
 
-export interface JsxAttributeStructureSpecific {
+interface JsxAttributeSpecificStructure {
     isSpreadAttribute?: false;
     initializer?: string;
 }

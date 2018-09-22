@@ -59,6 +59,7 @@ function isAllowedStructure(structure: Structure) {
         case "BodiedNodeStructure":
         case "BodyableNodeStructure":
         case "StatementedNodeStructure":
+        case "DecoratableNodeStructure":
             return false;
     }
 
