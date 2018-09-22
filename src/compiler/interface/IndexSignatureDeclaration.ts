@@ -126,8 +126,8 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
     getStructure(): IndexSignatureDeclarationStructure {
         return callBaseGetStructure<IndexSignatureDeclarationSpecificStructure>(IndexSignatureDeclarationBase.prototype, this, {
             keyName: this.getKeyName(),
-            keyType: this.getKeyType().getText(),
-            returnType: this.getReturnType().getText()
+            keyType: this.getKeyTypeNode().getText(),
+            returnType: this.getReturnTypeNode().getText()
         });
     }
 }

@@ -229,12 +229,13 @@ describe(nameof(IndexSignatureDeclaration), () => {
         }
 
         it("should get when not has anything", () => {
-            doTest("interface Identifier { [key: string]: number; }", {
+            // use type aliases to make sure the node text and not the type text is returned
+            doTest("interface Identifier { [key: OtherType]: MyType; } type OtherType = number; type MyType = string;", {
                 isReadonly: false,
                 keyName: "key",
-                keyType: "string",
+                keyType: "OtherType",
                 docs: [],
-                returnType: "number"
+                returnType: "MyType"
             });
         });
 
