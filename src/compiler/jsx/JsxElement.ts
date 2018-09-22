@@ -66,9 +66,9 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
      */
     set(structure: Partial<JsxElementStructure>) {
         callBaseSet(JsxElementBase.prototype, this, structure);
-        const openingElement = this.getOpeningElement();
 
         if (structure.attributes != null) {
+            const openingElement = this.getOpeningElement();
             openingElement.getAttributes().forEach(a => a.remove());
             openingElement.addAttributes(structure.attributes);
         }

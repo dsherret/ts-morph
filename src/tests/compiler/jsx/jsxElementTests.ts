@@ -99,7 +99,7 @@ describe(nameof(JsxElement), () => {
         }
 
         it("should not change when empty", () => {
-            const code = "const v = <div></div>";
+            const code = "const v = <div attr><inner /></div>";
             doTest(code, {}, code);
         });
 
