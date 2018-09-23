@@ -192,14 +192,18 @@ export class LanguageService {
      * @param node - Node.
      */
     findReferencesAsNodes(node: Node) {
-        const references = this.findReferences(node);
+        const referencedSymbols = this.findReferences(node);
         return ArrayUtils.from(getReferencingNodes());
 
         function* getReferencingNodes() {
-            for (const referenceSymbol of references) {
-                const isAlias = referenceSymbol.getDefinition().getKind() === ts.ScriptElementKind.alias;
-                for (const reference of referenceSymbol.getReferences()) {
-                    if (isAlias || !reference.isDefinition())
+            for (const referencedSymbol of referencedSymbols) {
+                const isAlias = referencedSymbol.getDefinition().getKind() === ts.ScriptElementKind.alias;
+                const references = referencedSymbol.getReferences();
+                for (let i = 0; i < references.length; i++) {
+                    // the first reference always seems to be the main definition... the other definitions
+                    // could be constructed in initializers or elsewhere
+                    const reference = references[i];
+                    if (isAlias || !reference.isDefinition() || i > 0)
                         yield reference.getNode();
                 }
             }

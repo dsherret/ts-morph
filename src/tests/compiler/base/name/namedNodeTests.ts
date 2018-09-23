@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { EnumDeclaration, FunctionDeclaration, Identifier, NamedNode, RenameOptions } from "../../../../compiler";
+import { InterfaceDeclaration, EnumDeclaration, FunctionDeclaration, Identifier, NamedNode, RenameOptions } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(NamedNode), () => {
@@ -97,6 +97,15 @@ describe(nameof(NamedNode), () => {
             expect(referencingNodes.length).to.equal(2);
             expect(referencingNodes[0].getParentOrThrow().getText()).to.equal("reference = myFunction");
             expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = myFunction");
+        });
+
+        it("should find references in initializers", () => {
+            // the reference in the initializer will be classified as `isDefinition` by the compiler
+            const code = `interface Test { prop: string; }\nconst partial: Test = { prop: "t" };`;
+            const { firstChild, sourceFile, project } = getInfoFromText<InterfaceDeclaration>(code);
+            const referencingNodes = firstChild.getProperties()[0].findReferencesAsNodes();
+            expect(referencingNodes.length).to.equal(1);
+            expect(referencingNodes[0].getParentOrThrow().getText()).to.equal(`prop: "t"`);
         });
     });
 
