@@ -2631,9 +2631,9 @@ ts-simple-ast@14.2.1:
     tslib "^1.9.0"
     typescript "3.0.1"
 
-ts-simple-ast@15.0.1:
-  version "15.0.1"
-  resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-15.0.1.tgz#104e732ab6927460ea1f1e5286cded6cbdc9ac5b"
+ts-simple-ast@15.0.2:
+  version "15.0.2"
+  resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-15.0.2.tgz#703de08cc62eb3962bd7fffcd833533ebe38f22c"
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
     code-block-writer "^7.2.1"

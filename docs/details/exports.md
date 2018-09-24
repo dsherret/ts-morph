@@ -68,6 +68,7 @@ Get the export declarations by calling:
 const exportDeclarations = sourceFile.getExportDeclarations();
 // or to get the first one that matches a condition
 const exportDeclaration = sourceFile.getExportDeclaration(d => d.hasNamedExports());
+const exportDecForModule = sourceFile.getExportDeclaration("module-specifier-text");
 
 // tell if it has named exports
 exportDeclaration.hasNamedExports();

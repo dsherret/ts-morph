@@ -586,26 +586,47 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.getImportDeclaration), () => {
+        function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean), expected: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const result = sourceFile.getImportDeclaration(conditionOrModuleSpecifier);
+            if (expected == null)
+                expect(result).to.be.undefined;
+            else
+                expect(result!.getText()).to.equal(expected);
+        }
+
         it("should get the import declaration", () => {
-            const { sourceFile } = getInfoFromText("import myImport from 'test'; import {next} from './test';");
-            expect(sourceFile.getImportDeclaration(i => i.getDefaultImport() != null)!.getText()).to.equal("import myImport from 'test';");
+            doTest("import myImport from 'test'; import {next} from './test';", i => i.getDefaultImport() != null, "import myImport from 'test';");
+        });
+
+        it("should get the import declaration when providing module specifier text", () => {
+            doTest("import myImport from 'test'; import {next} from './test';", "./test", "import {next} from './test';");
         });
 
         it("should return undefined when not exists", () => {
-            const { sourceFile } = getInfoFromText("");
-            expect(sourceFile.getImportDeclaration(e => false)).to.be.undefined;
+            doTest("import myImport from 'test';", "asdfasdf", undefined);
         });
     });
 
     describe(nameof<SourceFile>(n => n.getImportDeclarationOrThrow), () => {
+        function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean), expected: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            if (expected == null)
+                expect(() => sourceFile.getImportDeclarationOrThrow(conditionOrModuleSpecifier)).to.throw();
+            else
+                expect(sourceFile.getImportDeclarationOrThrow(conditionOrModuleSpecifier).getText()).to.equal(expected);
+        }
+
         it("should get the import declaration", () => {
-            const { sourceFile } = getInfoFromText("import myImport from 'test'; import {next} from './test';");
-            expect(sourceFile.getImportDeclarationOrThrow(i => i.getDefaultImport() != null).getText()).to.equal("import myImport from 'test';");
+            doTest("import myImport from 'test'; import {next} from './test';", i => i.getDefaultImport() != null, "import myImport from 'test';");
+        });
+
+        it("should get the import declaration when providing module specifier text", () => {
+            doTest("import myImport from 'test'; import {next} from './test';", "./test", "import {next} from './test';");
         });
 
         it("should throw when not exists", () => {
-            const { sourceFile } = getInfoFromText("");
-            expect(() => sourceFile.getImportDeclarationOrThrow(e => false)).to.throw();
+            doTest("import myImport from 'test';", "asdfasdf", undefined);
         });
     });
 
@@ -696,21 +717,47 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.getExportDeclaration), () => {
-        it("should get the export declaration", () => {
-            const { sourceFile } = getInfoFromText("export * from 'test'; export {next} from './test';");
-            expect(sourceFile.getExportDeclaration(e => e.isNamespaceExport())!.getText()).to.equal("export * from 'test';");
+        function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ExportDeclaration) => boolean), expected: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const result = sourceFile.getExportDeclaration(conditionOrModuleSpecifier);
+            if (expected == null)
+                expect(result).to.be.undefined;
+            else
+                expect(result!.getText()).to.equal(expected);
+        }
+
+        it("should get when exists", () => {
+            doTest("export * from 'test'; export {next} from './test';", e => e.isNamespaceExport(), "export * from 'test';");
+        });
+
+        it("should get when exists by module specifier", () => {
+            doTest("export * from 'test'; export {next} from './test';", "./test", "export {next} from './test';");
+        });
+
+        it("should return undefined when not exists", () => {
+            doTest("export * from 'test'; export {next} from './test';", "not-exists", undefined);
         });
     });
 
     describe(nameof<SourceFile>(n => n.getExportDeclarationOrThrow), () => {
-        it("should get the export declaration", () => {
-            const { sourceFile } = getInfoFromText("export * from 'test'; export {next} from './test';");
-            expect(sourceFile.getExportDeclarationOrThrow(e => e.isNamespaceExport()).getText()).to.equal("export * from 'test';");
+        function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ExportDeclaration) => boolean), expected: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            if (expected == null)
+                expect(() => sourceFile.getExportDeclarationOrThrow(conditionOrModuleSpecifier)).to.throw();
+            else
+                expect(sourceFile.getExportDeclarationOrThrow(conditionOrModuleSpecifier).getText()).to.equal(expected);
+        }
+
+        it("should get when exists", () => {
+            doTest("export * from 'test'; export {next} from './test';", e => e.isNamespaceExport(), "export * from 'test';");
+        });
+
+        it("should get when exists by module specifier", () => {
+            doTest("export * from 'test'; export {next} from './test';", "./test", "export {next} from './test';");
         });
 
         it("should throw when not exists", () => {
-            const { sourceFile } = getInfoFromText("");
-            expect(() => sourceFile.getExportDeclarationOrThrow(e => false)).to.throw();
+            doTest("export * from 'test'; export {next} from './test';", "not-exists", undefined);
         });
     });
 

@@ -558,18 +558,41 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the import by.
+     * @param condition - Condition to get the import declaration by.
      */
-    getImportDeclaration(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined {
-        return ArrayUtils.find(this.getImportDeclarations(), condition);
+    getImportDeclaration(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined;
+    /**
+     * Gets the first import declaration that matches a module specifier, or undefined if it doesn't exist.
+     * @param module - Module specifier to get the import declaration by.
+     */
+    getImportDeclaration(moduleSpecifier: string): ImportDeclaration | undefined;
+    /** @internal */
+    getImportDeclaration(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)): ImportDeclaration | undefined;
+    getImportDeclaration(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)) {
+        return ArrayUtils.find(this.getImportDeclarations(), getCondition());
+
+        function getCondition() {
+            if (typeof conditionOrModuleSpecifier === "string")
+                return (dec: ImportDeclaration) => dec.getModuleSpecifierValue() === conditionOrModuleSpecifier;
+            else
+                return conditionOrModuleSpecifier;
+        }
     }
 
     /**
      * Gets the first import declaration that matches a condition, or throws if it doesn't exist.
-     * @param condition - Condition to get the import by.
+     * @param condition - Condition to get the import declaration by.
      */
-    getImportDeclarationOrThrow(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration {
-        return errors.throwIfNullOrUndefined(this.getImportDeclaration(condition), "Expected to find an import with the provided condition.");
+    getImportDeclarationOrThrow(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration;
+    /**
+     * Gets the first import declaration that matches a module specifier, or throws if it doesn't exist.
+     * @param module - Module specifier to get the import declaration by.
+     */
+    getImportDeclarationOrThrow(moduleSpecifier: string): ImportDeclaration;
+    /** @internal */
+    getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)): ImportDeclaration;
+    getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)) {
+        return errors.throwIfNullOrUndefined(this.getImportDeclaration(conditionOrModuleSpecifier), "Expected to find an import with the provided condition.");
     }
 
     /**
@@ -631,16 +654,39 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the export declaration by.
      */
-    getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined {
-        return ArrayUtils.find(this.getExportDeclarations(), condition);
+    getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
+    /**
+     * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
+     * @param module - Module specifier to get the export declaration by.
+     */
+    getExportDeclaration(moduleSpecifier: string): ExportDeclaration | undefined;
+    /** @internal */
+    getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration | undefined;
+    getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
+        return ArrayUtils.find(this.getExportDeclarations(), getCondition());
+
+        function getCondition() {
+            if (typeof conditionOrModuleSpecifier === "string")
+                return (dec: ExportDeclaration) => dec.getModuleSpecifierValue() === conditionOrModuleSpecifier;
+            else
+                return conditionOrModuleSpecifier;
+        }
     }
 
     /**
      * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
      * @param condition - Condition to get the export declaration by.
      */
-    getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration {
-        return errors.throwIfNullOrUndefined(this.getExportDeclaration(condition), "Expected to find an export declaration with the provided condition.");
+    getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration;
+    /**
+     * Gets the first export declaration that matches a module specifier, or throws if it doesn't exist.
+     * @param module - Module specifier to get the export declaration by.
+     */
+    getExportDeclarationOrThrow(moduleSpecifier: string): ExportDeclaration;
+    /** @internal */
+    getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration;
+    getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
+        return errors.throwIfNullOrUndefined(this.getExportDeclaration(conditionOrModuleSpecifier), "Expected to find an export declaration with the provided condition.");
     }
 
     /**

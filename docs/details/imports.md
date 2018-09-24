@@ -11,6 +11,7 @@ Imports of a source file can be retrieved by calling:
 const imports = sourceFile.getImportDeclarations();
 // or get the first one that matches a condition
 const importWithDefaultImport = sourceFile.getImportDeclaration(i => i.getDefaultImport() != null);
+const someModuleImport = sourceFile.getImportDeclaration("module-specifier-text");
 ```
 
 ### Add/Insert

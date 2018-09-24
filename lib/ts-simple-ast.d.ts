@@ -6236,14 +6236,24 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
     /**
      * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the import by.
+     * @param condition - Condition to get the import declaration by.
      */
     getImportDeclaration(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined;
     /**
+     * Gets the first import declaration that matches a module specifier, or undefined if it doesn't exist.
+     * @param module - Module specifier to get the import declaration by.
+     */
+    getImportDeclaration(moduleSpecifier: string): ImportDeclaration | undefined;
+    /**
      * Gets the first import declaration that matches a condition, or throws if it doesn't exist.
-     * @param condition - Condition to get the import by.
+     * @param condition - Condition to get the import declaration by.
      */
     getImportDeclarationOrThrow(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration;
+    /**
+     * Gets the first import declaration that matches a module specifier, or throws if it doesn't exist.
+     * @param module - Module specifier to get the import declaration by.
+     */
+    getImportDeclarationOrThrow(moduleSpecifier: string): ImportDeclaration;
     /**
      * Get the file's import declarations.
      */
@@ -6276,10 +6286,20 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
     /**
+     * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
+     * @param module - Module specifier to get the export declaration by.
+     */
+    getExportDeclaration(moduleSpecifier: string): ExportDeclaration | undefined;
+    /**
      * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
      * @param condition - Condition to get the export declaration by.
      */
     getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration;
+    /**
+     * Gets the first export declaration that matches a module specifier, or throws if it doesn't exist.
+     * @param module - Module specifier to get the export declaration by.
+     */
+    getExportDeclarationOrThrow(moduleSpecifier: string): ExportDeclaration;
     /**
      * Get the file's export declarations.
      */
