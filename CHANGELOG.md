@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="15.1.0"></a>
+# [15.1.0](https://github.com/dsherret/ts-simple-ast/compare/15.0.2...15.1.0) (2018-09-24)
+
+
+### Features
+
+* [#431](https://github.com/dsherret/ts-simple-ast/issues/431) - Allow passing in a module specifier string to .getImportDeclaration and .getExportDeclaration ([20b45d2](https://github.com/dsherret/ts-simple-ast/commit/20b45d2))
+
+
+
 <a name="15.0.2"></a>
 ## [15.0.2](https://github.com/dsherret/ts-simple-ast/compare/15.0.1...15.0.2) (2018-09-23)
 
