@@ -1,4 +1,5 @@
 import { SourceFile } from "../../../compiler";
+import { Memoize } from "../../../utils";
 import { ProjectContext } from "../../../ProjectContext";
 import { DiagnosticCategory, ts } from "../../../typescript";
 import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
@@ -16,6 +17,9 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
     constructor(context: ProjectContext | undefined, compilerObject: TCompilerObject) {
         this.context = context;
         this._compilerObject = compilerObject;
+
+        // memoize
+        this.getSourceFile();
     }
 
     /**
@@ -28,6 +32,7 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
     /**
      * Gets the source file.
      */
+    @Memoize
     getSourceFile(): SourceFile | undefined {
         if (this.context == null)
             return undefined;

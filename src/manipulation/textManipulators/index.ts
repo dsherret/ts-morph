@@ -7,4 +7,5 @@ export * from "./RemoveChildrenTextManipulator";
 export * from "./RemoveChildrenWithFormattingTextManipulator";
 export * from "./RenameLocationTextManipulator";
 export * from "./TextManipulator";
+export * from "./UnchangedTextManipulator";
 export * from "./UnwrapTextManipulator";

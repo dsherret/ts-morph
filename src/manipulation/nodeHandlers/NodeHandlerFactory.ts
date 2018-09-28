@@ -68,15 +68,6 @@ export class NodeHandlerFactory {
             return new ParentFinderReplacementNodeHandler(compilerFactory, parentHandler, changingParent);
     }
 
-    getForCreatingSyntaxList(opts: ReplaceTreeCreatingSyntaxListOptions) {
-        const {parent, insertPos} = opts;
-        return this.getDefault({
-            parent,
-            childCount: 1,
-            isFirstChild: (currentNode, newNode) => newNode.kind === SyntaxKind.SyntaxList && insertPos <= newNode.getStart()
-        });
-    }
-
     getForRange(opts: ReplaceTreeWithRangeOptions) {
         const {parent: changingParent, start, end, replacingLength, replacingNodes, customMappings} = opts;
         const sourceFile = changingParent.getSourceFile();

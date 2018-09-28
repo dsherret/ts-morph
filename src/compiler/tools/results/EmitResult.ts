@@ -18,6 +18,9 @@ export class EmitResult {
     constructor(context: ProjectContext, compilerObject: ts.EmitResult) {
         this.context = context;
         this._compilerObject = compilerObject;
+
+        // memoize because diagnostics have dependencies that need to be memoized
+        this.getDiagnostics();
     }
 
     /**

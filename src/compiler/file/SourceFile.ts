@@ -50,6 +50,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     private readonly _modifiedEventContainer = new EventContainer<SourceFile>();
     /** @internal */
+    private readonly _preModifiedEventContainer = new EventContainer<SourceFile>();
+    /** @internal */
     readonly _referenceContainer = new SourceFileReferenceContainer(this);
 
     /** @internal */
@@ -1008,6 +1010,25 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         else
             this._modifiedEventContainer.unsubscribe(subscription);
         return this;
+    }
+
+    /**
+     * Do an action the next time the source file is modified.
+     * @param action - Action to run.
+     * @internal
+     */
+    _doActionPreNextModification(action: () => void) {
+        const wrappedSubscription = () => {
+            action();
+            this._preModifiedEventContainer.unsubscribe(wrappedSubscription);
+        };
+        this._preModifiedEventContainer.subscribe(wrappedSubscription);
+        return this;
+    }
+
+    /** @internal */
+    _firePreModified() {
+        this._preModifiedEventContainer.fire(this);
     }
 
     /**

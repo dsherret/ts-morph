@@ -1,6 +1,6 @@
 import { Node, RenameLocation, SourceFile } from "../../compiler";
 import { NodeHandlerFactory } from "../nodeHandlers";
-import { FullReplacementTextManipulator, InsertionTextManipulator, RenameLocationTextManipulator } from "../textManipulators";
+import { FullReplacementTextManipulator, InsertionTextManipulator, RenameLocationTextManipulator, UnchangedTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
 
 export interface ReplaceNodeTextOptions {
@@ -81,10 +81,11 @@ export interface ReplaceSourceFileForFilePathMoveOptions {
  */
 export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFilePathMoveOptions) {
     const {sourceFile, newFilePath} = opts;
-    const replacementSourceFile = sourceFile.context.compilerFactory.createCompilerSourceFileFromText(newFilePath, sourceFile.getFullText());
 
-    new NodeHandlerFactory().getForStraightReplacement(sourceFile.context.compilerFactory)
-        .handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
+    doManipulation(sourceFile,
+        new UnchangedTextManipulator(),
+        new NodeHandlerFactory().getForStraightReplacement(sourceFile.context.compilerFactory),
+        newFilePath);
 }
 
 /**

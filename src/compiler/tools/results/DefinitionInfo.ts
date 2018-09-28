@@ -14,8 +14,8 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
     constructor(context: ProjectContext, compilerObject: TCompilerObject) {
         super(context, compilerObject);
 
-        // fill memoize
-        this.getDeclarationNode();
+        // fill memoize before the source file is modified
+        this.getSourceFile()._doActionPreNextModification(() => this.getDeclarationNode());
     }
 
     /**
