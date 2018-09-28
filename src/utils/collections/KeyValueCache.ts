@@ -5,7 +5,7 @@ export class KeyValueCache<T, U> {
     private readonly cacheItems: Dictionary<T, U>;
 
     constructor() {
-        if (typeof Map !== undefined)
+        if (typeof Map !== "undefined")
             this.cacheItems = new Map<T, U>();
         else
             this.cacheItems = new Es5Map<T, U>();

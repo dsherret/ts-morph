@@ -4,7 +4,7 @@ export class WeakCache<T extends object, U> {
     private readonly cacheItems: WeakDictionary<T, U>;
 
     constructor() {
-        if (typeof WeakMap !== undefined)
+        if (typeof WeakMap !== "undefined")
             this.cacheItems = new WeakMap<T, U>();
         else
             this.cacheItems = new Es5WeakMap();
