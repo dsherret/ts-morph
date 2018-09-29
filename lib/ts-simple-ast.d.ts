@@ -5738,747 +5738,6 @@ export declare class YieldExpression extends YieldExpressionBase<ts.YieldExpress
     getExpressionOrThrow(): Expression<ts.Expression>;
 }
 
-declare const ExportAssignmentBase: typeof Statement;
-
-export declare class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
-    /**
-     * Gets if this is an export equals assignment.
-     *
-     * If this is false, then it's `export default`.
-     */
-    isExportEquals(): boolean;
-    /**
-     * Sets if this is an export equals assignment or export default.
-     * @param value - Whether it should be an export equals assignment.
-     */
-    setIsExportEquals(value: boolean): this;
-    /**
-     * Gets the export assignment expression.
-     */
-    getExpression(): Expression;
-    /**
-     * Sets the expression of the export assignment.
-     * @param textOrWriterFunction - Text or writer function to set as the export assignment expression.
-     */
-    setExpression(textOrWriterFunction: string | WriterFunction): this;
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<ExportAssignmentStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): ExportAssignmentStructure;
-}
-
-declare const ExportDeclarationBase: typeof Statement;
-
-export declare class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaration> {
-    /**
-     * Sets the import specifier.
-     * @param text - Text to set as the module specifier.
-     */
-    setModuleSpecifier(text: string): this;
-    /**
-     * Sets the import specifier.
-     * @param sourceFile - Source file to set the module specifier from.
-     */
-    setModuleSpecifier(sourceFile: SourceFile): this;
-    /**
-     * Gets the module specifier or undefined if it doesn't exist.
-     */
-    getModuleSpecifier(): StringLiteral | undefined;
-    /**
-     * Gets the module specifier value or undefined if it doesn't exist.
-     */
-    getModuleSpecifierValue(): string | undefined;
-    /**
-     * Gets the source file referenced in the module specifier or throws if it can't find it or it doesn't exist.
-     */
-    getModuleSpecifierSourceFileOrThrow(): SourceFile;
-    /**
-     * Gets the source file referenced in the module specifier.
-     */
-    getModuleSpecifierSourceFile(): SourceFile | undefined;
-    /**
-     * Gets if the module specifier starts with `./` or `../`.
-     */
-    isModuleSpecifierRelative(): boolean;
-    /**
-     * Removes the module specifier.
-     */
-    removeModuleSpecifier(): this;
-    /**
-     * Gets if the module specifier exists
-     */
-    hasModuleSpecifier(): boolean;
-    /**
-     * Gets if this export declaration is a namespace export.
-     */
-    isNamespaceExport(): boolean;
-    /**
-     * Gets if the export declaration has named exports.
-     */
-    hasNamedExports(): boolean;
-    /**
-     * Adds a named export.
-     * @param structure - Structure that represents the named export.
-     */
-    addNamedExport(structure: ExportSpecifierStructure): ExportSpecifier;
-    /**
-     * Adds a named export.
-     * @param name - Name of the named export.
-     */
-    addNamedExport(name: string): ExportSpecifier;
-    /**
-     * Adds named exports.
-     * @param structuresOrNames - Structures or names that represent the named exports.
-     */
-    addNamedExports(structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>): ExportSpecifier[];
-    /**
-     * Inserts a named export.
-     * @param index - Child index to insert at.
-     * @param structure - Structure that represents the named export.
-     */
-    insertNamedExport(index: number, structure: ExportSpecifierStructure): ExportSpecifier;
-    /**
-     * Inserts a named export.
-     * @param index - Child index to insert at.
-     * @param name - Name of the named export.
-     */
-    insertNamedExport(index: number, name: string): ExportSpecifier;
-    /**
-     * Inserts named exports into the export declaration.
-     * @param index - Child index to insert at.
-     * @param structuresOrNames - Structures or names that represent the named exports.
-     */
-    insertNamedExports(index: number, structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>): ExportSpecifier[];
-    /**
-     * Gets the named exports.
-     */
-    getNamedExports(): ExportSpecifier[];
-    /**
-     * Changes the export declaration to namespace export. Removes all the named exports.
-     */
-    toNamespaceExport(): this;
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<ExportDeclarationStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): ExportDeclarationStructure;
-}
-
-declare const ExportSpecifierBase: typeof Node;
-
-export declare class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
-    /**
-     * Sets the name of what's being exported.
-     */
-    setName(name: string): this;
-    /**
-     * Gets the name of the export specifier.
-     */
-    getName(): string;
-    /**
-     * Gets the name node of what's being exported.
-     */
-    getNameNode(): Identifier;
-    /**
-     * Sets the alias for the name being exported and renames all the usages.
-     * @param alias - Alias to set.
-     */
-    renameAlias(alias: string): this;
-    /**
-     * Sets the alias without renaming all the usages.
-     * @param alias - Alias to set.
-     */
-    setAlias(alias: string): this;
-    /**
-     * Removes the alias without renaming.
-     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the export specifier.
-     */
-    removeAlias(): this;
-    /**
-     * Removes the alias and renames any usages to the name of the export specifier.
-     */
-    removeAliasWithRename(): this;
-    /**
-     * Gets the alias identifier, if it exists.
-     */
-    getAliasNode(): Identifier | undefined;
-    /**
-     * Gets the export declaration associated with this export specifier.
-     */
-    getExportDeclaration(): ExportDeclaration;
-    /**
-     * Gets the local target symbol of the export specifier or throws if it doesn't exist.
-     */
-    getLocalTargetSymbolOrThrow(): Symbol;
-    /**
-     * Gets the local target symbol of the export specifier or undefined if it doesn't exist.
-     */
-    getLocalTargetSymbol(): Symbol | undefined;
-    /**
-     * Gets all the declarations referenced by the export specifier.
-     */
-    getLocalTargetDeclarations(): Node[];
-    /**
-     * Removes the export specifier.
-     */
-    remove(): void;
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<ExportSpecifierStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): ExportSpecifierStructure;
-}
-
-export declare class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
-    /**
-     * Gets the expression or undefined of the yield expression.
-     */
-    getExpression(): Expression | undefined;
-    /**
-     * Gets the expression of the yield expression or throws if it does not exist.
-     */
-    getExpressionOrThrow(): Expression<ts.Expression>;
-    /**
-     * Gets the source file referenced or throws if it can't find it.
-     */
-    getReferencedSourceFileOrThrow(): SourceFile;
-    /**
-     * Gets if the external module reference is relative.
-     */
-    isRelative(): boolean;
-    /**
-     * Gets the source file referenced or returns undefined if it can't find it.
-     */
-    getReferencedSourceFile(): SourceFile | undefined;
-}
-/**
- * Result of refreshing a source file from the file system.
- */
-export declare enum FileSystemRefreshResult {
-    /** The source file did not change. */
-    NoChange = 0,
-    /** The source file was updated from the file system. */
-    Updated = 1,
-    /** The source file was deleted. */
-    Deleted = 2
-}
-
-declare const ImportDeclarationBase: typeof Statement;
-
-export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
-    /**
-     * Sets the import specifier.
-     * @param text - Text to set as the module specifier.
-     */
-    setModuleSpecifier(text: string): this;
-    /**
-     * Sets the import specifier.
-     * @param sourceFile - Source file to set the module specifier from.
-     */
-    setModuleSpecifier(sourceFile: SourceFile): this;
-    /**
-     * Gets the module specifier.
-     */
-    getModuleSpecifier(): StringLiteral;
-    /**
-     * Gets the module specifier string literal value.
-     */
-    getModuleSpecifierValue(): string;
-    /**
-     * Gets the source file referenced in the module specifier or throws if it can't find it.
-     */
-    getModuleSpecifierSourceFileOrThrow(): SourceFile;
-    /**
-     * Gets the source file referenced in the module specifier or returns undefined if it can't find it.
-     */
-    getModuleSpecifierSourceFile(): SourceFile | undefined;
-    /**
-     * Gets if the module specifier starts with `./` or `../`.
-     */
-    isModuleSpecifierRelative(): boolean;
-    /**
-     * Sets the default import.
-     * @param text - Text to set as the default import.
-     * @remarks Use renameDefaultImport to rename.
-     */
-    setDefaultImport(text: string): this;
-    /**
-     * Renames or sets the provided default import.
-     * @param text - Text to set or rename the default import with.
-     */
-    renameDefaultImport(text: string): this;
-    /**
-     * Gets the default import or throws if it doesn't exit.
-     */
-    getDefaultImportOrThrow(): Identifier;
-    /**
-     * Gets the default import or returns undefined if it doesn't exist.
-     */
-    getDefaultImport(): Identifier | undefined;
-    /**
-     * Sets the namespace import.
-     * @param text - Text to set as the namespace import.
-     * @throws - InvalidOperationError if a named import exists.
-     */
-    setNamespaceImport(text: string): this;
-    /**
-     * Removes the namespace import.
-     */
-    removeNamespaceImport(): this;
-    /**
-     * Removes the default import.
-     */
-    removeDefaultImport(): this;
-    /**
-     * Gets the namespace import if it exists or throws.
-     */
-    getNamespaceImportOrThrow(): Identifier;
-    /**
-     * Gets the namespace import, if it exists.
-     */
-    getNamespaceImport(): Identifier | undefined;
-    /**
-     * Adds a named import.
-     * @param structure - Structure that represents the named import.
-     */
-    addNamedImport(structure: ImportSpecifierStructure): ImportSpecifier;
-    /**
-     * Adds a named import.
-     * @param name - Name of the named import.
-     */
-    addNamedImport(name: string): ImportSpecifier;
-    /**
-     * Adds named imports.
-     * @param structuresOrNames - Structures or names that represent the named imports.
-     */
-    addNamedImports(structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>): ImportSpecifier[];
-    /**
-     * Inserts a named import.
-     * @param index - Child index to insert at.
-     * @param structure - Structure that represents the named import.
-     */
-    insertNamedImport(index: number, structure: ImportSpecifierStructure): ImportSpecifier;
-    /**
-     * Inserts a named import.
-     * @param index - Child index to insert at.
-     * @param name - Name of the named import.
-     */
-    insertNamedImport(index: number, name: string): ImportSpecifier;
-    /**
-     * Inserts named imports into the import declaration.
-     * @param index - Child index to insert at.
-     * @param structuresOrNames - Structures or names that represent the named imports.
-     */
-    insertNamedImports(index: number, structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>): ImportSpecifier[];
-    /**
-     * Gets the named imports.
-     */
-    getNamedImports(): ImportSpecifier[];
-    /**
-     * Removes all the named imports.
-     */
-    removeNamedImports(): this;
-    /**
-     * Gets the import clause or throws if it doesn't exist.
-     */
-    getImportClauseOrThrow(): Node<ts.ImportClause>;
-    /**
-     * Gets the import clause or returns undefined if it doesn't exist.
-     */
-    getImportClause(): Node<ts.ImportClause> | undefined;
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<ImportDeclarationStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): ImportDeclarationStructure;
-}
-
-declare const ImportEqualsDeclarationBase: Constructor<JSDocableNode> & Constructor<NamedNode> & typeof Statement;
-
-export declare class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {
-    /**
-     * Gets the module reference of the import equals declaration.
-     */
-    getModuleReference(): ModuleReference;
-    /**
-     * Gets if the external module reference is relative.
-     */
-    isExternalModuleReferenceRelative(): boolean;
-    /**
-     * Sets the external module reference.
-     * @param externalModuleReference - External module reference as a string.
-     */
-    setExternalModuleReference(externalModuleReference: string): this;
-    /**
-     * Sets the external module reference.
-     * @param sourceFile - Source file to set the external module reference to.
-     */
-    setExternalModuleReference(sourceFile: SourceFile): this;
-    /**
-     * Gets the source file referenced in the external module reference or throws if it doesn't exist.
-     */
-    getExternalModuleReferenceSourceFileOrThrow(): SourceFile;
-    /**
-     * Gets the source file referenced in the external module reference or returns undefined if it doesn't exist.
-     */
-    getExternalModuleReferenceSourceFile(): SourceFile | undefined;
-}
-
-declare const ImportSpecifierBase: typeof Node;
-
-export declare class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
-    /**
-     * Sets the identifier being imported.
-     * @param name - Name being imported.
-     */
-    setName(name: string): this;
-    /**
-     * Gets the name of the import specifier.
-     */
-    getName(): string;
-    /**
-     * Gets the name node of what's being imported.
-     */
-    getNameNode(): Identifier;
-    /**
-     * Sets the alias for the name being imported and renames all the usages.
-     * @param alias - Alias to set.
-     */
-    renameAlias(alias: string): this;
-    /**
-     * Sets the alias without renaming all the usages.
-     * @param alias - Alias to set.
-     */
-    setAlias(alias: string): this;
-    /**
-     * Removes the alias without renaming.
-     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the import specifier.
-     */
-    removeAlias(): this;
-    /**
-     * Removes the alias and renames any usages to the name of the import specifier.
-     */
-    removeAliasWithRename(): this;
-    /**
-     * Gets the alias identifier, if it exists.
-     */
-    getAliasNode(): Identifier | undefined;
-    /**
-     * Gets the import declaration associated with this import specifier.
-     */
-    getImportDeclaration(): ImportDeclaration;
-    /**
-     * Remove the import specifier.
-     */
-    remove(): void;
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<ImportSpecifierStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): ImportSpecifierStructure;
-}
-
-export interface SourceFileCopyOptions {
-    overwrite?: boolean;
-}
-
-export interface SourceFileMoveOptions {
-    overwrite?: boolean;
-}
-
-/**
- * Options for emitting a source file.
- */
-export interface SourceFileEmitOptions extends EmitOptionsBase {
-}
-
-declare const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node;
-
-export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
-    /**
-     * Gets the file path.
-     */
-    getFilePath(): string;
-    /**
-     * Gets the file path's base name.
-     */
-    getBaseName(): string;
-    /**
-     * Gets the file path's base name without the extension.
-     */
-    getBaseNameWithoutExtension(): string;
-    /**
-     * Gets the file path's extension.
-     */
-    getExtension(): string;
-    /**
-     * Gets the directory that the source file is contained in.
-     */
-    getDirectory(): Directory;
-    /**
-     * Gets the directory path that the source file is contained in.
-     */
-    getDirectoryPath(): string;
-    /**
-     * Gets the full text with leading trivia.
-     */
-    getFullText(): string;
-    /**
-     * Gets the line number at the provided position.
-     * @param pos - Position
-     */
-    getLineNumberAtPos(pos: number): number;
-    /**
-     * Gets the character count from the start of the line to the provided position.
-     * @param pos - Position.
-     */
-    getLengthFromLineStartAtPos(pos: number): number;
-    /**
-     * Copy this source file to a new file.
-     *
-     * This will modify the module specifiers in the new file, if necessary.
-     * @param filePath - New file path. Can be relative to the original file or an absolute path.
-     * @param options - Options for copying.
-     */
-    copy(filePath: string, options?: SourceFileCopyOptions): SourceFile;
-    /**
-     * Copy this source file to a new file and immediately saves it to the file system asynchronously.
-     *
-     * This will modify the module specifiers in the new file, if necessary.
-     * @param filePath - New file path. Can be relative to the original file or an absolute path.
-     * @param options - Options for copying.
-     */
-    copyImmediately(filePath: string, options?: SourceFileCopyOptions): Promise<SourceFile>;
-    /**
-     * Copy this source file to a new file and immediately saves it to the file system synchronously.
-     *
-     * This will modify the module specifiers in the new file, if necessary.
-     * @param filePath - New file path. Can be relative to the original file or an absolute path.
-     * @param options - Options for copying.
-     */
-    copyImmediatelySync(filePath: string, options?: SourceFileCopyOptions): SourceFile;
-    /**
-     * Moves this source file to a new file.
-     *
-     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
-     * @param filePath - New file path. Can be relative to the original file or an absolute path.
-     * @param options - Options for moving.
-     */
-    move(filePath: string, options?: SourceFileMoveOptions): SourceFile;
-    /**
-     * Moves this source file to a new file and asynchronously updates the file system immediately.
-     *
-     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
-     * @param filePath - New file path. Can be relative to the original file or an absolute path.
-     * @param options - Options for moving.
-     */
-    moveImmediately(filePath: string, options?: SourceFileMoveOptions): Promise<SourceFile>;
-    /**
-     * Moves this source file to a new file and synchronously updates the file system immediately.
-     *
-     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
-     * @param filePath - New file path. Can be relative to the original file or an absolute path.
-     * @param options - Options for moving.
-     */
-    moveImmediatelySync(filePath: string, options?: SourceFileMoveOptions): SourceFile;
-    /**
-     * Queues a deletion of the file to the file system.
-     *
-     * The file will be deleted when you call ast.save(). If you wish to immediately delete the file, then use deleteImmediately().
-     */
-    delete(): void;
-    /**
-     * Asynchronously deletes the file from the file system.
-     */
-    deleteImmediately(): Promise<void>;
-    /**
-     * Synchronously deletes the file from the file system.
-     */
-    deleteImmediatelySync(): void;
-    /**
-     * Asynchronously saves this file with any changes.
-     */
-    save(): Promise<void>;
-    /**
-     * Synchronously saves this file with any changes.
-     */
-    saveSync(): void;
-    /**
-     * Gets any referenced files.
-     */
-    getReferencedFiles(): SourceFile[];
-    /**
-     * Gets the source files for any type reference directives.
-     */
-    getTypeReferenceDirectives(): SourceFile[];
-    /**
-     * Get any source files that reference this source file.
-     */
-    getReferencingSourceFiles(): SourceFile[];
-    /**
-     * Gets the import and exports in other source files that reference this source file.
-     */
-    getReferencingNodesInOtherSourceFiles(): SourceFileReferencingNodes[];
-    /**
-     * Gets the string literals in other source files that reference this source file.
-     */
-    getReferencingLiteralsInOtherSourceFiles(): StringLiteral[];
-    /**
-     * Gets all the descendant string literals that reference a source file.
-     */
-    getImportStringLiterals(): StringLiteral[];
-    /**
-     * Gets the script target of the source file.
-     */
-    getLanguageVersion(): ScriptTarget;
-    /**
-     * Gets the language variant of the source file.
-     */
-    getLanguageVariant(): LanguageVariant;
-    /**
-     * Gets if this is a declaration file.
-     */
-    isDeclarationFile(): boolean;
-    /**
-     * Gets if the source file is from an external library.
-     */
-    isFromExternalLibrary(): boolean;
-    /**
-     * Gets if this source file has been saved or if the latest changes have been saved.
-     */
-    isSaved(): boolean;
-    /**
-     * Gets the pre-emit diagnostics of the specified source file.
-     */
-    getPreEmitDiagnostics(): Diagnostic[];
-    /**
-     * Deindents the line at the specified position.
-     * @param pos - Position.
-     * @param times - Times to unindent. Specify a negative value to indent.
-     */
-    unindent(pos: number, times?: number): this;
-    /**
-     * Deindents the lines within the specified range.
-     * @param positionRange - Position range.
-     * @param times - Times to unindent. Specify a negative value to indent.
-     */
-    unindent(positionRange: [number, number], times?: number): this;
-    /**
-     * Indents the line at the specified position.
-     * @param pos - Position.
-     * @param times - Times to indent. Specify a negative value to unindent.
-     */
-    indent(pos: number, times?: number): this;
-    /**
-     * Indents the lines within the specified range.
-     * @param positionRange - Position range.
-     * @param times - Times to indent. Specify a negative value to unindent.
-     */
-    indent(positionRange: [number, number], times?: number): this;
-    /**
-     * Emits the source file.
-     */
-    emit(options?: SourceFileEmitOptions): EmitResult;
-    /**
-     * Gets the emit output of this source file.
-     * @param options - Emit options.
-     */
-    getEmitOutput(options?: {
-        emitOnlyDtsFiles?: boolean;
-    }): EmitOutput;
-    /**
-     * Formats the source file text using the internal TypeScript formatting API.
-     * @param settings - Format code settings.
-     */
-    formatText(settings?: FormatCodeSettings): void;
-    /**
-     * Refresh the source file from the file system.
-     *
-     * WARNING: When updating from the file system, this will "forget" any previously navigated nodes.
-     * @returns What action ended up taking place.
-     */
-    refreshFromFileSystem(): Promise<FileSystemRefreshResult>;
-    /**
-     * Synchronously refreshes the source file from the file system.
-     *
-     * WARNING: When updating from the file system, this will "forget" any previously navigated nodes.
-     * @returns What action ended up taking place.
-     */
-    refreshFromFileSystemSync(): FileSystemRefreshResult;
-    /**
-     * Gets the relative path to another source file.
-     * @param sourceFile - Source file.
-     */
-    getRelativePathTo(sourceFile: SourceFile): string;
-    /**
-     * Gets the relative path to another directory.
-     * @param directory - Directory.
-     */
-    getRelativePathTo(directory: Directory): string;
-    /**
-     * Gets the relative path to the specified source file as a module specifier.
-     * @param sourceFile - Source file.
-     */
-    getRelativePathAsModuleSpecifierTo(sourceFile: SourceFile): string;
-    /**
-     * Gets the relative path to the specified directory as a module specifier.
-     * @param directory - Directory.
-     */
-    getRelativePathAsModuleSpecifierTo(directory: Directory): string;
-    /**
-     * Subscribe to when the source file is modified.
-     * @param subscription - Subscription.
-     * @param subscribe - Optional and defaults to true. Use an explicit false to unsubscribe.
-     */
-    onModified(subscription: (sender: SourceFile) => void, subscribe?: boolean): this;
-    /**
-     * Organizes the imports in the file.
-     *
-     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
-     * @param settings - Format code settings.
-     * @param userPreferences - User preferences for refactoring.
-     */
-    organizeImports(settings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
-    /**
-     * Applies the text changes to the source file.
-     *
-     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
-     * @param textChanges - Text changes.
-     */
-    applyTextChanges(textChanges: ReadonlyArray<TextChange>): this;
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<SourceFileStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): SourceFileStructure;
-    private _refreshFromFileSystemInternal;
-}
-
 declare const ArrowFunctionBase: Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<AsyncableNode> & Constructor<FunctionLikeDeclaration> & typeof Expression;
 
 export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
@@ -7423,6 +6682,467 @@ declare const TemplateTailBase: Constructor<LiteralLikeNode> & typeof Node;
 export declare class TemplateTail extends TemplateTailBase<ts.TemplateTail> {
 }
 
+declare const ExportAssignmentBase: typeof Statement;
+
+export declare class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
+    /**
+     * Gets if this is an export equals assignment.
+     *
+     * If this is false, then it's `export default`.
+     */
+    isExportEquals(): boolean;
+    /**
+     * Sets if this is an export equals assignment or export default.
+     * @param value - Whether it should be an export equals assignment.
+     */
+    setIsExportEquals(value: boolean): this;
+    /**
+     * Gets the export assignment expression.
+     */
+    getExpression(): Expression;
+    /**
+     * Sets the expression of the export assignment.
+     * @param textOrWriterFunction - Text or writer function to set as the export assignment expression.
+     */
+    setExpression(textOrWriterFunction: string | WriterFunction): this;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportAssignmentStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ExportAssignmentStructure;
+}
+
+declare const ExportDeclarationBase: typeof Statement;
+
+export declare class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaration> {
+    /**
+     * Sets the import specifier.
+     * @param text - Text to set as the module specifier.
+     */
+    setModuleSpecifier(text: string): this;
+    /**
+     * Sets the import specifier.
+     * @param sourceFile - Source file to set the module specifier from.
+     */
+    setModuleSpecifier(sourceFile: SourceFile): this;
+    /**
+     * Gets the module specifier or undefined if it doesn't exist.
+     */
+    getModuleSpecifier(): StringLiteral | undefined;
+    /**
+     * Gets the module specifier value or undefined if it doesn't exist.
+     */
+    getModuleSpecifierValue(): string | undefined;
+    /**
+     * Gets the source file referenced in the module specifier or throws if it can't find it or it doesn't exist.
+     */
+    getModuleSpecifierSourceFileOrThrow(): SourceFile;
+    /**
+     * Gets the source file referenced in the module specifier.
+     */
+    getModuleSpecifierSourceFile(): SourceFile | undefined;
+    /**
+     * Gets if the module specifier starts with `./` or `../`.
+     */
+    isModuleSpecifierRelative(): boolean;
+    /**
+     * Removes the module specifier.
+     */
+    removeModuleSpecifier(): this;
+    /**
+     * Gets if the module specifier exists
+     */
+    hasModuleSpecifier(): boolean;
+    /**
+     * Gets if this export declaration is a namespace export.
+     */
+    isNamespaceExport(): boolean;
+    /**
+     * Gets if the export declaration has named exports.
+     */
+    hasNamedExports(): boolean;
+    /**
+     * Adds a named export.
+     * @param structure - Structure that represents the named export.
+     */
+    addNamedExport(structure: ExportSpecifierStructure): ExportSpecifier;
+    /**
+     * Adds a named export.
+     * @param name - Name of the named export.
+     */
+    addNamedExport(name: string): ExportSpecifier;
+    /**
+     * Adds named exports.
+     * @param structuresOrNames - Structures or names that represent the named exports.
+     */
+    addNamedExports(structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>): ExportSpecifier[];
+    /**
+     * Inserts a named export.
+     * @param index - Child index to insert at.
+     * @param structure - Structure that represents the named export.
+     */
+    insertNamedExport(index: number, structure: ExportSpecifierStructure): ExportSpecifier;
+    /**
+     * Inserts a named export.
+     * @param index - Child index to insert at.
+     * @param name - Name of the named export.
+     */
+    insertNamedExport(index: number, name: string): ExportSpecifier;
+    /**
+     * Inserts named exports into the export declaration.
+     * @param index - Child index to insert at.
+     * @param structuresOrNames - Structures or names that represent the named exports.
+     */
+    insertNamedExports(index: number, structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>): ExportSpecifier[];
+    /**
+     * Gets the named exports.
+     */
+    getNamedExports(): ExportSpecifier[];
+    /**
+     * Changes the export declaration to namespace export. Removes all the named exports.
+     */
+    toNamespaceExport(): this;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportDeclarationStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ExportDeclarationStructure;
+}
+
+declare const ExportSpecifierBase: typeof Node;
+
+export declare class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
+    /**
+     * Sets the name of what's being exported.
+     */
+    setName(name: string): this;
+    /**
+     * Gets the name of the export specifier.
+     */
+    getName(): string;
+    /**
+     * Gets the name node of what's being exported.
+     */
+    getNameNode(): Identifier;
+    /**
+     * Sets the alias for the name being exported and renames all the usages.
+     * @param alias - Alias to set.
+     */
+    renameAlias(alias: string): this;
+    /**
+     * Sets the alias without renaming all the usages.
+     * @param alias - Alias to set.
+     */
+    setAlias(alias: string): this;
+    /**
+     * Removes the alias without renaming.
+     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the export specifier.
+     */
+    removeAlias(): this;
+    /**
+     * Removes the alias and renames any usages to the name of the export specifier.
+     */
+    removeAliasWithRename(): this;
+    /**
+     * Gets the alias identifier, if it exists.
+     */
+    getAliasNode(): Identifier | undefined;
+    /**
+     * Gets the export declaration associated with this export specifier.
+     */
+    getExportDeclaration(): ExportDeclaration;
+    /**
+     * Gets the local target symbol of the export specifier or throws if it doesn't exist.
+     */
+    getLocalTargetSymbolOrThrow(): Symbol;
+    /**
+     * Gets the local target symbol of the export specifier or undefined if it doesn't exist.
+     */
+    getLocalTargetSymbol(): Symbol | undefined;
+    /**
+     * Gets all the declarations referenced by the export specifier.
+     */
+    getLocalTargetDeclarations(): Node[];
+    /**
+     * Removes the export specifier.
+     */
+    remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ExportSpecifierStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ExportSpecifierStructure;
+}
+
+export declare class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
+    /**
+     * Gets the expression or undefined of the yield expression.
+     */
+    getExpression(): Expression | undefined;
+    /**
+     * Gets the expression of the yield expression or throws if it does not exist.
+     */
+    getExpressionOrThrow(): Expression<ts.Expression>;
+    /**
+     * Gets the source file referenced or throws if it can't find it.
+     */
+    getReferencedSourceFileOrThrow(): SourceFile;
+    /**
+     * Gets if the external module reference is relative.
+     */
+    isRelative(): boolean;
+    /**
+     * Gets the source file referenced or returns undefined if it can't find it.
+     */
+    getReferencedSourceFile(): SourceFile | undefined;
+}
+/**
+ * Result of refreshing a source file from the file system.
+ */
+export declare enum FileSystemRefreshResult {
+    /** The source file did not change. */
+    NoChange = 0,
+    /** The source file was updated from the file system. */
+    Updated = 1,
+    /** The source file was deleted. */
+    Deleted = 2
+}
+
+declare const ImportDeclarationBase: typeof Statement;
+
+export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
+    /**
+     * Sets the import specifier.
+     * @param text - Text to set as the module specifier.
+     */
+    setModuleSpecifier(text: string): this;
+    /**
+     * Sets the import specifier.
+     * @param sourceFile - Source file to set the module specifier from.
+     */
+    setModuleSpecifier(sourceFile: SourceFile): this;
+    /**
+     * Gets the module specifier.
+     */
+    getModuleSpecifier(): StringLiteral;
+    /**
+     * Gets the module specifier string literal value.
+     */
+    getModuleSpecifierValue(): string;
+    /**
+     * Gets the source file referenced in the module specifier or throws if it can't find it.
+     */
+    getModuleSpecifierSourceFileOrThrow(): SourceFile;
+    /**
+     * Gets the source file referenced in the module specifier or returns undefined if it can't find it.
+     */
+    getModuleSpecifierSourceFile(): SourceFile | undefined;
+    /**
+     * Gets if the module specifier starts with `./` or `../`.
+     */
+    isModuleSpecifierRelative(): boolean;
+    /**
+     * Sets the default import.
+     * @param text - Text to set as the default import.
+     * @remarks Use renameDefaultImport to rename.
+     */
+    setDefaultImport(text: string): this;
+    /**
+     * Renames or sets the provided default import.
+     * @param text - Text to set or rename the default import with.
+     */
+    renameDefaultImport(text: string): this;
+    /**
+     * Gets the default import or throws if it doesn't exit.
+     */
+    getDefaultImportOrThrow(): Identifier;
+    /**
+     * Gets the default import or returns undefined if it doesn't exist.
+     */
+    getDefaultImport(): Identifier | undefined;
+    /**
+     * Sets the namespace import.
+     * @param text - Text to set as the namespace import.
+     * @throws - InvalidOperationError if a named import exists.
+     */
+    setNamespaceImport(text: string): this;
+    /**
+     * Removes the namespace import.
+     */
+    removeNamespaceImport(): this;
+    /**
+     * Removes the default import.
+     */
+    removeDefaultImport(): this;
+    /**
+     * Gets the namespace import if it exists or throws.
+     */
+    getNamespaceImportOrThrow(): Identifier;
+    /**
+     * Gets the namespace import, if it exists.
+     */
+    getNamespaceImport(): Identifier | undefined;
+    /**
+     * Adds a named import.
+     * @param structure - Structure that represents the named import.
+     */
+    addNamedImport(structure: ImportSpecifierStructure): ImportSpecifier;
+    /**
+     * Adds a named import.
+     * @param name - Name of the named import.
+     */
+    addNamedImport(name: string): ImportSpecifier;
+    /**
+     * Adds named imports.
+     * @param structuresOrNames - Structures or names that represent the named imports.
+     */
+    addNamedImports(structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>): ImportSpecifier[];
+    /**
+     * Inserts a named import.
+     * @param index - Child index to insert at.
+     * @param structure - Structure that represents the named import.
+     */
+    insertNamedImport(index: number, structure: ImportSpecifierStructure): ImportSpecifier;
+    /**
+     * Inserts a named import.
+     * @param index - Child index to insert at.
+     * @param name - Name of the named import.
+     */
+    insertNamedImport(index: number, name: string): ImportSpecifier;
+    /**
+     * Inserts named imports into the import declaration.
+     * @param index - Child index to insert at.
+     * @param structuresOrNames - Structures or names that represent the named imports.
+     */
+    insertNamedImports(index: number, structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>): ImportSpecifier[];
+    /**
+     * Gets the named imports.
+     */
+    getNamedImports(): ImportSpecifier[];
+    /**
+     * Removes all the named imports.
+     */
+    removeNamedImports(): this;
+    /**
+     * Gets the import clause or throws if it doesn't exist.
+     */
+    getImportClauseOrThrow(): Node<ts.ImportClause>;
+    /**
+     * Gets the import clause or returns undefined if it doesn't exist.
+     */
+    getImportClause(): Node<ts.ImportClause> | undefined;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ImportDeclarationStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ImportDeclarationStructure;
+}
+
+declare const ImportEqualsDeclarationBase: Constructor<JSDocableNode> & Constructor<NamedNode> & typeof Statement;
+
+export declare class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {
+    /**
+     * Gets the module reference of the import equals declaration.
+     */
+    getModuleReference(): ModuleReference;
+    /**
+     * Gets if the external module reference is relative.
+     */
+    isExternalModuleReferenceRelative(): boolean;
+    /**
+     * Sets the external module reference.
+     * @param externalModuleReference - External module reference as a string.
+     */
+    setExternalModuleReference(externalModuleReference: string): this;
+    /**
+     * Sets the external module reference.
+     * @param sourceFile - Source file to set the external module reference to.
+     */
+    setExternalModuleReference(sourceFile: SourceFile): this;
+    /**
+     * Gets the source file referenced in the external module reference or throws if it doesn't exist.
+     */
+    getExternalModuleReferenceSourceFileOrThrow(): SourceFile;
+    /**
+     * Gets the source file referenced in the external module reference or returns undefined if it doesn't exist.
+     */
+    getExternalModuleReferenceSourceFile(): SourceFile | undefined;
+}
+
+declare const ImportSpecifierBase: typeof Node;
+
+export declare class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
+    /**
+     * Sets the identifier being imported.
+     * @param name - Name being imported.
+     */
+    setName(name: string): this;
+    /**
+     * Gets the name of the import specifier.
+     */
+    getName(): string;
+    /**
+     * Gets the name node of what's being imported.
+     */
+    getNameNode(): Identifier;
+    /**
+     * Sets the alias for the name being imported and renames all the usages.
+     * @param alias - Alias to set.
+     */
+    renameAlias(alias: string): this;
+    /**
+     * Sets the alias without renaming all the usages.
+     * @param alias - Alias to set.
+     */
+    setAlias(alias: string): this;
+    /**
+     * Removes the alias without renaming.
+     * @remarks Use removeAliasWithRename() if you want it to rename any usages to the name of the import specifier.
+     */
+    removeAlias(): this;
+    /**
+     * Removes the alias and renames any usages to the name of the import specifier.
+     */
+    removeAliasWithRename(): this;
+    /**
+     * Gets the alias identifier, if it exists.
+     */
+    getAliasNode(): Identifier | undefined;
+    /**
+     * Gets the import declaration associated with this import specifier.
+     */
+    getImportDeclaration(): ImportDeclaration;
+    /**
+     * Remove the import specifier.
+     */
+    remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ImportSpecifierStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ImportSpecifierStructure;
+}
+
 export declare function NamespaceChildableNode<T extends Constructor<NamespaceChildableNodeExtensionType>>(Base: T): Constructor<NamespaceChildableNode> & T;
 
 export interface NamespaceChildableNode {
@@ -7494,6 +7214,286 @@ export declare enum NamespaceDeclarationKind {
     Namespace = "namespace",
     Module = "module",
     Global = "global"
+}
+
+export interface SourceFileCopyOptions {
+    overwrite?: boolean;
+}
+
+export interface SourceFileMoveOptions {
+    overwrite?: boolean;
+}
+
+/**
+ * Options for emitting a source file.
+ */
+export interface SourceFileEmitOptions extends EmitOptionsBase {
+}
+
+declare const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node;
+
+export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
+    /**
+     * Gets the file path.
+     */
+    getFilePath(): string;
+    /**
+     * Gets the file path's base name.
+     */
+    getBaseName(): string;
+    /**
+     * Gets the file path's base name without the extension.
+     */
+    getBaseNameWithoutExtension(): string;
+    /**
+     * Gets the file path's extension.
+     */
+    getExtension(): string;
+    /**
+     * Gets the directory that the source file is contained in.
+     */
+    getDirectory(): Directory;
+    /**
+     * Gets the directory path that the source file is contained in.
+     */
+    getDirectoryPath(): string;
+    /**
+     * Gets the full text with leading trivia.
+     */
+    getFullText(): string;
+    /**
+     * Gets the line number at the provided position.
+     * @param pos - Position
+     */
+    getLineNumberAtPos(pos: number): number;
+    /**
+     * Gets the character count from the start of the line to the provided position.
+     * @param pos - Position.
+     */
+    getLengthFromLineStartAtPos(pos: number): number;
+    /**
+     * Copy this source file to a new file.
+     *
+     * This will modify the module specifiers in the new file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for copying.
+     */
+    copy(filePath: string, options?: SourceFileCopyOptions): SourceFile;
+    /**
+     * Copy this source file to a new file and immediately saves it to the file system asynchronously.
+     *
+     * This will modify the module specifiers in the new file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for copying.
+     */
+    copyImmediately(filePath: string, options?: SourceFileCopyOptions): Promise<SourceFile>;
+    /**
+     * Copy this source file to a new file and immediately saves it to the file system synchronously.
+     *
+     * This will modify the module specifiers in the new file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for copying.
+     */
+    copyImmediatelySync(filePath: string, options?: SourceFileCopyOptions): SourceFile;
+    /**
+     * Moves this source file to a new file.
+     *
+     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for moving.
+     */
+    move(filePath: string, options?: SourceFileMoveOptions): SourceFile;
+    /**
+     * Moves this source file to a new file and asynchronously updates the file system immediately.
+     *
+     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for moving.
+     */
+    moveImmediately(filePath: string, options?: SourceFileMoveOptions): Promise<SourceFile>;
+    /**
+     * Moves this source file to a new file and synchronously updates the file system immediately.
+     *
+     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for moving.
+     */
+    moveImmediatelySync(filePath: string, options?: SourceFileMoveOptions): SourceFile;
+    /**
+     * Queues a deletion of the file to the file system.
+     *
+     * The file will be deleted when you call ast.save(). If you wish to immediately delete the file, then use deleteImmediately().
+     */
+    delete(): void;
+    /**
+     * Asynchronously deletes the file from the file system.
+     */
+    deleteImmediately(): Promise<void>;
+    /**
+     * Synchronously deletes the file from the file system.
+     */
+    deleteImmediatelySync(): void;
+    /**
+     * Asynchronously saves this file with any changes.
+     */
+    save(): Promise<void>;
+    /**
+     * Synchronously saves this file with any changes.
+     */
+    saveSync(): void;
+    /**
+     * Gets any referenced files.
+     */
+    getReferencedFiles(): SourceFile[];
+    /**
+     * Gets the source files for any type reference directives.
+     */
+    getTypeReferenceDirectives(): SourceFile[];
+    /**
+     * Get any source files that reference this source file.
+     */
+    getReferencingSourceFiles(): SourceFile[];
+    /**
+     * Gets the import and exports in other source files that reference this source file.
+     */
+    getReferencingNodesInOtherSourceFiles(): SourceFileReferencingNodes[];
+    /**
+     * Gets the string literals in other source files that reference this source file.
+     */
+    getReferencingLiteralsInOtherSourceFiles(): StringLiteral[];
+    /**
+     * Gets all the descendant string literals that reference a source file.
+     */
+    getImportStringLiterals(): StringLiteral[];
+    /**
+     * Gets the script target of the source file.
+     */
+    getLanguageVersion(): ScriptTarget;
+    /**
+     * Gets the language variant of the source file.
+     */
+    getLanguageVariant(): LanguageVariant;
+    /**
+     * Gets if this is a declaration file.
+     */
+    isDeclarationFile(): boolean;
+    /**
+     * Gets if the source file is from an external library.
+     */
+    isFromExternalLibrary(): boolean;
+    /**
+     * Gets if this source file has been saved or if the latest changes have been saved.
+     */
+    isSaved(): boolean;
+    /**
+     * Gets the pre-emit diagnostics of the specified source file.
+     */
+    getPreEmitDiagnostics(): Diagnostic[];
+    /**
+     * Deindents the line at the specified position.
+     * @param pos - Position.
+     * @param times - Times to unindent. Specify a negative value to indent.
+     */
+    unindent(pos: number, times?: number): this;
+    /**
+     * Deindents the lines within the specified range.
+     * @param positionRange - Position range.
+     * @param times - Times to unindent. Specify a negative value to indent.
+     */
+    unindent(positionRange: [number, number], times?: number): this;
+    /**
+     * Indents the line at the specified position.
+     * @param pos - Position.
+     * @param times - Times to indent. Specify a negative value to unindent.
+     */
+    indent(pos: number, times?: number): this;
+    /**
+     * Indents the lines within the specified range.
+     * @param positionRange - Position range.
+     * @param times - Times to indent. Specify a negative value to unindent.
+     */
+    indent(positionRange: [number, number], times?: number): this;
+    /**
+     * Emits the source file.
+     */
+    emit(options?: SourceFileEmitOptions): EmitResult;
+    /**
+     * Gets the emit output of this source file.
+     * @param options - Emit options.
+     */
+    getEmitOutput(options?: {
+        emitOnlyDtsFiles?: boolean;
+    }): EmitOutput;
+    /**
+     * Formats the source file text using the internal TypeScript formatting API.
+     * @param settings - Format code settings.
+     */
+    formatText(settings?: FormatCodeSettings): void;
+    /**
+     * Refresh the source file from the file system.
+     *
+     * WARNING: When updating from the file system, this will "forget" any previously navigated nodes.
+     * @returns What action ended up taking place.
+     */
+    refreshFromFileSystem(): Promise<FileSystemRefreshResult>;
+    /**
+     * Synchronously refreshes the source file from the file system.
+     *
+     * WARNING: When updating from the file system, this will "forget" any previously navigated nodes.
+     * @returns What action ended up taking place.
+     */
+    refreshFromFileSystemSync(): FileSystemRefreshResult;
+    /**
+     * Gets the relative path to another source file.
+     * @param sourceFile - Source file.
+     */
+    getRelativePathTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to another directory.
+     * @param directory - Directory.
+     */
+    getRelativePathTo(directory: Directory): string;
+    /**
+     * Gets the relative path to the specified source file as a module specifier.
+     * @param sourceFile - Source file.
+     */
+    getRelativePathAsModuleSpecifierTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to the specified directory as a module specifier.
+     * @param directory - Directory.
+     */
+    getRelativePathAsModuleSpecifierTo(directory: Directory): string;
+    /**
+     * Subscribe to when the source file is modified.
+     * @param subscription - Subscription.
+     * @param subscribe - Optional and defaults to true. Use an explicit false to unsubscribe.
+     */
+    onModified(subscription: (sender: SourceFile) => void, subscribe?: boolean): this;
+    /**
+     * Organizes the imports in the file.
+     *
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     * @param settings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
+     */
+    organizeImports(settings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
+    /**
+     * Applies the text changes to the source file.
+     *
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     * @param textChanges - Text changes.
+     */
+    applyTextChanges(textChanges: ReadonlyArray<TextChange>): this;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<SourceFileStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): SourceFileStructure;
+    private _refreshFromFileSystemInternal;
 }
 
 declare const BlockBase: Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Statement;
@@ -9827,38 +9827,6 @@ interface EnumMemberSpecificStructure {
     value?: number | string;
 }
 
-export interface ExportAssignmentStructure {
-    isExportEquals?: boolean;
-    expression: string | WriterFunction;
-}
-
-export interface ExportDeclarationStructure {
-    namedExports?: (string | ExportSpecifierStructure)[];
-    moduleSpecifier?: string;
-}
-export interface ExportSpecifierStructure {
-    name: string;
-    alias?: string;
-}
-
-export interface ImportDeclarationStructure {
-    defaultImport?: string;
-    namespaceImport?: string;
-    namedImports?: (ImportSpecifierStructure | string)[];
-    moduleSpecifier: string;
-}
-export interface ImportSpecifierStructure {
-    name: string;
-    alias?: string;
-}
-
-export interface SourceFileStructure extends SourceFileSpecificStructure, StatementedNodeStructure, ModuledNodeStructure {
-    bodyText?: string | WriterFunction;
-}
-
-interface SourceFileSpecificStructure {
-}
-
 export interface FunctionDeclarationStructure extends FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodyableNodeStructure {
 }
 
@@ -9938,6 +9906,31 @@ export interface JsxSpreadAttributeStructure {
     expression: string;
 }
 
+export interface ExportAssignmentStructure {
+    isExportEquals?: boolean;
+    expression: string | WriterFunction;
+}
+
+export interface ExportDeclarationStructure {
+    namedExports?: (string | ExportSpecifierStructure)[];
+    moduleSpecifier?: string;
+}
+export interface ExportSpecifierStructure {
+    name: string;
+    alias?: string;
+}
+
+export interface ImportDeclarationStructure {
+    defaultImport?: string;
+    namespaceImport?: string;
+    namedImports?: (ImportSpecifierStructure | string)[];
+    moduleSpecifier: string;
+}
+export interface ImportSpecifierStructure {
+    name: string;
+    alias?: string;
+}
+
 export interface NamespaceDeclarationStructure extends NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure, BodiedNodeStructure, ModuledNodeStructure {
 }
 
@@ -9948,6 +9941,13 @@ interface NamespaceDeclarationSpecificStructure {
      * @remarks Defaults to "namespace".
      */
     declarationKind?: NamespaceDeclarationKind;
+}
+
+export interface SourceFileStructure extends SourceFileSpecificStructure, StatementedNodeStructure, ModuledNodeStructure {
+    bodyText?: string | WriterFunction;
+}
+
+interface SourceFileSpecificStructure {
 }
 
 export interface StatementedNodeStructure {
