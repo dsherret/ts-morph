@@ -5,7 +5,7 @@ import { AmbientableNode, ChildOrderableNode, ExportableNode, ExtendsClauseableN
     TextInsertableNode, TypeElementMemberedNode, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { ClassDeclaration } from "../class";
-import { NamespaceChildableNode } from "../namespace";
+import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
 import { ImplementationLocation } from "../tools";
 import { Type, TypeAliasDeclaration } from "../type";

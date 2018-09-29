@@ -6,7 +6,7 @@ import { ts, SyntaxKind } from "../../typescript";
 import { ArrayUtils, TypeGuards, createHashSet } from "../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Node, Symbol } from "../common";
-import { ImportDeclaration, ExportDeclaration, ExportAssignment, ExportSpecifier } from "../file";
+import { ImportDeclaration, ExportDeclaration, ExportAssignment, ExportSpecifier } from "../module";
 import { StatementedNode } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 

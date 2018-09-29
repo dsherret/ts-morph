@@ -2,7 +2,7 @@ import { VariableDeclarationStructure, VariableStatementStructure, VariableState
 import { ts } from "../../typescript";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
-import { NamespaceChildableNode } from "../namespace";
+import { NamespaceChildableNode } from "../module";
 import { Statement } from "./Statement";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../variable";
 import { callBaseGetStructure } from "../callBaseGetStructure";

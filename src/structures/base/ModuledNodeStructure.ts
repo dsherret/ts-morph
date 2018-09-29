@@ -1,4 +1,4 @@
-﻿import { ImportDeclarationStructure, ExportDeclarationStructure } from "../file";
+﻿import { ImportDeclarationStructure, ExportDeclarationStructure } from "../module";
 
 export interface ModuledNodeStructure {
     imports?: ImportDeclarationStructure[];

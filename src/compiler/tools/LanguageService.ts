@@ -5,7 +5,7 @@ import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../.
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
 import { ArrayUtils, FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
 import { Node } from "../common";
-import { SourceFile } from "../file";
+import { SourceFile } from "../module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";

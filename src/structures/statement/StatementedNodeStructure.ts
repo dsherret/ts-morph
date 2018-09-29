@@ -2,7 +2,7 @@
 import { EnumDeclarationStructure } from "../enum";
 import { FunctionDeclarationStructure } from "../function";
 import { InterfaceDeclarationStructure } from "../interface";
-import { NamespaceDeclarationStructure } from "../namespace";
+import { NamespaceDeclarationStructure } from "../module";
 import { TypeAliasDeclarationStructure } from "../type";
 
 export interface StatementedNodeStructure {

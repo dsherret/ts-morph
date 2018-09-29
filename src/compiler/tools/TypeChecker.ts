@@ -3,7 +3,7 @@ import { SymbolFlags, SyntaxKind, ts, TypeFormatFlags } from "../../typescript";
 import { Node, Signature, Symbol } from "../common";
 import { EnumMember } from "../enum";
 import { Expression } from "../expression";
-import { ExportSpecifier } from "../file";
+import { ExportSpecifier } from "../module";
 import { Type } from "../type";
 
 /**

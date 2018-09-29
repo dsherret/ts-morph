@@ -5,7 +5,7 @@ import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } fro
 import { ComputedPropertyName, Identifier, Node, QualifiedName } from "./common";
 import { PrimaryExpression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment,
     ThisExpression, OmittedExpression } from "./expression";
-import { ExternalModuleReference } from "./file";
+import { ExternalModuleReference } from "./module";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText } from "./jsx";
 import { NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TemplateExpression } from "./literal";

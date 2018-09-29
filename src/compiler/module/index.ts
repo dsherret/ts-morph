@@ -6,4 +6,7 @@ export * from "./FileSystemRefreshResult";
 export * from "./ImportDeclaration";
 export * from "./ImportEqualsDeclaration";
 export * from "./ImportSpecifier";
+export * from "./NamespaceChildableNode";
+export * from "./NamespaceDeclaration";
+export * from "./NamespaceDeclarationKind";
 export * from "./SourceFile";

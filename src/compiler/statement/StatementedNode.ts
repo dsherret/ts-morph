@@ -15,7 +15,7 @@ import { EnumDeclaration } from "../enum";
 import { FunctionDeclaration } from "../function";
 import { InterfaceDeclaration } from "../interface";
 import { KindToNodeMappings } from "../kindToNodeMappings";
-import { NamespaceDeclaration } from "../namespace";
+import { NamespaceDeclaration } from "../module";
 import { Statement, VariableStatement } from "../statement";
 import { VariableDeclaration } from "../variable";
 import { TypeAliasDeclaration } from "../type";

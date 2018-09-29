@@ -9,7 +9,7 @@ import { AmbientableNode, ChildOrderableNode, DecoratableNode, ExportableNode, H
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function";
-import { NamespaceChildableNode } from "../namespace";
+import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
 import { ExpressionWithTypeArguments, Type } from "../type";
 import { AbstractableNode } from "./base";

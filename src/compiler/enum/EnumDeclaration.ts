@@ -5,7 +5,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
-import { NamespaceChildableNode } from "../namespace";
+import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
 import { EnumMember } from "./EnumMember";
 import { callBaseGetStructure } from "../callBaseGetStructure";

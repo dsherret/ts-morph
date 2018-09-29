@@ -8,7 +8,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
     TypeGuards, StoredComparer } from "../../utils";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
-import { SourceFile } from "../file";
+import { SourceFile } from "../module";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 import { Statement } from "../statement";
 import { FormatCodeSettings } from "../tools";

@@ -6,7 +6,7 @@ import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, Expor
     TextInsertableNode, UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { NamespaceChildableNode } from "../namespace";
+import { NamespaceChildableNode } from "../module";
 import { StatementedNode } from "../statement";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
