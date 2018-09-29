@@ -4,7 +4,7 @@ title: Imports
 
 ## Imports
 
-Imports of a source file can be retrieved by calling:
+Imports of a source file or module can be retrieved by calling:
 
 ```ts
 // get them all
