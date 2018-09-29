@@ -2,12 +2,49 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 16
+
+### Better support for `global` namespace declarations
+
+In ambient declarations, there exists namespace declarations that look like the following:
+
+```ts
+global {
+    export class Test {}
+}
+```
+
+The following changes were made:
+
+Deprecated:
+
+* `.setHasNamespaceKeyword`
+* `.setHasModuleKeyword`
+* `NamespaceDeclarationStructure` - `hasModuleKeyword` and `hasNamespaceKeyword`
+
+Added:
+
+* `enum NamespaceDeclarationKind {
+    Namespace = "namespace",
+    Module = "module",
+    Global = "global"
+}`
+* `setDeclarationKind(kind: NamespaceDeclarationKind)`
+* `getDeclarationKind(): NamespaceDeclarationKind;`
+* `NamespaceDeclarationStructure` - `declarationKind: NamespaceDeclarationKind`
+
+### The `XExtensionType` type aliases are now internal
+
+Previously there were a lot of `XExtensionType` type aliases that were used internally within the library, but they were
+being exported. These are now not exported from the libraries declaration file and made internal. See [#441](issues/441)
+for more details.
+
 ## Version 15
 
 * `TypeParameterDeclaration` - `getConstraintNode()` and `getDefaultNode()` are now `getConstraint()` and `getDefault()`.
 * `JsxTagNamedNode` - `getTagName()` is now `.getTagNameNode()` for consistency.
 
-## Import and Exports - No renaming for .setX methods
+### Import and Exports - No renaming for .setX methods
 
 Previously, the following methods would rename with the language service:
 
@@ -17,11 +54,11 @@ Previously, the following methods would rename with the language service:
 
 These no longer rename using the language service. Use the corresponding `renameX` methods instead.
 
-## `.fill` methods are now `.set`
+### `.fill` methods are now `.set`
 
 The `.fill` methods are now called `.set` and their behaviour has changed.
 
-### It replaces instead of adding
+#### It replaces instead of adding
 
 Previously calling...
 
@@ -35,7 +72,7 @@ classDeclaration.fill({
 
 If you want the `.fill` behaviour, use the `.addX` methods or provide the structures of the nodes by using `.getStructure()` (Ex. `classDeclaration.set({ properties: [...classDeclaration.getParameters().map(p => p.getStructure()), { name: "NewProperty" }] });`)`
 
-### It doesn't use the language service
+#### It doesn't use the language service
 
 Previously, doing `classDeclaration.fill({ name: "NewName" })` would do a rename with the language service. Now with `.set({ name: "NewName" })` it sets the name without renaming.
 
