@@ -17,6 +17,7 @@ flattenDeclarationFiles(project, mainFile);
 removeImportTypes(mainFile);
 hideBaseDeclarations();
 hideSpecificStructures();
+hideExtensionTypes();
 removeSkipOrThrowCheck();
 
 project.save();
@@ -38,6 +39,12 @@ function hideSpecificStructures() {
     const specificStructures = mainFile.getInterfaces().filter(s => StringUtils.endsWith(s.getName(), "SpecificStructure"));
     for (const structure of specificStructures)
         structure.setIsExported(false);
+}
+
+function hideExtensionTypes() {
+    const extensionTypes = mainFile.getTypeAliases().filter(t => StringUtils.endsWith(t.getName(), "ExtensionType"));
+    for (const extensionType of extensionTypes)
+        extensionType.setIsExported(false);
 }
 
 function removeSkipOrThrowCheck() {

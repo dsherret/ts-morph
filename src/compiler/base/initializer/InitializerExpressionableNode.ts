@@ -5,8 +5,6 @@ import { InitializerGetExpressionableNode } from "./InitializerGetExpressionable
 import { InitializerSetExpressionableNode } from "./InitializerSetExpressionableNode";
 
 export type InitializerExpressionableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
-/** @deprecated */
-export type InitializerExpressionableExtensionType = InitializerExpressionableNodeExtensionType;
 
 export interface InitializerExpressionableNode extends InitializerGetExpressionableNode, InitializerSetExpressionableNode {
 }

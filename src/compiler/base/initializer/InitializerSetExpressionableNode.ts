@@ -10,8 +10,6 @@ import { InitializerGetExpressionableNode } from "./InitializerGetExpressionable
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 export type InitializerSetExpressionableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerGetExpressionableNode;
-/** @deprecated */
-export type InitializerSetExpressionableExtensionType = InitializerSetExpressionableNodeExtensionType;
 
 export interface InitializerSetExpressionableNode {
     /**

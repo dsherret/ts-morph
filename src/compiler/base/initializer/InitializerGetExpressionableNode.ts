@@ -7,8 +7,6 @@ import { Expression } from "../../expression";
 import { KindToExpressionMappings } from "../../kindToNodeMappings";
 
 export type InitializerGetExpressionableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
-/** @deprecated */
-export type InitializerGetExpressionableExtensionType = InitializerGetExpressionableNodeExtensionType;
 
 export interface InitializerGetExpressionableNode {
     /**

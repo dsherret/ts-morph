@@ -11,8 +11,6 @@ import { TypeNode } from "../type/TypeNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ReturnTypedNodeExtensionType = Node<ts.SignatureDeclaration>;
-/** @deprecated */
-export type ReturnTypedNodeExtensionReturnType = ReturnTypedNodeExtensionType; // wrong name
 
 export interface ReturnTypedNode {
     /**

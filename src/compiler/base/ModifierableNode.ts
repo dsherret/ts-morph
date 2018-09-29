@@ -7,8 +7,6 @@ import { Node } from "../common";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 
 export type ModifierableNodeExtensionType = Node;
-/** @deprecated */
-export type ModiferableNodeExtensionType = ModifierableNodeExtensionType; // wrong spelling
 export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
 
 export interface ModifierableNode {
