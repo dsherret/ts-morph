@@ -1,4 +1,4 @@
-import { SourceFile } from "../../../compiler";
+import { SourceFile, Node } from "../../../compiler";
 import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
@@ -56,7 +56,37 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
      */
     @Memoize
     getNode() {
-        return this.getSourceFile().getDescendantAtStartWithWidth(this.getTextSpan().getStart(), this.getTextSpan().getLength())!;
+        const textSpan = this.getTextSpan();
+        const sourceFile = this.getSourceFile();
+        const start = textSpan.getStart();
+        const width = textSpan.getEnd();
+
+        return findBestMatchingNode();
+
+        function findBestMatchingNode() {
+            // more relaxed getDescendantAtStartWithWidth because the position may be within a string literal
+            let bestNode: Node | undefined;
+
+            sourceFile.context.compilerFactory.forgetNodesCreatedInBlock(remember => {
+                let foundNode: Node | undefined;
+                let nextNode: Node | undefined = sourceFile;
+
+                while (nextNode != null) {
+                    if (foundNode == null)
+                        bestNode = nextNode;
+                    if (nextNode.getStart() === start && nextNode.getWidth() === width)
+                        bestNode = foundNode = nextNode;
+                    else if (foundNode != null)
+                        break; // no need to keep looking
+                    nextNode = nextNode.getChildAtPos(start);
+                }
+
+                if (bestNode != null)
+                    remember(bestNode);
+            });
+
+            return bestNode!;
+        }
     }
 
     /**
