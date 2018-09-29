@@ -9,7 +9,7 @@ import { Constructor } from "../../types";
 import { LanguageVariant, ScriptTarget, SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, createHashSet, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../utils";
 import { getBodyTextForStructure } from "../base/helpers";
-import { TextInsertableNode } from "../base";
+import { TextInsertableNode, ModuledNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node, Symbol } from "../common";
 import { StringLiteral } from "../literal";
@@ -42,8 +42,10 @@ export interface SourceFileReferences {
     referencingLiterals: StringLiteral[];
 }
 
-// todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
-export const SourceFileBase: Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node = TextInsertableNode(StatementedNode(Node));
+// todo: not sure why I need to explicitly type this in order to get TS to not complain... (TS 2.4.1)
+export const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node = ModuledNode(
+    TextInsertableNode(StatementedNode(Node))
+);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     private _isSaved = false;
@@ -508,101 +510,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     setIsSaved(value: boolean) {
         this._isSaved = value;
-    }
-
-    /**
-     * Adds an import.
-     * @param structure - Structure that represents the import.
-     */
-    addImportDeclaration(structure: ImportDeclarationStructure) {
-        return this.addImportDeclarations([structure])[0];
-    }
-
-    /**
-     * Adds imports.
-     * @param structures - Structures that represent the imports.
-     */
-    addImportDeclarations(structures: ReadonlyArray<ImportDeclarationStructure>) {
-        const imports = this.getImportDeclarations();
-        const insertIndex = imports.length === 0 ? 0 : imports[imports.length - 1].getChildIndex() + 1;
-        return this.insertImportDeclarations(insertIndex, structures);
-    }
-
-    /**
-     * Insert an import.
-     * @param index - Child index to insert at.
-     * @param structure - Structure that represents the import.
-     */
-    insertImportDeclaration(index: number, structure: ImportDeclarationStructure) {
-        return this.insertImportDeclarations(index, [structure])[0];
-    }
-
-    /**
-     * Insert imports into a file.
-     * @param index - Child index to insert at.
-     * @param structures - Structures that represent the imports to insert.
-     */
-    insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[] {
-        return this._insertChildren<ImportDeclaration, ImportDeclarationStructure>({
-            expectedKind: SyntaxKind.ImportDeclaration,
-            index,
-            structures,
-            write: (writer, info) => {
-                this._standardWrite(writer, info, () => {
-                    this.context.structurePrinterFactory.forImportDeclaration().printTexts(writer, structures);
-                }, {
-                    previousNewLine: previousMember => TypeGuards.isImportDeclaration(previousMember),
-                    nextNewLine: nextMember => TypeGuards.isImportDeclaration(nextMember)
-                });
-            }
-        });
-    }
-
-    /**
-     * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the import declaration by.
-     */
-    getImportDeclaration(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined;
-    /**
-     * Gets the first import declaration that matches a module specifier, or undefined if it doesn't exist.
-     * @param module - Module specifier to get the import declaration by.
-     */
-    getImportDeclaration(moduleSpecifier: string): ImportDeclaration | undefined;
-    /** @internal */
-    getImportDeclaration(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)): ImportDeclaration | undefined;
-    getImportDeclaration(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)) {
-        return ArrayUtils.find(this.getImportDeclarations(), getCondition());
-
-        function getCondition() {
-            if (typeof conditionOrModuleSpecifier === "string")
-                return (dec: ImportDeclaration) => dec.getModuleSpecifierValue() === conditionOrModuleSpecifier;
-            else
-                return conditionOrModuleSpecifier;
-        }
-    }
-
-    /**
-     * Gets the first import declaration that matches a condition, or throws if it doesn't exist.
-     * @param condition - Condition to get the import declaration by.
-     */
-    getImportDeclarationOrThrow(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration;
-    /**
-     * Gets the first import declaration that matches a module specifier, or throws if it doesn't exist.
-     * @param module - Module specifier to get the import declaration by.
-     */
-    getImportDeclarationOrThrow(moduleSpecifier: string): ImportDeclaration;
-    /** @internal */
-    getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)): ImportDeclaration;
-    getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)) {
-        return errors.throwIfNullOrUndefined(this.getImportDeclaration(conditionOrModuleSpecifier), "Expected to find an import with the provided condition.");
-    }
-
-    /**
-     * Get the file's import declarations.
-     */
-    getImportDeclarations(): ImportDeclaration[] {
-        // todo: remove type assertion
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ImportDeclaration);
     }
 
     /**

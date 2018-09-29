@@ -1,0 +1,163 @@
+﻿import { expect } from "chai";
+import { SourceFile, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration } from "../../../compiler";
+import { ImportDeclarationStructure, ExportDeclarationStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
+
+describe(nameof(ModuledNode), () => {
+    describe(nameof<ModuledNode>(n => n.insertImportDeclarations), () => {
+        function doTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string, useSingleQuotes = false) {
+            const { sourceFile, project } = getInfoFromText(startCode);
+            if (useSingleQuotes)
+                project.manipulationSettings.set({ quoteKind: QuoteKind.Single });
+            const result = sourceFile.insertImportDeclarations(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should insert the different kinds of imports", () => {
+            doTest("", 0, [
+                { moduleSpecifier: "./test" },
+                { defaultImport: "identifier", moduleSpecifier: "./test" },
+                { defaultImport: "identifier", namespaceImport: "name", moduleSpecifier: "./test" },
+                { defaultImport: "identifier", namedImports: ["name1", { name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
+                { namedImports: ["name"], moduleSpecifier: "./test" },
+                { namespaceImport: "name", moduleSpecifier: "./test" }
+            ], [
+                `import "./test";`,
+                `import identifier from "./test";`,
+                `import identifier, * as name from "./test";`,
+                `import identifier, { name1, name, name as alias } from "./test";`,
+                `import { name } from "./test";`,
+                `import * as name from "./test";`
+            ].join("\n") + "\n");
+        });
+
+        it("should throw when specifying a namespace import and named imports", () => {
+            const { sourceFile } = getInfoFromText("");
+
+            expect(() => {
+                sourceFile.insertImportDeclarations(0, [{ namespaceImport: "name", namedImports: ["name"], moduleSpecifier: "file" }]);
+            }).to.throw();
+        });
+
+        it("should insert an import if the file was read with a utf-8 bom", () => {
+            doTest("\uFEFF", 0, [{ moduleSpecifier: "./test" }], `import "./test";\n`);
+        });
+
+        it("should insert at the beginning and use single quotes when specified", () => {
+            doTest(`export class Class {}\n`, 0, [{ moduleSpecifier: "./test" }], `import './test';\n\nexport class Class {}\n`, true);
+        });
+
+        it("should insert in the middle", () => {
+            doTest(`import "./file1";\nimport "./file3";\n`, 1, [{ moduleSpecifier: "./file2" }], `import "./file1";\nimport "./file2";\nimport "./file3";\n`);
+        });
+
+        it("should insert at the end", () => {
+            doTest(`export class Class {}\n`, 1, [{ moduleSpecifier: "./test" }], `export class Class {}\n\nimport "./test";\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.insertImportDeclaration), () => {
+        function doTest(startCode: string, index: number, structure: ImportDeclarationStructure, expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.insertImportDeclaration(index, structure);
+            expect(result).to.be.instanceOf(ImportDeclaration);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert at the specified position", () => {
+            doTest(`import "./file1";\nimport "./file3";\n`, 1, { moduleSpecifier: "./file2" }, `import "./file1";\nimport "./file2";\nimport "./file3";\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.addImportDeclaration), () => {
+        function doTest(startCode: string, structure: ImportDeclarationStructure, expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.addImportDeclaration(structure);
+            expect(result).to.be.instanceOf(ImportDeclaration);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should add at the last import if one exists", () => {
+            doTest(`import "./file1";\nimport "./file2";\n\nexport class MyClass {}\n`, { moduleSpecifier: "./file3" },
+                `import "./file1";\nimport "./file2";\nimport "./file3";\n\nexport class MyClass {}\n`);
+        });
+
+        it("should add at the start if no imports exists", () => {
+            doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" },
+                `import "./file";\n\nexport class MyClass {}\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.addImportDeclarations), () => {
+        function doTest(startCode: string, structures: ImportDeclarationStructure[], expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.addImportDeclarations(structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should add at the last import if one exists", () => {
+            doTest(`import "./file1";\n\nexport class MyClass {}\n`, [{ moduleSpecifier: "./file2" }, { moduleSpecifier: "./file3" }],
+                `import "./file1";\nimport "./file2";\nimport "./file3";\n\nexport class MyClass {}\n`);
+        });
+
+        it("should add at the start if no imports exists", () => {
+            doTest(`export class MyClass {}\n`, [{ moduleSpecifier: "./file1" }, { moduleSpecifier: "./file2" }],
+                `import "./file1";\nimport "./file2";\n\nexport class MyClass {}\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getImportDeclarations), () => {
+        it("should get the import declarations", () => {
+            const { sourceFile } = getInfoFromText("import myImport from 'test'; import {next} from './test';");
+            expect(sourceFile.getImportDeclarations().length).to.equal(2);
+            expect(sourceFile.getImportDeclarations()[0]).to.be.instanceOf(ImportDeclaration);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getImportDeclaration), () => {
+        function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean), expected: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const result = sourceFile.getImportDeclaration(conditionOrModuleSpecifier);
+            if (expected == null)
+                expect(result).to.be.undefined;
+            else
+                expect(result!.getText()).to.equal(expected);
+        }
+
+        it("should get the import declaration", () => {
+            doTest("import myImport from 'test'; import {next} from './test';", i => i.getDefaultImport() != null, "import myImport from 'test';");
+        });
+
+        it("should get the import declaration when providing module specifier text", () => {
+            doTest("import myImport from 'test'; import {next} from './test';", "./test", "import {next} from './test';");
+        });
+
+        it("should return undefined when not exists", () => {
+            doTest("import myImport from 'test';", "asdfasdf", undefined);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getImportDeclarationOrThrow), () => {
+        function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean), expected: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            if (expected == null)
+                expect(() => sourceFile.getImportDeclarationOrThrow(conditionOrModuleSpecifier)).to.throw();
+            else
+                expect(sourceFile.getImportDeclarationOrThrow(conditionOrModuleSpecifier).getText()).to.equal(expected);
+        }
+
+        it("should get the import declaration", () => {
+            doTest("import myImport from 'test'; import {next} from './test';", i => i.getDefaultImport() != null, "import myImport from 'test';");
+        });
+
+        it("should get the import declaration when providing module specifier text", () => {
+            doTest("import myImport from 'test'; import {next} from './test';", "./test", "import {next} from './test';");
+        });
+
+        it("should throw when not exists", () => {
+            doTest("import myImport from 'test';", "asdfasdf", undefined);
+        });
+    });
+});

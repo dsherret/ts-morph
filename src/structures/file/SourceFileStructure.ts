@@ -1,13 +1,10 @@
 import { WriterFunction } from "../../types";
+import { ModuledNodeStructure } from "../base";
 import { StatementedNodeStructure } from "../statement";
-import { ExportDeclarationStructure } from "./ExportDeclarationStructure";
-import { ImportDeclarationStructure } from "./ImportDeclarationStructure";
 
-export interface SourceFileStructure extends SourceFileSpecificStructure, StatementedNodeStructure {
+export interface SourceFileStructure extends SourceFileSpecificStructure, StatementedNodeStructure, ModuledNodeStructure {
     bodyText?: string | WriterFunction;
 }
 
 export interface SourceFileSpecificStructure {
-    imports?: ImportDeclarationStructure[];
-    exports?: ExportDeclarationStructure[];
 }

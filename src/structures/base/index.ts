@@ -13,6 +13,7 @@ export * from "./ImplementsClauseableNodeStructure";
 export * from "./InitializerExpressionableNodeStructure";
 export * from "./InitializerSetExpressionableNodeStructure";
 export * from "./JSDocableNodeStructure";
+export * from "./ModuledNodeStructure";
 export * from "./name";
 export * from "./ParameteredNodeStructure";
 export * from "./QuestionTokenableNodeStructure";
