@@ -148,7 +148,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     /** @internal */
     getInnerBody() {
         let node = this.getBody();
-        while (TypeGuards.isBodiedNode(node) && (node.compilerNode as ts.Block).statements == null)
+        while (TypeGuards.isBodiedNode(node) && (node.compilerNode as ts.Node as ts.Block).statements == null)
             node = node.getBody();
         return node;
     }

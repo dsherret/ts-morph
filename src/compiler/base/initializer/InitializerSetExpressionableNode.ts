@@ -9,7 +9,9 @@ import { Node } from "../../common";
 import { InitializerGetExpressionableNode } from "./InitializerGetExpressionableNode";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 
-export type InitializerSetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerGetExpressionableNode;
+export type InitializerSetExpressionableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerGetExpressionableNode;
+/** @deprecated */
+export type InitializerSetExpressionableExtensionType = InitializerSetExpressionableNodeExtensionType;
 
 export interface InitializerSetExpressionableNode {
     /**
@@ -23,7 +25,7 @@ export interface InitializerSetExpressionableNode {
     setInitializer(textOrWriterFunction: string | WriterFunction): this;
 }
 
-export function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T {
+export function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableNodeExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T {
     return class extends Base implements InitializerSetExpressionableNode {
         removeInitializer() {
             const initializer = this.getInitializer();

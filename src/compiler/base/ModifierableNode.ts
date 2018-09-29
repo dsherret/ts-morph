@@ -6,7 +6,9 @@ import { ArrayUtils, getSyntaxKindName } from "../../utils";
 import { Node } from "../common";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 
-export type ModiferableNodeExtensionType = Node;
+export type ModifierableNodeExtensionType = Node;
+/** @deprecated */
+export type ModiferableNodeExtensionType = ModifierableNodeExtensionType; // wrong spelling
 export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
 
 export interface ModifierableNode {
@@ -56,7 +58,7 @@ export interface ModifierableNode {
     removeModifier(text: ModifierTexts): boolean;
 }
 
-export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
+export function ModifierableNode<T extends Constructor<ModifierableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
     return class extends Base implements ModifierableNode {
         getModifiers() {
             return this.getCompilerModifiers().map(m => this.getNodeFromCompilerNode(m));

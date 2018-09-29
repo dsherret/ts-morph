@@ -52,7 +52,7 @@ export class TypeGuards {
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */
-    static isAbstractableNode(node: compiler.Node): node is compiler.AbstractableNode & compiler.Node {
+    static isAbstractableNode(node: compiler.Node): node is compiler.AbstractableNode & compiler.AbstractableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.GetAccessor:
@@ -69,7 +69,7 @@ export class TypeGuards {
      * Gets if the node is an AmbientableNode.
      * @param node - Node to check.
      */
-    static isAmbientableNode(node: compiler.Node): node is compiler.AmbientableNode & compiler.Node {
+    static isAmbientableNode(node: compiler.Node): node is compiler.AmbientableNode & compiler.AmbientableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
@@ -96,7 +96,7 @@ export class TypeGuards {
      * Gets if the node is an ArgumentedNode.
      * @param node - Node to check.
      */
-    static isArgumentedNode(node: compiler.Node): node is compiler.ArgumentedNode & compiler.Node {
+    static isArgumentedNode(node: compiler.Node): node is compiler.ArgumentedNode & compiler.ArgumentedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.NewExpression:
@@ -150,7 +150,7 @@ export class TypeGuards {
      * Gets if the node is an AsyncableNode.
      * @param node - Node to check.
      */
-    static isAsyncableNode(node: compiler.Node): node is compiler.AsyncableNode & compiler.Node {
+    static isAsyncableNode(node: compiler.Node): node is compiler.AsyncableNode & compiler.AsyncableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.ArrowFunction:
@@ -174,7 +174,7 @@ export class TypeGuards {
      * Gets if the node is an AwaitableNode.
      * @param node - Node to check.
      */
-    static isAwaitableNode(node: compiler.Node): node is compiler.AwaitableNode & compiler.Node {
+    static isAwaitableNode(node: compiler.Node): node is compiler.AwaitableNode & compiler.AwaitableNodeExtensionType {
         return node.getKind() === SyntaxKind.ForOfStatement;
     }
 
@@ -198,7 +198,7 @@ export class TypeGuards {
      * Gets if the node is a BindingNamedNode.
      * @param node - Node to check.
      */
-    static isBindingNamedNode(node: compiler.Node): node is compiler.BindingNamedNode & compiler.Node {
+    static isBindingNamedNode(node: compiler.Node): node is compiler.BindingNamedNode & compiler.BindingNamedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.VariableDeclaration:
@@ -220,7 +220,7 @@ export class TypeGuards {
      * Gets if the node is a BodiedNode.
      * @param node - Node to check.
      */
-    static isBodiedNode(node: compiler.Node): node is compiler.BodiedNode & compiler.Node {
+    static isBodiedNode(node: compiler.Node): node is compiler.BodiedNode & compiler.BodiedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionExpression:
@@ -235,7 +235,7 @@ export class TypeGuards {
      * Gets if the node is a BodyableNode.
      * @param node - Node to check.
      */
-    static isBodyableNode(node: compiler.Node): node is compiler.BodyableNode & compiler.Node {
+    static isBodyableNode(node: compiler.Node): node is compiler.BodyableNode & compiler.BodyableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
@@ -322,7 +322,7 @@ export class TypeGuards {
      * Gets if the node is a ChildOrderableNode.
      * @param node - Node to check.
      */
-    static isChildOrderableNode(node: compiler.Node): node is compiler.ChildOrderableNode & compiler.Node {
+    static isChildOrderableNode(node: compiler.Node): node is compiler.ChildOrderableNode & compiler.ChildOrderableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.Constructor:
@@ -438,7 +438,7 @@ export class TypeGuards {
      * Gets if the node is a DeclarationNamedNode.
      * @param node - Node to check.
      */
-    static isDeclarationNamedNode(node: compiler.Node): node is compiler.DeclarationNamedNode & compiler.Node {
+    static isDeclarationNamedNode(node: compiler.Node): node is compiler.DeclarationNamedNode & compiler.DeclarationNamedNodeExtensionType {
         return node.getKind() === SyntaxKind.Parameter;
     }
 
@@ -446,7 +446,7 @@ export class TypeGuards {
      * Gets if the node is a DecoratableNode.
      * @param node - Node to check.
      */
-    static isDecoratableNode(node: compiler.Node): node is compiler.DecoratableNode & compiler.Node {
+    static isDecoratableNode(node: compiler.Node): node is compiler.DecoratableNode & compiler.DecoratableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.GetAccessor:
@@ -528,7 +528,7 @@ export class TypeGuards {
      * Gets if the node is an ExclamationTokenableNode.
      * @param node - Node to check.
      */
-    static isExclamationTokenableNode(node: compiler.Node): node is compiler.ExclamationTokenableNode & compiler.Node {
+    static isExclamationTokenableNode(node: compiler.Node): node is compiler.ExclamationTokenableNode & compiler.ExclamationTokenableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.VariableDeclaration:
@@ -566,7 +566,7 @@ export class TypeGuards {
      * Gets if the node is an ExportableNode.
      * @param node - Node to check.
      */
-    static isExportableNode(node: compiler.Node): node is compiler.ExportableNode & compiler.Node {
+    static isExportableNode(node: compiler.Node): node is compiler.ExportableNode & compiler.ExportableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
@@ -667,7 +667,7 @@ export class TypeGuards {
      * Gets if the node is an ExpressionedNode.
      * @param node - Node to check.
      */
-    static isExpressionedNode(node: compiler.Node): node is compiler.ExpressionedNode & compiler.Node {
+    static isExpressionedNode(node: compiler.Node): node is compiler.ExpressionedNode & compiler.ExpressionedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.AsExpression:
             case SyntaxKind.NonNullExpression:
@@ -686,7 +686,7 @@ export class TypeGuards {
      * Gets if the node is an ExtendsClauseableNode.
      * @param node - Node to check.
      */
-    static isExtendsClauseableNode(node: compiler.Node): node is compiler.ExtendsClauseableNode & compiler.Node {
+    static isExtendsClauseableNode(node: compiler.Node): node is compiler.ExtendsClauseableNode & compiler.ExtendsClauseableNodeExtensionType {
         return node.getKind() === SyntaxKind.InterfaceDeclaration;
     }
 
@@ -750,7 +750,7 @@ export class TypeGuards {
      * Gets if the node is a FunctionLikeDeclaration.
      * @param node - Node to check.
      */
-    static isFunctionLikeDeclaration(node: compiler.Node): node is compiler.FunctionLikeDeclaration & compiler.Node {
+    static isFunctionLikeDeclaration(node: compiler.Node): node is compiler.FunctionLikeDeclaration & compiler.FunctionLikeDeclarationExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
@@ -790,7 +790,7 @@ export class TypeGuards {
      * Gets if the node is a GeneratorableNode.
      * @param node - Node to check.
      */
-    static isGeneratorableNode(node: compiler.Node): node is compiler.GeneratorableNode & compiler.Node {
+    static isGeneratorableNode(node: compiler.Node): node is compiler.GeneratorableNode & compiler.GeneratorableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.YieldExpression:
@@ -822,7 +822,7 @@ export class TypeGuards {
      * Gets if the node is a HeritageClauseableNode.
      * @param node - Node to check.
      */
-    static isHeritageClauseableNode(node: compiler.Node): node is compiler.HeritageClauseableNode & compiler.Node {
+    static isHeritageClauseableNode(node: compiler.Node): node is compiler.HeritageClauseableNode & compiler.HeritageClauseableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.InterfaceDeclaration:
@@ -852,7 +852,7 @@ export class TypeGuards {
      * Gets if the node is a ImplementsClauseableNode.
      * @param node - Node to check.
      */
-    static isImplementsClauseableNode(node: compiler.Node): node is compiler.ImplementsClauseableNode & compiler.Node {
+    static isImplementsClauseableNode(node: compiler.Node): node is compiler.ImplementsClauseableNode & compiler.ImplementsClauseableNodeExtensionType {
         return node.getKind() === SyntaxKind.ClassDeclaration;
     }
 
@@ -908,7 +908,7 @@ export class TypeGuards {
      * Gets if the node is a InitializerExpressionableNode.
      * @param node - Node to check.
      */
-    static isInitializerExpressionableNode(node: compiler.Node): node is compiler.InitializerExpressionableNode & compiler.Node {
+    static isInitializerExpressionableNode(node: compiler.Node): node is compiler.InitializerExpressionableNode & compiler.InitializerExpressionableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.PropertyDeclaration:
@@ -926,7 +926,7 @@ export class TypeGuards {
      * Gets if the node is a InitializerGetExpressionableNode.
      * @param node - Node to check.
      */
-    static isInitializerGetExpressionableNode(node: compiler.Node): node is compiler.InitializerGetExpressionableNode & compiler.Node {
+    static isInitializerGetExpressionableNode(node: compiler.Node): node is compiler.InitializerGetExpressionableNode & compiler.InitializerGetExpressionableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.PropertyDeclaration:
@@ -946,7 +946,7 @@ export class TypeGuards {
      * Gets if the node is a InitializerSetExpressionableNode.
      * @param node - Node to check.
      */
-    static isInitializerSetExpressionableNode(node: compiler.Node): node is compiler.InitializerSetExpressionableNode & compiler.Node {
+    static isInitializerSetExpressionableNode(node: compiler.Node): node is compiler.InitializerSetExpressionableNode & compiler.InitializerSetExpressionableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.PropertyDeclaration:
@@ -1029,7 +1029,7 @@ export class TypeGuards {
      * Gets if the node is a JSDocPropertyLikeTag.
      * @param node - Node to check.
      */
-    static isJSDocPropertyLikeTag(node: compiler.Node): node is compiler.JSDocPropertyLikeTag & compiler.Node {
+    static isJSDocPropertyLikeTag(node: compiler.Node): node is compiler.JSDocPropertyLikeTag & compiler.JSDocPropertyLikeTagExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.JSDocParameterTag:
             case SyntaxKind.JSDocPropertyTag:
@@ -1103,7 +1103,7 @@ export class TypeGuards {
      * Gets if the node is a JSDocableNode.
      * @param node - Node to check.
      */
-    static isJSDocableNode(node: compiler.Node): node is compiler.JSDocableNode & compiler.Node {
+    static isJSDocableNode(node: compiler.Node): node is compiler.JSDocableNode & compiler.JSDocableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.Constructor:
@@ -1146,7 +1146,7 @@ export class TypeGuards {
      * Gets if the node is a JsxAttributedNode.
      * @param node - Node to check.
      */
-    static isJsxAttributedNode(node: compiler.Node): node is compiler.JsxAttributedNode & compiler.Node {
+    static isJsxAttributedNode(node: compiler.Node): node is compiler.JsxAttributedNode & compiler.JsxAttributedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.JsxOpeningElement:
             case SyntaxKind.JsxSelfClosingElement:
@@ -1232,7 +1232,7 @@ export class TypeGuards {
      * Gets if the node is a JsxTagNamedNode.
      * @param node - Node to check.
      */
-    static isJsxTagNamedNode(node: compiler.Node): node is compiler.JsxTagNamedNode & compiler.Node {
+    static isJsxTagNamedNode(node: compiler.Node): node is compiler.JsxTagNamedNode & compiler.JsxTagNamedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.JsxClosingElement:
             case SyntaxKind.JsxOpeningElement:
@@ -1300,7 +1300,7 @@ export class TypeGuards {
      * Gets if the node is a LeftHandSideExpressionedNode.
      * @param node - Node to check.
      */
-    static isLeftHandSideExpressionedNode(node: compiler.Node): node is compiler.LeftHandSideExpressionedNode & compiler.Node {
+    static isLeftHandSideExpressionedNode(node: compiler.Node): node is compiler.LeftHandSideExpressionedNode & compiler.LeftHandSideExpressionedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.ElementAccessExpression:
@@ -1333,7 +1333,7 @@ export class TypeGuards {
      * Gets if the node is a LiteralLikeNode.
      * @param node - Node to check.
      */
-    static isLiteralLikeNode(node: compiler.Node): node is compiler.LiteralLikeNode & compiler.Node {
+    static isLiteralLikeNode(node: compiler.Node): node is compiler.LiteralLikeNode & compiler.LiteralLikeNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
@@ -1419,7 +1419,7 @@ export class TypeGuards {
      * Gets if the node is a ModifierableNode.
      * @param node - Node to check.
      */
-    static isModifierableNode(node: compiler.Node): node is compiler.ModifierableNode & compiler.Node {
+    static isModifierableNode(node: compiler.Node): node is compiler.ModifierableNode & compiler.ModifierableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.Constructor:
@@ -1450,7 +1450,7 @@ export class TypeGuards {
      * Gets if the node is a ModuledNode.
      * @param node - Node to check.
      */
-    static isModuledNode(node: compiler.Node): node is compiler.ModuledNode & compiler.Node {
+    static isModuledNode(node: compiler.Node): node is compiler.ModuledNode & compiler.ModuledNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.SourceFile:
             case SyntaxKind.ModuleDeclaration:
@@ -1464,7 +1464,7 @@ export class TypeGuards {
      * Gets if the node is a NameableNode.
      * @param node - Node to check.
      */
-    static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.Node {
+    static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.NameableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.FunctionDeclaration:
@@ -1479,7 +1479,7 @@ export class TypeGuards {
      * Gets if the node is a NamedNode.
      * @param node - Node to check.
      */
-    static isNamedNode(node: compiler.Node): node is compiler.NamedNode & compiler.Node {
+    static isNamedNode(node: compiler.Node): node is compiler.NamedNode & compiler.NamedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.MetaProperty:
@@ -1501,7 +1501,7 @@ export class TypeGuards {
      * Gets if the node is a NamespaceChildableNode.
      * @param node - Node to check.
      */
-    static isNamespaceChildableNode(node: compiler.Node): node is compiler.NamespaceChildableNode & compiler.Node {
+    static isNamespaceChildableNode(node: compiler.Node): node is compiler.NamespaceChildableNode & compiler.NamespaceChildableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
@@ -1623,7 +1623,7 @@ export class TypeGuards {
      * Gets if the node is a OverloadableNode.
      * @param node - Node to check.
      */
-    static isOverloadableNode(node: compiler.Node): node is compiler.OverloadableNode & compiler.Node {
+    static isOverloadableNode(node: compiler.Node): node is compiler.OverloadableNode & compiler.OverloadableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.MethodDeclaration:
@@ -1646,7 +1646,7 @@ export class TypeGuards {
      * Gets if the node is a ParameteredNode.
      * @param node - Node to check.
      */
-    static isParameteredNode(node: compiler.Node): node is compiler.ParameteredNode & compiler.Node {
+    static isParameteredNode(node: compiler.Node): node is compiler.ParameteredNode & compiler.ParameteredNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
@@ -1766,7 +1766,7 @@ export class TypeGuards {
      * Gets if the node is a PropertyNamedNode.
      * @param node - Node to check.
      */
-    static isPropertyNamedNode(node: compiler.Node): node is compiler.PropertyNamedNode & compiler.Node {
+    static isPropertyNamedNode(node: compiler.Node): node is compiler.PropertyNamedNode & compiler.PropertyNamedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -1802,7 +1802,7 @@ export class TypeGuards {
      * Gets if the node is a QuestionTokenableNode.
      * @param node - Node to check.
      */
-    static isQuestionTokenableNode(node: compiler.Node): node is compiler.QuestionTokenableNode & compiler.Node {
+    static isQuestionTokenableNode(node: compiler.Node): node is compiler.QuestionTokenableNode & compiler.QuestionTokenableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.Parameter:
@@ -1820,7 +1820,7 @@ export class TypeGuards {
      * Gets if the node is a ReadonlyableNode.
      * @param node - Node to check.
      */
-    static isReadonlyableNode(node: compiler.Node): node is compiler.ReadonlyableNode & compiler.Node {
+    static isReadonlyableNode(node: compiler.Node): node is compiler.ReadonlyableNode & compiler.ReadonlyableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.Parameter:
@@ -1836,7 +1836,7 @@ export class TypeGuards {
      * Gets if the node is a ReferenceFindableNode.
      * @param node - Node to check.
      */
-    static isReferenceFindableNode(node: compiler.Node): node is compiler.ReferenceFindableNode & compiler.Node {
+    static isReferenceFindableNode(node: compiler.Node): node is compiler.ReferenceFindableNode & compiler.ReferenceFindableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
@@ -1881,7 +1881,7 @@ export class TypeGuards {
      * Gets if the node is a RenameableNode.
      * @param node - Node to check.
      */
-    static isRenameableNode(node: compiler.Node): node is compiler.RenameableNode & compiler.Node {
+    static isRenameableNode(node: compiler.Node): node is compiler.RenameableNode & compiler.RenameableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
@@ -1926,7 +1926,7 @@ export class TypeGuards {
      * Gets if the node is a ReturnTypedNode.
      * @param node - Node to check.
      */
-    static isReturnTypedNode(node: compiler.Node): node is compiler.ReturnTypedNode & compiler.Node {
+    static isReturnTypedNode(node: compiler.Node): node is compiler.ReturnTypedNode & compiler.ReturnTypedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
@@ -1950,7 +1950,7 @@ export class TypeGuards {
      * Gets if the node is a ScopeableNode.
      * @param node - Node to check.
      */
-    static isScopeableNode(node: compiler.Node): node is compiler.ScopeableNode & compiler.Node {
+    static isScopeableNode(node: compiler.Node): node is compiler.ScopeableNode & compiler.ScopeableNodeExtensionType {
         return node.getKind() === SyntaxKind.Parameter;
     }
 
@@ -1958,7 +1958,7 @@ export class TypeGuards {
      * Gets if the node is a ScopedNode.
      * @param node - Node to check.
      */
-    static isScopedNode(node: compiler.Node): node is compiler.ScopedNode & compiler.Node {
+    static isScopedNode(node: compiler.Node): node is compiler.ScopedNode & compiler.ScopedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
@@ -1999,7 +1999,7 @@ export class TypeGuards {
      * Gets if the node is a SignaturedDeclaration.
      * @param node - Node to check.
      */
-    static isSignaturedDeclaration(node: compiler.Node): node is compiler.SignaturedDeclaration & compiler.Node {
+    static isSignaturedDeclaration(node: compiler.Node): node is compiler.SignaturedDeclaration & compiler.SignaturedDeclarationExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
@@ -2088,7 +2088,7 @@ export class TypeGuards {
      * Gets if the node is a StatementedNode.
      * @param node - Node to check.
      */
-    static isStatementedNode(node: compiler.Node): node is compiler.StatementedNode & compiler.Node {
+    static isStatementedNode(node: compiler.Node): node is compiler.StatementedNode & compiler.StatementedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
@@ -2113,7 +2113,7 @@ export class TypeGuards {
      * Gets if the node is a StaticableNode.
      * @param node - Node to check.
      */
-    static isStaticableNode(node: compiler.Node): node is compiler.StaticableNode & compiler.Node {
+    static isStaticableNode(node: compiler.Node): node is compiler.StaticableNode & compiler.StaticableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -2225,7 +2225,7 @@ export class TypeGuards {
      * Gets if the node is a TextInsertableNode.
      * @param node - Node to check.
      */
-    static isTextInsertableNode(node: compiler.Node): node is compiler.TextInsertableNode & compiler.Node {
+    static isTextInsertableNode(node: compiler.Node): node is compiler.TextInsertableNode & compiler.TextInsertableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.Constructor:
@@ -2301,7 +2301,7 @@ export class TypeGuards {
      * Gets if the node is a TypeArgumentedNode.
      * @param node - Node to check.
      */
-    static isTypeArgumentedNode(node: compiler.Node): node is compiler.TypeArgumentedNode & compiler.Node {
+    static isTypeArgumentedNode(node: compiler.Node): node is compiler.TypeArgumentedNode & compiler.TypeArgumentedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.NewExpression:
@@ -2341,7 +2341,7 @@ export class TypeGuards {
      * Gets if the node is a TypeElementMemberedNode.
      * @param node - Node to check.
      */
-    static isTypeElementMemberedNode(node: compiler.Node): node is compiler.TypeElementMemberedNode & compiler.Node {
+    static isTypeElementMemberedNode(node: compiler.Node): node is compiler.TypeElementMemberedNode & compiler.TypeElementMemberedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.TypeLiteral:
@@ -2404,7 +2404,7 @@ export class TypeGuards {
      * Gets if the node is a TypeParameteredNode.
      * @param node - Node to check.
      */
-    static isTypeParameteredNode(node: compiler.Node): node is compiler.TypeParameteredNode & compiler.Node {
+    static isTypeParameteredNode(node: compiler.Node): node is compiler.TypeParameteredNode & compiler.TypeParameteredNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.Constructor:
@@ -2438,7 +2438,7 @@ export class TypeGuards {
      * Gets if the node is a TypedNode.
      * @param node - Node to check.
      */
-    static isTypedNode(node: compiler.Node): node is compiler.TypedNode & compiler.Node {
+    static isTypedNode(node: compiler.Node): node is compiler.TypedNode & compiler.TypedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.AsExpression:
@@ -2501,7 +2501,7 @@ export class TypeGuards {
      * Gets if the node is a UnaryExpressionedNode.
      * @param node - Node to check.
      */
-    static isUnaryExpressionedNode(node: compiler.Node): node is compiler.UnaryExpressionedNode & compiler.Node {
+    static isUnaryExpressionedNode(node: compiler.Node): node is compiler.UnaryExpressionedNode & compiler.UnaryExpressionedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.AwaitExpression:
             case SyntaxKind.DeleteExpression:
@@ -2534,7 +2534,7 @@ export class TypeGuards {
      * Gets if the node is a UnwrappableNode.
      * @param node - Node to check.
      */
-    static isUnwrappableNode(node: compiler.Node): node is compiler.UnwrappableNode & compiler.Node {
+    static isUnwrappableNode(node: compiler.Node): node is compiler.UnwrappableNode & compiler.UnwrappableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.ModuleDeclaration:

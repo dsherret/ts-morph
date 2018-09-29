@@ -40,7 +40,7 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
                 "@param node - Node to check."
         }],
         parameters: [{ name: "node", type: "compiler.Node" }],
-        returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? " & compiler.Node" : ""),
+        returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType` : ""),
         bodyText: (writer: CodeBlockWriter) => {
             if (method.syntaxKinds.length === 0)
                 throw new Error(`For some reason  ${method.name} had no syntax kinds.`);

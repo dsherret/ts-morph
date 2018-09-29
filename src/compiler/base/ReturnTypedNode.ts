@@ -10,7 +10,9 @@ import { Type } from "../type/Type";
 import { TypeNode } from "../type/TypeNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export type ReturnTypedNodeExtensionReturnType = Node<ts.SignatureDeclaration>;
+export type ReturnTypedNodeExtensionType = Node<ts.SignatureDeclaration>;
+/** @deprecated */
+export type ReturnTypedNodeExtensionReturnType = ReturnTypedNodeExtensionType; // wrong name
 
 export interface ReturnTypedNode {
     /**
@@ -41,7 +43,7 @@ export interface ReturnTypedNode {
     removeReturnType(): this;
 }
 
-export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionReturnType>>(Base: T): Constructor<ReturnTypedNode> & T {
+export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionType>>(Base: T): Constructor<ReturnTypedNode> & T {
     return class extends Base implements ReturnTypedNode {
         getReturnType() {
             const typeChecker = this.context.typeChecker;

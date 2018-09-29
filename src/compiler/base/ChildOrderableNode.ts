@@ -3,6 +3,8 @@ import { changeChildOrder, getGeneralFormatting } from "../../manipulation";
 import { Constructor } from "../../types";
 import { Node } from "../common";
 
+export type ChildOrderableNodeExtensionType = Node;
+
 export interface ChildOrderableNode {
     /**
      * Sets the child order of the node within the parent.
@@ -10,7 +12,7 @@ export interface ChildOrderableNode {
     setOrder(order: number): this;
 }
 
-export function ChildOrderableNode<T extends Constructor<Node>>(Base: T): Constructor<ChildOrderableNode> & T {
+export function ChildOrderableNode<T extends Constructor<ChildOrderableNodeExtensionType>>(Base: T): Constructor<ChildOrderableNode> & T {
     return class extends Base implements ChildOrderableNode {
         setOrder(order: number) {
             const childIndex = this.getChildIndex();
