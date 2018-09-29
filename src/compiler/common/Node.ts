@@ -933,14 +933,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Get the node's parent.
      */
-    getParent<T extends Node | undefined = NodeParentType<NodeType>>() {
+    getParent<T extends Node | undefined = NodeParentType<NodeType>>(): T {
         return this.getNodeFromCompilerNodeIfExists(this.compilerNode.parent) as T;
     }
 
     /**
      * Gets the parent or throws an error if it doesn't exist.
      */
-    getParentOrThrow<T extends Node | undefined = NodeParentType<NodeType>>() {
+    getParentOrThrow<T extends Node | undefined = NodeParentType<NodeType>>(): NonNullable<T> {
         return errors.throwIfNullOrUndefined(this.getParent<T>(), "Expected to find a parent.") as NonNullable<T>;
     }
 
@@ -1236,7 +1236,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child by syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
-    getFirstChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
+    getFirstChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
         return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), `A child of the kind ${getSyntaxKindName(kind)} was expected.`);
     }
 

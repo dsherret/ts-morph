@@ -8,19 +8,19 @@
 }
 
 let counter = 0;
-function getNewFunction(originalFunction: () => void) {
+function getNewFunction(originalFunction: (...args: any[]) => void) {
     const identifier = ++counter;
 
-    function decorator(this: any) {
+    function decorator(this: any, ...args: any[]) {
         let propName = `__memoized_value_${identifier}`;
         if (arguments.length > 0)
-            propName += "_" + JSON.stringify(arguments);
+            propName += "_" + JSON.stringify(args);
         let returnedValue: any;
 
         if (this.hasOwnProperty(propName))
             returnedValue = this[propName];
         else {
-            returnedValue = originalFunction.apply(this, arguments);
+            returnedValue = originalFunction.apply(this, args);
             Object.defineProperty(this, propName, {
                 configurable: false,
                 enumerable: false,

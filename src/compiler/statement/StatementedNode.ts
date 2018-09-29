@@ -422,8 +422,8 @@ export interface InsertChildrenOptions<TStructure> {
 
 /** @internal */
 export interface StandardWriteOptions {
-    previousNewLine?: (previousMember: Node) => void;
-    nextNewLine?: (nextMember: Node) => void;
+    previousNewLine?: (previousMember: Node) => boolean;
+    nextNewLine?: (nextMember: Node) => boolean;
 }
 
 export function StatementedNode<T extends Constructor<StatementedNodeExtensionType>>(Base: T): Constructor<StatementedNode> & T {
@@ -458,7 +458,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertStatements(index: number, textOrWriterFunction: string | WriterFunction) {
             addBodyIfNotExists(this);
 
-            return getChildSyntaxList.call(this).insertChildText(index, textOrWriterFunction);
+            return getChildSyntaxList.call(this).insertChildText(index, textOrWriterFunction) as Statement[];
 
             function getChildSyntaxList(this: Node) {
                 const childSyntaxList = this.getChildSyntaxListOrThrow();
@@ -608,9 +608,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                         }).printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember =>
-                            structures[0].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,
+                            structures[0].hasDeclareKeyword === true && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,
                         nextNewLine: nextMember =>
-                            structures[structures.length - 1].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(nextMember) && nextMember.getBody() == null
+                            structures[structures.length - 1].hasDeclareKeyword === true && TypeGuards.isFunctionDeclaration(nextMember) && nextMember.getBody() == null
                     });
                 }
             });

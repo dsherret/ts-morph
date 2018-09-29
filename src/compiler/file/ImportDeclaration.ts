@@ -363,7 +363,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         const namedImports = importClause.getFirstChildByKind(SyntaxKind.NamedImports);
         if (namedImports == null)
             return [];
-        return namedImports.getChildSyntaxListOrThrow().getChildren().filter(c => TypeGuards.isImportSpecifier(c)) as ImportSpecifier[];
+        return namedImports.getChildSyntaxListOrThrow().getChildren().filter(TypeGuards.isImportSpecifier) as ImportSpecifier[];
     }
 
     /**
