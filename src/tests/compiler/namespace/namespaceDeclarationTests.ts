@@ -161,7 +161,7 @@ describe(nameof(NamespaceDeclaration), () => {
     });
 
     describe(nameof<NamespaceDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "imports" | "exports";
         function doTest(text: string, expectedStructure: Omit<MakeRequired<NamespaceDeclarationStructure>, PropertyNamesToExclude>) {
             const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             const structure = firstChild.getStructure();

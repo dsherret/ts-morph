@@ -61,14 +61,18 @@ describe(nameof(StatementedNode), () => {
                 enums: [{ name: "E" }],
                 functions: [{ name: "F" }],
                 namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');"
+                bodyText: "console.log('here');",
+                imports: [{ moduleSpecifier: "./import" }],
+                exports: [{ moduleSpecifier: "./export" }]
             };
 
             doTest("", 0, [structure],
                 "/**\n * Test\n */\nexport module n {\n" +
+                "    import \"./import\";\n\n" +
                 "    type T = string;\n\n    interface I {\n    }\n\n    enum E {\n    }\n\n" +
                 "    function F() {\n    }\n\n    class C {\n    }\n\n    namespace N {\n    }\n\n" +
-                "    console.log('here');\n" +
+                "    console.log('here');\n\n" +
+                "    export * from \"./export\";\n" +
                 "}\n");
         });
 
