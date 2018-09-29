@@ -247,9 +247,9 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this.context.structurePrinterFactory.forExportDeclaration().printTexts(writer, structures);
                     }, {
-                            previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember),
-                            nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
-                        });
+                        previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember),
+                        nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
+                    });
                 }
             });
         }
@@ -295,9 +295,9 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this.context.structurePrinterFactory.forExportAssignment().printTexts(writer, structures);
                     }, {
-                            previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember),
-                            nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)
-                        });
+                        previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember),
+                        nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)
+                    });
                 }
             });
         }
