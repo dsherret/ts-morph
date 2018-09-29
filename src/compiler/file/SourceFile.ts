@@ -1,13 +1,12 @@
 import * as errors from "../../errors";
 import { Directory } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
-import { FormattingKind, getTextFromFormattingEdits, removeChildrenWithFormatting, replaceNodeText, replaceSourceFileForFilePathMove,
-    replaceSourceFileTextForFormatting } from "../../manipulation";
+import { getTextFromFormattingEdits, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting } from "../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../manipulation/textSeek";
-import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, SourceFileStructure, SourceFileSpecificStructure } from "../../structures";
+import { SourceFileStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { LanguageVariant, ScriptTarget, SyntaxKind, ts } from "../../typescript";
-import { ArrayUtils, createHashSet, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../utils";
+import { ArrayUtils, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../utils";
 import { getBodyTextForStructure } from "../base/helpers";
 import { TextInsertableNode, ModuledNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -15,11 +14,7 @@ import { Node, Symbol } from "../common";
 import { StringLiteral } from "../literal";
 import { StatementedNode } from "../statement";
 import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, UserPreferences, TextChange } from "../tools";
-import { ExportAssignment } from "./ExportAssignment";
-import { ExportDeclaration } from "./ExportDeclaration";
-import { ExportSpecifier } from "./ExportSpecifier";
 import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
-import { ImportDeclaration } from "./ImportDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export interface SourceFileCopyOptions {
@@ -494,100 +489,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Add export assignments.
-     * @param structure - Structure that represents the export.
-     */
-    addExportAssignment(structure: ExportAssignmentStructure) {
-        return this.addExportAssignments([structure])[0];
-    }
-
-    /**
-     * Add export assignments.
-     * @param structures - Structures that represent the exports.
-     */
-    addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>) {
-        // always insert at end of file because of export {Identifier}; statements
-        return this.insertExportAssignments(this.getChildSyntaxListOrThrow().getChildCount(), structures);
-    }
-
-    /**
-     * Insert an export assignment.
-     * @param index - Child index to insert at.
-     * @param structure - Structure that represents the export.
-     */
-    insertExportAssignment(index: number, structure: ExportAssignmentStructure) {
-        return this.insertExportAssignments(index, [structure])[0];
-    }
-
-    /**
-     * Insert export assignments into a file.
-     * @param index - Child index to insert at.
-     * @param structures - Structures that represent the exports to insert.
-     */
-    insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[] {
-        return this._insertChildren<ExportAssignment, ExportAssignmentStructure>({
-            expectedKind: SyntaxKind.ExportAssignment,
-            index,
-            structures,
-            write: (writer, info) => {
-                this._standardWrite(writer, info, () => {
-                    this.context.structurePrinterFactory.forExportAssignment().printTexts(writer, structures);
-                }, {
-                    previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember),
-                    nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)
-                });
-            }
-        });
-    }
-
-    /**
-     * Gets the first export assignment that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the export assignment by.
-     */
-    getExportAssignment(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment | undefined {
-        return ArrayUtils.find(this.getExportAssignments(), condition);
-    }
-
-    /**
-     * Gets the first export assignment that matches a condition, or throws if it doesn't exist.
-     * @param condition - Condition to get the export assignment by.
-     */
-    getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment {
-        return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), "Expected to find an export assignment with the provided condition.");
-    }
-
-    /**
-     * Get the file's export assignments.
-     */
-    getExportAssignments(): ExportAssignment[] {
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportAssignment);
-    }
-
-    /**
      * Gets the pre-emit diagnostics of the specified source file.
      */
     getPreEmitDiagnostics(): Diagnostic[] {
         return this.context.getPreEmitDiagnostics(this);
-    }
-
-    /**
-     * Removes any "export default";
-     */
-    removeDefaultExport(defaultExportSymbol?: Symbol | undefined): this {
-        defaultExportSymbol = defaultExportSymbol || this.getDefaultExportSymbol();
-
-        if (defaultExportSymbol == null)
-            return this;
-
-        const declaration = defaultExportSymbol.getDeclarations()[0];
-        if (declaration.compilerNode.kind === SyntaxKind.ExportAssignment)
-            removeChildrenWithFormatting({ children: [declaration], getSiblingFormatting: () => FormattingKind.Newline });
-        else if (TypeGuards.isModifierableNode(declaration)) {
-            declaration.toggleModifier("default", false);
-            declaration.toggleModifier("export", false);
-        }
-
-        return this;
     }
 
     /**

@@ -1,5 +1,6 @@
 ﻿import * as errors from "../../errors";
-import { ModuledNodeStructure, ImportDeclarationStructure, ExportDeclarationStructure } from "../../structures";
+import { FormattingKind, removeChildrenWithFormatting } from "../../manipulation";
+import { ModuledNodeStructure, ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { ts, SyntaxKind } from "../../typescript";
 import { ArrayUtils, TypeGuards, createHashSet } from "../../utils";
@@ -113,6 +114,42 @@ export interface ModuledNode {
      */
     getExportDeclarations(): ExportDeclaration[];
     /**
+     * Add export assignments.
+     * @param structure - Structure that represents the export.
+     */
+    addExportAssignment(structure: ExportAssignmentStructure): ExportAssignment;
+    /**
+     * Add export assignments.
+     * @param structures - Structures that represent the exports.
+     */
+    addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
+    /**
+     * Insert an export assignment.
+     * @param index - Child index to insert at.
+     * @param structure - Structure that represents the export.
+     */
+    insertExportAssignment(index: number, structure: ExportAssignmentStructure): ExportAssignment;
+    /**
+     * Insert export assignments into a file.
+     * @param index - Child index to insert at.
+     * @param structures - Structures that represent the exports to insert.
+     */
+    insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
+    /**
+     * Gets the first export assignment that matches a condition, or undefined if it doesn't exist.
+     * @param condition - Condition to get the export assignment by.
+     */
+    getExportAssignment(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment | undefined;
+    /**
+     * Gets the first export assignment that matches a condition, or throws if it doesn't exist.
+     * @param condition - Condition to get the export assignment by.
+     */
+    getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment;
+    /**
+     * Get the file's export assignments.
+     */
+    getExportAssignments(): ExportAssignment[];
+    /**
      * Gets the default export symbol.
      */
     getDefaultExportSymbol(): Symbol | undefined;
@@ -131,6 +168,10 @@ export interface ModuledNode {
      * declarations then use `.getExportDeclarations()`.
      */
     getExportedDeclarations(): Node[];
+    /**
+     * Removes any "export default".
+     */
+    removeDefaultExport(defaultExportSymbol?: Symbol | undefined): this;
 }
 
 export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Base: T): Constructor<ModuledNode> & T {
@@ -232,6 +273,47 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration);
         }
 
+        addExportAssignment(structure: ExportAssignmentStructure) {
+            return this.addExportAssignments([structure])[0];
+        }
+
+        addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>) {
+            // always insert at end of file because of export {Identifier}; statements
+            return this.insertExportAssignments(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+        }
+
+        insertExportAssignment(index: number, structure: ExportAssignmentStructure) {
+            return this.insertExportAssignments(index, [structure])[0];
+        }
+
+        insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[] {
+            return this._insertChildren<ExportAssignment, ExportAssignmentStructure>({
+                expectedKind: SyntaxKind.ExportAssignment,
+                index,
+                structures,
+                write: (writer, info) => {
+                    this._standardWrite(writer, info, () => {
+                        this.context.structurePrinterFactory.forExportAssignment().printTexts(writer, structures);
+                    }, {
+                            previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember),
+                            nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)
+                        });
+                }
+            });
+        }
+
+        getExportAssignment(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment | undefined {
+            return ArrayUtils.find(this.getExportAssignments(), condition);
+        }
+
+        getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment {
+            return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), "Expected to find an export assignment with the provided condition.");
+        }
+
+        getExportAssignments(): ExportAssignment[] {
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportAssignment);
+        }
+
         getDefaultExportSymbol(): Symbol | undefined {
             const sourceFileSymbol = this.getSymbol();
 
@@ -285,6 +367,23 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                         yield declaration;
                 }
             }
+        }
+
+        removeDefaultExport(defaultExportSymbol?: Symbol | undefined): this {
+            defaultExportSymbol = defaultExportSymbol || this.getDefaultExportSymbol();
+
+            if (defaultExportSymbol == null)
+                return this;
+
+            const declaration = defaultExportSymbol.getDeclarations()[0];
+            if (declaration.compilerNode.kind === SyntaxKind.ExportAssignment)
+                removeChildrenWithFormatting({ children: [declaration], getSiblingFormatting: () => FormattingKind.Newline });
+            else if (TypeGuards.isModifierableNode(declaration)) {
+                declaration.toggleModifier("default", false);
+                declaration.toggleModifier("export", false);
+            }
+
+            return this;
         }
 
         set(structure: Partial<ModuledNodeStructure>) {

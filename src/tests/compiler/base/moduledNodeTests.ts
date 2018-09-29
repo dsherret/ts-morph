@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
-import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration } from "../../../compiler";
-import { ImportDeclarationStructure, ExportDeclarationStructure, ModuledNodeStructure } from "../../../structures";
+import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration, ExportAssignment } from "../../../compiler";
+import { ImportDeclarationStructure, ExportDeclarationStructure, ModuledNodeStructure, ExportAssignmentStructure } from "../../../structures";
 import { Project } from "../../../Project";
 import { getInfoFromText } from "../testHelpers";
 
@@ -327,6 +327,128 @@ describe(nameof(ModuledNode), () => {
         });
     });
 
+    describe(nameof<ModuledNode>(n => n.insertExportAssignments), () => {
+        function doTest(startCode: string, index: number, structures: ExportAssignmentStructure[], expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.insertExportAssignments(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert the different kinds of exports", () => {
+            doTest("", 0, [
+                { expression: "5" },
+                { isExportEquals: true, expression: writer => writer.write("6") },
+                { isExportEquals: false, expression: "name" }
+            ], [
+                `export = 5;`,
+                `export = 6;`,
+                `export default name;`
+            ].join("\n") + "\n");
+        });
+
+        it("should insert at the beginning", () => {
+            doTest(`export class Class {}\n`, 0, [{ expression: "5" }], `export = 5;\n\nexport class Class {}\n`);
+        });
+
+        it("should insert in the middle", () => {
+            doTest(`export * from "./file1";\nexport = 6;\n`, 1, [{ expression: "5" }],
+                `export * from "./file1";\n\nexport = 5;\nexport = 6;\n`);
+        });
+
+        it("should insert at the end", () => {
+            doTest(`export class Class {}\n`, 1, [{ expression: "5" }], `export class Class {}\n\nexport = 5;\n`);
+        });
+
+        function doNamespaceTest(startCode: string, index: number, structures: ExportAssignmentStructure[], expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.getNamespaces()[0].insertExportAssignments(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should insert into a namespace", () => {
+            doNamespaceTest(`namespace N {\n    export class Class {}\n}`, 1, [{ expression: "5" }],
+                `namespace N {\n    export class Class {}\n\n    export = 5;\n}`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.insertExportAssignment), () => {
+        function doTest(startCode: string, index: number, structure: ExportAssignmentStructure, expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.insertExportAssignment(index, structure);
+            expect(result).to.be.instanceOf(ExportAssignment);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert at the specified position", () => {
+            doTest(`export * from "./file1";\nexport = 6;\n`, 1, { expression: "5" },
+                `export * from "./file1";\n\nexport = 5;\nexport = 6;\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.addExportAssignment), () => {
+        function doTest(startCode: string, structure: ExportAssignmentStructure, expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.addExportAssignment(structure);
+            expect(result).to.be.instanceOf(ExportAssignment);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should always add at the end of the file", () => {
+            doTest(`export class MyClass {}\n`, { expression: "5" },
+                `export class MyClass {}\n\nexport = 5;\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.addExportAssignments), () => {
+        function doTest(startCode: string, structures: ExportAssignmentStructure[], expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.addExportAssignments(structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should add multiple", () => {
+            doTest(`export class MyClass {}\n`, [{ expression: "5" }, { expression: "6" }],
+                `export class MyClass {}\n\nexport = 5;\nexport = 6;\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getExportAssignments), () => {
+        it("should get from file", () => {
+            const { sourceFile } = getInfoFromText("export = 5; export = 6;");
+            expect(sourceFile.getExportAssignments().length).to.equal(2);
+            expect(sourceFile.getExportAssignments()[0]).to.be.instanceOf(ExportAssignment);
+        });
+
+        it("should get from namespace", () => {
+            const { sourceFile } = getInfoFromText("namespace T { export = 5; export = 6; }");
+            const result = sourceFile.getNamespaces()[0].getExportAssignments();
+            expect(result.length).to.equal(2);
+            expect(result[0]).to.be.instanceOf(ExportAssignment);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getExportAssignment), () => {
+        it("should get the export declaration", () => {
+            const { sourceFile } = getInfoFromText("export = 5; export default 6;");
+            expect(sourceFile.getExportAssignment(e => !e.isExportEquals())!.getText()).to.equal("export default 6;");
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getExportAssignmentOrThrow), () => {
+        it("should get the export declaration", () => {
+            const { sourceFile } = getInfoFromText("export = 5; export default 6;");
+            expect(sourceFile.getExportAssignmentOrThrow(e => !e.isExportEquals()).getText()).to.equal("export default 6;");
+        });
+
+        it("should throw when not exists", () => {
+            const { sourceFile } = getInfoFromText("");
+            expect(() => sourceFile.getExportAssignmentOrThrow(e => false)).to.throw();
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.set), () => {
         function doTest(startingCode: string, structure: ModuledNodeStructure, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
@@ -456,6 +578,37 @@ describe(nameof(ModuledNode), () => {
 
         it("should return the default export symbol when one exists", () => {
             doTest("export default class Identifier {}", "default");
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.removeDefaultExport), () => {
+        function doTest(text: string, expected: string) {
+            const { sourceFile } = getInfoFromText(text);
+            sourceFile.removeDefaultExport();
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should do nothing when there's no default export", () => {
+            doTest("", "");
+        });
+
+        it("should remove the default export symbol when one exists", () => {
+            doTest("export default class Identifier {}", "class Identifier {}");
+        });
+
+        it("should remove the default export symbol when default exported on a separate statement", () => {
+            doTest("namespace Identifier {}\nclass Identifier {}\nexport default Identifier;\n", "namespace Identifier {}\nclass Identifier {}\n");
+        });
+
+        function doNamespaceTest(text: string, expected: string) {
+            const { sourceFile } = getInfoFromText(text, { isDefinitionFile: true });
+            sourceFile.getNamespaces()[0].removeDefaultExport();
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should remove the default export symbol from an ambient module", () => {
+            doNamespaceTest("declare module 'test' {\n    namespace Identifier {}\n    class Identifier {}\n    export default Identifier;\n}",
+                "declare module 'test' {\n    namespace Identifier {}\n    class Identifier {}\n}");
         });
     });
 });
