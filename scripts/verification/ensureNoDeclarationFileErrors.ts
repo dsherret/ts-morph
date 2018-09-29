@@ -1,11 +1,11 @@
 ﻿/**
- * Code Verification: Ensure no definition file errors
+ * Code Verification: Ensure no declaration file errors
  * ---------------------------------------------------
- * Does what it says. Goes through and find definition file errors.
+ * Does what it says. Goes through and find declaration file errors.
  *
  * I had to implement this originally because I found the compiler wasn't always giving me emit errors
- * when creating the definition file. Now it's especially useful because it will make sure the final manipulated
- * definition file doesn't have errors.
+ * when creating the declaration file. Now it's especially useful because it will make sure the final manipulated
+ * declaration file doesn't have errors.
  * ---------------------------------------------------
  */
 import * as path from "path";

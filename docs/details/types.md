@@ -60,7 +60,7 @@ Format it by providing `TypeFormatFlags`:
 const text = type.getText(parameter, TypeFormatFlags.NoTruncation | TypeFormatFlags.WriteArrayAsGenericType);
 ```
 
-Look at the definition file for more available options for `TypeFormatFlags`.
+Look at the declaration file for more available options for `TypeFormatFlags`.
 
 
 ### Constraint and Default

@@ -1398,11 +1398,11 @@ describe(nameof(Directory), () => {
             doSourceFileTest("/dir", "/dir/to.ts", "./to");
         });
 
-        it("should get the module specifier to a definition file", () => {
+        it("should get the module specifier to a declaration file", () => {
             doSourceFileTest("/dir", "/dir2/to.d.ts", "../dir2/to");
         });
 
-        it("should get the module specifier to a definition file that doing use a lower case extension", () => {
+        it("should get the module specifier to a declaration file that doing use a lower case extension", () => {
             doSourceFileTest("/dir", "/dir2/to.D.TS", "../dir2/to");
         });
 
@@ -1418,7 +1418,7 @@ describe(nameof(Directory), () => {
             doSourceFileTest("/dir", "/dir2/INDEX.ts", "../dir2");
         });
 
-        it("should use an implicit index when specifying the index file of a definition file in a different directory", () => {
+        it("should use an implicit index when specifying the index file of a declaration file in a different directory", () => {
             doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2");
         });
 

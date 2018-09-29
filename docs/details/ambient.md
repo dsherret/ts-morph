@@ -4,7 +4,7 @@ title: Ambient
 
 ## Ambient
 
-Certain nodes in TypeScript can be ambient. For example, all nodes within a definition file are ambient.
+Certain nodes in TypeScript can be ambient. For example, all nodes within a declaration file are ambient.
 
 ### Testing if ambient
 

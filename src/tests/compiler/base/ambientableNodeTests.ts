@@ -53,7 +53,7 @@ describe(nameof(AmbientableNode), () => {
                 doTest("declare class Identifier {}", true);
             });
 
-            it("should be ambient when it's in a definition file", () => {
+            it("should be ambient when it's in a declaration file", () => {
                 const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}", { isDefinitionFile: true });
                 expect(firstChild.isAmbient()).to.be.true;
             });
