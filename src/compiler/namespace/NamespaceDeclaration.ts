@@ -1,15 +1,16 @@
 import * as errors from "../../errors";
-import { replaceNodeText } from "../../manipulation";
+import { removeChildren, insertIntoParentTextRange } from "../../manipulation";
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode,
     TextInsertableNode, UnwrappableNode, ModuledNode } from "../base";
 import { TypeGuards } from "../../utils";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Identifier } from "../common";
 import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
-import { callBaseGetStructure } from "../callBaseGetStructure";
+import { NamespaceDeclarationKind } from "./NamespaceDeclarationKind";
 
 export const NamespaceDeclarationBase = ModuledNode(ChildOrderableNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(
     StatementedNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))))
@@ -33,12 +34,9 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
             throw new errors.NotImplementedError(`Not implemented to set a namespace name that uses dot notation. ${openIssueText}`);
         if (newName.indexOf(".") >= 0)
             throw new errors.NotImplementedError(`Not implemented to set a namespace name to a name containing a period. ${openIssueText}`);
-        replaceNodeText({
-            sourceFile: this.sourceFile,
-            start: nameNodes[0].getStart(),
-            replacingLength: nameNodes[0].getWidth(),
-            newText: newName
-        });
+        if (newName !== "global")
+            addNamespaceKeywordIfNecessary(this);
+        nameNodes[0].replaceWithText(newName);
         return this;
     }
 
@@ -52,6 +50,8 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
             throw new errors.NotSupportedError(`Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`);
         if (newName.indexOf(".") >= 0)
             throw new errors.NotSupportedError(`Cannot rename a namespace name to a name containing a period.`);
+        if (newName !== "global")
+            addNamespaceKeywordIfNecessary(this);
         nameNodes[0].rename(newName);
         return this;
     }
@@ -73,45 +73,63 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets if this namespace has a namespace keyword.
      */
     hasNamespaceKeyword() {
-        return (this.compilerNode.flags & ts.NodeFlags.Namespace) === ts.NodeFlags.Namespace;
+        return this.getDeclarationKind() === NamespaceDeclarationKind.Namespace;
     }
 
     /**
      * Gets if this namespace has a namespace keyword.
      */
     hasModuleKeyword() {
-        return !this.hasNamespaceKeyword();
+        return this.getDeclarationKind() === NamespaceDeclarationKind.Module;
     }
 
     /**
-     * Set if this namespace has a namespace keyword.
-     * @param value - Whether to set it or not.
+     * Sets the namespace declaration kind.
+     * @param kind - Kind to set.
      */
-    setHasNamespaceKeyword(value = true) {
-        if (this.hasNamespaceKeyword() === value)
+    setDeclarationKind(kind: NamespaceDeclarationKind) {
+        if (this.getDeclarationKind() === kind)
             return this;
 
-        const declarationKindKeyword = this.getDeclarationKindKeyword();
+        if (kind === NamespaceDeclarationKind.Global) {
+            const declarationKindKeyword = this.getDeclarationKindKeyword();
 
-        replaceNodeText({
-            sourceFile: this.getSourceFile(),
-            start: declarationKindKeyword.getStart(),
-            replacingLength: declarationKindKeyword.getWidth(),
-            newText: value ? "namespace" : "module"
-        });
+            this.getNameNode().replaceWithText("global");
+
+            if (declarationKindKeyword != null)
+                removeChildren({
+                    children: [declarationKindKeyword],
+                    removeFollowingNewLines: true,
+                    removeFollowingSpaces: true
+                });
+        } else {
+            const declarationKindKeyword = this.getDeclarationKindKeyword();
+
+            if (declarationKindKeyword != null)
+                declarationKindKeyword.replaceWithText(kind);
+            else
+                insertIntoParentTextRange({
+                    parent: this,
+                    insertPos: this.getNameNode().getStart(),
+                    newText: kind + " "
+                });
+        }
+
         return this;
     }
 
     /**
-     * Set if this namespace has a namespace keyword.
-     * @param value - Whether to set it or not.
+     * Gets the namesapce declaration kind.
      */
-    setHasModuleKeyword(value = true) {
-        return this.setHasNamespaceKeyword(!value);
+    getDeclarationKind() {
+        const declarationKeyword = this.getDeclarationKindKeyword();
+        if (declarationKeyword == null)
+            return NamespaceDeclarationKind.Global;
+        return declarationKeyword.getKind() === SyntaxKind.NamespaceKeyword ? NamespaceDeclarationKind.Namespace : NamespaceDeclarationKind.Module;
     }
 
     /**
-     * Gets the namespace or module keyword.
+     * Gets the namespace or module keyword or returns undefined if it's global.
      */
     getDeclarationKindKeyword() {
         const keyword = this.getFirstChild(child =>
@@ -119,7 +137,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
             child.getKind() === SyntaxKind.ModuleKeyword);
         /* istanbul ignore if */
         if (keyword == null)
-            throw new errors.NotImplementedError("Expected the declaration kind keyword to exist on a namespace.");
+            return undefined;
         return keyword;
     }
 
@@ -128,10 +146,13 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * @param structure - Structure to set the node with.
      */
     set(structure: Partial<NamespaceDeclarationStructure>) {
+        if (structure.name != null && structure.name !== "global")
+            addNamespaceKeywordIfNecessary(this);
+
         callBaseSet(NamespaceDeclarationBase.prototype, this, structure);
 
-        if (structure.hasModuleKeyword != null)
-            this.setHasModuleKeyword(structure.hasModuleKeyword);
+        if (structure.declarationKind != null)
+            this.setDeclarationKind(structure.declarationKind);
 
         return this;
     }
@@ -141,7 +162,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      */
     getStructure(): NamespaceDeclarationStructure {
         return callBaseGetStructure<NamespaceDeclarationSpecificStructure>(NamespaceDeclarationBase.prototype, this, {
-            hasModuleKeyword: this.hasModuleKeyword()
+            declarationKind: this.getDeclarationKind()
         });
     }
 
@@ -152,4 +173,9 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
             node = node.getBody();
         return node;
     }
+}
+
+function addNamespaceKeywordIfNecessary(namespaceDec: NamespaceDeclaration) {
+    if (namespaceDec.getDeclarationKind() === NamespaceDeclarationKind.Global)
+        namespaceDec.setDeclarationKind(NamespaceDeclarationKind.Namespace);
 }

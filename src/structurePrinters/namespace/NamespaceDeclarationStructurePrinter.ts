@@ -1,4 +1,5 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { NamespaceDeclarationKind } from "../../compiler";
 import { StructurePrinterFactory } from "../../factories";
 import { ArrayUtils } from "../../utils";
 import { NamespaceDeclarationStructure } from "../../structures";
@@ -19,7 +20,12 @@ export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinte
     printText(writer: CodeBlockWriter, structure: NamespaceDeclarationStructure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
-        writer.write(`${structure.hasModuleKeyword ? "module" : "namespace"} ${structure.name} `).inlineBlock(() => {
+        if (structure.declarationKind == null || structure.declarationKind !== NamespaceDeclarationKind.Global)
+            writer.write(`${structure.declarationKind || "namespace"} ${structure.name} `);
+        else
+            writer.write("global ");
+
+        writer.inlineBlock(() => {
             this.factory.forImportDeclaration().printTexts(writer, structure.imports);
 
             this.factory.forBodyText({

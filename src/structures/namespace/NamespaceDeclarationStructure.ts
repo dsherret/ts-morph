@@ -1,4 +1,5 @@
-﻿import { AmbientableNodeStructure, BodiedNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure,
+﻿import { NamespaceDeclarationKind } from "../../compiler";
+import { AmbientableNodeStructure, BodiedNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure,
     ModuledNodeStructure } from "../base";
 import { StatementedNodeStructure } from "../statement";
 
@@ -10,7 +11,7 @@ export interface NamespaceDeclarationStructure
 
 export interface NamespaceDeclarationSpecificStructure {
     /**
-     * If the namespace has the module keyword.
+     * The namespace declaration kind.
      */
-    hasModuleKeyword?: boolean;
+    declarationKind?: NamespaceDeclarationKind;
 }
