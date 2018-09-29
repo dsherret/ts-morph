@@ -3,7 +3,7 @@ import { replaceNodeText } from "../../manipulation";
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode,
-    TextInsertableNode, UnwrappableNode } from "../base";
+    TextInsertableNode, UnwrappableNode, ModuledNode } from "../base";
 import { TypeGuards } from "../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Identifier } from "../common";
@@ -11,9 +11,9 @@ import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const NamespaceDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(
-    AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))
-)))))));
+export const NamespaceDeclarationBase = ModuledNode(ChildOrderableNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(
+    StatementedNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))))
+))))));
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
      * Gets the full name of the namespace.

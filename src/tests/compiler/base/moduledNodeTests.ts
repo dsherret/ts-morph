@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { SourceFile, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration } from "../../../compiler";
+import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration } from "../../../compiler";
 import { ImportDeclarationStructure, ExportDeclarationStructure, ModuledNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
@@ -55,6 +55,17 @@ describe(nameof(ModuledNode), () => {
         it("should insert at the end", () => {
             doTest(`export class Class {}\n`, 1, [{ moduleSpecifier: "./test" }], `export class Class {}\n\nimport "./test";\n`);
         });
+
+        function doNamespaceTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string) {
+            const { sourceFile, project } = getInfoFromText(startCode);
+            const result = sourceFile.getNamespaces()[0].insertImportDeclarations(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should insert into namespace", () => {
+            doNamespaceTest(`declare module N {\n}`, 0, [{ moduleSpecifier: "./test" }], `declare module N {\n    import "./test";\n}`);
+        });
     });
 
     describe(nameof<ModuledNode>(n => n.insertImportDeclaration), () => {
@@ -109,10 +120,16 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.getImportDeclarations), () => {
-        it("should get the import declarations", () => {
+        it("should get in a source file", () => {
             const { sourceFile } = getInfoFromText("import myImport from 'test'; import {next} from './test';");
             expect(sourceFile.getImportDeclarations().length).to.equal(2);
             expect(sourceFile.getImportDeclarations()[0]).to.be.instanceOf(ImportDeclaration);
+        });
+
+        it("should get in a namespace", () => {
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>("declare namespace N { import myImport from 'test'; }");
+            expect(firstChild.getImportDeclarations().length).to.equal(1);
+            expect(firstChild.getImportDeclarations()[0]).to.be.instanceOf(ImportDeclaration);
         });
     });
 
@@ -195,6 +212,17 @@ describe(nameof(ModuledNode), () => {
         it("should insert at the end", () => {
             doTest(`export class Class {}\n`, 1, [{ moduleSpecifier: "./test" }], `export class Class {}\n\nexport * from "./test";\n`);
         });
+
+        function doNamespaceTest(startCode: string, index: number, structures: ExportDeclarationStructure[], expectedCode: string) {
+            const { sourceFile, project } = getInfoFromText(startCode);
+            const result = sourceFile.getNamespaces()[0].insertExportDeclarations(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should insert into namespace", () => {
+            doNamespaceTest(`declare module N {\n}`, 0, [{ moduleSpecifier: "./test" }], `declare module N {\n    export * from "./test";\n}`);
+        });
     });
 
     describe(nameof<ModuledNode>(n => n.insertExportDeclaration), () => {
@@ -240,10 +268,16 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.getExportDeclarations), () => {
-        it("should get the export declarations", () => {
+        it("should get in a source file", () => {
             const { sourceFile } = getInfoFromText("export * from 'test'; export {next} from './test';");
             expect(sourceFile.getExportDeclarations().length).to.equal(2);
             expect(sourceFile.getExportDeclarations()[0]).to.be.instanceOf(ExportDeclaration);
+        });
+
+        it("should get in a namespace", () => {
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>("declare namespace N { export * from 'test'; }");
+            expect(firstChild.getExportDeclarations().length).to.equal(1);
+            expect(firstChild.getExportDeclarations()[0]).to.be.instanceOf(ExportDeclaration);
         });
     });
 
