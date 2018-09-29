@@ -12,6 +12,8 @@ export interface NamespaceDeclarationStructure
 export interface NamespaceDeclarationSpecificStructure {
     /**
      * The namespace declaration kind.
+     *
+     * @remarks Defaults to "namespace".
      */
     declarationKind?: NamespaceDeclarationKind;
 }

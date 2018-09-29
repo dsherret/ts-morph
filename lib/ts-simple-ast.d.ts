@@ -9959,6 +9959,8 @@ export interface NamespaceDeclarationStructure extends NamedNodeStructure, Names
 interface NamespaceDeclarationSpecificStructure {
     /**
      * The namespace declaration kind.
+     *
+     * @remarks Defaults to "namespace".
      */
     declarationKind?: NamespaceDeclarationKind;
 }
