@@ -34,27 +34,41 @@ Call `.remove()`:
 namespaceDeclaration.remove();
 ```
 
-### Module or namespace?
+### Module, namespace, or `global`?
 
-Check for the keyword you want:
+Check for the declaration kind or keywords:
 
 ```ts
+namespaceDeclaration.getDeclarationKind(); // returns: NamespaceDeclarationKind
+// or
 namespaceDeclaration.hasModuleKeyword(); // returns: boolean
 namespaceDeclaration.hasNamespaceKeyword(); // returns: boolean
 ```
 
-Or set one or the other:
+Or set the declaration kind:
 
 ```ts
-namespaceDeclaration.setHasModuleKeyword(); // optionally pass in a boolean
-namespaceDeclaration.setHasNamespaceKeyword();
+namespaceDeclaration.setDeclarationKind(NamespaceDeclarationKind.Namespace);
+namespaceDeclaration.setDeclarationKind(NamespaceDeclarationKind.Module);
+namespaceDeclaration.setDeclarationKind(NamespaceDeclarationKind.Global);
 ```
 
 Or get the keyword:
 
 ```ts
-namespaceDeclaration.getDeclarationKindKeyword(); // returns: the module or namespace keyword
+// returns: the module or namespace keyword or undefined if global
+namespaceDeclaration.getDeclarationKindKeyword();
 ```
+
+**Reminder:** Namespace declarations that are `global` have the following syntax:
+
+```ts
+declare module "my-library" {
+    // this is a global namespace declaration
+    global {
+        const foo: string;
+    }
+}
 
 ### Unwrap
 

@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { NamespaceDeclaration, StatementedNode, Node } from "../../../../compiler";
+import { NamespaceDeclaration, StatementedNode, Node, NamespaceDeclarationKind } from "../../../../compiler";
 import { NamespaceDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -15,7 +15,7 @@ describe(nameof(StatementedNode), () => {
         it("should insert to an empty file", () => {
             doTest("", 0, [{
                 name: "Identifier",
-                hasModuleKeyword: true
+                declarationKind: NamespaceDeclarationKind.Module
             }], "module Identifier {\n}\n");
         });
 
@@ -52,7 +52,7 @@ describe(nameof(StatementedNode), () => {
                 docs: [{ description: "Test" }],
                 name: "n",
                 hasDeclareKeyword: false,
-                hasModuleKeyword: true,
+                declarationKind: NamespaceDeclarationKind.Module,
                 isDefaultExport: false,
                 isExported: true,
                 classes: [{ name: "C" }],
@@ -89,6 +89,20 @@ describe(nameof(StatementedNode), () => {
 
             expect(sourceFile.getFullText()).to.equal("declare module Namespace {\n    namespace Namespace {\n        class Identifier {\n" +
                 "            myMethod();\n        }\n    }\n}\n");
+        });
+
+        it("should insert a global module", () => {
+            doTest("", 0, [{
+                name: "global",
+                declarationKind: NamespaceDeclarationKind.Global
+            }], "global {\n}\n");
+        });
+
+        it("should insert a global module and ignore value in the name property", () => {
+            doTest("", 0, [{
+                name: "somethingElse",
+                declarationKind: NamespaceDeclarationKind.Global // priority
+            }], "global {\n}\n");
         });
     });
 

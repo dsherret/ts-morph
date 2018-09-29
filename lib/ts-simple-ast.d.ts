@@ -7483,19 +7483,18 @@ export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.Na
      */
     hasModuleKeyword(): boolean;
     /**
-     * Set if this namespace has a namespace keyword.
-     * @param value - Whether to set it or not.
+     * Sets the namespace declaration kind.
+     * @param kind - Kind to set.
      */
-    setHasNamespaceKeyword(value?: boolean): this;
+    setDeclarationKind(kind: NamespaceDeclarationKind): this;
     /**
-     * Set if this namespace has a namespace keyword.
-     * @param value - Whether to set it or not.
+     * Gets the namesapce declaration kind.
      */
-    setHasModuleKeyword(value?: boolean): this;
+    getDeclarationKind(): NamespaceDeclarationKind;
     /**
-     * Gets the namespace or module keyword.
+     * Gets the namespace or module keyword or returns undefined if it's global.
      */
-    getDeclarationKindKeyword(): Node<ts.Node>;
+    getDeclarationKindKeyword(): Node<ts.Node> | undefined;
     /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
@@ -7505,6 +7504,11 @@ export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.Na
      * Gets the structure equivalent to this node.
      */
     getStructure(): NamespaceDeclarationStructure;
+}
+export declare enum NamespaceDeclarationKind {
+    Namespace = "namespace",
+    Module = "module",
+    Global = "global"
 }
 
 declare const BlockBase: Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Statement;
@@ -9954,9 +9958,11 @@ export interface NamespaceDeclarationStructure extends NamedNodeStructure, Names
 
 interface NamespaceDeclarationSpecificStructure {
     /**
-     * If the namespace has the module keyword.
+     * The namespace declaration kind.
+     *
+     * @remarks Defaults to "namespace".
      */
-    hasModuleKeyword?: boolean;
+    declarationKind?: NamespaceDeclarationKind;
 }
 
 export interface StatementedNodeStructure {

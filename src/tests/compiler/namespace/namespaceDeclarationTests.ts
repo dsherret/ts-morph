@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { NamespaceDeclaration } from "../../../compiler";
+import { NamespaceDeclaration, NamespaceDeclarationKind } from "../../../compiler";
 import * as errors from "../../../errors";
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
@@ -36,10 +36,23 @@ describe(nameof(NamespaceDeclaration), () => {
     });
 
     describe(nameof<NamespaceDeclaration>(d => d.rename), () => {
+        function doTest(text: string, newName: string, expectedText: string) {
+            const { sourceFile, firstChild } = getInfoFromText<NamespaceDeclaration>(text);
+            firstChild.rename(newName);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
         it("should rename a namespace that doesn't use dot notation", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace {}");
-            firstChild.rename("NewName");
-            expect(firstChild.getFullText()).to.equal("namespace NewName {}");
+            doTest("namespace MyNamespace { export class T {} } const t = MyNamespace.T;", "NewName",
+                "namespace NewName { export class T {} } const t = NewName.T;");
+        });
+
+        it("should add a namespace keyword for a global module", () => {
+            doTest("global {}", "NewName", "namespace NewName {}");
+        });
+
+        it("should do nothing for a global module when specifying global", () => {
+            doTest("global {}", "global", "global {}");
         });
 
         it("should throw an exception when passing in a name with a period", () => {
@@ -54,6 +67,24 @@ describe(nameof(NamespaceDeclaration), () => {
     });
 
     describe(nameof<NamespaceDeclaration>(d => d.setName), () => {
+        function doTest(text: string, newName: string, expectedText: string) {
+            const { sourceFile, firstChild } = getInfoFromText<NamespaceDeclaration>(text);
+            firstChild.rename(newName);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should set the name when not using dot notation", () => {
+            doTest("namespace MyNamespace {} const t = MyNamespace;", "NewName", "namespace NewName {} const t = MyNamespace;");
+        });
+
+        it("should add a namespace keyword for a global module", () => {
+            doTest("global {}", "NewName", "namespace NewName {}");
+        });
+
+        it("should do nothing for a global module when specifying global", () => {
+            doTest("global {}", "global", "global {}");
+        });
+
         it("should throw an exception when using dot notation because it's not implemented", () => {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace {}");
             expect(() => firstChild.setName("NewName.NewName")).to.throw(errors.NotImplementedError);
@@ -63,86 +94,122 @@ describe(nameof(NamespaceDeclaration), () => {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace.Name {}");
             expect(() => firstChild.setName("NewName")).to.throw(errors.NotImplementedError);
         });
-
-        it("should set the name when not using dot notation", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace {}");
-            firstChild.setName("NewName");
-            expect(firstChild.getText()).to.equal("namespace NewName {}");
-        });
     });
 
     describe(nameof<NamespaceDeclaration>(d => d.hasNamespaceKeyword), () => {
-        it("should have a namespace keyword when it has one", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier {}");
-            expect(firstChild.hasNamespaceKeyword()).is.true;
+        function doTest(text: string, expected: boolean) {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
+            expect(firstChild.hasNamespaceKeyword()).to.equal(expected);
+        }
+
+        it("should have when it has one", () => {
+            doTest("namespace Identifier {}", true);
         });
 
-        it("should not have a namespace keyword when it doesn't have one", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("module Identifier {}");
-            expect(firstChild.hasNamespaceKeyword()).is.false;
+        it("should not have when a module", () => {
+            doTest("module Identifier {}", false);
+        });
+
+        it("should not have when a global module", () => {
+            doTest("global {}", false);
         });
     });
 
     describe(nameof<NamespaceDeclaration>(d => d.hasModuleKeyword), () => {
-        it("should have a module keyword when it has one", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("module Identifier {}");
-            expect(firstChild.hasModuleKeyword()).is.true;
+        function doTest(text: string, expected: boolean) {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
+            expect(firstChild.hasModuleKeyword()).to.equal(expected);
+        }
+
+        it("should have when it has one", () => {
+            doTest("module Identifier {}", true);
         });
 
-        it("should not have a module keyword when it doesn't have one", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier {}");
-            expect(firstChild.hasModuleKeyword()).is.false;
+        it("should not have when a namespace", () => {
+            doTest("namespace Identifier {}", false);
+        });
+
+        it("should not have when a global module", () => {
+            doTest("global {}", false);
+        });
+    });
+
+    describe(nameof<NamespaceDeclaration>(d => d.getDeclarationKind), () => {
+        function doTest(text: string, expected: NamespaceDeclarationKind) {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
+            expect(firstChild.getDeclarationKind()).to.equal(expected);
+        }
+
+        it("should be equal for namespace", () => {
+            doTest("namespace Identifier {}", NamespaceDeclarationKind.Namespace);
+        });
+
+        it("should be equal for module", () => {
+            doTest("module Identifier {}", NamespaceDeclarationKind.Module);
+        });
+
+        it("should be equal for global", () => {
+            doTest("global {}", NamespaceDeclarationKind.Global);
         });
     });
 
     describe(nameof<NamespaceDeclaration>(d => d.getDeclarationKindKeyword), () => {
+        function doTest(text: string, expected: string | undefined) {
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
+            const keyword = firstChild.getDeclarationKindKeyword();
+            if (expected == null)
+                expect(keyword).to.be.undefined;
+            else
+                expect(keyword!.getText()).equals(expected);
+        }
+
         it("should get the declaration kind keyword for a namespace", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier {}");
-            expect(firstChild.getDeclarationKindKeyword()!.getText()).equals("namespace");
+            doTest("namespace Identifier {}", "namespace");
         });
 
         it("should get the declaration kind keyword for a module", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("module Identifier {}");
-            expect(firstChild.getDeclarationKindKeyword()!.getText()).equals("module");
+            doTest("module Identifier {}", "module");
+        });
+
+        it("should be undefined for global", () => {
+            doTest("global {}", undefined);
         });
     });
 
-    describe(nameof<NamespaceDeclaration>(d => d.setHasNamespaceKeyword), () => {
-        it("should change the declaration kind when a module", () => {
-            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>("module Identifier {}");
-            firstChild.setHasNamespaceKeyword();
-            expect(sourceFile.getText()).equals("namespace Identifier {}");
-        });
-
-        it("should change the declaration kind when a namespace", () => {
-            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>("namespace Identifier {}");
-            firstChild.setHasNamespaceKeyword(false);
-            expect(sourceFile.getText()).equals("module Identifier {}");
-        });
+    describe(nameof<NamespaceDeclaration>(d => d.setDeclarationKind), () => {
+        function doTest(text: string, kind: NamespaceDeclarationKind, expectedText: string) {
+            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(text);
+            firstChild.setDeclarationKind(kind);
+            expect(sourceFile.getFullText()).equals(expectedText);
+        }
 
         it("should do nothing when the same", () => {
-            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>("namespace Identifier {}");
-            firstChild.setHasNamespaceKeyword(true);
-            expect(sourceFile.getText()).equals("namespace Identifier {}");
-        });
-    });
-
-    describe(nameof<NamespaceDeclaration>(d => d.setHasModuleKeyword), () => {
-        it("should change the declaration kind when a namespace", () => {
-            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>("namespace Identifier {}");
-            firstChild.setHasModuleKeyword();
-            expect(sourceFile.getText()).equals("module Identifier {}");
+            doTest("module Identifier {}", NamespaceDeclarationKind.Module, "module Identifier {}");
         });
 
-        it("should change the declaration kind when a module", () => {
-            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>("module Identifier {}");
-            firstChild.setHasModuleKeyword(false);
-            expect(sourceFile.getText()).equals("namespace Identifier {}");
+        it("should change from module to namespace", () => {
+            doTest("module Identifier {}", NamespaceDeclarationKind.Namespace, "namespace Identifier {}");
+        });
+
+        it("should change from namespace to global", () => {
+            doTest("namespace Identifier {}", NamespaceDeclarationKind.Global, "global {}");
+        });
+
+        it("should change from module to global", () => {
+            doTest("module Identifier {}", NamespaceDeclarationKind.Global, "global {}");
+        });
+
+        it("should change from global to namespace", () => {
+            doTest("global {}", NamespaceDeclarationKind.Namespace, "namespace global {}");
+        });
+
+        it("should change from global to module", () => {
+            doTest("global {}", NamespaceDeclarationKind.Module, "module global {}");
         });
     });
 
     describe(nameof<NamespaceDeclaration>(n => n.set), () => {
-        function doTest(startingCode: string, structure: NamespaceDeclarationSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: Partial<NamespaceDeclarationStructure>, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -154,9 +221,21 @@ describe(nameof(NamespaceDeclaration), () => {
 
         it("should modify when changed", () => {
             const structure: MakeRequired<NamespaceDeclarationSpecificStructure> = {
-                hasModuleKeyword: true
+                declarationKind: NamespaceDeclarationKind.Module
             };
             doTest("namespace Identifier {\n}", structure, "module Identifier {\n}");
+        });
+
+        it("should ignore name when specifying global module", () => {
+            doTest("namespace Identifier {\n}", { name: "NewName", declarationKind: NamespaceDeclarationKind.Global }, "global {\n}");
+        });
+
+        it("should add a namespace keyword when specifying a name for a global module", () => {
+            doTest("global {\n}", { name: "NewName" }, "namespace NewName {\n}");
+        });
+
+        it("should do nothing when specifying a new name of global for a global module", () => {
+            doTest("global {\n}", { name: "global" }, "global {\n}");
         });
     });
 
@@ -170,7 +249,7 @@ describe(nameof(NamespaceDeclaration), () => {
 
         it("should get when has nothing", () => {
             doTest("namespace Identifier {\n}", {
-                hasModuleKeyword: false,
+                declarationKind: NamespaceDeclarationKind.Namespace,
                 bodyText: "",
                 docs: [],
                 hasDeclareKeyword: false,
@@ -187,13 +266,25 @@ export declare module Identifier {
     const t = 5;
 }`;
             doTest(code, {
-                hasModuleKeyword: true,
+                declarationKind: NamespaceDeclarationKind.Module,
                 bodyText: "const t = 5;",
                 docs: [{ description: "Test" }],
                 hasDeclareKeyword: true,
                 isDefaultExport: false,
                 isExported: true,
                 name: "Identifier"
+            });
+        });
+
+        it("should get for global module", () => {
+            doTest("global {\n}", {
+                declarationKind: NamespaceDeclarationKind.Global,
+                bodyText: "",
+                docs: [],
+                hasDeclareKeyword: false,
+                isDefaultExport: false,
+                isExported: false,
+                name: "global"
             });
         });
     });
