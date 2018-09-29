@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { SourceFile, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration } from "../../../compiler";
-import { ImportDeclarationStructure, ExportDeclarationStructure } from "../../../structures";
+import { ImportDeclarationStructure, ExportDeclarationStructure, ModuledNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ModuledNode), () => {
@@ -158,6 +158,166 @@ describe(nameof(ModuledNode), () => {
 
         it("should throw when not exists", () => {
             doTest("import myImport from 'test';", "asdfasdf", undefined);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.insertExportDeclarations), () => {
+        function doTest(startCode: string, index: number, structures: ExportDeclarationStructure[], expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.insertExportDeclarations(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert the different kinds of exports", () => {
+            doTest("", 0, [
+                { moduleSpecifier: "./test" },
+                { namedExports: ["name1", { name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
+                { namedExports: ["name"] },
+                {}
+            ], [
+                `export * from "./test";`,
+                `export { name1, name, name as alias } from "./test";`,
+                `export { name };`,
+                `export { };`
+            ].join("\n") + "\n");
+        });
+
+        it("should insert at the beginning", () => {
+            doTest(`export class Class {}\n`, 0, [{ moduleSpecifier: "./test" }], `export * from "./test";\n\nexport class Class {}\n`);
+        });
+
+        it("should insert in the middle", () => {
+            doTest(`export * from "./file1";\nexport * from "./file3";\n`, 1, [{ moduleSpecifier: "./file2" }],
+                `export * from "./file1";\nexport * from "./file2";\nexport * from "./file3";\n`);
+        });
+
+        it("should insert at the end", () => {
+            doTest(`export class Class {}\n`, 1, [{ moduleSpecifier: "./test" }], `export class Class {}\n\nexport * from "./test";\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.insertExportDeclaration), () => {
+        function doTest(startCode: string, index: number, structure: ExportDeclarationStructure, expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.insertExportDeclaration(index, structure);
+            expect(result).to.be.instanceOf(ExportDeclaration);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert at the specified position", () => {
+            doTest(`export * from "./file1";\nexport * from "./file3";\n`, 1, { moduleSpecifier: "./file2" },
+                `export * from "./file1";\nexport * from "./file2";\nexport * from "./file3";\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.addExportDeclaration), () => {
+        function doTest(startCode: string, structure: ExportDeclarationStructure, expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.addExportDeclaration(structure);
+            expect(result).to.be.instanceOf(ExportDeclaration);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should always add at the end of the file", () => {
+            doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" },
+                `export class MyClass {}\n\nexport * from "./file";\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.addExportDeclarations), () => {
+        function doTest(startCode: string, structures: ExportDeclarationStructure[], expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startCode);
+            const result = sourceFile.addExportDeclarations(structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should add multiple", () => {
+            doTest(`export class MyClass {}\n`, [{ moduleSpecifier: "./file1" }, { moduleSpecifier: "./file2" }],
+                `export class MyClass {}\n\nexport * from "./file1";\nexport * from "./file2";\n`);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getExportDeclarations), () => {
+        it("should get the export declarations", () => {
+            const { sourceFile } = getInfoFromText("export * from 'test'; export {next} from './test';");
+            expect(sourceFile.getExportDeclarations().length).to.equal(2);
+            expect(sourceFile.getExportDeclarations()[0]).to.be.instanceOf(ExportDeclaration);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getExportDeclaration), () => {
+        function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ExportDeclaration) => boolean), expected: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const result = sourceFile.getExportDeclaration(conditionOrModuleSpecifier);
+            if (expected == null)
+                expect(result).to.be.undefined;
+            else
+                expect(result!.getText()).to.equal(expected);
+        }
+
+        it("should get when exists", () => {
+            doTest("export * from 'test'; export {next} from './test';", e => e.isNamespaceExport(), "export * from 'test';");
+        });
+
+        it("should get when exists by module specifier", () => {
+            doTest("export * from 'test'; export {next} from './test';", "./test", "export {next} from './test';");
+        });
+
+        it("should return undefined when not exists", () => {
+            doTest("export * from 'test'; export {next} from './test';", "not-exists", undefined);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getExportDeclarationOrThrow), () => {
+        function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ExportDeclaration) => boolean), expected: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            if (expected == null)
+                expect(() => sourceFile.getExportDeclarationOrThrow(conditionOrModuleSpecifier)).to.throw();
+            else
+                expect(sourceFile.getExportDeclarationOrThrow(conditionOrModuleSpecifier).getText()).to.equal(expected);
+        }
+
+        it("should get when exists", () => {
+            doTest("export * from 'test'; export {next} from './test';", e => e.isNamespaceExport(), "export * from 'test';");
+        });
+
+        it("should get when exists by module specifier", () => {
+            doTest("export * from 'test'; export {next} from './test';", "./test", "export {next} from './test';");
+        });
+
+        it("should throw when not exists", () => {
+            doTest("export * from 'test'; export {next} from './test';", "not-exists", undefined);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.set), () => {
+        function doTest(startingCode: string, structure: ModuledNodeStructure, expectedCode: string) {
+            const { sourceFile } = getInfoFromText(startingCode);
+            sourceFile.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            const code = "import t from 'test'; export * from 'test';";
+            doTest(code, {}, code);
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<ModuledNodeStructure> = {
+                imports: [{ moduleSpecifier: "module" }],
+                exports: [{ moduleSpecifier: "export-module" }]
+            };
+            doTest("import t from 'test'; export { test };", structure, `import "module";\n\nexport * from "export-module";\n`);
+        });
+
+        it("should remove when specifying empty arrays", () => {
+            const structure: MakeRequired<ModuledNodeStructure> = {
+                imports: [],
+                exports: []
+            };
+            doTest("import t from 'test'; export { test };", structure, "");
         });
     });
 });

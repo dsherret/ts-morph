@@ -76,25 +76,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<SourceFileStructure>) {
-        callBaseSet(SourceFileBase.prototype, this, structure);
-
-        if (structure.imports != null) {
-            this.getImportDeclarations().forEach(d => d.remove());
-            this.addImportDeclarations(structure.imports);
-        }
-        if (structure.exports != null) {
-            this.getExportDeclarations().forEach(d => d.remove());
-            this.addExportDeclarations(structure.exports);
-        }
-
-        return this;
-    }
-
-    /**
      * @internal
      *
      * WARNING: This should only be called by the compiler factory!
@@ -513,99 +494,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Add export declarations.
-     * @param structure - Structure that represents the export.
-     */
-    addExportDeclaration(structure: ExportDeclarationStructure) {
-        return this.addExportDeclarations([structure])[0];
-    }
-
-    /**
-     * Add export declarations.
-     * @param structures - Structures that represent the exports.
-     */
-    addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>) {
-        // always insert at end of file because of export {Identifier}; statements
-        return this.insertExportDeclarations(this.getChildSyntaxListOrThrow().getChildCount(), structures);
-    }
-
-    /**
-     * Insert an export declaration.
-     * @param index - Child index to insert at.
-     * @param structure - Structure that represents the export.
-     */
-    insertExportDeclaration(index: number, structure: ExportDeclarationStructure) {
-        return this.insertExportDeclarations(index, [structure])[0];
-    }
-
-    /**
-     * Insert export declarations into a file.
-     * @param index - Child index to insert at.
-     * @param structures - Structures that represent the exports to insert.
-     */
-    insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[] {
-        return this._insertChildren<ExportDeclaration, ExportDeclarationStructure>({
-            expectedKind: SyntaxKind.ExportDeclaration,
-            index,
-            structures,
-            write: (writer, info) => {
-                this._standardWrite(writer, info, () => {
-                    this.context.structurePrinterFactory.forExportDeclaration().printTexts(writer, structures);
-                }, {
-                    previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember),
-                    nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
-                });
-            }
-        });
-    }
-
-    /**
-     * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the export declaration by.
-     */
-    getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
-    /**
-     * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
-     * @param module - Module specifier to get the export declaration by.
-     */
-    getExportDeclaration(moduleSpecifier: string): ExportDeclaration | undefined;
-    /** @internal */
-    getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration | undefined;
-    getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
-        return ArrayUtils.find(this.getExportDeclarations(), getCondition());
-
-        function getCondition() {
-            if (typeof conditionOrModuleSpecifier === "string")
-                return (dec: ExportDeclaration) => dec.getModuleSpecifierValue() === conditionOrModuleSpecifier;
-            else
-                return conditionOrModuleSpecifier;
-        }
-    }
-
-    /**
-     * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
-     * @param condition - Condition to get the export declaration by.
-     */
-    getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration;
-    /**
-     * Gets the first export declaration that matches a module specifier, or throws if it doesn't exist.
-     * @param module - Module specifier to get the export declaration by.
-     */
-    getExportDeclarationOrThrow(moduleSpecifier: string): ExportDeclaration;
-    /** @internal */
-    getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration;
-    getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
-        return errors.throwIfNullOrUndefined(this.getExportDeclaration(conditionOrModuleSpecifier), "Expected to find an export declaration with the provided condition.");
-    }
-
-    /**
-     * Get the file's export declarations.
-     */
-    getExportDeclarations(): ExportDeclaration[] {
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration);
-    }
-
-    /**
      * Gets the export symbols of the source file.
      */
     getExportSymbols(): Symbol[] {
@@ -964,6 +852,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             replacingLength: this.getFullWidth(),
             newText: getTextFromFormattingEdits(this, textChanges)
         });
+        return this;
+    }
+
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<SourceFileStructure>) {
+        callBaseSet(SourceFileBase.prototype, this, structure);
+
         return this;
     }
 

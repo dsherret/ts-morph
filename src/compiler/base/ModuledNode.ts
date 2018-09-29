@@ -5,7 +5,7 @@ import { ts, SyntaxKind } from "../../typescript";
 import { ArrayUtils, TypeGuards } from "../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { ImportDeclaration } from "../file";
+import { ImportDeclaration, ExportDeclaration } from "../file";
 import { StatementedNode } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
@@ -62,6 +62,56 @@ export interface ModuledNode {
      * Get the module's import declarations.
      */
     getImportDeclarations(): ImportDeclaration[];
+    /**
+     * Add export declarations.
+     * @param structure - Structure that represents the export.
+     */
+    addExportDeclaration(structure: ExportDeclarationStructure): ExportDeclaration;
+    /**
+     * Add export declarations.
+     * @param structures - Structures that represent the exports.
+     */
+    addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
+    /**
+     * Insert an export declaration.
+     * @param index - Child index to insert at.
+     * @param structure - Structure that represents the export.
+     */
+    insertExportDeclaration(index: number, structure: ExportDeclarationStructure): ExportDeclaration;
+    /**
+     * Insert export declarations into a file.
+     * @param index - Child index to insert at.
+     * @param structures - Structures that represent the exports to insert.
+     */
+    insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
+    /*
+     * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
+     * @param condition - Condition to get the export declaration by.
+     */
+    getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
+    /**
+     * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
+     * @param module - Module specifier to get the export declaration by.
+     */
+    getExportDeclaration(moduleSpecifier: string): ExportDeclaration | undefined;
+    /** @internal */
+    getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration | undefined;
+    /**
+     * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
+     * @param condition - Condition to get the export declaration by.
+     */
+    getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration;
+    /**
+     * Gets the first export declaration that matches a module specifier, or throws if it doesn't exist.
+     * @param module - Module specifier to get the export declaration by.
+     */
+    getExportDeclarationOrThrow(moduleSpecifier: string): ExportDeclaration;
+    /** @internal */
+    getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration;
+    /**
+     * Get the file's export declarations.
+     */
+    getExportDeclarations(): ExportDeclaration[];
 }
 
 export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Base: T): Constructor<ModuledNode> & T {
@@ -115,13 +165,92 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ImportDeclaration);
         }
 
+        addExportDeclaration(structure: ExportDeclarationStructure) {
+            return this.addExportDeclarations([structure])[0];
+        }
+
+        addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>) {
+            // always insert at end of file because of export {Identifier}; statements
+            return this.insertExportDeclarations(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+        }
+
+        insertExportDeclaration(index: number, structure: ExportDeclarationStructure) {
+            return this.insertExportDeclarations(index, [structure])[0];
+        }
+
+        insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[] {
+            return this._insertChildren<ExportDeclaration, ExportDeclarationStructure>({
+                expectedKind: SyntaxKind.ExportDeclaration,
+                index,
+                structures,
+                write: (writer, info) => {
+                    this._standardWrite(writer, info, () => {
+                        this.context.structurePrinterFactory.forExportDeclaration().printTexts(writer, structures);
+                    }, {
+                            previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember),
+                            nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
+                        });
+                }
+            });
+        }
+
+        /**
+         * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
+         * @param condition - Condition to get the export declaration by.
+         */
+        getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
+        /**
+         * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
+         * @param module - Module specifier to get the export declaration by.
+         */
+        getExportDeclaration(moduleSpecifier: string): ExportDeclaration | undefined;
+        /** @internal */
+        getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration | undefined;
+        getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
+            return ArrayUtils.find(this.getExportDeclarations(), getCondition());
+
+            function getCondition() {
+                if (typeof conditionOrModuleSpecifier === "string")
+                    return (dec: ExportDeclaration) => dec.getModuleSpecifierValue() === conditionOrModuleSpecifier;
+                else
+                    return conditionOrModuleSpecifier;
+            }
+        }
+
+        /**
+         * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
+         * @param condition - Condition to get the export declaration by.
+         */
+        getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration;
+        /**
+         * Gets the first export declaration that matches a module specifier, or throws if it doesn't exist.
+         * @param module - Module specifier to get the export declaration by.
+         */
+        getExportDeclarationOrThrow(moduleSpecifier: string): ExportDeclaration;
+        /** @internal */
+        getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration;
+        getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
+            return errors.throwIfNullOrUndefined(this.getExportDeclaration(conditionOrModuleSpecifier), "Expected to find an export declaration with the provided condition.");
+        }
+
+        /**
+         * Get the file's export declarations.
+         */
+        getExportDeclarations(): ExportDeclaration[] {
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration);
+        }
+
         set(structure: Partial<ModuledNodeStructure>) {
             callBaseSet(Base.prototype, this, structure);
 
-            if (structure.imports != null)
+            if (structure.imports != null) {
+                this.getImportDeclarations().forEach(d => d.remove());
                 this.addImportDeclarations(structure.imports);
-            //if (structure.exports != null)
-            //    this.addExportDeclarations(structure.exports);
+            }
+            if (structure.exports != null) {
+                this.getExportDeclarations().forEach(d => d.remove());
+                this.addExportDeclarations(structure.exports);
+            }
 
             return this;
         }
