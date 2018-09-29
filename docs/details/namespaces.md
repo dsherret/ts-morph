@@ -62,13 +62,14 @@ namespaceDeclaration.getDeclarationKindKeyword();
 
 **Reminder:** Namespace declarations that are `global` have the following syntax:
 
-```ts
+```ts ignore-error: 2664, 2669
 declare module "my-library" {
     // this is a global namespace declaration
     global {
         const foo: string;
     }
 }
+```
 
 ### Unwrap
 
