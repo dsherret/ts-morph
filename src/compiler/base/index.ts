@@ -16,6 +16,7 @@ export * from "./initializer";
 export * from "./JSDocableNode";
 export * from "./LiteralLikeNode";
 export * from "./ModifierableNode";
+export * from "./ModuledNode";
 export * from "./name";
 export * from "./ParameteredNode";
 export * from "./QuestionTokenableNode";

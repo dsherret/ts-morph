@@ -155,25 +155,6 @@ This returns any files that are referenced via `/// <reference types="..." />` s
 const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
 ```
 
-### Get default export symbol
-
-If it exists, the default export symbol can be retrieved:
-
-```ts
-const defaultExportSymbol = sourceFile.getDefaultExportSymbol(); // returns: Symbol | undefined
-```
-
-### Remove default export
-
-Use:
-
-```ts
-sourceFile.removeDefaultExport();
-```
-
-Note: This is safe to call even when there is no default export.
-
-
 ### Import Declarations
 
 See [Import Declarations](imports).
@@ -211,61 +192,6 @@ To get the nodes that reference the source file in other source files, use:
 
 ```ts
 const referencingNodes = sourceFile.getReferencingNodesInOtherSourceFiles();
-```
-
-### Getting Exported Declarations
-
-The exported declarations of a file can be retrieved via `.getExportedDeclarations()`.
-
-For example, given the following setup:
-
-```ts
-// main.ts
-export * from "./classes";
-export {Interface1} from "./interfaces";
-
-class MainClass {}
-export default MainClass;
-
-// classes.ts
-export * from "./Class1";
-export * from "./Class2";
-
-// Class1.ts
-export class Class1 {}
-
-// Class2.ts
-export class Class2 {}
-
-// interfaces.ts
-export interface Interface1 {}
-export interface Interface2 {}
-```
-
-The following code:
-
-```ts
-import Project, {TypeGuards} from "ts-simple-ast";
-
-const project = new Project();
-project.addExistingSourceFiles("**/*.ts");
-const mainFile = project.getSourceFileOrThrow("main.ts");
-
-for (const declaration of mainFile.getExportedDeclarations()) {
-    if (TypeGuards.isClassDeclaration(declaration) || TypeGuards.isInterfaceDeclaration(declaration))
-        console.log(`Name: ${declaration.getName()}`);
-    else
-        throw new Error(`Not expected declaration kind: ${declaration.getKindName()}`);
-}
-```
-
-Outputs the following:
-
-```
-Name: MainClass
-Name: Class1
-Name: Class2
-Name: Interface1
 ```
 
 ### Relative File Paths

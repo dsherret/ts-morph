@@ -1447,6 +1447,20 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ModuledNode.
+     * @param node - Node to check.
+     */
+    static isModuledNode(node: compiler.Node): node is compiler.ModuledNode & compiler.Node {
+        switch (node.getKind()) {
+            case SyntaxKind.SourceFile:
+            case SyntaxKind.ModuleDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a NameableNode.
      * @param node - Node to check.
      */

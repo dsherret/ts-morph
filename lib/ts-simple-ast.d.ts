@@ -1288,6 +1288,11 @@ export declare class TypeGuards {
      */
     static isModifierableNode(node: Node): node is ModifierableNode & Node;
     /**
+     * Gets if the node is a ModuledNode.
+     * @param node - Node to check.
+     */
+    static isModuledNode(node: Node): node is ModuledNode & Node;
+    /**
      * Gets if the node is a NameableNode.
      * @param node - Node to check.
      */
@@ -2385,6 +2390,160 @@ export interface ModifierableNode {
 export declare type ModiferableNodeExtensionType = Node;
 
 export declare type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
+
+export declare function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Base: T): Constructor<ModuledNode> & T;
+
+export interface ModuledNode {
+    /**
+     * Adds an import.
+     * @param structure - Structure that represents the import.
+     */
+    addImportDeclaration(structure: ImportDeclarationStructure): ImportDeclaration;
+    /**
+     * Adds imports.
+     * @param structures - Structures that represent the imports.
+     */
+    addImportDeclarations(structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
+    /**
+     * Insert an import.
+     * @param index - Child index to insert at.
+     * @param structure - Structure that represents the import.
+     */
+    insertImportDeclaration(index: number, structure: ImportDeclarationStructure): ImportDeclaration;
+    /**
+     * Inserts imports.
+     * @param index - Child index to insert at.
+     * @param structures - Structures that represent the imports to insert.
+     */
+    insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
+    /**
+     * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
+     * @param condition - Condition to get the import declaration by.
+     */
+    getImportDeclaration(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined;
+    /**
+     * Gets the first import declaration that matches a module specifier, or undefined if it doesn't exist.
+     * @param module - Module specifier to get the import declaration by.
+     */
+    getImportDeclaration(moduleSpecifier: string): ImportDeclaration | undefined;
+    /**
+     * Gets the first import declaration that matches a condition, or throws if it doesn't exist.
+     * @param condition - Condition to get the import declaration by.
+     */
+    getImportDeclarationOrThrow(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration;
+    /**
+     * Gets the first import declaration that matches a module specifier, or throws if it doesn't exist.
+     * @param module - Module specifier to get the import declaration by.
+     */
+    getImportDeclarationOrThrow(moduleSpecifier: string): ImportDeclaration;
+    /**
+     * Get the module's import declarations.
+     */
+    getImportDeclarations(): ImportDeclaration[];
+    /**
+     * Add export declarations.
+     * @param structure - Structure that represents the export.
+     */
+    addExportDeclaration(structure: ExportDeclarationStructure): ExportDeclaration;
+    /**
+     * Add export declarations.
+     * @param structures - Structures that represent the exports.
+     */
+    addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
+    /**
+     * Insert an export declaration.
+     * @param index - Child index to insert at.
+     * @param structure - Structure that represents the export.
+     */
+    insertExportDeclaration(index: number, structure: ExportDeclarationStructure): ExportDeclaration;
+    /**
+     * Insert export declarations.
+     * @param index - Child index to insert at.
+     * @param structures - Structures that represent the exports to insert.
+     */
+    insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
+    getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
+    /**
+     * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
+     * @param module - Module specifier to get the export declaration by.
+     */
+    getExportDeclaration(moduleSpecifier: string): ExportDeclaration | undefined;
+    /**
+     * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
+     * @param condition - Condition to get the export declaration by.
+     */
+    getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration;
+    /**
+     * Gets the first export declaration that matches a module specifier, or throws if it doesn't exist.
+     * @param module - Module specifier to get the export declaration by.
+     */
+    getExportDeclarationOrThrow(moduleSpecifier: string): ExportDeclaration;
+    /**
+     * Get the export declarations.
+     */
+    getExportDeclarations(): ExportDeclaration[];
+    /**
+     * Add export assignments.
+     * @param structure - Structure that represents the export.
+     */
+    addExportAssignment(structure: ExportAssignmentStructure): ExportAssignment;
+    /**
+     * Add export assignments.
+     * @param structures - Structures that represent the exports.
+     */
+    addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
+    /**
+     * Insert an export assignment.
+     * @param index - Child index to insert at.
+     * @param structure - Structure that represents the export.
+     */
+    insertExportAssignment(index: number, structure: ExportAssignmentStructure): ExportAssignment;
+    /**
+     * Insert export assignments into a file.
+     * @param index - Child index to insert at.
+     * @param structures - Structures that represent the exports to insert.
+     */
+    insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
+    /**
+     * Gets the first export assignment that matches a condition, or undefined if it doesn't exist.
+     * @param condition - Condition to get the export assignment by.
+     */
+    getExportAssignment(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment | undefined;
+    /**
+     * Gets the first export assignment that matches a condition, or throws if it doesn't exist.
+     * @param condition - Condition to get the export assignment by.
+     */
+    getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment;
+    /**
+     * Get the file's export assignments.
+     */
+    getExportAssignments(): ExportAssignment[];
+    /**
+     * Gets the default export symbol.
+     */
+    getDefaultExportSymbol(): Symbol | undefined;
+    /**
+     * Gets the default export symbol or throws if it doesn't exist.
+     */
+    getDefaultExportSymbolOrThrow(): Symbol;
+    /**
+     * Gets the export symbols.
+     */
+    getExportSymbols(): Symbol[];
+    /**
+     * Gets all the declarations that are exported from the module.
+     *
+     * This will include declarations that are transitively exported from other modules. If you mean to get the export
+     * declarations then use `.getExportDeclarations()`.
+     */
+    getExportedDeclarations(): Node[];
+    /**
+     * Removes any "export default".
+     */
+    removeDefaultExport(defaultExportSymbol?: Symbol | undefined): this;
+}
+
+export declare type ModuledNodeExtensionType = Node<ts.SourceFile | ts.NamespaceDeclaration> & StatementedNode;
 
 export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T;
 
@@ -6052,14 +6211,9 @@ export interface SourceFileMoveOptions {
 export interface SourceFileEmitOptions extends EmitOptionsBase {
 }
 
-declare const SourceFileBase: Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node;
+declare const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node;
 
 export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<SourceFileStructure>): this;
     /**
      * Gets the file path.
      */
@@ -6213,160 +6367,9 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     isSaved(): boolean;
     /**
-     * Adds an import.
-     * @param structure - Structure that represents the import.
-     */
-    addImportDeclaration(structure: ImportDeclarationStructure): ImportDeclaration;
-    /**
-     * Adds imports.
-     * @param structures - Structures that represent the imports.
-     */
-    addImportDeclarations(structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
-    /**
-     * Insert an import.
-     * @param index - Child index to insert at.
-     * @param structure - Structure that represents the import.
-     */
-    insertImportDeclaration(index: number, structure: ImportDeclarationStructure): ImportDeclaration;
-    /**
-     * Insert imports into a file.
-     * @param index - Child index to insert at.
-     * @param structures - Structures that represent the imports to insert.
-     */
-    insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
-    /**
-     * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the import declaration by.
-     */
-    getImportDeclaration(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined;
-    /**
-     * Gets the first import declaration that matches a module specifier, or undefined if it doesn't exist.
-     * @param module - Module specifier to get the import declaration by.
-     */
-    getImportDeclaration(moduleSpecifier: string): ImportDeclaration | undefined;
-    /**
-     * Gets the first import declaration that matches a condition, or throws if it doesn't exist.
-     * @param condition - Condition to get the import declaration by.
-     */
-    getImportDeclarationOrThrow(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration;
-    /**
-     * Gets the first import declaration that matches a module specifier, or throws if it doesn't exist.
-     * @param module - Module specifier to get the import declaration by.
-     */
-    getImportDeclarationOrThrow(moduleSpecifier: string): ImportDeclaration;
-    /**
-     * Get the file's import declarations.
-     */
-    getImportDeclarations(): ImportDeclaration[];
-    /**
-     * Add export declarations.
-     * @param structure - Structure that represents the export.
-     */
-    addExportDeclaration(structure: ExportDeclarationStructure): ExportDeclaration;
-    /**
-     * Add export declarations.
-     * @param structures - Structures that represent the exports.
-     */
-    addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
-    /**
-     * Insert an export declaration.
-     * @param index - Child index to insert at.
-     * @param structure - Structure that represents the export.
-     */
-    insertExportDeclaration(index: number, structure: ExportDeclarationStructure): ExportDeclaration;
-    /**
-     * Insert export declarations into a file.
-     * @param index - Child index to insert at.
-     * @param structures - Structures that represent the exports to insert.
-     */
-    insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
-    /**
-     * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the export declaration by.
-     */
-    getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
-    /**
-     * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
-     * @param module - Module specifier to get the export declaration by.
-     */
-    getExportDeclaration(moduleSpecifier: string): ExportDeclaration | undefined;
-    /**
-     * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
-     * @param condition - Condition to get the export declaration by.
-     */
-    getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration;
-    /**
-     * Gets the first export declaration that matches a module specifier, or throws if it doesn't exist.
-     * @param module - Module specifier to get the export declaration by.
-     */
-    getExportDeclarationOrThrow(moduleSpecifier: string): ExportDeclaration;
-    /**
-     * Get the file's export declarations.
-     */
-    getExportDeclarations(): ExportDeclaration[];
-    /**
-     * Gets the export symbols of the source file.
-     */
-    getExportSymbols(): Symbol[];
-    /**
-     * Gets all the declarations that are exported from the file.
-     *
-     * This will include declarations that are transitively exported from other files. If you mean to get the export
-     * declarations then use sourceFile.getExportDeclarations().
-     */
-    getExportedDeclarations(): Node[];
-    /**
-     * Add export assignments.
-     * @param structure - Structure that represents the export.
-     */
-    addExportAssignment(structure: ExportAssignmentStructure): ExportAssignment;
-    /**
-     * Add export assignments.
-     * @param structures - Structures that represent the exports.
-     */
-    addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
-    /**
-     * Insert an export assignment.
-     * @param index - Child index to insert at.
-     * @param structure - Structure that represents the export.
-     */
-    insertExportAssignment(index: number, structure: ExportAssignmentStructure): ExportAssignment;
-    /**
-     * Insert export assignments into a file.
-     * @param index - Child index to insert at.
-     * @param structures - Structures that represent the exports to insert.
-     */
-    insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
-    /**
-     * Gets the first export assignment that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the export assignment by.
-     */
-    getExportAssignment(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment | undefined;
-    /**
-     * Gets the first export assignment that matches a condition, or throws if it doesn't exist.
-     * @param condition - Condition to get the export assignment by.
-     */
-    getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment;
-    /**
-     * Get the file's export assignments.
-     */
-    getExportAssignments(): ExportAssignment[];
-    /**
-     * Gets the default export symbol of the file.
-     */
-    getDefaultExportSymbol(): Symbol | undefined;
-    /**
-     * Gets the default export symbol of the file or throws if it doesn't exist.
-     */
-    getDefaultExportSymbolOrThrow(): Symbol;
-    /**
      * Gets the pre-emit diagnostics of the specified source file.
      */
     getPreEmitDiagnostics(): Diagnostic[];
-    /**
-     * Removes any "export default";
-     */
-    removeDefaultExport(defaultExportSymbol?: Symbol | undefined): this;
     /**
      * Deindents the line at the specified position.
      * @param pos - Position.
@@ -6462,6 +6465,11 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param textChanges - Text changes.
      */
     applyTextChanges(textChanges: ReadonlyArray<TextChange>): this;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<SourceFileStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -7428,7 +7436,7 @@ export interface NamespaceChildableNode {
 
 export declare type NamespaceChildableNodeExtensionType = Node;
 
-declare const NamespaceDeclarationBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<NamespaceChildableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
+declare const NamespaceDeclarationBase: Constructor<ModuledNode> & Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<NamespaceChildableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
@@ -9645,6 +9653,11 @@ export interface InitializerSetExpressionableNodeStructure {
 export interface JSDocableNodeStructure {
     docs?: (JSDocStructure | string)[];
 }
+
+export interface ModuledNodeStructure {
+    imports?: ImportDeclarationStructure[];
+    exports?: ExportDeclarationStructure[];
+}
 export interface BindingNamedNodeStructure {
     name: string;
 }
@@ -9833,13 +9846,11 @@ export interface ImportSpecifierStructure {
     alias?: string;
 }
 
-export interface SourceFileStructure extends SourceFileSpecificStructure, StatementedNodeStructure {
+export interface SourceFileStructure extends SourceFileSpecificStructure, StatementedNodeStructure, ModuledNodeStructure {
     bodyText?: string | WriterFunction;
 }
 
 interface SourceFileSpecificStructure {
-    imports?: ImportDeclarationStructure[];
-    exports?: ExportDeclarationStructure[];
 }
 
 export interface FunctionDeclarationStructure extends FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodyableNodeStructure {
@@ -9921,7 +9932,7 @@ export interface JsxSpreadAttributeStructure {
     expression: string;
 }
 
-export interface NamespaceDeclarationStructure extends NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure, BodiedNodeStructure {
+export interface NamespaceDeclarationStructure extends NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure, BodiedNodeStructure, ModuledNodeStructure {
 }
 
 interface NamespaceDeclarationSpecificStructure {

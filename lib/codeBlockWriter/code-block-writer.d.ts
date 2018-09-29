@@ -17,6 +17,8 @@ declare class CodeBlockWriter {
     private _stringCharStack;
     private _isInRegEx;
     private _isOnFirstLineOfBlock;
+    private static readonly _newLineRegEx;
+    private static readonly _spacesOrTabsRegEx;
     constructor(opts?: Partial<CodeBlockWriterOptions>);
     /**
      * Gets the options.
@@ -24,7 +26,7 @@ declare class CodeBlockWriter {
     getOptions(): CodeBlockWriterOptions;
     /**
      * Queues the indentation level for the next lines written.
-     * @param indentationLevel - Indentation level to be at.
+     * @param indentationLevel - Indentation level to queue.
      */
     queueIndentationLevel(indentationLevel: number): this;
     /**
@@ -76,9 +78,9 @@ declare class CodeBlockWriter {
     conditionalWriteLine(condition: boolean | undefined, text: string): this;
     /**
      * Writes a line of text.
-     * @param str - String to write.
+     * @param text - String to write.
      */
-    writeLine(str: string): this;
+    writeLine(text: string): this;
     /**
      * Writes a newline if the last line was not a newline.
      */
