@@ -2,10 +2,10 @@
 import { ModuledNodeStructure, ImportDeclarationStructure, ExportDeclarationStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { ts, SyntaxKind } from "../../typescript";
-import { ArrayUtils, TypeGuards } from "../../utils";
+import { ArrayUtils, TypeGuards, createHashSet } from "../../utils";
 import { callBaseSet } from "../callBaseSet";
-import { Node } from "../common";
-import { ImportDeclaration, ExportDeclaration } from "../file";
+import { Node, Symbol } from "../common";
+import { ImportDeclaration, ExportDeclaration, ExportAssignment, ExportSpecifier } from "../file";
 import { StatementedNode } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
@@ -79,7 +79,7 @@ export interface ModuledNode {
      */
     insertExportDeclaration(index: number, structure: ExportDeclarationStructure): ExportDeclaration;
     /**
-     * Insert export declarations into a file.
+     * Insert export declarations.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
@@ -109,9 +109,28 @@ export interface ModuledNode {
     /** @internal */
     getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration;
     /**
-     * Get the file's export declarations.
+     * Get the export declarations.
      */
     getExportDeclarations(): ExportDeclaration[];
+    /**
+     * Gets the default export symbol.
+     */
+    getDefaultExportSymbol(): Symbol | undefined;
+    /**
+     * Gets the default export symbol or throws if it doesn't exist.
+     */
+    getDefaultExportSymbolOrThrow(): Symbol;
+    /**
+     * Gets the export symbols.
+     */
+    getExportSymbols(): Symbol[];
+    /**
+     * Gets all the declarations that are exported from the module.
+     *
+     * This will include declarations that are transitively exported from other modules. If you mean to get the export
+     * declarations then use `.getExportDeclarations()`.
+     */
+    getExportedDeclarations(): Node[];
 }
 
 export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Base: T): Constructor<ModuledNode> & T {
@@ -170,7 +189,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>) {
-            // always insert at end of file because of export {Identifier}; statements
+            // always insert at end of module because of export {Identifier}; statements
             return this.insertExportDeclarations(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
@@ -194,18 +213,6 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             });
         }
 
-        /**
-         * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
-         * @param condition - Condition to get the export declaration by.
-         */
-        getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
-        /**
-         * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
-         * @param module - Module specifier to get the export declaration by.
-         */
-        getExportDeclaration(moduleSpecifier: string): ExportDeclaration | undefined;
-        /** @internal */
-        getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration | undefined;
         getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
             return ArrayUtils.find(this.getExportDeclarations(), getCondition());
 
@@ -217,27 +224,67 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             }
         }
 
-        /**
-         * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
-         * @param condition - Condition to get the export declaration by.
-         */
-        getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration;
-        /**
-         * Gets the first export declaration that matches a module specifier, or throws if it doesn't exist.
-         * @param module - Module specifier to get the export declaration by.
-         */
-        getExportDeclarationOrThrow(moduleSpecifier: string): ExportDeclaration;
-        /** @internal */
-        getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)): ExportDeclaration;
         getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
             return errors.throwIfNullOrUndefined(this.getExportDeclaration(conditionOrModuleSpecifier), "Expected to find an export declaration with the provided condition.");
         }
 
-        /**
-         * Get the file's export declarations.
-         */
         getExportDeclarations(): ExportDeclaration[] {
             return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration);
+        }
+
+        getDefaultExportSymbol(): Symbol | undefined {
+            const sourceFileSymbol = this.getSymbol();
+
+            // will be undefined when the module doesn't have an export
+            if (sourceFileSymbol == null)
+                return undefined;
+
+            return sourceFileSymbol.getExportByName("default");
+        }
+
+        getDefaultExportSymbolOrThrow(): Symbol {
+            return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), "Expected to find a default export symbol");
+        }
+
+        getExportSymbols(): Symbol[] {
+            const symbol = this.getSymbol();
+            return symbol == null ? [] : this.context.typeChecker.getExportsOfModule(symbol);
+        }
+
+        getExportedDeclarations(): Node[] {
+            const exportSymbols = this.getExportSymbols();
+            return ArrayUtils.from(getDeclarationsForSymbols());
+
+            function* getDeclarationsForSymbols() {
+                const handledDeclarations = createHashSet<Node>();
+
+                for (const symbol of exportSymbols)
+                    for (const declaration of symbol.getDeclarations())
+                        yield* getDeclarationHandlingExportSpecifiers(declaration);
+
+                function* getDeclarationHandlingExportSpecifiers(declaration: Node): IterableIterator<Node> {
+                    if (handledDeclarations.has(declaration))
+                        return;
+                    handledDeclarations.add(declaration);
+
+                    if (declaration.getKind() === SyntaxKind.ExportSpecifier) {
+                        for (const d of (declaration as ExportSpecifier).getLocalTargetDeclarations())
+                            yield* getDeclarationHandlingExportSpecifiers(d);
+                    }
+                    else if (declaration.getKind() === SyntaxKind.ExportAssignment) {
+                        const identifier = (declaration as ExportAssignment).getExpression();
+                        if (identifier == null || identifier.getKind() !== SyntaxKind.Identifier)
+                            return;
+                        const symbol = identifier.getSymbol();
+                        if (symbol == null)
+                            return;
+                        for (const d of symbol.getDeclarations())
+                            yield* getDeclarationHandlingExportSpecifiers(d);
+                    }
+                    else
+                        yield declaration;
+                }
+            }
         }
 
         set(structure: Partial<ModuledNodeStructure>) {

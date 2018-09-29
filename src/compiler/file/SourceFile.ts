@@ -494,56 +494,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the export symbols of the source file.
-     */
-    getExportSymbols(): Symbol[] {
-        const symbol = this.getSymbol();
-        return symbol == null ? [] : this.context.typeChecker.getExportsOfModule(symbol);
-    }
-
-    /**
-     * Gets all the declarations that are exported from the file.
-     *
-     * This will include declarations that are transitively exported from other files. If you mean to get the export
-     * declarations then use sourceFile.getExportDeclarations().
-     */
-    getExportedDeclarations(): Node[] {
-        const exportSymbols = this.getExportSymbols();
-        return ArrayUtils.from(getDeclarationsForSymbols());
-
-        function* getDeclarationsForSymbols() {
-            const handledDeclarations = createHashSet<Node>();
-
-            for (const symbol of exportSymbols)
-                for (const declaration of symbol.getDeclarations())
-                    yield* getDeclarationHandlingExportSpecifiers(declaration);
-
-            function* getDeclarationHandlingExportSpecifiers(declaration: Node): IterableIterator<Node> {
-                if (handledDeclarations.has(declaration))
-                    return;
-                handledDeclarations.add(declaration);
-
-                if (declaration.getKind() === SyntaxKind.ExportSpecifier) {
-                    for (const d of (declaration as ExportSpecifier).getLocalTargetDeclarations())
-                        yield* getDeclarationHandlingExportSpecifiers(d);
-                }
-                else if (declaration.getKind() === SyntaxKind.ExportAssignment) {
-                    const identifier = (declaration as ExportAssignment).getExpression();
-                    if (identifier == null || identifier.getKind() !== SyntaxKind.Identifier)
-                        return;
-                    const symbol = identifier.getSymbol();
-                    if (symbol == null)
-                        return;
-                    for (const d of symbol.getDeclarations())
-                        yield* getDeclarationHandlingExportSpecifiers(d);
-                }
-                else
-                    yield declaration;
-            }
-        }
-    }
-
-    /**
      * Add export assignments.
      * @param structure - Structure that represents the export.
      */
@@ -611,26 +561,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getExportAssignments(): ExportAssignment[] {
         return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportAssignment);
-    }
-
-    /**
-     * Gets the default export symbol of the file.
-     */
-    getDefaultExportSymbol(): Symbol | undefined {
-        const sourceFileSymbol = this.getSymbol();
-
-        // will be undefined when the source file doesn't have an export
-        if (sourceFileSymbol == null)
-            return undefined;
-
-        return sourceFileSymbol.getExportByName("default");
-    }
-
-    /**
-     * Gets the default export symbol of the file or throws if it doesn't exist.
-     */
-    getDefaultExportSymbolOrThrow(): Symbol {
-        return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), "Expected to find a default export symbol");
     }
 
     /**

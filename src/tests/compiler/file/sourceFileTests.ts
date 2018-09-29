@@ -473,41 +473,6 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getExportedDeclarations), () => {
-        it("should get the exported declarations", () => {
-            const project = new Project({ useVirtualFileSystem: true });
-            const mainSourceFile = project.createSourceFile("main.ts", `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n` +
-                "export class MainFileClass {}\nexport default MainFileClass;");
-            project.createSourceFile("class.ts", `export class Class {} export class MyClass {}`);
-            project.createSourceFile("otherClass.ts", `export class OtherClass {}\nexport class InnerClass {}`);
-            project.createSourceFile("barrel.ts", `export * from "./subBarrel";`);
-            project.createSourceFile("subBarrel.ts", `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n` +
-                `export {default as SubClass3} from "./subFile3"`);
-            project.createSourceFile("subFile.ts", `export class SubClass {}`);
-            project.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
-            project.createSourceFile("subFile3.ts", `class SubClass3 {}\nexport default SubClass3;`);
-
-            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
-                .to.deep.equal(["MainFileClass", "OtherClass", "Class", "MyClass", "SubClass", "SubClass2", "SubClass3"].sort());
-        });
-
-        function doTest(text: string, expectedDeclarationNames: string[]) {
-            const project = new Project({ useVirtualFileSystem: true });
-            const mainSourceFile = project.createSourceFile("main.ts", text);
-
-            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
-                .to.deep.equal(expectedDeclarationNames.sort());
-        }
-
-        it("should get the exported declaration when there's only a default export using an export assignment", () => {
-            doTest("class MainFileClass {}\nexport default MainFileClass;", ["MainFileClass"]);
-        });
-
-        it("should not error for an empty file", () => {
-            doTest("", []);
-        });
-    });
-
     describe(nameof<SourceFile>(n => n.insertExportAssignments), () => {
         function doTest(startCode: string, index: number, structures: ExportAssignmentStructure[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
@@ -608,37 +573,6 @@ describe(nameof(SourceFile), () => {
         it("should throw when not exists", () => {
             const { sourceFile } = getInfoFromText("");
             expect(() => sourceFile.getExportAssignmentOrThrow(e => false)).to.throw();
-        });
-    });
-
-    describe(nameof<SourceFile>(n => n.getDefaultExportSymbol), () => {
-        it("should return undefined when there's no default export", () => {
-            const { sourceFile } = getInfoFromText("");
-            expect(sourceFile.getDefaultExportSymbol()).to.be.undefined;
-        });
-
-        it("should return the default export symbol when one exists", () => {
-            const { sourceFile } = getInfoFromText("export default class Identifier {}");
-            const defaultExportSymbol = sourceFile.getDefaultExportSymbol()!;
-            expect(defaultExportSymbol.getName()).to.equal("default");
-        });
-
-        it("should return the default export symbol when default exported on a separate statement", () => {
-            const { sourceFile } = getInfoFromText("class Identifier {}\nexport default Identifier;");
-            const defaultExportSymbol = sourceFile.getDefaultExportSymbol()!;
-            expect(defaultExportSymbol.getName()).to.equal("default");
-        });
-    });
-
-    describe(nameof<SourceFile>(n => n.getDefaultExportSymbolOrThrow), () => {
-        it("should throw when there's no default export", () => {
-            const { sourceFile } = getInfoFromText("");
-            expect(() => sourceFile.getDefaultExportSymbolOrThrow()).to.throw();
-        });
-
-        it("should return the default export symbol when one exists", () => {
-            const { sourceFile } = getInfoFromText("export default class Identifier {}");
-            expect(sourceFile.getDefaultExportSymbolOrThrow().getName()).to.equal("default");
         });
     });
 

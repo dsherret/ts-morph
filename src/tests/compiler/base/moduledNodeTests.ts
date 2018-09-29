@@ -1,6 +1,7 @@
 ﻿import { expect } from "chai";
 import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration } from "../../../compiler";
 import { ImportDeclarationStructure, ExportDeclarationStructure, ModuledNodeStructure } from "../../../structures";
+import { Project } from "../../../Project";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ModuledNode), () => {
@@ -352,6 +353,109 @@ describe(nameof(ModuledNode), () => {
                 exports: []
             };
             doTest("import t from 'test'; export { test };", structure, "");
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getExportedDeclarations), () => {
+        it("should get from a file", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n` +
+                "export class MainFileClass {}\nexport default MainFileClass;");
+            project.createSourceFile("class.ts", `export class Class {} export class MyClass {}`);
+            project.createSourceFile("otherClass.ts", `export class OtherClass {}\nexport class InnerClass {}`);
+            project.createSourceFile("barrel.ts", `export * from "./subBarrel";`);
+            project.createSourceFile("subBarrel.ts", `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n` +
+                `export {default as SubClass3} from "./subFile3"`);
+            project.createSourceFile("subFile.ts", `export class SubClass {}`);
+            project.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
+            project.createSourceFile("subFile3.ts", `class SubClass3 {}\nexport default SubClass3;`);
+
+            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
+                .to.deep.equal(["MainFileClass", "OtherClass", "Class", "MyClass", "SubClass", "SubClass2", "SubClass3"].sort());
+        });
+
+        function doTest(text: string, expectedDeclarationNames: string[]) {
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", text);
+
+            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
+                .to.deep.equal(expectedDeclarationNames.sort());
+        }
+
+        it("should get when there's only a default export using an export assignment", () => {
+            doTest("class MainFileClass {}\nexport default MainFileClass;", ["MainFileClass"]);
+        });
+
+        it("should not error for an empty file", () => {
+            doTest("", []);
+        });
+
+        function doNamespaceTest(text: string, expectedDeclarationNames: string[]) {
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.d.ts", text);
+
+            expect(mainSourceFile.getNamespaces()[0].getExportedDeclarations().map(d => (d as any).getName()).sort())
+                .to.deep.equal(expectedDeclarationNames.sort());
+        }
+
+        it("should get from namespace when there's a default export using an export assignment", () => {
+            doNamespaceTest("declare module 'test' { class Test {} export default Test; }", ["Test"]);
+        });
+
+        it("should not error for an empty namespace", () => {
+            doNamespaceTest("namespace Test {}", []);
+        });
+
+        it("should not error for an empty ambient module", () => {
+            doNamespaceTest("declare module 'test' {}", []);
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getDefaultExportSymbol), () => {
+        function doTest(text: string, expectedName: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const defaultSymbol = sourceFile.getDefaultExportSymbol();
+            if (expectedName == null)
+                expect(defaultSymbol).to.be.undefined;
+            else
+                expect(defaultSymbol!.getName()).to.equal(expectedName);
+        }
+
+        it("should return undefined when there's no default export", () => {
+            doTest("", undefined);
+        });
+
+        it("should return the default export symbol when one exists", () => {
+            doTest("export default class Identifier {}", "default");
+        });
+
+        it("should return the default export symbol when default exported on a separate statement", () => {
+            doTest("class Identifier {}\nexport default Identifier;", "default");
+        });
+
+        it("should return the default export symbol for a module", () => {
+            doTest("class Identifier {}\nexport default Identifier;", "default");
+            const { sourceFile } = getInfoFromText("declare module 'test' { class Identifier {}\nexport default Identifier; }", { isDefinitionFile: true });
+            const defaultSymbol = sourceFile.getNamespaces()[0].getDefaultExportSymbol();
+            expect(defaultSymbol!.getName()).to.equal("default");
+        });
+    });
+
+    describe(nameof<ModuledNode>(n => n.getDefaultExportSymbolOrThrow), () => {
+        function doTest(text: string, expectedName: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            if (expectedName == null)
+                expect(() => sourceFile.getDefaultExportSymbolOrThrow()).to.throw();
+            else
+                expect(sourceFile.getDefaultExportSymbolOrThrow().getName()).to.equal(expectedName);
+        }
+
+        it("should throw when there's no default export", () => {
+            doTest("", undefined);
+        });
+
+        it("should return the default export symbol when one exists", () => {
+            doTest("export default class Identifier {}", "default");
         });
     });
 });
