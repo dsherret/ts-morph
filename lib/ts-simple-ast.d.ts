@@ -4601,122 +4601,6 @@ export declare enum Scope {
     Private = "private"
 }
 
-export declare class Signature {
-    /**
-     * Gets the underlying compiler signature.
-     */
-    readonly compilerSignature: ts.Signature;
-    /**
-     * Gets the type parameters.
-     */
-    getTypeParameters(): TypeParameter[];
-    /**
-     * Gets the parameters.
-     */
-    getParameters(): Symbol[];
-    /**
-     * Gets the signature return type.
-     */
-    getReturnType(): Type;
-    /**
-     * Get the documentation comments.
-     */
-    getDocumentationComments(): SymbolDisplayPart[];
-    /**
-     * Gets the JS doc tags.
-     */
-    getJsDocTags(): JSDocTagInfo[];
-}
-
-export declare class Symbol {
-    /**
-     * Gets the underlying compiler symbol.
-     */
-    readonly compilerSymbol: ts.Symbol;
-    /**
-     * Gets the symbol name.
-     */
-    getName(): string;
-    /**
-     * Gets the escaped name.
-     */
-    getEscapedName(): string;
-    /**
-     * Gets the aliased symbol or throws if it doesn't exist.
-     */
-    getAliasedSymbolOrThrow(): Symbol;
-    /**
-     * Gets the aliased symbol or returns undefined if it doesn't exist.
-     */
-    getAliasedSymbol(): Symbol | undefined;
-    /**
-     * Gets if the symbol is an alias.
-     */
-    isAlias(): boolean;
-    /**
-     * Gets the symbol flags.
-     */
-    getFlags(): SymbolFlags;
-    /**
-     * Gets if the symbol has the specified flags.
-     * @param flags - Flags to check if the symbol has.
-     */
-    hasFlags(flags: SymbolFlags): boolean;
-    /**
-     * Gets the value declaration of a symbol or throws if it doesn't exist.
-     */
-    getValueDeclarationOrThrow(): Node;
-    /**
-     * Gets the value declaration of the symbol or returns undefined if it doesn't exist.
-     */
-    getValueDeclaration(): Node | undefined;
-    /**
-     * Gets the symbol declarations.
-     */
-    getDeclarations(): Node[];
-    /**
-     * Gets the export of the symbol by the specified name or throws if not exists.
-     * @param name - Name of the export.
-     */
-    getExportByNameOrThrow(name: string): Symbol;
-    /**
-     * Gets the export of the symbol by the specified name or returns undefined if not exists.
-     * @param name - Name of the export.
-     */
-    getExportByName(name: string): Symbol | undefined;
-    /**
-     * Gets the exports from the symbol.
-     */
-    getExports(): Symbol[];
-    /**
-     * Gets the member of the symbol by the specified name or throws if not exists.
-     * @param name - Name of the export.
-     */
-    getMemberByNameOrThrow(name: string): Symbol;
-    /**
-     * Gets the member of the symbol by the specified name or returns undefined if not exists.
-     * @param name - Name of the member.
-     */
-    getMemberByName(name: string): Symbol | undefined;
-    /**
-     * Gets the members of the symbol
-     */
-    getMembers(): Symbol[];
-    /**
-     * Gets the declared type of the symbol.
-     */
-    getDeclaredType(): Type;
-    /**
-     * Gets the type of the symbol at a location.
-     * @param node - Location to get the type at for this symbol.
-     */
-    getTypeAtLocation(node: Node): Type<ts.Type>;
-    /**
-     * Gets the fully qualified name.
-     */
-    getFullyQualifiedName(): string;
-}
-
 export declare class SyntaxList extends Node<ts.SyntaxList> {
     /**
      * Adds text at the end of the current children.
@@ -8250,6 +8134,379 @@ export declare class WithStatement extends WithStatementBase<ts.WithStatement> {
     getStatement(): Statement;
 }
 
+export declare class ArrayTypeNode extends TypeNode<ts.ArrayTypeNode> {
+    /**
+     * Gets the array type node's element type node.
+     */
+    getElementTypeNode(): TypeNode;
+}
+
+export declare class ConstructorTypeNode extends FunctionOrConstructorTypeNodeBase<ts.ConstructorTypeNode> {
+}
+
+declare const ExpressionWithTypeArgumentsBase: Constructor<LeftHandSideExpressionedNode> & typeof TypeNode;
+
+export declare class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase<ts.ExpressionWithTypeArguments> {
+    /**
+     * Gets the type arguments.
+     */
+    getTypeArguments(): TypeNode[];
+}
+
+declare const FunctionTypeNodeBase: Constructor<TypeParameteredNode> & typeof FunctionOrConstructorTypeNodeBase;
+
+export declare class FunctionTypeNode extends FunctionTypeNodeBase<ts.FunctionTypeNode> {
+}
+
+declare const FunctionOrConstructorTypeNodeBaseBase: Constructor<SignaturedDeclaration> & typeof TypeNode;
+
+export declare class FunctionOrConstructorTypeNodeBase<T extends ts.FunctionOrConstructorTypeNode = ts.FunctionOrConstructorTypeNode> extends FunctionOrConstructorTypeNodeBaseBase<T> {
+}
+
+declare const ImportTypeNodeBase: Constructor<TypeArgumentedNode> & typeof TypeNode;
+
+export declare class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
+    /**
+     * Sets the argument text.
+     * @param text - Text of the argument.
+     */
+    setArgument(text: string): this;
+    /**
+     * Gets the argument passed into the import type.
+     */
+    getArgument(): TypeNode;
+    /**
+     * Sets the qualifier text.
+     * @param text - Text.
+     */
+    setQualifier(text: string): this;
+    /**
+     * Gets the qualifier of the import type if it exists or throws
+     */
+    getQualifierOrThrow(): EntityName;
+    /**
+     * Gets the qualifier of the import type if it exists or returns undefined.
+     */
+    getQualifier(): EntityName | undefined;
+}
+
+export declare class IntersectionTypeNode extends TypeNode<ts.IntersectionTypeNode> {
+    /**
+     * Gets the intersection type nodes.
+     */
+    getTypeNodes(): TypeNode[];
+}
+
+export declare class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {
+    /**
+     * Gets the literal type node's literal.
+     */
+    getLiteral(): BooleanLiteral | LiteralExpression | PrefixUnaryExpression;
+}
+
+export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedTypeNode> {
+    /**
+     * Gets the node within the parentheses.
+     */
+    getTypeNode(): TypeNode;
+    /**
+     * Sets the type within the parentheses.
+     * @param textOrWriterFunction - Text or writer function to set the type with.
+     */
+    setType(textOrWriterFunction: string | WriterFunction): this;
+}
+
+export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {
+    /**
+     * Gets the tuple element type nodes.
+     */
+    getElementTypeNodes(): TypeNode[];
+}
+
+declare const TypeAliasDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TypeParameteredNode> & Constructor<TypedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
+
+export declare class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<TypeAliasDeclarationStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): TypeAliasDeclarationStructure;
+}
+
+declare const TypeLiteralNodeBase: Constructor<TypeElementMemberedNode> & typeof TypeNode;
+
+export declare class TypeLiteralNode extends TypeLiteralNodeBase<ts.TypeLiteralNode> {
+}
+
+export declare class TypeNode<T extends ts.TypeNode = ts.TypeNode> extends Node<T> {
+}
+
+declare const TypeParameterDeclarationBase: Constructor<NamedNode> & typeof Node;
+
+export declare class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
+    /**
+     * Gets the constraint of the type parameter.
+     */
+    getConstraint(): TypeNode | undefined;
+    /**
+     * Gets the constraint of the type parameter or throws if it doesn't exist.
+     */
+    getConstraintOrThrow(): TypeNode<ts.TypeNode>;
+    /**
+     * Sets the type parameter constraint.
+     * @param text - Text to set as the constraint.
+     */
+    setConstraint(text: string): this;
+    /**
+     * Removes the constraint type node.
+     */
+    removeConstraint(): this;
+    /**
+     * Gets the default node of the type parameter.
+     */
+    getDefault(): TypeNode | undefined;
+    /**
+     * Gets the default node of the type parameter or throws if it doesn't exist.
+     */
+    getDefaultOrThrow(): TypeNode<ts.TypeNode>;
+    /**
+     * Sets the type parameter default type node.
+     * @param text - Text to set as the default type node.
+     */
+    setDefault(text: string): this;
+    /**
+     * Removes the default type node.
+     */
+    removeDefault(): this;
+    /**
+     * Removes this type parameter.
+     */
+    remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<TypeParameterDeclarationStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): TypeParameterDeclarationStructure;
+}
+
+export declare class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {
+    /**
+     * Gets the type name.
+     */
+    getTypeName(): EntityName;
+    /**
+     * Gets the type arguments.
+     */
+    getTypeArguments(): TypeNode[];
+}
+
+export declare class UnionTypeNode extends TypeNode<ts.UnionTypeNode> {
+    /**
+     * Gets the union type nodes.
+     */
+    getTypeNodes(): TypeNode[];
+}
+
+declare const VariableDeclarationBase: Constructor<ExclamationTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
+
+export declare class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
+    /**
+     * Removes this variable declaration.
+     */
+    remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<VariableDeclarationStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): VariableDeclarationStructure;
+}
+export declare enum VariableDeclarationKind {
+    Var = "var",
+    Let = "let",
+    Const = "const"
+}
+
+declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
+
+export declare class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
+    /**
+     * Get the variable declarations.
+     */
+    getDeclarations(): VariableDeclaration[];
+    /**
+     * Gets the variable declaration kind.
+     */
+    getDeclarationKind(): VariableDeclarationKind;
+    /**
+     * Gets the variable declaration kind keyword.
+     */
+    getDeclarationKindKeyword(): Node;
+    /**
+     * Sets the variable declaration kind.
+     * @param type - Type to set.
+     */
+    setDeclarationKind(type: VariableDeclarationKind): this;
+    /**
+     * Add a variable declaration to the statement.
+     * @param structure - Structure representing the variable declaration to add.
+     */
+    addDeclaration(structure: VariableDeclarationStructure): VariableDeclaration;
+    /**
+     * Adds variable declarations to the statement.
+     * @param structures - Structures representing the variable declarations to add.
+     */
+    addDeclarations(structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
+    /**
+     * Inserts a variable declaration at the specified index within the statement.
+     * @param index - Child index to insert at.
+     * @param structure - Structure representing the variable declaration to insert.
+     */
+    insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
+    /**
+     * Inserts variable declarations at the specified index within the statement.
+     * @param index - Child index to insert at.
+     * @param structures - Structures representing the variable declarations to insert.
+     */
+    insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<VariableDeclarationListStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): VariableDeclarationListStructure;
+}
+
+export declare class Signature {
+    /**
+     * Gets the underlying compiler signature.
+     */
+    readonly compilerSignature: ts.Signature;
+    /**
+     * Gets the type parameters.
+     */
+    getTypeParameters(): TypeParameter[];
+    /**
+     * Gets the parameters.
+     */
+    getParameters(): Symbol[];
+    /**
+     * Gets the signature return type.
+     */
+    getReturnType(): Type;
+    /**
+     * Get the documentation comments.
+     */
+    getDocumentationComments(): SymbolDisplayPart[];
+    /**
+     * Gets the JS doc tags.
+     */
+    getJsDocTags(): JSDocTagInfo[];
+}
+
+export declare class Symbol {
+    /**
+     * Gets the underlying compiler symbol.
+     */
+    readonly compilerSymbol: ts.Symbol;
+    /**
+     * Gets the symbol name.
+     */
+    getName(): string;
+    /**
+     * Gets the escaped name.
+     */
+    getEscapedName(): string;
+    /**
+     * Gets the aliased symbol or throws if it doesn't exist.
+     */
+    getAliasedSymbolOrThrow(): Symbol;
+    /**
+     * Gets the aliased symbol or returns undefined if it doesn't exist.
+     */
+    getAliasedSymbol(): Symbol | undefined;
+    /**
+     * Gets if the symbol is an alias.
+     */
+    isAlias(): boolean;
+    /**
+     * Gets the symbol flags.
+     */
+    getFlags(): SymbolFlags;
+    /**
+     * Gets if the symbol has the specified flags.
+     * @param flags - Flags to check if the symbol has.
+     */
+    hasFlags(flags: SymbolFlags): boolean;
+    /**
+     * Gets the value declaration of a symbol or throws if it doesn't exist.
+     */
+    getValueDeclarationOrThrow(): Node;
+    /**
+     * Gets the value declaration of the symbol or returns undefined if it doesn't exist.
+     */
+    getValueDeclaration(): Node | undefined;
+    /**
+     * Gets the symbol declarations.
+     */
+    getDeclarations(): Node[];
+    /**
+     * Gets the export of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the export.
+     */
+    getExportByNameOrThrow(name: string): Symbol;
+    /**
+     * Gets the export of the symbol by the specified name or returns undefined if not exists.
+     * @param name - Name of the export.
+     */
+    getExportByName(name: string): Symbol | undefined;
+    /**
+     * Gets the exports from the symbol.
+     */
+    getExports(): Symbol[];
+    /**
+     * Gets the member of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the export.
+     */
+    getMemberByNameOrThrow(name: string): Symbol;
+    /**
+     * Gets the member of the symbol by the specified name or returns undefined if not exists.
+     * @param name - Name of the member.
+     */
+    getMemberByName(name: string): Symbol | undefined;
+    /**
+     * Gets the members of the symbol
+     */
+    getMembers(): Symbol[];
+    /**
+     * Gets the declared type of the symbol.
+     */
+    getDeclaredType(): Type;
+    /**
+     * Gets the type of the symbol at a location.
+     * @param node - Location to get the type at for this symbol.
+     */
+    getTypeAtLocation(node: Node): Type<ts.Type>;
+    /**
+     * Gets the fully qualified name.
+     */
+    getFullyQualifiedName(): string;
+}
+
 export interface FormatCodeSettings extends ts.FormatCodeSettings {
     ensureNewLineAtEndOfFile?: boolean;
 }
@@ -8933,95 +9190,6 @@ export declare class TypeChecker {
     private getDefaultTypeFormatFlags;
 }
 
-export declare class ArrayTypeNode extends TypeNode<ts.ArrayTypeNode> {
-    /**
-     * Gets the array type node's element type node.
-     */
-    getElementTypeNode(): TypeNode;
-}
-
-export declare class ConstructorTypeNode extends FunctionOrConstructorTypeNodeBase<ts.ConstructorTypeNode> {
-}
-
-declare const ExpressionWithTypeArgumentsBase: Constructor<LeftHandSideExpressionedNode> & typeof TypeNode;
-
-export declare class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase<ts.ExpressionWithTypeArguments> {
-    /**
-     * Gets the type arguments.
-     */
-    getTypeArguments(): TypeNode[];
-}
-
-declare const FunctionTypeNodeBase: Constructor<TypeParameteredNode> & typeof FunctionOrConstructorTypeNodeBase;
-
-export declare class FunctionTypeNode extends FunctionTypeNodeBase<ts.FunctionTypeNode> {
-}
-
-declare const FunctionOrConstructorTypeNodeBaseBase: Constructor<SignaturedDeclaration> & typeof TypeNode;
-
-export declare class FunctionOrConstructorTypeNodeBase<T extends ts.FunctionOrConstructorTypeNode = ts.FunctionOrConstructorTypeNode> extends FunctionOrConstructorTypeNodeBaseBase<T> {
-}
-
-declare const ImportTypeNodeBase: Constructor<TypeArgumentedNode> & typeof TypeNode;
-
-export declare class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
-    /**
-     * Sets the argument text.
-     * @param text - Text of the argument.
-     */
-    setArgument(text: string): this;
-    /**
-     * Gets the argument passed into the import type.
-     */
-    getArgument(): TypeNode;
-    /**
-     * Sets the qualifier text.
-     * @param text - Text.
-     */
-    setQualifier(text: string): this;
-    /**
-     * Gets the qualifier of the import type if it exists or throws
-     */
-    getQualifierOrThrow(): EntityName;
-    /**
-     * Gets the qualifier of the import type if it exists or returns undefined.
-     */
-    getQualifier(): EntityName | undefined;
-}
-
-export declare class IntersectionTypeNode extends TypeNode<ts.IntersectionTypeNode> {
-    /**
-     * Gets the intersection type nodes.
-     */
-    getTypeNodes(): TypeNode[];
-}
-
-export declare class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {
-    /**
-     * Gets the literal type node's literal.
-     */
-    getLiteral(): BooleanLiteral | LiteralExpression | PrefixUnaryExpression;
-}
-
-export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedTypeNode> {
-    /**
-     * Gets the node within the parentheses.
-     */
-    getTypeNode(): TypeNode;
-    /**
-     * Sets the type within the parentheses.
-     * @param textOrWriterFunction - Text or writer function to set the type with.
-     */
-    setType(textOrWriterFunction: string | WriterFunction): this;
-}
-
-export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {
-    /**
-     * Gets the tuple element type nodes.
-     */
-    getElementTypeNodes(): TypeNode[];
-}
-
 export declare class Type<TType extends ts.Type = ts.Type> {
     /**
      * Gets the underlying compiler type.
@@ -9259,28 +9427,6 @@ export declare class Type<TType extends ts.Type = ts.Type> {
     private _hasObjectFlag;
 }
 
-declare const TypeAliasDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TypeParameteredNode> & Constructor<TypedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
-
-export declare class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<TypeAliasDeclarationStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): TypeAliasDeclarationStructure;
-}
-
-declare const TypeLiteralNodeBase: Constructor<TypeElementMemberedNode> & typeof TypeNode;
-
-export declare class TypeLiteralNode extends TypeLiteralNodeBase<ts.TypeLiteralNode> {
-}
-
-export declare class TypeNode<T extends ts.TypeNode = ts.TypeNode> extends Node<T> {
-}
-
 export declare class TypeParameter extends Type<ts.TypeParameter> {
     /**
      * Gets the constraint or throws if it doesn't exist.
@@ -9298,152 +9444,6 @@ export declare class TypeParameter extends Type<ts.TypeParameter> {
      * Gets the default type or undefined if it doesn't exist.
      */
     getDefault(): Type | undefined;
-}
-
-declare const TypeParameterDeclarationBase: Constructor<NamedNode> & typeof Node;
-
-export declare class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
-    /**
-     * Gets the constraint of the type parameter.
-     */
-    getConstraint(): TypeNode | undefined;
-    /**
-     * Gets the constraint of the type parameter or throws if it doesn't exist.
-     */
-    getConstraintOrThrow(): TypeNode<ts.TypeNode>;
-    /**
-     * Sets the type parameter constraint.
-     * @param text - Text to set as the constraint.
-     */
-    setConstraint(text: string): this;
-    /**
-     * Removes the constraint type node.
-     */
-    removeConstraint(): this;
-    /**
-     * Gets the default node of the type parameter.
-     */
-    getDefault(): TypeNode | undefined;
-    /**
-     * Gets the default node of the type parameter or throws if it doesn't exist.
-     */
-    getDefaultOrThrow(): TypeNode<ts.TypeNode>;
-    /**
-     * Sets the type parameter default type node.
-     * @param text - Text to set as the default type node.
-     */
-    setDefault(text: string): this;
-    /**
-     * Removes the default type node.
-     */
-    removeDefault(): this;
-    /**
-     * Removes this type parameter.
-     */
-    remove(): void;
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<TypeParameterDeclarationStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): TypeParameterDeclarationStructure;
-}
-
-export declare class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {
-    /**
-     * Gets the type name.
-     */
-    getTypeName(): EntityName;
-    /**
-     * Gets the type arguments.
-     */
-    getTypeArguments(): TypeNode[];
-}
-
-export declare class UnionTypeNode extends TypeNode<ts.UnionTypeNode> {
-    /**
-     * Gets the union type nodes.
-     */
-    getTypeNodes(): TypeNode[];
-}
-
-declare const VariableDeclarationBase: Constructor<ExclamationTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
-
-export declare class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
-    /**
-     * Removes this variable declaration.
-     */
-    remove(): void;
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<VariableDeclarationStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): VariableDeclarationStructure;
-}
-export declare enum VariableDeclarationKind {
-    Var = "var",
-    Let = "let",
-    Const = "const"
-}
-
-declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
-
-export declare class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
-    /**
-     * Get the variable declarations.
-     */
-    getDeclarations(): VariableDeclaration[];
-    /**
-     * Gets the variable declaration kind.
-     */
-    getDeclarationKind(): VariableDeclarationKind;
-    /**
-     * Gets the variable declaration kind keyword.
-     */
-    getDeclarationKindKeyword(): Node;
-    /**
-     * Sets the variable declaration kind.
-     * @param type - Type to set.
-     */
-    setDeclarationKind(type: VariableDeclarationKind): this;
-    /**
-     * Add a variable declaration to the statement.
-     * @param structure - Structure representing the variable declaration to add.
-     */
-    addDeclaration(structure: VariableDeclarationStructure): VariableDeclaration;
-    /**
-     * Adds variable declarations to the statement.
-     * @param structures - Structures representing the variable declarations to add.
-     */
-    addDeclarations(structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
-    /**
-     * Inserts a variable declaration at the specified index within the statement.
-     * @param index - Child index to insert at.
-     * @param structure - Structure representing the variable declaration to insert.
-     */
-    insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
-    /**
-     * Inserts variable declarations at the specified index within the statement.
-     * @param index - Child index to insert at.
-     * @param structures - Structures representing the variable declarations to insert.
-     */
-    insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<VariableDeclarationListStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): VariableDeclarationListStructure;
 }
 
 export declare class ArgumentError extends BaseError {
