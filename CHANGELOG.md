@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="16.0.0"></a>
+# [16.0.0](https://github.com/dsherret/ts-simple-ast/compare/15.1.0...16.0.0) (2018-09-30)
+
+
+### Bug Fixes
+
+* [#437](https://github.com/dsherret/ts-simple-ast/issues/437) - Fix `findReferencesAsNodes` having an undefined entry when the reference is within a string literal. ([06943a9](https://github.com/dsherret/ts-simple-ast/commit/06943a9))
+* WeakCache and KeyValueCache weren't falling back to support ES5. ([eec9add](https://github.com/dsherret/ts-simple-ast/commit/eec9add))
+
+
+### Code Refactoring
+
+* [#429](https://github.com/dsherret/ts-simple-ast/issues/429) - IndexSignatureDeclaration - Return type should be nullable. ([bab0860](https://github.com/dsherret/ts-simple-ast/commit/bab0860))
+* [#441](https://github.com/dsherret/ts-simple-ast/issues/441) - Make "XExtensionType" type aliases internal. ([9ad6372](https://github.com/dsherret/ts-simple-ast/commit/9ad6372))
+
+
+### Features
+
+* [#436](https://github.com/dsherret/ts-simple-ast/issues/436) - Add support for import and exports to NamespaceDeclaration ([65d4bf2](https://github.com/dsherret/ts-simple-ast/commit/65d4bf2))
+* [#439](https://github.com/dsherret/ts-simple-ast/issues/439) - Improve type guards to use extension type for mixins. ([1ca6dd3](https://github.com/dsherret/ts-simple-ast/commit/1ca6dd3))
+* [#443](https://github.com/dsherret/ts-simple-ast/issues/443) Better support for `global` namespace declarations ([d89fd96](https://github.com/dsherret/ts-simple-ast/commit/d89fd96))
+* Add `.getSignature()` method to nodes that have a return type. ([f65c529](https://github.com/dsherret/ts-simple-ast/commit/f65c529))
+* Upgrade to TypeScript 3.0.3. ([c38f5c2](https://github.com/dsherret/ts-simple-ast/commit/c38f5c2))
+
+
+### Performance Improvements
+
+* [#435](https://github.com/dsherret/ts-simple-ast/issues/435) - Memoize only before source file manipulation for some wrapped language service source file dependent objects. ([ad06259](https://github.com/dsherret/ts-simple-ast/commit/ad06259))
+
+
+### BREAKING CHANGES
+
+* Upgraded to TS 3.0.3, which has some breaking changes in it from 3.0.1.
+* IndexSignatureDeclaration's return type is now nullable to reflect what's done in the compiler API.
+* The "XExtensionType" type aliases are now internal. They were hidden because they're not useful outside the library and only create noise in the named exports.
+* `NamespaceDeclaration.setHasNamespaceKeyword` and `setHasModuleKeyword` are now `setDeclarationKind(kind: NamespaceDeclarationKind)`. `NamespaceDeclarationStructure.hasModuleKeyword` and `hasNamespaceKeyword` are now `declarationKind`.
+
+
+
 <a name="15.1.0"></a>
 # [15.1.0](https://github.com/dsherret/ts-simple-ast/compare/15.0.2...15.1.0) (2018-09-24)
 
