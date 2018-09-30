@@ -685,84 +685,6 @@ export interface EditorSettings {
 }
 
 export namespace ts {
-    export declare namespace Status {
-        /**
-         * The project can't be built at all in its current state. For example,
-         * its config file cannot be parsed, or it has a syntax error or missing file
-         */
-        export interface Unbuildable {
-            type: UpToDateStatusType.Unbuildable;
-            reason: string;
-        }
-
-        /**
-         * This project doesn't have any outputs, so "is it up to date" is a meaningless question.
-         */
-        export interface ContainerOnly {
-            type: UpToDateStatusType.ContainerOnly;
-        }
-
-        /**
-         * The project is up to date with respect to its inputs.
-         * We track what the newest input file is.
-         */
-        export interface UpToDate {
-            type: UpToDateStatusType.UpToDate | UpToDateStatusType.UpToDateWithUpstreamTypes;
-            newestInputFileTime?: Date;
-            newestInputFileName?: string;
-            newestDeclarationFileContentChangedTime?: Date;
-            newestOutputFileTime?: Date;
-            newestOutputFileName?: string;
-            oldestOutputFileName?: string;
-        }
-
-        /**
-         * One or more of the outputs of the project does not exist.
-         */
-        export interface OutputMissing {
-            type: UpToDateStatusType.OutputMissing;
-            /**
-             * The name of the first output file that didn't exist
-             */
-            missingOutputFileName: string;
-        }
-
-        /**
-         * One or more of the project's outputs is older than its newest input.
-         */
-        export interface OutOfDateWithSelf {
-            type: UpToDateStatusType.OutOfDateWithSelf;
-            outOfDateOutputFileName: string;
-            newerInputFileName: string;
-        }
-
-        /**
-         * This project depends on an out-of-date project, so shouldn't be built yet
-         */
-        export interface UpstreamOutOfDate {
-            type: UpToDateStatusType.UpstreamOutOfDate;
-            upstreamProjectName: string;
-        }
-
-        /**
-         * This project depends an upstream project with build errors
-         */
-        export interface UpstreamBlocked {
-            type: UpToDateStatusType.UpstreamBlocked;
-            upstreamProjectName: string;
-        }
-
-        /**
-         * One or more of the project's outputs is older than the newest output of
-         * an upstream project.
-         */
-        export interface OutOfDateWithUpstream {
-            type: UpToDateStatusType.OutOfDateWithUpstream;
-            outOfDateOutputFileName: string;
-            newerProjectName: string;
-        }
-    }
-
     export declare namespace ScriptSnapshot {
         export function fromString(text: string): IScriptSnapshot;
     }
@@ -2784,15 +2706,6 @@ export namespace ts {
         configFileParsingDiagnostics?: ReadonlyArray<Diagnostic>;
     }
 
-    export interface UpToDateHost {
-        fileExists(fileName: string): boolean;
-        getModifiedTime(fileName: string): Date;
-        getUnchangedTime?(fileName: string): Date | undefined;
-        getLastStatus?(fileName: string): UpToDateStatus | undefined;
-        setLastStatus?(fileName: string, status: UpToDateStatus): void;
-        parseConfigFile?(configFilePath: ResolvedConfigFileName): ParsedCommandLine | undefined;
-    }
-
     export interface ModuleResolutionHost {
         fileExists(fileName: string): boolean;
         readFile(fileName: string): string | undefined;
@@ -2896,9 +2809,6 @@ export namespace ts {
         resolveTypeReferenceDirectives?(typeReferenceDirectiveNames: string[], containingFile: string): ResolvedTypeReferenceDirective[];
         getEnvironmentVariable?(name: string): string | undefined;
         createHash?(data: string): string;
-        getModifiedTime?(fileName: string): Date;
-        setModifiedTime?(fileName: string, date: Date): void;
-        deleteFile?(fileName: string): void;
     }
 
     export interface SourceMapRange extends TextRange {
@@ -3366,7 +3276,33 @@ export namespace ts {
         emitNextAffectedFile(writeFile?: WriteFileCallback, cancellationToken?: CancellationToken, emitOnlyDtsFiles?: boolean, customTransformers?: CustomTransformers): AffectedFileResult<EmitResult>;
     }
 
-    export interface WatchCompilerHost<T extends BuilderProgram> {
+    /**
+     * Host that has watch functionality used in --watch mode
+     */
+    export interface WatchHost {
+        /**
+         * If provided, called with Diagnostic message that informs about change in watch status
+         */
+        onWatchStatusChange?(diagnostic: Diagnostic, newLine: string, options: CompilerOptions): void;
+        /**
+         * Used to watch changes in source files, missing files needed to update the program or config file
+         */
+        watchFile(path: string, callback: FileWatcherCallback, pollingInterval?: number): FileWatcher;
+        /**
+         * Used to watch resolved module's failed lookup locations, config file specs, type roots where auto type reference directives are added
+         */
+        watchDirectory(path: string, callback: DirectoryWatcherCallback, recursive?: boolean): FileWatcher;
+        /**
+         * If provided, will be used to set delayed compilation, so that multiple changes in short span are compiled together
+         */
+        setTimeout?(callback: (...args: any[]) => void, ms: number, ...args: any[]): any;
+        /**
+         * If provided, will be used to reset existing delayed compilation
+         */
+        clearTimeout?(timeoutId: any): void;
+    }
+
+    export interface WatchCompilerHost<T extends BuilderProgram> extends WatchHost {
         /**
          * Used to create the program when need for program creation or recreation detected
          */
@@ -3375,10 +3311,6 @@ export namespace ts {
          * If provided, callback to invoke after every new program creation
          */
         afterProgramCreate?(program: T): void;
-        /**
-         * If provided, called with Diagnostic message that informs about change in watch status
-         */
-        onWatchStatusChange?(diagnostic: Diagnostic, newLine: string, options: CompilerOptions): void;
         useCaseSensitiveFileNames(): boolean;
         getNewLine(): string;
         getCurrentDirectory(): string;
@@ -3427,22 +3359,6 @@ export namespace ts {
          * If provided, used to resolve type reference directives, otherwise typescript's default resolution
          */
         resolveTypeReferenceDirectives?(typeReferenceDirectiveNames: string[], containingFile: string): ResolvedTypeReferenceDirective[];
-        /**
-         * Used to watch changes in source files, missing files needed to update the program or config file
-         */
-        watchFile(path: string, callback: FileWatcherCallback, pollingInterval?: number): FileWatcher;
-        /**
-         * Used to watch resolved module's failed lookup locations, config file specs, type roots where auto type reference directives are added
-         */
-        watchDirectory(path: string, callback: DirectoryWatcherCallback, recursive?: boolean): FileWatcher;
-        /**
-         * If provided, will be used to set delayed compilation, so that multiple changes in short span are compiled together
-         */
-        setTimeout?(callback: (...args: any[]) => void, ms: number, ...args: any[]): any;
-        /**
-         * If provided, will be used to reset existing delayed compilation
-         */
-        clearTimeout?(timeoutId: any): void;
     }
 
     /**
@@ -3499,61 +3415,6 @@ export namespace ts {
          * Updates the root files in the program, only if this is not config file compilation
          */
         updateRootFileNames(fileNames: string[]): void;
-    }
-
-    export interface BuildHost {
-        verbose(diag: DiagnosticMessage, ...args: string[]): void;
-        error(diag: DiagnosticMessage, ...args: string[]): void;
-        errorDiagnostic(diag: Diagnostic): void;
-        message(diag: DiagnosticMessage, ...args: string[]): void;
-    }
-
-    /**
-     * A BuildContext tracks what's going on during the course of a build.
-     *
-     * Callers may invoke any number of build requests within the same context;
-     * until the context is reset, each project will only be built at most once.
-     *
-     * Example: In a standard setup where project B depends on project A, and both are out of date,
-     * a failed build of A will result in A remaining out of date. When we try to build
-     * B, we should immediately bail instead of recomputing A's up-to-date status again.
-     *
-     * This also matters for performing fast (i.e. fake) downstream builds of projects
-     * when their upstream .d.ts files haven't changed content (but have newer timestamps)
-     */
-    export interface BuildContext {
-        options: BuildOptions;
-        /**
-         * Map from output file name to its pre-build timestamp
-         */
-        unchangedOutputs: FileMap<Date>;
-        /**
-         * Map from config file name to up-to-date status
-         */
-        projectStatus: FileMap<UpToDateStatus>;
-        invalidatedProjects: FileMap<true>;
-        queuedProjects: FileMap<true>;
-        missingRoots: Map<true>;
-    }
-
-    export interface DependencyGraph {
-        buildQueue: ResolvedConfigFileName[];
-        dependencyMap: Mapper;
-    }
-
-    export interface BuildOptions {
-        dry: boolean;
-        force: boolean;
-        verbose: boolean;
-    }
-
-    export interface FileMap<T> {
-        setValue(fileName: string, value: T): void;
-        getValue(fileName: string): T | never;
-        getValueOrUndefined(fileName: string): T | undefined;
-        hasKey(fileName: string): boolean;
-        removeKey(fileName: string): void;
-        getKeys(): string[];
     }
 
     export interface Node {
@@ -4698,26 +4559,6 @@ export namespace ts {
         Deleted = 2
     }
 
-    export enum UpToDateStatusType {
-        Unbuildable = 0,
-        UpToDate = 1,
-        /**
-         * The project appears out of date because its upstream inputs are newer than its outputs,
-         * but all of its outputs are actually newer than the previous identical outputs of its (.d.ts) inputs.
-         * This means we can Pseudo-build (just touch timestamps), as if we had actually built this project.
-         */
-        UpToDateWithUpstreamTypes = 2,
-        OutputMissing = 3,
-        OutOfDateWithSelf = 4,
-        OutOfDateWithUpstream = 5,
-        UpstreamOutOfDate = 6,
-        UpstreamBlocked = 7,
-        /**
-         * Projects with no outputs (i.e. "solution" files)
-         */
-        ContainerOnly = 8
-    }
-
     export enum HighlightSpanKind {
         none = "none",
         definition = "definition",
@@ -5147,8 +4988,6 @@ export namespace ts {
      * Create the program with rootNames and options, if they are undefined, oldProgram and new configFile diagnostics create new program
      */
     export type CreateProgram<T extends BuilderProgram> = (rootNames: ReadonlyArray<string> | undefined, options: CompilerOptions | undefined, host?: CompilerHost, oldProgram?: T, configFileParsingDiagnostics?: ReadonlyArray<Diagnostic>) => T;
-    export type Mapper = ReturnType<typeof createDependencyMapper>;
-    export type UpToDateStatus = Status.Unbuildable | Status.UpToDate | Status.OutputMissing | Status.OutOfDateWithSelf | Status.OutOfDateWithUpstream | Status.UpstreamOutOfDate | Status.UpstreamBlocked | Status.ContainerOnly;
     export type OrganizeImportsScope = CombinedCodeFixScope;
     export type CompletionsTriggerCharacter = "." | '"' | "'" | "`" | "/" | "@" | "<";
     export type SignatureHelpTriggerCharacter = "," | "(" | "<";
@@ -6247,37 +6086,6 @@ export namespace ts {
      * Creates the watch from the host for config file
      */
     export declare function createWatchProgram<T extends BuilderProgram>(host: WatchCompilerHostOfConfigFile<T>): WatchOfConfigFile<T>;
-    export declare function createDependencyMapper(): {
-            addReference: (childConfigFileName: ResolvedConfigFileName, parentConfigFileName: ResolvedConfigFileName) => void;
-            getReferencesTo: (parentConfigFileName: ResolvedConfigFileName) => ResolvedConfigFileName[];
-            getReferencesOf: (childConfigFileName: ResolvedConfigFileName) => ResolvedConfigFileName[];
-            getKeys: () => ReadonlyArray<ResolvedConfigFileName>;
-        };
-    export declare function createBuildContext(options: BuildOptions): BuildContext;
-    export declare function performBuild(args: string[], compilerHost: CompilerHost, buildHost: BuildHost, system?: System): number | undefined;
-    /**
-     * A SolutionBuilder has an immutable set of rootNames that are the "entry point" projects, but
-     * can dynamically add/remove other projects based on changes on the rootNames' references
-     */
-    export declare function createSolutionBuilder(compilerHost: CompilerHost, buildHost: BuildHost, rootNames: ReadonlyArray<string>, defaultOptions: BuildOptions, system?: System): {
-            buildAllProjects: () => ExitStatus;
-            getUpToDateStatus: (project: ParsedCommandLine | undefined) => UpToDateStatus;
-            getUpToDateStatusOfFile: (configFileName: ResolvedConfigFileName) => UpToDateStatus;
-            cleanAllProjects: () => ExitStatus.Success | ExitStatus.DiagnosticsPresent_OutputsSkipped;
-            resetBuildContext: (opts?: BuildOptions) => void;
-            getBuildGraph: (configFileNames: ReadonlyArray<string>) => DependencyGraph | undefined;
-            invalidateProject: (configFileName: string) => void;
-            buildInvalidatedProjects: () => void;
-            buildDependentInvalidatedProjects: () => void;
-            resolveProjectName: (name: string) => ResolvedConfigFileName | undefined;
-            startWatching: () => void;
-        };
-    /**
-     * Gets the UpToDateStatus for a project
-     */
-    export declare function getUpToDateStatus(host: UpToDateHost, project: ParsedCommandLine | undefined): UpToDateStatus;
-    export declare function getAllProjectOutputs(project: ParsedCommandLine): ReadonlyArray<string>;
-    export declare function formatUpToDateStatus<T>(configFileName: string, status: UpToDateStatus, relName: (fileName: string) => string, formatMessage: (message: DiagnosticMessage, ...args: string[]) => T): T | undefined;
     export declare function createClassifier(): Classifier;
     export declare function createDocumentRegistry(useCaseSensitiveFileNames?: boolean, currentDirectory?: string): DocumentRegistry;
     export declare function preProcessFile(sourceText: string, readImportFiles?: boolean, detectJavaScriptImports?: boolean): PreProcessedFileInfo;
