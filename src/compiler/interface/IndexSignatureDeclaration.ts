@@ -1,16 +1,14 @@
 import { removeInterfaceMember } from "../../manipulation";
 import { IndexSignatureDeclarationStructure, IndexSignatureDeclarationSpecificStructure } from "../../structures";
 import * as errors from "../../errors";
-import { WriterFunction } from "../../types";
 import { ts } from "../../typescript";
-import { getTextFromStringOrWriter } from "../../utils";
-import { ChildOrderableNode, JSDocableNode, ModifierableNode, ReadonlyableNode } from "../base";
+import { ChildOrderableNode, JSDocableNode, ModifierableNode, ReadonlyableNode, ReturnTypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Type, TypeNode } from "../type";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const IndexSignatureDeclarationBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(ModifierableNode(TypeElement))));
+export const IndexSignatureDeclarationBase = ReturnTypedNode(ChildOrderableNode(JSDocableNode(ReadonlyableNode(ModifierableNode(TypeElement)))));
 export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.IndexSignatureDeclaration> {
     /**
      * Gets the key name.
@@ -43,7 +41,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      * Gets the key type.
      */
     getKeyType(): Type {
-        return this.getKeyTypeNode().getType();
+        return this.getKeyNameNode().getType();
     }
 
     /**
@@ -52,48 +50,22 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      */
     setKeyType(type: string) {
         errors.throwIfWhitespaceOrNotString(type, nameof(type));
-        if (this.getKeyTypeNode().getText() === type)
-            return;
-        this.getKeyTypeNode().replaceWithText(type, this.getWriterWithQueuedChildIndentation());
+        const keyTypeNode = this.getKeyTypeNode();
+        if (keyTypeNode.getText() === type)
+            return this;
+
+        keyTypeNode.replaceWithText(type, this.getWriterWithQueuedChildIndentation());
+
+        return this;
     }
 
     /**
      * Gets the key type node.
      */
     getKeyTypeNode(): TypeNode {
+        // this node must exist for it to be an index signature (otherwise it's a property signature)
         const param = this.compilerNode.parameters[0];
         return this.getNodeFromCompilerNode(param.type!);
-    }
-
-    /**
-     * Gets the return type.
-     */
-    getReturnType() {
-        return this.getReturnTypeNode().getType();
-    }
-
-    /**
-     * Gets the return type node.
-     */
-    getReturnTypeNode(): TypeNode {
-        return this.getNodeFromCompilerNode(this.compilerNode.type!);
-    }
-
-    /**
-     * Sets the return type.
-     * @param textOrWriterFunction - Text to set as the return type.
-     */
-    setReturnType(textOrWriterFunction: string | WriterFunction) {
-        const returnTypeNode = this.getReturnTypeNode();
-        const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
-
-        errors.throwIfWhitespaceOrNotString(text, nameof(textOrWriterFunction));
-
-        if (returnTypeNode.getText() === text)
-            return this;
-
-        returnTypeNode.replaceWithText(text);
-        return this;
     }
 
     /**
@@ -114,8 +86,6 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
             this.setKeyName(structure.keyName);
         if (structure.keyType != null)
             this.setKeyType(structure.keyType);
-        if (structure.returnType != null)
-            this.setReturnType(structure.returnType);
 
         return this;
     }
@@ -124,10 +94,11 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      * Gets the structure equivalent to this node.
      */
     getStructure(): IndexSignatureDeclarationStructure {
+        const keyTypeNode = this.getKeyTypeNode();
+
         return callBaseGetStructure<IndexSignatureDeclarationSpecificStructure>(IndexSignatureDeclarationBase.prototype, this, {
             keyName: this.getKeyName(),
-            keyType: this.getKeyTypeNode().getText(),
-            returnType: this.getReturnTypeNode().getText()
+            keyType: keyTypeNode.getText()
         });
     }
 }

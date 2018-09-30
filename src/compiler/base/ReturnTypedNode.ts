@@ -27,14 +27,9 @@ export interface ReturnTypedNode {
     getReturnTypeNodeOrThrow(): TypeNode;
     /**
      * Sets the return type of the node.
-     * @param writerFunction - Writer function to set the return type with.
+     * @param textOrWriterFunction - Text or writer function to set the return type with.
      */
-    setReturnType(writerFunction: WriterFunction): this;
-    /**
-     * Sets the return type of the node.
-     * @param text - Text to set as the type.
-     */
-    setReturnType(text: string): this;
+    setReturnType(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes the return type.
      */
@@ -44,8 +39,9 @@ export interface ReturnTypedNode {
 export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionType>>(Base: T): Constructor<ReturnTypedNode> & T {
     return class extends Base implements ReturnTypedNode {
         getReturnType() {
-            const typeChecker = this.context.typeChecker;
-            const signature = typeChecker.getSignatureFromNode(this)!; // should always return a signature
+            const signature = this.context.typeChecker.getSignatureFromNode(this);
+            if (signature == null)
+                throw new errors.NotImplementedError("Expected the index signature to have a type checker signature.");
             return signature.getReturnType();
         }
 
@@ -63,20 +59,26 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
                 return this.removeReturnType();
 
             const returnTypeNode = this.getReturnTypeNode();
-            if (returnTypeNode != null && returnTypeNode.getText() === text)
+            if (returnTypeNode != null) {
+                if (returnTypeNode.getText() !== text)
+                    returnTypeNode.replaceWithText(text);
                 return this;
+            }
 
             // insert new type
             insertIntoParentTextRange({
                 parent: this,
-                insertPos: returnTypeNode != null ? returnTypeNode.getStart() : this.getFirstChildByKindOrThrow(SyntaxKind.CloseParenToken).getEnd(),
-                newText: returnTypeNode != null ? text : `: ${text}`,
-                replacing: {
-                    textLength: returnTypeNode == null ? 0 : returnTypeNode.getWidth()
-                }
+                insertPos: getEndNode(this).getEnd(),
+                newText: `: ${text}`
             });
 
             return this;
+
+            function getEndNode(thisNode: Node) {
+                if (thisNode.getKind() === SyntaxKind.IndexSignature)
+                    return thisNode.getFirstChildByKindOrThrow(SyntaxKind.CloseBracketToken);
+                return thisNode.getFirstChildByKindOrThrow(SyntaxKind.CloseParenToken);
+            }
         }
 
         set(structure: Partial<ReturnTypedNodeStructure>) {

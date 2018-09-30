@@ -127,7 +127,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should insert when none exists", () => {
-            doTest("interface i {\n}", 0, [{ returnType: "number" }], "interface i {\n    [key: string]: number;\n}");
+            doTest("interface i {\n}", 0, [{}, { returnType: "number" }], "interface i {\n    [key: string];\n    [key: string]: number;\n}");
         });
 
         it("should insert multiple into other", () => {

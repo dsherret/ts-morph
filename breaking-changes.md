@@ -33,6 +33,18 @@ Added:
 * `getDeclarationKind(): NamespaceDeclarationKind;`
 * `NamespaceDeclarationStructure` - `declarationKind: NamespaceDeclarationKind`
 
+### `IndexSignatureDeclaration` - Return type is now nullable
+
+Even though it's a compile error, index signatures may look like the following:
+
+```ts
+interface MyInterface {
+    [key: string];
+}
+```
+
+For this reason, the `.getReturnTypeNode()` method on `IndexSignatureDeclaration` may now return undefined.
+
 ### The `XExtensionType` type aliases are now internal
 
 Previously there were a lot of `XExtensionType` type aliases that were used internally within the library, but they were

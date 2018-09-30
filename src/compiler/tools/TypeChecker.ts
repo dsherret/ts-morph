@@ -148,10 +148,10 @@ export class TypeChecker {
      * Gets a signature from a node.
      * @param node - Node to get the signature from.
      */
-getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined {
-    const signature = this.compilerObject.getSignatureFromDeclaration(node.compilerNode);
-    return signature == null ? undefined : this.context.compilerFactory.getSignature(signature);
-}
+    getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined {
+        const signature = this.compilerObject.getSignatureFromDeclaration(node.compilerNode);
+        return signature == null ? undefined : this.context.compilerFactory.getSignature(signature);
+    }
 
     /**
      * Gets the exports of a module.

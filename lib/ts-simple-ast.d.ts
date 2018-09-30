@@ -2801,14 +2801,9 @@ export interface ReturnTypedNode {
     getReturnTypeNodeOrThrow(): TypeNode;
     /**
      * Sets the return type of the node.
-     * @param writerFunction - Writer function to set the return type with.
+     * @param textOrWriterFunction - Text or writer function to set the return type with.
      */
-    setReturnType(writerFunction: WriterFunction): this;
-    /**
-     * Sets the return type of the node.
-     * @param text - Text to set as the type.
-     */
-    setReturnType(text: string): this;
+    setReturnType(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes the return type.
      */
@@ -5942,7 +5937,7 @@ export declare class ConstructSignatureDeclaration extends ConstructSignatureDec
     getStructure(): ConstructSignatureDeclarationStructure;
 }
 
-declare const IndexSignatureDeclarationBase: Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & typeof TypeElement;
+declare const IndexSignatureDeclarationBase: Constructor<ReturnTypedNode> & Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & typeof TypeElement;
 
 export declare class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.IndexSignatureDeclaration> {
     /**
@@ -5966,24 +5961,11 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
      * Sets the key type.
      * @param type - Type.
      */
-    setKeyType(type: string): void;
+    setKeyType(type: string): this;
     /**
      * Gets the key type node.
      */
     getKeyTypeNode(): TypeNode;
-    /**
-     * Gets the return type.
-     */
-    getReturnType(): Type<ts.Type>;
-    /**
-     * Gets the return type node.
-     */
-    getReturnTypeNode(): TypeNode;
-    /**
-     * Sets the return type.
-     * @param textOrWriterFunction - Text to set as the return type.
-     */
-    setReturnType(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes this index signature.
      */
@@ -9859,13 +9841,12 @@ export interface ConstructSignatureDeclarationStructure extends ConstructSignatu
 interface ConstructSignatureDeclarationSpecificStructure {
 }
 
-export interface IndexSignatureDeclarationStructure extends IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure {
+export interface IndexSignatureDeclarationStructure extends IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, ReturnTypedNodeStructure {
 }
 
 interface IndexSignatureDeclarationSpecificStructure {
     keyName?: string;
     keyType?: string;
-    returnType: string | WriterFunction;
 }
 
 export interface InterfaceDeclarationStructure extends NamedNodeStructure, InterfaceDeclarationSpecificStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, TypeElementMemberedNodeStructure {

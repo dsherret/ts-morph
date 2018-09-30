@@ -56,22 +56,22 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getKeyType), () => {
         function doTest(code: string, expected: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getKeyType().getText()).to.equal(expected);
         }
 
-        it("should get the key type", () => {
+        it("should get", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "string");
         });
     });
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getKeyTypeNode), () => {
         function doTest(code: string, expectedName: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getKeyTypeNode().getText()).to.equal(expectedName);
         }
 
-        it("should get the key type node", () => {
+        it("should get", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "string");
         });
     });
@@ -83,12 +83,12 @@ describe(nameof(IndexSignatureDeclaration), () => {
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
-        it("should set the key type", () => {
+        it("should set", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "number", "interface Identifier { [keyName: number]: number; }");
         });
 
         function doThrowTest(name: string) {
-            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo("interface Identifier { [keyName: string]: number; }");
+            const { firstIndexSignature } = getFirstIndexSignatureWithInfo("interface Identifier { [keyName: string]: number; }");
             expect(() => firstIndexSignature.setKeyType(name)).to.throw(errors.ArgumentNullOrWhitespaceError);
         }
 
@@ -103,19 +103,31 @@ describe(nameof(IndexSignatureDeclaration), () => {
             expect(firstIndexSignature.getReturnType().getText()).to.equal(expected);
         }
 
-        it("should get the return type", () => {
+        it("should get when it exists", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "number");
+        });
+
+        it("should get when it doesn't exist", () => {
+            doTest("interface Identifier { [keyName: string]; }", "any");
         });
     });
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getReturnTypeNode), () => {
-        function doTest(code: string, expectedName: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
-            expect(firstIndexSignature.getReturnTypeNode().getText()).to.equal(expectedName);
+        function doTest(code: string, expectedName: string | undefined) {
+            const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
+            const returnTypeNode = firstIndexSignature.getReturnTypeNode();
+            if (expectedName == null)
+                expect(returnTypeNode).to.be.undefined;
+            else
+                expect(returnTypeNode!.getText()).to.equal(expectedName);
         }
 
-        it("should get the return type node", () => {
+        it("should get when exists", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "number");
+        });
+
+        it("should be undefined when not exists", () => {
+            doTest("interface Identifier { [keyName: string]; }", undefined);
         });
     });
 
@@ -126,21 +138,20 @@ describe(nameof(IndexSignatureDeclaration), () => {
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
-        it("should set the return type", () => {
+        it("should set with a string", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "Date", "interface Identifier { [keyName: string]: Date; }");
         });
 
-        it("should set the return type with a writer function", () => {
+        it("should set with a writer function", () => {
             doTest("interface Identifier { [keyName: string]: number; }", writer => writer.write("Date"), "interface Identifier { [keyName: string]: Date; }");
         });
 
-        function doThrowTest(name: string) {
-            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo("interface Identifier { [keyName: string]: number; }");
-            expect(() => firstIndexSignature.setReturnType(name)).to.throw(errors.ArgumentNullOrWhitespaceError);
-        }
+        it("should set when it doesn't exist", () => {
+            doTest("interface Identifier { [keyName: string]; }", "Date", "interface Identifier { [keyName: string]: Date; }");
+        });
 
-        it("should throw when specifying an empty string", () => {
-            doThrowTest("");
+        it("should remove when specifying an empty string", () => {
+            doTest("interface Identifier { [keyName: string]: number; }", "", "interface Identifier { [keyName: string]; }");
         });
     });
 
@@ -236,6 +247,16 @@ describe(nameof(IndexSignatureDeclaration), () => {
                 keyType: "OtherType",
                 docs: [],
                 returnType: "MyType"
+            });
+        });
+
+        it("should get when doesn't have return type", () => {
+            doTest("interface Identifier { [key: string]; }", {
+                isReadonly: false,
+                keyName: "key",
+                keyType: "string",
+                docs: [],
+                returnType: undefined
             });
         });
 
