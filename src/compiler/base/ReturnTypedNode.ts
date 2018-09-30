@@ -5,7 +5,7 @@ import { Constructor, WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { getTextFromStringOrWriter, StringUtils } from "../../utils";
 import { callBaseSet } from "../callBaseSet";
-import { Node } from "../common";
+import { Node, Signature } from "../common";
 import { Type } from "../type/Type";
 import { TypeNode } from "../type/TypeNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -34,15 +34,16 @@ export interface ReturnTypedNode {
      * Removes the return type.
      */
     removeReturnType(): this;
+    /**
+     * Gets the signature of the node from the type checker.
+     */
+    getSignature(): Signature;
 }
 
 export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionType>>(Base: T): Constructor<ReturnTypedNode> & T {
     return class extends Base implements ReturnTypedNode {
         getReturnType() {
-            const signature = this.context.typeChecker.getSignatureFromNode(this);
-            if (signature == null)
-                throw new errors.NotImplementedError("Expected the index signature to have a type checker signature.");
-            return signature.getReturnType();
+            return this.getSignature().getReturnType();
         }
 
         getReturnTypeNode() {
@@ -81,6 +82,23 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
             }
         }
 
+        removeReturnType() {
+            const returnTypeNode = this.getReturnTypeNode();
+            if (returnTypeNode == null)
+                return this;
+
+            const colonToken = returnTypeNode.getPreviousSiblingIfKindOrThrow(SyntaxKind.ColonToken);
+            removeChildren({ children: [colonToken, returnTypeNode], removePrecedingSpaces: true });
+            return this;
+        }
+
+        getSignature() {
+            const signature = this.context.typeChecker.getSignatureFromNode(this);
+            if (signature == null)
+                throw new errors.NotImplementedError("Expected the node to have a signature.");
+            return signature;
+        }
+
         set(structure: Partial<ReturnTypedNodeStructure>) {
             callBaseSet(Base.prototype, this, structure);
 
@@ -89,16 +107,6 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
             else if (structure.hasOwnProperty(nameof(structure.returnType)))
                 this.removeReturnType();
 
-            return this;
-        }
-
-        removeReturnType() {
-            const returnTypeNode = this.getReturnTypeNode();
-            if (returnTypeNode == null)
-                return this;
-
-            const colonToken = returnTypeNode.getPreviousSiblingIfKindOrThrow(SyntaxKind.ColonToken);
-            removeChildren({ children: [colonToken, returnTypeNode], removePrecedingSpaces: true });
             return this;
         }
 

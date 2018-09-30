@@ -2808,6 +2808,10 @@ export interface ReturnTypedNode {
      * Removes the return type.
      */
     removeReturnType(): this;
+    /**
+     * Gets the signature of the node from the type checker.
+     */
+    getSignature(): Signature;
 }
 
 declare type ReturnTypedNodeExtensionType = Node<ts.SignatureDeclaration>;
