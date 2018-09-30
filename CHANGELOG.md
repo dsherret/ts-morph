@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="16.0.1"></a>
+## [16.0.1](https://github.com/dsherret/ts-simple-ast/compare/16.0.0...16.0.1) (2018-09-30)
+
+
+### Bug Fixes
+
+* More robust directory creation. ([21ccc2e](https://github.com/dsherret/ts-simple-ast/commit/21ccc2e))
+
+
+
 <a name="16.0.0"></a>
 # [16.0.0](https://github.com/dsherret/ts-simple-ast/compare/15.1.0...16.0.0) (2018-09-30)
 
