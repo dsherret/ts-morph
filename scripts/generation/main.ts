@@ -6,29 +6,67 @@ import { createKindToNodeMappings } from "./createKindToNodeMappings";
 import { createCompilerNodeBrandPropertyNamesType } from "./createCompilerNodeBrandPropertyNamesType";
 import { createCompilerNodeToWrappedType } from "./createCompilerNodeToWrappedType";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
+import { createDeclarationFile } from "./createDeclarationFile";
 import { InspectorFactory } from "../inspectors";
 
-// setup
+const args = process.argv.slice(2);
+const originalArgs = [...args];
 const factory = new InspectorFactory();
 const inspector = factory.getTsSimpleAstInspector();
 const tsInspector = factory.getTsInspector();
 
-// create
-console.log("Creating get structure functions...");
-createGetStructureFunctions(inspector.getStructures());
-console.log("Creating type guards utility class...");
-createTypeGuardsUtility(inspector);
-console.log("Creating structure printer factory...");
-createStructurePrinterFactory(inspector);
-console.log("Creating code block writer file...");
-createCodeBlockWriterFile(inspector);
-console.log("Creating compiler api layer...");
-createCompilerApiLayer(factory);
-console.log("Creating kind to node mappings...");
-createKindToNodeMappings(inspector, tsInspector);
-console.log("Creating compiler node brand property names type...");
-createCompilerNodeBrandPropertyNamesType(tsInspector);
-console.log("Creating compiler node to wrapped type...");
-createCompilerNodeToWrappedType(inspector);
+if (checkHasArg("create-get-structure-functions")) {
+    console.log("Creating get structure functions...");
+    createGetStructureFunctions(inspector.getStructures());
+}
+if (checkHasArg("create-type-guards")) {
+    console.log("Creating type guards utility class...");
+    createTypeGuardsUtility(inspector);
+}
+if (checkHasArg("create-structure-printer-factory")) {
+    console.log("Creating structure printer factory...");
+    createStructurePrinterFactory(inspector);
+}
+if (checkHasArg("create-code-block-writer-file")) {
+    console.log("Creating code block writer file...");
+    createCodeBlockWriterFile(inspector);
+}
+if (checkHasArg("create-compiler-api-layer")) {
+    console.log("Creating compiler api layer...");
+    createCompilerApiLayer(factory);
+    console.log("Creating compiler node brand property names type...");
+    createCompilerNodeBrandPropertyNamesType(tsInspector);
+}
+if (checkHasArg("create-kind-to-node-mappings")) {
+    console.log("Creating kind to node mappings...");
+    createKindToNodeMappings(inspector, tsInspector);
+}
+if (checkHasArg("create-compiler-node-to-wrapped-type")) {
+    console.log("Creating compiler node to wrapped type...");
+    createCompilerNodeToWrappedType(inspector);
+}
+if (checkHasExplicitArg("create-declaration-file")) {
+    console.log("Creating declaration file...");
+    createDeclarationFile();
+}
+
+if (args.length > 0)
+    console.error(`Unknown args: ${args}`);
 
 inspector.getProject().save();
+
+function checkHasArg(argName: string) {
+    if (originalArgs.length === 0)
+        return true; // run all
+
+    return checkHasExplicitArg(argName);
+}
+
+function checkHasExplicitArg(argName: string) {
+    const index = args.indexOf(argName);
+    if (index === -1)
+        return false;
+
+    args.splice(index, 1);
+    return true;
+}
