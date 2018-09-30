@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { VariableDeclarationKind } from "../../compiler/variable/VariableDeclarationKind";
+import { VariableDeclarationKind } from "../../compiler/ast/variable/VariableDeclarationKind";
 import { VariableStatementStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";

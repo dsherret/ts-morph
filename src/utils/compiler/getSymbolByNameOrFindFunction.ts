@@ -1,4 +1,4 @@
-﻿import { Symbol } from "../../compiler/common/Symbol";
+﻿import { Symbol } from "../../compiler/symbols/Symbol";
 import { ArrayUtils } from "../ArrayUtils";
 
 // todo: merge with getNamedNodeByNameOrFindFunction

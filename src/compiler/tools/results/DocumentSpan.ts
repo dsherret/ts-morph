@@ -1,7 +1,7 @@
-import { SourceFile, Node } from "../../../compiler";
 import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
+import { SourceFile, Node } from "../../ast";
 import { TextSpan } from "./TextSpan";
 
 /**

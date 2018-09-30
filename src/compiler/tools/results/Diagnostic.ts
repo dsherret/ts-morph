@@ -1,7 +1,7 @@
-import { SourceFile } from "../../../compiler";
-import { Memoize } from "../../../utils";
 import { ProjectContext } from "../../../ProjectContext";
 import { DiagnosticCategory, ts } from "../../../typescript";
+import { Memoize } from "../../../utils";
+import { SourceFile } from "../../ast";
 import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
 
 /**

@@ -1,7 +1,7 @@
 import { ProjectContext } from "../../ProjectContext";
 import { ModuleResolutionKind, ts } from "../../typescript";
 import * as tsInternal from "../../typescript/tsInternal";
-import { SourceFile } from "../module";
+import { SourceFile } from "../ast/module";
 import { Diagnostic, DiagnosticWithLocation, EmitResult, MemoryEmitResult, MemoryEmitResultFile } from "./results";
 import { TypeChecker } from "./TypeChecker";
 
