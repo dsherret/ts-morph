@@ -100,31 +100,6 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forExportAssignment(): structurePrinters.ExportAssignmentStructurePrinter {
-        return new structurePrinters.ExportAssignmentStructurePrinter(this);
-    }
-
-    @Memoize
-    forExportDeclaration(): structurePrinters.ExportDeclarationStructurePrinter {
-        return new structurePrinters.ExportDeclarationStructurePrinter(this);
-    }
-
-    @Memoize
-    forImportDeclaration(): structurePrinters.ImportDeclarationStructurePrinter {
-        return new structurePrinters.ImportDeclarationStructurePrinter(this);
-    }
-
-    @Memoize
-    forNamedImportExportSpecifier(): structurePrinters.NamedImportExportSpecifierStructurePrinter {
-        return new structurePrinters.NamedImportExportSpecifierStructurePrinter(this);
-    }
-
-    @Memoize
-    forSourceFile(options: { isAmbient: boolean; }): structurePrinters.SourceFileStructurePrinter {
-        return new structurePrinters.SourceFileStructurePrinter(this, options);
-    }
-
-    @Memoize
     forFunctionDeclaration(options: { isAmbient: boolean; }): structurePrinters.FunctionDeclarationStructurePrinter {
         return new structurePrinters.FunctionDeclarationStructurePrinter(this, options);
     }
@@ -190,8 +165,33 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forExportAssignment(): structurePrinters.ExportAssignmentStructurePrinter {
+        return new structurePrinters.ExportAssignmentStructurePrinter(this);
+    }
+
+    @Memoize
+    forExportDeclaration(): structurePrinters.ExportDeclarationStructurePrinter {
+        return new structurePrinters.ExportDeclarationStructurePrinter(this);
+    }
+
+    @Memoize
+    forImportDeclaration(): structurePrinters.ImportDeclarationStructurePrinter {
+        return new structurePrinters.ImportDeclarationStructurePrinter(this);
+    }
+
+    @Memoize
     forNamespaceDeclaration(options: { isAmbient: boolean; }): structurePrinters.NamespaceDeclarationStructurePrinter {
         return new structurePrinters.NamespaceDeclarationStructurePrinter(this, options);
+    }
+
+    @Memoize
+    forNamedImportExportSpecifier(): structurePrinters.NamedImportExportSpecifierStructurePrinter {
+        return new structurePrinters.NamedImportExportSpecifierStructurePrinter(this);
+    }
+
+    @Memoize
+    forSourceFile(options: { isAmbient: boolean; }): structurePrinters.SourceFileStructurePrinter {
+        return new structurePrinters.SourceFileStructurePrinter(this, options);
     }
 
     @Memoize

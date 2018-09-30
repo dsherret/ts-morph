@@ -1113,7 +1113,6 @@ export class TypeGuards {
             case SyntaxKind.SetAccessor:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
-            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
@@ -1123,6 +1122,7 @@ export class TypeGuards {
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.MethodSignature:
             case SyntaxKind.PropertySignature:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.ExpressionStatement:
             case SyntaxKind.LabeledStatement:
@@ -1452,8 +1452,8 @@ export class TypeGuards {
      */
     static isModuledNode(node: compiler.Node): node is compiler.ModuledNode & compiler.ModuledNodeExtensionType {
         switch (node.getKind()) {
-            case SyntaxKind.SourceFile:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SourceFile:
                 return true;
             default:
                 return false;
@@ -1484,9 +1484,9 @@ export class TypeGuards {
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.MetaProperty:
             case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.JsxAttribute:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
@@ -1849,7 +1849,6 @@ export class TypeGuards {
             case SyntaxKind.EnumMember:
             case SyntaxKind.MetaProperty:
             case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.Parameter:
@@ -1857,6 +1856,7 @@ export class TypeGuards {
             case SyntaxKind.MethodSignature:
             case SyntaxKind.PropertySignature:
             case SyntaxKind.JsxAttribute:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
@@ -1894,7 +1894,6 @@ export class TypeGuards {
             case SyntaxKind.EnumMember:
             case SyntaxKind.MetaProperty:
             case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.Parameter:
@@ -1902,6 +1901,7 @@ export class TypeGuards {
             case SyntaxKind.MethodSignature:
             case SyntaxKind.PropertySignature:
             case SyntaxKind.JsxAttribute:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
@@ -1937,6 +1937,7 @@ export class TypeGuards {
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.CallSignature:
             case SyntaxKind.ConstructSignature:
+            case SyntaxKind.IndexSignature:
             case SyntaxKind.MethodSignature:
             case SyntaxKind.ConstructorType:
             case SyntaxKind.FunctionType:
@@ -2051,11 +2052,11 @@ export class TypeGuards {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ExportAssignment:
             case SyntaxKind.ExportDeclaration:
             case SyntaxKind.ImportDeclaration:
             case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
@@ -2094,12 +2095,12 @@ export class TypeGuards {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
-            case SyntaxKind.SourceFile:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SourceFile:
             case SyntaxKind.Block:
             case SyntaxKind.CaseClause:
             case SyntaxKind.DefaultClause:
@@ -2233,12 +2234,12 @@ export class TypeGuards {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
             case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.SourceFile:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SourceFile:
             case SyntaxKind.Block:
             case SyntaxKind.CaseBlock:
             case SyntaxKind.CaseClause:

@@ -54,14 +54,6 @@ export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ArrayBin
     T extends ts.TypeOfExpression ? compiler.TypeOfExpression :
     T extends ts.VoidExpression ? compiler.VoidExpression :
     T extends ts.YieldExpression ? compiler.YieldExpression :
-    T extends ts.ExportAssignment ? compiler.ExportAssignment :
-    T extends ts.ExportDeclaration ? compiler.ExportDeclaration :
-    T extends ts.ExportSpecifier ? compiler.ExportSpecifier :
-    T extends ts.ExternalModuleReference ? compiler.ExternalModuleReference :
-    T extends ts.ImportDeclaration ? compiler.ImportDeclaration :
-    T extends ts.ImportEqualsDeclaration ? compiler.ImportEqualsDeclaration :
-    T extends ts.ImportSpecifier ? compiler.ImportSpecifier :
-    T extends ts.SourceFile ? compiler.SourceFile :
     T extends ts.ArrowFunction ? compiler.ArrowFunction :
     T extends ts.FunctionDeclaration ? compiler.FunctionDeclaration :
     T extends ts.FunctionExpression ? compiler.FunctionExpression :
@@ -90,7 +82,15 @@ export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ArrayBin
     T extends ts.NumericLiteral ? compiler.NumericLiteral :
     T extends ts.RegularExpressionLiteral ? compiler.RegularExpressionLiteral :
     T extends ts.StringLiteral ? compiler.StringLiteral :
+    T extends ts.ExportAssignment ? compiler.ExportAssignment :
+    T extends ts.ExportDeclaration ? compiler.ExportDeclaration :
+    T extends ts.ExportSpecifier ? compiler.ExportSpecifier :
+    T extends ts.ExternalModuleReference ? compiler.ExternalModuleReference :
+    T extends ts.ImportDeclaration ? compiler.ImportDeclaration :
+    T extends ts.ImportEqualsDeclaration ? compiler.ImportEqualsDeclaration :
+    T extends ts.ImportSpecifier ? compiler.ImportSpecifier :
     T extends ts.NamespaceDeclaration ? compiler.NamespaceDeclaration :
+    T extends ts.SourceFile ? compiler.SourceFile :
     T extends ts.Block ? compiler.Block :
     T extends ts.BreakStatement ? compiler.BreakStatement :
     T extends ts.CaseBlock ? compiler.CaseBlock :
