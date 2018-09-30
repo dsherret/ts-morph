@@ -1,5 +1,5 @@
 ﻿import { FileSystemHost, VirtualFileSystemHost } from "../../fileSystem";
-import { ArrayUtils, KeyValueCache } from "../../utils";
+import { ArrayUtils, KeyValueCache, createHashSet } from "../../utils";
 
 export interface CustomFileSystemProps {
     getWriteLog(): { filePath: string; fileText: string; }[];
@@ -16,13 +16,14 @@ export function getFileSystemHostWithFiles(initialFiles: { filePath: string; tex
 class VirtualFileSystemForTest extends VirtualFileSystemHost implements CustomFileSystemProps {
     private readonly writeLog: { filePath: string; fileText: string; }[] = [];
     private readonly deleteLog: { path: string; }[] = [];
-    private readonly trackedDirectories: string[];
+    private readonly trackedDirectories = createHashSet<string>();
     private readonly files = new KeyValueCache<string, string>();
 
     constructor(private readonly initialFiles: { filePath: string; text: string; }[], private readonly initialDirectories: string[] = []) {
         super();
 
-        this.trackedDirectories = [...initialDirectories];
+        for (const item of initialDirectories)
+            this.trackedDirectories.add(item);
         initialDirectories.forEach(d => this.mkdirSync(d));
         initialFiles.forEach(file => {
             const filePath = file.filePath[0] === "/" ? file.filePath : "/" + file.filePath;
@@ -42,7 +43,7 @@ class VirtualFileSystemForTest extends VirtualFileSystemHost implements CustomFi
     }
 
     mkdirSync(dirPath: string) {
-        this.trackedDirectories.push(dirPath);
+        this.trackedDirectories.add(dirPath);
         super.mkdirSync(dirPath);
     }
 
@@ -59,14 +60,12 @@ class VirtualFileSystemForTest extends VirtualFileSystemHost implements CustomFi
     }
 
     getCreatedDirectories() {
-        return [...this.trackedDirectories].filter(path => this.initialDirectories.indexOf(path) === -1);
+        return [...this.trackedDirectories.values()].filter(path => this.initialDirectories.indexOf(path) === -1);
     }
 
     private doDelete(path: string) {
         this.deleteLog.push({ path });
         this.files.removeByKey(path);
-        const dirIndex = this.trackedDirectories.indexOf(path);
-        if (dirIndex >= 0)
-            this.trackedDirectories.splice(dirIndex, 1);
+        this.trackedDirectories.delete(path);
     }
 }

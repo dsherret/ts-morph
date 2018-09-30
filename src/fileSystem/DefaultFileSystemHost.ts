@@ -70,19 +70,24 @@ export class DefaultFileSystemHost implements FileSystemHost {
         this.fs.writeFileSync(filePath, fileText);
     }
 
-    mkdir(dirPath: string) {
-        return new Promise<void>((resolve, reject) => {
-            this.fs.mkdir(dirPath, err => {
-                if (err)
-                    reject(err);
-                else
-                    resolve();
-            });
-        });
+    async mkdir(dirPath: string) {
+        try {
+            await this.fs.mkdirp(dirPath);
+        } catch (err) {
+            // ignore if it already exists
+            if (err.code !== "EEXIST")
+                throw err;
+        }
     }
 
     mkdirSync(dirPath: string) {
-        this.fs.mkdirSync(dirPath);
+        try {
+            this.fs.mkdirpSync(dirPath);
+        } catch (err) {
+            // ignore if it already exists
+            if (err.code !== "EEXIST")
+                throw err;
+        }
     }
 
     move(srcPath: string, destPath: string) {

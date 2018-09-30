@@ -292,7 +292,7 @@ export class FileSystemWrapper {
         const operations = this.getAndClearOperationsForDir(dir);
 
         // await after the state is set
-        await this.ensureDirectoryExists(dirPath);
+        await this.ensureDirectoryExists(dir);
         for (const operation of operations)
             await this.executeOperation(operation);
     }
@@ -302,7 +302,7 @@ export class FileSystemWrapper {
         const dir = this.getOrCreateDirectory(dirPath);
         this.throwIfHasExternalOperations(dir, "save directory");
 
-        this.ensureDirectoryExistsSync(dirPath);
+        this.ensureDirectoryExistsSync(dir);
 
         for (const operation of this.getAndClearOperationsForDir(dir))
             this.executeOperationSync(operation);
@@ -625,7 +625,7 @@ export class FileSystemWrapper {
         const parentDir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
-        await this.ensureDirectoryExists(parentDir.path);
+        await this.ensureDirectoryExists(parentDir);
         await this.fileSystem.writeFile(filePath, fileText);
     }
 
@@ -634,7 +634,7 @@ export class FileSystemWrapper {
         const parentDir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
-        this.ensureDirectoryExistsSync(parentDir.path);
+        this.ensureDirectoryExistsSync(parentDir);
         this.fileSystem.writeFileSync(filePath, fileText);
     }
 
@@ -747,37 +747,28 @@ export class FileSystemWrapper {
         }
     }
 
-    private async ensureDirectoryExists(dirPath: string) {
-        if (await this.fileSystem.directoryExists(dirPath))
+    private async ensureDirectoryExists(dir: Directory) {
+        if (dir.isRootDir())
             return;
 
-        // ensure the parent exists and is not the root
-        const parentDirPath = FileUtils.getDirPath(dirPath);
-        if (parentDirPath !== dirPath && !FileUtils.isRootDirPath(parentDirPath))
-            await this.ensureDirectoryExists(parentDirPath);
-
-        // make this directory
-        this.removeMkDirOperationsForDir(dirPath);
-        await this.fileSystem.mkdir(dirPath);
+        this.removeMkDirOperationsForDir(dir);
+        await this.fileSystem.mkdir(dir.path);
     }
 
-    private ensureDirectoryExistsSync(dirPath: string) {
-        if (this.fileSystem.directoryExistsSync(dirPath))
+    private ensureDirectoryExistsSync(dir: Directory) {
+        if (dir.isRootDir())
             return;
 
-        // ensure the parent exists and is not the root
-        const parentDirPath = FileUtils.getDirPath(dirPath);
-        if (parentDirPath !== dirPath && !FileUtils.isRootDirPath(parentDirPath))
-            this.ensureDirectoryExistsSync(parentDirPath);
-
-        // make this directory
-        this.removeMkDirOperationsForDir(dirPath);
-        this.fileSystem.mkdirSync(dirPath);
+        this.removeMkDirOperationsForDir(dir);
+        this.fileSystem.mkdirSync(dir.path);
     }
 
-    private removeMkDirOperationsForDir(dirPath: string) {
-        const dir = this.getOrCreateDirectory(dirPath);
-        const parentDir = this.getOrCreateParentDirectory(dirPath);
-        ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
+    private removeMkDirOperationsForDir(dir: Directory) {
+        const parentDir = dir.getParent();
+
+        if (parentDir != null) {
+            ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
+            this.removeMkDirOperationsForDir(parentDir);
+        }
     }
 }
