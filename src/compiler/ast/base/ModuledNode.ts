@@ -343,29 +343,49 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
 
                 for (const symbol of exportSymbols)
                     for (const declaration of symbol.getDeclarations())
-                        yield* getDeclarationHandlingExportSpecifiers(declaration);
+                        yield* getDeclarationHandlingImportsAndExports(declaration);
 
-                function* getDeclarationHandlingExportSpecifiers(declaration: Node): IterableIterator<Node> {
+                function* getDeclarationHandlingImportsAndExports(declaration: Node): IterableIterator<Node> {
                     if (handledDeclarations.has(declaration))
                         return;
                     handledDeclarations.add(declaration);
 
-                    if (declaration.getKind() === SyntaxKind.ExportSpecifier) {
-                        for (const d of (declaration as ExportSpecifier).getLocalTargetDeclarations())
-                            yield* getDeclarationHandlingExportSpecifiers(d);
+                    if (TypeGuards.isExportSpecifier(declaration)) {
+                        for (const d of declaration.getLocalTargetDeclarations())
+                            yield* getDeclarationHandlingImportsAndExports(d);
                     }
-                    else if (declaration.getKind() === SyntaxKind.ExportAssignment) {
-                        const identifier = (declaration as ExportAssignment).getExpression();
+                    else if (TypeGuards.isExportAssignment(declaration)) {
+                        const identifier = declaration.getExpression();
                         if (identifier == null || identifier.getKind() !== SyntaxKind.Identifier)
+                            return;
+                        yield* getDeclarationsForSymbol(identifier.getSymbol());
+                    }
+                    else if (TypeGuards.isImportSpecifier(declaration)) {
+                        const identifier = declaration.getNameNode();
+                        const symbol = identifier.getSymbol();
+                        if (symbol == null)
+                            return;
+                        yield* getDeclarationsForSymbol(symbol.getAliasedSymbol());
+                    }
+                    else if (declaration.getKind() === SyntaxKind.ImportClause) {
+                        // default import
+                        const identifier = (declaration as Node<ts.ImportClause>).getNodeProperty("name");
+                        if (identifier == null)
                             return;
                         const symbol = identifier.getSymbol();
                         if (symbol == null)
                             return;
-                        for (const d of symbol.getDeclarations())
-                            yield* getDeclarationHandlingExportSpecifiers(d);
+                        yield* getDeclarationsForSymbol(symbol.getAliasedSymbol());
                     }
                     else
                         yield declaration;
+
+                    function* getDeclarationsForSymbol(symbol: Symbol | undefined): IterableIterator<Node> {
+                        if (symbol == null)
+                            return;
+                        for (const d of symbol.getDeclarations())
+                            yield* getDeclarationHandlingImportsAndExports(d);
+                    }
                 }
             }
         }

@@ -492,8 +492,42 @@ describe(nameof(ModuledNode), () => {
             project.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
             project.createSourceFile("subFile3.ts", `class SubClass3 {}\nexport default SubClass3;`);
 
-            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
-                .to.deep.equal(["MainFileClass", "OtherClass", "Class", "MyClass", "SubClass", "SubClass2", "SubClass3"].sort());
+            expect(mainSourceFile.getExportedDeclarations().map(d => d.getText()).sort())
+                .to.deep.equal([
+                    "export class MainFileClass {}",
+                    "export class OtherClass {}",
+                    "export class Class {}",
+                    "export class MyClass {}",
+                    "export class SubClass {}",
+                    "export class SubClass2 {}",
+                    "class SubClass3 {}"].sort());
+        });
+
+        it("should get the original declaration of one that's imported then exported", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", `import { Test } from "./Test"; export { Test };`);
+            project.createSourceFile("Test.ts", `export class Test {}`);
+
+            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
+                .to.deep.equal(["export class Test {}"].sort());
+        });
+
+        it("should get the original declaration of one that's imported on a different name then exported", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", `import { Test as NewTest } from "./Test"; export { NewTest };`);
+            project.createSourceFile("Test.ts", `export class Test {}`);
+
+            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
+                .to.deep.equal(["export class Test {}"].sort());
+        });
+
+        it("should get the original declaration of one that's imported on a default import then exported", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", `import Test from "./Test"; export { Test };`);
+            project.createSourceFile("Test.ts", `export default class Test {}`);
+
+            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
+                .to.deep.equal(["export default class Test {}"].sort());
         });
 
         function doTest(text: string, expectedDeclarationNames: string[]) {
