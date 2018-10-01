@@ -1,4 +1,4 @@
-﻿import Project, { FunctionDeclaration, ClassDeclaration, Node, SourceFile, MethodDeclaration, TypeGuards, Decorator,
+﻿import { Project, FunctionDeclaration, ClassDeclaration, Node, SourceFile, MethodDeclaration, TypeGuards, Decorator,
     EnumDeclaration, EnumMember, ExportDeclaration, ExportSpecifier, ImportDeclaration, ImportSpecifier,
     InterfaceDeclaration, ShorthandPropertyAssignment, SpreadAssignment, ObjectLiteralExpression, ParameterDeclaration,
     Type, Symbol, Signature, TypeFormatFlags, NamespaceDeclaration, Directory, Diagnostic, DiagnosticMessageChain,

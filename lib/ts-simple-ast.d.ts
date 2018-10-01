@@ -559,8 +559,6 @@ export declare class Project {
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
 }
 
-export default Project;
-
 export interface SourceFileCreateOptions {
     overwrite?: boolean;
 }
@@ -9984,3 +9982,6 @@ interface TypeParameterDeclarationSpecificStructure {
 
 export * from "./typescript/typescript";
 export * from "./codeBlockWriter/code-block-writer";
+
+/** @deprecated Use the named export "Project" */
+export default Project;

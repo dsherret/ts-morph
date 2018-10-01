@@ -36,7 +36,7 @@ Work in progress: https://dsherret.github.io/ts-simple-ast/
 ## Example
 
 ```ts
-import Project from "ts-simple-ast";
+import { Project } from "ts-simple-ast";
 
 // initialize
 const project = new Project();

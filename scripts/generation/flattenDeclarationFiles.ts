@@ -12,6 +12,7 @@ export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) 
     const compilerApiFile = project.getSourceFileOrThrow("dist/typescript/typescript.d.ts");
     const codeBlockWriterFile = project.getSourceFileOrThrow("dist/codeBlockWriter/code-block-writer.d.ts");
     const exportedDeclarations = mainFile.getExportedDeclarations();
+
     mainFile.removeText();
 
     for (let declaration of exportedDeclarations) {
@@ -37,9 +38,11 @@ export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) 
 
     mainFile.addExportDeclaration({ moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(compilerApiFile) });
     mainFile.addExportDeclaration({ moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(codeBlockWriterFile) });
+    // todo: no JSDoc? seems like TypeScript declaration file says no, but the compiler parses it anyway
+    const defaultExport = mainFile.addExportAssignment({ expression: "Project", isExportEquals: false });
+    mainFile.insertText(defaultExport.getStart(), writer => writer.write(`/** @deprecated Use the named export "Project" */`).newLine());
 
     // update the main.d.ts file
-    mainFile.getClassOrThrow("Project").setIsDefaultExport(true);
     mainFile.replaceWithText(mainFile.getFullText().replace(/compiler\.([A-Za-z]+)/g, "$1"));
 
     definitionFiles.filter(f => f !== mainFile).forEach(f => f.delete());

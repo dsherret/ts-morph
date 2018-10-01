@@ -45,7 +45,7 @@ Use the `sourceFile.isSaved()` method that will tell you if the file is saved to
 The `sourceFile.delete()` method will queue up deletions to the file system. When done call `project.save()`. For example:
 
 ```ts
-import Project from "ts-simple-ast";
+import { Project } from "ts-simple-ast";
 
 // queue up all the source files to be deleted
 const project = new Project();

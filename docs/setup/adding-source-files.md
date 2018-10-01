@@ -11,7 +11,7 @@ You will need to populate the `project` object with source files.
 Source files will be added when instantiating with a `tsConfigFilePath`:
 
 ```ts
-import Project from "ts-simple-ast";
+import { Project } from "ts-simple-ast";
 
 const project = new Project({
     tsConfigFilePath: "path/to/tsconfig.json"

@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ExportDeclaration, ExportSpecifier } from "../../../compiler";
-import Project from "../../../main";
+import { Project } from "../../../Project";
 import { ExportSpecifierStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";

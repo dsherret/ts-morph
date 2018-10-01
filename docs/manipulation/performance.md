@@ -96,7 +96,7 @@ It won't be updated when manipulation happens again. Note that after doing this,
 It's possible to make sure all created nodes within a block are forgotten:
 
 ```ts
-import Project, {NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "ts-simple-ast";
+import { Project, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration } from "ts-simple-ast";
 
 const project = new Project();
 const text = "namespace Namespace { interface Interface {} class Class {} }";

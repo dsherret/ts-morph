@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import Project from "../../../main";
+import { Project } from "../../../Project";
 import { isBlankLineAtPos } from "../../../manipulation/textChecks";
 
 describe(nameof(isBlankLineAtPos), () => {
