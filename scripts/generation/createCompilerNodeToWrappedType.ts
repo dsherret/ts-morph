@@ -6,7 +6,6 @@
  */
 import { ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
     ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards, SyntaxKind } from "ts-simple-ast";
-import { hasDescendantBaseType } from "../common";
 import { TsSimpleAstInspector, WrappedNode } from "../inspectors";
 
 // this can go away once conditional types are well supported (maybe a few versions after)

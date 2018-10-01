@@ -1,4 +1,4 @@
-﻿import Project, { Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName,
+﻿import { Project, Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName,
     Directory, TypeGuards } from "ts-simple-ast";
 import { Memoize, ArrayUtils, createHashSet } from "../../src/utils";
 import { isNodeClass } from "../common";

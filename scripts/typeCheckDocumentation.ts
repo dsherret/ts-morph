@@ -1,4 +1,4 @@
-﻿import Project, { Diagnostic, SourceFile, ScriptTarget } from "ts-simple-ast";
+﻿import { Diagnostic, SourceFile } from "ts-simple-ast";
 import { getProject } from "./common";
 import { MarkDownFile, CodeBlock } from "./markdown";
 

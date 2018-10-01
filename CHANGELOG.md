@@ -10,7 +10,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 * Export Project as named export to match declaration file. ([f529801](https://github.com/dsherret/ts-simple-ast/commit/f529801))
 * Fix `sourceFile.getExportedDeclarations()` returning import identifiers in some scenarios ([295ea4a](https://github.com/dsherret/ts-simple-ast/commit/295ea4a))
-* More robust directory creation. ([21ccc2e](https://github.com/dsherret/ts-simple-ast/commit/21ccc2e))
 
 
 

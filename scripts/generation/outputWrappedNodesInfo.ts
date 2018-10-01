@@ -9,10 +9,8 @@
  */
 import * as path from "path";
 import * as fs from "fs";
-import { MethodDeclaration } from "ts-simple-ast";
 import { rootFolder } from "../config";
 import { InspectorFactory, TsNode, TsNodeProperty } from "../inspectors";
-import { ArrayUtils } from "../../src/utils";
 
 // setup
 const inspectorFactory = new InspectorFactory();

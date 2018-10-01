@@ -5,8 +5,7 @@
  * the getDescendantsOfKind, getChildrenOfKind, etc... methods.
  * ----------------------------------------------
  */
-import { ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
-    ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards, SyntaxKind } from "ts-simple-ast";
+import { ClassDeclaration, SyntaxKind } from "ts-simple-ast";
 import { hasDescendantBaseType } from "../common";
 import { TsSimpleAstInspector, TsInspector } from "../inspectors";
 

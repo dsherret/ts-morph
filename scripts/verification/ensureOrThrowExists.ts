@@ -8,7 +8,7 @@
  * unexpected happens. They also work nicely with strict null checking.
  * --------------------------------------------
  */
-import Project, { Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature, Directory } from "ts-simple-ast";
+import { Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature } from "ts-simple-ast";
 import { TsSimpleAstInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
