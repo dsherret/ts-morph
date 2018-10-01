@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="16.0.2"></a>
+## [16.0.2](https://github.com/dsherret/ts-simple-ast/compare/16.0.0...16.0.2) (2018-10-01)
+
+
+### Bug Fixes
+
+* Export Project as named export to match declaration file. ([f529801](https://github.com/dsherret/ts-simple-ast/commit/f529801))
+* Fix `sourceFile.getExportedDeclarations()` returning import identifiers in some scenarios ([295ea4a](https://github.com/dsherret/ts-simple-ast/commit/295ea4a))
+* More robust directory creation. ([21ccc2e](https://github.com/dsherret/ts-simple-ast/commit/21ccc2e))
+
+
+
 <a name="16.0.1"></a>
 ## [16.0.1](https://github.com/dsherret/ts-simple-ast/compare/16.0.0...16.0.1) (2018-09-30)
 
