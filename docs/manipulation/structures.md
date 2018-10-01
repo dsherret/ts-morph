@@ -5,7 +5,7 @@ title: Structures
 ## Structures
 
 Lightweight serializable node representations called **structures** can be retreived from and used to
-fill many `Node` objects.
+set many `Node` objects.
 
 ### Getting structure
 
