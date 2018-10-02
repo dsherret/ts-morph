@@ -20,7 +20,7 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector, tsInsp
     // add imports
     kindToNodeMappingsFile.addImportDeclaration({
         namespaceImport: "compiler",
-        moduleSpecifier: kindToNodeMappingsFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/compiler/index.ts"))
+        moduleSpecifier: kindToNodeMappingsFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/compiler/ast/index.ts"))
     });
     kindToNodeMappingsFile.addImportDeclaration({
         namedImports: ["SyntaxKind"],
