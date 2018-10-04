@@ -1,6 +1,5 @@
 ﻿import { createGetStructureFunctions } from "./createGetStructureFunctions";
 import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
-import { createCompilerApiLayer } from "./createCompilerApiLayer";
 import { createCodeBlockWriterFile } from "./createCodeBlockWriterFile";
 import { createKindToNodeMappings } from "./createKindToNodeMappings";
 import { createCompilerNodeBrandPropertyNamesType } from "./createCompilerNodeBrandPropertyNamesType";
@@ -32,8 +31,6 @@ if (checkHasArg("create-code-block-writer-file")) {
     createCodeBlockWriterFile(inspector);
 }
 if (checkHasArg("create-compiler-api-layer")) {
-    console.log("Creating compiler api layer...");
-    createCompilerApiLayer(factory);
     console.log("Creating compiler node brand property names type...");
     createCompilerNodeBrandPropertyNamesType(tsInspector);
 }
