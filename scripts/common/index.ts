@@ -1,6 +1,7 @@
 export * from "./cloning";
 export * from "./execScript";
 export * from "./getDefinitionProject";
+export * from "./getDevCompilerVersions";
 export * from "./getProject";
 export * from "./hasInternalDocTag";
 export * from "./isNodeClass";

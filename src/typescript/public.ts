@@ -1,7 +1,7 @@
 // flattened typescript exports
 import { SyntaxKind, ScriptTarget, ScriptKind, LanguageVariant, EmitHint, JsxEmit, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags,
-    ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, IndentStyle, CompilerOptions, EditorSettings, MapLike } from "typescript";
-import * as ts from "typescript";
+    ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, IndentStyle, CompilerOptions, EditorSettings, MapLike } from "typescript-3.0.3";
+import * as ts from "typescript-3.0.3";
 
 export {
     ts,
