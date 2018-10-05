@@ -23,7 +23,13 @@ export function createCompilerNodeBrandPropertyNamesType(tsInspector: TsInspecto
     sourceFile.addTypeAlias({
         isExported: true,
         name: typeAliasName,
-        type: brandNames.map(n => `"${n}"`).join(" | ")
+        type: writer => {
+            for (let i = 0; i < brandNames.length; i++) {
+                if (i > 0)
+                    writer.write(" |").newLine().indent(); // todo: remove indent when #452 is fixed
+                writer.quote(brandNames[i]);
+            }
+        }
     });
 
     function removeTypeAliasIfExists(name: string) {
