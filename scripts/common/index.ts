@@ -1,3 +1,4 @@
+export * from "./changeTypeScriptVersion";
 export * from "./cloning";
 export * from "./execScript";
 export * from "./getDefinitionProject";

@@ -2,11 +2,11 @@ import { Project } from "ts-simple-ast";
 import * as path from "path";
 import { rootFolder } from "../config";
 
-export function changeTestTypeScriptVersion(version: string) {
+export function changeTypeScriptVersion(version: string) {
     setModuleSpecifierValue(`typescript-${version}`);
 }
 
-export function resetTestTypeScriptVersion() {
+export function resetTypeScriptVersion() {
     setModuleSpecifierValue("typescript");
 }
 
