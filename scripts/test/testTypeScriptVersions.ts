@@ -1,12 +1,11 @@
 import { execNpmScript, getDevCompilerVersions } from "../common";
-import { changeTestTypeScriptVersion, resetTestTypeScriptVersion } from "./changeTestTypeScriptVersion"
+import { changeTestTypeScriptVersion, resetTestTypeScriptVersion } from "./changeTestTypeScriptVersion";
 
 async function run() {
     try {
         for (const { version } of getDevCompilerVersions()) {
-            console.log(`Changing to version ${version}...`);
+            console.log(`Running tests for version ${version}...`);
             changeTestTypeScriptVersion(version);
-            console.log(`Running tests...`);
             await execNpmScript("test");
         }
 
