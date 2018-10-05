@@ -1,6 +1,7 @@
 ﻿import { expect } from "chai";
 import { JSDoc } from "../../../compiler";
 import { JSDocStructure } from "../../../structures";
+import { ts } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(JSDoc), () => {
@@ -84,8 +85,11 @@ describe(nameof(JSDoc), () => {
         });
 
         it("should return the tags when they exist", () => {
-            doTest("/**\n * Description\n * @param test - Test\n * @returns A value\n */function identifier() {}",
-                ["@param test - Test\n * ", "@returns "]);
+            const text = "/**\n * Description\n * @param test - Test\n * @returns A value\n */function identifier() {}";
+            if (ts.version === "3.0.1" || ts.version === "3.0.3")
+                doTest(text, ["@param test - Test\n * ", "@returns "]);
+            else
+                doTest(text, ["@param test - Test\n * ", "@returns"]);
         });
     });
 
