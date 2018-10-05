@@ -13,7 +13,7 @@
     "build": "rimraf dist && npx ttsc",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha --opts mocha.opts",
     "test-ts-versions": "ts-node --transpileOnly scripts/test/testTypeScriptVersions",
-    "test-coverage": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
+    "test-coverage": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" nyc --reporter=lcov mocha --opts mocha.opts",
     "code-generate": "ts-node --transpileOnly --compiler ttypescript --project tsconfig.scripts.json scripts/generation/main",
     "refactor": "ts-node --transpileOnly scripts/refactor",
     "output-wrapped-nodes": "ts-node --transpileOnly scripts/generation/outputWrappedNodesInfo",
