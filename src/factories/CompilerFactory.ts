@@ -5,7 +5,7 @@ import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
-import { SyntaxKind, ScriptTarget, ts, TypeFlags } from "../typescript";
+import { SyntaxKind, ts, TypeFlags } from "../typescript";
 import { replaceSourceFileForCacheUpdate } from "../manipulation";
 import { ArrayUtils, EventContainer, FileUtils, KeyValueCache, WeakCache, StringUtils } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
@@ -35,7 +35,6 @@ export class CompilerFactory {
     private readonly nodeCache = new ForgetfulNodeCache();
     private readonly directoryCache: DirectoryCache;
     private readonly sourceFileAddedEventContainer = new EventContainer<SourceFile>();
-    private readonly sourceFileMovedEventContainer = new EventContainer<SourceFile>();
     private readonly sourceFileRemovedEventContainer = new EventContainer<SourceFile>();
 
     readonly documentRegistry: DocumentRegistry;

@@ -7,7 +7,9 @@ export function execScript(command: string) {
             cwd: rootFolder
         }, (err, stdout, stderr) => {
             if (err) {
-                reject(err)
+                console.log(stdout);
+                console.log(stderr);
+                reject(err);
                 return;
             }
             if (stderr) {
@@ -21,8 +23,4 @@ export function execScript(command: string) {
 
 export function execNpmScript(scriptName: string) {
     return execScript(`npm run ${scriptName}`);
-}
-
-export function execYarnInstall(packageName: string, version: string) {
-    return execScript(`yarn add ${packageName}@${version}`);
 }

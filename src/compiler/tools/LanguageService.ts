@@ -9,7 +9,6 @@ import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
-import { DocumentRegistry } from "../../factories/DocumentRegistry";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
