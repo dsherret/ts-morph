@@ -5,6 +5,7 @@ before_script:
     - npm run lint
 script:
     - npm run ensure-no-project-compile-errors
+    - npm run package
     - npm run test-coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
     - npm run test-ts-versions
 after_script:
