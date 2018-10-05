@@ -2,12 +2,16 @@ import { execNpmScript, getDevCompilerVersions, changeTypeScriptVersion, resetTy
 
 async function run() {
     try {
-        for (const { version } of getDevCompilerVersions()) {
-            console.log(`--- TypeScript Version ${version} ---`);
+        const versions = getDevCompilerVersions().map(v => v.version);
+        for (let i = 0; i < versions.length; i++) {
+            if (i > 0)
+                console.log("");
+
+            console.log(`--- TypeScript Version ${versions[i]} ---`);
+            changeTypeScriptVersion(versions[i]);
             console.log(`Type checking...`);
             await execNpmScript("type-check-library");
             console.log(`Running tests...`);
-            changeTypeScriptVersion(version);
             await execNpmScript("test");
         }
 
