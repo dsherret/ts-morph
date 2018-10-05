@@ -6,5 +6,6 @@ export * from "./getDevCompilerVersions";
 export * from "./getProject";
 export * from "./hasInternalDocTag";
 export * from "./isNodeClass";
+export * from "./printDiagnostics";
 export * from "./removeImportTypes";
 export * from "./typeHelpers";

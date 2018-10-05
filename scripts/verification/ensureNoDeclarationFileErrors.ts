@@ -8,23 +8,17 @@
  * declaration file doesn't have errors.
  * ---------------------------------------------------
  */
-import { getDefinitionProject } from "../common";
+import { getDefinitionProject, printDiagnostics } from "../common";
 
 const project = getDefinitionProject();
 
 if (project.getSourceFiles().length === 0)
     throw new Error("Could not find any source files.");
 
-const problems = project.getPreEmitDiagnostics().map(d => {
-    let text = "";
-    if (d.getSourceFile() != null)
-        text += `${d.getSourceFile()!.getFilePath()} ${d.getStart()}: `;
-    text += d.getMessageText();
-    return text;
-});
+const diagnostics = project.getPreEmitDiagnostics();
 
-if (problems.length > 0) {
-    console.log(problems);
+if (diagnostics.length > 0) {
+    printDiagnostics(diagnostics);
     console.error("There were declaration file issues!");
     process.exit(1);
 }
