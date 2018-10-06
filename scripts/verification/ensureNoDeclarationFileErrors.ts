@@ -8,9 +8,9 @@
  * declaration file doesn't have errors.
  * ---------------------------------------------------
  */
-import { getDefinitionProject, printDiagnostics } from "../common";
+import { getDeclarationProject, printDiagnostics } from "../common";
 
-const project = getDefinitionProject();
+const project = getDeclarationProject();
 
 if (project.getSourceFiles().length === 0)
     throw new Error("Could not find any source files.");

@@ -1,7 +1,7 @@
 {
     "extends": "./tsconfig.common.json",
     "compilerOptions": {
-        "declaration": true,
+        "declaration": false,
         "strict": true,
         "rootDir": "./src",
         "outDir": "./dist",
@@ -12,6 +12,8 @@
         "./lib",
         "./docs",
         "./dist-scripts",
+        "./dist-declarations",
+        "./dist",
         "node_modules"
     ]
 }

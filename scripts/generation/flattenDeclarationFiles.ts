@@ -7,8 +7,8 @@
 import { Project, SourceFile, TypeGuards, SyntaxKind } from "ts-simple-ast";
 
 export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) {
-    const declarationFiles = project.getSourceFiles(["dist/**/*.d.ts", "!dist/codeBlockWriter/code-block-writer.d.ts"]);
-    const codeBlockWriterFile = project.getSourceFileOrThrow("dist/codeBlockWriter/code-block-writer.d.ts");
+    const declarationFiles = project.getSourceFiles(["dist-declarations/**/*.d.ts", "!dist-declarations/codeBlockWriter/code-block-writer.d.ts"]);
+    const codeBlockWriterFile = project.getSourceFileOrThrow("dist-declarations/codeBlockWriter/code-block-writer.d.ts");
     const exportedDeclarations = mainFile.getExportedDeclarations().filter(d => d.getSourceFile() !== mainFile);
     const flattenedCompilerApiExports = [
         "SyntaxKind", "CompilerOptions", "EmitHint", "ScriptKind", "NewLineKind", "LanguageVariant", "ScriptTarget",

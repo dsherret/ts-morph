@@ -30,7 +30,7 @@ if (checkHasArg("create-code-block-writer-file")) {
     console.log("Creating code block writer file...");
     createCodeBlockWriterFile(inspector);
 }
-if (checkHasArg("create-compiler-api-layer")) {
+if (checkHasArg("create-compiler-inspected-types")) {
     console.log("Creating compiler node brand property names type...");
     createCompilerNodeBrandPropertyNamesType(tsInspector);
 }

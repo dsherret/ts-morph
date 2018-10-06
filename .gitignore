@@ -15,5 +15,6 @@
 /docs/Gemfile.lock
 /docs/_site
 /dist-scripts
+/dist-declarations
 /.nyc_output
 /npm-debug.log
