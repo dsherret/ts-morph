@@ -56,6 +56,7 @@ export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.HeritageClause]: compiler.HeritageClause,
     [SyntaxKind.Identifier]: compiler.Identifier,
     [SyntaxKind.IfStatement]: compiler.IfStatement,
+    [SyntaxKind.ImportClause]: compiler.ImportClause,
     [SyntaxKind.ImportDeclaration]: compiler.ImportDeclaration,
     [SyntaxKind.ImportEqualsDeclaration]: compiler.ImportEqualsDeclaration,
     [SyntaxKind.ImportSpecifier]: compiler.ImportSpecifier,

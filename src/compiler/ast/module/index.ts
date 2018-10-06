@@ -3,6 +3,7 @@ export * from "./ExportDeclaration";
 export * from "./ExportSpecifier";
 export * from "./ExternalModuleReference";
 export * from "./FileSystemRefreshResult";
+export * from "./ImportClause";
 export * from "./ImportDeclaration";
 export * from "./ImportEqualsDeclaration";
 export * from "./ImportSpecifier";

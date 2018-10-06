@@ -857,6 +857,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ImportClause.
+     * @param node - Node to check.
+     */
+    static isImportClause(node: compiler.Node): node is compiler.ImportClause {
+        return node.getKind() === SyntaxKind.ImportClause;
+    }
+
+    /**
      * Gets if the node is a ImportDeclaration.
      * @param node - Node to check.
      */
@@ -1911,6 +1919,7 @@ export class TypeGuards {
             case SyntaxKind.JsxAttribute:
             case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.NamespaceImport:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:

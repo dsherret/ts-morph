@@ -86,6 +86,7 @@ export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ArrayBin
     T extends ts.ExportDeclaration ? compiler.ExportDeclaration :
     T extends ts.ExportSpecifier ? compiler.ExportSpecifier :
     T extends ts.ExternalModuleReference ? compiler.ExternalModuleReference :
+    T extends ts.ImportClause ? compiler.ImportClause :
     T extends ts.ImportDeclaration ? compiler.ImportDeclaration :
     T extends ts.ImportEqualsDeclaration ? compiler.ImportEqualsDeclaration :
     T extends ts.ImportSpecifier ? compiler.ImportSpecifier :

@@ -3,7 +3,6 @@ import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRa
 import { ImportSpecifierStructure, ImportDeclarationStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, ModuleUtils, StringUtils, TypeGuards } from "../../../utils";
-import { Identifier, Node } from "../common";
 import { StringLiteral } from "../literal";
 import { Statement } from "../statement";
 import { ImportSpecifier } from "./ImportSpecifier";
@@ -137,7 +136,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         const importClause = this.getImportClause();
         if (importClause == null)
             return undefined;
-        return importClause.getNodeProperty("name");
+        return importClause.getDefaultImport();
     }
 
     /**
@@ -210,7 +209,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         const importClause = this.getImportClause();
         if (importClause == null)
             return this;
-        const defaultImport = importClause.getNodeProperty("name");
+        const defaultImport = importClause.getDefaultImport();
         if (defaultImport == null)
             return this;
 
@@ -245,10 +244,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         const importClause = this.getImportClause();
         if (importClause == null)
             return undefined;
-        const namespaceImport = importClause.getFirstChildByKind(SyntaxKind.NamespaceImport);
-        if (namespaceImport == null)
-            return undefined;
-        return namespaceImport.getFirstChildByKind(SyntaxKind.Identifier);
+        return importClause.getNamespaceImport();
     }
 
     /**
@@ -318,8 +314,8 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
                 });
             else if (this.getNamespaceImport() != null)
                 throw getErrorWhenNamespaceImportsExist();
-            else if (importClause.getNodeProperty("namedBindings") != null) {
-                const namedBindings = importClause.getNodeProperty("namedBindings")!;
+            else if (importClause.getNamedBindings() != null) {
+                const namedBindings = importClause.getNamedBindingsOrThrow();
                 insertIntoParentTextRange({
                     insertPos: namedBindings.getStart(),
                     replacing: {
@@ -360,10 +356,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         const importClause = this.getImportClause();
         if (importClause == null)
             return [];
-        const namedImports = importClause.getFirstChildByKind(SyntaxKind.NamedImports);
-        if (namedImports == null)
-            return [];
-        return namedImports.getChildSyntaxListOrThrow().getChildren().filter(TypeGuards.isImportSpecifier) as ImportSpecifier[];
+        return importClause.getNamedImports();
     }
 
     /**
@@ -374,8 +367,8 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         if (importClause == null)
             return this;
 
-        const namedImportsNode = importClause.getFirstChildByKind(SyntaxKind.NamedImports);
-        if (namedImportsNode == null)
+        const namedImportsNode = importClause.getNamedBindings();
+        if (namedImportsNode == null || namedImportsNode.getKind() !== SyntaxKind.NamedImports)
             return this;
 
         // ex. import defaultExport, { Export1 } from "module-name";
@@ -472,7 +465,7 @@ function setEmptyNamedImport(node: ImportDeclaration) {
         return;
     }
 
-    const replaceNode = importClause.getNodeProperty("namedBindings")!;
+    const replaceNode = importClause.getNamedBindings();
     if (replaceNode != null) {
         insertIntoParentTextRange({
             parent: importClause,
@@ -485,7 +478,7 @@ function setEmptyNamedImport(node: ImportDeclaration) {
         return;
     }
 
-    const defaultImport = importClause.getNodeProperty("name");
+    const defaultImport = importClause.getDefaultImport();
     if (defaultImport != null) {
         insertIntoParentTextRange({
             insertPos: defaultImport.getEnd(),
