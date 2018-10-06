@@ -16,7 +16,7 @@
     "test-ts-versions": "ts-node --transpileOnly scripts/test/testTypeScriptVersions",
     "test-coverage": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" nyc --reporter=lcov mocha --opts mocha.opts",
     "type-check-library": "ts-node --transpileOnly scripts/typeCheckLibrary",
-    "code-generate": "ts-node --transpileOnly --compiler ttypescript --project tsconfig.scripts.json scripts/generation/main",
+    "code-generate": "ts-node --transpileOnly --compiler ttypescript scripts/generation/main",
     "refactor": "ts-node --transpileOnly scripts/refactor",
     "output-wrapped-nodes": "ts-node --transpileOnly scripts/generation/outputWrappedNodesInfo",
     "package": "npm run build && npm run build-declarations",

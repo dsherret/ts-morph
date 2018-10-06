@@ -8,11 +8,12 @@ async function run() {
                 console.log("");
 
             console.log(`--- TypeScript Version ${versions[i]} ---`);
-            changeTypeScriptVersion(versions[i]); // todo: needs to affect declaration files
-            console.log(`Type checking declaration files...`);
-            await execNpmScript("ensure-no-declaration-file-errors");
-            console.log(`Running tests...`);
-            await execNpmScript("test");
+            changeTypeScriptVersion(versions[i]);
+            console.log(`Type checking declaration files and running tests...`);
+            await Promise.all([
+                execNpmScript("ensure-no-declaration-file-errors"),
+                execNpmScript("test")
+            ]);
         }
 
         resetTypeScriptVersion();
