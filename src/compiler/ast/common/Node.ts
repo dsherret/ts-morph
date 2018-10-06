@@ -53,6 +53,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     private _compilerNode: NodeType | undefined;
     /** @internal */
+    private _forgottenText: string | undefined;
+    /** @internal */
     private _childStringRanges: [number, number][] | undefined;
     /** @internal */
     private _leadingCommentRanges: CommentRange[] | undefined;
@@ -65,8 +67,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the underlying compiler node.
      */
     get compilerNode(): NodeType {
-        if (this._compilerNode == null)
-            throw new errors.InvalidOperationError("Attempted to get information from a node that was removed or forgotten.");
+        if (this._compilerNode == null) {
+            let message = "Attempted to get information from a node that was removed or forgotten.";
+            if (this._forgottenText != null)
+                message += `\n\nNode text: ${this._forgottenText}`;
+            throw new errors.InvalidOperationError(message);
+        }
         return this._compilerNode;
     }
 
@@ -114,14 +120,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (this.wasForgotten())
             return;
 
+        this._storeTextForForgetting();
         this.context.compilerFactory.removeNodeFromCache(this);
         this._clearInternals();
     }
 
     /**
-     * Gets if the node was forgotten.
+     * Gets if the compiler node was forgotten.
      *
-     * This will be true when the node was forgotten or removed.
+     * This will be true when the compiler node was forgotten or removed.
      */
     wasForgotten() {
         return this._compilerNode == null;
@@ -133,8 +140,30 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * WARNING: This should only be called by the compiler factory!
      */
     replaceCompilerNodeFromFactory(compilerNode: NodeType) {
+        if (compilerNode == null)
+            this._storeTextForForgetting();
         this._clearInternals();
         this._compilerNode = compilerNode;
+    }
+
+    /** @internal */
+    private _storeTextForForgetting() {
+        // check for undefined here just in case
+        const sourceFileCompilerNode = this.sourceFile && this.sourceFile.compilerNode;
+        const compilerNode = this._compilerNode;
+
+        if (sourceFileCompilerNode == null || compilerNode == null)
+            return;
+
+        this._forgottenText = getText();
+
+        function getText() {
+            const start = compilerNode!.getStart(sourceFileCompilerNode);
+            const length = compilerNode!.end - start;
+            const trimmedLength = Math.min(length, 100);
+            const text = sourceFileCompilerNode.text.substr(start, trimmedLength);
+            return trimmedLength !== length ? text + "..." : text;
+        }
     }
 
     /** @internal */
