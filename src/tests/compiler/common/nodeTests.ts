@@ -25,16 +25,32 @@ describe(nameof(Node), () => {
 
     describe(nameof<Node>(n => n.compilerNode), () => {
         it("should get the underlying compiler node", () => {
-            const {sourceFile} = getInfoFromText("enum MyEnum {}\n");
+            const { sourceFile } = getInfoFromText("enum MyEnum {}\n");
             // just compare that the texts are the same
             expect(sourceFile.getFullText()).to.equal(sourceFile.compilerNode.getFullText());
         });
 
         it("should throw an error when using a removed node", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member }\n");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member }");
             const member = firstChild.getMembers()[0];
             member.remove();
-            expect(() => member.compilerNode).to.throw();
+            expect(() => member.compilerNode).to.throw(errors.InvalidOperationError, getExpectedForgottenMessage("member"));
+        });
+
+        it("should throw an error when using a removed node and trim the message's node text when it's sufficiently long", () => {
+            const trimLength = 100;
+            const nodeText = getTestNodeText();
+            const { firstChild } = getInfoFromText<EnumDeclaration>(nodeText);
+            firstChild.remove();
+            expect(() => firstChild.compilerNode).to.throw(errors.InvalidOperationError, getExpectedForgottenMessage(nodeText.substr(0, trimLength) + "..."));
+
+            function getTestNodeText() {
+                let result = "enum MyEnum { ";
+                while (result.length < trimLength)
+                    result += `member, `;
+                result += "}";
+                return result;
+            }
         });
     });
 
@@ -882,7 +898,7 @@ class MyClass {
                 newNode = propAccess.replaceWithText(replaceText);
             expect(newNode.getText()).to.equal(getReplaceTextAsString());
             expect(sourceFile.getFullText()).to.equal(expectedText);
-            expect(() => propAccess.compilerNode).to.throw(); // should be forgotten
+            expect(propAccess.wasForgotten()).to.be.true;
 
             function getReplaceTextAsString() {
                 if (typeof replaceText === "string")
@@ -1498,4 +1514,18 @@ class MyClass {
             expect(syntaxList.getTrailingTriviaEnd()).to.equal(expectedTriviaEnd);
         });
     });
+
+    describe(nameof<Node>(n => n.forget), () => {
+        it("should throw an error when using a forgotten node", () => {
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member }");
+            const member = firstChild.getMembers()[0];
+            member.forget();
+            expect(member.wasForgotten()).to.be.true;
+            expect(() => member.compilerNode).to.throw(errors.InvalidOperationError, getExpectedForgottenMessage("member"));
+        });
+    });
+
+    function getExpectedForgottenMessage(nodeText: string) {
+        return `Attempted to get information from a node that was removed or forgotten.\n\nNode text: ${nodeText}`;
+    }
 });
