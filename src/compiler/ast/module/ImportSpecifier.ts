@@ -1,4 +1,4 @@
-import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText, removeChildren } from "../../../manipulation";
+import { insertIntoParentTextRange, removeCommaSeparatedChild, removeChildren } from "../../../manipulation";
 import { SyntaxKind, ts } from "../../../typescript";
 import { StringUtils } from "../../../utils";
 import { Node } from "../common";

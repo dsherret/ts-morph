@@ -88,6 +88,7 @@ export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.MethodDeclaration]: compiler.MethodDeclaration,
     [SyntaxKind.MethodSignature]: compiler.MethodSignature,
     [SyntaxKind.ModuleDeclaration]: compiler.NamespaceDeclaration,
+    [SyntaxKind.NamespaceImport]: compiler.NamespaceImport,
     [SyntaxKind.NewExpression]: compiler.NewExpression,
     [SyntaxKind.NonNullExpression]: compiler.NonNullExpression,
     [SyntaxKind.NotEmittedStatement]: compiler.NotEmittedStatement,

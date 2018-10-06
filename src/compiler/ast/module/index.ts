@@ -9,4 +9,5 @@ export * from "./ImportSpecifier";
 export * from "./NamespaceChildableNode";
 export * from "./NamespaceDeclaration";
 export * from "./NamespaceDeclarationKind";
+export * from "./NamespaceImport";
 export * from "./SourceFile";

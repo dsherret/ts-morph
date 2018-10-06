@@ -20,13 +20,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
         if (nameNode.getText() === name)
             return this;
 
-        const start = nameNode.getStart();
-        replaceNodeText({
-            sourceFile: this.sourceFile,
-            start,
-            replacingLength: nameNode.getWidth(),
-            newText: name
-        });
+        nameNode.replaceWithText(name);
 
         return this;
     }

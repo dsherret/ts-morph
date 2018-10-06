@@ -239,7 +239,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
     }
 
     /**
-     * Gets the namespace import, if it exists.
+     * Gets the namespace import identifier, if it exists.
      */
     getNamespaceImport() {
         const importClause = this.getImportClause();

@@ -91,6 +91,7 @@ export interface KindToNodeMappings {
     [SyntaxKind.MethodDeclaration]: compiler.MethodDeclaration;
     [SyntaxKind.MethodSignature]: compiler.MethodSignature;
     [SyntaxKind.ModuleDeclaration]: compiler.NamespaceDeclaration;
+    [SyntaxKind.NamespaceImport]: compiler.NamespaceImport;
     [SyntaxKind.NewExpression]: compiler.NewExpression;
     [SyntaxKind.NonNullExpression]: compiler.NonNullExpression;
     [SyntaxKind.NotEmittedStatement]: compiler.NotEmittedStatement;

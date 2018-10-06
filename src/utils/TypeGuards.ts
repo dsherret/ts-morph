@@ -1524,6 +1524,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a NamespaceImport.
+     * @param node - Node to check.
+     */
+    static isNamespaceImport(node: compiler.Node): node is compiler.NamespaceImport {
+        return node.getKind() === SyntaxKind.NamespaceImport;
+    }
+
+    /**
      * Gets if the node is a NeverKeyword.
      * @param node - Node to check.
      */
