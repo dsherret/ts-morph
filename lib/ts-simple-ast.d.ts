@@ -5014,18 +5014,18 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
     getElements(): Expression[];
     /**
      * Adds an element to the array.
-     * @param text - Text to add as an element.
+     * @param textOrWriterFunction - Text to add as an element.
      * @param options - Options.
      */
-    addElement(text: string, options?: {
+    addElement(textOrWriterFunction: string | WriterFunction, options?: {
         useNewLines?: boolean;
     }): Expression<ts.Expression>;
     /**
      * Adds elements to the array.
-     * @param texts - Texts to add as elements.
+     * @param textsOrWriterFunction - Texts to add as elements.
      * @param options - Options.
      */
-    addElements(texts: ReadonlyArray<string>, options?: {
+    addElements(textsOrWriterFunction: ReadonlyArray<string | WriterFunction> | WriterFunction, options?: {
         useNewLines?: boolean;
     }): Expression<ts.Expression>[];
     /**
@@ -5034,7 +5034,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
      * @param text - Text to insert as an element.
      * @param options - Options.
      */
-    insertElement(index: number, text: string, options?: {
+    insertElement(index: number, textOrWriterFunction: string | WriterFunction, options?: {
         useNewLines?: boolean;
     }): Expression<ts.Expression>;
     /**
@@ -5043,7 +5043,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
      * @param textsOrWriterFunction - Texts to insert as elements.
      * @param options - Options.
      */
-    insertElements(index: number, textsOrWriterFunction: ReadonlyArray<string> | WriterFunction, options?: {
+    insertElements(index: number, textsOrWriterFunction: ReadonlyArray<string | WriterFunction> | WriterFunction, options?: {
         useNewLines?: boolean;
     }): Expression<ts.Expression>[];
     /**

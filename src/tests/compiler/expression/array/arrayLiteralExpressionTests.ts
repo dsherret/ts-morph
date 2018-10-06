@@ -73,14 +73,20 @@ describe(nameof(ArrayLiteralExpression), () => {
             doTest("var t = [2, 3, 4]", 0, ["1"], `var t = [\n    1,\n    2, 3, 4]`, { useNewLines: true });
         });
 
-        function doWriterTest(text: string, index: number, writerFunction: WriterFunction, expectedText: string, options?: { useNewLines?: boolean; }) {
+        function doWriterTest(text: string, index: number, elements: WriterFunction | ReadonlyArray<string | WriterFunction>, expectedText: string,
+            options?: { useNewLines?: boolean; })
+        {
             const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
-            const result = arrayLiteralExpression.insertElements(index, writerFunction, options);
+            arrayLiteralExpression.insertElements(index, elements, options);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
         it("should support writing with a writer", () => {
             doWriterTest("var t = [1, 4, 5]", 1, writer => writer.writeLine("2,").write("3"), `var t = [1,\n    2,\n    3,\n    4, 5]`, { useNewLines: true });
+        });
+
+        it("should support passing in an array of writer functions and/or strings", () => {
+            doWriterTest("var t = [1, 4, 5]", 1, [writer => writer.write("2"), "3"], `var t = [1, 2, 3, 4, 5]`);
         });
     });
 

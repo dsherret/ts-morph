@@ -16,20 +16,20 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
 
     /**
      * Adds an element to the array.
-     * @param text - Text to add as an element.
+     * @param textOrWriterFunction - Text to add as an element.
      * @param options - Options.
      */
-    addElement(text: string, options?: { useNewLines?: boolean; }) {
-        return this.addElements([text], options)[0];
+    addElement(textOrWriterFunction: string | WriterFunction, options?: { useNewLines?: boolean; }) {
+        return this.addElements([textOrWriterFunction], options)[0];
     }
 
     /**
      * Adds elements to the array.
-     * @param texts - Texts to add as elements.
+     * @param textsOrWriterFunction - Texts to add as elements.
      * @param options - Options.
      */
-    addElements(texts: ReadonlyArray<string>, options?: { useNewLines?: boolean; }) {
-        return this.insertElements(this.compilerNode.elements.length, texts, options);
+    addElements(textsOrWriterFunction: ReadonlyArray<string | WriterFunction> | WriterFunction, options?: { useNewLines?: boolean; }) {
+        return this.insertElements(this.compilerNode.elements.length, textsOrWriterFunction, options);
     }
 
     /**
@@ -38,8 +38,8 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
      * @param text - Text to insert as an element.
      * @param options - Options.
      */
-    insertElement(index: number, text: string, options?: { useNewLines?: boolean; }) {
-        return this.insertElements(index, [text], options)[0];
+    insertElement(index: number, textOrWriterFunction: string | WriterFunction, options?: { useNewLines?: boolean; }) {
+        return this.insertElements(index, [textOrWriterFunction], options)[0];
     }
 
     /**
@@ -48,7 +48,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
      * @param textsOrWriterFunction - Texts to insert as elements.
      * @param options - Options.
      */
-    insertElements(index: number, textsOrWriterFunction: ReadonlyArray<string> | WriterFunction, options: { useNewLines?: boolean; } = {}) {
+    insertElements(index: number, textsOrWriterFunction: ReadonlyArray<string | WriterFunction> | WriterFunction, options: { useNewLines?: boolean; } = {}) {
         const elements = this.getElements();
         index = verifyAndGetIndex(index, elements.length);
         const useNewLines = getUseNewLines(this);
