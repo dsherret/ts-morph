@@ -709,14 +709,22 @@ describe(nameof(Project), () => {
     });
 
     describe(nameof<Project>(project => project.getSourceFileOrThrow), () => {
-        it("should throw when it can't find the source file based on a provided path", () => {
+        it("should throw when it can't find the source file based on a provided file name", () => {
             const project = new Project({ useVirtualFileSystem: true });
-            expect(() => project.getSourceFileOrThrow("some path")).to.throw();
+            expect(() => project.getSourceFileOrThrow("fileName.ts")).to.throw(errors.InvalidOperationError,
+                "Could not find source file based on the provided name or path: fileName.ts");
+        });
+
+        it("should throw when it can't find the source file based on a provided absolute path", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            expect(() => project.getSourceFileOrThrow("/fileName.ts")).to.throw(errors.InvalidOperationError,
+                "Could not find source file based on the provided name or path: /fileName.ts");
         });
 
         it("should throw when it can't find the source file based on a provided condition", () => {
             const project = new Project({ useVirtualFileSystem: true });
-            expect(() => project.getSourceFileOrThrow(s => false)).to.throw();
+            expect(() => project.getSourceFileOrThrow(s => false)).to.throw(errors.InvalidOperationError,
+                "Could not find source file based on the provided condition.");
         });
 
         it("should not throw when it finds the file", () => {
