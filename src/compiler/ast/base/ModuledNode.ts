@@ -367,9 +367,8 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                             return;
                         yield* getDeclarationsForSymbol(symbol.getAliasedSymbol());
                     }
-                    else if (declaration.getKind() === SyntaxKind.ImportClause) {
-                        // default import
-                        const identifier = (declaration as Node<ts.ImportClause>).getNodeProperty("name");
+                    else if (TypeGuards.isImportClause(declaration)) {
+                        const identifier = declaration.getDefaultImport();
                         if (identifier == null)
                             return;
                         const symbol = identifier.getSymbol();
