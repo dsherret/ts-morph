@@ -521,6 +521,29 @@ describe(nameof(ModuledNode), () => {
                 .to.deep.equal(["export class Test {}"].sort());
         });
 
+        it("should get the namespace import identifier of one that's exported from an imported namespace export that doesn't import a namespace", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", `import * as ts from "./Test"; export { ts };`);
+            project.createSourceFile("Test.ts", `export class Test {}`);
+
+            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
+                .to.deep.equal([`* as ts`].sort());
+        });
+
+        it("should get the namespace import identifier of one that's exported from an imported namespace export that imports a namespace declaration", () => {
+            // perhaps in the future this should return the namespace declarations
+            const project = new Project({ useVirtualFileSystem: true });
+            const fileSystem = project.getFileSystem();
+            fileSystem.writeFileSync("/node_modules/@types/typescript/index.d.ts", `
+declare namespace ts { const version: string; }
+declare namespace ts { const version2: string; }
+export = ts;`);
+            const mainSourceFile = project.createSourceFile("main.ts", `import * as ts from "typescript"; export { ts };`);
+
+            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
+                .to.deep.equal([`* as ts`].sort());
+        });
+
         it("should get the original declaration of one that's imported on a default import then exported", () => {
             const project = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import Test from "./Test"; export { Test };`);
