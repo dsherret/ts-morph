@@ -2,11 +2,11 @@ language: node_js
 node_js:
     - "6"
 before_script:
-    - npm run lint
-    - npm run ensure-no-project-compile-errors
-    - npm run build-declarations
+    - yarn run lint
+    - yarn run ensure-no-project-compile-errors
+    - yarn run build-declarations
 script:
-    - npm run test-coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-    - npm run test-ts-versions
+    - yarn run test-coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+    - yarn run test-ts-versions
 after_script:
-    - npm run code-verification
+    - yarn run code-verification

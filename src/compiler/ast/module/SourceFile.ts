@@ -5,9 +5,8 @@ import { getTextFromFormattingEdits, replaceNodeText, replaceSourceFileForFilePa
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { SourceFileStructure } from "../../../structures";
 import { Constructor } from "../../../types";
-import { LanguageVariant, ScriptTarget, SyntaxKind, ts } from "../../../typescript";
+import { LanguageVariant, ScriptTarget, ts } from "../../../typescript";
 import { ArrayUtils, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../../utils";
-import { Symbol } from "../../symbols";
 import { getBodyTextForStructure } from "../base/helpers";
 import { TextInsertableNode, ModuledNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -152,6 +151,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Copies this source file to the specified directory.
+     *
+     * This will modify the module specifiers in the new file, if necessary.
+     * @param dirPathOrDirectory Directory path or directory object to copy the file to.
+     * @param options Options for copying.
+     * @returns The source file the copy was made to.
+     */
+    copyToDirectory(dirPathOrDirectory: string | Directory, options?: SourceFileCopyOptions) {
+        const dirPath = typeof dirPathOrDirectory === "string" ? dirPathOrDirectory : dirPathOrDirectory.getPath();
+        return this.copy(FileUtils.pathJoin(dirPath, this.getBaseName()), options);
+    }
+
+    /**
      * Copy this source file to a new file.
      *
      * This will modify the module specifiers in the new file, if necessary.
@@ -231,6 +243,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const newSourceFile = this.copy(filePath, options);
         newSourceFile.saveSync();
         return newSourceFile;
+    }
+
+    /**
+     * Moves this source file to the specified directory.
+     *
+     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
+     * @param dirPathOrDirectory Directory path or directory object to move the file to.
+     * @param options Options for moving.
+     */
+    moveToDirectory(dirPathOrDirectory: string | Directory, options?: SourceFileMoveOptions) {
+        const dirPath = typeof dirPathOrDirectory === "string" ? dirPathOrDirectory : dirPathOrDirectory.getPath();
+        return this.move(FileUtils.pathJoin(dirPath, this.getBaseName()), options);
     }
 
     /**

@@ -180,7 +180,14 @@ export declare class Directory {
     }): DirectoryEmitResult;
     private _emitInternal;
     /**
-     * Copies a directory to a new directory.
+     * Copies the directory to a subdirectory of the specified directory.
+     * @param dirPathOrDirectory Directory path or directory object to copy the directory to.
+     * @param options Options for copying.
+     * @returns The new copied directory.
+     */
+    copyToDirectory(dirPathOrDirectory: string | Directory, options?: DirectoryCopyOptions): Directory;
+    /**
+     * Copies the directory to a new directory.
      * @param relativeOrAbsolutePath - The relative or absolute path to the new directory.
      * @param options - Options.
      * @returns The directory the copy was made to.
@@ -200,6 +207,12 @@ export declare class Directory {
      * @remarks If includeTrackedFiles is true, then it will execute the pending operations in the current directory.
      */
     copyImmediatelySync(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions): Directory;
+    /**
+     * Moves the directory to a subdirectory of the specified directory.
+     * @param dirPathOrDirectory Directory path or directory object to move the directory to.
+     * @param options Options for moving.
+     */
+    moveToDirectory(dirPathOrDirectory: string | Directory, options?: DirectoryMoveOptions): this;
     /**
      * Moves the directory to a new path.
      * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
@@ -7141,6 +7154,15 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getLengthFromLineStartAtPos(pos: number): number;
     /**
+     * Copies this source file to the specified directory.
+     *
+     * This will modify the module specifiers in the new file, if necessary.
+     * @param dirPathOrDirectory Directory path or directory object to copy the file to.
+     * @param options Options for copying.
+     * @returns The source file the copy was made to.
+     */
+    copyToDirectory(dirPathOrDirectory: string | Directory, options?: SourceFileCopyOptions): SourceFile;
+    /**
      * Copy this source file to a new file.
      *
      * This will modify the module specifiers in the new file, if necessary.
@@ -7164,6 +7186,14 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param options - Options for copying.
      */
     copyImmediatelySync(filePath: string, options?: SourceFileCopyOptions): SourceFile;
+    /**
+     * Moves this source file to the specified directory.
+     *
+     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
+     * @param dirPathOrDirectory Directory path or directory object to move the file to.
+     * @param options Options for moving.
+     */
+    moveToDirectory(dirPathOrDirectory: string | Directory, options?: SourceFileMoveOptions): SourceFile;
     /**
      * Moves this source file to a new file.
      *

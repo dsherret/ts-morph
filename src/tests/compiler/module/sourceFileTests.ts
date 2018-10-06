@@ -93,6 +93,32 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.copyToDirectory), () => {
+        it("should copy when passing in an absolute path", () => {
+            const { sourceFile } = getInfoFromText("", { filePath: "/File.ts" });
+            const newSourceFile = sourceFile.copyToDirectory("newDir");
+            expect(sourceFile.getFilePath()).to.equal("/File.ts");
+            expect(newSourceFile.getFilePath()).to.equal("/newDir/File.ts");
+        });
+
+        it("should copy when passing in a relative path", () => {
+            const { sourceFile } = getInfoFromText("", { filePath: "/dir/other/File.ts" });
+            expect(sourceFile.copyToDirectory("../newDir").getFilePath()).to.equal("/dir/newDir/File.ts");
+        });
+
+        it("should copy when passing in a directory", () => {
+            const { sourceFile, project } = getInfoFromText("", { filePath: "/File.ts" });
+            const dir = project.createDirectory("/newDir");
+            expect(sourceFile.copyToDirectory(dir).getFilePath()).to.equal("/newDir/File.ts");
+        });
+
+        it("should copy allowing overwrite", () => {
+            const { sourceFile, project } = getInfoFromText("", { filePath: "/File.ts" });
+            const originalSourceFile = project.createSourceFile("/newDir/File.ts");
+            expect(sourceFile.copyToDirectory("/newDir", { overwrite: true }).getFilePath()).to.equal("/newDir/File.ts");
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.copyImmediately), () => {
         it("should copy the source file and update the file system", async () => {
             const { sourceFile, project } = getInfoFromText("", { filePath: "/File.ts" });
@@ -257,6 +283,35 @@ describe(nameof(SourceFile), () => {
                 `export interface MyInterface {}\n` +
                 `export * from "../dir/OtherInterface";`);
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./NewFile";\nexport interface OtherInterface {}`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.moveToDirectory), () => {
+        it("should move when passing in an absolute path", () => {
+            const { sourceFile } = getInfoFromText("", { filePath: "/File.ts" });
+            sourceFile.moveToDirectory("newDir");
+            expect(sourceFile.getFilePath()).to.equal("/newDir/File.ts");
+        });
+
+        it("should move when passing in a relative path", () => {
+            const { sourceFile } = getInfoFromText("", { filePath: "/dir/other/File.ts" });
+            sourceFile.moveToDirectory("../newDir");
+            expect(sourceFile.getFilePath()).to.equal("/dir/newDir/File.ts");
+        });
+
+        it("should move when passing in a directory", () => {
+            const { sourceFile, project } = getInfoFromText("", { filePath: "/File.ts" });
+            const dir = project.createDirectory("/newDir");
+            sourceFile.moveToDirectory(dir);
+            expect(sourceFile.getFilePath()).to.equal("/newDir/File.ts");
+        });
+
+        it("should move allowing overwrite", () => {
+            const { sourceFile, project } = getInfoFromText("", { filePath: "/File.ts" });
+            const originalSourceFile = project.createSourceFile("/newDir/File.ts");
+            sourceFile.moveToDirectory("/newDir", { overwrite: true });
+            expect(sourceFile.getFilePath()).to.equal("/newDir/File.ts");
+            expect(originalSourceFile.wasForgotten()).to.be.true;
         });
     });
 

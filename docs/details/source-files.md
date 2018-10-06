@@ -77,6 +77,9 @@ Copy a source file to a new file by specifying a new relative or absolute path:
 const newSourceFile = sourceFile.copy("newFileName.ts");
 // this won't throw if a file exists at the specified path
 const otherSourceFile = sourceFile.copy("other.ts", { overwrite: true });
+// or specify directory to copy to
+sourceFile.copyToDirectory("/some/dir");
+sourceFile.copyToDirectory(someDirectoryObject);
 ```
 
 Note: If necessary, this will automatically update the module specifiers of the relative import and export declarations
@@ -99,6 +102,9 @@ Moves a source file to a new file by specifying a new relative or absolute path:
 sourceFile.move("newFileName.ts");
 // this won't throw if a file exists at the specified path
 sourceFile.move("other.ts", { overwrite: true });
+// or specify directory to move to
+sourceFile.moveToDirectory("/some/dir");
+sourceFile.moveToDirectory(someDirectoryObject);
 ```
 
 Note: If necessary, this will automatically update the module specifiers of the relative import and export declarations

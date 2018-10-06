@@ -425,7 +425,18 @@ export class Directory {
     }
 
     /**
-     * Copies a directory to a new directory.
+     * Copies the directory to a subdirectory of the specified directory.
+     * @param dirPathOrDirectory Directory path or directory object to copy the directory to.
+     * @param options Options for copying.
+     * @returns The new copied directory.
+     */
+    copyToDirectory(dirPathOrDirectory: string | Directory, options?: DirectoryCopyOptions) {
+        const dirPath = typeof dirPathOrDirectory === "string" ? dirPathOrDirectory : dirPathOrDirectory.getPath();
+        return this.copy(FileUtils.pathJoin(dirPath, this.getBaseName()), options);
+    }
+
+    /**
+     * Copies the directory to a new directory.
      * @param relativeOrAbsolutePath - The relative or absolute path to the new directory.
      * @param options - Options.
      * @returns The directory the copy was made to.
@@ -525,6 +536,16 @@ export class Directory {
             this.getSourceFileOrThrow(newFilePath)._updateReferencesForCopyInternal(references);
 
         return this.context.compilerFactory.getDirectoryFromCache(newPath)!;
+    }
+
+    /**
+     * Moves the directory to a subdirectory of the specified directory.
+     * @param dirPathOrDirectory Directory path or directory object to move the directory to.
+     * @param options Options for moving.
+     */
+    moveToDirectory(dirPathOrDirectory: string | Directory, options?: DirectoryMoveOptions) {
+        const dirPath = typeof dirPathOrDirectory === "string" ? dirPathOrDirectory : dirPathOrDirectory.getPath();
+        return this.move(FileUtils.pathJoin(dirPath, this.getBaseName()), options);
     }
 
     /**

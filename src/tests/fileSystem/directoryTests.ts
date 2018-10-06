@@ -718,6 +718,36 @@ describe(nameof(Directory), () => {
         });
     });
 
+    describe(nameof<Directory>(dir => dir.copyToDirectory), () => {
+        it("should copy when specifying an absolute path", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir/temp");
+            expect(dir.copyToDirectory("/otherDir").getPath()).to.equal("/otherDir/temp");
+        });
+
+        it("should copy when specifying a relative path", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir/temp");
+            expect(dir.copyToDirectory("../otherDir").getPath()).to.equal("/dir/otherDir/temp");
+        });
+
+        it("should copy when specifying a directory", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir/temp");
+            const otherDir = project.createDirectory("otherDir");
+            expect(dir.copyToDirectory(otherDir).getPath()).to.equal("/otherDir/temp");
+        });
+
+        it("should copy with overwrite", () => {
+            const project = getProject();
+            project.createSourceFile("/dir/temp/file.ts");
+            project.createSourceFile("/otherDir/temp/file.ts");
+            const dir = project.getDirectoryOrThrow("/dir/temp");
+            const newDir = dir.copyToDirectory("/otherDir", { overwrite: true });
+            expect(newDir.getPath()).to.equal("/otherDir/temp");
+        });
+    });
+
     describe(nameof<Directory>(dir => dir.move), () => {
         it("should move all the files and sub directories to a new directory", () => {
             const project = getProject();
@@ -805,6 +835,39 @@ describe(nameof(Directory), () => {
             const dirFile = project.createSourceFile("dir/file.ts", "");
             dirFile.getDirectory().move("./dir2");
             expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal(["/dir2"]);
+        });
+    });
+
+    describe(nameof<Directory>(dir => dir.moveToDirectory), () => {
+        it("should move when specifying an absolute path", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir/temp");
+            dir.moveToDirectory("/otherDir");
+            expect(dir.getPath()).to.equal("/otherDir/temp");
+        });
+
+        it("should move when specifying a relative path", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir/temp");
+            dir.moveToDirectory("../otherDir");
+            expect(dir.getPath()).to.equal("/dir/otherDir/temp");
+        });
+
+        it("should move when specifying a directory", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir/temp");
+            const otherDir = project.createDirectory("otherDir");
+            dir.moveToDirectory(otherDir);
+            expect(dir.getPath()).to.equal("/otherDir/temp");
+        });
+
+        it("should move with overwrite", () => {
+            const project = getProject();
+            project.createSourceFile("/dir/temp/file.ts");
+            project.createSourceFile("/otherDir/temp/file.ts");
+            const dir = project.getDirectoryOrThrow("/dir/temp");
+            dir.moveToDirectory("/otherDir", { overwrite: true });
+            expect(dir.getPath()).to.equal("/otherDir/temp");
         });
     });
 

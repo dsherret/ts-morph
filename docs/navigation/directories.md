@@ -159,6 +159,9 @@ directory.move("./newDir");
 directory.move("../otherDir", { overwrite: true }); // allows overwriting (otherwise it will throw)
 // or specify an absolute path
 directory.move("C:\\finalDir");
+// or specify the directory to move to
+directory.moveToDirectory("some/directory");
+directory.moveToDirectory(otherDir);
 ```
 
 ### Moving Immediately
@@ -182,6 +185,9 @@ directory.copy("../newDir");
 directory.copy("../nextDir", { overwrite: true });
 // or specify an absolute path
 directory.copy("C:\\test");
+// or specify the directory to copy to
+directory.copyToDirectory("some/directory");
+directory.copyToDirectory(otherDir);
 ```
 
 Note that the directory and source files, in all these cases, won't be created until calling save on the project.
