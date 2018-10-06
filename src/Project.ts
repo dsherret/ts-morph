@@ -285,9 +285,8 @@ export class Project {
     getSourceFileOrThrow(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile {
         const sourceFile = this.getSourceFile(fileNameOrSearchFunction);
         if (sourceFile == null) {
-            const filePathOrSearchFunction = getFilePathOrSearchFunction(this.context.fileSystemWrapper, fileNameOrSearchFunction);
-            if (typeof filePathOrSearchFunction === "string")
-                throw new errors.InvalidOperationError(`Could not find source file based on the provided name or path: ${filePathOrSearchFunction}.`);
+            if (typeof fileNameOrSearchFunction === "string")
+                throw new errors.InvalidOperationError(`Could not find source file based on the provided name or path: ${fileNameOrSearchFunction}`);
             else
                 throw new errors.InvalidOperationError(`Could not find source file based on the provided condition.`);
         }
@@ -309,11 +308,22 @@ export class Project {
      */
     getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined;
     getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined {
-        const filePathOrSearchFunction = getFilePathOrSearchFunction(this.context.fileSystemWrapper, fileNameOrSearchFunction);
+        const filePathOrSearchFunction = getFilePathOrSearchFunction(this.context.fileSystemWrapper);
 
         if (typeof filePathOrSearchFunction === "string")
             return this.context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
         return ArrayUtils.find(this.context.compilerFactory.getSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
+
+        function getFilePathOrSearchFunction(fileSystemWrapper: FileSystemWrapper): string | ((file: SourceFile) => boolean) {
+            if (fileNameOrSearchFunction instanceof Function)
+                return fileNameOrSearchFunction;
+
+            const fileNameOrPath = FileUtils.standardizeSlashes(fileNameOrSearchFunction);
+            if (FileUtils.pathIsAbsolute(fileNameOrPath) || fileNameOrPath.indexOf("/") >= 0)
+                return fileSystemWrapper.getStandardizedAbsolutePath(fileNameOrPath);
+            else
+                return def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrPath);
+        }
     }
 
     /**
@@ -477,18 +487,4 @@ export class Project {
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => (void | Promise<void>)) {
         return this.context.compilerFactory.forgetNodesCreatedInBlock(block);
     }
-}
-
-function getFilePathOrSearchFunction(
-    fileSystemWrapper: FileSystemWrapper,
-    fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)
-): string | ((file: SourceFile) => boolean) {
-    if (fileNameOrSearchFunction instanceof Function)
-        return fileNameOrSearchFunction;
-
-    const fileNameOrPath = FileUtils.standardizeSlashes(fileNameOrSearchFunction);
-    if (FileUtils.pathIsAbsolute(fileNameOrPath) || fileNameOrPath.indexOf("/") >= 0)
-        return fileSystemWrapper.getStandardizedAbsolutePath(fileNameOrPath);
-    else
-        return def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrPath);
 }
