@@ -3,7 +3,10 @@ node_js:
     - "6"
 before_script:
     - npm run lint
+    - npm run ensure-no-project-compile-errors
+    - npm run build-declarations
 script:
     - npm run test-coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+    - npm run test-ts-versions
 after_script:
     - npm run code-verification

@@ -21,24 +21,25 @@ export interface ProjectContextOptions {
  * @internal
  */
 export class ProjectContext {
-    private readonly _manipulationSettings = new ManipulationSettingsContainer();
-    private readonly _compilerFactory: CompilerFactory;
-    private readonly _structurePrinterFactory: StructurePrinterFactory;
-    private readonly _lazyReferenceCoordinator: LazyReferenceCoordinator;
-    private readonly _directoryCoordinator: DirectoryCoordinator;
     private readonly _languageService: LanguageService | undefined;
-    private readonly _fileSystemWrapper: FileSystemWrapper;
     private readonly _compilerOptions = new CompilerOptionsContainer();
     private readonly _customTypeChecker: TypeChecker | undefined;
-    private readonly _logger = new ConsoleLogger();
+
+    readonly logger = new ConsoleLogger();
+    readonly lazyReferenceCoordinator: LazyReferenceCoordinator;
+    readonly directoryCoordinator: DirectoryCoordinator;
+    readonly fileSystemWrapper: FileSystemWrapper;
+    readonly manipulationSettings = new ManipulationSettingsContainer();
+    readonly structurePrinterFactory: StructurePrinterFactory;
+    readonly compilerFactory: CompilerFactory;
 
     constructor(fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, opts: ProjectContextOptions) {
-        this._fileSystemWrapper = fileSystemWrapper;
+        this.fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions.set(compilerOptions);
-        this._compilerFactory = new CompilerFactory(this);
-        this._structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
-        this._lazyReferenceCoordinator = new LazyReferenceCoordinator(this._compilerFactory);
-        this._directoryCoordinator = new DirectoryCoordinator(this._compilerFactory, fileSystemWrapper);
+        this.compilerFactory = new CompilerFactory(this);
+        this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
+        this.lazyReferenceCoordinator = new LazyReferenceCoordinator(this.compilerFactory);
+        this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, fileSystemWrapper);
         this._languageService = opts.createLanguageService ? new LanguageService(this) : undefined;
 
         if (opts.typeChecker != null) {
@@ -48,29 +49,9 @@ export class ProjectContext {
         }
     }
 
-    /** Gets the file system wrapper. */
-    get fileSystemWrapper() {
-        return this._fileSystemWrapper;
-    }
-
     /** Gets the compiler options. */
     get compilerOptions() {
         return this._compilerOptions;
-    }
-
-    /** Gets the manipulation settings. */
-    get manipulationSettings() {
-        return this._manipulationSettings;
-    }
-
-    /** Gets the compiler factory. */
-    get compilerFactory() {
-        return this._compilerFactory;
-    }
-
-    /** Gets the structure printer factory. */
-    get structurePrinterFactory() {
-        return this._structurePrinterFactory;
     }
 
     /** Gets the language service. Throws an exception if it doesn't exist. */
@@ -101,23 +82,6 @@ export class ProjectContext {
             throw this.getToolRequiredError("type checker");
 
         return this.program.getTypeChecker();
-    }
-
-    /**
-     * Gets the logger.
-     */
-    get logger() {
-        return this._logger;
-    }
-
-    /** Gets the lazy reference coordinator. */
-    get lazyReferenceCoordinator() {
-        return this._lazyReferenceCoordinator;
-    }
-
-    /** Gets the directory coordinator. */
-    get directoryCoordinator() {
-        return this._directoryCoordinator;
     }
 
     /**

@@ -1,4 +1,5 @@
-import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind } from "./typescript/typescript";
+import * as ts from "typescript";
+import { SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind } from "typescript";
 import { CodeBlockWriter } from "./codeBlockWriter/code-block-writer";
 
 export declare class Directory {
@@ -4035,9 +4036,9 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     forget(): void;
     /**
-     * Gets if the node was forgotten.
+     * Gets if the compiler node was forgotten.
      *
-     * This will be true when the node was forgotten or removed.
+     * This will be true when the compiler node was forgotten or removed.
      */
     wasForgotten(): boolean;
     /**
@@ -9980,7 +9981,9 @@ interface TypeParameterDeclarationSpecificStructure {
     default?: string;
 }
 
-export * from "./typescript/typescript";
+export declare type CompilerNodeBrandPropertyNamesType = "_classElementBrand" | "_declarationBrand" | "_expressionBrand" | "_functionLikeDeclarationBrand" | "_jsDocTypeBrand" | "_leftHandSideExpressionBrand" | "_literalExpressionBrand" | "_memberExpressionBrand" | "_objectLiteralBrandBrand" | "_primaryExpressionBrand" | "_propertyAccessExpressionLikeQualifiedNameBrand" | "_statementBrand" | "_typeElementBrand" | "_typeNodeBrand" | "_unaryExpressionBrand" | "_updateExpressionBrand";
+
+export { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind };
 export * from "./codeBlockWriter/code-block-writer";
 
 /** @deprecated Use the named export "Project" */

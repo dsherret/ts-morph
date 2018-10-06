@@ -13,15 +13,20 @@ export class TsInspector {
     }
 
     getApiLayerFile(): SourceFile {
-        return this.project.getSourceFileOrThrow("src/typescript/typescript.ts");
+        return this.project.getSourceFileOrThrow("src/typescript/public.ts");
+    }
+
+    getCompilerApiFile(): SourceFile {
+        const publicFile = this.getApiLayerFile();
+        return publicFile.getImportDeclarationOrThrow(t => t.getModuleSpecifierValue().startsWith("typescript")).getModuleSpecifierSourceFile();
     }
 
     @Memoize
     getTsNodes() {
-        const compilerApiFile = this.project.getSourceFileOrThrow("src/typescript/typescript.ts");
+        const compilerApiFile = this.getCompilerApiFile();
         const interfaces: InterfaceDeclaration[] = [];
         for (const interfaceDec of ArrayUtils.flatten(compilerApiFile.getNamespaces().map(n => n.getInterfaces()))) {
-            if (interfaceDec.getBaseTypes().some(t => hasDescendantBaseType(t, checkingType => StringUtils.endsWith(checkingType.getText(), "ts.Node"))))
+            if (interfaceDec.getBaseTypes().some(t => hasDescendantBaseType(t, checkingType => StringUtils.endsWith(checkingType.getText(), "Node"))))
                 interfaces.push(interfaceDec);
         }
         return ArrayUtils.sortByProperty(interfaces.map(i => this.wrapperFactory.getTsNode(i)), item => item.getName());
