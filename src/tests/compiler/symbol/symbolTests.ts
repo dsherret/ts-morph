@@ -65,6 +65,67 @@ describe(nameof(Symbol), () => {
         });
     });
 
+    describe(nameof<Symbol>(s => s.getGlobalExports), () => {
+        function doTest(code: string, exportNames: string[]) {
+            const { sourceFile } = getInfoFromText(code, { isDefinitionFile: true });
+            expect(sourceFile.getSymbolOrThrow().getGlobalExports().map(e => e.getName())).to.deep.equal(exportNames);
+        }
+
+        it("should get the global exports when they exist", () => {
+            doTest("export class MyName {}\nexport as namespace test;", ["test"]);
+        });
+
+        it("should not get the global exports when they don't exist", () => {
+            doTest("export class Test {}", []);
+        });
+    });
+
+    describe(nameof<Symbol>(s => s.getGlobalExportByName), () => {
+        function doTest(code: string, exportName: string, expectedName: string | undefined) {
+            const { sourceFile } = getInfoFromText(code, { isDefinitionFile: true });
+            const exportSymbol = sourceFile.getSymbolOrThrow().getGlobalExportByName(exportName);
+            if (expectedName == null)
+                expect(exportSymbol).to.be.undefined;
+            else
+                expect(exportSymbol!.getName()).to.equal(expectedName);
+        }
+
+        it("should get the global export when it exists", () => {
+            doTest("export class MyName {}\nexport as namespace test;", "test", "test");
+        });
+
+        it("should not get the export when it doesn't exist", () => {
+            doTest("export class MyName {}\nexport as namespace test;", "otherName", undefined);
+        });
+
+        it("should not get the export when not a valid file", () => {
+            doTest("export class MyName {}", "MyName", undefined);
+        });
+    });
+
+    describe(nameof<Symbol>(s => s.getGlobalExportByNameOrThrow), () => {
+        function doTest(code: string, exportName: string, expectedName: string | undefined) {
+            const { sourceFile } = getInfoFromText(code, { isDefinitionFile: true });
+            const symbol = sourceFile.getSymbolOrThrow();
+            if (expectedName == null)
+                expect(() => symbol.getGlobalExportByNameOrThrow(exportName)).to.throw();
+            else
+                expect(symbol.getGlobalExportByNameOrThrow(exportName).getName()).to.equal(expectedName);
+        }
+
+        it("should get the global export when it exists", () => {
+            doTest("export class MyName {}\nexport as namespace test;", "test", "test");
+        });
+
+        it("should not get the export when it doesn't exist", () => {
+            doTest("export class MyName {}\nexport as namespace test;", "otherName", undefined);
+        });
+
+        it("should not get the export when not a valid file", () => {
+            doTest("export class MyName {}", "MyName", undefined);
+        });
+    });
+
     describe(nameof<Symbol>(s => s.getMembers), () => {
         function doTest(code: string, expectedNames: string[]) {
             const { sourceFile } = getInfoFromText(code);

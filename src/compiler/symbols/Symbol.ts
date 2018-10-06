@@ -138,6 +138,35 @@ export class Symbol {
     }
 
     /**
+     * Gets the global export of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the global export.
+     */
+    getGlobalExportByNameOrThrow(name: string): Symbol {
+        return errors.throwIfNullOrUndefined(this.getGlobalExportByName(name), `Expected to find global export with name: ${name}`);
+    }
+
+    /**
+     * Gets the global export of the symbol by the specified name or returns undefined if not exists.
+     * @param name - Name of the global export.
+     */
+    getGlobalExportByName(name: string): Symbol | undefined {
+        if (this.compilerSymbol.globalExports == null)
+            return undefined;
+
+        const tsSymbol = this.compilerSymbol.globalExports.get(name as ts.__String);
+        return tsSymbol == null ? undefined : this.context.compilerFactory.getSymbol(tsSymbol);
+    }
+
+    /**
+     * Gets the global exports from the symbol.
+     */
+    getGlobalExports(): Symbol[] {
+        if (this.compilerSymbol.globalExports == null)
+            return [];
+        return ArrayUtils.from(this.compilerSymbol.globalExports.values()).map(symbol => this.context.compilerFactory.getSymbol(symbol));
+    }
+
+    /**
      * Gets the member of the symbol by the specified name or throws if not exists.
      * @param name - Name of the export.
      */
