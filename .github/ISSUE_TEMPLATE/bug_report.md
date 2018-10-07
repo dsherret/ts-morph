@@ -13,5 +13,12 @@ Version: X.X.X
 **To Reproduce**
 <!-- Clearly identify the problem and submit some reproduction code. Prune the reproduction code to remove needless details. State the actual behaviour. -->
 
+```ts
+const project = new Project();
+const sourceFile = project.createSourceFile("test.ts", ``);
+
+// reproduce the problem here
+```
+
 **Expected behavior**
 <!-- A clear and concise description of what you expected to happen. -->
