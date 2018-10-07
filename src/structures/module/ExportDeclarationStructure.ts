@@ -1,6 +1,7 @@
-﻿import { ExportSpecifierStructure } from "./ExportSpecifierStructure";
+﻿import { WriterFunction } from "../../types";
+import { ExportSpecifierStructure } from "./ExportSpecifierStructure";
 
 export interface ExportDeclarationStructure {
-    namedExports?: (string | ExportSpecifierStructure)[];
+    namedExports?: (string | ExportSpecifierStructure | WriterFunction)[] | WriterFunction;
     moduleSpecifier?: string;
 }

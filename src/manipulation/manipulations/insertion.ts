@@ -1,7 +1,7 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Node } from "../../compiler";
 import { SyntaxKind, ts } from "../../typescript";
-import { TypeGuards } from "../../utils";
+import { TypeGuards, StringUtils } from "../../utils";
 import { getEndPosFromIndex, getInsertPosFromIndex, getRangeFromArray, verifyAndGetIndex } from "../helpers";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { InsertionTextManipulator } from "../textManipulators";
@@ -49,34 +49,32 @@ export interface InsertIntoCommaSeparatedNodesOptions {
     surroundWithSpaces?: boolean;
 }
 
+const endsWithComma = /\,\s*$/;
+const startsWithComma = /^\s*\,/;
+
 export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNodesOptions) {
-    // todo: this needs to be fixed/cleaned up in the future, but this is good enough for now
-    const {currentNodes, insertIndex, parent} = opts;
-    const nextNode = currentNodes[insertIndex];
-    const previousNode = currentNodes[insertIndex - 1];
+    const { currentNodes, insertIndex, parent } = opts;
+    const nextNode = currentNodes[insertIndex] as Node | undefined;
+    const previousNode = currentNodes[insertIndex - 1] as Node | undefined;
     const separator = opts.useNewLines ? parent.context.manipulationSettings.getNewLineKindAsString() : " ";
-    const childIndentationText = parent.getParentOrThrow().getChildIndentationText();
     const parentNextSibling = parent.getNextSibling();
     const isContained = parentNextSibling != null && (
         parentNextSibling.getKind() === SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === SyntaxKind.CloseBracketToken
     );
-    let {newText} = opts;
+    let { newText } = opts;
 
     if (previousNode != null) {
+        prependCommaAndSeparator();
+
+        if (nextNode != null)
+            appendCommaAndSeparator();
+        else if (opts.useNewLines || opts.surroundWithSpaces)
+            appendSeparator();
+        else
+            appendIndentation();
+
         const nextEndStart = nextNode == null ? (isContained ? parentNextSibling!.getStart(true) : parent.getEnd()) : nextNode.getStart(true);
         const insertPos = previousNode.getEnd();
-
-        newText = `,${separator}${newText}`;
-        if (nextNode != null) {
-            newText += `,${separator}`;
-            if (opts.useNewLines)
-                newText += childIndentationText;
-        }
-        else if (opts.useNewLines)
-            newText += separator + parent.getParentOrThrow().getIndentationText();
-        else if (opts.surroundWithSpaces)
-            newText += " ";
-
         insertIntoParentTextRange({
             insertPos,
             newText,
@@ -85,13 +83,11 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         });
     }
     else if (nextNode != null) {
-        if (opts.useNewLines)
-            newText = separator + newText;
-        else if (opts.surroundWithSpaces)
-            newText = " " + newText;
-        newText += `,${separator}`;
-        if (opts.useNewLines)
-            newText += childIndentationText;
+        if (opts.useNewLines || opts.surroundWithSpaces)
+            prependSeparator();
+
+        appendCommaAndSeparator();
+
         const insertPos = isContained ? parent.getPos() : parent.getStart(true);
         insertIntoParentTextRange({
             insertPos,
@@ -101,10 +97,12 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         });
     }
     else {
-        if (opts.useNewLines)
-            newText = separator + newText + parent.context.manipulationSettings.getNewLineKindAsString() + parent.getParentOrThrow().getIndentationText();
-        else if (opts.surroundWithSpaces)
-            newText = ` ${newText} `;
+        if (opts.useNewLines || opts.surroundWithSpaces) {
+            prependSeparator();
+            appendSeparator();
+        }
+        else
+            appendIndentation();
 
         insertIntoParentTextRange({
             insertPos: parent.getPos(),
@@ -112,6 +110,42 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
             parent,
             replacing: { textLength: parent.getNextSiblingOrThrow().getStart() - parent.getPos() }
         });
+    }
+
+    function prependCommaAndSeparator() {
+        if (!startsWithComma.test(newText)) {
+            prependSeparator();
+            newText = `,${newText}`;
+        }
+    }
+
+    function prependSeparator() {
+        if (!StringUtils.startsWithNewLine(newText))
+            newText = separator + newText;
+    }
+
+    function appendCommaAndSeparator() {
+        if (!endsWithComma.test(newText)) {
+            newText = StringUtils.insertAtLastNonWhitespace(newText, ",");
+            appendSeparator();
+        }
+        else
+            appendIndentation();
+    }
+
+    function appendSeparator() {
+        if (!StringUtils.endsWithNewLine(newText))
+            newText += separator;
+        appendIndentation();
+    }
+
+    function appendIndentation() {
+        if (opts.useNewLines || StringUtils.endsWithNewLine(newText)) {
+            if (nextNode != null)
+                newText += parent.getParentOrThrow().getChildIndentationText();
+            else
+                newText += parent.getParentOrThrow().getIndentationText();
+        }
     }
 }
 
@@ -121,7 +155,7 @@ export interface InsertIntoBracesOrSourceFileOptionsWriteInfo {
     isStartOfFile: boolean;
 }
 
-export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
+export interface InsertIntoBracesOrSourceFileOptions {
     parent: Node;
     children: Node[];
     index: number;
@@ -131,7 +165,7 @@ export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
 /**
  * Used to insert non-comma separated nodes into braces or a source file.
  */
-export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
+export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileOptions) {
     const { parent, index, children } = opts;
     const fullText = parent.sourceFile.getFullText();
     const insertPos = getInsertPosFromIndex(index, parent.getChildSyntaxListOrThrow(), children);
@@ -191,7 +225,6 @@ export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node, 
     const startChildren = opts.getIndexedChildren();
     const parentSyntaxList = opts.parent.getChildSyntaxListOrThrow();
     const index = verifyAndGetIndex(opts.index, startChildren.length);
-    const childIndex = getChildIndex();
 
     insertIntoBracesOrSourceFile({
         parent: opts.parent,

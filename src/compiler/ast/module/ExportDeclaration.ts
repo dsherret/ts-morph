@@ -1,6 +1,7 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex, removeChildren } from "../../../manipulation";
 import { ExportSpecifierStructure, ExportDeclarationStructure } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, ModuleUtils, TypeGuards, StringUtils } from "../../../utils";
 import { StringLiteral } from "../literal";
@@ -142,63 +143,46 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
 
     /**
      * Adds a named export.
-     * @param structure - Structure that represents the named export.
+     * @param namedExport - Structure, name, or writer function to write the named export.
      */
-    addNamedExport(structure: ExportSpecifierStructure): ExportSpecifier;
-    /**
-     * Adds a named export.
-     * @param name - Name of the named export.
-     */
-    addNamedExport(name: string): ExportSpecifier;
-    /** @internal */
-    addNamedExport(structureOrName: ExportSpecifierStructure | string): ExportSpecifier;
-    addNamedExport(structureOrName: ExportSpecifierStructure | string) {
-        return this.addNamedExports([structureOrName])[0];
+    addNamedExport(namedExport: ExportSpecifierStructure | string | WriterFunction) {
+        return this.addNamedExports([namedExport])[0];
     }
 
     /**
      * Adds named exports.
-     * @param structuresOrNames - Structures or names that represent the named exports.
+     * @param namedExports - Structures, names, or writer function to write the named exports.
      */
-    addNamedExports(structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>) {
-        return this.insertNamedExports(this.getNamedExports().length, structuresOrNames);
+    addNamedExports(namedExports: ReadonlyArray<ExportSpecifierStructure | string | WriterFunction> | WriterFunction) {
+        return this.insertNamedExports(this.getNamedExports().length, namedExports);
     }
 
     /**
      * Inserts a named export.
      * @param index - Child index to insert at.
-     * @param structure - Structure that represents the named export.
+     * @param namedExport - Structure, name, or writer function to write the named export.
      */
-    insertNamedExport(index: number, structure: ExportSpecifierStructure): ExportSpecifier;
-    /**
-     * Inserts a named export.
-     * @param index - Child index to insert at.
-     * @param name - Name of the named export.
-     */
-    insertNamedExport(index: number, name: string): ExportSpecifier;
-    /** @internal */
-    insertNamedExport(index: number, structureOrName: (ExportSpecifierStructure | string)): ExportSpecifier;
-    insertNamedExport(index: number, structureOrName: (ExportSpecifierStructure | string)) {
-        return this.insertNamedExports(index, [structureOrName])[0];
+    insertNamedExport(index: number, namedExport: ExportSpecifierStructure | string | WriterFunction) {
+        return this.insertNamedExports(index, [namedExport])[0];
     }
 
     /**
      * Inserts named exports into the export declaration.
      * @param index - Child index to insert at.
-     * @param structuresOrNames - Structures or names that represent the named exports.
+     * @param namedExports - Structures, names, or writer funciton to write the named exports.
      */
-    insertNamedExports(index: number, structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>) {
-        if (ArrayUtils.isNullOrEmpty(structuresOrNames))
+    insertNamedExports(index: number, namedExports: ReadonlyArray<ExportSpecifierStructure | string | WriterFunction> | WriterFunction) {
+        if (!(namedExports instanceof Function) && ArrayUtils.isNullOrEmpty(namedExports))
                 return [];
 
-        const namedExports = this.getNamedExports();
-        const writer = this.getWriterWithQueuedChildIndentation();
+        const originalNamedExports = this.getNamedExports();
+        const writer = this.getWriterWithIndentation();
         const namedExportStructurePrinter = this.context.structurePrinterFactory.forNamedImportExportSpecifier();
 
-        index = verifyAndGetIndex(index, namedExports.length);
+        index = verifyAndGetIndex(index, originalNamedExports.length);
 
         if (this.getNodeProperty("exportClause") == null) {
-            namedExportStructurePrinter.printTextsWithBraces(writer, structuresOrNames);
+            namedExportStructurePrinter.printTextsWithBraces(writer, namedExports);
             const asteriskToken = this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
             insertIntoParentTextRange({
                 insertPos: asteriskToken.getStart(),
@@ -210,17 +194,18 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
             });
         }
         else {
-            namedExportStructurePrinter.printTexts(writer, structuresOrNames);
+            namedExportStructurePrinter.printTexts(writer, namedExports);
             insertIntoCommaSeparatedNodes({
                 parent: this.getFirstChildByKindOrThrow(SyntaxKind.NamedExports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
-                currentNodes: namedExports,
+                currentNodes: originalNamedExports,
                 insertIndex: index,
                 newText: writer.toString(),
                 surroundWithSpaces: this.context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
             });
         }
 
-        return getNodesToReturn(this.getNamedExports(), index, structuresOrNames.length);
+        const newNamedExports = this.getNamedExports();
+        return getNodesToReturn(newNamedExports, index, newNamedExports.length - originalNamedExports.length);
     }
 
     /**

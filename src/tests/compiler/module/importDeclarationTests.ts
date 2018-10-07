@@ -2,6 +2,7 @@
 import { ImportDeclaration } from "../../../compiler";
 import * as errors from "../../../errors";
 import { Project } from "../../../Project";
+import { WriterFunction } from "../../../types";
 import { ImportSpecifierStructure, ImportDeclarationStructure } from "../../../structures";
 import { ModuleResolutionKind } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
@@ -418,16 +419,21 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.insertNamedImports), () => {
-        function doTest(text: string, index: number, structuresOrNames: (ImportSpecifierStructure | string)[], expected: string, surroundWithSpaces = true) {
+        function doTest(text: string, index: number, structuresOrNames: (ImportSpecifierStructure | string | WriterFunction)[] | WriterFunction, expected: string,
+            surroundWithSpaces = true)
+        {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             if (!surroundWithSpaces)
                 firstChild.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
-            firstChild.insertNamedImports(index, structuresOrNames);
+            const originalCount = firstChild.getNamedImports().length;
+            const result = firstChild.insertNamedImports(index, structuresOrNames);
+            const afterCount = firstChild.getNamedImports().length;
+            expect(result.length).to.equal(afterCount - originalCount);
             expect(sourceFile.getText()).to.equal(expected);
         }
 
         it("should insert named imports when importing for the side effects", () => {
-            doTest(`import "./test";`, 0, ["name", { name: "name", alias: "alias" }], `import { name, name as alias } from "./test";`);
+            doTest(`import "./test";`, 0, ["name", { name: "name", alias: "alias" }, writer => writer.write("name2")], `import { name, name as alias, name2 } from "./test";`);
         });
 
         it("should insert named imports when a default import exists", () => {
@@ -452,6 +458,10 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should insert named imports in the middle", () => {
             doTest(`import {name1, name4} from "./test";`, 1, [{ name: "name2" }, { name: "name3" }], `import {name1, name2, name3, name4} from "./test";`);
+        });
+
+        it("should insert with a writer function", () => {
+            doTest(`import { name1 } from "./test";`, 1, writer => writer.writeLine("name2,").write("name3"), `import { name1, name2,\n    name3 } from "./test";`);
         });
     });
 

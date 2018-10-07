@@ -1,30 +1,46 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
+import { StringUtils } from "../../utils";
 import { ExportSpecifierStructure, ImportSpecifierStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
-export type NamedImportExportSpecifierStructureToTextItem = ImportSpecifierStructure | ExportSpecifierStructure | string;
+export type NamedImportExportSpecifierStructureToTextItem = WriterFunction | ImportSpecifierStructure | ExportSpecifierStructure | string;
 
 export class NamedImportExportSpecifierStructurePrinter extends FactoryStructurePrinter<NamedImportExportSpecifierStructureToTextItem> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
-    printTextsWithBraces(writer: CodeBlockWriter, structures: ReadonlyArray<NamedImportExportSpecifierStructureToTextItem>) {
+    printTextsWithBraces(writer: CodeBlockWriter, structures: ReadonlyArray<NamedImportExportSpecifierStructureToTextItem> | WriterFunction) {
         const formatSettings = this.factory.getFormatCodeSettings();
-        writer.write("{").conditionalWrite(formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ");
-        this.printTexts(writer, structures);
-        writer.conditionalWrite(formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ").write("}");
+        writer.write("{");
+        const specifierWriter = this.getNewWriter(writer);
+        this.printTexts(specifierWriter, structures);
+        const specifierText = specifierWriter.toString();
+        if (formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces && !StringUtils.startsWithNewLine(specifierText))
+            writer.space();
+        writer.write(specifierText);
+        if (formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces && !StringUtils.endsWithNewLine(specifierText))
+            writer.space();
+        writer.write("}");
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<NamedImportExportSpecifierStructureToTextItem>) {
-        this.multipleWriter.printText(writer, structures);
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<NamedImportExportSpecifierStructureToTextItem> | WriterFunction) {
+        if (structures instanceof Function)
+            this.printText(writer, structures);
+        else
+            this.multipleWriter.printText(writer, structures);
     }
 
     printText(writer: CodeBlockWriter, structure: NamedImportExportSpecifierStructureToTextItem) {
+        const specifierWriter = this.getNewWriterWithQueuedChildIndentation(writer);
         if (typeof structure === "string")
-            writer.write(structure);
+            specifierWriter.write(structure);
+        else if (structure instanceof Function)
+            structure(specifierWriter);
         else {
-            writer.write(structure.name);
-            writer.conditionalWrite(structure.alias != null, ` as ${structure.alias}`);
+            specifierWriter.write(structure.name);
+            specifierWriter.conditionalWrite(structure.alias != null, ` as ${structure.alias}`);
         }
+        writer.write(specifierWriter.toString());
     }
 }

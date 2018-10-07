@@ -2,6 +2,9 @@
 import * as errors from "../errors";
 
 const isSpaces = /^ +$/;
+const isWhitespace = /^\s$/;
+const startsWithNewLine = /^\r?\n/;
+const endsWithNewLine = /\r?\n$/;
 
 export class StringUtils {
     private constructor() {
@@ -42,6 +45,21 @@ export class StringUtils {
         if (typeof String.prototype.endsWith === "function")
             return str.endsWith(endsWithString);
         return Es5StringUtils.endsWith(str, endsWithString);
+    }
+
+    static startsWithNewLine(str: string) {
+        return startsWithNewLine.test(str);
+    }
+
+    static endsWithNewLine(str: string) {
+        return endsWithNewLine.test(str);
+    }
+
+    static insertAtLastNonWhitespace(str: string, insertText: string) {
+        let i = str.length;
+        while (i > 0 && isWhitespace.test(str[i - 1]))
+            i--;
+        return str.substring(0, i) + insertText + str.substring(i);
     }
 
     static getLineNumberAtPos(str: string, pos: number) {

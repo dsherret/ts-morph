@@ -2,8 +2,10 @@
 import { ExportDeclaration } from "../../../compiler";
 import * as errors from "../../../errors";
 import { Project } from "../../../Project";
+import { WriterFunction } from "../../../types";
+import { SyntaxKind } from "../../../typescript";
 import { ExportSpecifierStructure, ExportDeclarationStructure } from "../../../structures";
-import { getInfoFromText } from "../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {
     describe(nameof<ExportDeclaration>(n => n.isNamespaceExport), () => {
@@ -259,11 +261,17 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExports), () => {
-        function doTest(text: string, index: number, structures: (ExportSpecifierStructure | string)[], expected: string, surroundWithSpaces = true) {
-            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
+        function doTest(text: string, index: number, structures: (ExportSpecifierStructure | string | WriterFunction)[] | WriterFunction, expected: string,
+            surroundWithSpaces = true)
+        {
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<ExportDeclaration>(text, SyntaxKind.ExportDeclaration);
             if (!surroundWithSpaces)
-                firstChild.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
-            firstChild.insertNamedExports(index, structures);
+                descendant.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+            const originalCount = descendant.getNamedExports().length;
+            const result = descendant.insertNamedExports(index, structures);
+            const afterCount = descendant.getNamedExports().length;
+
+            expect(result.length).to.equal(afterCount - originalCount);
             expect(sourceFile.getText()).to.equal(expected);
         }
 
@@ -272,7 +280,7 @@ describe(nameof(ExportDeclaration), () => {
         });
 
         it("should insert named exports at the start", () => {
-            doTest(`export { name3 } from "./test";`, 0, [{ name: "name1" }, "name2"], `export { name1, name2, name3 } from "./test";`);
+            doTest(`export { name3 } from "./test";`, 0, [{ name: "name1" }, writer => writer.write("name2")], `export { name1, name2, name3 } from "./test";`);
         });
 
         it("should insert named exports at the start when it shouldn't use a space", () => {
@@ -293,6 +301,24 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should insert named exports when there are none", () => {
             doTest(`export { } from "./test";`, 0, [{ name: "name1" }], `export { name1 } from "./test";`);
+        });
+
+        it("should insert named exports on multiple lines when there are none", () => {
+            doTest(`declare module Test {\n    export { };\n}`, 0, writer => writer.newLine().writeLine("name1"),
+                `declare module Test {\n    export {\n        name1\n    };\n}`);
+        });
+
+        it("should insert multiple with a writer", () => {
+            doTest(`export { name3 } from "./test";`, 0, writer => writer.writeLine("name1,").writeLine("name2,"), `export { name1,\n    name2,\n    name3 } from "./test";`);
+        });
+
+        it("should insert multiple with a writer starting on a newline", () => {
+            doTest(`export { name3 } from "./test";`, 0, writer => writer.newLine().writeLine("name1,").write("name2"), `export {\n    name1,\n    name2, name3 } from "./test";`);
+        });
+
+        it("should insert multiple with a writer and indent the last newline", () => {
+            doTest(`export { name3 } from "./test";`, 0, writer => writer.newLine().writeLine("name1,").writeLine("name2"),
+                `export {\n    name1,\n    name2,\n    name3 } from "./test";`);
         });
     });
 

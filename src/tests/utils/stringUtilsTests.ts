@@ -87,6 +87,64 @@ describe(nameof(StringUtils), () => {
         });
     });
 
+    describe(nameof(StringUtils.startsWithNewLine), () => {
+        function doTest(input: string, expected: boolean) {
+            expect(StringUtils.startsWithNewLine(input)).to.equal(expected);
+        }
+
+        it("should when \\r\\n", () => {
+            doTest("\r\ntest", true);
+        });
+
+        it("should when \\n", () => {
+            doTest("\ntest", true);
+        });
+
+        it("should not when doesn't start with newline", () => {
+            doTest("t\ntest\n", false);
+        });
+    });
+
+    describe(nameof(StringUtils.endsWithNewLine), () => {
+        function doTest(input: string, expected: boolean) {
+            expect(StringUtils.endsWithNewLine(input)).to.equal(expected);
+        }
+
+        it("should when \\r\\n", () => {
+            doTest("test\r\n", true);
+        });
+
+        it("should when \\n", () => {
+            doTest("test\n", true);
+        });
+
+        it("should not when doesn't end with newline", () => {
+            doTest("\ntte\nst", false);
+        });
+    });
+
+    describe(nameof(StringUtils.insertAtLastNonWhitespace), () => {
+        function doTest(input: string, insertText: string, expected: string) {
+            expect(StringUtils.insertAtLastNonWhitespace(input, insertText)).to.equal(expected);
+        }
+
+        it("should insert into a string that's all whitepsace", () => {
+            doTest(" \t\r\n \t", ",", ", \t\r\n \t");
+        });
+
+        it("should insert at the first nonwhitespace char", () => {
+            doTest(" s \t", ",", " s, \t");
+        });
+
+        it("should insert at the first nonwhitespace char when that's the first char", () => {
+            doTest("s \t\r\n", ",", "s, \t\r\n");
+        });
+
+        it("should insert into an empty string", () => {
+            doTest("", ",", ",");
+        });
+    });
+
     describe(nameof(StringUtils.escapeForWithinString), () => {
         function doTest(input: string, expected: string) {
             expect(StringUtils.escapeForWithinString(input, QuoteKind.Double)).to.equal(expected);

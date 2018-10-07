@@ -1,6 +1,7 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
 import { ImportSpecifierStructure, ImportDeclarationStructure } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, ModuleUtils, StringUtils, TypeGuards } from "../../../utils";
 import { StringLiteral } from "../literal";
@@ -249,63 +250,46 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
 
     /**
      * Adds a named import.
-     * @param structure - Structure that represents the named import.
+     * @param namedImport - Name, structure, or writer to write the named import with.
      */
-    addNamedImport(structure: ImportSpecifierStructure): ImportSpecifier;
-    /**
-     * Adds a named import.
-     * @param name - Name of the named import.
-     */
-    addNamedImport(name: string): ImportSpecifier;
-    /** @internal */
-    addNamedImport(structureOrName: ImportSpecifierStructure | string): ImportSpecifier;
-    addNamedImport(structureOrName: ImportSpecifierStructure | string) {
-        return this.addNamedImports([structureOrName])[0];
+    addNamedImport(namedImport: ImportSpecifierStructure | string | WriterFunction) {
+        return this.addNamedImports([namedImport])[0];
     }
 
     /**
      * Adds named imports.
-     * @param structuresOrNames - Structures or names that represent the named imports.
+     * @param namedImport - Structures, names, or writer function to write the named import with.
      */
-    addNamedImports(structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>) {
-        return this.insertNamedImports(this.getNamedImports().length, structuresOrNames);
+    addNamedImports(namedImports: ReadonlyArray<ImportSpecifierStructure | string | WriterFunction> | WriterFunction) {
+        return this.insertNamedImports(this.getNamedImports().length, namedImports);
     }
 
     /**
      * Inserts a named import.
      * @param index - Child index to insert at.
-     * @param structure - Structure that represents the named import.
+     * @param namedImport - Structure, name, or writer function to write the named import with.
      */
-    insertNamedImport(index: number, structure: ImportSpecifierStructure): ImportSpecifier;
-    /**
-     * Inserts a named import.
-     * @param index - Child index to insert at.
-     * @param name - Name of the named import.
-     */
-    insertNamedImport(index: number, name: string): ImportSpecifier;
-    /** @internal */
-    insertNamedImport(index: number, structureOrName: ImportSpecifierStructure | string): ImportSpecifier;
-    insertNamedImport(index: number, structureOrName: ImportSpecifierStructure | string) {
-        return this.insertNamedImports(index, [structureOrName])[0];
+    insertNamedImport(index: number, namedImport: ImportSpecifierStructure | string | WriterFunction) {
+        return this.insertNamedImports(index, [namedImport])[0];
     }
 
     /**
      * Inserts named imports into the import declaration.
      * @param index - Child index to insert at.
-     * @param structuresOrNames - Structures or names that represent the named imports.
+     * @param namedImports - Structures, names, or writer function to write the named import with.
      */
-    insertNamedImports(index: number, structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>) {
-        if (ArrayUtils.isNullOrEmpty(structuresOrNames))
+    insertNamedImports(index: number, namedImports: ReadonlyArray<ImportSpecifierStructure | string | WriterFunction> | WriterFunction) {
+        if (!(namedImports instanceof Function) && ArrayUtils.isNullOrEmpty(namedImports))
                 return [];
 
-        const namedImports = this.getNamedImports();
-        const writer = this.getWriterWithQueuedChildIndentation();
+        const originalNamedImports = this.getNamedImports();
+        const writer = this.getWriterWithQueuedIndentation();
         const namedImportStructurePrinter = this.context.structurePrinterFactory.forNamedImportExportSpecifier();
         const importClause = this.getImportClause();
-        index = verifyAndGetIndex(index, namedImports.length);
+        index = verifyAndGetIndex(index, originalNamedImports.length);
 
-        if (namedImports.length === 0) {
-            namedImportStructurePrinter.printTextsWithBraces(writer, structuresOrNames);
+        if (originalNamedImports.length === 0) {
+            namedImportStructurePrinter.printTextsWithBraces(writer, namedImports);
             if (importClause == null)
                 insertIntoParentTextRange({
                     insertPos: this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
@@ -335,18 +319,19 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         else {
             if (importClause == null)
                 throw new errors.NotImplementedError("Expected to have an import clause.");
-            namedImportStructurePrinter.printTexts(writer, structuresOrNames);
+            namedImportStructurePrinter.printTexts(writer, namedImports);
 
             insertIntoCommaSeparatedNodes({
                 parent: importClause.getFirstChildByKindOrThrow(SyntaxKind.NamedImports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
-                currentNodes: namedImports,
+                currentNodes: originalNamedImports,
                 insertIndex: index,
                 newText: writer.toString(),
                 surroundWithSpaces: this.context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
             });
         }
 
-        return getNodesToReturn(this.getNamedImports(), index, structuresOrNames.length);
+        const newNamedImports = this.getNamedImports();
+        return getNodesToReturn(newNamedImports, index, newNamedImports.length - originalNamedImports.length);
     }
 
     /**

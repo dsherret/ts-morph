@@ -6661,37 +6661,26 @@ export declare class ExportDeclaration extends ExportDeclarationBase<ts.ExportDe
     hasNamedExports(): boolean;
     /**
      * Adds a named export.
-     * @param structure - Structure that represents the named export.
+     * @param namedExport - Structure, name, or writer function to write the named export.
      */
-    addNamedExport(structure: ExportSpecifierStructure): ExportSpecifier;
-    /**
-     * Adds a named export.
-     * @param name - Name of the named export.
-     */
-    addNamedExport(name: string): ExportSpecifier;
+    addNamedExport(namedExport: ExportSpecifierStructure | string | WriterFunction): ExportSpecifier;
     /**
      * Adds named exports.
-     * @param structuresOrNames - Structures or names that represent the named exports.
+     * @param namedExports - Structures, names, or writer function to write the named exports.
      */
-    addNamedExports(structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>): ExportSpecifier[];
+    addNamedExports(namedExports: ReadonlyArray<ExportSpecifierStructure | string | WriterFunction> | WriterFunction): ExportSpecifier[];
     /**
      * Inserts a named export.
      * @param index - Child index to insert at.
-     * @param structure - Structure that represents the named export.
+     * @param namedExport - Structure, name, or writer function to write the named export.
      */
-    insertNamedExport(index: number, structure: ExportSpecifierStructure): ExportSpecifier;
-    /**
-     * Inserts a named export.
-     * @param index - Child index to insert at.
-     * @param name - Name of the named export.
-     */
-    insertNamedExport(index: number, name: string): ExportSpecifier;
+    insertNamedExport(index: number, namedExport: ExportSpecifierStructure | string | WriterFunction): ExportSpecifier;
     /**
      * Inserts named exports into the export declaration.
      * @param index - Child index to insert at.
-     * @param structuresOrNames - Structures or names that represent the named exports.
+     * @param namedExports - Structures, names, or writer funciton to write the named exports.
      */
-    insertNamedExports(index: number, structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>): ExportSpecifier[];
+    insertNamedExports(index: number, namedExports: ReadonlyArray<ExportSpecifierStructure | string | WriterFunction> | WriterFunction): ExportSpecifier[];
     /**
      * Gets the named exports.
      */
@@ -6923,37 +6912,26 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
     getNamespaceImport(): Identifier | undefined;
     /**
      * Adds a named import.
-     * @param structure - Structure that represents the named import.
+     * @param namedImport - Name, structure, or writer to write the named import with.
      */
-    addNamedImport(structure: ImportSpecifierStructure): ImportSpecifier;
-    /**
-     * Adds a named import.
-     * @param name - Name of the named import.
-     */
-    addNamedImport(name: string): ImportSpecifier;
+    addNamedImport(namedImport: ImportSpecifierStructure | string | WriterFunction): ImportSpecifier;
     /**
      * Adds named imports.
-     * @param structuresOrNames - Structures or names that represent the named imports.
+     * @param namedImport - Structures, names, or writer function to write the named import with.
      */
-    addNamedImports(structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>): ImportSpecifier[];
+    addNamedImports(namedImports: ReadonlyArray<ImportSpecifierStructure | string | WriterFunction> | WriterFunction): ImportSpecifier[];
     /**
      * Inserts a named import.
      * @param index - Child index to insert at.
-     * @param structure - Structure that represents the named import.
+     * @param namedImport - Structure, name, or writer function to write the named import with.
      */
-    insertNamedImport(index: number, structure: ImportSpecifierStructure): ImportSpecifier;
-    /**
-     * Inserts a named import.
-     * @param index - Child index to insert at.
-     * @param name - Name of the named import.
-     */
-    insertNamedImport(index: number, name: string): ImportSpecifier;
+    insertNamedImport(index: number, namedImport: ImportSpecifierStructure | string | WriterFunction): ImportSpecifier;
     /**
      * Inserts named imports into the import declaration.
      * @param index - Child index to insert at.
-     * @param structuresOrNames - Structures or names that represent the named imports.
+     * @param namedImports - Structures, names, or writer function to write the named import with.
      */
-    insertNamedImports(index: number, structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>): ImportSpecifier[];
+    insertNamedImports(index: number, namedImports: ReadonlyArray<ImportSpecifierStructure | string | WriterFunction> | WriterFunction): ImportSpecifier[];
     /**
      * Gets the named imports.
      */
@@ -8570,6 +8548,20 @@ export declare class Symbol {
      */
     getExports(): Symbol[];
     /**
+     * Gets the global export of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the global export.
+     */
+    getGlobalExportByNameOrThrow(name: string): Symbol;
+    /**
+     * Gets the global export of the symbol by the specified name or returns undefined if not exists.
+     * @param name - Name of the global export.
+     */
+    getGlobalExportByName(name: string): Symbol | undefined;
+    /**
+     * Gets the global exports from the symbol.
+     */
+    getGlobalExports(): Symbol[];
+    /**
      * Gets the member of the symbol by the specified name or throws if not exists.
      * @param name - Name of the export.
      */
@@ -9988,7 +9980,7 @@ export interface ExportAssignmentStructure {
 }
 
 export interface ExportDeclarationStructure {
-    namedExports?: (string | ExportSpecifierStructure)[];
+    namedExports?: (string | ExportSpecifierStructure | WriterFunction)[] | WriterFunction;
     moduleSpecifier?: string;
 }
 export interface ExportSpecifierStructure {
@@ -9999,7 +9991,7 @@ export interface ExportSpecifierStructure {
 export interface ImportDeclarationStructure {
     defaultImport?: string;
     namespaceImport?: string;
-    namedImports?: (ImportSpecifierStructure | string)[];
+    namedImports?: (ImportSpecifierStructure | string | WriterFunction)[] | WriterFunction;
     moduleSpecifier: string;
 }
 export interface ImportSpecifierStructure {

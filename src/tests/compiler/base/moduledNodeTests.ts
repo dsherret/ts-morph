@@ -57,6 +57,11 @@ describe(nameof(ModuledNode), () => {
             doTest(`export class Class {}\n`, 1, [{ moduleSpecifier: "./test" }], `export class Class {}\n\nimport "./test";\n`);
         });
 
+        it("should support writing named imports with a writer", () => {
+            doTest(``, 0, [{ namedImports: writer => writer.writeLine("test,").writeLine("test2"), moduleSpecifier: "./test" }],
+                `import { test,\n    test2\n} from "./test";\n`);
+        });
+
         function doNamespaceTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string) {
             const { sourceFile, project } = getInfoFromText(startCode);
             const result = sourceFile.getNamespaces()[0].insertImportDeclarations(index, structures);
@@ -212,6 +217,11 @@ describe(nameof(ModuledNode), () => {
 
         it("should insert at the end", () => {
             doTest(`export class Class {}\n`, 1, [{ moduleSpecifier: "./test" }], `export class Class {}\n\nexport * from "./test";\n`);
+        });
+
+        it("should support writing named imports with a writer", () => {
+            doTest(``, 0, [{ namedExports: writer => writer.newLine().writeLine("test,").writeLine("test2") }],
+                `export {\n    test,\n    test2\n};\n`);
         });
 
         function doNamespaceTest(startCode: string, index: number, structures: ExportDeclarationStructure[], expectedCode: string) {

@@ -11,4 +11,14 @@ export abstract class StructurePrinter<TStructure> {
         else if (textOrWriterFunc != null)
             textOrWriterFunc(writer);
     }
+
+    protected getNewWriter(writer: CodeBlockWriter) {
+        return new CodeBlockWriter(writer.getOptions());
+    }
+
+    protected getNewWriterWithQueuedChildIndentation(writer: CodeBlockWriter) {
+        const newWriter = new CodeBlockWriter(writer.getOptions());
+        newWriter.queueIndentationLevel(1);
+        return newWriter;
+    }
 }
