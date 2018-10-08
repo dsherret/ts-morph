@@ -1,6 +1,5 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { InitializerSetExpressionableNodeStructure } from "../../structures";
-import { WriterFunction } from "../../types";
 import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
@@ -10,15 +9,14 @@ export class InitializerExpressionableNodeStructurePrinter extends FactoryStruct
         if (initializer == null)
             return;
 
-        // todo: hacky, will need to change this in the future...
-        const initializerText = typeof initializer === "string" ? initializer : getTextForWriterFunc(initializer);
+        const initializerWriter = this.getNewWriterWithQueuedChildIndentation(writer);
+        if (typeof initializer === "string")
+            initializerWriter.write(initializer);
+        else
+            initializer(initializerWriter);
+
+        const initializerText = initializerWriter.toString();
         if (!StringUtils.isNullOrWhitespace(initializerText))
             writer.write(` = ${initializerText}`);
-
-        function getTextForWriterFunc(writerFunc: WriterFunction) {
-            const newWriter = new CodeBlockWriter(writer.getOptions());
-            writerFunc(newWriter);
-            return newWriter.toString();
-        }
     }
 }
