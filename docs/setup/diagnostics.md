@@ -4,7 +4,7 @@ title: Diagnostics
 
 ## Diagnostics
 
-Diagnostics (compile errors) can be retrieved on the AST or on source files:
+Diagnostics (compile errors) can be retrieved on the project or on source files:
 
 ```ts
 const diagnostics = project.getPreEmitDiagnostics();
