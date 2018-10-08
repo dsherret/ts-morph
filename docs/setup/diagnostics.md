@@ -13,7 +13,7 @@ const diagnostics = project.getPreEmitDiagnostics();
 const sourceFileDiagnostics = sourceFile.getPreEmitDiagnostics();
 ```
 
-The pre-emit diagnostics are the syntactic, semantic, global, options, config file parsing, and declaration diagnostics.
+The pre-emit diagnostics are the syntactic, semantic, global, options, config file parsing, and if enabled the declaration diagnostics.
 
 ### Diagnostic
 
