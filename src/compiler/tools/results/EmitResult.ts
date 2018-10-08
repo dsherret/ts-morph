@@ -39,6 +39,8 @@ export class EmitResult {
 
     /**
      * Contains declaration emit diagnostics.
+     *
+     * This is the semantic, syntactic, global, options, and if enabled declaration diagnostics.
      */
     @Memoize
     getDiagnostics() {

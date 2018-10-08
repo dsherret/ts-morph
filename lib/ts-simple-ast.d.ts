@@ -9006,6 +9006,8 @@ export declare class EmitResult {
     getEmitSkipped(): boolean;
     /**
      * Contains declaration emit diagnostics.
+     *
+     * This is the semantic, syntactic, global, options, and if enabled declaration diagnostics.
      */
     getDiagnostics(): Diagnostic<ts.Diagnostic>[];
 }
