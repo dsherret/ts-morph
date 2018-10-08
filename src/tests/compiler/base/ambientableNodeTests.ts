@@ -93,14 +93,6 @@ describe(nameof(AmbientableNode), () => {
             // this is a weird situation where the jsdoc pos is 4, but the export keyword's syntax list is 0 (maybe it's a ts compiler bug?)
             doTest("    /** Testing*/export function identifier { }", true, "    /** Testing*/export declare function identifier { }");
         });
-
-        it("should do nothing for an interface when setting to true", () => {
-            doTest("interface MyInterface { }", true, "interface MyInterface { }");
-        });
-
-        it("should do nothing for a type alias when setting to true", () => {
-            doTest("type MyType = string;", true, "type MyType = string;");
-        });
     });
 
     describe(nameof<ClassDeclaration>(n => n.getStructure), () => {

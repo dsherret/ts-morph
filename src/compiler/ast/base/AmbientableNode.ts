@@ -53,10 +53,6 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
         }
 
         setHasDeclareKeyword(value: boolean) {
-            // do nothing for these kind of nodes
-            if (TypeGuards.isInterfaceDeclaration(this) || TypeGuards.isTypeAliasDeclaration(this))
-                return this;
-
             this.toggleModifier("declare", value);
             return this;
         }
