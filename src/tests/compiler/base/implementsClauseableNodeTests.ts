@@ -1,35 +1,38 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, ImplementsClauseableNode } from "../../../compiler";
 import { ImplementsClauseableNodeStructure } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ImplementsClauseableNode), () => {
     describe(nameof<ImplementsClauseableNode>(n => n.getImplements), () => {
         it("should return an empty array when they don't exist", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             const implementsExpressions = firstChild.getImplements();
             expect(implementsExpressions.length).to.equal(0);
         });
 
         it("should return an empty array when they don't exist, but an extends does", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier extends Base {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier extends Base {}");
             const implementsExpressions = firstChild.getImplements();
             expect(implementsExpressions.length).to.equal(0);
         });
 
         it("should get all the implements expressions when they exist", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier extends Base implements IBase, IBase2 {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier extends Base implements IBase, IBase2 {}");
             const implementsExpressions = firstChild.getImplements();
             expect(implementsExpressions.length).to.equal(2);
         });
     });
 
     describe(nameof<ImplementsClauseableNode>(n => n.addImplements), () => {
-        function doTest(code: string, implementsTextOrArray: string | string[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
-            if (implementsTextOrArray instanceof Array) {
+        function doTest(code: string, implementsTextOrArray: string | WriterFunction | (string | WriterFunction)[], expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
+            if (implementsTextOrArray instanceof Array || implementsTextOrArray instanceof Function) {
+                const originalLength = firstChild.getImplements().length;
                 const result = firstChild.addImplements(implementsTextOrArray);
-                expect(result.length).to.equal(implementsTextOrArray.length);
+                const newLength = firstChild.getImplements().length;
+                expect(result.length).to.equal(newLength - originalLength);
             }
             else {
                 const result = firstChild.addImplements(implementsTextOrArray);
@@ -51,7 +54,12 @@ describe(nameof(ImplementsClauseableNode), () => {
         });
 
         it("should add multiple implements", () => {
-            doTest("class Identifier implements Base1 {}", ["Base2", "Base3"], "class Identifier implements Base1, Base2, Base3 {}");
+            doTest("class Identifier implements Base1 {}", ["Base2", writer => writer.write("Base3")], "class Identifier implements Base1, Base2, Base3 {}");
+        });
+
+        it("should add multiple implements with a writer on a newline", () => {
+            doTest("class Identifier implements Base1 {}", writer => writer.writeLine("Base2,").write("Base3"),
+                "class Identifier implements Base1, Base2,\n    Base3 {}");
         });
 
         it("should do nothing if an empty array", () => {
@@ -59,18 +67,20 @@ describe(nameof(ImplementsClauseableNode), () => {
         });
 
         it("should throw an error when providing invalid input", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier implements Base1 {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier implements Base1 {}");
             expect(() => firstChild.addImplements("")).to.throw();
             expect(() => firstChild.addImplements("  ")).to.throw();
         });
     });
 
     describe(nameof<ImplementsClauseableNode>(n => n.insertImplements), () => {
-        function doTest(code: string, index: number, implementsTextOrArray: string | string[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
-            if (implementsTextOrArray instanceof Array) {
+        function doTest(code: string, index: number, implementsTextOrArray: string | WriterFunction | (string | WriterFunction)[], expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
+            if (implementsTextOrArray instanceof Array || implementsTextOrArray instanceof Function) {
+                const originalLength = firstChild.getImplements().length;
                 const result = firstChild.insertImplements(index, implementsTextOrArray);
-                expect(result.length).to.equal(implementsTextOrArray.length);
+                const newLength = firstChild.getImplements().length;
+                expect(result.length).to.equal(newLength - originalLength);
             }
             else {
                 const result = firstChild.insertImplements(index, implementsTextOrArray);
@@ -85,7 +95,11 @@ describe(nameof(ImplementsClauseableNode), () => {
         });
 
         it("should insert multiple implements at a position", () => {
-            doTest("class Identifier implements Base, Base1 {}", 1, ["Base2", "Base3"], "class Identifier implements Base, Base2, Base3, Base1 {}");
+            doTest("class Identifier implements Base, Base1 {}", 1, ["Base2", writer => writer.write("Base3")], "class Identifier implements Base, Base2, Base3, Base1 {}");
+        });
+
+        it("should insert with a writer", () => {
+            doTest("class Identifier implements Base {}", 1, writer => writer.write("Base2"), "class Identifier implements Base, Base2 {}");
         });
     });
 
@@ -95,25 +109,25 @@ describe(nameof(ImplementsClauseableNode), () => {
             doNodeTest();
 
             function doIndexTest() {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+                const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
                 firstChild.removeImplements(index);
                 expect(firstChild.getText()).to.equal(expectedCode);
             }
 
             function doNodeTest() {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+                const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
                 firstChild.removeImplements(firstChild.getImplements()[index]);
                 expect(firstChild.getText()).to.equal(expectedCode);
             }
         }
 
         it("should throw when trying to remove and none exist", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class C {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class C {}");
             expect(() => firstChild.removeImplements(0)).to.throw();
         });
 
         it("should throw when specifying a bad index", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class C implements B {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class C implements B {}");
             expect(() => firstChild.removeImplements(1)).to.throw();
         });
 
@@ -140,7 +154,7 @@ describe(nameof(ImplementsClauseableNode), () => {
 
     describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: ImplementsClauseableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -168,7 +182,7 @@ describe(nameof(ImplementsClauseableNode), () => {
 
     describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
         function doTest(startingCode: string, implementsTexts: string[]) {
-            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             expect(firstChild.getStructure().implements).to.deep.equal(implementsTexts);
         }
 

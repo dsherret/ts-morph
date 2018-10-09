@@ -1,12 +1,13 @@
 ﻿import { expect } from "chai";
 import { ExtendsClauseableNode, InterfaceDeclaration } from "../../../compiler";
+import { WriterFunction } from "../../../types";
 import { ExtendsClauseableNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExtendsClauseableNode), () => {
     describe(nameof<ExtendsClauseableNode>(n => n.getExtends), () => {
         function doTest(text: string, expectedLength: number) {
-            const {firstChild} = getInfoFromText<InterfaceDeclaration>(text);
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(text);
             const extendsExpressions = firstChild.getExtends();
             expect(extendsExpressions.length).to.equal(expectedLength);
         }
@@ -21,11 +22,13 @@ describe(nameof(ExtendsClauseableNode), () => {
     });
 
     describe(nameof<ExtendsClauseableNode>(n => n.addExtends), () => {
-        function doTest(code: string, extendsTextOrArray: string | string[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
-            if (extendsTextOrArray instanceof Array) {
+        function doTest(code: string, extendsTextOrArray: string | WriterFunction | (string | WriterFunction)[], expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
+            if (extendsTextOrArray instanceof Array || extendsTextOrArray instanceof Function) {
+                const originalLength = firstChild.getExtends().length;
                 const result = firstChild.addExtends(extendsTextOrArray);
-                expect(result.length).to.equal(extendsTextOrArray.length);
+                const newLength = firstChild.getExtends().length;
+                expect(result.length).to.equal(newLength - originalLength);
             }
             else {
                 const result = firstChild.addExtends(extendsTextOrArray);
@@ -47,7 +50,11 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
 
         it("should add multiple extends", () => {
-            doTest("interface Identifier {}", ["Base", "Base2"], "interface Identifier extends Base, Base2 {}");
+            doTest("interface Identifier {}", ["Base", writer => writer.write("Base2")], "interface Identifier extends Base, Base2 {}");
+        });
+
+        it("should add multiple extends with a writer on multiple lines", () => {
+            doTest("interface Identifier {}", writer => writer.writeLine("Base,").write("Base2"), "interface Identifier extends Base,\n    Base2 {}");
         });
 
         it("should do nothing if an empty array", () => {
@@ -55,18 +62,20 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
 
         it("should throw an error when providing invalid input", () => {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("interface Identifier extends Base1 {}");
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier extends Base1 {}");
             expect(() => firstChild.addExtends("")).to.throw();
             expect(() => firstChild.addExtends("  ")).to.throw();
         });
     });
 
     describe(nameof<ExtendsClauseableNode>(n => n.insertExtends), () => {
-        function doTest(code: string, index: number, extendsTextOrArray: string | string[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
-            if (extendsTextOrArray instanceof Array) {
+        function doTest(code: string, index: number, extendsTextOrArray: string | WriterFunction | (string | WriterFunction)[], expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
+            if (extendsTextOrArray instanceof Array || extendsTextOrArray instanceof Function) {
+                const originalLength = firstChild.getExtends().length;
                 const result = firstChild.insertExtends(index, extendsTextOrArray);
-                expect(result.length).to.equal(extendsTextOrArray.length);
+                const newLength = firstChild.getExtends().length;
+                expect(result.length).to.equal(newLength - originalLength);
             }
             else {
                 const result = firstChild.insertExtends(index, extendsTextOrArray);
@@ -81,7 +90,11 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
 
         it("should insert multiple extends at a position", () => {
-            doTest("interface Identifier extends Base, Base1 {}", 1, ["Base2", "Base3"], "interface Identifier extends Base, Base2, Base3, Base1 {}");
+            doTest("interface Identifier extends Base, Base1 {}", 1, ["Base2", writer => writer.write("Base3")], "interface Identifier extends Base, Base2, Base3, Base1 {}");
+        });
+
+        it("should insert multiple with a writer", () => {
+            doTest("interface Identifier extends Base {}", 1, writer => writer.write("Base2, Base3"), "interface Identifier extends Base, Base2, Base3 {}");
         });
     });
 
@@ -91,25 +104,25 @@ describe(nameof(ExtendsClauseableNode), () => {
             doNodeTest();
 
             function doIndexTest() {
-                const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
+                const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
                 firstChild.removeExtends(index);
                 expect(firstChild.getText()).to.equal(expectedCode);
             }
 
             function doNodeTest() {
-                const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
+                const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
                 firstChild.removeExtends(firstChild.getExtends()[index]);
                 expect(firstChild.getText()).to.equal(expectedCode);
             }
         }
 
         it("should throw when trying to remove and none exist", () => {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("interface C {}");
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface C {}");
             expect(() => firstChild.removeExtends(0)).to.throw();
         });
 
         it("should throw when specifying a bad index", () => {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("interface C extends B {}");
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface C extends B {}");
             expect(() => firstChild.removeExtends(1)).to.throw();
         });
 
@@ -132,7 +145,7 @@ describe(nameof(ExtendsClauseableNode), () => {
 
     describe(nameof<InterfaceDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: ExtendsClauseableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -160,7 +173,7 @@ describe(nameof(ExtendsClauseableNode), () => {
 
     describe(nameof<InterfaceDeclaration>(n => n.getStructure), () => {
         function doTest(startingCode: string, extendsTexts: string[]) {
-            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             expect(firstChild.getStructure().extends).to.deep.equal(extendsTexts);
         }
 

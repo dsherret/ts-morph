@@ -2146,7 +2146,7 @@ export interface ExtendsClauseableNode {
      * Adds multiple extends clauses.
      * @param texts - Texts to add for the extends clause.
      */
-    addExtends(texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Adds an extends clause.
      * @param text - Text to add for the extends clause.
@@ -2156,7 +2156,7 @@ export interface ExtendsClauseableNode {
      * Inserts multiple extends clauses.
      * @param texts - Texts to insert for the extends clause.
      */
-    insertExtends(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Inserts an extends clause.
      * @param text - Text to insert for the extends clause.
@@ -2241,12 +2241,12 @@ export interface ImplementsClauseableNode {
      * Adds multiple implements clauses.
      * @param text - Texts to add for the implements clause.
      */
-    addImplements(text: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Inserts an implements clause.
      * @param text - Text to insert for the implements clause.
      */
-    insertImplements(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    insertImplements(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Inserts multiple implements clauses.
      * @param text - Texts to insert for the implements clause.
@@ -9710,14 +9710,16 @@ export interface ExportableNodeStructure {
     isExported?: boolean;
     isDefaultExport?: boolean;
 }
+
 export interface ExtendsClauseableNodeStructure {
-    extends?: string[];
+    extends?: (string | WriterFunction)[] | WriterFunction;
 }
 export interface GeneratorableNodeStructure {
     isGenerator?: boolean;
 }
+
 export interface ImplementsClauseableNodeStructure {
-    implements?: string[];
+    implements?: (string | WriterFunction)[] | WriterFunction;
 }
 
 export interface InitializerExpressionableNodeStructure extends InitializerSetExpressionableNodeStructure {

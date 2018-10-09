@@ -59,7 +59,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
             new CommaNewLineSeparatedStructuresPrinter(stringStructurePrinter) :
             new CommaSeparatedStructuresPrinter(stringStructurePrinter);
 
-        structurePrinter.printText(writer, textsOrWriterFunction instanceof Function ? [textsOrWriterFunction] : textsOrWriterFunction);
+        structurePrinter.printText(writer, textsOrWriterFunction);
 
         return insertTexts(this);
 

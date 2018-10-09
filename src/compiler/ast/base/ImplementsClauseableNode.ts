@@ -1,8 +1,8 @@
 import * as errors from "../../../errors";
-import { getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../../structurePrinters";
 import { ImplementsClauseableNodeStructure } from "../../../structures";
-import { Constructor } from "../../../types";
+import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
@@ -26,12 +26,12 @@ export interface ImplementsClauseableNode {
      * Adds multiple implements clauses.
      * @param text - Texts to add for the implements clause.
      */
-    addImplements(text: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Inserts an implements clause.
      * @param text - Text to insert for the implements clause.
      */
-    insertImplements(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    insertImplements(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Inserts multiple implements clauses.
      * @param text - Texts to insert for the implements clause.
@@ -56,59 +56,60 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             return implementsClause == null ? [] : implementsClause.getTypeNodes();
         }
 
-        addImplements(text: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+        addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
         addImplements(text: string): ExpressionWithTypeArguments;
-        addImplements(text: string | ReadonlyArray<string>): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+        addImplements(text: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
             return this.insertImplements(this.getImplements().length, text as any);
         }
 
-        insertImplements(index: number, text: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+        insertImplements(index: number, text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
         insertImplements(index: number, text: string): ExpressionWithTypeArguments;
-        insertImplements(index: number, texts: string | ReadonlyArray<string>): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
-            const length = texts instanceof Array ? texts.length : 0;
+        insertImplements(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+            const originalImplements = this.getImplements();
+            const wasStringInput = typeof texts === "string";
+
             if (typeof texts === "string") {
                 errors.throwIfWhitespaceOrNotString(texts, nameof(texts));
                 texts = [texts];
             }
-            else if (texts.length === 0) {
+            else if (texts.length === 0)
                 return [];
-            }
 
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structurePrinter = new CommaSeparatedStructuresPrinter(new StringStructurePrinter());
+            const structurePrinter = new CommaSeparatedStructuresPrinter<string>(new StringStructurePrinter());
 
             structurePrinter.printText(writer, texts);
 
             const heritageClauses = this.getHeritageClauses();
-            const implementsTypes = this.getImplements();
-            index = verifyAndGetIndex(index, implementsTypes.length);
+            index = verifyAndGetIndex(index, originalImplements.length);
 
-            if (implementsTypes.length > 0) {
+            if (originalImplements.length > 0) {
                 const implementsClause = this.getHeritageClauseByKindOrThrow(SyntaxKind.ImplementsKeyword);
                 insertIntoCommaSeparatedNodes({
                     parent: implementsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
-                    currentNodes: implementsTypes,
+                    currentNodes: originalImplements,
                     insertIndex: index,
                     newText: writer.toString()
                 });
-                return getNodeOrNodesToReturn(this.getImplements(), index, length);
+            }
+            else {
+                const openBraceToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
+                const openBraceStart = openBraceToken.getStart();
+                const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
+                let insertText = `implements ${writer.toString()} `;
+                if (!isLastSpace)
+                    insertText = " " + insertText;
+
+                // assumes there can only be another extends heritage clause
+                insertIntoParentTextRange({
+                    parent: heritageClauses.length === 0 ? this : heritageClauses[0].getParentSyntaxListOrThrow(),
+                    insertPos: openBraceStart,
+                    newText: insertText
+                });
             }
 
-            const openBraceToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
-            const openBraceStart = openBraceToken.getStart();
-            const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
-            let insertText = `implements ${writer.toString()} `;
-            if (!isLastSpace)
-                insertText = " " + insertText;
-
-            // assumes there can only be another extends heritage clause
-            insertIntoParentTextRange({
-                parent: heritageClauses.length === 0 ? this : heritageClauses[0].getParentSyntaxListOrThrow(),
-                insertPos: openBraceStart,
-                newText: insertText
-            });
-
-            return getNodeOrNodesToReturn(this.getImplements(), index, length);
+            const newImplements = this.getImplements();
+            return wasStringInput ? newImplements[0] : getNodesToReturn(newImplements, index, newImplements.length - originalImplements.length);
         }
 
         removeImplements(index: number): this;

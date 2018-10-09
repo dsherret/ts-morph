@@ -17,8 +17,12 @@ export class InterfaceDeclarationStructurePrinter extends FactoryStructurePrinte
         writer.write(`interface ${structure.name}`);
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.space();
-        if (!ArrayUtils.isNullOrEmpty(structure.extends))
-            writer.write(`extends ${structure.extends.join(", ")} `);
+
+        if (structure.extends instanceof Array && !ArrayUtils.isNullOrEmpty(structure.extends))
+            writer.write(`extends ${structure.extends.map(e => this.getTextWithQueuedChildIndentation(writer, e)).join(", ")} `);
+        else if (structure.extends instanceof Function)
+            writer.write(`extends ${this.getTextWithQueuedChildIndentation(writer, structure.extends)} `);
+
         writer.inlineBlock(() => {
             this.factory.forTypeElementMemberedNode().printText(writer, structure);
         });
