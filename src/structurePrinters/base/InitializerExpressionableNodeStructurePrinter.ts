@@ -9,13 +9,7 @@ export class InitializerExpressionableNodeStructurePrinter extends FactoryStruct
         if (initializer == null)
             return;
 
-        const initializerWriter = this.getNewWriterWithQueuedChildIndentation(writer);
-        if (typeof initializer === "string")
-            initializerWriter.write(initializer);
-        else
-            initializer(initializerWriter);
-
-        const initializerText = initializerWriter.toString();
+        const initializerText = this.getTextWithQueuedChildIndentation(writer, initializer);
         if (!StringUtils.isNullOrWhitespace(initializerText))
             writer.write(` = ${initializerText}`);
     }

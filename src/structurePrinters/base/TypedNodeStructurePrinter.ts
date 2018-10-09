@@ -16,13 +16,7 @@ export class TypedNodeStructurePrinter extends FactoryStructurePrinter<TypedNode
 
         type = type || "any";
 
-        const typeWriter = this.getNewWriterWithQueuedChildIndentation(writer);
-        if (typeof type === "string")
-            typeWriter.write(type);
-        else
-            type(typeWriter);
-
-        const typeText = typeWriter.toString();
+        const typeText = this.getTextWithQueuedChildIndentation(writer, type);
         if (!StringUtils.isNullOrWhitespace(typeText))
             writer.write(`${this.separator} ${typeText}`);
     }

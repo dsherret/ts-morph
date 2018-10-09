@@ -21,4 +21,13 @@ export abstract class StructurePrinter<TStructure> {
         newWriter.queueIndentationLevel(1);
         return newWriter;
     }
+
+    protected getTextWithQueuedChildIndentation(writer: CodeBlockWriter, textOrWriterFunc: string | WriterFunction) {
+        const queuedChildIndentationWriter = this.getNewWriterWithQueuedChildIndentation(writer);
+        if (typeof textOrWriterFunc === "string")
+            queuedChildIndentationWriter.write(textOrWriterFunc);
+        else
+            textOrWriterFunc(queuedChildIndentationWriter);
+        return queuedChildIndentationWriter.toString();
+    }
 }
