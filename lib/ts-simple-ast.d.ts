@@ -3381,7 +3381,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Sets the extends expression.
      * @param text - Text to set as the extends expression.
      */
-    setExtends(text: string): this;
+    setExtends(text: string | WriterFunction): this;
     /**
      * Removes the extends expression, if it exists.
      */
@@ -9809,7 +9809,7 @@ export interface ClassDeclarationStructure extends NameableNodeStructure, ClassD
 }
 
 interface ClassDeclarationSpecificStructure {
-    extends?: string;
+    extends?: string | WriterFunction;
     ctors?: ConstructorDeclarationStructure[];
     properties?: PropertyDeclarationStructure[];
     getAccessors?: GetAccessorDeclarationStructure[];

@@ -28,6 +28,11 @@ describe(nameof(InterfaceDeclarationStructurePrinter), () => {
                 doTest({ name: "I", extends: writer => writer.writeLine("Base1,").write("Base2") },
                     `interface I extends Base1,\n    Base2 {\n}`);
             });
+
+            it("should not write if empty", () => {
+                doTest({ name: "I", extends: _ => {} },
+                    `interface I {\n}`);
+            });
         });
     });
 });

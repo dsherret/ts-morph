@@ -28,13 +28,20 @@ export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<Cl
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.space();
 
-        if (!StringUtils.isNullOrWhitespace(structure.extends))
-            writer.write(`extends ${structure.extends} `);
+        if (structure.extends != null) {
+            const extendsText = this.getTextWithQueuedChildIndentation(writer, structure.extends);
+            if (!StringUtils.isNullOrWhitespace(extendsText))
+                writer.write(`extends ${extendsText} `);
+        }
 
-        if (structure.implements instanceof Array && !ArrayUtils.isNullOrEmpty(structure.implements))
-            writer.write(`implements ${structure.implements.map(i => this.getTextWithQueuedChildIndentation(writer, i)).join(", ")} `);
-        else if (structure.implements instanceof Function)
-            writer.write(`implements ${this.getTextWithQueuedChildIndentation(writer, structure.implements)} `);
+        if (structure.implements != null) {
+            const implementsText = structure.implements instanceof Array
+                ? structure.implements.map(i => this.getTextWithQueuedChildIndentation(writer, i)).join(", ")
+                : this.getTextWithQueuedChildIndentation(writer, structure.implements);
+
+            if (!StringUtils.isNullOrWhitespace(implementsText))
+                writer.write(`implements ${implementsText} `);
+        }
 
         writer.inlineBlock(() => {
             this.factory.forPropertyDeclaration().printTexts(writer, structure.properties);

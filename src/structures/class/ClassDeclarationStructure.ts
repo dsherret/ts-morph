@@ -1,4 +1,5 @@
-﻿import { AbstractableNodeStructure, AmbientableNodeStructure, DecoratableNodeStructure, ExportableNodeStructure, ImplementsClauseableNodeStructure,
+﻿import { WriterFunction } from "../../types";
+import { AbstractableNodeStructure, AmbientableNodeStructure, DecoratableNodeStructure, ExportableNodeStructure, ImplementsClauseableNodeStructure,
     JSDocableNodeStructure, NameableNodeStructure, TypeParameteredNodeStructure } from "../base";
 import { ConstructorDeclarationStructure } from "./ConstructorDeclarationStructure";
 import { GetAccessorDeclarationStructure } from "./GetAccessorDeclarationStructure";
@@ -18,7 +19,7 @@ export interface ClassDeclarationStructure
 }
 
 export interface ClassDeclarationSpecificStructure {
-    extends?: string;
+    extends?: string | WriterFunction;
     ctors?: ConstructorDeclarationStructure[];
     properties?: PropertyDeclarationStructure[];
     getAccessors?: GetAccessorDeclarationStructure[];

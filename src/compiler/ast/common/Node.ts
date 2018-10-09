@@ -1655,6 +1655,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         return writer;
     }
 
+    /** @internal */
+    _getTextWithQueuedChildIndentation(textOrWriterFunc: string | WriterFunction) {
+        const writer = this.getWriterWithQueuedChildIndentation();
+        if (typeof textOrWriterFunc === "string")
+            writer.write(textOrWriterFunc);
+        else
+            textOrWriterFunc(writer);
+        return writer.toString();
+    }
+
     /**
      * Gets a writer with no child indentation text.
      * @internal
