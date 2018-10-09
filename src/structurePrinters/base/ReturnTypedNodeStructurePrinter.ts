@@ -1,7 +1,6 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { ReturnTypedNodeStructure } from "../../structures";
-import { WriterFunction } from "../../types";
 import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
@@ -17,15 +16,14 @@ export class ReturnTypedNodeStructurePrinter extends FactoryStructurePrinter<Ret
 
         returnType = returnType || "void";
 
-        // todo: hacky, will need to change this in the future...
-        const initializerText = typeof returnType === "string" ? returnType : getTextForWriterFunc(returnType);
-        if (!StringUtils.isNullOrWhitespace(initializerText))
-            writer.write(`: ${initializerText}`);
+        const typeWriter = this.getNewWriterWithQueuedChildIndentation(writer);
+        if (typeof returnType === "string")
+            typeWriter.write(returnType);
+        else
+            returnType(typeWriter);
 
-        function getTextForWriterFunc(writerFunc: WriterFunction) {
-            const newWriter = new CodeBlockWriter(writer.getOptions());
-            writerFunc(newWriter);
-            return newWriter.toString();
-        }
+        const returnTypeText = typeWriter.toString();
+        if (!StringUtils.isNullOrWhitespace(returnTypeText))
+            writer.write(`: ${returnTypeText}`);
     }
 }

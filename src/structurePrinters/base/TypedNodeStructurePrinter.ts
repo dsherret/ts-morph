@@ -16,14 +16,14 @@ export class TypedNodeStructurePrinter extends FactoryStructurePrinter<TypedNode
 
         type = type || "any";
 
-        const initializerWriter = this.getNewWriterWithQueuedChildIndentation(writer);
+        const typeWriter = this.getNewWriterWithQueuedChildIndentation(writer);
         if (typeof type === "string")
-            initializerWriter.write(type);
+            typeWriter.write(type);
         else
-            type(initializerWriter);
+            type(typeWriter);
 
-        const initializerText = initializerWriter.toString();
-        if (!StringUtils.isNullOrWhitespace(initializerText))
-            writer.write(`${this.separator} ${initializerText}`);
+        const typeText = typeWriter.toString();
+        if (!StringUtils.isNullOrWhitespace(typeText))
+            writer.write(`${this.separator} ${typeText}`);
     }
 }
