@@ -1498,4 +1498,30 @@ class MyClass {
             expect(syntaxList.getTrailingTriviaEnd()).to.equal(expectedTriviaEnd);
         });
     });
+
+    describe(nameof<Node>(n => n.getNonWhitespaceStart), () => {
+        function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, expected: number) {
+            const { sourceFile } = getInfoFromText(text);
+            const node = selectNode(sourceFile);
+            expect(node.getNonWhitespaceStart()).to.equal(expected);
+        }
+
+        // todo: more tests
+
+        it("should include the jsdocs if a node with jsdocs", () => {
+            doTest("/** test */declare function test() {}", sourceFile => sourceFile.getFunctions()[0], 0);
+        });
+
+        it("should not include jsdocs when the pos is before and the start is after", () => {
+            doTest("/** test */declare function test() {}", sourceFile => sourceFile.getFunctions()[0].getModifiers()[0], 11);
+        });
+
+        it("should not include the comment when for a child with the same pos as the parent", () => {
+            doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0].getModifiers()[0], 11);
+        });
+
+        it("should include the comment for the node that handles it", () => {
+            doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0], 0);
+        });
+    });
 });

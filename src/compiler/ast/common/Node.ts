@@ -780,10 +780,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the first source file text position from the result of .getPos() that is not whitespace.
+     * Gets the first source file text position that is not whitespace.
      */
-    getNonWhitespaceStart() {
-        return getNextNonWhitespacePos(this.sourceFile.getFullText(), this.getPos());
+    getNonWhitespaceStart(): number {
+        const parent = this.getParent() as Node | undefined;
+        const parentTakesPrecedence = parent != null
+            && !TypeGuards.isSourceFile(parent)
+            && parent.getPos() === this.getPos();
+
+        return getNextNonWhitespacePos(this.sourceFile.getFullText(), parentTakesPrecedence ? this.getStart(true) : this.getPos());
     }
 
     /**
