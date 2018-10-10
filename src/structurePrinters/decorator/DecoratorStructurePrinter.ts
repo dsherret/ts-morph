@@ -1,6 +1,5 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { DecoratorStructure } from "../../structures";
-import { printTextFromStringOrWriter } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class DecoratorStructurePrinter extends FactoryStructurePrinter<DecoratorStructure> {
@@ -22,10 +21,14 @@ export class DecoratorStructurePrinter extends FactoryStructurePrinter<Decorator
             return;
 
         writer.write("(");
-        for (let i = 0; i < structure.arguments.length; i++) {
+
+        const args = structure.arguments instanceof Array ? structure.arguments : [structure.arguments];
+
+        for (let i = 0; i < args.length; i++) {
             writer.conditionalWrite(i > 0, ", ");
-            printTextFromStringOrWriter(writer, structure.arguments[i]);
+            writer.write(this.getTextWithQueuedChildIndentation(writer, args[i]));
         }
+
         writer.write(")");
     }
 

@@ -1857,7 +1857,7 @@ export interface ArgumentedNode {
      * Adds arguments.
      * @param argumentTexts - Argument texts to add.
      */
-    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node[];
     /**
      * Inserts an argument.
      * @param index - Child index to insert at.
@@ -1869,7 +1869,7 @@ export interface ArgumentedNode {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
-    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node[];
     /**
      * Removes an argument.
      * @param arg - Argument to remove.
@@ -4726,7 +4726,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds arguments.
      * @param argumentTexts - Argument texts.
      */
-    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node<ts.Node>[];
     /**
      * Inserts an argument.
      * @param index - Child index to insert at.
@@ -4738,7 +4738,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
-    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node<ts.Node>[];
     /**
      * Removes an argument based on the node.
      * @param node - Argument's node to remove.
@@ -9857,7 +9857,7 @@ interface SetAccessorDeclarationSpecificStructure {
 
 export interface DecoratorStructure {
     name: string;
-    arguments?: (string | WriterFunction)[];
+    arguments?: (string | WriterFunction)[] | WriterFunction;
     typeArguments?: string[];
 }
 

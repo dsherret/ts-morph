@@ -21,7 +21,7 @@ export interface ArgumentedNode {
      * Adds arguments.
      * @param argumentTexts - Argument texts to add.
      */
-    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node[];
     /**
      * Inserts an argument.
      * @param index - Child index to insert at.
@@ -33,7 +33,7 @@ export interface ArgumentedNode {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
-    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node[];
     /**
      * Removes an argument.
      * @param arg - Argument to remove.
@@ -60,7 +60,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
             return this.addArguments([argumentText])[0];
         }
 
-        addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>) {
+        addArguments(argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction) {
             return this.insertArguments(this.getArguments().length, argumentTexts);
         }
 
@@ -68,12 +68,15 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
             return this.insertArguments(index, [argumentText])[0];
         }
 
-        insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>) {
+        insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction) {
+            if (argumentTexts instanceof Function)
+                argumentTexts = [argumentTexts];
+
             if (ArrayUtils.isNullOrEmpty(argumentTexts))
                 return [];
 
-            const args = this.getArguments();
-            index = verifyAndGetIndex(index, args.length);
+            const originalArgs = this.getArguments();
+            index = verifyAndGetIndex(index, originalArgs.length);
 
             const writer = this.getWriterWithQueuedChildIndentation();
             for (let i = 0; i < argumentTexts.length; i++) {
@@ -83,12 +86,13 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
 
             insertIntoCommaSeparatedNodes({
                 parent: this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
-                currentNodes: args,
+                currentNodes: originalArgs,
                 insertIndex: index,
                 newText: writer.toString()
             });
 
-            return getNodesToReturn(this.getArguments(), index, argumentTexts.length);
+            const newArgs = this.getArguments();
+            return getNodesToReturn(newArgs, index, newArgs.length - originalArgs.length);
         }
 
         removeArgument(arg: Node): this;

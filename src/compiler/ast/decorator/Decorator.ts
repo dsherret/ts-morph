@@ -4,7 +4,6 @@ import { SyntaxKind, ts } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
 import { WriterFunction } from "../../../types";
 import { Node } from "../common/Node";
-import { Identifier } from "../common/Identifier";
 import { CallExpression, Expression } from "../expression";
 import { TypeNode } from "../type";
 import { DecoratorStructure } from "../../../structures";
@@ -24,8 +23,6 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the name node of the decorator.
      */
     getNameNode() {
-        const sourceFile = this.getSourceFile();
-
         if (this.isDecoratorFactory()) {
             const callExpression = this.getCallExpression()!;
             return getIdentifierFromName(callExpression.getExpression());
@@ -218,7 +215,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds arguments.
      * @param argumentTexts - Argument texts.
      */
-    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>) {
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction) {
         return this.insertArguments(this.getArguments().length, argumentTexts);
     }
 
@@ -236,7 +233,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
-    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>) {
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction) {
         this.setIsDecoratorFactory(true);
         return this.getCallExpressionOrThrow().insertArguments(index, argumentTexts);
     }
