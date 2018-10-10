@@ -1,6 +1,7 @@
 import { removeChildren, removeCommaSeparatedChild, insertIntoParentTextRange } from "../../../manipulation";
-import { SyntaxKind, ts } from "../../../typescript";
 import * as errors from "../../../errors";
+import { WriterFunction } from "../../../types";
+import { SyntaxKind, ts } from "../../../typescript";
 import { StringUtils } from "../../../utils";
 import { NamedNode } from "../base";
 import { Node } from "../common";
@@ -29,7 +30,8 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      * Sets the type parameter constraint.
      * @param text - Text to set as the constraint.
      */
-    setConstraint(text: string) {
+    setConstraint(text: string | WriterFunction) {
+        text = this._getTextWithQueuedChildIndentation(text);
         if (StringUtils.isNullOrWhitespace(text)) {
             this.removeConstraint();
             return this;
@@ -77,7 +79,8 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      * Sets the type parameter default type node.
      * @param text - Text to set as the default type node.
      */
-    setDefault(text: string) {
+    setDefault(text: string | WriterFunction) {
+        text = this._getTextWithQueuedChildIndentation(text);
         if (StringUtils.isNullOrWhitespace(text)) {
             this.removeDefault();
             return this;
