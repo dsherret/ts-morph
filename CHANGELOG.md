@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="16.0.3"></a>
+## [16.0.3](https://github.com/dsherret/ts-simple-ast/compare/16.0.2...16.0.3) (2018-10-08)
+
+
+### Bug Fixes
+
+* [#460](https://github.com/dsherret/ts-simple-ast/issues/460) - Calling setHasDeclareKeyword on interfaces and type aliases should modify them. ([7d7c8e2](https://github.com/dsherret/ts-simple-ast/commit/7d7c8e2))
+
+
+
 <a name="16.0.2"></a>
 ## [16.0.2](https://github.com/dsherret/ts-simple-ast/compare/16.0.0...16.0.2) (2018-10-01)
 
