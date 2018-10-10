@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="16.0.4"></a>
+## [16.0.4](https://github.com/dsherret/ts-simple-ast/compare/16.0.3...16.0.4) (2018-10-10)
+
+
+### Bug Fixes
+
+* Removing last modifier should not remove preceding comments. ([3aa9390](https://github.com/dsherret/ts-simple-ast/commit/3aa9390))
+
+
+
 <a name="16.0.3"></a>
 ## [16.0.3](https://github.com/dsherret/ts-simple-ast/compare/16.0.2...16.0.3) (2018-10-08)
 
