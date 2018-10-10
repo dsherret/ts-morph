@@ -39,7 +39,12 @@ export class NamedImportExportSpecifierStructurePrinter extends FactoryStructure
             structure(specifierWriter);
         else {
             specifierWriter.write(structure.name);
-            specifierWriter.conditionalWrite(structure.alias != null, ` as ${structure.alias}`);
+
+            if (!StringUtils.isNullOrWhitespace(structure.alias)) {
+                if (!specifierWriter.isLastNewLine())
+                    specifierWriter.space();
+                specifierWriter.write(`as ${structure.alias}`);
+            }
         }
         writer.write(specifierWriter.toString());
     }
