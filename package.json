@@ -11,7 +11,7 @@
     "lint-scripts": "tslint \"scripts/**/*.ts\"",
     "lint-src-and-fix": "tslint \"src/**/*.ts\" --fix",
     "build": "rimraf dist && npx ttsc",
-    "build-declarations": "ts-node --transpileOnly scripts/generation/main create-compiler-inspected-types create-code-block-writer-file && rimraf dist-declarations && npx ttsc --project tsconfig.declarations.json && ts-node --transpileOnly scripts/generation/main create-declaration-file",
+    "build-declarations": "rimraf dist-declarations && ts-node --transpileOnly scripts/generation/main create-compiler-inspected-types create-code-block-writer-file create-declaration-file",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha --opts mocha.opts",
     "test-ts-versions": "ts-node --transpileOnly scripts/test/testTypeScriptVersions",
     "test-coverage": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" nyc --reporter=lcov mocha --opts mocha.opts",

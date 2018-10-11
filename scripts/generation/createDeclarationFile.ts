@@ -7,11 +7,11 @@
  */
 import { Node, VariableStatement } from "ts-simple-ast";
 import { StringUtils } from "../../src/utils";
-import { getDeclarationProject, removeImportTypes } from "../common";
+import { createDeclarationProject, removeImportTypes } from "../common";
 import { flattenDeclarationFiles } from "./flattenDeclarationFiles";
 
 export function createDeclarationFile() {
-    const project = getDeclarationProject();
+    const project = createDeclarationProject();
     const mainFile = project.getSourceFileOrThrow("main.d.ts");
 
     flattenDeclarationFiles(project, mainFile);

@@ -8329,7 +8329,7 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
      * Sets the type parameter constraint.
      * @param text - Text to set as the constraint.
      */
-    setConstraint(text: string): this;
+    setConstraint(text: string | WriterFunction): this;
     /**
      * Removes the constraint type node.
      */
@@ -8346,7 +8346,7 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
      * Sets the type parameter default type node.
      * @param text - Text to set as the default type node.
      */
-    setDefault(text: string): this;
+    setDefault(text: string | WriterFunction): this;
     /**
      * Removes the default type node.
      */
@@ -10065,8 +10065,8 @@ export interface TypeParameterDeclarationStructure extends TypeParameterDeclarat
 }
 
 interface TypeParameterDeclarationSpecificStructure {
-    constraint?: string;
-    default?: string;
+    constraint?: string | WriterFunction;
+    default?: string | WriterFunction;
 }
 
 export declare type CompilerNodeBrandPropertyNamesType = "_classElementBrand" | "_declarationBrand" | "_expressionBrand" | "_functionLikeDeclarationBrand" | "_jsDocTypeBrand" | "_leftHandSideExpressionBrand" | "_literalExpressionBrand" | "_memberExpressionBrand" | "_objectLiteralBrandBrand" | "_primaryExpressionBrand" | "_propertyAccessExpressionLikeQualifiedNameBrand" | "_statementBrand" | "_typeElementBrand" | "_typeNodeBrand" | "_unaryExpressionBrand" | "_updateExpressionBrand";
