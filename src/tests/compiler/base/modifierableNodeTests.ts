@@ -135,5 +135,17 @@ describe(nameof(ModifierableNode), () => {
             firstChild.toggleModifier("export", false);
             expect(firstChild.getText()).to.equal("class Identifier {}");
         });
+
+        it("should not remove jsdoc comment", () => {
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>("/** test */declare function Test {}");
+            firstChild.toggleModifier("declare", false);
+            expect(sourceFile.getFullText()).to.equal("/** test */function Test {}");
+        });
+
+        it("should not remove comment", () => {
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>("// test\ndeclare function Test {}");
+            firstChild.toggleModifier("declare", false);
+            expect(sourceFile.getFullText()).to.equal("// test\nfunction Test {}");
+        });
     });
 });

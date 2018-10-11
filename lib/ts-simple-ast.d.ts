@@ -4295,7 +4295,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     getFullStart(): number;
     /**
-     * Gets the first source file text position from the result of .getPos() that is not whitespace.
+     * Gets the first source file text position that is not whitespace.
      */
     getNonWhitespaceStart(): number;
     /**
