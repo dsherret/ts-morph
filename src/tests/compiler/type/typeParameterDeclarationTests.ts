@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration } from "../../../compiler";
+import { WriterFunction } from "../../../types";
 import { TypeParameterDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
@@ -41,7 +42,7 @@ describe(nameof(TypeParameterDeclaration), () => {
     });
 
     describe(nameof<TypeParameterDeclaration>(d => d.setConstraint), () => {
-        function doTest(text: string, name: string, expected: string) {
+        function doTest(text: string, name: string | WriterFunction, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.setConstraint(name);
             expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
@@ -49,6 +50,10 @@ describe(nameof(TypeParameterDeclaration), () => {
 
         it("should set when it doesn't exist", () => {
             doTest("function func<T>() {}", "string", "function func<T extends string>() {}");
+        });
+
+        it("should set on multiple lines", () => {
+            doTest("function func<T>() {}", writer => writer.writeLine("string |").write("number"), "function func<T extends string |\n    number>() {}");
         });
 
         it("should set when it exists", () => {
@@ -109,7 +114,7 @@ describe(nameof(TypeParameterDeclaration), () => {
     });
 
     describe(nameof<TypeParameterDeclaration>(d => d.setDefault), () => {
-        function doTest(text: string, name: string, expected: string) {
+        function doTest(text: string, name: string | WriterFunction, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.setDefault(name);
             expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
@@ -117,6 +122,10 @@ describe(nameof(TypeParameterDeclaration), () => {
 
         it("should set when it doesn't exist", () => {
             doTest("function func<T>() {}", "string", "function func<T = string>() {}");
+        });
+
+        it("should set on multiple lines", () => {
+            doTest("function func<T>() {}", writer => writer.writeLine("string |").write("number"), "function func<T = string |\n    number>() {}");
         });
 
         it("should set when it exists", () => {

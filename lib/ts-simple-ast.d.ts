@@ -1857,7 +1857,7 @@ export interface ArgumentedNode {
      * Adds arguments.
      * @param argumentTexts - Argument texts to add.
      */
-    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node[];
     /**
      * Inserts an argument.
      * @param index - Child index to insert at.
@@ -1869,7 +1869,7 @@ export interface ArgumentedNode {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
-    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node[];
     /**
      * Removes an argument.
      * @param arg - Argument to remove.
@@ -2146,7 +2146,7 @@ export interface ExtendsClauseableNode {
      * Adds multiple extends clauses.
      * @param texts - Texts to add for the extends clause.
      */
-    addExtends(texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Adds an extends clause.
      * @param text - Text to add for the extends clause.
@@ -2156,7 +2156,7 @@ export interface ExtendsClauseableNode {
      * Inserts multiple extends clauses.
      * @param texts - Texts to insert for the extends clause.
      */
-    insertExtends(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Inserts an extends clause.
      * @param text - Text to insert for the extends clause.
@@ -2241,12 +2241,12 @@ export interface ImplementsClauseableNode {
      * Adds multiple implements clauses.
      * @param text - Texts to add for the implements clause.
      */
-    addImplements(text: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    addImplements(text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Inserts an implements clause.
      * @param text - Text to insert for the implements clause.
      */
-    insertImplements(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    insertImplements(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Inserts multiple implements clauses.
      * @param text - Texts to insert for the implements clause.
@@ -3381,7 +3381,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Sets the extends expression.
      * @param text - Text to set as the extends expression.
      */
-    setExtends(text: string): this;
+    setExtends(text: string | WriterFunction): this;
     /**
      * Removes the extends expression, if it exists.
      */
@@ -4726,7 +4726,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds arguments.
      * @param argumentTexts - Argument texts.
      */
-    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node<ts.Node>[];
     /**
      * Inserts an argument.
      * @param index - Child index to insert at.
@@ -4738,7 +4738,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
-    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction> | WriterFunction): Node<ts.Node>[];
     /**
      * Removes an argument based on the node.
      * @param node - Argument's node to remove.
@@ -9710,14 +9710,16 @@ export interface ExportableNodeStructure {
     isExported?: boolean;
     isDefaultExport?: boolean;
 }
+
 export interface ExtendsClauseableNodeStructure {
-    extends?: string[];
+    extends?: (string | WriterFunction)[] | WriterFunction;
 }
 export interface GeneratorableNodeStructure {
     isGenerator?: boolean;
 }
+
 export interface ImplementsClauseableNodeStructure {
-    implements?: string[];
+    implements?: (string | WriterFunction)[] | WriterFunction;
 }
 
 export interface InitializerExpressionableNodeStructure extends InitializerSetExpressionableNodeStructure {
@@ -9807,7 +9809,7 @@ export interface ClassDeclarationStructure extends NameableNodeStructure, ClassD
 }
 
 interface ClassDeclarationSpecificStructure {
-    extends?: string;
+    extends?: string | WriterFunction;
     ctors?: ConstructorDeclarationStructure[];
     properties?: PropertyDeclarationStructure[];
     getAccessors?: GetAccessorDeclarationStructure[];
@@ -9855,7 +9857,7 @@ interface SetAccessorDeclarationSpecificStructure {
 
 export interface DecoratorStructure {
     name: string;
-    arguments?: (string | WriterFunction)[];
+    arguments?: (string | WriterFunction)[] | WriterFunction;
     typeArguments?: string[];
 }
 

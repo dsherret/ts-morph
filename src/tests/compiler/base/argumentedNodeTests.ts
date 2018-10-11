@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { ArgumentedNode, ClassDeclaration } from "../../../compiler";
+import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ArgumentedNode), () => {
@@ -20,16 +21,22 @@ describe(nameof(ArgumentedNode), () => {
     });
 
     describe(nameof<ArgumentedNode>(n => n.insertArguments), () => {
-        function doTest(code: string, index: number, texts: string[], expectedCode: string) {
+        function doTest(code: string, index: number, texts: (string | WriterFunction)[] | WriterFunction, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
+            const originalCount = callExpr.getArguments().length;
             const result = callExpr.insertArguments(index, texts);
-            expect(result.map(t => t.getText())).to.deep.equal(texts);
+            const newCount = callExpr.getArguments().length;
+            expect(result.length).to.equal(newCount - originalCount);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should insert multiple args when none exist", () => {
-            doTest("@dec()\nclass T {}", 0, ["5", "6", "7"], "@dec(5, 6, 7)\nclass T {}");
+            doTest("@dec()\nclass T {}", 0, ["5", "6", writer => writer.write("7")], "@dec(5, 6, 7)\nclass T {}");
+        });
+
+        it("should write with a writer and use queued child identation", () => {
+            doTest("@dec()\nclass T {}", 0, writer => writer.writeLine("5,").write("6"), "@dec(5,\n    6)\nclass T {}");
         });
 
         it("should insert multiple args at the beginning", () => {

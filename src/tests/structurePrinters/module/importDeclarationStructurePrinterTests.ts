@@ -1,15 +1,12 @@
 ﻿import { expect } from "chai";
-import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { FormatCodeSettings } from "../../../compiler";
-import { StructurePrinterFactory } from "../../../factories";
 import { ExportDeclarationStructurePrinter } from "../../../structurePrinters";
 import { ExportDeclarationStructure } from "../../../structures";
-import { getDefaultFormatCodeSettings } from "../../testHelpers";
+import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(ExportDeclarationStructurePrinter), () => {
     function doTest(structure: ExportDeclarationStructure, expectedOutput: string, formatCodeSettings?: FormatCodeSettings) {
-        const writer = new CodeBlockWriter();
-        const factory = new StructurePrinterFactory(() => getDefaultFormatCodeSettings(formatCodeSettings));
+        const { writer, factory } = getStructureFactoryAndWriter(formatCodeSettings);
         factory.forExportDeclaration().printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);
     }

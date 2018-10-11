@@ -66,6 +66,10 @@ describe(nameof(ExportAssignment), () => {
             doTest("export = 5;", "6", "export = 6;");
         });
 
+        it("should set with writer and using queued child indentation", () => {
+            doTest("export = 5;", writer => writer.writeLine("4 +").write("7"), "export = 4 +\n    7;");
+        });
+
         it("should set for an export default", () => {
             doTest("export default 5;", writer => writer.write("6"), "export default 6;");
         });

@@ -1,8 +1,8 @@
 import * as errors from "../../../errors";
-import { getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../../structurePrinters";
 import { ExtendsClauseableNodeStructure } from "../../../structures";
-import { Constructor } from "../../../types";
+import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
@@ -21,7 +21,7 @@ export interface ExtendsClauseableNode {
      * Adds multiple extends clauses.
      * @param texts - Texts to add for the extends clause.
      */
-    addExtends(texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Adds an extends clause.
      * @param text - Text to add for the extends clause.
@@ -31,7 +31,7 @@ export interface ExtendsClauseableNode {
      * Inserts multiple extends clauses.
      * @param texts - Texts to insert for the extends clause.
      */
-    insertExtends(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+    insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
     /**
      * Inserts an extends clause.
      * @param text - Text to insert for the extends clause.
@@ -56,16 +56,18 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             return extendsClause == null ? [] : extendsClause.getTypeNodes();
         }
 
-        addExtends(texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+        addExtends(texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
         addExtends(text: string): ExpressionWithTypeArguments;
-        addExtends(text: string | ReadonlyArray<string>): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+        addExtends(text: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
             return this.insertExtends(this.getExtends().length, text as any);
         }
 
-        insertExtends(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
+        insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
         insertExtends(index: number, text: string): ExpressionWithTypeArguments;
-        insertExtends(index: number, texts: string | ReadonlyArray<string>): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
-            const length = texts instanceof Array ? texts.length : 0;
+        insertExtends(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+            const originalExtends = this.getExtends();
+            const wasStringInput = typeof texts === "string";
+
             if (typeof texts === "string") {
                 errors.throwIfWhitespaceOrNotString(texts, nameof(texts));
                 texts = [texts];
@@ -79,34 +81,34 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
 
             structurePrinter.printText(writer, texts);
 
-            const extendsTypes = this.getExtends();
-            index = verifyAndGetIndex(index, extendsTypes.length);
+            index = verifyAndGetIndex(index, originalExtends.length);
 
-            if (extendsTypes.length > 0) {
+            if (originalExtends.length > 0) {
                 const extendsClause = this.getHeritageClauseByKindOrThrow(SyntaxKind.ExtendsKeyword);
                 insertIntoCommaSeparatedNodes({
                     parent: extendsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
-                    currentNodes: extendsTypes,
+                    currentNodes: originalExtends,
                     insertIndex: index,
                     newText: writer.toString()
                 });
-                return getNodeOrNodesToReturn(this.getExtends(), index, length);
+            }
+            else {
+                const openBraceToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
+                const openBraceStart = openBraceToken.getStart();
+                const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
+                let insertText = `extends ${writer.toString()} `;
+                if (!isLastSpace)
+                    insertText = " " + insertText;
+
+                insertIntoParentTextRange({
+                    parent: this,
+                    insertPos: openBraceStart,
+                    newText: insertText
+                });
             }
 
-            const openBraceToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
-            const openBraceStart = openBraceToken.getStart();
-            const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
-            let insertText = `extends ${writer.toString()} `;
-            if (!isLastSpace)
-                insertText = " " + insertText;
-
-            insertIntoParentTextRange({
-                parent: this,
-                insertPos: openBraceStart,
-                newText: insertText
-            });
-
-            return getNodeOrNodesToReturn(this.getExtends(), index, length);
+            const newExtends = this.getExtends();
+            return wasStringInput ? newExtends[index] : getNodesToReturn(newExtends, index, newExtends.length - originalExtends.length);
         }
 
         removeExtends(index: number): this;

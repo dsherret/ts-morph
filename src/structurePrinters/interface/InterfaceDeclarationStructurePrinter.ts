@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { InterfaceDeclarationStructure } from "../../structures";
-import { ArrayUtils } from "../../utils";
+import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
@@ -17,8 +17,16 @@ export class InterfaceDeclarationStructurePrinter extends FactoryStructurePrinte
         writer.write(`interface ${structure.name}`);
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.space();
-        if (!ArrayUtils.isNullOrEmpty(structure.extends))
-            writer.write(`extends ${structure.extends.join(", ")} `);
+
+        if (structure.extends != null) {
+            const extendsText = structure.extends instanceof Array
+                ? structure.extends.map(i => this.getTextWithQueuedChildIndentation(writer, i)).join(", ")
+                : this.getTextWithQueuedChildIndentation(writer, structure.extends);
+
+            if (!StringUtils.isNullOrWhitespace(extendsText))
+                writer.write(`extends ${extendsText} `);
+        }
+
         writer.inlineBlock(() => {
             this.factory.forTypeElementMemberedNode().printText(writer, structure);
         });

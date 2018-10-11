@@ -27,10 +27,22 @@ export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<Cl
             writer.space().write(structure.name);
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.space();
-        if (!StringUtils.isNullOrWhitespace(structure.extends))
-            writer.write(`extends ${structure.extends} `);
-        if (!ArrayUtils.isNullOrEmpty(structure.implements))
-            writer.write(`implements ${structure.implements.join(", ")} `);
+
+        if (structure.extends != null) {
+            const extendsText = this.getTextWithQueuedChildIndentation(writer, structure.extends);
+            if (!StringUtils.isNullOrWhitespace(extendsText))
+                writer.write(`extends ${extendsText} `);
+        }
+
+        if (structure.implements != null) {
+            const implementsText = structure.implements instanceof Array
+                ? structure.implements.map(i => this.getTextWithQueuedChildIndentation(writer, i)).join(", ")
+                : this.getTextWithQueuedChildIndentation(writer, structure.implements);
+
+            if (!StringUtils.isNullOrWhitespace(implementsText))
+                writer.write(`implements ${implementsText} `);
+        }
+
         writer.inlineBlock(() => {
             this.factory.forPropertyDeclaration().printTexts(writer, structure.properties);
             this.printCtors(writer, structure, isAmbient);

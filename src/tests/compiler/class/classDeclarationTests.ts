@@ -3,6 +3,7 @@ import { ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, 
     PropertyDeclaration, Scope, SetAccessorDeclaration } from "../../../compiler";
 import { ClassDeclarationSpecificStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
@@ -33,7 +34,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.setExtends), () => {
-        function doTest(startCode: string, extendsText: string, expectedCode: string) {
+        function doTest(startCode: string, extendsText: string | WriterFunction, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.setExtends(extendsText);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -41,6 +42,10 @@ describe(nameof(ClassDeclaration), () => {
 
         it("should set an extends", () => {
             doTest("  class Identifier {}  ", "Base", "  class Identifier extends Base {}  ");
+        });
+
+        it("should set an extends with a writer function and queued indentation", () => {
+            doTest("class Identifier {}", writer => writer.writeLine("Test<").write("number>"), "class Identifier extends Test<\n    number> {}");
         });
 
         it("should set an extends when an implements exists", () => {

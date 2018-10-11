@@ -1,5 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { TypeParameterDeclarationStructure } from "../../structures";
+import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
@@ -20,9 +21,15 @@ export class TypeParameterDeclarationStructurePrinter extends FactoryStructurePr
 
     printText(writer: CodeBlockWriter, structure: TypeParameterDeclarationStructure) {
         writer.write(structure.name);
-        if (structure.constraint != null && structure.constraint.length > 0)
-            writer.write(` extends ${structure.constraint}`);
-        if (structure.default != null && structure.default.length > 0)
-            writer.write(` = ${structure.default}`);
+        if (structure.constraint != null) {
+            const constraintText = this.getTextWithQueuedChildIndentation(writer, structure.constraint);
+            if (!StringUtils.isNullOrWhitespace(constraintText))
+                writer.write(` extends ${constraintText}`);
+        }
+        if (structure.default != null) {
+            const defaultText = this.getTextWithQueuedChildIndentation(writer, structure.default);
+            if (!StringUtils.isNullOrWhitespace(defaultText))
+                writer.write(` = ${defaultText}`);
+        }
     }
 }

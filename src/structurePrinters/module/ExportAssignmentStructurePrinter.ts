@@ -17,8 +17,6 @@ export class ExportAssignmentStructurePrinter extends FactoryStructurePrinter<Ex
         else
             writer.write(" default ");
 
-        this.printTextOrWriterFunc(writer, structure.expression);
-
-        writer.write(";");
+        writer.write(this.getTextWithQueuedChildIndentation(writer, structure.expression)).write(";");
     }
 }

@@ -2,6 +2,7 @@ import * as errors from "../../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange } from "../../../manipulation";
 import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure,
     PropertyDeclarationStructure, SetAccessorDeclarationStructure, ClassDeclarationSpecificStructure } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../../utils";
 import { AmbientableNode, ChildOrderableNode, DecoratableNode, ExportableNode, HeritageClauseableNode, ImplementsClauseableNode,
@@ -72,12 +73,14 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Sets the extends expression.
      * @param text - Text to set as the extends expression.
      */
-    setExtends(text: string) {
+    setExtends(text: string | WriterFunction) {
+        text = this._getTextWithQueuedChildIndentation(text);
+
         if (StringUtils.isNullOrWhitespace(text))
             return this.removeExtends();
 
-        const heritageClauses = this.getHeritageClauses();
         const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
+
         if (extendsClause != null) {
             const childSyntaxList = extendsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList);
             const childSyntaxListStart = childSyntaxList.getStart();
@@ -89,26 +92,26 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     textLength: childSyntaxList.getEnd() - childSyntaxListStart
                 }
             });
-            return this;
         }
+        else {
+            const implementsClause = this.getHeritageClauseByKind(SyntaxKind.ImplementsKeyword);
+            let insertPos: number;
+            if (implementsClause != null)
+                insertPos = implementsClause.getStart();
+            else
+                insertPos = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken).getStart();
 
-        const implementsClause = this.getHeritageClauseByKind(SyntaxKind.ImplementsKeyword);
-        let insertPos: number;
-        if (implementsClause != null)
-            insertPos = implementsClause.getStart();
-        else
-            insertPos = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken).getStart();
+            const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[insertPos - 1]);
+            let newText = `extends ${text} `;
+            if (!isLastSpace)
+                newText = " " + newText;
 
-        const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[insertPos - 1]);
-        let newText = `extends ${text} `;
-        if (!isLastSpace)
-            newText = " " + newText;
-
-        insertIntoParentTextRange({
-            parent: implementsClause == null ? this : implementsClause.getParentSyntaxListOrThrow(),
-            insertPos,
-            newText
-        });
+            insertIntoParentTextRange({
+                parent: implementsClause == null ? this : implementsClause.getParentSyntaxListOrThrow(),
+                insertPos,
+                newText
+            });
+        }
 
         return this;
     }

@@ -45,7 +45,7 @@ export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> 
      * @param textOrWriterFunction - Text or writer function to set as the export assignment expression.
      */
     setExpression(textOrWriterFunction: string | WriterFunction) {
-        this.getExpression().replaceWithText(textOrWriterFunction);
+        this.getExpression().replaceWithText(textOrWriterFunction, this.getWriterWithQueuedChildIndentation());
         return this;
     }
 

@@ -1,3 +1,5 @@
-﻿export interface ExtendsClauseableNodeStructure {
-    extends?: string[];
+﻿import { WriterFunction } from "../../types";
+
+export interface ExtendsClauseableNodeStructure {
+    extends?: (string | WriterFunction)[] | WriterFunction;
 }
