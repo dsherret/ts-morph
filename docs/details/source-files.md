@@ -73,7 +73,7 @@ This isn't recommended though because it could possibly leave the file system in
 
 Copy a source file to a new file by specifying a new relative or absolute path:
 
-```ts
+```ts setup: const someDirectoryObject: Directory
 const newSourceFile = sourceFile.copy("newFileName.ts");
 // this won't throw if a file exists at the specified path
 const otherSourceFile = sourceFile.copy("other.ts", { overwrite: true });
@@ -98,7 +98,7 @@ sourceFile.copyImmediatelySync("NewFile2.ts");
 
 Moves a source file to a new file by specifying a new relative or absolute path:
 
-```ts
+```ts setup: const someDirectoryObject: Directory
 sourceFile.move("newFileName.ts");
 // this won't throw if a file exists at the specified path
 sourceFile.move("other.ts", { overwrite: true });
