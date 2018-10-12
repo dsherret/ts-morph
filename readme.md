@@ -8,9 +8,9 @@
 
 [TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (18 August 2018)
+## Library Development - Progress Update (11 October 2018)
 
-TypeScript 3.0 support was added in v13. A major performance improvement was added in v14. View information on breaking changes in [breaking-changes.md](breaking-changes.md).
+TypeScript 3.1 support was added in v17. View information on breaking changes in [breaking-changes.md](breaking-changes.md).
 
 This library is still under early active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
@@ -39,7 +39,12 @@ Work in progress: https://dsherret.github.io/ts-simple-ast/
 import { Project } from "ts-simple-ast";
 
 // initialize
-const project = new Project();
+const project = new Project({
+    // Optionally specify compiler options, tsconfig.json, virtual file system, and more here.
+    // If you initialize with a tsconfig.json, then it will automatically populate the project
+    // with the associated source files.
+    // Read more: https://dsherret.github.io/ts-simple-ast/setup/
+});
 
 // add source files
 project.addExistingSourceFiles("src/**/*.ts");
