@@ -28,3 +28,6 @@ tsconfig.json
 tsconfig.*.json
 tslint.json
 wrapped-nodes.md
+# do not include lock files in order to not restrict the typescript version
+yarn.lock
+package-lock.json
