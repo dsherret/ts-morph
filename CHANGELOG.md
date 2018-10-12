@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="17.0.0"></a>
+# [17.0.0](https://github.com/dsherret/ts-simple-ast/compare/16.0.4...17.0.0) (2018-10-12)
+
+
+### Bug Fixes
+
+* Project.getSourceFileOrThrow() should always output the passed in string in the error message. ([c81081e](https://github.com/dsherret/ts-simple-ast/commit/c81081e))
+* Write more with hanging indents ([#461](https://github.com/dsherret/ts-simple-ast/issues/461)) ([687e467](https://github.com/dsherret/ts-simple-ast/commit/687e467))
+
+
+### Code Refactoring
+
+* Remove CompilerNodeBrandPropertyNamesType. ([ac0040e](https://github.com/dsherret/ts-simple-ast/commit/ac0040e))
+
+
+### Features
+
+* [#153](https://github.com/dsherret/ts-simple-ast/issues/153) - Ability to insert named exports and imports with a writer. ([aa5617e](https://github.com/dsherret/ts-simple-ast/commit/aa5617e))
+* [#400](https://github.com/dsherret/ts-simple-ast/issues/400) - Symbol - Add global exports. ([2bbeff9](https://github.com/dsherret/ts-simple-ast/commit/2bbeff9))
+* [#445](https://github.com/dsherret/ts-simple-ast/issues/445) - SourceFile, Directory - Add moveToDirectory and copyToDirectory. ([fc806da](https://github.com/dsherret/ts-simple-ast/commit/fc806da))
+* [#449](https://github.com/dsherret/ts-simple-ast/issues/449) - Wrap ImportClause. ([c66ed65](https://github.com/dsherret/ts-simple-ast/commit/c66ed65))
+* [#454](https://github.com/dsherret/ts-simple-ast/issues/454) - Wrap NamespaceImport. ([001e7d0](https://github.com/dsherret/ts-simple-ast/commit/001e7d0))
+* [#456](https://github.com/dsherret/ts-simple-ast/issues/456) - Relax ts dependency to 3.0.1 and 3.0.3. ([1029f75](https://github.com/dsherret/ts-simple-ast/commit/1029f75))
+* ArrayLiteralExpression - Add ability to add elements with writer for each element. ([1f8b1cb](https://github.com/dsherret/ts-simple-ast/commit/1f8b1cb))
+* Better error message when using a forgotten node. ([762254f](https://github.com/dsherret/ts-simple-ast/commit/762254f))
+* Support TypeScript 3.1.1 and 3.1.3. ([1598b96](https://github.com/dsherret/ts-simple-ast/commit/1598b96))
+
+
+### BREAKING CHANGES
+
+* Removed CompilerNodeBrandPropertyNamesType.
+* More declarations are being written with hanging indents.
+
+
+
 <a name="16.0.4"></a>
 ## [16.0.4](https://github.com/dsherret/ts-simple-ast/compare/16.0.3...16.0.4) (2018-10-10)
 
