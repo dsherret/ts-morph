@@ -2,7 +2,6 @@
 import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
 import { createCodeBlockWriterFile } from "./createCodeBlockWriterFile";
 import { createKindToNodeMappings } from "./createKindToNodeMappings";
-import { createCompilerNodeBrandPropertyNamesType } from "./createCompilerNodeBrandPropertyNamesType";
 import { createCompilerNodeToWrappedType } from "./createCompilerNodeToWrappedType";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
 import { createDeclarationFile } from "./createDeclarationFile";
@@ -29,10 +28,6 @@ if (checkHasArg("create-structure-printer-factory")) {
 if (checkHasArg("create-code-block-writer-file")) {
     console.log("Creating code block writer file...");
     createCodeBlockWriterFile(inspector);
-}
-if (checkHasArg("create-compiler-inspected-types")) {
-    console.log("Creating compiler node brand property names type...");
-    createCompilerNodeBrandPropertyNamesType(tsInspector);
 }
 if (checkHasArg("create-kind-to-node-mappings")) {
     console.log("Creating kind to node mappings...");

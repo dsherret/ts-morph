@@ -5661,4 +5661,3 @@ export declare namespace ts {
     let disableIncrementalParsing: boolean;
 }
 export { SyntaxKind, TypeFormatFlags, SymbolFlags, TypeFlags, ObjectFlags, DiagnosticCategory, ModuleResolutionKind, ModuleKind, JsxEmit, NewLineKind, ScriptKind, ScriptTarget, LanguageVariant, EmitHint, IndentStyle };
-export declare type CompilerNodeBrandPropertyNamesType = "_classElementBrand" | "_declarationBrand" | "_expressionBrand" | "_functionLikeDeclarationBrand" | "_jsDocTypeBrand" | "_leftHandSideExpressionBrand" | "_literalExpressionBrand" | "_memberExpressionBrand" | "_objectLiteralBrandBrand" | "_primaryExpressionBrand" | "_propertyAccessExpressionLikeQualifiedNameBrand" | "_statementBrand" | "_typeElementBrand" | "_typeNodeBrand" | "_unaryExpressionBrand" | "_updateExpressionBrand";

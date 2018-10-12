@@ -10069,8 +10069,6 @@ interface TypeParameterDeclarationSpecificStructure {
     default?: string | WriterFunction;
 }
 
-export declare type CompilerNodeBrandPropertyNamesType = "_classElementBrand" | "_declarationBrand" | "_expressionBrand" | "_functionLikeDeclarationBrand" | "_jsDocTypeBrand" | "_leftHandSideExpressionBrand" | "_literalExpressionBrand" | "_memberExpressionBrand" | "_objectLiteralBrandBrand" | "_primaryExpressionBrand" | "_propertyAccessExpressionLikeQualifiedNameBrand" | "_statementBrand" | "_typeElementBrand" | "_typeNodeBrand" | "_unaryExpressionBrand" | "_updateExpressionBrand";
-
 export { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind };
 export * from "./codeBlockWriter/code-block-writer";
 
