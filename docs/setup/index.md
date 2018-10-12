@@ -4,7 +4,7 @@ title: Instantiating
 
 ## Instantiating
 
-Use the default export from `"ts-simple-ast"`:
+Use the `Project` named export from `"ts-simple-ast"`:
 
 ```ts
 import { Project } from "ts-simple-ast";
