@@ -1,5 +1,5 @@
 ﻿/* barrel:ignore */
-import * as objectAssign from "object-assign";
+import { ObjectUtils } from "../../utils";
 import { Node } from "./common/Node";
 
 /** @internal */
@@ -11,7 +11,7 @@ export function callBaseGetStructure<T>(basePrototype: any, node: Node, structur
         newStructure = {} as any;
 
     if (structure != null)
-        objectAssign(newStructure, structure);
+        ObjectUtils.assign(newStructure, structure);
 
     return newStructure;
 }

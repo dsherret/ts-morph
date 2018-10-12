@@ -1,9 +1,8 @@
-import * as objectAssign from "object-assign";
 import * as errors from "../../../errors";
 import { getRangeFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { Constructor } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
-import { ArrayUtils, TypeGuards } from "../../../utils";
+import { ArrayUtils, TypeGuards, ObjectUtils } from "../../../utils";
 import { BodyableNode, NamedNode } from "../base";
 import { Node } from "../common";
 
@@ -112,7 +111,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     const structures = [...opts.structures];
 
     for (let i = 0; i < structures.length; i++) {
-        structures[i] = objectAssign(objectAssign({}, thisStructure), structures[i]);
+        structures[i] = ObjectUtils.assign(ObjectUtils.assign({}, thisStructure), structures[i]);
         // structures[i] = {...thisStructure, ...structures[i]}; // not supported by TS as of 2.4.1
     }
 

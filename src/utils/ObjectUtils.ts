@@ -30,9 +30,9 @@
             return this.es5Assign(a, b, c);
     }
 
-    static es5Assign<T, U>(a: T, b: U): T & U;
-    static es5Assign<T, U, V>(a: T, b: U, c: V): T & U & V;
-    static es5Assign<T, U, V>(a: T, b: U, c?: V) {
+    private static es5Assign<T, U>(a: T, b: U): T & U;
+    private static es5Assign<T, U, V>(a: T, b: U, c: V): T & U & V;
+    private static es5Assign<T, U, V>(a: T, b: U, c?: V) {
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
         const to = Object(a);
 

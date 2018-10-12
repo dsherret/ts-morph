@@ -20,9 +20,9 @@ export function createGetStructureFunctions(structures: Structure[]) {
 
     writer.writeLine("/* tslint:disable */");
     writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: npm run code-generate").newLine();
-    writer.writeLine(`import * as objectAssign from "object-assign";`);
     writer.writeLine(`import * as compiler from "../../compiler";`);
     writer.writeLine(`import * as structures from "../../structures";`);
+    writer.writeLine(`import { ObjectUtils } from "../../utils";`);
     writer.writeLine(`import * as getMixinStructureFuncs from "./getMixinStructureFunctions";`);
 
     for (const structure of structures.filter(s => shouldCreateForStructure(s.getName()))) {
@@ -45,9 +45,9 @@ function write(writer: CodeBlockWriter, structure: Structure) {
 }
 
 function writeBody(writer: CodeBlockWriter, structure: Structure, baseStructures: Structure[]) {
-    writer.writeLine(`let structure: structures.${structure.getName()} = {} as any;`);
+    writer.writeLine(`const structure: structures.${structure.getName()} = {} as any;`);
     for (const extendsStructure of baseStructures) {
-        writer.write("objectAssign(structure, ");
+        writer.write("ObjectUtils.assign(structure, ");
         writer.write("getMixinStructureFuncs.");
         const extendsClassName = extendsStructure.getName().replace(/Structure$/, "");
         writer.write(`from${extendsClassName}(node));`).newLine();

@@ -73,7 +73,6 @@
     "globby": "^8.0.1",
     "is-negated-glob": "^1.0.0",
     "multimatch": "^2.1.0",
-    "object-assign": "^4.1.1",
     "tslib": "^1.9.3",
     "typescript": "^3.0.1"
   },
@@ -86,7 +85,6 @@
     "@types/mocha": "^5.2.0",
     "@types/multimatch": "^2.1.2",
     "@types/node": "^6.0.110",
-    "@types/object-assign": "^4.0.30",
     "barrel-maintainer": "^1.4.0",
     "chai": "^4.1.2",
     "chalk": "^2.4.0",

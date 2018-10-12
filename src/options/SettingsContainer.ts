@@ -1,5 +1,4 @@
-﻿import * as objectAssign from "object-assign";
-import { EventContainer } from "../utils";
+﻿import { EventContainer, ObjectUtils } from "../utils";
 
 export abstract class SettingsContainer<T extends object> {
     /** @internal */
@@ -11,7 +10,7 @@ export abstract class SettingsContainer<T extends object> {
 
     /** @internal */
     constructor(defaultSettings: T) {
-        this.defaultSettings = objectAssign({}, defaultSettings);
+        this.defaultSettings = ObjectUtils.assign({}, defaultSettings);
         this.settings = defaultSettings;
     }
 
@@ -19,7 +18,7 @@ export abstract class SettingsContainer<T extends object> {
      * Resets the settings to the default.
      */
     reset() {
-        this.settings = objectAssign({}, this.defaultSettings);
+        this.settings = ObjectUtils.assign({}, this.defaultSettings);
         this.fireModified();
     }
 
@@ -27,7 +26,7 @@ export abstract class SettingsContainer<T extends object> {
      * Gets a copy of the settings as an object.
      */
     get(): T {
-        return objectAssign({}, this.settings);
+        return ObjectUtils.assign({}, this.settings);
     }
 
     /**
@@ -35,7 +34,7 @@ export abstract class SettingsContainer<T extends object> {
      * @param settings - Settings to set.
      */
     set(settings: Partial<T>) {
-        objectAssign(this.settings, settings);
+        ObjectUtils.assign(this.settings, settings);
         this.fireModified();
     }
 
