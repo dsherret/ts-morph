@@ -22,14 +22,4 @@ const tsTypeChecker = typeChecker.compilerObject;
 
 ### Use
 
-Generally you won't need to use the type checker, because most of the functionality is exposed as methods on the wrapped compiler objects.
-
-It may be useful in certain instances to use the type checker though.
-
-### Getting type at location
-
-Get the type of any node by calling:
-
-```ts
-const typeOfNode = typeChecker.getTypeAtLocation(node);
-```
+Generally you won't need to use the type checker because most of the functionality is exposed as methods on other objects.

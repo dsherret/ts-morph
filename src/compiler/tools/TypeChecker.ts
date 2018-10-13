@@ -37,6 +37,13 @@ export class TypeChecker {
     }
 
     /**
+     * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
+     */
+    getAmbientModules() {
+        return this.compilerObject.getAmbientModules().map(s => this.context.compilerFactory.getSymbol(s));
+    }
+
+    /**
      * Gets the apparent type of a type.
      * @param type - Type to get the apparent type of.
      */

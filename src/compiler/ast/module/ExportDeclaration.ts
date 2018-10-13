@@ -86,10 +86,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
         const symbol = stringLiteral.getSymbol();
         if (symbol == null)
             return undefined;
-        const declarations = symbol.getDeclarations();
-        if (declarations.length === 0 || declarations[0].getKind() !== SyntaxKind.SourceFile)
-            return undefined;
-        return declarations[0] as SourceFile;
+        const declaration = symbol.getDeclarations()[0];
+        return declaration != null && TypeGuards.isSourceFile(declaration) ? declaration : undefined;
     }
 
     /**

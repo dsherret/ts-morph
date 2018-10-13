@@ -22,4 +22,4 @@ const tsProgram = program.compilerObject;
 
 ### Use
 
-Generally you won't need to use the program, because most of the functionality is exposed as methods on the wrapped `Node` objects.
+Generally you won't need to use the program because most of the functionality is exposed as methods on other objects.

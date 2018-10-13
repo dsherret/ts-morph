@@ -44,7 +44,7 @@ export class Symbol {
      * Gets the escaped name.
      */
     getEscapedName() {
-        return this.compilerSymbol.escapedName as string;
+        return this.compilerSymbol.getEscapedName() as string;
     }
 
     /**

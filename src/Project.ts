@@ -364,6 +364,31 @@ export class Project {
     }
 
     /**
+     * Gets the specified ambient module symbol or returns undefined if not found.
+     * @param moduleName - The ambient module name with or without quotes.
+     */
+    getAmbientModule(moduleName: string) {
+        moduleName = normalizeAmbientModuleName(moduleName);
+        return ArrayUtils.find(this.getAmbientModules(), s => s.getName() === moduleName);
+    }
+
+    /**
+     * Gets the specified ambient module symbol or throws if not found.
+     * @param moduleName - The ambient module name with or without quotes.
+     */
+    getAmbientModuleOrThrow(moduleName: string) {
+        return errors.throwIfNullOrUndefined(this.getAmbientModule(moduleName),
+            () => `Could not find ambient module with name: ${normalizeAmbientModuleName(moduleName)}`);
+    }
+
+    /**
+     * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
+     */
+    getAmbientModules() {
+        return this.getTypeChecker().getAmbientModules();
+    }
+
+    /**
      * Saves all the unsaved source files to the file system and deletes all deleted files.
      */
     async save() {
@@ -486,5 +511,15 @@ export class Project {
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => (void | Promise<void>)) {
         return this.context.compilerFactory.forgetNodesCreatedInBlock(block);
+    }
+}
+
+function normalizeAmbientModuleName(moduleName: string) {
+    if (isQuote(moduleName[0]) && isQuote(moduleName[moduleName.length - 1]))
+        moduleName = moduleName.substring(1, moduleName.length - 1);
+    return `"${moduleName}"`;
+
+    function isQuote(char: string) {
+        return char === `"` || char === "'";
     }
 }

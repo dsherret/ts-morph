@@ -927,6 +927,67 @@ describe(nameof(Project), () => {
         });
     });
 
+    describe("ambient modules", () => {
+        function getProject() {
+            const project = new Project({ useVirtualFileSystem: true });
+            const fileSystem = project.getFileSystem();
+
+            fileSystem.writeFileSync("/node_modules/@types/jquery/index.d.ts", `
+    declare module 'jquery' {
+        export = jQuery;
+    }
+    declare const jQuery: JQueryStatic;
+    interface JQueryStatic {
+        test: string;
+    }`);
+            fileSystem.writeFileSync("/node_modules/@types/jquery/package.json",
+                `{ "name": "@types/jquery", "version": "1.0.0", "typeScriptVersion": "2.3" }`);
+
+            return project;
+        }
+
+        describe(nameof<Project>(p => p.getAmbientModules), () => {
+            it("should get when exist", () => {
+                const project = getProject();
+                expect(project.getAmbientModules().map(m => m.getName())).to.deep.equal([`"jquery"`]);
+            });
+
+            it("should get when doesn't exist", () => {
+                const project = new Project({ useVirtualFileSystem: true });
+                expect(project.getAmbientModules().length).to.equal(0);
+            });
+        });
+
+        describe(nameof<Project>(p => p.getAmbientModule), () => {
+            function doTest(moduleName: string, expectedName: string | undefined) {
+                const project = getProject();
+                const ambientModule = project.getAmbientModule(moduleName);
+                expect(ambientModule == null ? undefined : ambientModule.getName()).to.equal(expectedName);
+            }
+
+            it("should find when using single quotes", () => doTest(`'jquery'`, `"jquery"`));
+            it("should find when using double quotes", () => doTest(`"jquery"`, `"jquery"`));
+            it("should find when using no quotes", () => doTest("jquery", `"jquery"`));
+            it("should not find when does not exist", () => doTest("other-module", undefined));
+        });
+
+        describe(nameof<Project>(p => p.getAmbientModuleOrThrow), () => {
+            function doTest(moduleName: string, expectedName: string | undefined) {
+                const project = getProject();
+
+                if (expectedName != null)
+                    expect(project.getAmbientModuleOrThrow(moduleName).getName()).to.equal(expectedName);
+                else
+                    expect(() => project.getAmbientModuleOrThrow(moduleName)).to.throw();
+            }
+
+            it("should find when using single quotes", () => doTest(`'jquery'`, `"jquery"`));
+            it("should find when using double quotes", () => doTest(`"jquery"`, `"jquery"`));
+            it("should find when using no quotes", () => doTest("jquery", `"jquery"`));
+            it("should not find when does not exist", () => doTest("other-module", undefined));
+        });
+    });
+
     describe("manipulating then getting something from the type checker", () => {
         it("should not error after manipulation", () => {
             const project = new Project({ useVirtualFileSystem: true });
