@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* `printNode` should get the source file from the passed in node if it exists. ([3a77dbc](https://github.com/dsherret/ts-simple-ast/commit/3a77dbc))
+* [#464](https://github.com/dsherret/ts-simple-ast/issues/464) - `printNode` should get the source file from the passed in node if it exists. ([3a77dbc](https://github.com/dsherret/ts-simple-ast/commit/3a77dbc))
 
 
 
