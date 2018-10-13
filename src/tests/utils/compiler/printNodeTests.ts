@@ -1,12 +1,10 @@
 import { expect } from "chai";
 import { NewLineKind, ScriptKind, ScriptTarget, SyntaxKind, ts } from "../../../typescript";
 import { printNode } from "../../../utils";
-import { getInfoFromText } from "../../compiler/testHelpers";
 
 describe(nameof(printNode), () => {
     const nodeText = "class MyClass {\n    // comment\n    prop: string;\n}";
     const nodeTextNoComment = nodeText.replace("    // comment\n", "");
-    const {sourceFile, firstChild} = getInfoFromText(nodeText);
     const tsSourceFile = ts.createSourceFile("file.tsx", nodeText, ScriptTarget.Latest, false, ScriptKind.TSX);
     const tsClass = tsSourceFile.getChildren(tsSourceFile)[0].getChildren(tsSourceFile)[0];
 
@@ -28,6 +26,20 @@ describe(nameof(printNode), () => {
 
     it("should print the node when specifying a compiler node and source file", () => {
         expect(printNode(tsClass)).to.equal(nodeTextNoComment);
+    });
+
+    it("should print a parsed node that has parents set", () => {
+        const text = "function test() {\n    return 5;\n}";
+        const sourceFile = ts.createSourceFile("file.ts", text, ScriptTarget.Latest, true);
+        const functionDeclaration = ts.forEachChild(sourceFile, node => node)!;
+        expect(printNode(functionDeclaration)).to.equal(text);
+    });
+
+    it("should print a parsed node that does not have its parent set, but is passed a source file", () => {
+        const text = "function test() {\n    return 5;\n}";
+        const sourceFile = ts.createSourceFile("file.ts", text, ScriptTarget.Latest, false);
+        const functionDeclaration = ts.forEachChild(sourceFile, node => node)!;
+        expect(printNode(functionDeclaration, sourceFile)).to.equal(text);
     });
 
     it("general compiler api test", () => {

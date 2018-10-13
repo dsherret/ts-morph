@@ -26,7 +26,10 @@ export interface PrintNodeOptions {
     /**
      * The script kind.
      *
-     * Defaults to TSX. This is only useful when not using a wrapped node and not providing a source file.
+     * @remarks This is only useful when passing in a compiler node that was constructed
+     * with the compiler API factory methods.
+     *
+     * Defaults to TSX.
      */
     scriptKind?: ScriptKind;
 }
@@ -35,6 +38,8 @@ export interface PrintNodeOptions {
  * Prints the provided node using the compiler's printer.
  * @param node - Compiler node.
  * @param options - Options.
+ * @remarks If the node was not constructed with the compiler API factory methods and the node
+ * does not have parents set, then use the other overload that accepts a source file.
  */
 export function printNode(node: ts.Node, options?: PrintNodeOptions): string;
 /**
@@ -63,8 +68,13 @@ export function printNode(node: ts.Node, sourceFileOrOptions?: PrintNodeOptions 
         if (isFirstOverload) {
             if (node.kind === SyntaxKind.SourceFile)
                 return undefined;
-            const scriptKind = getScriptKind();
-            return ts.createSourceFile(`print.${getFileExt(scriptKind)}`, "", ScriptTarget.Latest, false, scriptKind);
+            const topParent = getNodeSourceFile();
+            if (topParent == null) {
+                // create a result file (see https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API)
+                const scriptKind = getScriptKind();
+                return ts.createSourceFile(`print.${getFileExt(scriptKind)}`, "", ScriptTarget.Latest, false, scriptKind);
+            }
+            return topParent;
         }
 
         return sourceFileOrOptions as ts.SourceFile;
@@ -78,6 +88,13 @@ export function printNode(node: ts.Node, sourceFileOrOptions?: PrintNodeOptions 
                 return "tsx";
             return "ts";
         }
+    }
+
+    function getNodeSourceFile() {
+        let topNode: ts.Node | undefined = node.parent;
+        while (topNode != null && topNode.parent != null)
+            topNode = topNode.parent;
+        return topNode as ts.SourceFile;
     }
 
     function getOptions() {
