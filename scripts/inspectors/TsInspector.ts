@@ -18,7 +18,7 @@ export class TsInspector {
 
     getCompilerApiFile(): SourceFile {
         const publicFile = this.getApiLayerFile();
-        return publicFile.getImportDeclarationOrThrow(t => t.getModuleSpecifierValue().startsWith("typescript")).getModuleSpecifierSourceFile();
+        return publicFile.getImportDeclarationOrThrow(t => t.getModuleSpecifierValue().startsWith("typescript")).getModuleSpecifierSourceFileOrThrow();
     }
 
     @Memoize

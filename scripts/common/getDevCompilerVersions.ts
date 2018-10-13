@@ -13,7 +13,7 @@ export function getDevCompilerVersions() {
         if (!keyRegEx.test(key))
             continue;
         const matches = versionRegEx.exec(dependencies[key]);
-        versions.push({ version: matches[0], name: key });
+        versions.push({ version: matches![0], name: key });
     }
 
     return versions.sort((a, b) => a.version > b.version ? -1 : 1);
