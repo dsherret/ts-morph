@@ -607,6 +607,8 @@ export interface CreateWrappedNodeOptions {
  * Prints the provided node using the compiler's printer.
  * @param node - Compiler node.
  * @param options - Options.
+ * @remarks If the node was not constructed with the compiler API factory methods and the node
+ * does not have parents set, then use the other overload that accepts a source file.
  */
 export declare function printNode(node: ts.Node, options?: PrintNodeOptions): string;
 
@@ -644,7 +646,10 @@ export interface PrintNodeOptions {
     /**
      * The script kind.
      *
-     * Defaults to TSX. This is only useful when not using a wrapped node and not providing a source file.
+     * @remarks This is only useful when passing in a compiler node that was constructed
+     * with the compiler API factory methods.
+     *
+     * Defaults to TSX.
      */
     scriptKind?: ScriptKind;
 }
