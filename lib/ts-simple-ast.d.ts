@@ -503,6 +503,20 @@ export declare class Project {
      */
     getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
     /**
+     * Gets the specified ambient module symbol or returns undefined if not found.
+     * @param moduleName - The ambient module name with or without quotes.
+     */
+    getAmbientModule(moduleName: string): Symbol | undefined;
+    /**
+     * Gets the specified ambient module symbol or throws if not found.
+     * @param moduleName - The ambient module name with or without quotes.
+     */
+    getAmbientModuleOrThrow(moduleName: string): Symbol;
+    /**
+     * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
+     */
+    getAmbientModules(): Symbol[];
+    /**
      * Saves all the unsaved source files to the file system and deletes all deleted files.
      */
     save(): Promise<void>;
@@ -1784,6 +1798,18 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isYieldExpression(node: Node): node is YieldExpression;
+}
+
+/** Functions for writing. */
+export declare class WriterFunctions {
+    private constructor();
+    /**
+     * Gets a writer function for writing the provided object as an object literal expression.
+     * @param obj - Object to write.
+     */
+    static object(obj: {
+        [key: string]: string | number | WriterFunction | undefined;
+    }): WriterFunction;
 }
 
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
@@ -9192,6 +9218,10 @@ export declare class TypeChecker {
      * Gets the compiler's TypeChecker.
      */
     readonly compilerObject: ts.TypeChecker;
+    /**
+     * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
+     */
+    getAmbientModules(): Symbol[];
     /**
      * Gets the apparent type of a type.
      * @param type - Type to get the apparent type of.
