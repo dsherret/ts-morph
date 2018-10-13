@@ -2,6 +2,11 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 17
+
+* Removed `CompilerNodeBrandPropertyNamesType` type alias.
+* More nodes are being written with hanging indentation when doing a newline.
+
 ## Version 16
 
 ### Better support for `global` namespace declarations

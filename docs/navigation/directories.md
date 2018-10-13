@@ -152,7 +152,7 @@ directory.emit({ emitOnlyDtsFiles: true });
 
 Move the directory to a new directory:
 
-```ts
+```ts setup: const otherDir: Directory;
 // ex. moves C:\MyProject\dir to C:\MyProject\newDir if working directory is C:\MyProject
 directory.move("./newDir");
 // ex. moves C:\MyProject\newDir to C:\MyProject\otherDir using a relative path
@@ -178,7 +178,7 @@ directory.moveImmediatelySync("../newDir2");
 
 Copy the directory to a new directory:
 
-```ts
+```ts setup: const otherDir: Directory;
 // ex. copies C:\MyProject\dir to C:\MyProject\newDir
 directory.copy("../newDir");
 // allows overwriting (otherwise it will throw)
