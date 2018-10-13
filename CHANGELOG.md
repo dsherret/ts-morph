@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="17.0.1"></a>
+## [17.0.1](https://github.com/dsherret/ts-simple-ast/compare/17.0.0...17.0.1) (2018-10-13)
+
+
+### Bug Fixes
+
+* `printNode` should get the source file from the passed in node if it exists. ([3a77dbc](https://github.com/dsherret/ts-simple-ast/commit/3a77dbc))
+
+
+
 <a name="17.0.0"></a>
 # [17.0.0](https://github.com/dsherret/ts-simple-ast/compare/16.0.4...17.0.0) (2018-10-12)
 
