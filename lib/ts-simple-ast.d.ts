@@ -1800,7 +1800,10 @@ export declare class TypeGuards {
     static isYieldExpression(node: Node): node is YieldExpression;
 }
 
-/** Functions for writing. */
+/**
+ * Functions for writing.
+ * @remarks These functions are currently very experimental.
+ */
 export declare class WriterFunctions {
     private constructor();
     /**
