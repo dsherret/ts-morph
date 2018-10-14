@@ -1,7 +1,10 @@
 import { CodeBlockWriter } from "../codeBlockWriter";
 import { WriterFunction } from "../types";
 
-/** Functions for writing. */
+/**
+ * Functions for writing.
+ * @remarks These functions are currently very experimental.
+ */
 export class WriterFunctions {
     private constructor() {
     }
