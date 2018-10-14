@@ -1,7 +1,7 @@
 ﻿import * as path from "path";
-import { EOL } from "os";
 import { Project, NewLineKind, ts } from "ts-simple-ast";
 import { rootFolder } from "../config";
+import { printDiagnostics } from "./printDiagnostics";
 
 export function getDeclarationProject() {
     const project = new Project({
@@ -27,11 +27,7 @@ export function createDeclarationProject() {
     const emitResult = project.emitToMemory({ emitOnlyDtsFiles: true });
 
     if (emitResult.getDiagnostics().length > 0) {
-        ts.formatDiagnosticsWithColorAndContext(emitResult.getDiagnostics().map(d => d.compilerObject), {
-            getCurrentDirectory: () => process.cwd(),
-            getCanonicalFileName: fileName => fileName,
-            getNewLine: () => EOL
-        });
+        printDiagnostics(emitResult.getDiagnostics());
         process.exit(1);
     }
 
