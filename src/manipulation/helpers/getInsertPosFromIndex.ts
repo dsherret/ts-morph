@@ -1,5 +1,5 @@
 import { Node, SyntaxList } from "../../compiler";
-import { SyntaxKind, ts } from "../../typescript";
+import { SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
 
@@ -12,7 +12,6 @@ export function getInsertPosFromIndex(index: number, syntaxList: SyntaxList, chi
         if (TypeGuards.isSourceFile(parent))
             return 0;
         else if (TypeGuards.isCaseClause(parent) || TypeGuards.isDefaultClause(parent)) {
-            const block = parent.getFirstChildIfKind(SyntaxKind.Block);
             const colonToken = parent.getFirstChildByKindOrThrow(SyntaxKind.ColonToken);
             return colonToken.getEnd();
         }
