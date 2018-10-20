@@ -1,9 +1,9 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Scope } from "../../../compiler";
 import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure } from "../../../structures";
-import { getInfoFromText } from "../testHelpers";
 import { SyntaxKind } from "../../../typescript";
-import { TypeGuards } from "../../../utils";
+import { ArrayUtils } from "../../../utils";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
@@ -94,8 +94,9 @@ describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(m => m.remove), () => {
         describe("no overload", () => {
             function doTest(code: string, nameToRemove: string, expectedCode: string) {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
-                firstChild.getInstanceMethod(nameToRemove)!.remove();
+                const { sourceFile } = getInfoFromText<ClassDeclaration>(code);
+                const method = ArrayUtils.find(sourceFile.getDescendantsOfKind(SyntaxKind.MethodDeclaration), m => m.getName() === nameToRemove)!;
+                method.remove();
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
 
@@ -132,6 +133,11 @@ describe(nameof(MethodDeclaration), () => {
             it("should remove when it's in an ambient class", () => {
                 doTest("declare class Identifier {\n    method(): void;\n\n    prop: string;\n\n    method2(): void;\n}", "method",
                     "declare class Identifier {\n    prop: string;\n\n    method2(): void;\n}");
+            });
+
+            it("should remove when it's in an class expression", () => {
+                doTest("const myTest = class {\n    method1() {\n    }\n\n    method2() {\n    }\n\n    method3() {\n    }\n}", "method2",
+                    "const myTest = class {\n    method1() {\n    }\n\n    method3() {\n    }\n}");
             });
         });
 

@@ -1,9 +1,9 @@
-﻿import { ClassDeclaration, Node } from "../../compiler";
+﻿import { Node } from "../../compiler";
 import { TypeGuards } from "../../utils";
 import { FormattingKind } from "./FormattingKind";
 
-export function getClassMemberFormatting(parent: ClassDeclaration, member: Node) {
-    if (parent.isAmbient())
+export function getClassMemberFormatting(parent: Node, member: Node) {
+    if (TypeGuards.isAmbientableNode(parent) && parent.isAmbient())
         return FormattingKind.Newline;
 
     if (hasBody(member))

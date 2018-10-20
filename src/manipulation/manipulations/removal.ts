@@ -1,5 +1,6 @@
 import { ClassDeclaration, Node, OverloadableNode } from "../../compiler";
 import { SyntaxKind } from "../../typescript";
+import { TypeGuards } from "../../utils";
 import { FormattingKind, getClassMemberFormatting, getClausedNodeChildFormatting, getInterfaceMemberFormatting, getStatementedNodeChildFormatting } from "../formatting";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { RemoveChildrenTextManipulator, RemoveChildrenWithFormattingTextManipulator, UnwrapTextManipulator } from "../textManipulators";
@@ -65,7 +66,8 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
 
 export function removeOverloadableClassMember(classMember: Node & OverloadableNode) {
     if (classMember.isOverload()) {
-        if ((classMember.getParentOrThrow() as ClassDeclaration).isAmbient())
+        const parent = classMember.getParentOrThrow();
+        if (TypeGuards.isAmbientableNode(parent) && parent.isAmbient())
             removeClassMember(classMember);
         else
             removeChildren({ children: [classMember], removeFollowingSpaces: true, removeFollowingNewLines: true });
