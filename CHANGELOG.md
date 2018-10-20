@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="17.1.1"></a>
+## [17.1.1](https://github.com/dsherret/ts-simple-ast/compare/17.1.0...17.1.1) (2018-10-20)
+
+
+### Bug Fixes
+
+* [#468](https://github.com/dsherret/ts-simple-ast/issues/468) - Removing class members should not assume it's in a class. ([2c4db99](https://github.com/dsherret/ts-simple-ast/commit/2c4db99))
+
+
+
 <a name="17.1.0"></a>
 # [17.1.0](https://github.com/dsherret/ts-simple-ast/compare/17.0.1...17.1.0) (2018-10-14)
 
