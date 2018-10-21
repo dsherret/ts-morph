@@ -2084,9 +2084,7 @@ export interface DecoratableNode {
     insertDecorators(index: number, structures: ReadonlyArray<DecoratorStructure>): Decorator[];
 }
 
-declare type DecoratableNodeExtensionType = Node<ts.Node & {
-    decorators: ts.NodeArray<ts.Decorator> | undefined;
-}>;
+declare type DecoratableNodeExtensionType = Node<ts.Node>;
 
 export declare function ExclamationTokenableNode<T extends Constructor<ExclamationTokenableNodeExtensionType>>(Base: T): Constructor<ExclamationTokenableNode> & T;
 
@@ -3391,26 +3389,14 @@ export interface AbstractableNode {
 
 declare type AbstractableNodeExtensionType = Node & ModifierableNode;
 
-export declare type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
+export declare function ClassLikeDeclarationBase<T extends Constructor<ClassLikeDeclarationBaseExtensionType>>(Base: T): Constructor<ClassLikeDeclarationBase> & T;
 
-export declare type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
+export interface ClassLikeDeclarationBase extends NameableNode, TextInsertableNode, ImplementsClauseableNode, HeritageClauseableNode, AbstractableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, ModifierableNode, ClassLikeDeclarationBaseSpecific {
+}
 
-export declare type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
+declare function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLikeDeclarationBaseSpecificExtensionType>>(Base: T): Constructor<ClassLikeDeclarationBaseSpecific> & T;
 
-export declare type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
-
-export declare type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
-
-export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
-
-declare const ClassDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ImplementsClauseableNode> & Constructor<HeritageClauseableNode> & Constructor<DecoratableNode> & Constructor<TypeParameteredNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<AbstractableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NameableNode> & typeof Statement;
-
-export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<ClassDeclarationStructure>): this;
+interface ClassLikeDeclarationBaseSpecific {
     /**
      * Sets the extends expression.
      * @param text - Text to set as the extends expression.
@@ -3781,7 +3767,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
     /**
      * Gets the static members.
      */
-    getStaticMembers(): (GetAccessorDeclaration | MethodDeclaration | PropertyDeclaration | SetAccessorDeclaration)[];
+    getStaticMembers(): ClassStaticMemberTypes[];
     /**
      * Gets the class' members regardless of whether it's an instance of static member.
      */
@@ -3828,11 +3814,36 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Gets all the derived classes.
      */
     getDerivedClasses(): ClassDeclaration[];
+}
+
+export declare type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
+
+export declare type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
+
+export declare type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
+
+export declare type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
+
+export declare type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
+
+export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
+
+declare type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
+
+declare type ClassLikeDeclarationBaseSpecificExtensionType = Node<ts.ClassLikeDeclarationBase> & HeritageClauseableNode & ModifierableNode & NameableNode;
+
+declare const ClassDeclarationBase: Constructor<ChildOrderableNode> & Constructor<NamespaceChildableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ClassLikeDeclarationBase> & typeof Statement;
+
+export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ClassDeclarationStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): ClassDeclarationStructure;
-    private getImmediateDerivedClasses;
 }
 
 declare const ConstructorDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<ScopedNode> & Constructor<FunctionLikeDeclaration> & Constructor<BodyableNode> & typeof Node;

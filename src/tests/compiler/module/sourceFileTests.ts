@@ -1,10 +1,9 @@
 ﻿import { expect } from "chai";
-import { Node, EmitResult, ExportAssignment, ExportDeclaration, FileSystemRefreshResult, FormatCodeSettings,
-    ImportDeclaration, QuoteKind, SourceFile } from "../../../compiler";
+import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile } from "../../../compiler";
 import * as errors from "../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../options";
 import { Project } from "../../../Project";
-import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, SourceFileStructure } from "../../../structures";
+import { SourceFileStructure } from "../../../structures";
 import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget } from "../../../typescript";
 import { getFileSystemHostWithFiles } from "../../testHelpers";
 import { getInfoFromText } from "../testHelpers";

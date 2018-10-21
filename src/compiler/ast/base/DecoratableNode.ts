@@ -9,7 +9,7 @@ import { Node } from "../common";
 import { Decorator } from "../decorator/Decorator";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export type DecoratableNodeExtensionType = Node<ts.Node & { decorators: ts.NodeArray<ts.Decorator> | undefined; }>;
+export type DecoratableNodeExtensionType = Node<ts.Node>;
 
 export interface DecoratableNode {
     /**
