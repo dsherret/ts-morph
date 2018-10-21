@@ -55,6 +55,7 @@ export class TypeGuards {
     static isAbstractableNode(node: compiler.Node): node is compiler.AbstractableNode & compiler.AbstractableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
@@ -371,6 +372,28 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ClassExpression.
+     * @param node - Node to check.
+     */
+    static isClassExpression(node: compiler.Node): node is compiler.ClassExpression {
+        return node.getKind() === SyntaxKind.ClassExpression;
+    }
+
+    /**
+     * Gets if the node is a ClassLikeDeclarationBase.
+     * @param node - Node to check.
+     */
+    static isClassLikeDeclarationBase(node: compiler.Node): node is compiler.ClassLikeDeclarationBase & compiler.ClassLikeDeclarationBaseExtensionType {
+        switch (node.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a CommaListExpression.
      * @param node - Node to check.
      */
@@ -449,6 +472,7 @@ export class TypeGuards {
     static isDecoratableNode(node: compiler.Node): node is compiler.DecoratableNode & compiler.DecoratableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
@@ -595,6 +619,7 @@ export class TypeGuards {
             case SyntaxKind.StringKeyword:
             case SyntaxKind.SymbolKeyword:
             case SyntaxKind.UndefinedKeyword:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Identifier:
             case SyntaxKind.AsExpression:
             case SyntaxKind.AwaitExpression:
@@ -825,6 +850,7 @@ export class TypeGuards {
     static isHeritageClauseableNode(node: compiler.Node): node is compiler.HeritageClauseableNode & compiler.HeritageClauseableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.InterfaceDeclaration:
                 return true;
             default:
@@ -853,7 +879,13 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isImplementsClauseableNode(node: compiler.Node): node is compiler.ImplementsClauseableNode & compiler.ImplementsClauseableNodeExtensionType {
-        return node.getKind() === SyntaxKind.ClassDeclaration;
+        switch (node.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -1114,6 +1146,7 @@ export class TypeGuards {
     static isJSDocableNode(node: compiler.Node): node is compiler.JSDocableNode & compiler.JSDocableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -1273,6 +1306,7 @@ export class TypeGuards {
      */
     static isLeftHandSideExpression(node: compiler.Node): node is compiler.LeftHandSideExpression {
         switch (node.getKind()) {
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Identifier:
             case SyntaxKind.CallExpression:
             case SyntaxKind.ElementAccessExpression:
@@ -1370,6 +1404,7 @@ export class TypeGuards {
      */
     static isMemberExpression(node: compiler.Node): node is compiler.MemberExpression {
         switch (node.getKind()) {
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Identifier:
             case SyntaxKind.ElementAccessExpression:
             case SyntaxKind.ImportKeyword:
@@ -1430,6 +1465,7 @@ export class TypeGuards {
     static isModifierableNode(node: compiler.Node): node is compiler.ModifierableNode & compiler.ModifierableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -1475,6 +1511,7 @@ export class TypeGuards {
     static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.NameableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
                 return true;
@@ -1728,6 +1765,7 @@ export class TypeGuards {
      */
     static isPrimaryExpression(node: compiler.Node): node is compiler.PrimaryExpression {
         switch (node.getKind()) {
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Identifier:
             case SyntaxKind.ImportKeyword:
             case SyntaxKind.MetaProperty:
@@ -1856,6 +1894,7 @@ export class TypeGuards {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
@@ -1901,6 +1940,7 @@ export class TypeGuards {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
@@ -2246,6 +2286,7 @@ export class TypeGuards {
     static isTextInsertableNode(node: compiler.Node): node is compiler.TextInsertableNode & compiler.TextInsertableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -2425,6 +2466,7 @@ export class TypeGuards {
     static isTypeParameteredNode(node: compiler.Node): node is compiler.TypeParameteredNode & compiler.TypeParameteredNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -2477,6 +2519,7 @@ export class TypeGuards {
      */
     static isUnaryExpression(node: compiler.Node): node is compiler.UnaryExpression {
         switch (node.getKind()) {
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Identifier:
             case SyntaxKind.AwaitExpression:
             case SyntaxKind.CallExpression:
@@ -2568,6 +2611,7 @@ export class TypeGuards {
      */
     static isUpdateExpression(node: compiler.Node): node is compiler.UpdateExpression {
         switch (node.getKind()) {
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.Identifier:
             case SyntaxKind.CallExpression:
             case SyntaxKind.ElementAccessExpression:
