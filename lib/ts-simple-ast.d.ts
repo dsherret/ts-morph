@@ -1992,6 +1992,10 @@ export interface BodiedNode {
      * @param textOrWriterFunction - Text or writer function to set as the body.
      */
     setBodyText(textOrWriterFunction: string | WriterFunction): this;
+    /**
+     * Gets the body text without leading whitespace, leading indentation, or trailing whitespace.
+     */
+    getBodyText(): string;
 }
 
 declare type BodiedNodeExtensionType = Node<ts.Node & {
@@ -2009,6 +2013,10 @@ export interface BodyableNode {
      * Gets the body if it exists.
      */
     getBody(): Node | undefined;
+    /**
+     * Gets the body text without leading whitespace, leading indentation, or trailing whitespace. Returns undefined if there is no body.
+     */
+    getBodyText(): string | undefined;
     /**
      * Gets if the node has a body.
      */
@@ -5808,7 +5816,7 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
      */
     isRestParameter(): boolean;
     /**
-     * Gets if this is a parameter property.
+     * Gets if this is a property with a scope or readonly keyword (found in class constructors).
      */
     isParameterProperty(): boolean;
     /**

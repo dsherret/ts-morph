@@ -5,7 +5,7 @@ import { JsxElementStructure } from "../../../structures";
 import { ts } from "../../../typescript";
 import { printTextFromStringOrWriter } from "../../../utils";
 import { JsxChild } from "../aliases";
-import { getBodyText, getBodyTextForStructure } from "../base/helpers";
+import { getBodyText, getBodyTextWithoutLeadingIndentation } from "../base/helpers";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { PrimaryExpression } from "../expression";
@@ -102,7 +102,7 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
             attributes: openingElement.getAttributes().map(a => a.getStructure()),
             children: undefined,
             isSelfClosing: false,
-            bodyText: getBodyTextForStructure(this)
+            bodyText: getBodyTextWithoutLeadingIndentation(this)
         });
         delete structure.children;
         return structure;
