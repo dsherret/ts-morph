@@ -1,59 +1,61 @@
 ﻿import { expect } from "chai";
-import { ParameterDeclaration, ClassDeclaration, PropertyDeclaration, QuestionTokenableNode } from "../../../compiler";
-import * as errors from "../../../errors";
-import { SyntaxKind } from "../../../typescript";
+import { ClassDeclaration, PropertyDeclaration, QuestionTokenableNode } from "../../../compiler";
 import { QuestionTokenableNodeStructure } from "../../../structures";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(QuestionTokenableNode), () => {
-    function getInfoWithFirstPropertyFromText(text: string) {
+    function getInfoWithFirstMember(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
-        return {...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
+        return {...result, firstMember: result.firstChild.getMembers()[0] as QuestionTokenableNode };
     }
 
     describe(nameof<QuestionTokenableNode>(d => d.hasQuestionToken), () => {
         function doTest(text: string, value: boolean) {
-            const {firstProperty} = getInfoWithFirstPropertyFromText(text);
-            expect(firstProperty.hasQuestionToken()).to.equal(value);
+            const {firstMember} = getInfoWithFirstMember(text);
+            expect(firstMember.hasQuestionToken()).to.equal(value);
         }
 
-        it("should have a question token when has one", () => {
+        it("should have when property with one", () => {
             doTest("class MyClass { prop?: string; }", true);
         });
 
-        it("should not have a question token when not has one", () => {
+        it("should have when a method with one", () => {
+            doTest("declare class MyClass { myMethod?(): string; }", true);
+        });
+
+        it("should not have when not has one", () => {
             doTest("class MyClass { prop: string; }", false);
         });
     });
 
     describe(nameof<QuestionTokenableNode>(d => d.getQuestionTokenNode), () => {
         it("should be get the question token node", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass { prop?: string; }");
-            expect(firstProperty.getQuestionTokenNode()!.getText()).to.equal("?");
+            const {firstMember} = getInfoWithFirstMember("class MyClass { prop?: string; }");
+            expect(firstMember.getQuestionTokenNode()!.getText()).to.equal("?");
         });
 
         it("should be undefined when not optional", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass { prop: string;} ");
-            expect(firstProperty.getQuestionTokenNode()).to.be.undefined;
+            const {firstMember} = getInfoWithFirstMember("class MyClass { prop: string;} ");
+            expect(firstMember.getQuestionTokenNode()).to.be.undefined;
         });
     });
 
     describe(nameof<QuestionTokenableNode>(d => d.getQuestionTokenNodeOrThrow), () => {
         it("should be get the question token node", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop?: string;}\n");
-            expect(firstProperty.getQuestionTokenNodeOrThrow().getText()).to.equal("?");
+            const {firstMember} = getInfoWithFirstMember("class MyClass {\nprop?: string;}\n");
+            expect(firstMember.getQuestionTokenNodeOrThrow().getText()).to.equal("?");
         });
 
         it("should throw when not optional", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
-            expect(() => firstProperty.getQuestionTokenNodeOrThrow()).to.throw();
+            const {firstMember} = getInfoWithFirstMember("class MyClass {\nprop: string;}\n");
+            expect(() => firstMember.getQuestionTokenNodeOrThrow()).to.throw();
         });
     });
 
     describe(nameof<QuestionTokenableNode>(d => d.setHasQuestionToken), () => {
         function doTest(startText: string, value: boolean, expected: string) {
-            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startText);
-            firstProperty.setHasQuestionToken(value);
+            const {firstMember, sourceFile} = getInfoWithFirstMember(startText);
+            firstMember.setHasQuestionToken(value);
             expect(sourceFile.getFullText()).to.be.equal(expected);
         }
 
@@ -80,12 +82,24 @@ describe(nameof(QuestionTokenableNode), () => {
         it("should be set as optional when has no type nor semi-colon", () => {
             doTest("class MyClass { prop }", true, "class MyClass { prop? }");
         });
+
+        it("should set when a method", () => {
+            doTest("declare class MyClass { method(): string; }", true, "declare class MyClass { method?(): string; }");
+        });
+
+        it("should set when a method with type parameters", () => {
+            doTest("declare class MyClass { method<T>(): string; }", true, "declare class MyClass { method?<T>(): string; }");
+        });
+
+        it("should remove when a method", () => {
+            doTest("declare class MyClass { method?(): string; }", false, "declare class MyClass { method(): string; }");
+        });
     });
 
     describe(nameof<PropertyDeclaration>(p => p.set), () => {
         function doTest(startCode: string, structure: QuestionTokenableNodeStructure, expectedCode: string) {
-            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
-            firstProperty.set(structure);
+            const {firstMember, sourceFile} = getInfoWithFirstMember(startCode);
+            (firstMember as PropertyDeclaration).set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 
@@ -104,8 +118,8 @@ describe(nameof(QuestionTokenableNode), () => {
 
     describe(nameof<PropertyDeclaration>(p => p.getStructure), () => {
         function doTest(startCode: string, hasToken: boolean) {
-            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
-            expect(firstProperty.getStructure().hasQuestionToken).to.equal(hasToken);
+            const {firstMember} = getInfoWithFirstMember(startCode);
+            expect((firstMember as PropertyDeclaration).getStructure().hasQuestionToken).to.equal(hasToken);
         }
 
         it("should be false when not has one", () => {

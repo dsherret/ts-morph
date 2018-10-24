@@ -30,7 +30,7 @@ export class TypeGuards {
      * Gets if the node has a name.
      * @param node - Node to check.
      */
-    static hasName(node: compiler.Node): node is compiler.Node & { getName(): string; } {
+    static hasName(node: compiler.Node): node is compiler.Node & { getName(): string; getNameNode(): compiler.Node; } {
         // this method is manually maintained
         if ((node as any).getName == null)
             return false;
@@ -1858,6 +1858,7 @@ export class TypeGuards {
      */
     static isQuestionTokenableNode(node: compiler.Node): node is compiler.QuestionTokenableNode & compiler.QuestionTokenableNodeExtensionType {
         switch (node.getKind()) {
+            case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.Parameter:
             case SyntaxKind.MethodSignature:

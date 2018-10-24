@@ -705,6 +705,7 @@ export declare class TypeGuards {
      */
     static hasName(node: Node): node is Node & {
         getName(): string;
+        getNameNode(): Node;
     };
     /**
      * Gets if the node has a body.
@@ -3937,9 +3938,9 @@ export declare class GetAccessorDeclaration extends GetAccessorDeclarationBase<t
     getStructure(): GetAccessorDeclarationStructure;
 }
 
-declare const MethodDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<FunctionLikeDeclaration> & Constructor<PropertyNamedNode> & typeof Node;
+declare const MethodDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<QuestionTokenableNode> & Constructor<StaticableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<FunctionLikeDeclaration> & Constructor<PropertyNamedNode> & typeof Node;
 
-declare const MethodDeclarationOverloadBase: Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ScopedNode> & Constructor<TypeParameteredNode> & Constructor<AbstractableNode> & Constructor<StaticableNode> & Constructor<AsyncableNode> & Constructor<ModifierableNode> & Constructor<GeneratorableNode> & Constructor<SignaturedDeclaration> & typeof Node;
+declare const MethodDeclarationOverloadBase: Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ScopedNode> & Constructor<TypeParameteredNode> & Constructor<AbstractableNode> & Constructor<QuestionTokenableNode> & Constructor<StaticableNode> & Constructor<AsyncableNode> & Constructor<ModifierableNode> & Constructor<GeneratorableNode> & Constructor<SignaturedDeclaration> & typeof Node;
 
 export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
@@ -9907,14 +9908,14 @@ export interface GetAccessorDeclarationStructure extends GetAccessorDeclarationS
 interface GetAccessorDeclarationSpecificStructure {
 }
 
-export interface MethodDeclarationStructure extends MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
+export interface MethodDeclarationStructure extends MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure, QuestionTokenableNodeStructure {
 }
 
 interface MethodDeclarationSpecificStructure {
     overloads?: MethodDeclarationOverloadStructure[];
 }
 
-export interface MethodDeclarationOverloadStructure extends StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
+export interface MethodDeclarationOverloadStructure extends StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, QuestionTokenableNodeStructure {
 }
 
 export interface PropertyDeclarationStructure extends PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure {
