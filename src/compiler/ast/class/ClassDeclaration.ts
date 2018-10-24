@@ -1,11 +1,16 @@
-import { ClassDeclarationStructure, ConstructorDeclarationStructure, MethodDeclarationStructure, ClassDeclarationSpecificStructure } from "../../../structures";
+import { ClassDeclarationStructure, ConstructorDeclarationStructure, MethodDeclarationStructure, ClassDeclarationSpecificStructure,
+    InterfaceDeclarationStructure } from "../../../structures";
 import { ts } from "../../../typescript";
+import { ArrayUtils, StringUtils, TypeGuards, KeyValueCache } from "../../../utils";
 import { ChildOrderableNode, ExportableNode, AmbientableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassLikeDeclarationBase } from "./base";
+import { Scope } from "../common";
+import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
+import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
 export const ClassDeclarationBase = ChildOrderableNode(NamespaceChildableNode(AmbientableNode(ExportableNode(ClassLikeDeclarationBase(Statement)))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
@@ -59,5 +64,61 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             getAccessors: this.getGetAccessors().map(getAccessor => getAccessor.getStructure()),
             setAccessors: this.getSetAccessors().map(accessor => accessor.getStructure())
         }) as any as ClassDeclarationStructure;
+    }
+
+    /**
+     * Extracts an interface declaration structure from the class' type.
+     * @param name Name of the interface. Falls back to the same name as the class and then the filepath's base name.
+     */
+    extractInterface(name?: string): InterfaceDeclarationStructure {
+        name = StringUtils.isNullOrWhitespace(name) ? undefined : name;
+        const parameterProperties = ArrayUtils.flatten(this.getConstructors().map(c => c.getParameters().filter(p => p.isParameterProperty())))
+            .filter(p => p.getName() != null && p.getScope() === Scope.Public);
+        const properties = this.getProperties().filter(p => !p.isStatic() && p.getScope() === Scope.Public);
+        const methods = this.getMethods().filter(p => !p.isStatic() && p.getScope() === Scope.Public);
+        const accessors = getAccessors(this);
+
+        return {
+            name: name || this.getName() || this.getSourceFile().getBaseNameWithoutExtension().replace(/[^a-zA-Z0-9_$]/g, ""),
+            typeParameters: this.getTypeParameters().map(p => p.getStructure()),
+            properties: [
+                ...parameterProperties.map(p => ({
+                    name: p.getName()!,
+                    type: p.getType().getText(p),
+                    hasQuestionToken: p.hasQuestionToken(),
+                    isReadonly: p.isReadonly()
+                })),
+                ...properties.map(p => ({
+                    name: p.getName()!,
+                    type: p.getType().getText(p),
+                    hasQuestionToken: p.hasQuestionToken(),
+                    isReadonly: p.isReadonly()
+                })),
+                ...accessors.map(getAndSet => ({
+                    name: getAndSet[0].getName(),
+                    type: getAndSet[0].getType().getText(getAndSet[0]),
+                    hasQuestionToken: false,
+                    isReadonly: getAndSet.every(TypeGuards.isGetAccessorDeclaration)
+                }))
+            ],
+            methods: [
+                ...methods.map(m => ({
+                    name: m.getName(),
+                    returnType: m.getReturnType().getText(m)
+                }))
+            ]
+        };
+
+        function getAccessors(thisNode: ClassDeclaration) {
+            type GetOrSetArray = (GetAccessorDeclaration | SetAccessorDeclaration)[];
+            const accessors = new KeyValueCache<string, GetOrSetArray>();
+
+            for (const accessor of [...thisNode.getGetAccessors(), ...thisNode.getSetAccessors()]) {
+                if (accessor.getScope() === Scope.Public)
+                    accessors.getOrCreate<GetOrSetArray>(accessor.getName(), () => []).push(accessor);
+            }
+
+            return accessors.getValuesAsArray();
+        }
     }
 }

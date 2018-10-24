@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, MethodDeclaration } from "../../../compiler";
-import { ClassDeclarationSpecificStructure, ClassDeclarationStructure } from "../../../structures";
+import { ClassDeclaration } from "../../../compiler";
+import { ClassDeclarationSpecificStructure, ClassDeclarationStructure, InterfaceDeclarationStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
@@ -204,6 +204,86 @@ declare class Identifier {
                 setAccessors: [{ name: "setAccessor" }],
                 typeParameters: []
             });
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.extractInterface), () => {
+        function doTest(code: string, name: string | undefined, expectedStructure: InterfaceDeclarationStructure, filePath?: string) {
+            const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
+            const structure = descendant.extractInterface(name);
+
+            if (expectedStructure.properties == null)
+                expectedStructure.properties = [];
+            if (expectedStructure.methods == null)
+                expectedStructure.methods = [];
+
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should use the class name when no name", () => {
+            doTest("class Test { }", undefined, { name: "Test" });
+        });
+
+        it("should use the base name when no name and no class name", () => {
+            doTest("export default class { }", undefined, { name: "File_42$" }, "/dir/File^_4#2$.ts");
+        });
+
+        it("should get when class has everything", () => {
+            doTest(`
+abstract class Test<T extends string = number, U> extends Base implements IBase {
+    constructor(public param1: string, readonly param2?: number, public readonly param3: string, private param3) {}
+    static test: number;
+    prop1: string;
+    readonly prop2?: number;
+    protected myProtectedProp: number;
+    private myPrivateProp: string;
+    get myGet() { return 5; }
+    get myGetAndSet() { return ""; }
+    set myGetAndSet(value: string) {}
+    set mySet(value: string) {}
+    protected get myProtectedAccessor() { return 5; }
+    protected set myProtectedAccessor(value: string) {}
+    private get myPrivateAccessor() { return 5; }
+    myMethod<T extends string = number, U>(param1: string) { return 5; }
+    abstract myAbstractMethod?(): number;
+    static myStaticMethod() {}
+    protected myProtected() {}
+    private myPrivate() {}
+}`,
+                undefined, {
+                    name: "Test",
+                    typeParameters: [
+                        { name: "T", constraint: "string", default: "number" },
+                        { name: "U", constraint: undefined, default: undefined }
+                    ],
+                    properties: [
+                        { name: "param1", type: "string", hasQuestionToken: false, isReadonly: false },
+                        { name: "param2", type: "number", hasQuestionToken: true, isReadonly: true },
+                        { name: "param3", type: "string", hasQuestionToken: false, isReadonly: true },
+                        { name: "prop1", type: "string", hasQuestionToken: false, isReadonly: false },
+                        { name: "prop2", type: "number", hasQuestionToken: true, isReadonly: true },
+                        { name: "myGet", type: "number", hasQuestionToken: false, isReadonly: true },
+                        { name: "myGetAndSet", type: "string", hasQuestionToken: false, isReadonly: false },
+                        { name: "mySet", type: "string", hasQuestionToken: false, isReadonly: false }
+                    ],
+                    methods: [{
+                        name: "myMethod",
+                        returnType: "number",
+                        parameters: [
+                            { name: "param1", type: "string" }
+                        ],
+                        typeParameters: [
+                            { name: "T", constraint: "string", default: "number" },
+                            { name: "U", constraint: undefined, default: undefined }
+                        ]
+                    }, {
+                        name: "myAbstractMethod",
+                        returnType: "number",
+                        parameters: [],
+                        typeParameters: [],
+                        hasQuestionToken: true
+                    }]
+                });
         });
     });
 });
