@@ -766,7 +766,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 scope: Scope.Public,
                 isAsync: true,
                 isGenerator: true,
-                overloads: [{}, { scope: Scope.Private, isStatic: false }],
+                hasQuestionToken: true,
+                overloads: [{}, { scope: Scope.Private, isStatic: false, hasQuestionToken: false }],
                 parameters: [{ name: "param" }],
                 returnType: "number",
                 typeParameters: [{ name: "T" }],
@@ -779,8 +780,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 bodyText: "console.log('here');"
             };
             doTest("class c {\n}", 0, [structure],
-                "class c {\n    public static myMethod();\n    private myMethod();\n" +
-                "    /**\n     * Test\n     */\n    @dec\n    public static async myMethod<T>(param): number {\n" +
+                "class c {\n    public static myMethod?();\n    private myMethod();\n" +
+                "    /**\n     * Test\n     */\n    @dec\n    public static async myMethod?<T>(param): number {\n" +
                 "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n" +
                 "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
                 "        console.log('here');\n" +

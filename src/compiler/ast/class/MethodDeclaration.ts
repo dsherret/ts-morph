@@ -2,9 +2,8 @@ import { removeOverloadableClassMember } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { Signature } from "../../symbols";
 import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode,
-    TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode } from "../base";
+    TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode, QuestionTokenableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
@@ -12,10 +11,10 @@ import { AbstractableNode } from "./base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const MethodDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(
-    StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))))
+    QuestionTokenableNode(StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(Node))))))
 )))))));
 export const MethodDeclarationOverloadBase = JSDocableNode(ChildOrderableNode(TextInsertableNode(ScopedNode(TypeParameteredNode(AbstractableNode(
-    StaticableNode(AsyncableNode(ModifierableNode(GeneratorableNode(SignaturedDeclaration(Node)
+    QuestionTokenableNode(StaticableNode(AsyncableNode(ModifierableNode(GeneratorableNode(SignaturedDeclaration(Node))
 ))))))))));
 
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {

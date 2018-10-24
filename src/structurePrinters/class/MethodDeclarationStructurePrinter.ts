@@ -45,6 +45,7 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
                 setValueIfUndefined(overload, "scope", structure.scope);
                 setValueIfUndefined(overload, "isStatic", structure.isStatic); // allow people to do stupid things
                 setValueIfUndefined(overload, "isAbstract", structure.isAbstract);
+                setValueIfUndefined(overload, "hasQuestionToken", structure.hasQuestionToken);
             }
 
             return overloads;
@@ -72,6 +73,7 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
             this.factory.forDecorator().printTexts(writer, (structure as MethodDeclarationStructure).decorators);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(name);
+        writer.conditionalWrite(structure.hasQuestionToken, "?");
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
         this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
