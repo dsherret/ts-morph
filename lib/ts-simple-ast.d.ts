@@ -4836,9 +4836,13 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
 export declare function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagExtensionType>>(Base: T): Constructor<JSDocPropertyLikeTag> & T;
 
 export interface JSDocPropertyLikeTag {
+    /** Gets the name of the JS doc property like tag. */
+    getName(): string;
+    /** Gets the name node of the JS doc property like tag. */
+    getNameNode(): EntityName;
 }
 
-declare type JSDocPropertyLikeTagExtensionType = Node;
+declare type JSDocPropertyLikeTagExtensionType = Node<ts.JSDocPropertyLikeTag> & JSDocTag;
 
 declare const JSDocBase: typeof Node;
 
