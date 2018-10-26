@@ -4923,7 +4923,7 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
     /**
      * Gets the tag's name as a string.
      */
-    getName(): string;
+    getTagName(): string;
     /**
      * Gets the tag name node.
      */
