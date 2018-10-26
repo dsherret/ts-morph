@@ -29,7 +29,7 @@ export class MyClass {
 ```js
 {
     isAbstract: false,
-    hasExportKeyword: true;
+    hasExportKeyword: true,
     name: "MyClass",
     typeParameters: [],
     constructors: [],
