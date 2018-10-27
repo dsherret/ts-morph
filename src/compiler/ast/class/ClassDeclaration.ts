@@ -9,6 +9,7 @@ import { Statement } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassLikeDeclarationBase } from "./base";
 import { Scope } from "../common";
+import { ConstructorDeclaration } from "./ConstructorDeclaration";
 import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
@@ -80,21 +81,31 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         return {
             name: name || this.getName() || this.getSourceFile().getBaseNameWithoutExtension().replace(/[^a-zA-Z0-9_$]/g, ""),
+            docs: this.getJsDocs().map(d => d.getStructure()),
             typeParameters: this.getTypeParameters().map(p => p.getStructure()),
             properties: [
-                ...parameterProperties.map(p => ({
-                    name: p.getName()!,
-                    type: p.getType().getText(p),
-                    hasQuestionToken: p.hasQuestionToken(),
-                    isReadonly: p.isReadonly()
-                })),
+                ...parameterProperties.map(p => {
+                    const jsDocComment = ArrayUtils.flatten((p.getParentOrThrow() as ConstructorDeclaration).getJsDocs().map(j => j.getTags()))
+                                .filter(TypeGuards.isJSDocParameterTag)
+                                .filter(t => t.getTagName() === "param" && t.getName() === p.getName() && t.getComment() != null)
+                                .map(t => t.getComment()!.trim())[0];
+                    return {
+                        docs: jsDocComment == null ? [] : [{ description: jsDocComment }],
+                        name: p.getName()!,
+                        type: p.getType().getText(p),
+                        hasQuestionToken: p.hasQuestionToken(),
+                        isReadonly: p.isReadonly()
+                    };
+                }),
                 ...properties.map(p => ({
+                    docs: p.getJsDocs().map(d => d.getStructure()),
                     name: p.getName()!,
                     type: p.getType().getText(p),
                     hasQuestionToken: p.hasQuestionToken(),
                     isReadonly: p.isReadonly()
                 })),
                 ...accessors.map(getAndSet => ({
+                    docs: getAndSet[0].getJsDocs().map(d => d.getStructure()),
                     name: getAndSet[0].getName(),
                     type: getAndSet[0].getType().getText(getAndSet[0]),
                     hasQuestionToken: false,
@@ -102,23 +113,27 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                 }))
             ],
             methods: [
-                ...methods.map(m => ({
+                ...ArrayUtils.flatten(methods.map(m => m.getOverloads().length > 0 ? m.getOverloads() : [m])).map(m => ({
+                    docs: m.getJsDocs().map(d => d.getStructure()),
                     name: m.getName(),
-                    returnType: m.getReturnType().getText(m)
+                    hasQuestionToken: m.hasQuestionToken(),
+                    returnType: m.getReturnType().getText(m),
+                    parameters: m.getParameters().map(p => p.getStructure()),
+                    typeParameters: m.getTypeParameters().map(p => p.getStructure())
                 }))
             ]
         };
 
         function getAccessors(thisNode: ClassDeclaration) {
             type GetOrSetArray = (GetAccessorDeclaration | SetAccessorDeclaration)[];
-            const accessors = new KeyValueCache<string, GetOrSetArray>();
+            const result = new KeyValueCache<string, GetOrSetArray>();
 
             for (const accessor of [...thisNode.getGetAccessors(), ...thisNode.getSetAccessors()]) {
                 if (accessor.getScope() === Scope.Public)
-                    accessors.getOrCreate<GetOrSetArray>(accessor.getName(), () => []).push(accessor);
+                    result.getOrCreate<GetOrSetArray>(accessor.getName(), () => []).push(accessor);
             }
 
-            return accessors.getValuesAsArray();
+            return result.getValuesAsArray();
         }
     }
 }

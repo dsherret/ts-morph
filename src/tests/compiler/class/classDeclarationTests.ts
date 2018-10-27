@@ -212,6 +212,10 @@ declare class Identifier {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
             const structure = descendant.extractInterface(name);
 
+            if (expectedStructure.docs == null)
+                expectedStructure.docs = [];
+            if (expectedStructure.typeParameters == null)
+                expectedStructure.typeParameters = [];
             if (expectedStructure.properties == null)
                 expectedStructure.properties = [];
             if (expectedStructure.methods == null)
@@ -230,21 +234,35 @@ declare class Identifier {
 
         it("should get when class has everything", () => {
             doTest(`
+/** Test */
 abstract class Test<T extends string = number, U> extends Base implements IBase {
+    /**
+     * Description.
+     * @param param1 Test description.
+     */
     constructor(public param1: string, readonly param2?: number, public readonly param3: string, private param3) {}
     static test: number;
+    /** Description */
     prop1: string;
     readonly prop2?: number;
     protected myProtectedProp: number;
     private myPrivateProp: string;
+    /** MyGet */
     get myGet() { return 5; }
+    /** MyGetAndSet Get */
     get myGetAndSet() { return ""; }
+    /** MyGetAndSet Set */
     set myGetAndSet(value: string) {}
+    /** MySet */
     set mySet(value: string) {}
     protected get myProtectedAccessor() { return 5; }
     protected set myProtectedAccessor(value: string) {}
     private get myPrivateAccessor() { return 5; }
+    /** Method */
     myMethod<T extends string = number, U>(param1: string) { return 5; }
+    overloadMethod(str: string): void;
+    overloadMethod(): string;
+    overloadMethod() { return ""; }
     abstract myAbstractMethod?(): number;
     static myStaticMethod() {}
     protected myProtected() {}
@@ -252,36 +270,70 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
 }`,
                 undefined, {
                     name: "Test",
+                    docs: [{ description: "Test" }],
                     typeParameters: [
                         { name: "T", constraint: "string", default: "number" },
                         { name: "U", constraint: undefined, default: undefined }
                     ],
                     properties: [
-                        { name: "param1", type: "string", hasQuestionToken: false, isReadonly: false },
-                        { name: "param2", type: "number", hasQuestionToken: true, isReadonly: true },
-                        { name: "param3", type: "string", hasQuestionToken: false, isReadonly: true },
-                        { name: "prop1", type: "string", hasQuestionToken: false, isReadonly: false },
-                        { name: "prop2", type: "number", hasQuestionToken: true, isReadonly: true },
-                        { name: "myGet", type: "number", hasQuestionToken: false, isReadonly: true },
-                        { name: "myGetAndSet", type: "string", hasQuestionToken: false, isReadonly: false },
-                        { name: "mySet", type: "string", hasQuestionToken: false, isReadonly: false }
+                        { name: "param1", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Test description." }] },
+                        { name: "param2", type: "number", hasQuestionToken: true, isReadonly: true, docs: [] },
+                        { name: "param3", type: "string", hasQuestionToken: false, isReadonly: true, docs: [] },
+                        { name: "prop1", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Description" }] },
+                        { name: "prop2", type: "number", hasQuestionToken: true, isReadonly: true, docs: [] },
+                        { name: "myGet", type: "number", hasQuestionToken: false, isReadonly: true, docs: [{ description: "MyGet" }] },
+                        { name: "myGetAndSet", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "MyGetAndSet Get" }] },
+                        { name: "mySet", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "MySet" }] }
                     ],
                     methods: [{
+                        docs: [{ description: "Method" }],
                         name: "myMethod",
                         returnType: "number",
-                        parameters: [
-                            { name: "param1", type: "string" }
-                        ],
+                        hasQuestionToken: false,
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param1",
+                            type: "string",
+                            scope: undefined
+                        }],
                         typeParameters: [
                             { name: "T", constraint: "string", default: "number" },
                             { name: "U", constraint: undefined, default: undefined }
                         ]
                     }, {
+                        docs: [],
+                        name: "overloadMethod",
+                        returnType: "void",
+                        hasQuestionToken: false,
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "str",
+                            type: "string",
+                            scope: undefined
+                        }],
+                        typeParameters: []
+                    }, {
+                        docs: [],
+                        name: "overloadMethod",
+                        returnType: "string",
+                        hasQuestionToken: false,
+                        parameters: [],
+                        typeParameters: []
+                    }, {
+                        docs: [],
                         name: "myAbstractMethod",
                         returnType: "number",
+                        hasQuestionToken: true,
                         parameters: [],
-                        typeParameters: [],
-                        hasQuestionToken: true
+                        typeParameters: []
                     }]
                 });
         });
