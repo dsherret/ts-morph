@@ -3863,6 +3863,16 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Gets the structure equivalent to this node.
      */
     getStructure(): ClassDeclarationStructure;
+    /**
+     * Extracts an interface declaration structure from the class.
+     * @param name - Name of the interface. Falls back to the same name as the class and then the filepath's base name.
+     */
+    extractInterface(name?: string): InterfaceDeclarationStructure;
+    /**
+     * Extracts an interface declaration structure from the static part of the class.
+     * @param name - Name of the interface.
+     */
+    extractStaticInterface(name: string): InterfaceDeclarationStructure;
 }
 
 declare const ClassExpressionBase: Constructor<ClassLikeDeclarationBase> & typeof PrimaryExpression;
