@@ -73,10 +73,13 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     extractInterface(name?: string): InterfaceDeclarationStructure {
         name = StringUtils.isNullOrWhitespace(name) ? undefined : name;
-        const parameterProperties = ArrayUtils.flatten(this.getConstructors().map(c => c.getParameters().filter(p => p.isParameterProperty())))
+        const constructors = ArrayUtils.flatten(this.getConstructors().map(c => c.getOverloads().length > 0 ? c.getOverloads() : [c]));
+        const parameterProperties = ArrayUtils.flatten(constructors.map(c => c.getParameters().filter(p => p.isParameterProperty())))
             .filter(p => p.getName() != null && p.getScope() === Scope.Public);
         const properties = this.getProperties().filter(p => !p.isStatic() && p.getScope() === Scope.Public);
-        const methods = this.getMethods().filter(p => !p.isStatic() && p.getScope() === Scope.Public);
+        const methods = ArrayUtils.flatten(this.getMethods()
+            .filter(p => !p.isStatic() && p.getScope() === Scope.Public)
+            .map(m => m.getOverloads().length > 0 ? m.getOverloads() : [m]));
         const accessors = getAccessors(this);
 
         return {
@@ -113,7 +116,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                 }))
             ],
             methods: [
-                ...ArrayUtils.flatten(methods.map(m => m.getOverloads().length > 0 ? m.getOverloads() : [m])).map(m => ({
+                ...methods.map(m => ({
                     docs: m.getJsDocs().map(d => d.getStructure()),
                     name: m.getName(),
                     hasQuestionToken: m.hasQuestionToken(),

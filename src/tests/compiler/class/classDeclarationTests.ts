@@ -337,5 +337,71 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                     }]
                 });
         });
+
+        it("should handle constructor and method overloads", () => {
+            doTest(`
+class Test {
+    /**
+     * @param param Test.
+     */
+    constructor(public param: string, protected paramProtected: number);
+    /**
+     * @param param2 Test2.
+     */
+    constructor(public param2: number, private paramPrivate: number);
+    constructor() {}
+    /**
+     * Description1.
+     */
+    method(param1: string): string;
+    /**
+     * Description2.
+     */
+    method(param2: number): number;
+    /** Ignores this implementation */
+    method() {
+    }
+}`,
+                undefined, {
+                    name: "Test",
+                    properties: [
+                        { name: "param", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Test." }] },
+                        { name: "param2", type: "number", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Test2." }] }
+                    ],
+                    methods: [{
+                        docs: [{ description: "Description1." }],
+                        name: "method",
+                        returnType: "string",
+                        hasQuestionToken: false,
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param1",
+                            type: "string",
+                            scope: undefined
+                        }],
+                        typeParameters: []
+                    }, {
+                        docs: [{ description: "Description2." }],
+                        name: "method",
+                        returnType: "number",
+                        hasQuestionToken: false,
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param2",
+                            type: "number",
+                            scope: undefined
+                        }],
+                        typeParameters: []
+                    }]
+                });
+        });
     });
 });
