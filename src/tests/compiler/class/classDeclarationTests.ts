@@ -228,7 +228,7 @@ declare class Identifier {
             doTest("class Test { }", undefined, { name: "Test" });
         });
 
-        it("should use the base name when no name and no class name", () => {
+        it("should use the file's base name when no name and no class name", () => {
             doTest("export default class { }", undefined, { name: "File_42$" }, "/dir/File^_4#2$.ts");
         });
 
@@ -240,7 +240,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
      * Description.
      * @param param1 Test description.
      */
-    constructor(public param1: string, readonly param2?: number, public readonly param3: string, private param3) {}
+    constructor(@dec public param1: string, readonly param2?: number, public readonly param3: string, private param3) {}
     static test: number;
     /** Description */
     prop1: string;
@@ -255,11 +255,12 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
     set myGetAndSet(value: string) {}
     /** MySet */
     set mySet(value: string) {}
+    static get myStaticGet() {}
     protected get myProtectedAccessor() { return 5; }
     protected set myProtectedAccessor(value: string) {}
     private get myPrivateAccessor() { return 5; }
     /** Method */
-    myMethod<T extends string = number, U>(param1: string) { return 5; }
+    myMethod<T extends string = number, U>(@dec param1: string) { return 5; }
     overloadMethod(str: string): void;
     overloadMethod(): string;
     overloadMethod() { return ""; }
@@ -368,6 +369,256 @@ class Test {
                         { name: "param", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Test." }] },
                         { name: "param2", type: "number", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Test2." }] }
                     ],
+                    methods: [{
+                        docs: [{ description: "Description1." }],
+                        name: "method",
+                        returnType: "string",
+                        hasQuestionToken: false,
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param1",
+                            type: "string",
+                            scope: undefined
+                        }],
+                        typeParameters: []
+                    }, {
+                        docs: [{ description: "Description2." }],
+                        name: "method",
+                        returnType: "number",
+                        hasQuestionToken: false,
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param2",
+                            type: "number",
+                            scope: undefined
+                        }],
+                        typeParameters: []
+                    }]
+                });
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.extractStaticInterface), () => {
+        function doTest(code: string, name: string, expectedStructure: InterfaceDeclarationStructure, filePath?: string) {
+            const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
+            const structure = descendant.extractStaticInterface(name);
+
+            if (expectedStructure.properties == null)
+                expectedStructure.properties = [];
+            if (expectedStructure.methods == null)
+                expectedStructure.methods = [];
+            if (expectedStructure.constructSignatures == null)
+                expectedStructure.constructSignatures = [];
+
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should use the file's base name in the constructor signature return types when no class name", () => {
+            doTest("export default class { constructor() {} }", "Test", {
+                name: "Test",
+                constructSignatures: [{
+                    docs: [],
+                    parameters: [],
+                    returnType: "File_42$"
+                }],
+                methods: [],
+                properties: []
+            }, "/dir/File^_4#2$.ts");
+        });
+
+        it("should get when class has everything", () => {
+            doTest(`
+/** Test */
+class Test<T extends string = number, U> extends Base implements IBase {
+    /**
+     * Description.
+     */
+    constructor(@dec public param1: string, readonly param2?: number, public readonly param3: string, private param4) {}
+    test: number;
+    /** Description */
+    static prop1: string;
+    static readonly prop2?: number;
+    protected static myProtectedProp: number;
+    private static myPrivateProp: string;
+    /** MyGet */
+    static get myGet() { return 5; }
+    /** MyGetAndSet Get */
+    static get myGetAndSet() { return ""; }
+    /** MyGetAndSet Set */
+    static set myGetAndSet(value: string) {}
+    /** MySet */
+    static set mySet(value: string) {}
+    get myStaticGet() {}
+    protected static get myProtectedAccessor() { return 5; }
+    protected static set myProtectedAccessor(value: string) {}
+    private static get myPrivateAccessor() { return 5; }
+    /** Method */
+    static myMethod<T extends string = number, U>(@dec param1: string) { return 5; }
+    static overloadMethod(str: string): void;
+    static overloadMethod(): string;
+    static overloadMethod() { return ""; }
+    myInstanceMethod() {}
+    static protected myProtected() {}
+    static private myPrivate() {}
+}`,
+                "Name", {
+                    name: "Name",
+                    constructSignatures: [{
+                        docs: [{ description: "Description." }],
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param1",
+                            type: "string",
+                            scope: undefined
+                        }, {
+                            decorators: [],
+                            hasQuestionToken: true,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param2",
+                            type: "number",
+                            scope: undefined
+                        }, {
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param3",
+                            type: "string",
+                            scope: undefined
+                        }, {
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param4",
+                            type: undefined,
+                            scope: undefined
+                        }],
+                        returnType: "Test"
+                    }],
+                    properties: [
+                        { name: "prop1", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Description" }] },
+                        { name: "prop2", type: "number", hasQuestionToken: true, isReadonly: true, docs: [] },
+                        { name: "myGet", type: "number", hasQuestionToken: false, isReadonly: true, docs: [{ description: "MyGet" }] },
+                        { name: "myGetAndSet", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "MyGetAndSet Get" }] },
+                        { name: "mySet", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "MySet" }] }
+                    ],
+                    methods: [{
+                        docs: [{ description: "Method" }],
+                        name: "myMethod",
+                        returnType: "number",
+                        hasQuestionToken: false,
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param1",
+                            type: "string",
+                            scope: undefined
+                        }],
+                        typeParameters: [
+                            { name: "T", constraint: "string", default: "number" },
+                            { name: "U", constraint: undefined, default: undefined }
+                        ]
+                    }, {
+                        docs: [],
+                        name: "overloadMethod",
+                        returnType: "void",
+                        hasQuestionToken: false,
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "str",
+                            type: "string",
+                            scope: undefined
+                        }],
+                        typeParameters: []
+                    }, {
+                        docs: [],
+                        name: "overloadMethod",
+                        returnType: "string",
+                        hasQuestionToken: false,
+                        parameters: [],
+                        typeParameters: []
+                    }]
+                });
+        });
+
+        it("should handle constructor and method overloads", () => {
+            doTest(`
+class Test {
+    /**
+     * Test.
+     */
+    constructor(public param: string);
+    /**
+     * Test2.
+     */
+    constructor(private param2: number);
+    constructor() {}
+    /**
+     * Description1.
+     */
+    static method(param1: string): string;
+    /**
+     * Description2.
+     */
+    static method(param2: number): number;
+    /** Ignores this implementation */
+    static method() {
+    }
+}`,
+                "Name", {
+                    name: "Name",
+                    constructSignatures: [{
+                        docs: [{ description: "Test." }],
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param",
+                            type: "string",
+                            scope: undefined
+                        }],
+                        returnType: "Test"
+                    }, {
+                        docs: [{ description: "Test2." }],
+                        parameters: [{
+                            decorators: [],
+                            hasQuestionToken: false,
+                            initializer: undefined,
+                            isReadonly: false,
+                            isRestParameter: false,
+                            name: "param2",
+                            type: "number",
+                            scope: undefined
+                        }],
+                        returnType: "Test"
+                    }],
+                    properties: [],
                     methods: [{
                         docs: [{ description: "Description1." }],
                         name: "method",
