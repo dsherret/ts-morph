@@ -23,6 +23,7 @@ export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.CaseClause]: compiler.CaseClause,
     [SyntaxKind.CatchClause]: compiler.CatchClause,
     [SyntaxKind.ClassDeclaration]: compiler.ClassDeclaration,
+    [SyntaxKind.ClassExpression]: compiler.ClassExpression,
     [SyntaxKind.Constructor]: compiler.ConstructorDeclaration,
     [SyntaxKind.ConstructorType]: compiler.ConstructorTypeNode,
     [SyntaxKind.ConstructSignature]: compiler.ConstructSignatureDeclaration,

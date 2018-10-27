@@ -239,8 +239,8 @@ describe(nameof(MethodDeclaration), () => {
             expect(structure).to.deep.equal(expectedStructure);
         }
 
-        it("should get structure when empty", () => {
-            doTest("class Test { abstract method() {} }", {
+        it("should get structure when abstract", () => {
+            doTest("class Test { abstract method?() {} }", {
                 bodyText: "",
                 decorators: [],
                 docs: [],
@@ -248,6 +248,7 @@ describe(nameof(MethodDeclaration), () => {
                 isAsync: false,
                 isGenerator: false,
                 isStatic: false,
+                hasQuestionToken: true,
                 name: "method",
                 overloads: [],
                 parameters: [],
@@ -275,6 +276,7 @@ class Test {
                 isAsync: true,
                 isGenerator: true,
                 isStatic: true,
+                hasQuestionToken: false,
                 name: "method",
                 overloads: [{
                     docs: [{ description: "overload" }],
@@ -285,7 +287,8 @@ class Test {
                     scope: Scope.Protected,
                     parameters: [{ name: "p" }],
                     typeParameters: [{ name: "T" }],
-                    isAbstract: false
+                    isAbstract: false,
+                    hasQuestionToken: false
                 }],
                 parameters: [{ name: "param" }],
                 returnType: "string",

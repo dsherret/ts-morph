@@ -21,6 +21,7 @@ export interface KindToNodeMappings {
     [SyntaxKind.CaseClause]: compiler.CaseClause;
     [SyntaxKind.CatchClause]: compiler.CatchClause;
     [SyntaxKind.ClassDeclaration]: compiler.ClassDeclaration;
+    [SyntaxKind.ClassExpression]: compiler.ClassExpression;
     [SyntaxKind.Constructor]: compiler.ConstructorDeclaration;
     [SyntaxKind.ConstructorType]: compiler.ConstructorTypeNode;
     [SyntaxKind.ConstructSignature]: compiler.ConstructSignatureDeclaration;
@@ -175,6 +176,7 @@ export interface KindToExpressionMappings {
     [SyntaxKind.AwaitExpression]: compiler.AwaitExpression;
     [SyntaxKind.BinaryExpression]: compiler.BinaryExpression;
     [SyntaxKind.CallExpression]: compiler.CallExpression;
+    [SyntaxKind.ClassExpression]: compiler.ClassExpression;
     [SyntaxKind.CommaListExpression]: compiler.CommaListExpression;
     [SyntaxKind.ConditionalExpression]: compiler.ConditionalExpression;
     [SyntaxKind.DeleteExpression]: compiler.DeleteExpression;

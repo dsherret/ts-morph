@@ -97,9 +97,28 @@ describe(nameof(BodyableNode), () => {
         });
     });
 
+    describe(nameof<FunctionDeclaration>(n => n.getBodyText), () => {
+        function doTest(startCode: string, bodyText: string | undefined) {
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
+            expect(firstChild.getBodyText()).to.equal(bodyText);
+        }
+
+        it("should get when there is none", () => {
+            doTest("function test();", undefined);
+        });
+
+        it("should get when there is a lot of whitespace", () => {
+            doTest("function test() {\n   \t\n\r\n   \t}", "");
+        });
+
+        it("should get without indentation", () => {
+            doTest("function test() {\n    export class Test {\n        prop: string;\n    }\n}\n}", "export class Test {\n    prop: string;\n}");
+        });
+    });
+
     describe(nameof<BodyableNode>(n => n.hasBody), () => {
         function doTest(startCode: string, value: boolean) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             expect(firstChild.hasBody()).to.equal(value);
         }
 
@@ -114,7 +133,7 @@ describe(nameof(BodyableNode), () => {
 
     describe(nameof<BodyableNode>(n => n.addBody), () => {
         function doTest(startCode: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             firstChild.addBody();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -138,7 +157,7 @@ describe(nameof(BodyableNode), () => {
 
     describe(nameof<BodyableNode>(n => n.removeBody), () => {
         function doTest(startCode: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             firstChild.removeBody();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -162,7 +181,7 @@ describe(nameof(BodyableNode), () => {
 
     describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
         function doTest(startCode: string, bodyText: string | undefined) {
-            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             expect((firstChild.getStructure() as FunctionDeclarationStructure).bodyText).to.equal(bodyText);
         }
 
@@ -181,7 +200,7 @@ describe(nameof(BodyableNode), () => {
 
     describe(nameof<FunctionDeclaration>(n => n.set), () => {
         function doTest(startCode: string, structure: BodyableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }

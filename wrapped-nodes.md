@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 163
+**Total:** 164
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -57,6 +57,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: block
 * [ClassDeclaration](src/compiler/ast/class/ClassDeclaration.ts)
     * :heavy_check_mark: name
+* [ClassExpression](src/compiler/ast/class/ClassExpression.ts)
 * [CommaListExpression](src/compiler/ast/expression/CommaListExpression.ts)
     * :heavy_check_mark: elements
 * [ComputedPropertyName](src/compiler/ast/common/ComputedPropertyName.ts)
@@ -413,11 +414,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 58
+**Total:** 57
 
 * Bundle
 * ClassElement
-* ClassExpression
 * ClassLikeDeclarationBase
 * ConditionalTypeNode
 * DeclarationStatement
