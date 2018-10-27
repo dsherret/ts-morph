@@ -29,26 +29,11 @@ describe(nameof(ScopeableNode), () => {
             const {firstParam} = getFirstParameter("class Identifier { constructor(private param: string) {} }");
             expect(firstParam.getScope()).to.equal(Scope.Private);
         });
-
-        it("should return public when readonly", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(readonly param: string) {} }");
-            expect(firstParam.getScope()).to.equal(Scope.Public);
-        });
-
-        it("should return private when readonly and private", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(private readonly param: string) {} }");
-            expect(firstParam.getScope()).to.equal(Scope.Private);
-        });
     });
 
     describe(nameof<ScopeableNode>(d => d.hasScopeKeyword), () => {
         it("should not have one when there's no scope", () => {
             const {firstParam} = getFirstParameter("class Identifier { constructor(param: string) {} }");
-            expect(firstParam.hasScopeKeyword()).to.be.false;
-        });
-
-        it("should not have one when there's no scope and readonly", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(readonly param: string) {} }");
             expect(firstParam.hasScopeKeyword()).to.be.false;
         });
 

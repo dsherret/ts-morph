@@ -1,5 +1,5 @@
 /* barrel:ignore */
 export * from "./getBodyText";
-export * from "./getBodyTextWithoutLeadingIndentation";
+export * from "./getBodyTextForStructure";
 export * from "./hasBlock";
 export * from "./setBodyTextForNode";

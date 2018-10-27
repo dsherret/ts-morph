@@ -67,9 +67,6 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
             return this;
 
             function getInsertPos(this: QuestionTokenableNode & Node) {
-                if (TypeGuards.hasName(this))
-                    return this.getNameNode().getEnd();
-
                 const colonNode = this.getFirstChildByKind(SyntaxKind.ColonToken);
                 if (colonNode != null)
                     return colonNode.getStart();

@@ -15,7 +15,7 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends Node<N
     /**
      * Gets the tag's name as a string.
      */
-    getTagName() {
+    getName() {
         return this.getTagNameNode().getText();
     }
 

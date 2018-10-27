@@ -231,21 +231,6 @@ Get static members:
 const staticMembers = classDeclaration.getStaticMembers();
 ```
 
-### Extracting an Interface
-
-An interface declaration structure can be extracted from a class by calling `classDeclaration.extractInterface()`. For example:
-
-```ts
-// the passed in name is optional and defaults to the class name
-const interfaceStructure = classDeclaration.extractInterface(`I${classDeclaration.getName()}`);
-```
-
-Alternatively the static interface declaration structure of a class can be extracted by calling:
-
-```ts
-const interfaceStructure = classDeclaration.extractStaticInterface(`${classDeclaration.getName()}Static`);
-```
-
 ## Abstract
 
 Nodes on a class may be abstract.

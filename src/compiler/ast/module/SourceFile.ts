@@ -7,7 +7,7 @@ import { SourceFileStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { LanguageVariant, ScriptTarget, ts } from "../../../typescript";
 import { ArrayUtils, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../../utils";
-import { getBodyTextWithoutLeadingIndentation } from "../base/helpers";
+import { getBodyTextForStructure } from "../base/helpers";
 import { TextInsertableNode, ModuledNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
@@ -730,7 +730,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getStructure(): SourceFileStructure {
         return callBaseGetStructure<{ bodyText: string | undefined; }>(SourceFileBase.prototype, this, {
-            bodyText: getBodyTextWithoutLeadingIndentation(this)
+            bodyText: getBodyTextForStructure(this)
         });
     }
 

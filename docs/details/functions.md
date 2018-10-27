@@ -98,14 +98,6 @@ functionDeclaration.setBodyText(writer => writer.writeLine("const myNumber = 5;"
 
 Using the writer is very useful because it will write code out using the indentation and newline settings of the AST. It's also easier to use.
 
-### Get body text
-
-This returns the body text without leading indentation or leading and trailing whitespace.
-
-```ts
-console.log(functionDeclaration.getBodyText());
-```
-
 ### Unwrap
 
 A function declaration can be replaced with its body using the `.unwrap()` method.

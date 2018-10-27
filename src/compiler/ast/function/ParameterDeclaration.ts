@@ -28,7 +28,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
     }
 
     /**
-     * Gets if this is a property with a scope or readonly keyword (found in class constructors).
+     * Gets if this is a parameter property.
      */
     isParameterProperty() {
         return this.getScope() != null || this.isReadonly();

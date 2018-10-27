@@ -1,7 +1,6 @@
 import { ScopeableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { ts } from "../../../typescript";
-import { ArrayUtils, TypeGuards } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Scope } from "../common/Scope";
@@ -30,12 +29,7 @@ export interface ScopeableNode {
 export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>(Base: T): Constructor<ScopeableNode> & T {
     return class extends Base implements ScopeableNode {
         getScope() {
-            const scope = getScopeForNode(this);
-            if (scope != null)
-                return scope;
-            if (TypeGuards.isParameterDeclaration(this) && this.isReadonly())
-                return Scope.Public;
-            return undefined;
+            return getScopeForNode(this);
         }
 
         setScope(scope: Scope | undefined) {
@@ -43,16 +37,8 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
             return this;
         }
 
-        // todo: make public
-        private getScopeKeyword() {
-            return ArrayUtils.find(this.getModifiers(), m => {
-                const text = m.getText();
-                return text === "public" || text === "protected" || text === "private";
-            });
-        }
-
         hasScopeKeyword() {
-            return this.getScopeKeyword() != null;
+            return this.getScope() != null;
         }
 
         set(structure: Partial<ScopeableNodeStructure>) {

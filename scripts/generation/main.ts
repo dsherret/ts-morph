@@ -1,5 +1,4 @@
-﻿import { ts } from "ts-simple-ast";
-import { createGetStructureFunctions } from "./createGetStructureFunctions";
+﻿import { createGetStructureFunctions } from "./createGetStructureFunctions";
 import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
 import { createCodeBlockWriterFile } from "./createCodeBlockWriterFile";
 import { createKindToNodeMappings } from "./createKindToNodeMappings";
@@ -13,8 +12,6 @@ const originalArgs = [...args];
 const factory = new InspectorFactory();
 const inspector = factory.getTsSimpleAstInspector();
 const tsInspector = factory.getTsInspector();
-
-console.log(`TypeScript version: ${ts.version}`);
 
 if (checkHasArg("create-get-structure-functions")) {
     console.log("Creating get structure functions...");

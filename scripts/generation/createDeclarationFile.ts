@@ -19,7 +19,6 @@ export function createDeclarationFile() {
     hideBaseDeclarations();
     hideSpecificStructures();
     hideExtensionTypes();
-    hideSpecificDeclarations();
     removeSkipOrThrowCheck();
 
     project.save();
@@ -47,11 +46,6 @@ export function createDeclarationFile() {
         const extensionTypes = mainFile.getTypeAliases().filter(t => StringUtils.endsWith(t.getName(), "ExtensionType"));
         for (const extensionType of extensionTypes)
             extensionType.setIsExported(false);
-    }
-
-    function hideSpecificDeclarations() {
-        mainFile.getFunctionOrThrow("ClassLikeDeclarationBaseSpecific").setIsExported(false);
-        mainFile.getInterfaceOrThrow("ClassLikeDeclarationBaseSpecific").setIsExported(false);
     }
 
     function removeSkipOrThrowCheck() {

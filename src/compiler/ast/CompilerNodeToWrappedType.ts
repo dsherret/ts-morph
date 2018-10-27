@@ -6,7 +6,6 @@ export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ArrayBin
     T extends ts.BindingElement ? compiler.BindingElement :
     T extends ts.ObjectBindingPattern ? compiler.ObjectBindingPattern :
     T extends ts.ClassDeclaration ? compiler.ClassDeclaration :
-    T extends ts.ClassExpression ? compiler.ClassExpression :
     T extends ts.ConstructorDeclaration ? compiler.ConstructorDeclaration :
     T extends ts.GetAccessorDeclaration ? compiler.GetAccessorDeclaration :
     T extends ts.MethodDeclaration ? compiler.MethodDeclaration :

@@ -6,7 +6,7 @@ import { SyntaxKind, ts } from "../../../typescript";
 import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common/Node";
-import { getBodyTextWithoutLeadingIndentation, setBodyTextForNode } from "./helpers";
+import { getBodyTextForStructure, setBodyTextForNode } from "./helpers";
 
 export type BodyableNodeExtensionType = Node<ts.Node & { body?: ts.Node; }>;
 
@@ -19,10 +19,6 @@ export interface BodyableNode {
      * Gets the body if it exists.
      */
     getBody(): Node | undefined;
-    /**
-     * Gets the body text without leading whitespace, leading indentation, or trailing whitespace. Returns undefined if there is no body.
-     */
-    getBodyText(): string | undefined;
     /**
      * Gets if the node has a body.
      */
@@ -50,11 +46,6 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
 
         getBody() {
             return this.getNodeFromCompilerNodeIfExists(this.compilerNode.body);
-        }
-
-        getBodyText() {
-            const body = this.getBody();
-            return body == null ? undefined : getBodyTextWithoutLeadingIndentation(body);
         }
 
         setBodyText(textOrWriterFunction: string | WriterFunction) {
@@ -114,9 +105,10 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
         }
 
         getStructure() {
-            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {
-                bodyText: this.getBodyText()
-            });
+            const body = this.getBody();
+            const bodyStructure = { bodyText: body == null ? undefined : getBodyTextForStructure(body) };
+
+            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, bodyStructure);
         }
     };
 }

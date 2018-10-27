@@ -1,7 +1,8 @@
-﻿import { expect } from "chai";
+﻿import { expect, assert } from "chai";
 import { FunctionDeclaration } from "../../../compiler";
 import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
+import { TypeGuards } from "../../../utils/TypeGuards";
 
 describe(nameof(FunctionDeclaration), () => {
     describe(nameof<FunctionDeclaration>(f => f.getName), () => {

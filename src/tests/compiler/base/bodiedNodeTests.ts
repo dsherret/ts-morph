@@ -7,7 +7,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(BodiedNode), () => {
     describe(nameof<BodiedNode>(n => n.setBodyText), () => {
         function doTest(startCode: string, newText: string, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(startCode);
+            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>(startCode);
             firstChild.setBodyText(newText);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -28,28 +28,9 @@ describe(nameof(BodiedNode), () => {
         });
     });
 
-    describe(nameof<NamespaceDeclaration>(n => n.getBodyText), () => {
-        function doTest(startCode: string, bodyText: string | undefined) {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>(startCode);
-            expect(firstChild.getBodyText()).to.equal(bodyText);
-        }
-
-        it("should get when there is none", () => {
-            doTest("namespace identifier {\n}", "");
-        });
-
-        it("should get when there is a lot of whitespace", () => {
-            doTest("namespace identifier {\n   \t\n\r\n   \t}", "");
-        });
-
-        it("should get without indentation", () => {
-            doTest("namespace identifier {\n    export class Test {\n        prop: string;\n    }\n}\n}", "export class Test {\n    prop: string;\n}");
-        });
-    });
-
     describe(nameof<NamespaceDeclaration>(n => n.getStructure), () => {
         function doTest(startCode: string, bodyText: string | undefined) {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(startCode);
             expect(firstChild.getStructure().bodyText).to.equal(bodyText);
         }
 
@@ -68,7 +49,7 @@ describe(nameof(BodiedNode), () => {
 
     describe(nameof<NamespaceDeclaration>(n => n.set), () => {
         function doTest(startCode: string, structure: BodiedNodeStructure, expectedCode: string) {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>(startCode);
+            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>(startCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
