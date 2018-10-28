@@ -5,7 +5,7 @@ import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, 
 import { ProjectContext } from "./ProjectContext";
 import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsContainer } from "./options";
 import { SourceFileStructure } from "./structures";
-import { CompilerOptions } from "./typescript";
+import { ts, CompilerOptions } from "./typescript";
 import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
 
 export interface Options {
@@ -511,6 +511,19 @@ export class Project {
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => (void | Promise<void>)) {
         return this.context.compilerFactory.forgetNodesCreatedInBlock(block);
+    }
+
+    /**
+     * Formats an array of diagnostics with their color and context into a string.
+     * @param diagnostics - Diagnostics to get a string of.
+     * @param options - Collection of options. For exmaple, the new line character to use (defaults to the OS' new line character).
+     */
+    formatDiagnosticsWithColorAndContext(diagnostics: Diagnostic[], opts: { newLineChar?: "\n" | "\r\n"; } = {}) {
+        return ts.formatDiagnosticsWithColorAndContext(diagnostics.map(d => d.compilerObject), {
+            getCurrentDirectory: () => this.context.fileSystemWrapper.getCurrentDirectory(),
+            getCanonicalFileName: fileName => fileName,
+            getNewLine: () => opts.newLineChar || require("os").EOL
+        });
     }
 }
 

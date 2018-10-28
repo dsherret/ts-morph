@@ -1,4 +1,5 @@
 ﻿import { expect } from "chai";
+import { EOL } from "os";
 import * as path from "path";
 import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile } from "../compiler";
 import * as errors from "../errors";
@@ -996,6 +997,43 @@ describe(nameof(Project), () => {
             expect(param.getType().getText()).to.equal("string");
             param.setType("number");
             expect(param.getType().getText()).to.equal("number");
+        });
+    });
+
+    describe(nameof<Project>(p => p.formatDiagnosticsWithColorAndContext), () => {
+        function setup() {
+            const project = new Project({ useVirtualFileSystem: true });
+            project.createSourceFile("test.ts", "const t; const u;");
+            return project;
+        }
+
+        function testForLineFeed(text: string) {
+            expect(text.indexOf("\r\n")).to.equal(-1);
+        }
+
+        function testForCarriageReturnLineFeed(text: string) {
+            expect(text.split("\n").slice(0, -1).every(line => line[line.length - 1] === "\r")).to.be.true;
+        }
+
+        it("should get the text formatted based on the OS", () => {
+            const project = setup();
+            const text = project.formatDiagnosticsWithColorAndContext(project.getPreEmitDiagnostics());
+            if (EOL === "\n")
+                testForLineFeed(text);
+            if (EOL === "\r\n")
+                testForCarriageReturnLineFeed(text);
+        });
+
+        it("should use line feeds when passed in", () => {
+            const project = setup();
+            const text = project.formatDiagnosticsWithColorAndContext(project.getPreEmitDiagnostics(), { newLineChar: "\n" });
+            testForLineFeed(text);
+        });
+
+        it("should use carriage return line feeds when passed in", () => {
+            const project = setup();
+            const text = project.formatDiagnosticsWithColorAndContext(project.getPreEmitDiagnostics(), { newLineChar: "\r\n" });
+            testForCarriageReturnLineFeed(text);
         });
     });
 });

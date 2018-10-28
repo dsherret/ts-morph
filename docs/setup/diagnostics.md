@@ -15,6 +15,16 @@ const sourceFileDiagnostics = sourceFile.getPreEmitDiagnostics();
 
 The pre-emit diagnostics are the syntactic, semantic, global, options, config file parsing, and if enabled the declaration diagnostics.
 
+### Formatting for Output
+
+To nicely output the diagnostics, use `project.formatDiagnosticsWithColorAndContext`:
+
+```ts
+const diagnostics = project.getPreEmitDiagnostics();
+
+console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
+```
+
 ### Diagnostic
 
 #### Message text
