@@ -1016,11 +1016,10 @@ function getImmediateDerivedClasses(classDec: ClassLikeDeclarationBaseSpecific &
         const heritageClause = nodeParent.getParentIfKind(SyntaxKind.HeritageClause);
         if (heritageClause == null || heritageClause.getToken() !== SyntaxKind.ExtendsKeyword)
             continue;
-
-        const derivedClass = heritageClause.getFirstAncestorByKind(SyntaxKind.ClassDeclaration);
-        if (derivedClass == null) {
+        const derivedClass = heritageClause.getParentIfKind(SyntaxKind.ClassDeclaration);
+        if (derivedClass == null)
             continue;
-        }
+
         classes.push(derivedClass);
     }
 

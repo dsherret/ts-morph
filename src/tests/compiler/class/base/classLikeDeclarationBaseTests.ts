@@ -1339,7 +1339,7 @@ class Child extends Mixin(Base) {}
         });
 
         it("should ignore Interfaces that extend classes", () => {
-            doTest("class Base {} interface InterfaceExtendsClass extends Base {} class Child1 extends Base", "Base", ["Child1"]);
+            doTest("class Base {} interface InterfaceExtendsClass extends Base {} class Child1 extends Base {}", "Base", ["Child1"]);
         });
 
         it("should get the class descendants when there are none", () => {
