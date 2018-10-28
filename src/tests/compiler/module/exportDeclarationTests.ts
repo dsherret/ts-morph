@@ -466,14 +466,14 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should work with named export declarations", () => {
             doTest(`export { name } from "./test";`, {
-                moduleSpecifier: './test',
+                moduleSpecifier: "./test",
                 namedExports: [{ alias: undefined, name: "name" }]
             });
         });
 
         it("should work with namespace export declarations", () => {
             doTest(`export * from "./test";`, {
-                moduleSpecifier: './test',
+                moduleSpecifier: "./test",
                 namedExports: []
             });
         });
