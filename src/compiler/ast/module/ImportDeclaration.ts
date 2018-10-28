@@ -424,7 +424,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
 
         return callBaseGetStructure<ImportDeclarationStructure>(ImportDeclarationBase.prototype, this, {
             defaultImport: defaultImport ? defaultImport.getText() : undefined,
-            moduleSpecifier: this.getModuleSpecifier().getText(),
+            moduleSpecifier: this.getModuleSpecifier().getLiteralText(),
             namedImports: this.getNamedImports().map(node => node.getStructure()),
             namespaceImport: namespaceImport ? namespaceImport.getText() : undefined
         });
