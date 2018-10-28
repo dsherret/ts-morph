@@ -1,6 +1,7 @@
 import { Constructor } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
+import { TypeGuards } from "../../../utils";
 import { Node } from "../common";
 import { NamespaceDeclaration } from "./NamespaceDeclaration";
 
@@ -26,7 +27,7 @@ export function NamespaceChildableNode<T extends Constructor<NamespaceChildableN
 
         getParentNamespace() {
             let parent = this.getParentOrThrow();
-            if (parent.getKind() !== SyntaxKind.ModuleBlock)
+            if (!TypeGuards.isModuleBlock(parent))
                 return undefined;
 
             while (parent.getParentOrThrow().getKind() === SyntaxKind.ModuleDeclaration)

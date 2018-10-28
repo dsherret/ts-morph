@@ -1491,6 +1491,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ModuleBlock.
+     * @param node - Node to check.
+     */
+    static isModuleBlock(node: compiler.Node): node is compiler.ModuleBlock {
+        return node.getKind() === SyntaxKind.ModuleBlock;
+    }
+
+    /**
      * Gets if the node is a ModuledNode.
      * @param node - Node to check.
      */
@@ -2115,6 +2123,7 @@ export class TypeGuards {
             case SyntaxKind.ExportDeclaration:
             case SyntaxKind.ImportDeclaration:
             case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.ModuleBlock:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
@@ -2157,6 +2166,7 @@ export class TypeGuards {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.ModuleBlock:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.SourceFile:
             case SyntaxKind.Block:

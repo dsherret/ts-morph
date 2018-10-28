@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 164
+**Total:** 165
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -238,6 +238,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: body
 * [MethodSignature](src/compiler/ast/interface/MethodSignature.ts)
     * :heavy_check_mark: name
+* [ModuleBlock](src/compiler/ast/module/ModuleBlock.ts)
+    * :heavy_check_mark: statements
 * NamedDeclaration - Implemented via mixin.
 * [NamespaceDeclaration](src/compiler/ast/module/NamespaceDeclaration.ts)
     * :heavy_check_mark: name
@@ -309,6 +311,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ShorthandPropertyAssignment](src/compiler/ast/expression/object/ShorthandPropertyAssignment.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: questionToken
+    * :x: exclamationToken
     * :heavy_check_mark: equalsToken
     * :heavy_check_mark: objectAssignmentInitializer
 * SignatureDeclarationBase - Implemented via mixin.
@@ -428,6 +431,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * InputFiles
 * JSDocAllType
 * JSDocCallbackTag
+* JSDocEnumTag
 * JSDocFunctionType
 * JSDocNamespaceDeclaration
 * JSDocNonNullableType
@@ -451,7 +455,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * LiteralLikeNode
 * MappedTypeNode
 * MissingDeclaration
-* ModuleBlock
 * ModuleDeclaration
 * NamedExports
 * NamedImports

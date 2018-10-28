@@ -92,6 +92,7 @@ export interface KindToNodeMappings {
     [SyntaxKind.MetaProperty]: compiler.MetaProperty;
     [SyntaxKind.MethodDeclaration]: compiler.MethodDeclaration;
     [SyntaxKind.MethodSignature]: compiler.MethodSignature;
+    [SyntaxKind.ModuleBlock]: compiler.ModuleBlock;
     [SyntaxKind.ModuleDeclaration]: compiler.NamespaceDeclaration;
     [SyntaxKind.NamespaceImport]: compiler.NamespaceImport;
     [SyntaxKind.NewExpression]: compiler.NewExpression;

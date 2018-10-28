@@ -20,7 +20,8 @@ import { Statement, VariableStatement } from "../statement";
 import { VariableDeclaration } from "../variable";
 import { TypeAliasDeclaration } from "../type";
 
-export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause>;
+export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause
+    | ts.DefaultClause | ts.ModuleBlock>;
 
 export interface StatementedNode {
     /**

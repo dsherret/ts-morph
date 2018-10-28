@@ -7,6 +7,7 @@ export * from "./ImportClause";
 export * from "./ImportDeclaration";
 export * from "./ImportEqualsDeclaration";
 export * from "./ImportSpecifier";
+export * from "./ModuleBlock";
 export * from "./NamespaceChildableNode";
 export * from "./NamespaceDeclaration";
 export * from "./NamespaceDeclarationKind";
