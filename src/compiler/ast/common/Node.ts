@@ -106,10 +106,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (this.wasForgotten())
             return;
 
+        this.forgetChildren();
+        this.forgetOnlyThis();
+    }
+
+    /**
+     * Forgets the children of this node.
+     * @internal
+     */
+    forgetChildren() {
         for (const child of this.getChildrenInCacheIterator())
             child.forget();
-
-        this.forgetOnlyThis();
     }
 
     /**
