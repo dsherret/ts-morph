@@ -2,6 +2,10 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 18
+
+* `JSDocTag.getName()` is now `.getTagName()`. This was originally incorrectly named and `.getName()` is necessary for js doc tags that have one (such as `JSDocPropertyLikeTag`).
+
 ## Version 17
 
 * Removed `CompilerNodeBrandPropertyNamesType` type alias.
