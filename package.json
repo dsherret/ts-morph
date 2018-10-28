@@ -3,7 +3,7 @@
   "version": "18.0.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/main.js",
-  "typings": "dist-declarations/main.d.ts",
+  "typings": "dist-declarations/ts-simple-ast.d.ts",
   "scripts": {
     "dopublish": "yarn run type-check-docs && yarn run package && yarn run publish-code-verification && npm publish",
     "lint": "yarn run lint-src && yarn run lint-scripts",
@@ -29,7 +29,7 @@
     "ensure-declaration-files-not-changed": "ts-node --transpileOnly scripts/verification/ensureDeclarationFilesNotChanged",
     "ensure-array-inputs-readonly": "ts-node --transpileOnly scripts/verification/main ensure-array-inputs-readonly",
     "ensure-or-throw-exists": "ts-node --transpileOnly scripts/verification/main ensure-or-throw-exists",
-    "overwrite-declaration-files": "yarn run build-declarations && shx cp -rf dist-declarations/main.d.ts lib/ts-simple-ast.d.ts && shx cp -rf dist-declarations/codeBlockWriter/code-block-writer.d.ts lib/codeBlockWriter/code-block-writer.d.ts",
+    "overwrite-declaration-files": "yarn run build-declarations && shx cp -rf dist-declarations/ts-simple-ast.d.ts lib/ts-simple-ast.d.ts && shx cp -rf dist-declarations/codeBlockWriter/code-block-writer.d.ts lib/codeBlockWriter/code-block-writer.d.ts",
     "type-check-docs": "ts-node --transpileOnly scripts/typeCheckDocumentation.ts",
     "maintain-barrels": "barrel-maintainer src"
   },
@@ -63,7 +63,7 @@
     "all": true
   },
   "typescript": {
-    "definition": "dist-declarations/main.d.ts"
+    "definition": "dist-declarations/ts-simple-ast.d.ts"
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",

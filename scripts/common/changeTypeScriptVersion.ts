@@ -14,7 +14,7 @@ export function resetTypeScriptVersion() {
 function setModuleSpecifierValue(value: string) {
     const project = new Project();
     const sourceFiles = [
-        project.addExistingSourceFile(path.join(rootFolder, "dist-declarations/main.d.ts")),
+        project.addExistingSourceFile(path.join(rootFolder, "dist-declarations/ts-simple-ast.d.ts")),
         project.addExistingSourceFile(path.join(rootFolder, "src/typescript/public.ts"))
     ];
 

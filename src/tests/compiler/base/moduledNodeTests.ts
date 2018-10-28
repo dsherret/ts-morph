@@ -581,7 +581,7 @@ export = ts;`);
 
         function doNamespaceTest(text: string, expectedDeclarationNames: string[]) {
             const project = new Project({ useVirtualFileSystem: true });
-            const mainSourceFile = project.createSourceFile("main.d.ts", text);
+            const mainSourceFile = project.createSourceFile("file.d.ts", text);
 
             expect(mainSourceFile.getNamespaces()[0].getExportedDeclarations().map(d => (d as any).getName()).sort())
                 .to.deep.equal(expectedDeclarationNames.sort());

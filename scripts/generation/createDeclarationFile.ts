@@ -1,7 +1,7 @@
 ﻿/**
  * Code Manipulation - Create Declaration File
  * -------------------------------------------
- * This flattens the declaration file output of the TypeScript compiler into one main.d.ts file
+ * This flattens the declaration file output of the TypeScript compiler into one ts-simple-ast.d.ts file
  * and hides any declarations that should be internal.
  * -------------------------------------------
  */
@@ -10,7 +10,7 @@ import { StringUtils } from "../../src/utils";
 import { createDeclarationProject, removeImportTypes } from "../common";
 import { flattenDeclarationFiles } from "./flattenDeclarationFiles";
 
-export function createDeclarationFile() {
+export async function createDeclarationFile() {
     const project = createDeclarationProject();
     const mainFile = project.getSourceFileOrThrow("main.d.ts");
 
@@ -21,8 +21,9 @@ export function createDeclarationFile() {
     hideExtensionTypes();
     hideSpecificDeclarations();
     removeSkipOrThrowCheck();
+    mainFile.move("ts-simple-ast.d.ts");
 
-    project.save();
+    await project.save();
 
     function hideBaseDeclarations() {
         const baseDeclarations = mainFile.getVariableDeclarations().filter(s => StringUtils.endsWith(s.getName(), "Base"));

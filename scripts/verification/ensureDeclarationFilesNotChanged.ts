@@ -11,7 +11,7 @@ import chalk from "chalk";
 
 (async function doCheck() {
     await Promise.all([
-        compareFiles("./lib/ts-simple-ast.d.ts", "./dist-declarations/main.d.ts"),
+        compareFiles("./lib/ts-simple-ast.d.ts", "./dist-declarations/ts-simple-ast.d.ts"),
         compareFiles("./lib/codeBlockWriter/code-block-writer.d.ts", "./dist-declarations/codeBlockWriter/code-block-writer.d.ts")
     ]);
 })();
