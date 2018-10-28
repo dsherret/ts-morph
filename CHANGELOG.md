@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="18.0.0"></a>
+# [18.0.0](https://github.com/dsherret/ts-simple-ast/compare/17.1.1...18.0.0) (2018-10-28)
+
+
+### Bug Fixes
+
+* [#482](https://github.com/dsherret/ts-simple-ast/issues/482) - Import and export declaration should not include quotes in module specifier in structure ([92c7f46](https://github.com/dsherret/ts-simple-ast/commit/92c7f46) - [@brianzinn](https://github.com/brianzinn))
+* [#483](https://github.com/dsherret/ts-simple-ast/issues/483) - `getDerivedClasses()` fails when there exists an interface that extends the class ([2bbcec5](https://github.com/dsherret/ts-simple-ast/commit/2bbcec5) - [@cancerberoSgx](https://github.com/cancerberoSgx))
+* [#484](https://github.com/dsherret/ts-simple-ast/issues/484) - organizeImports() would sometimes throw. ([447bcfc](https://github.com/dsherret/ts-simple-ast/commit/447bcfc))
+* ParameterDeclaration.getScope() should return public for readonly parameter properties with an implicit scope. ([c430eb4](https://github.com/dsherret/ts-simple-ast/commit/c430eb4))
+
+
+### Code Refactoring
+
+* `JSDocTag.getName()` should be `.getTagName()` ([c362510](https://github.com/dsherret/ts-simple-ast/commit/c362510))
+
+
+### Features
+
+* [#467](https://github.com/dsherret/ts-simple-ast/issues/467) - Move some ClassDeclaration functionality into ClassLikeDeclarationBase. ([fdb5f42](https://github.com/dsherret/ts-simple-ast/commit/fdb5f42))
+* [#467](https://github.com/dsherret/ts-simple-ast/issues/467) - Wrap ClassExpression. ([92f4be3](https://github.com/dsherret/ts-simple-ast/commit/92f4be3))
+* [#469](https://github.com/dsherret/ts-simple-ast/issues/469) - ClassDeclaration - Add "Extract interface" ([8b19131](https://github.com/dsherret/ts-simple-ast/commit/8b19131))
+* [#471](https://github.com/dsherret/ts-simple-ast/issues/471) - Add `Project.formatDiagnosticsWithColorAndContext(diagnostics)` ([3056a1e](https://github.com/dsherret/ts-simple-ast/commit/3056a1e))
+* [#472](https://github.com/dsherret/ts-simple-ast/issues/472) - Add getBodyText() to BodiedNode and BodyableNode ([e41c278](https://github.com/dsherret/ts-simple-ast/commit/e41c278))
+* [#473](https://github.com/dsherret/ts-simple-ast/issues/473) - MethodDeclaration should extend QuestionTokenableNode. ([674d3d2](https://github.com/dsherret/ts-simple-ast/commit/674d3d2))
+* Add `JSDocPropertyLikeTag.getName()` and `.getNameNode()` ([9804627](https://github.com/dsherret/ts-simple-ast/commit/9804627))
+* Wrap ModuleBlock. ([1507c8d](https://github.com/dsherret/ts-simple-ast/commit/1507c8d))
+* Wrap NamedImports and NamedExports. ([6a17fe8](https://github.com/dsherret/ts-simple-ast/commit/6a17fe8))
+
+
+### BREAKING CHANGES
+
+* `JSDocTag`'s `.getName()` is now `.getTagName()`. This was necessary because `.getName()` should return a `JSDocPropertyLikeTag`'s name.
+
+
+
 <a name="17.1.1"></a>
 ## [17.1.1](https://github.com/dsherret/ts-simple-ast/compare/17.1.0...17.1.1) (2018-10-20)
 
