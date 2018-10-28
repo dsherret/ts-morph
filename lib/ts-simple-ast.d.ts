@@ -585,6 +585,14 @@ export declare class Project {
      * @param block - Block of code to run.
      */
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
+    /**
+     * Formats an array of diagnostics with their color and context into a string.
+     * @param diagnostics - Diagnostics to get a string of.
+     * @param options - Collection of options. For exmaple, the new line character to use (defaults to the OS' new line character).
+     */
+    formatDiagnosticsWithColorAndContext(diagnostics: ReadonlyArray<Diagnostic>, opts?: {
+        newLineChar?: "\n" | "\r\n";
+    }): string;
 }
 
 export interface SourceFileCreateOptions {
@@ -9926,7 +9934,19 @@ export interface TypeParameteredNodeStructure {
     typeParameters?: TypeParameterDeclarationStructure[];
 }
 
-export interface ClassDeclarationStructure extends NameableNodeStructure, ClassDeclarationSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure {
+export interface ClassLikeDeclarationBaseStructure extends NameableNodeStructure, ClassLikeDeclarationBaseSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AbstractableNodeStructure {
+}
+
+interface ClassLikeDeclarationBaseSpecificStructure {
+    extends?: string | WriterFunction;
+    ctors?: ConstructorDeclarationStructure[];
+    properties?: PropertyDeclarationStructure[];
+    getAccessors?: GetAccessorDeclarationStructure[];
+    setAccessors?: SetAccessorDeclarationStructure[];
+    methods?: MethodDeclarationStructure[];
+}
+
+export interface ClassDeclarationStructure extends ClassLikeDeclarationBaseStructure, ClassDeclarationSpecificStructure, AmbientableNodeStructure, ExportableNodeStructure {
     /**
      * The class name.
      * @remarks Can be undefined. For example: `export default class { ... }`
@@ -9935,12 +9955,6 @@ export interface ClassDeclarationStructure extends NameableNodeStructure, ClassD
 }
 
 interface ClassDeclarationSpecificStructure {
-    extends?: string | WriterFunction;
-    ctors?: ConstructorDeclarationStructure[];
-    properties?: PropertyDeclarationStructure[];
-    getAccessors?: GetAccessorDeclarationStructure[];
-    setAccessors?: SetAccessorDeclarationStructure[];
-    methods?: MethodDeclarationStructure[];
 }
 
 export interface ConstructorDeclarationStructure extends ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
