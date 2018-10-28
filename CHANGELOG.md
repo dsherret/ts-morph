@@ -8,8 +8,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* [#482](https://github.com/dsherret/ts-simple-ast/issues/482) - Import and export declaration should not include quotes in module specifier in structure ([92c7f46](https://github.com/dsherret/ts-simple-ast/commit/92c7f46) - [@brianzinn](https://github.com/brianzinn))
-* [#483](https://github.com/dsherret/ts-simple-ast/issues/483) - `getDerivedClasses()` fails when there exists an interface that extends the class ([2bbcec5](https://github.com/dsherret/ts-simple-ast/commit/2bbcec5) - [@cancerberoSgx](https://github.com/cancerberoSgx))
+* [#482](https://github.com/dsherret/ts-simple-ast/issues/482) - Import and export declaration should not include quotes in module specifier in structure ([92c7f46](https://github.com/dsherret/ts-simple-ast/commit/92c7f46) - [@cancerberoSgx](https://github.com/cancerberoSgx))
+* [#483](https://github.com/dsherret/ts-simple-ast/issues/483) - `getDerivedClasses()` fails when there exists an interface that extends the class ([2bbcec5](https://github.com/dsherret/ts-simple-ast/commit/2bbcec5) - [@brianzinn](https://github.com/brianzinn))
 * [#484](https://github.com/dsherret/ts-simple-ast/issues/484) - organizeImports() would sometimes throw. ([447bcfc](https://github.com/dsherret/ts-simple-ast/commit/447bcfc))
 * ParameterDeclaration.getScope() should return public for readonly parameter properties with an implicit scope. ([c430eb4](https://github.com/dsherret/ts-simple-ast/commit/c430eb4))
 
