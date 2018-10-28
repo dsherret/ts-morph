@@ -680,7 +680,7 @@ describe(nameof(ImportDeclaration), () => {
         it("should work when has named imports", () => {
             doTest(`import { a } from 'foo'`, {
                 defaultImport: undefined,
-                moduleSpecifier: "'foo'",
+                moduleSpecifier: "foo",
                 namedImports: [{ name: "a", alias: undefined }],
                 namespaceImport: undefined
             });
@@ -689,7 +689,7 @@ describe(nameof(ImportDeclaration), () => {
         it("should work when is a namespace import", () => {
             doTest(`import * as ts from 'typescript'`, {
                 defaultImport: undefined,
-                moduleSpecifier: "\'typescript\'",
+                moduleSpecifier: "typescript",
                 namedImports: [],
                 namespaceImport: "ts"
             });
@@ -698,7 +698,7 @@ describe(nameof(ImportDeclaration), () => {
         it("should work for default imports", () => {
             doTest(`import bar from 'foo'`, {
                 defaultImport: "bar",
-                moduleSpecifier: "\'foo\'",
+                moduleSpecifier: "foo",
                 namedImports: [],
                 namespaceImport: undefined
             });
@@ -707,7 +707,7 @@ describe(nameof(ImportDeclaration), () => {
         it("should work for default with named imports", () => {
             doTest(`import bar, {test} from 'foo'`, {
                 defaultImport: "bar",
-                moduleSpecifier: "\'foo\'",
+                moduleSpecifier: "foo",
                 namedImports: [{ name: "test", alias: undefined }],
                 namespaceImport: undefined
             });

@@ -269,7 +269,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
     getStructure(): ExportDeclarationStructure {
         const moduleSpecifier = this.getModuleSpecifier();
         return callBaseGetStructure<ExportDeclarationStructure>(ExportDeclarationBase.prototype, this, {
-            moduleSpecifier: moduleSpecifier ? moduleSpecifier.getText() : undefined,
+            moduleSpecifier: moduleSpecifier ? moduleSpecifier.getLiteralText() : undefined,
             namedExports: this.getNamedExports().map(node => node.getStructure())
         });
     }

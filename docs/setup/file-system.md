@@ -50,6 +50,8 @@ import { Project, FileSystemHost } from "ts-simple-ast";
 function loadDtsFiles(fs: FileSystemHost) {
     // Example that loads every single lib file. You most likely don't need all of these.
     // Please consult your version of the compiler to see what's necessary.
+    // Note: It is best to generate this list of file names at compile time somehow based on the compiler api version
+    // used (these are the .d.ts files found in the node_modules/typescript/lib folder).
     const libDtsFileNames = ["lib.d.ts", "lib.dom.d.ts", "lib.dom.iterable.d.ts", "lib.es2015.collection.d.ts",
         "lib.es2015.core.d.ts", "lib.es2015.d.ts", "lib.es2015.generator.d.ts", "lib.es2015.iterable.d.ts",
         "lib.es2015.promise.d.ts", "lib.es2015.proxy.d.ts", "lib.es2015.reflect.d.ts", "lib.es2015.symbol.d.ts",
