@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { ImportDeclaration, ModuledNode } from "../../../compiler";
+import { ImportDeclaration } from "../../../compiler";
 import * as errors from "../../../errors";
 import { Project } from "../../../Project";
 import { WriterFunction } from "../../../types";
@@ -711,15 +711,6 @@ describe(nameof(ImportDeclaration), () => {
                 namedImports: [{ name: "test", alias: undefined }],
                 namespaceImport: undefined
             });
-        });
-    });
-
-    describe(nameof<ImportDeclaration>(n => n.getStructure) + " compatibiltiy with " +
-        nameof<ModuledNode>(n => n.addImportDeclaration) + " and " + nameof<ModuledNode>(n => n.getImportDeclaration), () => {
-        it("should work for default with named imports", () => {
-            const { firstChild, project, sourceFile } = getInfoFromText<ImportDeclaration>("import {Foo} from 'foo'");
-            sourceFile.addImportDeclaration(firstChild.getStructure());
-            expect(sourceFile.getImportDeclarations()[1].getStructure()).to.deep.equal(firstChild.getStructure());
         });
     });
 });
