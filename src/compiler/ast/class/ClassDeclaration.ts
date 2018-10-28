@@ -953,7 +953,12 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             const heritageClause = nodeParent.getParentIfKind(SyntaxKind.HeritageClause);
             if (heritageClause == null || heritageClause.getToken() !== SyntaxKind.ExtendsKeyword)
                 continue;
-            classes.push(heritageClause.getFirstAncestorByKindOrThrow(SyntaxKind.ClassDeclaration));
+
+            const derivedClass = heritageClause.getFirstAncestorByKind(SyntaxKind.ClassDeclaration);
+            if (derivedClass == null) {
+                continue;
+            }
+            classes.push(derivedClass);
         }
 
         return classes;
