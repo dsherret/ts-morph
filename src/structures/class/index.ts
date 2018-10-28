@@ -1,3 +1,4 @@
+export * from "./base";
 export * from "./ClassDeclarationStructure";
 export * from "./ConstructorDeclarationStructure";
 export * from "./GetAccessorDeclarationStructure";

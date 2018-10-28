@@ -1,6 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration } from "../../../compiler";
-import { ClassDeclarationSpecificStructure, ClassDeclarationStructure, InterfaceDeclarationStructure } from "../../../structures";
+import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure,
+    InterfaceDeclarationStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
@@ -25,7 +26,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(c => c.set), () => {
-        function doTest(startingCode: string, structure: ClassDeclarationSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -71,7 +72,7 @@ class Identifier extends Other {
     }
 }
 `;
-            const structure: MakeRequired<ClassDeclarationSpecificStructure> = {
+            const structure: MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure> = {
                 extends: "Other",
                 ctors: [{}],
                 properties: [{ name: "p" }],
@@ -96,7 +97,7 @@ class Identifier extends Test {
 class Identifier {
 }
 `;
-            const structure: MakeRequired<ClassDeclarationSpecificStructure> = {
+            const structure: MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure> = {
                 extends: undefined,
                 ctors: [],
                 properties: [],

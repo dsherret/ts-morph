@@ -1,15 +1,8 @@
-﻿import { WriterFunction } from "../../types";
-import { AbstractableNodeStructure, AmbientableNodeStructure, DecoratableNodeStructure, ExportableNodeStructure, ImplementsClauseableNodeStructure,
-    JSDocableNodeStructure, NameableNodeStructure, TypeParameteredNodeStructure } from "../base";
-import { ConstructorDeclarationStructure } from "./ConstructorDeclarationStructure";
-import { GetAccessorDeclarationStructure } from "./GetAccessorDeclarationStructure";
-import { MethodDeclarationStructure } from "./MethodDeclarationStructure";
-import { PropertyDeclarationStructure } from "./PropertyDeclarationStructure";
-import { SetAccessorDeclarationStructure } from "./SetAccessorDeclarationStructure";
+﻿import { AmbientableNodeStructure, ExportableNodeStructure } from "../base";
+import { ClassLikeDeclarationBaseStructure } from "./base";
 
 export interface ClassDeclarationStructure
-    extends NameableNodeStructure, ClassDeclarationSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure,
-        TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure
+    extends ClassLikeDeclarationBaseStructure, ClassDeclarationSpecificStructure, AmbientableNodeStructure, ExportableNodeStructure
 {
     /**
      * The class name.
@@ -19,10 +12,4 @@ export interface ClassDeclarationStructure
 }
 
 export interface ClassDeclarationSpecificStructure {
-    extends?: string | WriterFunction;
-    ctors?: ConstructorDeclarationStructure[];
-    properties?: PropertyDeclarationStructure[];
-    getAccessors?: GetAccessorDeclarationStructure[];
-    setAccessors?: SetAccessorDeclarationStructure[];
-    methods?: MethodDeclarationStructure[];
 }

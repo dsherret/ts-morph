@@ -518,7 +518,7 @@ export class Project {
      * @param diagnostics - Diagnostics to get a string of.
      * @param options - Collection of options. For exmaple, the new line character to use (defaults to the OS' new line character).
      */
-    formatDiagnosticsWithColorAndContext(diagnostics: Diagnostic[], opts: { newLineChar?: "\n" | "\r\n"; } = {}) {
+    formatDiagnosticsWithColorAndContext(diagnostics: ReadonlyArray<Diagnostic>, opts: { newLineChar?: "\n" | "\r\n"; } = {}) {
         return ts.formatDiagnosticsWithColorAndContext(diagnostics.map(d => d.compilerObject), {
             getCurrentDirectory: () => this.context.fileSystemWrapper.getCurrentDirectory(),
             getCanonicalFileName: fileName => fileName,

@@ -1,5 +1,6 @@
 import { ClassDeclarationStructure, ConstructorDeclarationStructure, MethodDeclarationStructure, ClassDeclarationSpecificStructure,
-    InterfaceDeclarationStructure, PropertyDeclarationStructure, ParameterDeclarationStructure } from "../../../structures";
+    ClassLikeDeclarationBaseSpecificStructure, InterfaceDeclarationStructure, PropertyDeclarationStructure,
+    ParameterDeclarationStructure } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ArrayUtils, StringUtils, TypeGuards, KeyValueCache } from "../../../utils";
 import { ChildOrderableNode, ExportableNode, AmbientableNode } from "../base";
@@ -60,7 +61,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     getStructure(): ClassDeclarationStructure {
         const getExtends = this.getExtends();
         const isAmbient = this.isAmbient();
-        return callBaseGetStructure<ClassDeclarationSpecificStructure>(ClassDeclarationBase.prototype, this, {
+        return callBaseGetStructure<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>(ClassDeclarationBase.prototype, this, {
             ctors: this.getConstructors().filter(ctor => isAmbient || !ctor.isOverload()).map(ctor => ctor.getStructure() as ConstructorDeclarationStructure),
             methods: this.getMethods().filter(method => isAmbient || !method.isOverload()).map(method => method.getStructure() as MethodDeclarationStructure),
             properties: this.getProperties().map(property => property.getStructure()),
