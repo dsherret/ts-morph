@@ -1,7 +1,6 @@
-import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
 import * as errors from "../../../errors";
 import { Node } from "../common";
-import { ts, SyntaxKind } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
 
 export const ImportClauseBase = Node;
@@ -56,8 +55,8 @@ export class ImportClause extends ImportClauseBase<ts.ImportClause> {
      */
     getNamedImports() {
         const namedBindings = this.getNamedBindings();
-        if (namedBindings == null || namedBindings.getKind() !== SyntaxKind.NamedImports)
+        if (namedBindings == null || !TypeGuards.isNamedImports(namedBindings))
             return [];
-        return (namedBindings as Node<ts.NamedImports>).getNodeProperty("elements") || [];
+        return namedBindings.getElements();
     }
 }

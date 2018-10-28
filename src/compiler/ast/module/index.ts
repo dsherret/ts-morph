@@ -8,6 +8,8 @@ export * from "./ImportDeclaration";
 export * from "./ImportEqualsDeclaration";
 export * from "./ImportSpecifier";
 export * from "./ModuleBlock";
+export * from "./NamedExports";
+export * from "./NamedImports";
 export * from "./NamespaceChildableNode";
 export * from "./NamespaceDeclaration";
 export * from "./NamespaceDeclarationKind";

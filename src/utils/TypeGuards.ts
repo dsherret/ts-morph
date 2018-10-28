@@ -1529,6 +1529,22 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a NamedExports.
+     * @param node - Node to check.
+     */
+    static isNamedExports(node: compiler.Node): node is compiler.NamedExports {
+        return node.getKind() === SyntaxKind.NamedExports;
+    }
+
+    /**
+     * Gets if the node is a NamedImports.
+     * @param node - Node to check.
+     */
+    static isNamedImports(node: compiler.Node): node is compiler.NamedImports {
+        return node.getKind() === SyntaxKind.NamedImports;
+    }
+
+    /**
      * Gets if the node is a NamedNode.
      * @param node - Node to check.
      */

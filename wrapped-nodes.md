@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 165
+**Total:** 167
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -241,6 +241,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ModuleBlock](src/compiler/ast/module/ModuleBlock.ts)
     * :heavy_check_mark: statements
 * NamedDeclaration - Implemented via mixin.
+* [NamedExports](src/compiler/ast/module/NamedExports.ts)
+    * :heavy_check_mark: elements
+* [NamedImports](src/compiler/ast/module/NamedImports.ts)
+    * :heavy_check_mark: elements
 * [NamespaceDeclaration](src/compiler/ast/module/NamespaceDeclaration.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: body
@@ -417,7 +421,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 57
+**Total:** 55
 
 * Bundle
 * ClassElement
@@ -456,8 +460,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * MappedTypeNode
 * MissingDeclaration
 * ModuleDeclaration
-* NamedExports
-* NamedImports
 * NamespaceExportDeclaration
 * NodeWithTypeArguments
 * ObjectLiteralElement
