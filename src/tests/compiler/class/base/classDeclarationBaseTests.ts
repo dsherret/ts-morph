@@ -1338,6 +1338,10 @@ class Child extends Mixin(Base) {}
                 "class GreatGrandChild1 extends Grandchild1 {}", "Base", ["Child1", "Child2", "Grandchild1", "GreatGrandChild1"]);
         });
 
+        it("should ignore Interfaces that extend classes", () => {
+            doTest("class Base {} interface InterfaceExtendsClass extends Base {} class Child1 extends Base", "Base", ["Child1"]);
+        });
+
         it("should get the class descendants when there are none", () => {
             doTest("class Base {} class Child1 extends Base {} class Child2 extends Base {} class Grandchild1 extends Child1 {}", "Grandchild1", []);
         });
