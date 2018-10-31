@@ -9,6 +9,9 @@ import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
+import { TextRange } from "typescript";
+import { RefactorEditInfo } from "./results/RefactorEditInfo";
+import { CodeFixAction } from "./results/CodeFixAction";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -335,6 +338,22 @@ export class LanguageService {
         };
         return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings), this._getFilledUserPreferences(userPreferences))
             .map(fileTextChanges => new FileTextChanges(fileTextChanges));
+    }
+
+    getEditsForRefactor(fileName: string, formatOptions: FormatCodeSettings, positionOrRange: number | TextRange,
+        refactorName: string, actionName: string, preferences: UserPreferences | undefined): RefactorEditInfo | undefined {
+        const compilerObject = this.compilerObject.getEditsForRefactor(fileName, formatOptions, positionOrRange,
+            refactorName, actionName, this._getFilledUserPreferences(preferences || {}));
+        if (compilerObject) {
+            return new RefactorEditInfo(compilerObject);
+        }
+        return undefined;
+    }
+
+    getCodeFixesAtPosition(fileName: string, start: number, end: number, errorCodes: ReadonlyArray<number>,
+        formatOptions: FormatCodeSettings, preferences: UserPreferences): ReadonlyArray<CodeFixAction> {
+        const compilerResult = this.compilerObject.getCodeFixesAtPosition(fileName, start, end, errorCodes, formatOptions, preferences);
+        return compilerResult.map(compilerObject => new CodeFixAction(compilerObject));
     }
 
     private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {
