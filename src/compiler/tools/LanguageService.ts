@@ -340,19 +340,38 @@ export class LanguageService {
             .map(fileTextChanges => new FileTextChanges(fileTextChanges));
     }
 
+    /**
+     * Gets the edits information to modify the file with given refactor action at given position.
+     * @param fileName - File path of the source file.
+     * @param formatOptions - Fomat code settings.
+     * @param positionOrRange - The position in the source file where to apply given refactor.
+     * @param refactorName  - The refactor name.
+     * @param actionName  - The refactor action name.
+     * @param preferences - User preferences for refactoring.
+     */
     getEditsForRefactor(fileName: string, formatOptions: FormatCodeSettings, positionOrRange: number | TextRange,
         refactorName: string, actionName: string, preferences: UserPreferences | undefined): RefactorEditInfo | undefined {
-        const compilerObject = this.compilerObject.getEditsForRefactor(fileName, formatOptions, positionOrRange,
-            refactorName, actionName, this._getFilledUserPreferences(preferences || {}));
+        const compilerObject = this.compilerObject.getEditsForRefactor(fileName, this._getFilledSettings(formatOptions),
+            positionOrRange, refactorName, actionName, this._getFilledUserPreferences(preferences || {}));
         if (compilerObject) {
             return new RefactorEditInfo(compilerObject);
         }
         return undefined;
     }
 
+    /**
+     * Gets the edit information to modify the file with given code fix at given text range in a given file.
+     * @param fileName - File path of the source file.
+     * @param start - The start index of the text range to be fixed.
+     * @param end  - The end index of the text range to be fixed.
+     * @param errorCodes  - One or more error codes associated to the code fixex to apply.
+     * @param formatOptions - Format coe settings.
+     * @param preferences . User preferences for refactoring.
+     */
     getCodeFixesAtPosition(fileName: string, start: number, end: number, errorCodes: ReadonlyArray<number>,
         formatOptions: FormatCodeSettings, preferences: UserPreferences): ReadonlyArray<CodeFixAction> {
-        const compilerResult = this.compilerObject.getCodeFixesAtPosition(fileName, start, end, errorCodes, formatOptions, preferences);
+        const compilerResult = this.compilerObject.getCodeFixesAtPosition(fileName, start, end, errorCodes,
+            this._getFilledSettings(formatOptions), this._getFilledUserPreferences(preferences || {}));
         return compilerResult.map(compilerObject => new CodeFixAction(compilerObject));
     }
 

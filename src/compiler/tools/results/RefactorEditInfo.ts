@@ -26,16 +26,10 @@ export class RefactorEditInfo {
         return this.compilerObject.edits.map(edit => new FileTextChanges(edit));
     }
 
-    /**
-     *
-     */
     getRenameFilename() {
         return this.compilerObject.renameFilename;
     }
 
-    /**
-     *
-     */
     getRenameLocation() {
         return this.compilerObject.renameLocation;
     }
