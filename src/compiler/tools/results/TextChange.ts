@@ -36,8 +36,10 @@ export class TextChange {
         return this.compilerObject.newText;
     }
 
-    /** creates a new TextChange from compiler object */
-    static create(compilerObject: ts.TextChange): TextChange {
+    /**
+     * Creates a new TextChange from compiler object.
+     */
+    static create(compilerObject: ts.TextChange) {
         return new TextChange(compilerObject);
     }
 }

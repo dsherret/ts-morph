@@ -27,4 +27,18 @@ export class FileTextChanges {
     getTextChanges() {
         return this._compilerObject.textChanges.map(c => new TextChange(c));
     }
+
+    /**
+     * Should the file be created?
+     */
+    isNewFile() {
+        return this._compilerObject.isNewFile;
+    }
+
+    /**
+     * Creates a new FileTextChange from compiler object.
+     */
+    static create(compilerObject: ts.FileTextChanges) {
+        return new FileTextChanges(compilerObject);
+    }
 }
