@@ -120,6 +120,7 @@ describe(nameof(LanguageService), () => {
             const results = project.getLanguageService().getEditsForRefactor(sourceFile.getFilePath(), {},
                 { pos: classId.getStart(), end: classId.getEnd() }, "Move to a new file", "Move to a new file", {});
 
+            expect(results!.getEdits()).to.lengthOf(2);
             const edit1 = results!.getEdits().find(edit => edit.getFilePath() === sourceFile.getFilePath());
             const edit2 = results!.getEdits().find(edit => edit.getFilePath() === "/A.ts");
 
@@ -148,8 +149,10 @@ describe(nameof(LanguageService), () => {
         it("should get code fixes at position for known code fixes convertToEs6Module (error code 80001)", () => {
             const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ", { filePath: "/file.ts" });
             const variableDeclaration = sourceFile.getVariableDeclarationOrThrow("moment");
-            const results = project.getLanguageService().getCodeFixesAtPosition(sourceFile.getFilePath(), variableDeclaration.getStart(), variableDeclaration.getEnd(), [80001], {}, {});
+            const results = project.getLanguageService().getCodeFixesAtPosition(sourceFile.getFilePath(),
+                variableDeclaration.getStart(), variableDeclaration.getEnd(), [80001], {}, {});
 
+            expect(results).to.lengthOf(1);
             expect(results[0]!.getFixName()).to.equal("convertToEs6Module");
             expect(results[0]!.getDescription()).to.equal("Convert to ES6 module");
 
