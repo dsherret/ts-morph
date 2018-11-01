@@ -166,6 +166,19 @@ describe(nameof(LanguageService), () => {
 
         });
     });
+
+    describe(nameof<LanguageService>(l => l.getSuggestionDiagnostics), () => {
+        it("should return default suggestion diagnostics for file)", () => {
+            const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ");
+            const diagnostics = project.getLanguageService().getSuggestionDiagnostics(sourceFile);
+            expect(diagnostics).to.lengthOf(1);
+            expect(diagnostics[0].getCode()).to.equal(80005);
+            expect(diagnostics[0].getMessageText()).to.equal("\'require\' call may be converted to an import.");
+            expect(diagnostics[0].getStart()).to.equal(15);
+            expect(diagnostics[0].getLength()).to.equal(17);
+        });
+    });
+
 });
 
 function checkOutput(output: EmitOutput, expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; }) {

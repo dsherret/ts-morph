@@ -8,7 +8,7 @@ import { Node } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
-import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
+import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation } from "./results";
 import { TextRange } from "typescript";
 import { RefactorEditInfo } from "./results/RefactorEditInfo";
 import { CodeFixAction } from "./results/CodeFixAction";
@@ -231,6 +231,16 @@ export class LanguageService {
         const renameLocations = this.compilerObject.findRenameLocations(node.sourceFile.getFilePath(), node.getStart(),
             options.renameInStrings || false, options.renameInComments || false) || [];
         return renameLocations.map(l => new RenameLocation(this.context, l));
+    }
+
+    /**
+     * Gets the suggestion diagnostics.
+     * @param fileName - Optional source file to filter by.
+     */
+    getSuggestionDiagnostics(filePathOrSourceFile: SourceFile | string): DiagnosticWithLocation[] {
+        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const suggestionDiagnostics = this.compilerObject.getSuggestionDiagnostics(filePath);
+        return suggestionDiagnostics.map(d => this.context.compilerFactory.getDiagnosticWithLocation(d));
     }
 
     /**
