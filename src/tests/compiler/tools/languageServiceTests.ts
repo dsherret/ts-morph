@@ -114,11 +114,10 @@ describe(nameof(LanguageService), () => {
     });
 
     describe(nameof<LanguageService>(l => l.getEditsForRefactor), () => {
-        it("should get edits for known refactor 'move to a new file'", () => {
+        it("should get edits for known refactor 'Move to a new file'", () => {
             const { sourceFile, project } = getInfoFromText("export class A {}; function f(){return new A(); }", { filePath: "/file.ts" });
             const classId = sourceFile.getClassOrThrow("A").getNameNodeOrThrow();
-            const results = project.getLanguageService().getEditsForRefactor(sourceFile.getFilePath(), {},
-                { pos: classId.getStart(), end: classId.getEnd() }, "Move to a new file", "Move to a new file", {});
+            const results = project.getLanguageService().getEditsForRefactor(sourceFile, {}, classId, "Move to a new file", "Move to a new file", {});
 
             expect(results!.getEdits()).to.lengthOf(2);
             const edit1 = results!.getEdits().find(edit => edit.getFilePath() === sourceFile.getFilePath());
@@ -149,8 +148,8 @@ describe(nameof(LanguageService), () => {
         it("should get code fixes at position for known code fixes convertToEs6Module (error code 80001)", () => {
             const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ", { filePath: "/file.ts" });
             const variableDeclaration = sourceFile.getVariableDeclarationOrThrow("moment");
-            const results = project.getLanguageService().getCodeFixesAtPosition(sourceFile.getFilePath(),
-                variableDeclaration.getStart(), variableDeclaration.getEnd(), [80001], {}, {});
+            const results = project.getLanguageService().getCodeFixesAtPosition(sourceFile,
+                variableDeclaration.getStart(), variableDeclaration.getEnd(), [80001]);
 
             expect(results).to.lengthOf(1);
             expect(results[0]!.getFixName()).to.equal("convertToEs6Module");
@@ -163,12 +162,11 @@ describe(nameof(LanguageService), () => {
                     span: { start: 0, length: 33 }
                 }]
             });
-
         });
     });
 
     describe(nameof<LanguageService>(l => l.getSuggestionDiagnostics), () => {
-        it("should return default suggestion diagnostics for file)", () => {
+        it("should return default suggestion diagnostics for file", () => {
             const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ");
             const diagnostics = project.getLanguageService().getSuggestionDiagnostics(sourceFile);
             expect(diagnostics).to.lengthOf(1);
@@ -177,8 +175,12 @@ describe(nameof(LanguageService), () => {
             expect(diagnostics[0].getStart()).to.equal(15);
             expect(diagnostics[0].getLength()).to.equal(17);
         });
-    });
 
+        it("should throw for a file that doesn't exist", () => {
+            const { project } = getInfoFromText("const moment = require('moment'); moment(); ");
+            expect(() => project.getLanguageService().getSuggestionDiagnostics("someFile.ts")).to.throw(FileNotFoundError);
+        });
+    });
 });
 
 function checkOutput(output: EmitOutput, expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; }) {

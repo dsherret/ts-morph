@@ -1,12 +1,14 @@
 import { ts } from "../../../typescript";
 import {FileTextChanges} from "./FileTextChanges";
+
 /**
- * Represents a code action
+ * Represents a code action.
  */
 export class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
     /** @internal */
     private readonly _compilerObject: TCompilerObject;
 
+    /** @internal */
     constructor(compilerObject: TCompilerObject) {
         this._compilerObject = compilerObject;
     }
@@ -16,16 +18,15 @@ export class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
         return this._compilerObject;
     }
 
-    /** Description of the code action to display in the UI of the editor */
+    /** Description of the code action. */
     getDescription() {
         return this.compilerObject.description;
     }
 
-    /** Text changes to apply to each file as part of the code action */
+    /** Text changes to apply to each file as part of the code action. */
     getChanges() {
         return this.compilerObject.changes.map(change => new FileTextChanges(change));
     }
 
-    // TODO: commands
-
+    // TODO: commands property
 }

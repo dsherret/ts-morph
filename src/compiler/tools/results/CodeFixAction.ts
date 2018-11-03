@@ -2,10 +2,9 @@ import { ts } from "../../../typescript";
 import { CodeAction } from "./CodeAction";
 
 /**
- * Represents a code fix action
+ * Represents a code fix action.
  */
-export class CodeFixAction<TCompilerObject extends ts.CodeFixAction = ts.CodeFixAction> extends CodeAction<TCompilerObject> {
-
+export class CodeFixAction extends CodeAction<ts.CodeFixAction> {
     /**
      * Short name to identify the fix, for use by telemetry.
      */
@@ -21,8 +20,10 @@ export class CodeFixAction<TCompilerObject extends ts.CodeFixAction = ts.CodeFix
         return this.compilerObject.fixId;
     }
 
+    /**
+     * Gets the description of the code fix when fixing everything.
+     */
     getFixAllDescription() {
         return this.compilerObject.fixAllDescription;
     }
-
 }
