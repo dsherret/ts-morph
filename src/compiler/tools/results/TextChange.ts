@@ -9,9 +9,7 @@ export class TextChange {
     /** @internal */
     private readonly _compilerObject: ts.TextChange;
 
-    /**
-     * @internal
-     */
+    /** @internal */
     constructor(compilerObject: ts.TextChange) {
         this._compilerObject = compilerObject;
     }
@@ -34,12 +32,5 @@ export class TextChange {
      */
     getNewText() {
         return this.compilerObject.newText;
-    }
-
-    /**
-     * Creates a new TextChange from compiler object.
-     */
-    static create(compilerObject: ts.TextChange) {
-        return new TextChange(compilerObject);
     }
 }
