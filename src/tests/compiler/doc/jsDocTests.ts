@@ -86,10 +86,7 @@ describe(nameof(JSDoc), () => {
 
         it("should return the tags when they exist", () => {
             const text = "/**\n * Description\n * @param test - Test\n * @returns A value\n */function identifier() {}";
-            if (ts.version === "3.0.1" || ts.version === "3.0.3")
-                doTest(text, ["@param test - Test\n * ", "@returns "]);
-            else
-                doTest(text, ["@param test - Test\n * ", "@returns"]);
+            doTest(text, ["@param test - Test\n * ", "@returns "]);
         });
     });
 
