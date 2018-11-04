@@ -84,11 +84,11 @@ node.forEachDescendant((node, traversal) => {
             traversal.skip();
             break;
         case SyntaxKind.Parameter:
-            // skips traversal of the current node, siblings, and all their descendants
+            // skips traversal of the current node's descendants and its siblings and all their descendants
             traversal.up();
             break;
         case SyntaxKind.FunctionDeclaration:
-            // stop traversal completely
+            // stops traversal completely
             traversal.stop();
             break;
     }
