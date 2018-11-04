@@ -14,12 +14,14 @@ I've created this very basic web-based TypeScript AST viewer.
 
 Features:
 
-* View code on left, tree in middle, and selected node's properties on right.
-* Select a node in the tree to focus on that node's properties.
+* View code on left, tree in middle, and information about selected node on right.
+* View the type and symbol of the selected node.
+* Toggle the tree between `node.forEachChild(...)` and `node.getChildren()`.
+* Change compiler API versions.
 
 [![TypeScript AST Viewer](images/ts-ast-viewer.png)](http://ts-ast-viewer.com)
 
-I will improve and add more functionality to this in the future, but for now it will give you a good understanding of the tree.
+I will improve and add more functionality to this in the future. You can help contribute to its progress [here](https://github.com/dsherret/ts-ast-viewer).
 
 ### Atom TypeScript
 
