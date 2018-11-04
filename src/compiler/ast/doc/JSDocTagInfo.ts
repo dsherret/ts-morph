@@ -7,7 +7,7 @@ export class JSDocTagInfo {
     /** @internal */
     private readonly _compilerObject: ts.JSDocTagInfo;
 
-    /** @internal */
+    /** @private */
     constructor(compilerObject: ts.JSDocTagInfo) {
         this._compilerObject = compilerObject;
     }

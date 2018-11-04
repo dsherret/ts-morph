@@ -15,7 +15,7 @@ export class ReferencedSymbol {
     private readonly references: ReferenceEntry[];
 
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, compilerObject: ts.ReferencedSymbol) {
         this.context = context;

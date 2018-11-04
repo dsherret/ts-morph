@@ -21,7 +21,7 @@ export class Type<TType extends ts.Type = ts.Type> {
 
     /**
      * Initializes a new instance of Type.
-     * @internal
+     * @private
      * @param context - Project context.
      * @param type - Compiler type.
      */

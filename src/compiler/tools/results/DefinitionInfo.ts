@@ -9,7 +9,7 @@ import { DocumentSpan } from "./DocumentSpan";
  */
 export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.DefinitionInfo> extends DocumentSpan<TCompilerObject> {
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, compilerObject: TCompilerObject) {
         super(context, compilerObject);

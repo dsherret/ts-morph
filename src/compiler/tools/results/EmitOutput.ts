@@ -13,7 +13,7 @@ export class EmitOutput {
     private readonly _compilerObject: ts.EmitOutput;
 
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, private readonly filePath: string, compilerObject: ts.EmitOutput) {
         this.context = context;

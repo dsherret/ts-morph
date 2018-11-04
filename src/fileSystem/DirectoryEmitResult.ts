@@ -1,5 +1,5 @@
 ﻿export class DirectoryEmitResult {
-    /** @internal */
+    /** @private */
     constructor(private readonly _emitSkipped: boolean, private readonly _outputFilePaths: ReadonlyArray<string>) {
     }
 

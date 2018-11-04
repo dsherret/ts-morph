@@ -1,7 +1,7 @@
 ﻿import { BaseError } from "./BaseError";
 
 export class NotImplementedError extends BaseError {
-    /** @internal */
+    /** @private */
     constructor(message = "Not implemented.") {
         super(message, NotImplementedError.prototype);
     }

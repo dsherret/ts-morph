@@ -8,7 +8,7 @@ export abstract class SettingsContainer<T extends object> {
     /** @internal */
     protected settings: T;
 
-    /** @internal */
+    /** @private */
     constructor(defaultSettings: T) {
         this.defaultSettings = ObjectUtils.assign({}, defaultSettings);
         this.settings = defaultSettings;

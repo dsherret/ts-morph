@@ -5,7 +5,7 @@
  * and hides any declarations that should be internal.
  * -------------------------------------------
  */
-import { Node, VariableStatement } from "ts-simple-ast";
+import { Node, VariableStatement, TypeGuards, Scope } from "ts-simple-ast";
 import { StringUtils } from "../../src/utils";
 import { createDeclarationProject, removeImportTypes } from "../common";
 import { flattenDeclarationFiles } from "./flattenDeclarationFiles";
@@ -16,6 +16,7 @@ export async function createDeclarationFile() {
 
     flattenDeclarationFiles(project, mainFile);
     removeImportTypes(mainFile);
+    makeConstructorsPrivate();
     hideBaseDeclarations();
     hideSpecificStructures();
     hideExtensionTypes();
@@ -58,5 +59,21 @@ export async function createDeclarationFile() {
     function removeSkipOrThrowCheck() {
         // no real good support for jsdocs yet so doing this regex solution that I know will work
         mainFile.replaceWithText(mainFile.getFullText().replace(/\n\s+\*\s+@skipOrThrowCheck\r?\n/g, "\n"));
+    }
+
+    function makeConstructorsPrivate() {
+        mainFile.forEachDescendant(node => {
+            if (!TypeGuards.isClassDeclaration(node))
+                return;
+
+            for (const ctor of node.getConstructors()) {
+                const hasPrivateTag = ctor.getJsDocs().some(doc => doc.getTags().some(tag => tag.getTagName() === "private"));
+                if (hasPrivateTag) {
+                    ctor.getParameters().forEach(p => p.remove());
+                    ctor.getJsDocs().forEach(d => d.remove());
+                    ctor.setScope(node.getDerivedClasses().length > 0 ? Scope.Protected : Scope.Private);
+                }
+            }
+        });
     }
 }

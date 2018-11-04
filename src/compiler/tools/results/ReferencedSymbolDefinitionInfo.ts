@@ -5,7 +5,7 @@ import { DefinitionInfo } from "./DefinitionInfo";
 
 export class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.ReferencedSymbolDefinitionInfo> {
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, compilerObject: ts.ReferencedSymbolDefinitionInfo) {
         super(context, compilerObject);

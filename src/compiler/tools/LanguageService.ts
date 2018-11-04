@@ -24,7 +24,7 @@ export class LanguageService {
         return this._compilerObject;
     }
 
-    /** @internal */
+    /** @private */
     constructor(context: ProjectContext) {
         this.context = context;
 

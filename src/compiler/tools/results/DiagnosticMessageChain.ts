@@ -7,7 +7,7 @@ export class DiagnosticMessageChain {
     /** @internal */
     readonly _compilerObject: ts.DiagnosticMessageChain;
 
-    /** @internal */
+    /** @private */
     constructor(compilerObject: ts.DiagnosticMessageChain) {
         this._compilerObject = compilerObject;
     }

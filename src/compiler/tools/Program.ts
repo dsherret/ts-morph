@@ -46,7 +46,7 @@ export class Program {
     /** @internal */
     private _getOrCreateCompilerObject!: () => ts.Program;
 
-    /** @internal */
+    /** @private */
     constructor(context: ProjectContext, rootNames: ReadonlyArray<string>, host: ts.CompilerHost) {
         this.context = context;
         this.typeChecker = new TypeChecker(this.context);

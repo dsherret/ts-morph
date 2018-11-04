@@ -31,7 +31,7 @@ export class Directory {
     private _path!: string;
     private _pathParts!: string[];
 
-    /** @internal */
+    /** @private */
     constructor(context: ProjectContext, path: string) {
         this._context = context;
         this._setPathInternal(path);
