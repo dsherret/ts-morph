@@ -147,6 +147,16 @@ describe(nameof(LanguageService), () => {
                 }]
             });
         });
+
+        it("should return undefined if given refactor doesn't exists", () => {
+            const { project, sourceFile } = getInfoFromText("const moment = require('moment'); moment(); ");
+            expect(project.getLanguageService().getEditsForRefactor(sourceFile, {}, 1, "Non Existent Refactor", "Non Existent Refactor Action", {})).to.be.equals(undefined);
+        });
+
+        it("should throw for a file that doesn't exist", () => {
+            const { project } = getInfoFromText("const moment = require('moment'); moment(); ");
+            expect(() => project.getLanguageService().getEditsForRefactor("nonExistent.ts", {}, 1, "Move to a new file", "Move to a new file", {})).to.throw(FileNotFoundError);
+        });
     });
 
     describe(nameof<LanguageService>(l => l.getCodeFixesAtPosition), () => {
@@ -170,6 +180,11 @@ describe(nameof(LanguageService), () => {
                     span: { start: 0, length: 33 }
                 }]
             });
+        });
+
+        it("should throw for a file that doesn't exist", () => {
+            const { project } = getInfoFromText("const moment = require('moment'); moment(); ");
+            expect(() => project.getLanguageService().getCodeFixesAtPosition("nonExistent.ts", 0, 1, [80001], {}, {})).to.throw(FileNotFoundError);
         });
     });
 
