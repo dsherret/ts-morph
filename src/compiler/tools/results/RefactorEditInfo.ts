@@ -3,17 +3,18 @@ import { Memoize } from "../../../utils";
 import { FileTextChanges } from "./FileTextChanges";
 
 /**
- * Represents a refactor edit
+ * Represents a refactor edit.
  */
 export class RefactorEditInfo {
     /** @internal */
     private readonly _compilerObject: ts.RefactorEditInfo;
 
+    /** @internal */
     constructor(compilerObject: ts.RefactorEditInfo) {
         this._compilerObject = compilerObject;
     }
 
-    /** Gets the compiler refactor edit info */
+    /** Gets the compiler refactor edit info. */
     get compilerObject() {
         return this._compilerObject;
     }
@@ -26,7 +27,10 @@ export class RefactorEditInfo {
         return this.compilerObject.edits.map(edit => new FileTextChanges(edit));
     }
 
-    getRenameFilename() {
+    /**
+     * Gets the file path for a rename refactor.
+     */
+    getRenameFilePath() {
         return this.compilerObject.renameFilename;
     }
 
