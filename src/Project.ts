@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
-import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
+import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker, FileTextChanges } from "./compiler";
 import * as errors from "./errors";
 import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { ProjectContext } from "./ProjectContext";
@@ -342,7 +342,7 @@ export class Project {
      */
     getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
     getSourceFiles(globPatterns?: string | ReadonlyArray<string>): SourceFile[] {
-        const {compilerFactory, fileSystemWrapper} = this.context;
+        const { compilerFactory, fileSystemWrapper } = this.context;
         const sourceFiles = this.context.compilerFactory.getSourceFilesByDirectoryDepth();
         if (typeof globPatterns === "string" || globPatterns instanceof Array)
             return ArrayUtils.from(getFilteredSourceFiles());
@@ -421,7 +421,7 @@ export class Project {
     private getUnsavedSourceFiles() {
         return ArrayUtils.from(getUnsavedIterator(this.context.compilerFactory.getSourceFilesByDirectoryDepth()));
 
-        function *getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {
+        function* getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {
             for (const sourceFile of sourceFiles) {
                 if (!sourceFile.isSaved())
                     yield sourceFile;
@@ -523,6 +523,25 @@ export class Project {
             getCurrentDirectory: () => this.context.fileSystemWrapper.getCurrentDirectory(),
             getCanonicalFileName: fileName => fileName,
             getNewLine: () => opts.newLineChar || require("os").EOL
+        });
+    }
+
+    /**
+     * Apply given file text changes to this project, modifying and possibly creating new SourceFiles.
+     *
+     * WARNING: Internally it uses `SourceFile.applyTextChanges()` so this will forget any previously navigated descendant nodes of changed files.
+     * @param fileTextChanges description of the changes to files to apply to this project.
+     */
+    applyFileTextChanges(fileTextChanges: FileTextChanges[]) {
+        fileTextChanges.forEach(fileTextChange => {
+            let file: SourceFile | undefined = this.getSourceFile(fileTextChange.getFilePath());
+            errors.throwIfTrue(fileTextChange.isNewFile() && !!file, "FileTextChanges instructed to create file " + fileTextChange.getFilePath() +
+                " but it already exists on the project. Aborting.");
+            errors.throwIfTrue(!file && !fileTextChange.isNewFile(), "FileTextChanges instructed to modify existing file " + fileTextChange.getFilePath() +
+                " but it doesn\'t exist. Refusing to create it. Aborting.");
+            if (!file)
+                file = this.createSourceFile(fileTextChange.getFilePath());
+            file.applyTextChanges(fileTextChange.getTextChanges());
         });
     }
 }
