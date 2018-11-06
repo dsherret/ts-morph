@@ -30,6 +30,6 @@ export class FileTextChanges {
      * Gets if this change is for creating a new file.
      */
     isNewFile() {
-        return this._compilerObject.isNewFile;
+        return !!this._compilerObject.isNewFile;
     }
 }

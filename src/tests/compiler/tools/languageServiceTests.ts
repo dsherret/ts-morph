@@ -118,10 +118,15 @@ describe(nameof(LanguageService), () => {
             const { sourceFile, project } = getInfoFromText("export class A {}; function f(){return new A(); }", { filePath: "/file.ts" });
             const classId = sourceFile.getClassOrThrow("A").getNameNodeOrThrow();
             const results = project.getLanguageService().getEditsForRefactor(sourceFile, {}, classId, "Move to a new file", "Move to a new file", {});
-
             expect(results!.getEdits()).to.lengthOf(2);
+            expect(results!.getRenameFilePath()).to.be.equals(undefined);
+            expect(results!.getRenameLocation()).to.be.equals(undefined);
+
             const edit1 = results!.getEdits().find(edit => edit.getFilePath() === sourceFile.getFilePath());
             const edit2 = results!.getEdits().find(edit => edit.getFilePath() === "/A.ts");
+
+            expect(results!.getEdits()[0].isNewFile()).to.be.equals(false);
+            expect(results!.getEdits()[1].isNewFile()).to.be.equals(true);
 
             checkFileTextChanges(edit1!, {
                 fileName: "/file.ts",
@@ -154,6 +159,9 @@ describe(nameof(LanguageService), () => {
             expect(results).to.lengthOf(1);
             expect(results[0]!.getFixName()).to.equal("convertToEs6Module");
             expect(results[0]!.getDescription()).to.equal("Convert to ES6 module");
+
+            expect(results[0]!.getFixId()).to.be.equals(undefined);
+            expect(results[0]!.getFixAllDescription()).to.be.equals(undefined);
 
             checkFileTextChanges(results[0]!.getChanges()[0], {
                 fileName: "/file.ts",
