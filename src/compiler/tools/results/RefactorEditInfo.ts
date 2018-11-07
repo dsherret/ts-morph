@@ -3,7 +3,7 @@ import { Memoize } from "../../../utils";
 import { FileTextChanges } from "./FileTextChanges";
 
 /**
- * Represents a refactor edit.
+ * Set of edits to make in response to a refactor action, plus an optional location where renaming should be invoked from.
  */
 export class RefactorEditInfo {
     /** @internal */
@@ -34,6 +34,9 @@ export class RefactorEditInfo {
         return this.compilerObject.renameFilename;
     }
 
+    /**
+     * Location where renaming should be invoked from.
+     */
     getRenameLocation() {
         return this.compilerObject.renameLocation;
     }

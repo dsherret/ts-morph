@@ -8,9 +8,7 @@ import { Node } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
-import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation } from "./results";
-import { RefactorEditInfo } from "./results/RefactorEditInfo";
-import { CodeFixAction } from "./results/CodeFixAction";
+import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction } from "./results";
 
 export interface TextRange {
     getPos(): number;

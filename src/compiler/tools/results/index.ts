@@ -15,3 +15,5 @@ export * from "./RenameLocation";
 export * from "./SymbolDisplayPart";
 export * from "./TextChange";
 export * from "./TextSpan";
+export * from "./RefactorEditInfo";
+export * from "./CodeFixAction";
