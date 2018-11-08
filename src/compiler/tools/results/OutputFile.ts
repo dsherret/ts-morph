@@ -11,7 +11,7 @@ export class OutputFile {
     private readonly _context: ProjectContext;
 
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, compilerObject: ts.OutputFile) {
         this._compilerObject = compilerObject;

@@ -13,7 +13,7 @@ export class Signature {
 
     /**
      * Initializes a new instance of Signature.
-     * @internal
+     * @private
      * @param context - Project context.
      * @param signature - Compiler signature.
      */

@@ -56,7 +56,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Initializes a new instance.
-     * @internal
+     * @private
      * @param context - Project context.
      * @param node - Underlying node.
      */

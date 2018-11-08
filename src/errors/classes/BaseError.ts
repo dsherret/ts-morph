@@ -1,5 +1,5 @@
 ﻿export abstract class BaseError extends Error {
-    /** @internal */
+    /** @private */
     constructor(public readonly message: string, prototype: any) {
         super(message);
 

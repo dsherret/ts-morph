@@ -16,7 +16,7 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     protected readonly sourceFile: SourceFile;
 
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, compilerObject: TCompilerObject) {
         this.context = context;

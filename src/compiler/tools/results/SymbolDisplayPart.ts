@@ -7,7 +7,7 @@ export class SymbolDisplayPart {
     /** @internal */
     private readonly _compilerObject: ts.SymbolDisplayPart;
 
-    /** @internal */
+    /** @private */
     constructor(compilerObject: ts.SymbolDisplayPart) {
         this._compilerObject = compilerObject;
     }

@@ -8,7 +8,7 @@ export class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
     /** @internal */
     private readonly _compilerObject: TCompilerObject;
 
-    /** @internal */
+    /** @private */
     constructor(compilerObject: TCompilerObject) {
         this._compilerObject = compilerObject;
     }

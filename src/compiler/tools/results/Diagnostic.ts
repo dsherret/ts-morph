@@ -13,7 +13,7 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
     /** @internal */
     readonly _compilerObject: TCompilerObject;
 
-    /** @internal */
+    /** @private */
     constructor(context: ProjectContext | undefined, compilerObject: TCompilerObject) {
         this.context = context;
         this._compilerObject = compilerObject;

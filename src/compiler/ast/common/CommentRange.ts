@@ -9,7 +9,7 @@ export class CommentRange {
     private _sourceFile: SourceFile | undefined;
 
     /**
-     * @internal
+     * @private
      */
     constructor(compilerObject: ts.CommentRange, sourceFile: SourceFile) {
         this._compilerObject = compilerObject;

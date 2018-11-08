@@ -7,7 +7,7 @@ export class TextSpan {
     /** @internal */
     private readonly _compilerObject: ts.TextSpan;
 
-    /** @internal */
+    /** @private */
     constructor(compilerObject: ts.TextSpan) {
         this._compilerObject = compilerObject;
     }

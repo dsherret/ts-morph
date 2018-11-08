@@ -78,7 +78,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Initializes a new instance.
-     * @internal
+     * @private
      * @param context - Project context.
      * @param node - Underlying node.
      * @param sourceFile - Source file for the node.

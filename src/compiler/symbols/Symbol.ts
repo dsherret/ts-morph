@@ -20,7 +20,7 @@ export class Symbol {
 
     /**
      * Initializes a new instance of Symbol.
-     * @internal
+     * @private
      * @param context - Project context.
      * @param symbol - Compiler symbol.
      */
