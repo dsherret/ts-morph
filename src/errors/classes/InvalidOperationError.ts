@@ -1,7 +1,7 @@
 ﻿import { BaseError } from "./BaseError";
 
 export class InvalidOperationError extends BaseError {
-    /** @internal */
+    /** @private */
     constructor(message: string) {
         super(message, InvalidOperationError.prototype);
     }

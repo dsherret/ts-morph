@@ -3,7 +3,7 @@ import { ts } from "../../../typescript";
 import { Diagnostic } from "./Diagnostic";
 
 export class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWithLocation> {
-    /** @internal */
+    /** @private */
     constructor(context: ProjectContext | undefined, compilerObject: ts.DiagnosticWithLocation) {
         super(context, compilerObject);
     }

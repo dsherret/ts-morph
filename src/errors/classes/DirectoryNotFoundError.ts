@@ -1,7 +1,7 @@
 ﻿import { PathNotFoundError } from "./PathNotFoundError";
 
 export class DirectoryNotFoundError extends PathNotFoundError {
-    /** @internal */
+    /** @private */
     constructor(dirPath: string) {
         super(dirPath, "Directory", DirectoryNotFoundError.prototype);
     }

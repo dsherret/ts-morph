@@ -6,6 +6,7 @@ export declare class Directory {
     private _context;
     private _path;
     private _pathParts;
+    private constructor();
     /**
      * Checks if this directory is an ancestor of the provided directory.
      * @param possibleDescendant - Directory or source file that's a possible descendant.
@@ -303,6 +304,7 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
 export declare class DirectoryEmitResult {
     private readonly _emitSkipped;
     private readonly _outputFilePaths;
+    private constructor();
     /**
      * Gets if the emit was skipped.
      */
@@ -4058,6 +4060,7 @@ export declare class SetAccessorDeclaration extends SetAccessorDeclarationBase<t
 }
 
 export declare class CommentRange {
+    private constructor();
     /**
      * Gets the underlying compiler object.
      */
@@ -4154,6 +4157,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the underlying compiler node.
      */
     readonly compilerNode: NodeType;
+    protected constructor();
     /**
      * Releases the node and all its descendants from the underlying node cache and ast.
      *
@@ -4975,6 +4979,7 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
  * JS doc tag info.
  */
 export declare class JSDocTagInfo {
+    private constructor();
     /** Gets the compiler JS doc tag info. */
     readonly compilerObject: ts.JSDocTagInfo;
     /**
@@ -7285,6 +7290,7 @@ export interface SourceFileEmitOptions extends EmitOptionsBase {
 declare const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node;
 
 export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
+    private constructor();
     /**
      * Gets the file path.
      */
@@ -8591,6 +8597,7 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
 }
 
 export declare class Signature {
+    private constructor();
     /**
      * Gets the underlying compiler signature.
      */
@@ -8622,6 +8629,7 @@ export declare class Symbol {
      * Gets the underlying compiler symbol.
      */
     readonly compilerSymbol: ts.Symbol;
+    private constructor();
     /**
      * Gets the symbol name.
      */
@@ -8753,6 +8761,7 @@ export declare class LanguageService {
      * Gets the compiler language service.
      */
     readonly compilerObject: ts.LanguageService;
+    private constructor();
     /**
      * Gets the language service's program.
      */
@@ -8912,6 +8921,7 @@ export interface EmitOptionsBase {
  * Wrapper around Program.
  */
 export declare class Program {
+    private constructor();
     /**
      * Gets the underlying compiler program.
      */
@@ -8964,6 +8974,7 @@ export declare class Program {
  * Definition info.
  */
 export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.DefinitionInfo> extends DocumentSpan<TCompilerObject> {
+    protected constructor();
     /**
      * Gets the kind.
      */
@@ -8990,6 +9001,7 @@ export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = 
  * Diagnostic.
  */
 export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
+    protected constructor();
     /**
      * Gets the underlying compiler diagnostic.
      */
@@ -9032,6 +9044,7 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
  * Diagnostic message chain.
  */
 export declare class DiagnosticMessageChain {
+    private constructor();
     /**
      * Gets the underlying compiler object.
      */
@@ -9055,6 +9068,7 @@ export declare class DiagnosticMessageChain {
 }
 
 export declare class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWithLocation> {
+    private constructor();
     /**
      * Gets the line number.
      */
@@ -9077,6 +9091,7 @@ export declare class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWith
  * Document span.
  */
 export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentSpan> {
+    protected constructor();
     /**
      * Gets the compiler object.
      */
@@ -9108,6 +9123,7 @@ export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.D
  */
 export declare class EmitOutput {
     private readonly filePath;
+    private constructor();
     /**
      * TypeScript compiler emit result.
      */
@@ -9126,6 +9142,7 @@ export declare class EmitOutput {
  * Result of an emit.
  */
 export declare class EmitResult {
+    protected constructor();
     /**
      * TypeScript compiler emit result.
      */
@@ -9165,6 +9182,7 @@ export interface MemoryEmitResultFile {
  */
 export declare class MemoryEmitResult extends EmitResult {
     private readonly files;
+    private constructor();
     /**
      * Gets the files that were emitted to memory.
      */
@@ -9172,6 +9190,7 @@ export declare class MemoryEmitResult extends EmitResult {
 }
 
 export declare class FileTextChanges {
+    private constructor();
     /**
      * Gets the file path.
      */
@@ -9183,6 +9202,7 @@ export declare class FileTextChanges {
 }
 
 export declare class ImplementationLocation extends DocumentSpan<ts.ImplementationLocation> {
+    private constructor();
     /**
      * Gets the kind.
      */
@@ -9197,6 +9217,7 @@ export declare class ImplementationLocation extends DocumentSpan<ts.Implementati
  * Output file of an emit.
  */
 export declare class OutputFile {
+    private constructor();
     /**
      * TypeScript compiler output file.
      */
@@ -9219,6 +9240,7 @@ export declare class OutputFile {
  * Referenced symbol.
  */
 export declare class ReferencedSymbol {
+    private constructor();
     /**
      * Gets the compiler referenced symbol.
      */
@@ -9234,6 +9256,7 @@ export declare class ReferencedSymbol {
 }
 
 export declare class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.ReferencedSymbolDefinitionInfo> {
+    private constructor();
     /**
      * Gets the display parts.
      */
@@ -9241,6 +9264,7 @@ export declare class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.Re
 }
 
 export declare class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
+    private constructor();
     isWriteAccess(): boolean;
     /**
      * If this is the definition reference.
@@ -9259,6 +9283,7 @@ export declare class RenameLocation extends DocumentSpan<ts.RenameLocation> {
  * Symbol display part.
  */
 export declare class SymbolDisplayPart {
+    private constructor();
     /** Gets the compiler symbol display part. */
     readonly compilerObject: ts.SymbolDisplayPart;
     /**
@@ -9277,6 +9302,7 @@ export declare class SymbolDisplayPart {
  * Represents a text change.
  */
 export declare class TextChange {
+    private constructor();
     /** Gets the compiler text change. */
     readonly compilerObject: ts.TextChange;
     /**
@@ -9293,6 +9319,7 @@ export declare class TextChange {
  * Represents a span of text.
  */
 export declare class TextSpan {
+    private constructor();
     /** Gets the compiler text span. */
     readonly compilerObject: ts.TextSpan;
     /**
@@ -9313,6 +9340,7 @@ export declare class TextSpan {
  * Wrapper around the TypeChecker.
  */
 export declare class TypeChecker {
+    private constructor();
     /**
      * Gets the compiler's TypeChecker.
      */
@@ -9414,6 +9442,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      * Gets the underlying compiler type.
      */
     readonly compilerType: TType;
+    protected constructor();
     /**
      * Gets the type text.
      * @param enclosingNode - The enclosing node.
@@ -9666,37 +9695,48 @@ export declare class TypeParameter extends Type<ts.TypeParameter> {
 }
 
 export declare class ArgumentError extends BaseError {
+    protected constructor();
 }
 
 export declare class ArgumentNullOrWhitespaceError extends ArgumentError {
+    private constructor();
 }
 
 export declare class ArgumentOutOfRangeError extends ArgumentError {
+    private constructor();
 }
 
 export declare class ArgumentTypeError extends ArgumentError {
+    private constructor();
 }
 export declare abstract class BaseError extends Error {
     readonly message: string;
+    protected constructor();
 }
 
 export declare class DirectoryNotFoundError extends PathNotFoundError {
+    private constructor();
 }
 
 export declare class FileNotFoundError extends PathNotFoundError {
+    private constructor();
 }
 
 export declare class InvalidOperationError extends BaseError {
+    private constructor();
 }
 
 export declare class NotImplementedError extends BaseError {
+    private constructor();
 }
 
 export declare class NotSupportedError extends BaseError {
+    private constructor();
 }
 
 export declare class PathNotFoundError extends BaseError {
     readonly path: string;
+    protected constructor();
     readonly code: "ENOENT";
 }
 
@@ -9799,6 +9839,7 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
     set(settings: Partial<ManipulationSettings>): void;
 }
 export declare abstract class SettingsContainer<T extends object> {
+    protected constructor();
     /**
      * Resets the settings to the default.
      */
@@ -9997,6 +10038,10 @@ interface SetAccessorDeclarationSpecificStructure {
 
 export interface DecoratorStructure {
     name: string;
+    /**
+     * Arguments for a decorator factory.
+     * @remarks Provide an empty array to make the structure a decorator factory.
+     */
     arguments?: (string | WriterFunction)[] | WriterFunction;
     typeArguments?: string[];
 }

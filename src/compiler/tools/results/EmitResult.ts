@@ -13,7 +13,7 @@ export class EmitResult {
     private readonly _compilerObject: ts.EmitResult;
 
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, compilerObject: ts.EmitResult) {
         this.context = context;
@@ -79,7 +79,7 @@ export interface MemoryEmitResultFile {
  */
 export class MemoryEmitResult extends EmitResult {
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, compilerObject: ts.EmitResult, private readonly files: MemoryEmitResultFile[]) {
         super(context, compilerObject);

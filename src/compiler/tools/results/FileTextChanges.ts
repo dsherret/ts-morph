@@ -6,7 +6,7 @@ export class FileTextChanges {
     /** @internal */
     private readonly _compilerObject: ts.FileTextChanges;
 
-    /** @internal */
+    /** @private */
     constructor(compilerObject: ts.FileTextChanges) {
         this._compilerObject = compilerObject;
     }

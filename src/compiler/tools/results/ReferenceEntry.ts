@@ -4,7 +4,7 @@ import { DocumentSpan } from "./DocumentSpan";
 
 export class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, compilerObject: ts.ReferenceEntry) {
         super(context, compilerObject);

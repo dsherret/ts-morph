@@ -5,7 +5,7 @@ import { DocumentSpan } from "./DocumentSpan";
 
 export class ImplementationLocation extends DocumentSpan<ts.ImplementationLocation> {
     /**
-     * @internal
+     * @private
      */
     constructor(context: ProjectContext, compilerObject: ts.ImplementationLocation) {
         super(context, compilerObject);

@@ -16,7 +16,7 @@ export class TypeChecker {
     /** @internal */
     private _getCompilerObject!: () => ts.TypeChecker;
 
-    /** @internal */
+    /** @private */
     constructor(context: ProjectContext) {
         this.context = context;
     }
