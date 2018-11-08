@@ -9,7 +9,7 @@ export class RefactorEditInfo {
     /** @internal */
     private readonly _compilerObject: ts.RefactorEditInfo;
 
-    /** @internal */
+    /** @private */
     constructor(compilerObject: ts.RefactorEditInfo) {
         this._compilerObject = compilerObject;
     }
