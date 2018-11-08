@@ -8,7 +8,12 @@ import { Node } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
-import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
+import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction } from "./results";
+
+export interface TextRange {
+    getPos(): number;
+    getEnd(): number;
+}
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -231,6 +236,16 @@ export class LanguageService {
     }
 
     /**
+     * Gets the suggestion diagnostics.
+     * @param filePathOrSourceFile - The source file or file path to get suggestions for.
+     */
+    getSuggestionDiagnostics(filePathOrSourceFile: SourceFile | string): DiagnosticWithLocation[] {
+        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const suggestionDiagnostics = this.compilerObject.getSuggestionDiagnostics(filePath);
+        return suggestionDiagnostics.map(d => this.context.compilerFactory.getDiagnosticWithLocation(d));
+    }
+
+    /**
      * Gets the formatting edits for a range.
      * @param filePath - File path.
      * @param range - Position range.
@@ -335,6 +350,45 @@ export class LanguageService {
         };
         return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings), this._getFilledUserPreferences(userPreferences))
             .map(fileTextChanges => new FileTextChanges(fileTextChanges));
+    }
+
+    /**
+     * Gets the edit information for applying a refactor at a the provided position in a source file.
+     * @param filePathOrSourceFile - File path or source file to get the edits for.
+     * @param formatOptions - Fomat code settings.
+     * @param positionOrRange - Position in the source file where to apply given refactor.
+     * @param refactorName - Refactor name.
+     * @param actionName - Refactor action name.
+     * @param preferences - User preferences for refactoring.
+     */
+    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatOptions: FormatCodeSettings, positionOrRange: number | TextRange,
+        refactorName: string, actionName: string, preferences: UserPreferences = {}): RefactorEditInfo | undefined
+    {
+        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const position = typeof positionOrRange === "number" ? positionOrRange : { pos: positionOrRange.getPos(), end: positionOrRange.getEnd() };
+        const compilerObject = this.compilerObject.getEditsForRefactor(filePath, this._getFilledSettings(formatOptions),
+            position, refactorName, actionName, this._getFilledUserPreferences(preferences));
+
+        return compilerObject != null ? new RefactorEditInfo(compilerObject) : undefined;
+    }
+
+    /**
+     * Gets the edit information for applying a code fix at the provided text range in a source file.
+     * @param filePathOrSourceFile - File path or source file to get the code fixes for.
+     * @param start - Start position of the text range to be fixed.
+     * @param end - End position of the text range to be fixed.
+     * @param errorCodes - One or more error codes associated with the code fixes to apply.
+     * @param formatOptions - Format code settings.
+     * @param preferences - User preferences for refactoring.
+     */
+    getCodeFixesAtPosition(filePathOrSourceFile: string | SourceFile, start: number, end: number, errorCodes: ReadonlyArray<number>,
+        formatOptions: FormatCodeSettings = {}, preferences: UserPreferences = {}): CodeFixAction[]
+    {
+        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const compilerResult = this.compilerObject.getCodeFixesAtPosition(filePath, start, end, errorCodes,
+            this._getFilledSettings(formatOptions), this._getFilledUserPreferences(preferences || {}));
+
+        return compilerResult.map(compilerObject => new CodeFixAction(compilerObject));
     }
 
     private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {
