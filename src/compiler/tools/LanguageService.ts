@@ -8,14 +8,19 @@ import { Node } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
-import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
+import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction } from "./results";
+
+export interface TextRange {
+    getPos(): number;
+    getEnd(): number;
+}
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
-    private readonly compilerHost: ts.CompilerHost;
-    private program: Program;
+    private readonly _compilerHost: ts.CompilerHost;
+    private _program: Program;
     /** @internal */
-    private context: ProjectContext;
+    private _context: ProjectContext;
 
     /**
      * Gets the compiler language service.
@@ -26,69 +31,69 @@ export class LanguageService {
 
     /** @private */
     constructor(context: ProjectContext) {
-        this.context = context;
+        this._context = context;
 
         let version = 0;
-        const fileExistsSync = (path: string) => this.context.compilerFactory.containsSourceFileAtPath(path) || context.fileSystemWrapper.fileExistsSync(path);
+        const fileExistsSync = (path: string) => this._context.compilerFactory.containsSourceFileAtPath(path) || context.fileSystemWrapper.fileExistsSync(path);
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => context.compilerOptions.get(),
             getNewLine: () => context.manipulationSettings.getNewLineKindAsString(),
-            getScriptFileNames: () => this.context.compilerFactory.getSourceFilePaths(),
+            getScriptFileNames: () => this._context.compilerFactory.getSourceFilePaths(),
             getScriptVersion: fileName => {
-                const sourceFile = this.context.compilerFactory.getSourceFileFromCacheFromFilePath(fileName);
+                const sourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(fileName);
                 if (sourceFile == null)
                     return (version++).toString();
-                return this.context.compilerFactory.documentRegistry.getSourceFileVersion(sourceFile.compilerNode);
+                return this._context.compilerFactory.documentRegistry.getSourceFileVersion(sourceFile.compilerNode);
             },
             getScriptSnapshot: fileName => {
                 if (!fileExistsSync(fileName))
                     return undefined;
-                return ts.ScriptSnapshot.fromString(this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName)!.getFullText());
+                return ts.ScriptSnapshot.fromString(this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName)!.getFullText());
             },
             getCurrentDirectory: () => context.fileSystemWrapper.getCurrentDirectory(),
             getDefaultLibFileName: options => {
-                if (this.context.fileSystemWrapper.getFileSystem() instanceof DefaultFileSystemHost)
+                if (this._context.fileSystemWrapper.getFileSystem() instanceof DefaultFileSystemHost)
                     return ts.getDefaultLibFilePath(context.compilerOptions.get());
                 else
                     return FileUtils.pathJoin(context.fileSystemWrapper.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(context.compilerOptions.get()));
             },
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
-                if (this.context.compilerFactory.containsSourceFileAtPath(path))
-                    return this.context.compilerFactory.getSourceFileFromCacheFromFilePath(path)!.getFullText();
-                return this.context.fileSystemWrapper.readFileSync(path, encoding);
+                if (this._context.compilerFactory.containsSourceFileAtPath(path))
+                    return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(path)!.getFullText();
+                return this._context.fileSystemWrapper.readFileSync(path, encoding);
             },
             fileExists: fileExistsSync,
-            directoryExists: dirName => this.context.compilerFactory.containsDirectoryAtPath(dirName) || this.context.fileSystemWrapper.directoryExistsSync(dirName)
+            directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName) || this._context.fileSystemWrapper.directoryExistsSync(dirName)
         };
 
-        this.compilerHost = {
+        this._compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
-                const sourceFile = this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName);
+                const sourceFile = this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName);
                 return sourceFile == null ? undefined : sourceFile.compilerNode;
             },
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
             // getDefaultLibLocation: (...) => {},
             getDefaultLibFileName: (options: CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
             writeFile: (filePath, data, writeByteOrderMark, onError, sourceFiles) => {
-                this.context.fileSystemWrapper.writeFileSync(filePath, data);
+                this._context.fileSystemWrapper.writeFileSync(filePath, data);
             },
             getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),
-            getDirectories: (path: string) => this.context.fileSystemWrapper.getDirectories(path),
+            getDirectories: (path: string) => this._context.fileSystemWrapper.getDirectories(path),
             fileExists: (fileName: string) => languageServiceHost.fileExists!(fileName),
             readFile: (fileName: string) => languageServiceHost.readFile!(fileName),
-            getCanonicalFileName: (fileName: string) => this.context.fileSystemWrapper.getStandardizedAbsolutePath(fileName),
+            getCanonicalFileName: (fileName: string) => this._context.fileSystemWrapper.getStandardizedAbsolutePath(fileName),
             useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
             getNewLine: () => languageServiceHost.getNewLine!(),
             getEnvironmentVariable: (name: string) => process.env[name],
             directoryExists: dirName => languageServiceHost.directoryExists!(dirName)
         };
 
-        this._compilerObject = ts.createLanguageService(languageServiceHost, this.context.compilerFactory.documentRegistry);
-        this.program = new Program(this.context, this.context.compilerFactory.getSourceFilePaths(), this.compilerHost);
+        this._compilerObject = ts.createLanguageService(languageServiceHost, this._context.compilerFactory.documentRegistry);
+        this._program = new Program(this._context, this._context.compilerFactory.getSourceFilePaths(), this._compilerHost);
 
-        this.context.compilerFactory.onSourceFileAdded(() => this.resetProgram());
-        this.context.compilerFactory.onSourceFileRemoved(() => this.resetProgram());
+        this._context.compilerFactory.onSourceFileAdded(() => this.resetProgram());
+        this._context.compilerFactory.onSourceFileRemoved(() => this.resetProgram());
     }
 
     /**
@@ -96,14 +101,14 @@ export class LanguageService {
      * @internal
      */
     resetProgram() {
-        this.program.reset(this.context.compilerFactory.getSourceFilePaths(), this.compilerHost);
+        this._program.reset(this._context.compilerFactory.getSourceFilePaths(), this._compilerHost);
     }
 
     /**
      * Gets the language service's program.
      */
     getProgram() {
-        return this.program;
+        return this._program;
     }
 
     /**
@@ -157,7 +162,7 @@ export class LanguageService {
      */
     getDefinitionsAtPosition(sourceFile: SourceFile, pos: number): DefinitionInfo[] {
         const results = this.compilerObject.getDefinitionAtPosition(sourceFile.getFilePath(), pos) || [];
-        return results.map(info => this.context.compilerFactory.getDefinitionInfo(info));
+        return results.map(info => this._context.compilerFactory.getDefinitionInfo(info));
     }
 
     /**
@@ -175,7 +180,7 @@ export class LanguageService {
      */
     getImplementationsAtPosition(sourceFile: SourceFile, pos: number): ImplementationLocation[] {
         const results = this.compilerObject.getImplementationAtPosition(sourceFile.getFilePath(), pos) || [];
-        return results.map(location => new ImplementationLocation(this.context, location));
+        return results.map(location => new ImplementationLocation(this._context, location));
     }
 
     /**
@@ -216,7 +221,7 @@ export class LanguageService {
      */
     findReferencesAtPosition(sourceFile: SourceFile, pos: number) {
         const results = this.compilerObject.findReferences(sourceFile.getFilePath(), pos) || [];
-        return results.map(s => this.context.compilerFactory.getReferencedSymbol(s));
+        return results.map(s => this._context.compilerFactory.getReferencedSymbol(s));
     }
 
     /**
@@ -227,7 +232,17 @@ export class LanguageService {
     findRenameLocations(node: Node, options: RenameOptions = {}): RenameLocation[] {
         const renameLocations = this.compilerObject.findRenameLocations(node.sourceFile.getFilePath(), node.getStart(),
             options.renameInStrings || false, options.renameInComments || false) || [];
-        return renameLocations.map(l => new RenameLocation(this.context, l));
+        return renameLocations.map(l => new RenameLocation(this._context, l));
+    }
+
+    /**
+     * Gets the suggestion diagnostics.
+     * @param filePathOrSourceFile - The source file or file path to get suggestions for.
+     */
+    getSuggestionDiagnostics(filePathOrSourceFile: SourceFile | string): DiagnosticWithLocation[] {
+        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const suggestionDiagnostics = this.compilerObject.getSuggestionDiagnostics(filePath);
+        return suggestionDiagnostics.map(d => this.context.compilerFactory.getDiagnosticWithLocation(d));
     }
 
     /**
@@ -255,7 +270,7 @@ export class LanguageService {
      * @param settings - Format code settings.
      */
     getFormattedDocumentText(filePath: string, settings: FormatCodeSettings) {
-        const sourceFile = this.context.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
+        const sourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(filePath);
 
@@ -286,7 +301,7 @@ export class LanguageService {
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput;
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
-        return new EmitOutput(this.context, filePath, this.compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles));
+        return new EmitOutput(this._context, filePath, this.compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles));
     }
 
     /**
@@ -306,9 +321,9 @@ export class LanguageService {
     getIdentationAtPosition(filePathOrSourceFile: SourceFile | string, position: number, settings?: EditorSettings): number {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         if (settings == null)
-            settings = this.context.manipulationSettings.getEditorSettings();
+            settings = this._context.manipulationSettings.getEditorSettings();
         else
-            fillDefaultEditorSettings(settings, this.context.manipulationSettings);
+            fillDefaultEditorSettings(settings, this._context.manipulationSettings);
         return this.compilerObject.getIndentationAtPosition(filePath, position, settings);
     }
 
@@ -337,11 +352,50 @@ export class LanguageService {
             .map(fileTextChanges => new FileTextChanges(fileTextChanges));
     }
 
+    /**
+     * Gets the edit information for applying a refactor at a the provided position in a source file.
+     * @param filePathOrSourceFile - File path or source file to get the edits for.
+     * @param formatOptions - Fomat code settings.
+     * @param positionOrRange - Position in the source file where to apply given refactor.
+     * @param refactorName - Refactor name.
+     * @param actionName - Refactor action name.
+     * @param preferences - User preferences for refactoring.
+     */
+    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatOptions: FormatCodeSettings, positionOrRange: number | TextRange,
+        refactorName: string, actionName: string, preferences: UserPreferences = {}): RefactorEditInfo | undefined
+    {
+        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const position = typeof positionOrRange === "number" ? positionOrRange : { pos: positionOrRange.getPos(), end: positionOrRange.getEnd() };
+        const compilerObject = this.compilerObject.getEditsForRefactor(filePath, this._getFilledSettings(formatOptions),
+            position, refactorName, actionName, this._getFilledUserPreferences(preferences));
+
+        return compilerObject != null ? new RefactorEditInfo(compilerObject) : undefined;
+    }
+
+    /**
+     * Gets the edit information for applying a code fix at the provided text range in a source file.
+     * @param filePathOrSourceFile - File path or source file to get the code fixes for.
+     * @param start - Start position of the text range to be fixed.
+     * @param end - End position of the text range to be fixed.
+     * @param errorCodes - One or more error codes associated with the code fixes to apply.
+     * @param formatOptions - Format code settings.
+     * @param preferences - User preferences for refactoring.
+     */
+    getCodeFixesAtPosition(filePathOrSourceFile: string | SourceFile, start: number, end: number, errorCodes: ReadonlyArray<number>,
+        formatOptions: FormatCodeSettings = {}, preferences: UserPreferences = {}): CodeFixAction[]
+    {
+        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        const compilerResult = this.compilerObject.getCodeFixesAtPosition(filePath, start, end, errorCodes,
+            this._getFilledSettings(formatOptions), this._getFilledUserPreferences(preferences || {}));
+
+        return compilerResult.map(compilerObject => new CodeFixAction(compilerObject));
+    }
+
     private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {
         const filePath = typeof filePathOrSourceFile === "string"
-            ? this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePathOrSourceFile)
+            ? this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePathOrSourceFile)
             : filePathOrSourceFile.getFilePath();
-        if (!this.context.compilerFactory.containsSourceFileAtPath(filePath))
+        if (!this._context.compilerFactory.containsSourceFileAtPath(filePath))
             throw new errors.FileNotFoundError(filePath);
         return filePath;
     }
@@ -349,13 +403,13 @@ export class LanguageService {
     private _getFilledSettings(settings: FormatCodeSettings) {
         if ((settings as any)["_filled"]) // optimization
             return settings;
-        settings = ObjectUtils.assign(this.context.getFormatCodeSettings(), settings);
-        fillDefaultFormatCodeSettings(settings, this.context.manipulationSettings);
+        settings = ObjectUtils.assign(this._context.getFormatCodeSettings(), settings);
+        fillDefaultFormatCodeSettings(settings, this._context.manipulationSettings);
         (settings as any)["_filled"] = true;
         return settings;
     }
 
     private _getFilledUserPreferences(userPreferences: UserPreferences) {
-        return ObjectUtils.assign(this.context.getUserPreferences(), userPreferences);
+        return ObjectUtils.assign(this._context.getUserPreferences(), userPreferences);
     }
 }

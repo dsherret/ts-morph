@@ -1,3 +1,5 @@
+export * from "./CodeAction";
+export * from "./CodeFixAction";
 export * from "./DefinitionInfo";
 export * from "./Diagnostic";
 export * from "./DiagnosticMessageChain";
@@ -8,6 +10,7 @@ export * from "./EmitResult";
 export * from "./FileTextChanges";
 export * from "./ImplementationLocation";
 export * from "./OutputFile";
+export * from "./RefactorEditInfo";
 export * from "./ReferencedSymbol";
 export * from "./ReferencedSymbolDefinitionInfo";
 export * from "./ReferenceEntry";

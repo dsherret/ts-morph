@@ -533,7 +533,7 @@ export declare class Project {
      * @param enabled - Enabled.
      */
     enableLogging(enabled?: boolean): void;
-    private getUnsavedSourceFiles;
+    private _getUnsavedSourceFiles;
     /**
      * Gets the pre-emit diagnostics.
      */
@@ -8755,8 +8755,8 @@ export interface UserPreferences extends ts.UserPreferences {
 
 export declare class LanguageService {
     private readonly _compilerObject;
-    private readonly compilerHost;
-    private program;
+    private readonly _compilerHost;
+    private _program;
     /**
      * Gets the compiler language service.
      */
@@ -9122,7 +9122,7 @@ export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.D
  * Output of an emit on a single file.
  */
 export declare class EmitOutput {
-    private readonly filePath;
+    private readonly _filePath;
     private constructor();
     /**
      * TypeScript compiler emit result.
@@ -9181,7 +9181,7 @@ export interface MemoryEmitResultFile {
  * Result of an emit to memory.
  */
 export declare class MemoryEmitResult extends EmitResult {
-    private readonly files;
+    private readonly _files;
     private constructor();
     /**
      * Gets the files that were emitted to memory.
@@ -9434,7 +9434,7 @@ export declare class TypeChecker {
      * @param type - Literal type to get the base type of.
      */
     getBaseTypeOfLiteralType(type: Type): Type<ts.Type>;
-    private getDefaultTypeFormatFlags;
+    private _getDefaultTypeFormatFlags;
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {
@@ -9800,9 +9800,9 @@ export interface SupportedFormatCodeSettingsOnly {
  * Holds the manipulation settings.
  */
 export declare class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
-    private editorSettings;
-    private formatCodeSettings;
-    private userPreferences;
+    private _editorSettings;
+    private _formatCodeSettings;
+    private _userPreferences;
     constructor();
     /**
      * Gets the editor settings based on the current manipulation settings.

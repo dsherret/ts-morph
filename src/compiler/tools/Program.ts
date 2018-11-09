@@ -38,9 +38,9 @@ export interface EmitOptionsBase {
  */
 export class Program {
     /** @internal */
-    private readonly context: ProjectContext;
+    private readonly _context: ProjectContext;
     /** @internal */
-    private readonly typeChecker: TypeChecker;
+    private readonly _typeChecker: TypeChecker;
     /** @internal */
     private _createdCompilerObject: ts.Program | undefined;
     /** @internal */
@@ -48,8 +48,8 @@ export class Program {
 
     /** @private */
     constructor(context: ProjectContext, rootNames: ReadonlyArray<string>, host: ts.CompilerHost) {
-        this.context = context;
-        this.typeChecker = new TypeChecker(this.context);
+        this._context = context;
+        this._typeChecker = new TypeChecker(this._context);
         this.reset(rootNames, host);
     }
 
@@ -65,7 +65,7 @@ export class Program {
      * @internal
      */
     reset(rootNames: ReadonlyArray<string>, host: ts.CompilerHost) {
-        const compilerOptions = this.context.compilerOptions.get();
+        const compilerOptions = this._context.compilerOptions.get();
         this._getOrCreateCompilerObject = () => {
             // need to use ts.createProgram instead of languageService.getProgram() because the
             // program created by the language service is not fully featured (ex. does not write to the file system)
@@ -76,14 +76,14 @@ export class Program {
             return this._createdCompilerObject || this._getOrCreateCompilerObject();
         };
         this._createdCompilerObject = undefined;
-        this.typeChecker.reset(() => this.compilerObject.getTypeChecker());
+        this._typeChecker.reset(() => this.compilerObject.getTypeChecker());
     }
 
     /**
      * Get the program's type checker.
      */
     getTypeChecker() {
-        return this.typeChecker;
+        return this._typeChecker;
     }
 
     /**
@@ -91,7 +91,7 @@ export class Program {
      * @param options - Options for emitting.
      */
     emit(options: ProgramEmitOptions = {}) {
-        return new EmitResult(this.context, this._emit(options));
+        return new EmitResult(this._context, this._emit(options));
     }
 
     /**
@@ -100,7 +100,7 @@ export class Program {
      */
     emitToMemory(options: EmitOptions = {}) {
         const sourceFiles: MemoryEmitResultFile[] = [];
-        const { fileSystemWrapper } = this.context;
+        const { fileSystemWrapper } = this._context;
         const emitResult = this._emit({
             writeFile: (filePath, text, writeByteOrderMark) => {
                 sourceFiles.push({
@@ -110,7 +110,7 @@ export class Program {
                 });
             }, ...options
         });
-        return new MemoryEmitResult(this.context, emitResult, sourceFiles);
+        return new MemoryEmitResult(this._context, emitResult, sourceFiles);
     }
 
     /** @internal */
@@ -127,7 +127,7 @@ export class Program {
      */
     getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getSyntacticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnosticWithLocation(d));
+        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnosticWithLocation(d));
     }
 
     /**
@@ -136,7 +136,7 @@ export class Program {
      */
     getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
         const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnostic(d));
+        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
     }
 
     /**
@@ -145,7 +145,7 @@ export class Program {
      */
     getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnosticWithLocation(d));
+        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnosticWithLocation(d));
     }
 
     /**
@@ -153,7 +153,7 @@ export class Program {
      */
     getGlobalDiagnostics(): Diagnostic[] {
         const compilerDiagnostics = this.compilerObject.getGlobalDiagnostics();
-        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnostic(d));
+        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
     }
 
     /**

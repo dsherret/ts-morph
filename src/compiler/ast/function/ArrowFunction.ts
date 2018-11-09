@@ -1,9 +1,8 @@
-import { ts, SyntaxKind } from "../../../typescript";
-import { AsyncableNode, BodiedNode, JSDocableNode, ModifierableNode, SignaturedDeclaration, TextInsertableNode, TypeParameteredNode } from "../base";
-import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
+import { SyntaxKind, ts } from "../../../typescript";
+import { AsyncableNode, BodiedNode, TextInsertableNode } from "../base";
 import { Node } from "../common";
 import { Expression } from "../expression";
-import { StatementedNode } from "../statement";
+import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 
 export const ArrowFunctionBase = TextInsertableNode(BodiedNode(AsyncableNode(FunctionLikeDeclaration(Expression))));
 export class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
