@@ -54,7 +54,7 @@ export class Directory {
      * @param possibleDescendant - Directory or source file that's a possible descendant.
      */
     isAncestorOf(possibleDescendant: Directory | SourceFile) {
-        return Directory.isAncestorOfDir(this, possibleDescendant);
+        return Directory._isAncestorOfDir(this, possibleDescendant);
     }
 
     /**
@@ -62,7 +62,7 @@ export class Directory {
      * @param possibleAncestor - Directory or source file that's a possible ancestor.
      */
     isDescendantOf(possibleAncestor: Directory) {
-        return Directory.isAncestorOfDir(possibleAncestor, this);
+        return Directory._isAncestorOfDir(possibleAncestor, this);
     }
 
     /**
@@ -834,7 +834,7 @@ export class Directory {
     }
 
     /** @internal */
-    private static isAncestorOfDir(ancestor: Directory, descendant: Directory | SourceFile) {
+    private static _isAncestorOfDir(ancestor: Directory, descendant: Directory | SourceFile) {
         if (descendant instanceof SourceFile) {
             descendant = descendant.getDirectory();
             if (ancestor === descendant)

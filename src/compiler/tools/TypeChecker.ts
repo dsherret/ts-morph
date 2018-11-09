@@ -12,13 +12,13 @@ import { ExportSpecifier } from "../ast/module";
  */
 export class TypeChecker {
     /** @internal */
-    private readonly context: ProjectContext;
+    private readonly _context: ProjectContext;
     /** @internal */
     private _getCompilerObject!: () => ts.TypeChecker;
 
     /** @private */
     constructor(context: ProjectContext) {
-        this.context = context;
+        this._context = context;
     }
 
     /**
@@ -40,7 +40,7 @@ export class TypeChecker {
      * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
      */
     getAmbientModules() {
-        return this.compilerObject.getAmbientModules().map(s => this.context.compilerFactory.getSymbol(s));
+        return this.compilerObject.getAmbientModules().map(s => this._context.compilerFactory.getSymbol(s));
     }
 
     /**
@@ -48,7 +48,7 @@ export class TypeChecker {
      * @param type - Type to get the apparent type of.
      */
     getApparentType(type: Type) {
-        return this.context.compilerFactory.getType(this.compilerObject.getApparentType(type.compilerType));
+        return this._context.compilerFactory.getType(this.compilerObject.getApparentType(type.compilerType));
     }
 
     /**
@@ -72,7 +72,7 @@ export class TypeChecker {
      * @param node - Node to get the type for.
      */
     getTypeAtLocation(node: Node): Type {
-        return this.context.compilerFactory.getType(this.compilerObject.getTypeAtLocation(node.compilerNode));
+        return this._context.compilerFactory.getType(this.compilerObject.getTypeAtLocation(node.compilerNode));
     }
 
     /**
@@ -81,7 +81,7 @@ export class TypeChecker {
      */
     getContextualType(expression: Expression): Type | undefined {
         const contextualType = this.compilerObject.getContextualType(expression.compilerNode);
-        return contextualType == null ? undefined : this.context.compilerFactory.getType(contextualType);
+        return contextualType == null ? undefined : this._context.compilerFactory.getType(contextualType);
     }
 
     /**
@@ -90,7 +90,7 @@ export class TypeChecker {
      * @param node - Location to get the type for.
      */
     getTypeOfSymbolAtLocation(symbol: Symbol, node: Node): Type {
-        return this.context.compilerFactory.getType(this.compilerObject.getTypeOfSymbolAtLocation(symbol.compilerSymbol, node.compilerNode));
+        return this._context.compilerFactory.getType(this.compilerObject.getTypeOfSymbolAtLocation(symbol.compilerSymbol, node.compilerNode));
     }
 
     /**
@@ -98,7 +98,7 @@ export class TypeChecker {
      * @param symbol - Symbol to get the type for.
      */
     getDeclaredTypeOfSymbol(symbol: Symbol): Type {
-        return this.context.compilerFactory.getType(this.compilerObject.getDeclaredTypeOfSymbol(symbol.compilerSymbol));
+        return this._context.compilerFactory.getType(this.compilerObject.getDeclaredTypeOfSymbol(symbol.compilerSymbol));
     }
 
     /**
@@ -107,7 +107,7 @@ export class TypeChecker {
      */
     getSymbolAtLocation(node: Node): Symbol | undefined {
         const compilerSymbol = this.compilerObject.getSymbolAtLocation(node.compilerNode);
-        return compilerSymbol == null ? undefined : this.context.compilerFactory.getSymbol(compilerSymbol);
+        return compilerSymbol == null ? undefined : this._context.compilerFactory.getSymbol(compilerSymbol);
     }
 
     /**
@@ -119,7 +119,7 @@ export class TypeChecker {
             return undefined;
 
         const tsAliasSymbol = this.compilerObject.getAliasedSymbol(symbol.compilerSymbol);
-        return tsAliasSymbol == null ? undefined : this.context.compilerFactory.getSymbol(tsAliasSymbol);
+        return tsAliasSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsAliasSymbol);
     }
 
     /**
@@ -127,7 +127,7 @@ export class TypeChecker {
      * @param type - Type.
      */
     getPropertiesOfType(type: Type) {
-        return this.compilerObject.getPropertiesOfType(type.compilerType).map(p => this.context.compilerFactory.getSymbol(p));
+        return this.compilerObject.getPropertiesOfType(type.compilerType).map(p => this._context.compilerFactory.getSymbol(p));
     }
 
     /**
@@ -138,7 +138,7 @@ export class TypeChecker {
      */
     getTypeText(type: Type, enclosingNode?: Node, typeFormatFlags?: TypeFormatFlags) {
         if (typeFormatFlags == null)
-            typeFormatFlags = this.getDefaultTypeFormatFlags(enclosingNode);
+            typeFormatFlags = this._getDefaultTypeFormatFlags(enclosingNode);
 
         const compilerNode = enclosingNode == null ? undefined : enclosingNode.compilerNode;
         return this.compilerObject.typeToString(type.compilerType, compilerNode, typeFormatFlags);
@@ -149,7 +149,7 @@ export class TypeChecker {
      * @param signature - Signature to get the return type of.
      */
     getReturnTypeOfSignature(signature: Signature): Type {
-        return this.context.compilerFactory.getType(this.compilerObject.getReturnTypeOfSignature(signature.compilerSignature));
+        return this._context.compilerFactory.getType(this.compilerObject.getReturnTypeOfSignature(signature.compilerSignature));
     }
 
     /**
@@ -158,7 +158,7 @@ export class TypeChecker {
      */
     getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined {
         const signature = this.compilerObject.getSignatureFromDeclaration(node.compilerNode);
-        return signature == null ? undefined : this.context.compilerFactory.getSignature(signature);
+        return signature == null ? undefined : this._context.compilerFactory.getSignature(signature);
     }
 
     /**
@@ -167,7 +167,7 @@ export class TypeChecker {
      */
     getExportsOfModule(moduleSymbol: Symbol) {
         const symbols = this.compilerObject.getExportsOfModule(moduleSymbol.compilerSymbol);
-        return(symbols || []).map(s => this.context.compilerFactory.getSymbol(s));
+        return(symbols || []).map(s => this._context.compilerFactory.getSymbol(s));
     }
 
     /**
@@ -176,7 +176,7 @@ export class TypeChecker {
      */
     getExportSpecifierLocalTargetSymbol(exportSpecifier: ExportSpecifier) {
         const symbol = this.compilerObject.getExportSpecifierLocalTargetSymbol(exportSpecifier.compilerNode);
-        return symbol == null ? undefined : this.context.compilerFactory.getSymbol(symbol);
+        return symbol == null ? undefined : this._context.compilerFactory.getSymbol(symbol);
     }
 
     /**
@@ -186,10 +186,10 @@ export class TypeChecker {
      * @param type - Literal type to get the base type of.
      */
     getBaseTypeOfLiteralType(type: Type) {
-        return this.context.compilerFactory.getType(this.compilerObject.getBaseTypeOfLiteralType(type.compilerType));
+        return this._context.compilerFactory.getType(this.compilerObject.getBaseTypeOfLiteralType(type.compilerType));
     }
 
-    private getDefaultTypeFormatFlags(enclosingNode?: Node) {
+    private _getDefaultTypeFormatFlags(enclosingNode?: Node) {
         let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType |
             TypeFormatFlags.WriteTypeArgumentsOfSignature) as TypeFormatFlags;
 
