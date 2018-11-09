@@ -2,7 +2,7 @@
 
 export abstract class SettingsContainer<T extends object> {
     /** @internal */
-    private readonly _defaultSettings: T;
+    private readonly defaultSettings: T;
     /** @internal */
     private _modifiedEventContainer: EventContainer | undefined;
     /** @internal */
@@ -10,7 +10,7 @@ export abstract class SettingsContainer<T extends object> {
 
     /** @private */
     constructor(defaultSettings: T) {
-        this._defaultSettings = ObjectUtils.assign({}, defaultSettings);
+        this.defaultSettings = ObjectUtils.assign({}, defaultSettings);
         this.settings = defaultSettings;
     }
 
@@ -18,8 +18,8 @@ export abstract class SettingsContainer<T extends object> {
      * Resets the settings to the default.
      */
     reset() {
-        this.settings = ObjectUtils.assign({}, this._defaultSettings);
-        this._fireModified();
+        this.settings = ObjectUtils.assign({}, this.defaultSettings);
+        this.fireModified();
     }
 
     /**
@@ -35,7 +35,7 @@ export abstract class SettingsContainer<T extends object> {
      */
     set(settings: Partial<T>) {
         ObjectUtils.assign(this.settings, settings);
-        this._fireModified();
+        this.fireModified();
     }
 
     /**
@@ -50,7 +50,7 @@ export abstract class SettingsContainer<T extends object> {
     }
 
     /** @internal */
-    private _fireModified() {
+    private fireModified() {
         if (this._modifiedEventContainer != null)
             this._modifiedEventContainer.fire(undefined);
     }

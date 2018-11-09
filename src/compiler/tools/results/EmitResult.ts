@@ -8,7 +8,7 @@ import { OutputFile } from "./OutputFile";
  */
 export class EmitResult {
     /** @internal */
-    private readonly _context: ProjectContext;
+    private readonly context: ProjectContext;
     /** @internal */
     private readonly _compilerObject: ts.EmitResult;
 
@@ -16,7 +16,7 @@ export class EmitResult {
      * @private
      */
     constructor(context: ProjectContext, compilerObject: ts.EmitResult) {
-        this._context = context;
+        this.context = context;
         this._compilerObject = compilerObject;
 
         // memoize because diagnostics have dependencies that need to be memoized
@@ -44,7 +44,7 @@ export class EmitResult {
      */
     @Memoize
     getDiagnostics() {
-        return this.compilerObject.diagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
+        return this.compilerObject.diagnostics.map(d => this.context.compilerFactory.getDiagnostic(d));
     }
 
     /*
@@ -81,7 +81,7 @@ export class MemoryEmitResult extends EmitResult {
     /**
      * @private
      */
-    constructor(context: ProjectContext, compilerObject: ts.EmitResult, private readonly _files: MemoryEmitResultFile[]) {
+    constructor(context: ProjectContext, compilerObject: ts.EmitResult, private readonly files: MemoryEmitResultFile[]) {
         super(context, compilerObject);
     }
 
@@ -89,6 +89,6 @@ export class MemoryEmitResult extends EmitResult {
      * Gets the files that were emitted to memory.
      */
     getFiles() {
-        return this._files;
+        return this.files;
     }
 }
