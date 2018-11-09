@@ -6,9 +6,7 @@ export class FileTextChanges {
     /** @internal */
     private readonly _compilerObject: ts.FileTextChanges;
 
-    /**
-     * @private
-     */
+    /** @private */
     constructor(compilerObject: ts.FileTextChanges) {
         this._compilerObject = compilerObject;
     }
@@ -26,5 +24,12 @@ export class FileTextChanges {
     @Memoize
     getTextChanges() {
         return this._compilerObject.textChanges.map(c => new TextChange(c));
+    }
+
+    /**
+     * Gets if this change is for creating a new file.
+     */
+    isNewFile() {
+        return !!this._compilerObject.isNewFile;
     }
 }
