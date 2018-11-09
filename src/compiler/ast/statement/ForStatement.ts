@@ -10,7 +10,7 @@ export class ForStatement extends ForStatementBase<ts.ForStatement> {
      * Gets this for statement's initializer or undefined if none exists.
      */
     getInitializer(): VariableDeclarationList | Expression | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
     }
 
     /**
@@ -24,7 +24,7 @@ export class ForStatement extends ForStatementBase<ts.ForStatement> {
      * Gets this for statement's condition or undefined if none exists.
      */
     getCondition(): Expression | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.condition);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.condition);
     }
 
     /**
@@ -38,7 +38,7 @@ export class ForStatement extends ForStatementBase<ts.ForStatement> {
      * Gets this for statement's incrementor.
      */
     getIncrementor(): Expression | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.incrementor);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.incrementor);
     }
 
     /**

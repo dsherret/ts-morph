@@ -45,7 +45,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         function doTest(text: string, name: string | WriterFunction, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.setConstraint(name);
-            expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
+            expect(typeParameterDeclaration._sourceFile.getFullText()).to.equal(expected);
         }
 
         it("should set when it doesn't exist", () => {
@@ -73,7 +73,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         function doTest(text: string, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.removeConstraint();
-            expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
+            expect(typeParameterDeclaration._sourceFile.getFullText()).to.equal(expected);
         }
 
         it("should do nothing when it doesn't exist", () => {
@@ -117,7 +117,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         function doTest(text: string, name: string | WriterFunction, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.setDefault(name);
-            expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
+            expect(typeParameterDeclaration._sourceFile.getFullText()).to.equal(expected);
         }
 
         it("should set when it doesn't exist", () => {
@@ -145,7 +145,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         function doTest(text: string, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.removeDefault();
-            expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
+            expect(typeParameterDeclaration._sourceFile.getFullText()).to.equal(expected);
         }
 
         it("should do nothing when it doesn't exist", () => {
@@ -164,11 +164,11 @@ describe(nameof(TypeParameterDeclaration), () => {
     describe(nameof<TypeParameterDeclaration>(d => d.remove), () => {
         function doTest(startText: string, indexToRemove: number, expectedText: string) {
             const typeParameterDeclaration = getTypeParameterFromText(startText, indexToRemove);
-            const {sourceFile} = typeParameterDeclaration;
+            const {_sourceFile} = typeParameterDeclaration;
 
             typeParameterDeclaration.remove();
 
-            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(_sourceFile.getFullText()).to.equal(expectedText);
         }
 
         it("should remove when its the only type parameter", () => {

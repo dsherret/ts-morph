@@ -10,6 +10,6 @@ export class AssignmentExpression<
      * Gets the operator token of the assignment expression.
      */
     getOperatorToken() {
-        return this.getNodeFromCompilerNode(this.compilerNode.operatorToken);
+        return this._getNodeFromCompilerNode(this.compilerNode.operatorToken);
     }
 }

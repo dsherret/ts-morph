@@ -33,7 +33,7 @@ describe(nameof(TaggedTemplateExpression), () => {
     describe(nameof<TaggedTemplateExpression>(n => n.removeTag), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getExpression(text);
-            const sourceFile = expression.sourceFile;
+            const sourceFile = expression._sourceFile;
             const template = expression.getTemplate();
             const templateText = template.getText();
             expect(expression.removeTag().getText()).to.equal(templateText);

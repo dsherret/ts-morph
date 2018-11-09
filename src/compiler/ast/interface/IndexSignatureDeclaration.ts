@@ -27,7 +27,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
         if (this.getKeyName() === name)
             return;
 
-        this.getKeyNameNode().replaceWithText(name, this.getWriterWithQueuedChildIndentation());
+        this.getKeyNameNode().replaceWithText(name, this._getWriterWithQueuedChildIndentation());
     }
 
     /**
@@ -35,7 +35,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      */
     getKeyNameNode() {
         const param = this.compilerNode.parameters[0];
-        return this.getNodeFromCompilerNode(param.name);
+        return this._getNodeFromCompilerNode(param.name);
     }
 
     /**
@@ -55,7 +55,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
         if (keyTypeNode.getText() === type)
             return this;
 
-        keyTypeNode.replaceWithText(type, this.getWriterWithQueuedChildIndentation());
+        keyTypeNode.replaceWithText(type, this._getWriterWithQueuedChildIndentation());
 
         return this;
     }
@@ -66,7 +66,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
     getKeyTypeNode(): TypeNode {
         // this node must exist for it to be an index signature (otherwise it's a property signature)
         const param = this.compilerNode.parameters[0];
-        return this.getNodeFromCompilerNode(param.type!);
+        return this._getNodeFromCompilerNode(param.type!);
     }
 
     /**

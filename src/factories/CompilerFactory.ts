@@ -48,7 +48,7 @@ export class CompilerFactory {
         this.directoryCache = new DirectoryCache(context);
 
         // prevent memory leaks when the document registry key changes by just reseting it
-        this.context.compilerOptions.onModified(() => {
+        this.context.compilerOptions._onModified(() => {
             // repopulate the cache
             const currentSourceFiles = this.sourceFileCacheByFilePath.getValuesAsArray();
             for (const sourceFile of currentSourceFiles) {
@@ -187,7 +187,7 @@ export class CompilerFactory {
             if (this.context.fileSystemWrapper.fileExistsSync(filePath)) {
                 this.context.logger.log(`Loading file: ${filePath}`);
                 sourceFile = this.createSourceFileFromTextInternal(filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()));
-                sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
+                sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
             }
 
             if (sourceFile != null) {
@@ -484,7 +484,7 @@ export class CompilerFactory {
             const oldFilePath = (nodeToReplace as ts.SourceFile).fileName;
             const sourceFile = node! as SourceFile;
             this.removeCompilerNodeFromCache(nodeToReplace);
-            sourceFile.replaceCompilerNodeFromFactory(newNode as ts.SourceFile);
+            sourceFile._replaceCompilerNodeFromFactory(newNode as ts.SourceFile);
             this.nodeCache.set(newNode, sourceFile);
             this.addSourceFileToCache(sourceFile);
             this.sourceFileAddedEventContainer.fire(sourceFile);
@@ -492,7 +492,7 @@ export class CompilerFactory {
         else {
             this.nodeCache.replaceKey(nodeToReplace, newNode);
             if (node != null)
-                node.replaceCompilerNodeFromFactory(newNode);
+                node._replaceCompilerNodeFromFactory(newNode);
         }
     }
 

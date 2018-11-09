@@ -37,7 +37,7 @@ export function ExclamationTokenableNode<T extends Constructor<ExclamationTokena
         }
 
         getExclamationTokenNode(): Node<ts.ExclamationToken> | undefined {
-            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.exclamationToken);
+            return this._getNodeFromCompilerNodeIfExists(this.compilerNode.exclamationToken);
         }
 
         getExclamationTokenNodeOrThrow(): Node<ts.ExclamationToken> {

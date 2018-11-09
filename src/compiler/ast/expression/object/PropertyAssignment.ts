@@ -23,7 +23,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
         const initializer = this.getInitializerOrThrow();
         const colonToken = initializer.getPreviousSiblingIfKindOrThrow(SyntaxKind.ColonToken);
         const childIndex = this.getChildIndex();
-        const sourceFileText = this.sourceFile.getFullText();
+        const sourceFileText = this._sourceFile.getFullText();
         const insertPos = this.getStart();
         const newText = sourceFileText.substring(insertPos, colonToken.getPos()) + sourceFileText.substring(initializer.getEnd(), this.getEnd());
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
@@ -49,7 +49,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
 
         insertIntoParentTextRange({
             insertPos: initializer.getStart(),
-            newText: getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction),
+            newText: getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction),
             parent: this,
             replacing: {
                 textLength: initializer.getWidth()

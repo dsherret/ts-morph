@@ -22,7 +22,7 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
         const parent = children[0].getParentOrThrow() as TNode;
         const sourceFile = parent.getSourceFile();
         const fullText = sourceFile.getFullText();
-        const newLineKind = sourceFile.context.manipulationSettings.getNewLineKindAsString();
+        const newLineKind = sourceFile._context.manipulationSettings.getNewLineKindAsString();
         const previousSibling = children[0].getPreviousSibling();
         const nextSibling = children[children.length - 1].getNextSibling();
         const removalPos = getRemovalPos();

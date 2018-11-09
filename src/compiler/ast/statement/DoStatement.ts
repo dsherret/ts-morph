@@ -8,6 +8,6 @@ export class DoStatement extends DoStatementBase<ts.DoStatement> {
      * Gets this do statement's expression.
      */
     getExpression(): Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression);
+        return this._getNodeFromCompilerNode(this.compilerNode.expression);
     }
 }

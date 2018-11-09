@@ -6,6 +6,6 @@ export class ArrayBindingPattern extends Node<ts.ArrayBindingPattern> {
      * Gets the array binding pattern's elements.
      */
     getElements() {
-        return this.compilerNode.elements.map(e => this.getNodeFromCompilerNode(e));
+        return this.compilerNode.elements.map(e => this._getNodeFromCompilerNode(e));
     }
 }

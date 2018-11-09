@@ -424,7 +424,7 @@ describe(nameof(ImportDeclaration), () => {
         {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             if (!surroundWithSpaces)
-                firstChild.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+                firstChild._context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             const originalCount = firstChild.getNamedImports().length;
             const result = firstChild.insertNamedImports(index, structuresOrNames);
             const afterCount = firstChild.getNamedImports().length;

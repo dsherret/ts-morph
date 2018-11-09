@@ -8,7 +8,7 @@ describe(nameof(LanguageService), () => {
     describe(nameof<LanguageService>(l => l.getEmitOutput), () => {
         it("should get the emit output", () => {
             function doTest(sourceFileOrFilePath: string | SourceFile) {
-                const output = sourceFile.context.languageService.getEmitOutput(sourceFileOrFilePath);
+                const output = sourceFile._context.languageService.getEmitOutput(sourceFileOrFilePath);
                 checkOutput(output, {
                     emitSkipped: false,
                     outputFiles: [{
@@ -27,7 +27,7 @@ describe(nameof(LanguageService), () => {
 
         it("should get the emit output when specifying a source file", () => {
             const {sourceFile, project} = getInfoFromText("const t = 5;", { compilerOptions: { target: ScriptTarget.ES5 } });
-            const output = sourceFile.context.languageService.getEmitOutput(sourceFile);
+            const output = sourceFile._context.languageService.getEmitOutput(sourceFile);
             checkOutput(output, {
                 emitSkipped: false,
                 outputFiles: [{
@@ -40,7 +40,7 @@ describe(nameof(LanguageService), () => {
 
         it("should only emit the declaration file when specified", () => {
             const {sourceFile, project} = getInfoFromText("const t = 5;", { compilerOptions: { declaration: true } });
-            const output = sourceFile.context.languageService.getEmitOutput(sourceFile.getFilePath(), true);
+            const output = sourceFile._context.languageService.getEmitOutput(sourceFile.getFilePath(), true);
             checkOutput(output, {
                 emitSkipped: false,
                 outputFiles: [{
@@ -53,7 +53,7 @@ describe(nameof(LanguageService), () => {
 
         it("should not emit if there is a declaration file error", () => {
             const {sourceFile, project} = getInfoFromText("export class Test extends MyClass {}\n", { compilerOptions: { declaration: true } });
-            const output = sourceFile.context.languageService.getEmitOutput(sourceFile.getFilePath(), true);
+            const output = sourceFile._context.languageService.getEmitOutput(sourceFile.getFilePath(), true);
 
             checkOutput(output, {
                 emitSkipped: true,

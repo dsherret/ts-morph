@@ -49,7 +49,7 @@ export type NodeParentType<NodeType extends ts.Node> =
 
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
-    readonly context: ProjectContext;
+    readonly _context: ProjectContext;
     /** @internal */
     private _compilerNode: NodeType | undefined;
     /** @internal */
@@ -61,7 +61,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     private _trailingCommentRanges: CommentRange[] | undefined;
     /** @internal */
-    sourceFile: SourceFile;
+    _sourceFile: SourceFile;
 
     /**
      * Gets the underlying compiler node.
@@ -92,9 +92,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export " +
                 "of the package and manipulate the source file from there.");
 
-        this.context = context;
+        this._context = context;
         this._compilerNode = node;
-        this.sourceFile = sourceFile;
+        this._sourceFile = sourceFile;
     }
 
     /**
@@ -106,16 +106,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (this.wasForgotten())
             return;
 
-        this.forgetChildren();
-        this.forgetOnlyThis();
+        this._forgetChildren();
+        this._forgetOnlyThis();
     }
 
     /**
      * Forgets the children of this node.
      * @internal
      */
-    forgetChildren() {
-        for (const child of this.getChildrenInCacheIterator())
+    _forgetChildren() {
+        for (const child of this._getChildrenInCacheIterator())
             child.forget();
     }
 
@@ -123,12 +123,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Only forgets this node.
      * @internal
      */
-    forgetOnlyThis() {
+    _forgetOnlyThis() {
         if (this.wasForgotten())
             return;
 
         this._storeTextForForgetting();
-        this.context.compilerFactory.removeNodeFromCache(this);
+        this._context.compilerFactory.removeNodeFromCache(this);
         this._clearInternals();
     }
 
@@ -146,7 +146,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      *
      * WARNING: This should only be called by the compiler factory!
      */
-    replaceCompilerNodeFromFactory(compilerNode: NodeType) {
+    _replaceCompilerNodeFromFactory(compilerNode: NodeType) {
         if (compilerNode == null)
             this._storeTextForForgetting();
         this._clearInternals();
@@ -156,7 +156,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     private _storeTextForForgetting() {
         // check for undefined here just in case
-        const sourceFileCompilerNode = this.sourceFile && this.sourceFile.compilerNode;
+        const sourceFileCompilerNode = this._sourceFile && this._sourceFile.compilerNode;
         const compilerNode = this._compilerNode;
 
         if (sourceFileCompilerNode == null || compilerNode == null)
@@ -185,7 +185,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         function clearCommentRanges(commentRanges: ReadonlyArray<CommentRange> | undefined) {
             if (commentRanges == null)
                 return;
-            commentRanges.forEach(r => r.forget());
+            commentRanges.forEach(r => r._forget());
         }
     }
 
@@ -209,12 +209,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     print(options: PrintNodeOptions = {}): string {
         if (options.newLineKind == null)
-            options.newLineKind = this.context.manipulationSettings.getNewLineKind();
+            options.newLineKind = this._context.manipulationSettings.getNewLineKind();
 
         if (this.getKind() === SyntaxKind.SourceFile)
             return printNode(this.compilerNode, options);
         else
-            return printNode(this.compilerNode, this.sourceFile.compilerNode, options);
+            return printNode(this.compilerNode, this._sourceFile.compilerNode, options);
     }
 
     /**
@@ -230,16 +230,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getSymbol(): Symbol | undefined {
         const boundSymbol = (this.compilerNode as any).symbol as ts.Symbol | undefined;
         if (boundSymbol != null)
-            return this.context.compilerFactory.getSymbol(boundSymbol);
+            return this._context.compilerFactory.getSymbol(boundSymbol);
 
-        const typeChecker = this.context.typeChecker;
+        const typeChecker = this._context.typeChecker;
         const typeCheckerSymbol = typeChecker.getSymbolAtLocation(this);
         if (typeCheckerSymbol != null)
             return typeCheckerSymbol;
 
         const nameNode = (this.compilerNode as any).name as ts.Node | undefined;
         if (nameNode != null)
-            return this.getNodeFromCompilerNode(nameNode).getSymbol();
+            return this._getNodeFromCompilerNode(nameNode).getSymbol();
 
         return undefined;
     }
@@ -248,7 +248,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the type of the node.
      */
     getType(): Type {
-        return this.context.typeChecker.getTypeAtLocation(this);
+        return this._context.typeChecker.getTypeAtLocation(this);
     }
 
     /**
@@ -269,9 +269,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
         if (this._childStringRanges == null) {
             this._childStringRanges = [];
-            for (const descendant of this.getCompilerDescendantsIterator()) {
+            for (const descendant of this._getCompilerDescendantsIterator()) {
                 if (isStringKind(descendant.kind))
-                    this._childStringRanges.push([descendant.getStart(this.sourceFile.compilerNode), descendant.getEnd()]);
+                    this._childStringRanges.push([descendant.getStart(this._sourceFile.compilerNode), descendant.getEnd()]);
             }
         }
 
@@ -313,8 +313,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getFirstChild(condition?: (node: Node) => boolean): Node | undefined;
     getFirstChild(condition?: (node: Node) => boolean) {
-        const firstChild = this.getCompilerFirstChild(getWrappedCondition(this, condition));
-        return this.getNodeFromCompilerNodeIfExists(firstChild);
+        const firstChild = this._getCompilerFirstChild(getWrappedCondition(this, condition));
+        return this._getNodeFromCompilerNodeIfExists(firstChild);
     }
 
     /**
@@ -342,8 +342,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getLastChild(condition?: (node: Node) => boolean): Node | undefined;
     getLastChild(condition?: (node: Node) => boolean): Node | undefined {
-        const lastChild = this.getCompilerLastChild(getWrappedCondition(this, condition));
-        return this.getNodeFromCompilerNodeIfExists(lastChild);
+        const lastChild = this._getCompilerLastChild(getWrappedCondition(this, condition));
+        return this._getNodeFromCompilerNodeIfExists(lastChild);
     }
 
     /**
@@ -371,7 +371,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getFirstDescendant(condition?: (node: Node) => boolean): Node | undefined;
     getFirstDescendant(condition?: (node: Node) => boolean) {
-        for (const descendant of this.getDescendantsIterator()) {
+        for (const descendant of this._getDescendantsIterator()) {
             if (condition == null || condition(descendant))
                 return descendant;
         }
@@ -383,13 +383,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      * @param offset - Offset.
      */
-    offsetPositions(offset: number) {
+    _offsetPositions(offset: number) {
         // todo: remove? Not used internally anymore
         this.compilerNode.pos += offset;
         this.compilerNode.end += offset;
 
         for (const child of this.getChildren()) {
-            child.offsetPositions(offset);
+            child._offsetPositions(offset);
         }
     }
 
@@ -418,8 +418,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getPreviousSibling(condition?: (node: Node) => boolean): Node | undefined;
     getPreviousSibling(condition?: (node: Node) => boolean): Node | undefined {
-        const previousSibling = this.getCompilerPreviousSibling(getWrappedCondition(this, condition));
-        return this.getNodeFromCompilerNodeIfExists(previousSibling);
+        const previousSibling = this._getCompilerPreviousSibling(getWrappedCondition(this, condition));
+        return this._getNodeFromCompilerNodeIfExists(previousSibling);
     }
 
     /**
@@ -447,8 +447,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getNextSibling(condition?: (node: Node) => boolean): Node | undefined;
     getNextSibling(condition?: (node: Node) => boolean): Node | undefined {
-        const nextSibling = this.getCompilerNextSibling(getWrappedCondition(this, condition));
-        return this.getNodeFromCompilerNodeIfExists(nextSibling);
+        const nextSibling = this._getCompilerNextSibling(getWrappedCondition(this, condition));
+        return this._getNodeFromCompilerNodeIfExists(nextSibling);
     }
 
     /**
@@ -457,7 +457,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Note: Closest sibling is the zero index.
      */
     getPreviousSiblings(): Node[] {
-        return this.getCompilerPreviousSiblings().map(n => this.getNodeFromCompilerNode(n));
+        return this._getCompilerPreviousSiblings().map(n => this._getNodeFromCompilerNode(n));
     }
 
     /**
@@ -466,14 +466,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Note: Closest sibling is the zero index.
      */
     getNextSiblings(): Node[] {
-        return this.getCompilerNextSiblings().map(n => this.getNodeFromCompilerNode(n));
+        return this._getCompilerNextSiblings().map(n => this._getNodeFromCompilerNode(n));
     }
 
     /**
      * Gets all the children of the node.
      */
     getChildren(): Node[] {
-        return this.getCompilerChildren().map(n => this.getNodeFromCompilerNode(n));
+        return this._getCompilerChildren().map(n => this._getNodeFromCompilerNode(n));
     }
 
     /**
@@ -481,27 +481,27 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param index - Index of the child.
      */
     getChildAtIndex(index: number): Node {
-        return this.getNodeFromCompilerNode(this.getCompilerChildAtIndex(index));
+        return this._getNodeFromCompilerNode(this._getCompilerChildAtIndex(index));
     }
 
     /**
      * @internal
      */
-    *getChildrenIterator(): IterableIterator<Node> {
-        for (const compilerChild of this.getCompilerChildren())
-            yield this.getNodeFromCompilerNode(compilerChild);
+    *_getChildrenIterator(): IterableIterator<Node> {
+        for (const compilerChild of this._getCompilerChildren())
+            yield this._getNodeFromCompilerNode(compilerChild);
     }
 
     /**
      * @internal
      */
-    *getChildrenInCacheIterator(): IterableIterator<Node> {
-        for (const child of this.getCompilerChildren()) {
-            if (this.context.compilerFactory.hasCompilerNode(child))
-                yield this.context.compilerFactory.getExistingCompilerNode(child)!;
+    *_getChildrenInCacheIterator(): IterableIterator<Node> {
+        for (const child of this._getCompilerChildren()) {
+            if (this._context.compilerFactory.hasCompilerNode(child))
+                yield this._context.compilerFactory.getExistingCompilerNode(child)!;
             else if (child.kind === SyntaxKind.SyntaxList) {
                 // always return syntax lists because their children could be in the cache
-                yield this.getNodeFromCompilerNode(child);
+                yield this._getNodeFromCompilerNode(child);
             }
         }
     }
@@ -539,11 +539,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             return node.getFirstChildByKind(SyntaxKind.SyntaxList);
 
         let passedBrace = false;
-        for (const child of node.getCompilerChildren()) {
+        for (const child of node._getCompilerChildren()) {
             if (!passedBrace)
                 passedBrace = child.kind === SyntaxKind.OpenBraceToken;
             else if (child.kind === SyntaxKind.SyntaxList)
-                return this.getNodeFromCompilerNode(child) as SyntaxList;
+                return this._getNodeFromCompilerNode(child) as SyntaxList;
         }
 
         return undefined;
@@ -568,9 +568,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         // .forEachChild from returning out of date nodes due to a manipulation or deletion
         this.compilerNode.forEachChild(node => {
             // use function block to ensure a truthy value is not returned
-            snapshots.push(this.getNodeFromCompilerNode(node));
+            snapshots.push(this._getNodeFromCompilerNode(node));
         }, cbNodeArray == null ? undefined : nodes => {
-            snapshots.push(nodes.map(n => this.getNodeFromCompilerNode(n)));
+            snapshots.push(nodes.map(n => this._getNodeFromCompilerNode(n)));
         });
 
         // now send them to the user
@@ -664,16 +664,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the node's descendants.
      */
     getDescendants(): Node[] {
-        return ArrayUtils.from(this.getDescendantsIterator());
+        return ArrayUtils.from(this._getDescendantsIterator());
     }
 
     /**
      * Gets the node's descendants as an iterator.
      * @internal
      */
-    *getDescendantsIterator(): IterableIterator<Node> {
-        for (const descendant of this.getCompilerDescendantsIterator())
-            yield this.getNodeFromCompilerNode(descendant);
+    *_getDescendantsIterator(): IterableIterator<Node> {
+        for (const descendant of this._getCompilerDescendantsIterator())
+            yield this._getNodeFromCompilerNode(descendant);
     }
 
     /**
@@ -693,7 +693,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             else if (node.kind === SyntaxKind.ArrowFunction) {
                 const arrowFunction = (node as ts.ArrowFunction);
                 if (arrowFunction.body.kind !== SyntaxKind.Block)
-                    statements.push(thisNode.getNodeFromCompilerNode(arrowFunction.body) as Node as Statement); // todo: bug... it's not a statement
+                    statements.push(thisNode._getNodeFromCompilerNode(arrowFunction.body) as Node as Statement); // todo: bug... it's not a statement
                 else
                     handleNode(thisNode, arrowFunction.body);
             }
@@ -705,7 +705,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             if ((node as NodeWithStatements).statements == null)
                 return false;
             for (const statement of (node as NodeWithStatements).statements) {
-                statements.push(thisNode.getNodeFromCompilerNode(statement));
+                statements.push(thisNode._getNodeFromCompilerNode(statement));
                 handleChildren(thisNode, statement);
             }
             return true;
@@ -720,7 +720,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the number of children the node has.
      */
     getChildCount() {
-        return this.compilerNode.getChildCount(this.sourceFile.compilerNode);
+        return this.compilerNode.getChildCount(this._sourceFile.compilerNode);
     }
 
     /**
@@ -731,9 +731,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (pos < this.getPos() || pos >= this.getEnd())
             return undefined;
 
-        for (const child of this.getCompilerChildren()) {
+        for (const child of this._getCompilerChildren()) {
             if (pos >= child.pos && pos < child.end)
-                return this.getNodeFromCompilerNode(child);
+                return this._getNodeFromCompilerNode(child);
         }
 
         return undefined;
@@ -763,7 +763,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getDescendantAtStartWithWidth(start: number, width: number): Node | undefined {
         let foundNode: Node | undefined;
 
-        this.context.compilerFactory.forgetNodesCreatedInBlock(remember => {
+        this._context.compilerFactory.forgetNodesCreatedInBlock(remember => {
             let nextNode: Node | undefined = this.getSourceFile();
 
             do {
@@ -805,7 +805,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getStart(includeJsDocComment?: boolean) {
         // rare time a bool parameter will be used... it's because it's done in the ts compiler
-        return this.compilerNode.getStart(this.sourceFile.compilerNode, includeJsDocComment);
+        return this.compilerNode.getStart(this._sourceFile.compilerNode, includeJsDocComment);
     }
 
     /**
@@ -824,22 +824,22 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             && !TypeGuards.isSourceFile(parent)
             && parent.getPos() === this.getPos();
 
-        return getNextNonWhitespacePos(this.sourceFile.getFullText(), parentTakesPrecedence ? this.getStart(true) : this.getPos());
+        return getNextNonWhitespacePos(this._sourceFile.getFullText(), parentTakesPrecedence ? this.getStart(true) : this.getPos());
     }
 
     /**
      * Gets the source file text position going forward the result of .getTrailingTriviaEnd() that is not whitespace.
      * @internal
      */
-    getTrailingTriviaNonWhitespaceEnd() {
-        return getPreviousNonWhitespacePos(this.sourceFile.getFullText(), this.getTrailingTriviaEnd());
+    _getTrailingTriviaNonWhitespaceEnd() {
+        return getPreviousNonWhitespacePos(this._sourceFile.getFullText(), this.getTrailingTriviaEnd());
     }
 
     /**
      * Gets the text length of the node without trivia.
      */
     getWidth() {
-        return this.compilerNode.getWidth(this.sourceFile.compilerNode);
+        return this.compilerNode.getWidth(this._sourceFile.compilerNode);
     }
 
     /**
@@ -853,7 +853,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the node's leading trivia's text length.
      */
     getLeadingTriviaWidth() {
-        return this.compilerNode.getLeadingTriviaWidth(this.sourceFile.compilerNode);
+        return this.compilerNode.getLeadingTriviaWidth(this._sourceFile.compilerNode);
     }
 
     /**
@@ -877,7 +877,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const trailingComments = this.getTrailingCommentRanges();
         const searchStart = getSearchStart();
 
-        return getNextMatchingPos(this.sourceFile.getFullText(), searchStart, char => char !== " " && char !== "\t");
+        return getNextMatchingPos(this._sourceFile.getFullText(), searchStart, char => char !== " " && char !== "\t");
 
         function getSearchStart() {
             return trailingComments.length > 0 ? trailingComments[trailingComments.length - 1].getEnd() : end;
@@ -892,17 +892,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (includeJsDocComment && TypeGuards.isJSDocableNode(this)) {
             const docs = this.getJsDocs();
             if (docs.length > 0)
-                return this.sourceFile.getFullText().substring(docs[0].getStart(), this.getEnd());
+                return this._sourceFile.getFullText().substring(docs[0].getStart(), this.getEnd());
         }
 
-        return this.compilerNode.getText(this.sourceFile.compilerNode);
+        return this.compilerNode.getText(this._sourceFile.compilerNode);
     }
 
     /**
      * Gets the full text with leading trivia (comments and whitespace).
      */
     getFullText(): string {
-        return this.compilerNode.getFullText(this.sourceFile.compilerNode);
+        return this.compilerNode.getFullText(this._sourceFile.compilerNode);
     }
 
     /**
@@ -917,7 +917,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the source file.
      */
     getSourceFile(): SourceFile {
-        return this.sourceFile;
+        return this._sourceFile;
     }
 
     /**
@@ -933,9 +933,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (property == null)
             return undefined as any;
         else if (property instanceof Array)
-            return property.map(p => isNode(p) ? this.getNodeFromCompilerNode(p) : p) as any;
+            return property.map(p => isNode(p) ? this._getNodeFromCompilerNode(p) : p) as any;
         else if (isNode(property))
-            return this.getNodeFromCompilerNode(property) as any;
+            return this._getNodeFromCompilerNode(property) as any;
         else
             return property;
 
@@ -953,13 +953,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getAncestors(includeSyntaxLists: boolean): Node[];
     getAncestors(includeSyntaxLists = false) {
-        return ArrayUtils.from(this.getAncestorsIterator(includeSyntaxLists));
+        return ArrayUtils.from(this._getAncestorsIterator(includeSyntaxLists));
     }
 
     /**
      * @internal
      */
-    *getAncestorsIterator(includeSyntaxLists: boolean): IterableIterator<Node> {
+    *_getAncestorsIterator(includeSyntaxLists: boolean): IterableIterator<Node> {
         let parent = getParent(this);
         while (parent != null) {
             yield parent;
@@ -975,7 +975,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Get the node's parent.
      */
     getParent<T extends Node | undefined = NodeParentType<NodeType>>(): T {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.parent) as T;
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.parent) as T;
     }
 
     /**
@@ -1046,11 +1046,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last token of this node. Usually this is a close brace.
      */
     getLastToken(): Node {
-        const lastToken = this.compilerNode.getLastToken(this.sourceFile.compilerNode);
+        const lastToken = this.compilerNode.getLastToken(this._sourceFile.compilerNode);
         if (lastToken == null)
             throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist.");
 
-        return this.getNodeFromCompilerNode(lastToken);
+        return this._getNodeFromCompilerNode(lastToken);
     }
 
     /**
@@ -1072,7 +1072,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getParentSyntaxList(): Node | undefined {
         const syntaxList = getParentSyntaxList(this.compilerNode);
-        return this.getNodeFromCompilerNodeIfExists(syntaxList);
+        return this._getNodeFromCompilerNodeIfExists(syntaxList);
     }
 
     /**
@@ -1081,7 +1081,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getChildIndex() {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         let i = 0;
-        for (const child of parent.getCompilerChildren()) {
+        for (const child of parent._getCompilerChildren()) {
             if (child === this.compilerNode)
                 return i;
             i++;
@@ -1095,8 +1095,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the indentation level of the current node.
      */
     getIndentationLevel() {
-        const indentationText = this.context.manipulationSettings.getIndentationText();
-        return this.context.languageService.getIdentationAtPosition(this.sourceFile, this.getStart()) / indentationText.length;
+        const indentationText = this._context.manipulationSettings.getIndentationText();
+        return this._context.languageService.getIdentationAtPosition(this._sourceFile, this.getStart()) / indentationText.length;
     }
 
     /**
@@ -1129,7 +1129,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     private _getIndentationTextForLevel(level: number) {
-        return StringUtils.repeat(this.context.manipulationSettings.getIndentationText(), level);
+        return StringUtils.repeat(this._context.manipulationSettings.getIndentationText(), level);
     }
 
     /**
@@ -1137,7 +1137,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param includeJsDocComment - Whether to include the JS doc comment or not.
      */
     getStartLinePos(includeJsDocComment?: boolean) {
-        const sourceFileText = this.sourceFile.getFullText();
+        const sourceFileText = this._sourceFile.getFullText();
         return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComment), char => char === "\n" || char === "\r");
     }
 
@@ -1146,23 +1146,23 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param includeJsDocComment - Whether to include the JS doc comment or not.
      */
     getStartLineNumber(includeJsDocComment?: boolean) {
-        return this.sourceFile.getLineNumberAtPos(this.getStartLinePos(includeJsDocComment));
+        return this._sourceFile.getLineNumberAtPos(this.getStartLinePos(includeJsDocComment));
     }
 
     /**
      * Gets the line number of the end of the node.
      */
     getEndLineNumber() {
-        const sourceFileText = this.sourceFile.getFullText();
+        const sourceFileText = this._sourceFile.getFullText();
         const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === "\n" || char === "\r");
-        return this.sourceFile.getLineNumberAtPos(endLinePos);
+        return this._sourceFile.getLineNumberAtPos(endLinePos);
     }
 
     /**
      * Gets if this is the first node on the current line.
      */
     isFirstNodeOnLine() {
-        const sourceFileText = this.sourceFile.getFullText();
+        const sourceFileText = this._sourceFile.getFullText();
         const startPos = this.getNonWhitespaceStart();
 
         for (let i = startPos - 1; i >= 0; i--) {
@@ -1189,7 +1189,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     replaceWithText(textOrWriterFunction: string | WriterFunction, writer: CodeBlockWriter): Node;
     replaceWithText(textOrWriterFunction: string | WriterFunction, writer?: CodeBlockWriter): Node {
-        const newText = getTextFromStringOrWriter(writer || this.getWriterWithQueuedIndentation(), textOrWriterFunction);
+        const newText = getTextFromStringOrWriter(writer || this._getWriterWithQueuedIndentation(), textOrWriterFunction);
         if (TypeGuards.isSourceFile(this)) {
             this.replaceText([this.getPos(), this.getEnd()], newText);
             return this;
@@ -1232,14 +1232,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param settings - Format code settings.
      */
     formatText(settings: FormatCodeSettings = {}) {
-        const formattingEdits = this.context.languageService.getFormattingEditsForRange(
-            this.sourceFile.getFilePath(),
+        const formattingEdits = this._context.languageService.getFormattingEditsForRange(
+            this._sourceFile.getFilePath(),
             [this.getStart(true), this.getEnd()],
             settings);
 
         replaceSourceFileTextForFormatting({
-            sourceFile: this.sourceFile,
-            newText: getTextFromFormattingEdits(this.sourceFile, formattingEdits)
+            sourceFile: this._sourceFile,
+            newText: getTextFromFormattingEdits(this._sourceFile, formattingEdits)
         });
     }
 
@@ -1262,7 +1262,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (this.getKind() === SyntaxKind.SourceFile)
             return [];
 
-        return (getComments(this.sourceFile.getFullText(), pos) || []).map(r => new CommentRange(r, this.sourceFile));
+        return (getComments(this._sourceFile.getFullText(), pos) || []).map(r => new CommentRange(r, this._sourceFile));
     }
 
     /**
@@ -1270,7 +1270,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getChildrenOfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind][] {
-        return this.getCompilerChildren().filter(c => c.kind === kind).map(c => this.getNodeFromCompilerNode(c));
+        return this._getCompilerChildren().filter(c => c.kind === kind).map(c => this._getNodeFromCompilerNode(c));
     }
 
     /**
@@ -1286,8 +1286,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstChildByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const child = this.getCompilerFirstChild(c => c.kind === kind);
-        return child == null ? undefined : this.getNodeFromCompilerNode(child);
+        const child = this._getCompilerFirstChild(c => c.kind === kind);
+        return child == null ? undefined : this._getNodeFromCompilerNode(child);
     }
 
     /**
@@ -1303,8 +1303,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstChildIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const firstChild = this.getCompilerFirstChild();
-        return firstChild != null && firstChild.kind === kind ? this.getNodeFromCompilerNode(firstChild) : undefined;
+        const firstChild = this._getCompilerFirstChild();
+        return firstChild != null && firstChild.kind === kind ? this._getNodeFromCompilerNode(firstChild) : undefined;
     }
 
     /**
@@ -1320,8 +1320,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getLastChildByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const lastChild = this.getCompilerLastChild(c => c.kind === kind);
-        return this.getNodeFromCompilerNodeIfExists(lastChild);
+        const lastChild = this._getCompilerLastChild(c => c.kind === kind);
+        return this._getNodeFromCompilerNodeIfExists(lastChild);
     }
 
     /**
@@ -1337,8 +1337,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getLastChildIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const lastChild = this.getCompilerLastChild();
-        return lastChild != null && lastChild.kind === kind ? this.getNodeFromCompilerNode(lastChild) : undefined;
+        const lastChild = this._getCompilerLastChild();
+        return lastChild != null && lastChild.kind === kind ? this._getNodeFromCompilerNode(lastChild) : undefined;
     }
 
     /**
@@ -1356,8 +1356,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKind<TKind extends SyntaxKind>(index: number, kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const node = this.getCompilerChildAtIndex(index);
-        return node.kind === kind ? this.getNodeFromCompilerNode(node) : undefined;
+        const node = this._getCompilerChildAtIndex(index);
+        return node.kind === kind ? this._getNodeFromCompilerNode(node) : undefined;
     }
 
     /**
@@ -1381,8 +1381,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Kind to check.
      */
     getPreviousSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const previousSibling = this.getCompilerPreviousSibling();
-        return previousSibling != null && previousSibling.kind === kind ? this.getNodeFromCompilerNode(previousSibling) : undefined;
+        const previousSibling = this._getCompilerPreviousSibling();
+        return previousSibling != null && previousSibling.kind === kind ? this._getNodeFromCompilerNode(previousSibling) : undefined;
     }
 
     /**
@@ -1390,8 +1390,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Kind to check.
      */
     getNextSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const nextSibling = this.getCompilerNextSibling();
-        return nextSibling != null && nextSibling.kind === kind ? this.getNodeFromCompilerNode(nextSibling) : undefined;
+        const nextSibling = this._getCompilerNextSibling();
+        return nextSibling != null && nextSibling.kind === kind ? this._getNodeFromCompilerNode(nextSibling) : undefined;
     }
 
     /**
@@ -1422,7 +1422,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstAncestorByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        for (const parent of this.getAncestorsIterator(kind === SyntaxKind.SyntaxList)) {
+        for (const parent of this._getAncestorsIterator(kind === SyntaxKind.SyntaxList)) {
             if (parent.getKind() === kind)
                 return parent;
         }
@@ -1454,7 +1454,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getFirstAncestor(condition?: (node: Node) => boolean): Node | undefined;
     getFirstAncestor(condition?: (node: Node) => boolean) {
-        for (const ancestor of this.getAncestorsIterator(false)) {
+        for (const ancestor of this._getAncestorsIterator(false)) {
             if (condition == null || condition(ancestor))
                 return ancestor;
         }
@@ -1467,9 +1467,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getDescendantsOfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind][] {
         const descendants: Node[] = [];
-        for (const descendant of this.getCompilerDescendantsIterator()) {
+        for (const descendant of this._getCompilerDescendantsIterator()) {
             if (descendant.kind === kind)
-                descendants.push(this.getNodeFromCompilerNode(descendant));
+                descendants.push(this._getNodeFromCompilerNode(descendant));
         }
         return descendants;
     }
@@ -1487,9 +1487,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstDescendantByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        for (const descendant of this.getCompilerDescendantsIterator()) {
+        for (const descendant of this._getCompilerDescendantsIterator()) {
             if (descendant.kind === kind)
-                return this.getNodeFromCompilerNode(descendant);
+                return this._getNodeFromCompilerNode(descendant);
         }
         return undefined;
     }
@@ -1498,16 +1498,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the compiler children of the node.
      * @internal
      */
-    getCompilerChildren(): ts.Node[] {
-        return this.compilerNode.getChildren(this.sourceFile.compilerNode);
+    _getCompilerChildren(): ts.Node[] {
+        return this.compilerNode.getChildren(this._sourceFile.compilerNode);
     }
 
     /**
      * Gets the node's descendant compiler nodes as an iterator.
      * @internal
      */
-    getCompilerDescendantsIterator(): IterableIterator<ts.Node> {
-        const compilerSourceFile = this.sourceFile.compilerNode;
+    _getCompilerDescendantsIterator(): IterableIterator<ts.Node> {
+        const compilerSourceFile = this._sourceFile.compilerNode;
         return getDescendantsIterator(this.compilerNode);
 
         function* getDescendantsIterator(node: ts.Node): IterableIterator<ts.Node> {
@@ -1523,8 +1523,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param condition - Condition.
      * @internal
      */
-    getCompilerFirstChild(condition?: (node: ts.Node) => boolean) {
-        for (const child of this.getCompilerChildren()) {
+    _getCompilerFirstChild(condition?: (node: ts.Node) => boolean) {
+        for (const child of this._getCompilerChildren()) {
             if (condition == null || condition(child))
                 return child;
         }
@@ -1536,8 +1536,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param condition - Condition.
      * @internal
      */
-    getCompilerLastChild(condition?: (node: ts.Node) => boolean) {
-        const children = this.getCompilerChildren();
+    _getCompilerLastChild(condition?: (node: ts.Node) => boolean) {
+        const children = this._getCompilerChildren();
         for (let i = children.length - 1; i >= 0; i--) {
             const child = children[i];
             if (condition == null || condition(child))
@@ -1552,11 +1552,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Note: Closest sibling is the zero index.
      * @internal
      */
-    getCompilerPreviousSiblings() {
+    _getCompilerPreviousSiblings() {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         const previousSiblings: ts.Node[] = [];
 
-        for (const child of parent.getCompilerChildren()) {
+        for (const child of parent._getCompilerChildren()) {
             if (child === this.compilerNode)
                 break;
             previousSiblings.unshift(child);
@@ -1571,12 +1571,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Note: Closest sibling is the zero index.
      * @internal
      */
-    getCompilerNextSiblings() {
+    _getCompilerNextSiblings() {
         let foundChild = false;
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         const nextSiblings: ts.Node[] = [];
 
-        for (const child of parent.getCompilerChildren()) {
+        for (const child of parent._getCompilerChildren()) {
             if (!foundChild) {
                 foundChild = child === this.compilerNode;
                 continue;
@@ -1593,8 +1593,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param condition - Optional condition for getting the previous sibling.
      * @internal
      */
-    getCompilerPreviousSibling(condition?: (node: ts.Node) => boolean) {
-        for (const sibling of this.getCompilerPreviousSiblings()) {
+    _getCompilerPreviousSibling(condition?: (node: ts.Node) => boolean) {
+        for (const sibling of this._getCompilerPreviousSiblings()) {
             if (condition == null || condition(sibling))
                 return sibling;
         }
@@ -1607,8 +1607,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param condition - Optional condition for getting the previous sibling.
      * @internal
      */
-    getCompilerNextSibling(condition?: (node: ts.Node) => boolean) {
-        for (const sibling of this.getCompilerNextSiblings()) {
+    _getCompilerNextSibling(condition?: (node: ts.Node) => boolean) {
+        for (const sibling of this._getCompilerNextSiblings()) {
             if (condition == null || condition(sibling))
                 return sibling;
         }
@@ -1621,8 +1621,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param index - Index.
      * @internal
      */
-    getCompilerChildAtIndex(index: number) {
-        const children = this.getCompilerChildren();
+    _getCompilerChildAtIndex(index: number) {
+        const children = this._getCompilerChildren();
         errors.throwIfOutOfRange(index, [0, children.length - 1], nameof(index));
         return children[index];
     }
@@ -1631,8 +1631,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets a writer with the indentation text.
      * @internal
      */
-    getWriterWithIndentation() {
-        const writer = this.getWriter();
+    _getWriterWithIndentation() {
+        const writer = this._getWriter();
         writer.setIndentationLevel(this.getIndentationLevel());
         return writer;
     }
@@ -1641,8 +1641,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets a writer with the queued indentation text.
      * @internal
      */
-    getWriterWithQueuedIndentation() {
-        const writer = this.getWriter();
+    _getWriterWithQueuedIndentation() {
+        const writer = this._getWriter();
         writer.queueIndentationLevel(this.getIndentationLevel());
         return writer;
     }
@@ -1651,8 +1651,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets a writer with the child indentation text.
      * @internal
      */
-    getWriterWithChildIndentation() {
-        const writer = this.getWriter();
+    _getWriterWithChildIndentation() {
+        const writer = this._getWriter();
         writer.setIndentationLevel(this.getChildIndentationLevel());
         return writer;
     }
@@ -1661,15 +1661,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets a writer with the queued child indentation text.
      * @internal
      */
-    getWriterWithQueuedChildIndentation() {
-        const writer = this.getWriter();
+    _getWriterWithQueuedChildIndentation() {
+        const writer = this._getWriter();
         writer.queueIndentationLevel(this.getChildIndentationLevel());
         return writer;
     }
 
     /** @internal */
     _getTextWithQueuedChildIndentation(textOrWriterFunc: string | WriterFunction) {
-        const writer = this.getWriterWithQueuedChildIndentation();
+        const writer = this._getWriterWithQueuedChildIndentation();
         if (typeof textOrWriterFunc === "string")
             writer.write(textOrWriterFunc);
         else
@@ -1681,35 +1681,35 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets a writer with no child indentation text.
      * @internal
      */
-    getWriter() {
-        return this.context.createWriter();
+    _getWriter() {
+        return this._context.createWriter();
     }
 
     /**
      * Gets or creates a node from the internal cache.
      * @internal
      */
-    getNodeFromCompilerNode<LocalCompilerNodeType extends ts.Node = ts.Node>(
+    _getNodeFromCompilerNode<LocalCompilerNodeType extends ts.Node = ts.Node>(
         compilerNode: LocalCompilerNodeType): CompilerNodeToWrappedType<LocalCompilerNodeType>
     {
-        return this.context.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile);
+        return this._context.compilerFactory.getNodeFromCompilerNode(compilerNode, this._sourceFile);
     }
 
     /**
      * Gets or creates a node from the internal cache, if it exists.
      * @internal
      */
-    getNodeFromCompilerNodeIfExists<LocalCompilerNodeType extends ts.Node = ts.Node>(
+    _getNodeFromCompilerNodeIfExists<LocalCompilerNodeType extends ts.Node = ts.Node>(
         compilerNode: LocalCompilerNodeType | undefined): CompilerNodeToWrappedType<LocalCompilerNodeType> | undefined
     {
-        return compilerNode == null ? undefined : this.getNodeFromCompilerNode<LocalCompilerNodeType>(compilerNode);
+        return compilerNode == null ? undefined : this._getNodeFromCompilerNode<LocalCompilerNodeType>(compilerNode);
     }
 
     /**
      * Ensures that the binder has bound the node before.
      * @internal
      */
-    protected ensureBound() {
+    protected _ensureBound() {
         if ((this.compilerNode as any).symbol != null)
             return;
         this.getSymbol(); // binds the node
@@ -1717,12 +1717,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 }
 
 function getWrappedCondition(thisNode: Node, condition: ((c: Node) => boolean) | undefined): ((c: ts.Node) => boolean) | undefined {
-    return condition == null ? undefined : ((c: ts.Node) => condition(thisNode.getNodeFromCompilerNode(c)));
+    return condition == null ? undefined : ((c: ts.Node) => condition(thisNode._getNodeFromCompilerNode(c)));
 }
 
 function insertWhiteSpaceTextAtPos(node: Node, insertPos: number, textOrWriterFunction: string | WriterFunction, methodName: string) {
     const parent = TypeGuards.isSourceFile(node) ? node.getChildSyntaxListOrThrow() : node.getParentSyntaxList() || node.getParentOrThrow();
-    const newText = getTextFromStringOrWriter(node.getWriterWithQueuedIndentation(), textOrWriterFunction);
+    const newText = getTextFromStringOrWriter(node._getWriterWithQueuedIndentation(), textOrWriterFunction);
 
     if (!/^[\s\r\n]*$/.test(newText))
         throw new errors.InvalidOperationError(`Cannot insert non-whitespace into ${methodName}.`);

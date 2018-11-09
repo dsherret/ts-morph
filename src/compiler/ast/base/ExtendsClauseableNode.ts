@@ -76,7 +76,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 return [];
             }
 
-            const writer = this.getWriterWithQueuedChildIndentation();
+            const writer = this._getWriterWithQueuedChildIndentation();
             const structurePrinter = new CommaSeparatedStructuresPrinter(new StringStructurePrinter());
 
             structurePrinter.printText(writer, texts);

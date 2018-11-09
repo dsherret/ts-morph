@@ -36,7 +36,7 @@ export function AwaitableNode<T extends Constructor<AwaitableNodeExtensionType>>
 
         getAwaitKeyword(): Node<ts.AwaitKeywordToken> | undefined {
             const awaitModifier = this.compilerNode.awaitModifier;
-            return this.getNodeFromCompilerNodeIfExists(awaitModifier);
+            return this._getNodeFromCompilerNodeIfExists(awaitModifier);
         }
 
         getAwaitKeywordOrThrow(): Node<ts.AwaitKeywordToken> {

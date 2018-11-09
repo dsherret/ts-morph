@@ -12,7 +12,7 @@ export class ContinueStatement extends ContinueStatementBase<ts.ContinueStatemen
     getLabel(): Identifier | undefined {
         return this.compilerNode.label == null
             ? undefined
-            : this.getNodeFromCompilerNode(this.compilerNode.label);
+            : this._getNodeFromCompilerNode(this.compilerNode.label);
     }
 
     /**

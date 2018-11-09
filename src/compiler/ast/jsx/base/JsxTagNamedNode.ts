@@ -18,7 +18,7 @@ export function JsxTagNamedNode<T extends Constructor<JsxTagNamedNodeExtensionTy
          * Gets the tag name of the JSX element.
          */
         getTagNameNode() {
-            return this.getNodeFromCompilerNode(this.compilerNode.tagName) as JsxTagNameExpression;
+            return this._getNodeFromCompilerNode(this.compilerNode.tagName) as JsxTagNameExpression;
         }
     };
 }

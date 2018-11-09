@@ -7,20 +7,20 @@ export class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryExpressio
      * Gets the left side of the binary expression.
      */
     getLeft(): Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.left);
+        return this._getNodeFromCompilerNode(this.compilerNode.left);
     }
 
     /**
      * Gets the operator token of the binary expression.
      */
     getOperatorToken() {
-        return this.getNodeFromCompilerNode(this.compilerNode.operatorToken);
+        return this._getNodeFromCompilerNode(this.compilerNode.operatorToken);
     }
 
     /**
      * Gets the right side of the binary expression.
      */
     getRight(): Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.right);
+        return this._getNodeFromCompilerNode(this.compilerNode.right);
     }
 }

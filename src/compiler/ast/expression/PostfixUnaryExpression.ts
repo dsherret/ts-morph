@@ -15,6 +15,6 @@ export class PostfixUnaryExpression extends PostfixUnaryExpressionBase<ts.Postfi
      * Gets the operand of the postfix unary expression.
      */
     getOperand(): LeftHandSideExpression {
-        return this.getNodeFromCompilerNode(this.compilerNode.operand);
+        return this._getNodeFromCompilerNode(this.compilerNode.operand);
     }
 }

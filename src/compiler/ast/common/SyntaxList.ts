@@ -23,13 +23,13 @@ export class SyntaxList extends Node<ts.SyntaxList> {
     insertChildText(index: number, textOrWriterFunction: string | WriterFunction) {
         // get index
         const initialChildCount = this.getChildCount();
-        const newLineKind = this.context.manipulationSettings.getNewLineKindAsString();
+        const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();
         const parent = this.getParentOrThrow();
         index = verifyAndGetIndex(index, initialChildCount);
 
         // get text
         const isInline = this !== parent.getChildSyntaxList();
-        let insertText = getTextFromStringOrWriter(isInline ? parent.getWriterWithQueuedChildIndentation() : parent.getWriterWithChildIndentation(), textOrWriterFunction);
+        let insertText = getTextFromStringOrWriter(isInline ? parent._getWriterWithQueuedChildIndentation() : parent._getWriterWithChildIndentation(), textOrWriterFunction);
 
         if (insertText.length === 0)
             return [];

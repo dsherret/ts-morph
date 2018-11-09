@@ -27,6 +27,6 @@ export class NamespaceImport extends NamespaceImportBase<ts.NamespaceImport> {
      * Gets the namespace import's name node.
      */
     getNameNode() {
-        return this.getNodeFromCompilerNode(this.compilerNode.name);
+        return this._getNodeFromCompilerNode(this.compilerNode.name);
     }
 }

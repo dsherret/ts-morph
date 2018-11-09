@@ -59,7 +59,7 @@ export interface ModifierableNode {
 export function ModifierableNode<T extends Constructor<ModifierableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
     return class extends Base implements ModifierableNode {
         getModifiers() {
-            return this.getCompilerModifiers().map(m => this.getNodeFromCompilerNode(m));
+            return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m));
         }
 
         getFirstModifierByKindOrThrow(kind: SyntaxKind) {
@@ -69,7 +69,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
         getFirstModifierByKind(kind: SyntaxKind) {
             for (const modifier of this.getCompilerModifiers()) {
                 if (modifier.kind === kind)
-                    return this.getNodeFromCompilerNode(modifier);
+                    return this._getNodeFromCompilerNode(modifier);
             }
 
             return undefined;
@@ -147,7 +147,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
                 function getInitialInsertPos() {
                     if (modifiers.length > 0)
                         return modifiers[0].getStart();
-                    for (const child of node.getChildrenIterator()) {
+                    for (const child of node._getChildrenIterator()) {
                         // skip over any initial syntax lists (ex. decorators) or js docs
                         if (child.getKind() === SyntaxKind.SyntaxList || ts.isJSDocCommentContainingNode(child.compilerNode))
                             continue;

@@ -7,6 +7,6 @@ export class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
      * Gets the expression.
      */
     getExpression(): Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression);
+        return this._getNodeFromCompilerNode(this.compilerNode.expression);
     }
 }

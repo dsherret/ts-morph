@@ -8,6 +8,6 @@ export class IterationStatement<T extends ts.IterationStatement = ts.IterationSt
      * Gets this iteration statement's statement.
      */
     getStatement(): Statement {
-        return this.getNodeFromCompilerNode(this.compilerNode.statement);
+        return this._getNodeFromCompilerNode(this.compilerNode.statement);
     }
 }

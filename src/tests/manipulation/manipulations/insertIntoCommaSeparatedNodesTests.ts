@@ -11,7 +11,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
             const { firstChild } = getInfoFromText<NamespaceDeclaration>(`declare namespace Test {\n    import ${text} from "./test";\n}\n`);
             const importDec = firstChild.getImportDeclarations()[0];
             if (!surroundWithSpaces)
-                firstChild.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+                firstChild._context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             importDec.insertNamedImports(index, writerFunction);
             expect(importDec.getImportClauseOrThrow().getNamedBindingsOrThrow().getText()).to.equal(expected);
         }

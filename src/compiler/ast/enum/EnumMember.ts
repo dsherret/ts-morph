@@ -13,7 +13,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
      * Gets the constant value of the enum.
      */
     getValue() {
-        return this.context.typeChecker.getConstantValue(this);
+        return this._context.typeChecker.getConstantValue(this);
     }
 
     /**
@@ -23,7 +23,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     setValue(value: string | number) {
         let text: string;
         if (typeof value === "string") {
-            const quoteKind = this.context.manipulationSettings.getQuoteKind();
+            const quoteKind = this._context.manipulationSettings.getQuoteKind();
             text = quoteKind + StringUtils.escapeForWithinString(value, quoteKind) + quoteKind;
         }
         else {

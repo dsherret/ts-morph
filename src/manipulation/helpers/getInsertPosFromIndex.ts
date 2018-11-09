@@ -54,7 +54,7 @@ export function getEndPosFromIndex(index: number, parent: Node, children: Node[]
 
 function getParentContainer(parent: Node) {
     if (TypeGuards.isBodiedNode(parent))
-        return TypeGuards.isNamespaceDeclaration(parent) ? parent.getInnerBody() : parent.getBody();
+        return TypeGuards.isNamespaceDeclaration(parent) ? parent._getInnerBody() : parent.getBody();
     if (TypeGuards.isBodyableNode(parent))
         return parent.getBodyOrThrow();
     else

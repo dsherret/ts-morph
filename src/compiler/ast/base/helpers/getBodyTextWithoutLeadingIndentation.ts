@@ -5,10 +5,10 @@ import { Node } from "../../common";
  * @internal
  */
 export function getBodyTextWithoutLeadingIndentation(body: Node) {
-    const sourceFile = body.sourceFile;
+    const sourceFile = body._sourceFile;
     const textArea = body.getChildSyntaxList() || body; // arrow functions don't have a syntax list
     const startPos = textArea.getNonWhitespaceStart();
-    const endPos = Math.max(startPos, textArea.getTrailingTriviaNonWhitespaceEnd());
+    const endPos = Math.max(startPos, textArea._getTrailingTriviaNonWhitespaceEnd());
     const width = endPos - startPos;
 
     if (width === 0)
@@ -18,6 +18,6 @@ export function getBodyTextWithoutLeadingIndentation(body: Node) {
 
     return StringUtils.indent(fullText,
         -1 * textArea.getIndentationLevel(),
-        textArea.context.manipulationSettings.getIndentationText(),
+        textArea._context.manipulationSettings.getIndentationText(),
         pos => sourceFile.isInStringAtPos(pos + startPos));
 }

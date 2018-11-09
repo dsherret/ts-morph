@@ -37,7 +37,7 @@ export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> 
      * Gets the export assignment expression.
      */
     getExpression(): Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression);
+        return this._getNodeFromCompilerNode(this.compilerNode.expression);
     }
 
     /**
@@ -45,7 +45,7 @@ export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> 
      * @param textOrWriterFunction - Text or writer function to set as the export assignment expression.
      */
     setExpression(textOrWriterFunction: string | WriterFunction) {
-        this.getExpression().replaceWithText(textOrWriterFunction, this.getWriterWithQueuedChildIndentation());
+        this.getExpression().replaceWithText(textOrWriterFunction, this._getWriterWithQueuedChildIndentation());
         return this;
     }
 

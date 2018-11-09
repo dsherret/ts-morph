@@ -57,7 +57,7 @@ export interface JsxAttributedNode {
 export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensionType>>(Base: T): Constructor<JsxAttributedNode> & T {
     return class extends Base implements JsxAttributedNode {
         getAttributes() {
-            return this.compilerNode.attributes.properties.map(p => this.getNodeFromCompilerNode(p));
+            return this.compilerNode.attributes.properties.map(p => this._getNodeFromCompilerNode(p));
         }
 
         getAttributeOrThrow(nameOrFindFunction: (string | ((attribute: JsxAttributeLike) => boolean))) {
@@ -88,8 +88,8 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
             index = verifyAndGetIndex(index, this.compilerNode.attributes.properties.length);
 
             const insertPos = index === 0 ? this.getTagNameNode().getEnd() : this.getAttributes()[index - 1].getEnd();
-            const writer = this.getWriterWithQueuedChildIndentation();
-            const structuresPrinter = new SpaceFormattingStructuresPrinter(this.context.structurePrinterFactory.forJsxAttributeDecider());
+            const writer = this._getWriterWithQueuedChildIndentation();
+            const structuresPrinter = new SpaceFormattingStructuresPrinter(this._context.structurePrinterFactory.forJsxAttributeDecider());
             structuresPrinter.printText(writer, structures);
 
             insertIntoParentTextRange({

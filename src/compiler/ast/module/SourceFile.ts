@@ -66,7 +66,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     ) {
         // start hack :(
         super(context, node, undefined as any);
-        this.sourceFile = this;
+        this._sourceFile = this;
         // end hack
     }
 
@@ -75,9 +75,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      *
      * WARNING: This should only be called by the compiler factory!
      */
-    replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile) {
-        super.replaceCompilerNodeFromFactory(compilerNode);
-        this.context.resetProgram(); // make sure the program has the latest source file
+    _replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile) {
+        super._replaceCompilerNodeFromFactory(compilerNode);
+        this._context.resetProgram(); // make sure the program has the latest source file
         this._isSaved = false;
         this._modifiedEventContainer.fire(this);
     }
@@ -116,7 +116,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the directory that the source file is contained in.
      */
     getDirectory(): Directory {
-        return this.context.compilerFactory.getDirectoryFromCache(this.getDirectoryPath())!;
+        return this._context.compilerFactory.getDirectoryFromCache(this.getDirectoryPath())!;
     }
 
     /**
@@ -186,7 +186,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     _copyInternal(filePath: string, options: SourceFileCopyOptions = {}) {
         const { overwrite = false } = options;
-        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
         if (filePath === this.getFilePath())
             return false;
@@ -195,7 +195,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         function getCopiedSourceFile(currentFile: SourceFile) {
             try {
-                return currentFile.context.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), { overwrite });
+                return currentFile._context.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), { overwrite });
             } catch (err) {
                 if (err instanceof errors.InvalidOperationError)
                     throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
@@ -272,13 +272,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         if (!this._moveInternal(filePath, options))
             return this;
 
-        this.context.fileSystemWrapper.queueFileDelete(oldFilePath);
+        this._context.fileSystemWrapper.queueFileDelete(oldFilePath);
         this._updateReferencesForMoveInternal(sourceFileReferences, oldDirPath);
 
         // ignore any modifications in other source files
-        this.context.lazyReferenceCoordinator.clearDirtySourceFiles();
+        this._context.lazyReferenceCoordinator.clearDirtySourceFiles();
         // need to add the current source file as being dirty because it was removed and added to the cache in the move
-        this.context.lazyReferenceCoordinator.addDirtySourceFile(this);
+        this._context.lazyReferenceCoordinator.addDirtySourceFile(this);
 
         return this;
     }
@@ -286,19 +286,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     _moveInternal(filePath: string, options: SourceFileMoveOptions = {}) {
         const {overwrite = false} = options;
-        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
         if (filePath === this.getFilePath())
             return false;
 
         if (overwrite) {
             // remove the past file if it exists
-            const existingSourceFile = this.context.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
+            const existingSourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
             if (existingSourceFile != null)
                 existingSourceFile.forget();
         }
         else
-            this.context.compilerFactory.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
+            this._context.compilerFactory.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
 
         replaceSourceFileForFilePathMove({
             newFilePath: filePath,
@@ -336,10 +336,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     async moveImmediately(filePath: string, options?: SourceFileMoveOptions): Promise<SourceFile> {
         const oldFilePath = this.getFilePath();
-        const newFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        const newFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
         this.move(filePath, options);
         if (oldFilePath !== newFilePath) {
-            await this.context.fileSystemWrapper.moveFileImmediately(oldFilePath, newFilePath, this.getFullText());
+            await this._context.fileSystemWrapper.moveFileImmediately(oldFilePath, newFilePath, this.getFullText());
             this._isSaved = true;
         }
         else
@@ -356,10 +356,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     moveImmediatelySync(filePath: string, options?: SourceFileMoveOptions): SourceFile {
         const oldFilePath = this.getFilePath();
-        const newFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        const newFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
         this.move(filePath, options);
         if (oldFilePath !== newFilePath) {
-            this.context.fileSystemWrapper.moveFileImmediatelySync(oldFilePath, newFilePath, this.getFullText());
+            this._context.fileSystemWrapper.moveFileImmediatelySync(oldFilePath, newFilePath, this.getFullText());
             this._isSaved = true;
         }
         else
@@ -375,7 +375,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     delete() {
         const filePath = this.getFilePath();
         this.forget();
-        this.context.fileSystemWrapper.queueFileDelete(filePath);
+        this._context.fileSystemWrapper.queueFileDelete(filePath);
     }
 
     /**
@@ -384,7 +384,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     async deleteImmediately() {
         const filePath = this.getFilePath();
         this.forget();
-        await this.context.fileSystemWrapper.deleteFileImmediately(filePath);
+        await this._context.fileSystemWrapper.deleteFileImmediately(filePath);
     }
 
     /**
@@ -393,14 +393,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     deleteImmediatelySync() {
         const filePath = this.getFilePath();
         this.forget();
-        this.context.fileSystemWrapper.deleteFileImmediatelySync(filePath);
+        this._context.fileSystemWrapper.deleteFileImmediatelySync(filePath);
     }
 
     /**
      * Asynchronously saves this file with any changes.
      */
     async save() {
-        await this.context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
+        await this._context.fileSystemWrapper.writeFile(this.getFilePath(), this._getTextForSave());
         this._isSaved = true;
     }
 
@@ -408,7 +408,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Synchronously saves this file with any changes.
      */
     saveSync() {
-        this.context.fileSystemWrapper.writeFileSync(this.getFilePath(), this._getTextForSave());
+        this._context.fileSystemWrapper.writeFileSync(this.getFilePath(), this._getTextForSave());
         this._isSaved = true;
     }
 
@@ -425,7 +425,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.referencedFiles || [])
-            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
+            .map(f => this._context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -436,7 +436,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.typeReferenceDirectives || [])
-            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
+            .map(f => this._context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -465,9 +465,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets all the descendant string literals that reference a source file.
      */
     getImportStringLiterals() {
-        this.ensureBound();
+        this._ensureBound();
         const literals = ((this.compilerNode as any).imports || []) as ts.StringLiteral[];
-        return literals.filter(l => (l.flags & ts.NodeFlags.Synthesized) === 0).map(l => this.getNodeFromCompilerNode(l));
+        return literals.filter(l => (l.flags & ts.NodeFlags.Synthesized) === 0).map(l => this._getNodeFromCompilerNode(l));
     }
 
     /**
@@ -495,7 +495,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets if the source file is from an external library.
      */
     isFromExternalLibrary() {
-        return this.context.program.isSourceFileFromExternalLibrary(this);
+        return this._context.program.isSourceFileFromExternalLibrary(this);
     }
 
     /**
@@ -509,7 +509,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Sets if this source file has been saved.
      * @internal
      */
-    setIsSaved(value: boolean) {
+    _setIsSaved(value: boolean) {
         this._isSaved = value;
     }
 
@@ -517,7 +517,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the pre-emit diagnostics of the specified source file.
      */
     getPreEmitDiagnostics(): Diagnostic[] {
-        return this.context.getPreEmitDiagnostics(this);
+        return this._context.getPreEmitDiagnostics(this);
     }
 
     /**
@@ -565,7 +565,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         const startLinePos = getPreviousMatchingPos(sourceFileText, positionRange[0], char => char === "\n");
         const endLinePos = getNextMatchingPos(sourceFileText, positionRange[1], char => char === "\r" || char === "\n");
-        const indentText = this.context.manipulationSettings.getIndentationText();
+        const indentText = this._context.manipulationSettings.getIndentationText();
 
         const correctedText = StringUtils.indent(sourceFileText.substring(startLinePos, endLinePos),
             times, indentText, pos => this.isInStringAtPos(pos + startLinePos));
@@ -582,7 +582,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Emits the source file.
      */
     emit(options?: SourceFileEmitOptions): EmitResult {
-        return this.context.program.emit({ targetSourceFile: this, ...options });
+        return this._context.program.emit({ targetSourceFile: this, ...options });
     }
 
     /**
@@ -590,7 +590,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param options - Emit options.
      */
     getEmitOutput(options: { emitOnlyDtsFiles?: boolean; } = {}): EmitOutput {
-        return this.context.languageService.getEmitOutput(this, options.emitOnlyDtsFiles || false);
+        return this._context.languageService.getEmitOutput(this, options.emitOnlyDtsFiles || false);
     }
 
     /**
@@ -600,7 +600,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     formatText(settings: FormatCodeSettings = {}) {
         replaceSourceFileTextForFormatting({
             sourceFile: this,
-            newText: this.context.languageService.getFormattedDocumentText(this.getFilePath(), settings)
+            newText: this._context.languageService.getFormattedDocumentText(this.getFilePath(), settings)
         });
     }
 
@@ -611,7 +611,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @returns What action ended up taking place.
      */
     async refreshFromFileSystem(): Promise<FileSystemRefreshResult> {
-        const fileReadResult = await this.context.fileSystemWrapper.readFileOrNotExists(this.getFilePath(), this.context.getEncoding());
+        const fileReadResult = await this._context.fileSystemWrapper.readFileOrNotExists(this.getFilePath(), this._context.getEncoding());
         return this._refreshFromFileSystemInternal(fileReadResult);
     }
 
@@ -622,7 +622,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @returns What action ended up taking place.
      */
     refreshFromFileSystemSync(): FileSystemRefreshResult {
-        const fileReadResult = this.context.fileSystemWrapper.readFileOrNotExistsSync(this.getFilePath(), this.context.getEncoding());
+        const fileReadResult = this._context.fileSystemWrapper.readFileOrNotExistsSync(this.getFilePath(), this._context.getEncoding());
         return this._refreshFromFileSystemInternal(fileReadResult);
     }
 
@@ -694,7 +694,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param userPreferences - User preferences for refactoring.
      */
     organizeImports(settings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
-        this.applyTextChanges(ArrayUtils.flatten(this.context.languageService.organizeImports(this, settings, userPreferences).map(r => r.getTextChanges())));
+        this.applyTextChanges(ArrayUtils.flatten(this._context.languageService.organizeImports(this, settings, userPreferences).map(r => r.getTextChanges())));
         return this;
     }
 
@@ -705,9 +705,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param textChanges - Text changes.
      */
     applyTextChanges(textChanges: ReadonlyArray<TextChange>) {
-        this.forgetChildren();
+        this._forgetChildren();
         replaceNodeText({
-            sourceFile: this.sourceFile,
+            sourceFile: this._sourceFile,
             start: 0,
             replacingLength: this.getFullWidth(),
             newText: getTextFromFormattingEdits(this, textChanges)
@@ -745,7 +745,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return FileSystemRefreshResult.NoChange;
 
         this.replaceText([0, this.getEnd()], fileText);
-        this.setIsSaved(true); // saved when loaded from file system
+        this._setIsSaved(true); // saved when loaded from file system
         return FileSystemRefreshResult.Updated;
     }
 }
@@ -753,6 +753,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 function updateStringLiteralReferences(nodeReferences: ReadonlyArray<[StringLiteral, SourceFile]>) {
     for (const [stringLiteral, sourceFile] of nodeReferences) {
         if (ModuleUtils.isModuleSpecifierRelative(stringLiteral.getLiteralText()))
-            stringLiteral.setLiteralValue(stringLiteral.sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile));
+            stringLiteral.setLiteralValue(stringLiteral._sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile));
     }
 }

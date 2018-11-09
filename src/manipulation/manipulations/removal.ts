@@ -54,7 +54,7 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
     if (children.length === 0)
         return;
 
-    doManipulation(children[0].sourceFile, new RemoveChildrenWithFormattingTextManipulator<TNode>({
+    doManipulation(children[0]._sourceFile, new RemoveChildrenWithFormattingTextManipulator<TNode>({
         children,
         getSiblingFormatting
     }), new NodeHandlerFactory().getForChildIndex({
@@ -161,7 +161,7 @@ export function removeClausedNodeChildren(nodes: Node[]) {
 }
 
 export function unwrapNode(node: Node) {
-    doManipulation(node.sourceFile,
+    doManipulation(node._sourceFile,
         new UnwrapTextManipulator(node),
         new NodeHandlerFactory().getForUnwrappingNode(node));
 }

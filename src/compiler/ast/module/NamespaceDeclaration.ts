@@ -63,7 +63,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         const nodes: Identifier[] = [];
         let current: NamespaceDeclaration | undefined = this;
         do {
-            nodes.push(this.getNodeFromCompilerNode(current.compilerNode.name));
+            nodes.push(this._getNodeFromCompilerNode(current.compilerNode.name));
             current = current.getFirstChildByKind(SyntaxKind.ModuleDeclaration);
         } while (current != null);
         return nodes;
@@ -167,7 +167,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     }
 
     /** @internal */
-    getInnerBody() {
+    _getInnerBody() {
         let node = this.getBody();
         while (TypeGuards.isBodiedNode(node) && (node.compilerNode as ts.Node as ts.Block).statements == null)
             node = node.getBody();

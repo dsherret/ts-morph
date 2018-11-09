@@ -35,7 +35,7 @@ export class RegularExpressionLiteral extends RegularExpressionLiteralBase<ts.Re
         }
 
         replaceNodeText({
-            sourceFile: this.sourceFile,
+            sourceFile: this._sourceFile,
             start: this.getStart(),
             replacingLength: this.getWidth(),
             newText: `/${pattern}/${flags || ""}`
