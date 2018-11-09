@@ -9,7 +9,7 @@ export class ThrowStatement extends ThrowStatementBase<ts.ThrowStatement> {
      * Gets the throw statement's expression.
      */
     getExpression(): Expression | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
     }
 
     /**

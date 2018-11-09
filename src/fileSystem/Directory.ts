@@ -27,13 +27,13 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
 }
 
 export class Directory {
-    private _context: ProjectContext | undefined;
+    private __context: ProjectContext | undefined;
     private _path!: string;
     private _pathParts!: string[];
 
     /** @private */
     constructor(context: ProjectContext, path: string) {
-        this._context = context;
+        this.__context = context;
         this._setPathInternal(path);
     }
 
@@ -44,9 +44,9 @@ export class Directory {
     }
 
     /** @internal */
-    get context() {
+    get _context() {
         this._throwIfDeletedOrRemoved();
-        return this._context!;
+        return this.__context!;
     }
 
     /**
@@ -54,7 +54,7 @@ export class Directory {
      * @param possibleDescendant - Directory or source file that's a possible descendant.
      */
     isAncestorOf(possibleDescendant: Directory | SourceFile) {
-        return Directory.isAncestorOfDir(this, possibleDescendant);
+        return Directory._isAncestorOfDir(this, possibleDescendant);
     }
 
     /**
@@ -62,14 +62,14 @@ export class Directory {
      * @param possibleAncestor - Directory or source file that's a possible ancestor.
      */
     isDescendantOf(possibleAncestor: Directory) {
-        return Directory.isAncestorOfDir(possibleAncestor, this);
+        return Directory._isAncestorOfDir(possibleAncestor, this);
     }
 
     /**
      * Gets the directory depth.
      * @internal
      */
-    getDepth() {
+    _getDepth() {
         return this._pathParts.length;
     }
 
@@ -117,7 +117,7 @@ export class Directory {
     getDirectoryOrThrow(pathOrCondition: string | ((directory: Directory) => boolean)) {
         return errors.throwIfNullOrUndefined(this.getDirectory(pathOrCondition), () => {
             if (typeof pathOrCondition === "string")
-                return `Could not find a directory at path '${this.context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath())}'.`;
+                return `Could not find a directory at path '${this._context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath())}'.`;
             return "Could not find child directory that matched condition.";
         });
     }
@@ -136,8 +136,8 @@ export class Directory {
     getDirectory(pathOrCondition: string | ((directory: Directory) => boolean)): Directory | undefined;
     getDirectory(pathOrCondition: string | ((directory: Directory) => boolean)) {
         if (typeof pathOrCondition === "string") {
-            const path = this.context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath());
-            return this.context.compilerFactory.getDirectoryFromCache(path);
+            const path = this._context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath());
+            return this._context.compilerFactory.getDirectoryFromCache(path);
         }
 
         return ArrayUtils.find(this.getDirectories(), pathOrCondition);
@@ -158,7 +158,7 @@ export class Directory {
     getSourceFileOrThrow(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
         return errors.throwIfNullOrUndefined(this.getSourceFile(pathOrCondition), () => {
             if (typeof pathOrCondition === "string")
-                return `Could not find child source file at path '${this.context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath())}'.`;
+                return `Could not find child source file at path '${this._context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath())}'.`;
             return "Could not find child source file that matched condition.";
         });
     }
@@ -177,8 +177,8 @@ export class Directory {
     getSourceFile(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)): SourceFile | undefined;
     getSourceFile(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
         if (typeof pathOrCondition === "string") {
-            const path = this.context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath());
-            return this.context.compilerFactory.getSourceFileFromCacheFromFilePath(path);
+            const path = this._context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath());
+            return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(path);
         }
 
         return ArrayUtils.find(this.getSourceFiles(), pathOrCondition);
@@ -188,49 +188,49 @@ export class Directory {
      * Gets the child directories.
      */
     getDirectories() {
-        return this.context.compilerFactory.getChildDirectoriesOfDirectory(this.getPath());
+        return this._context.compilerFactory.getChildDirectoriesOfDirectory(this.getPath());
     }
 
     /**
      * Gets the source files within this directory.
      */
     getSourceFiles() {
-        return this.context.compilerFactory.getChildSourceFilesOfDirectory(this.getPath());
+        return this._context.compilerFactory.getChildSourceFilesOfDirectory(this.getPath());
     }
 
     /**
      * Gets the source files in the current directory and all the descendant directories.
      */
     getDescendantSourceFiles() {
-        return ArrayUtils.from(this.getDescendantSourceFilesIterator());
+        return ArrayUtils.from(this._getDescendantSourceFilesIterator());
     }
 
     /**
      * Gets the source files in the current directory and all the descendant directories.
      * @internal
      */
-    *getDescendantSourceFilesIterator(): IterableIterator<SourceFile> {
+    *_getDescendantSourceFilesIterator(): IterableIterator<SourceFile> {
         for (const sourceFile of this.getSourceFiles())
             yield sourceFile;
         for (const directory of this.getDirectories())
-            yield* directory.getDescendantSourceFilesIterator();
+            yield* directory._getDescendantSourceFilesIterator();
     }
 
     /**
      * Gets the descendant directories.
      */
     getDescendantDirectories() {
-        return ArrayUtils.from(this.getDescendantDirectoriesIterator());
+        return ArrayUtils.from(this._getDescendantDirectoriesIterator());
     }
 
     /**
      * Gets the descendant directories.
      * @internal
      */
-    *getDescendantDirectoriesIterator(): IterableIterator<Directory> {
+    *_getDescendantDirectoriesIterator(): IterableIterator<Directory> {
         for (const directory of this.getDirectories()) {
             yield directory;
-            yield* directory.getDescendantDirectoriesIterator();
+            yield* directory._getDescendantDirectoriesIterator();
         }
     }
 
@@ -248,7 +248,7 @@ export class Directory {
             return FileUtils.pathJoin(this.getPath(), g);
         });
 
-        return this.context.directoryCoordinator.addExistingSourceFiles(fileGlobs);
+        return this._context.directoryCoordinator.addExistingSourceFiles(fileGlobs);
     }
 
     /**
@@ -260,8 +260,8 @@ export class Directory {
      * @skipOrThrowCheck
      */
     addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}) {
-        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this.context.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
+        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
+        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
     }
 
     /**
@@ -272,8 +272,8 @@ export class Directory {
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
     addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}) {
-        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this.context.directoryCoordinator.addExistingDirectory(dirPath, options);
+        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
+        return this._context.directoryCoordinator.addExistingDirectory(dirPath, options);
     }
 
     /**
@@ -281,8 +281,8 @@ export class Directory {
      * @param dirPath - Relative or absolute path to the directory that should be created.
      */
     createDirectory(dirPath: string) {
-        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this.context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath);
+        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
+        return this._context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath);
     }
 
     /**
@@ -314,8 +314,8 @@ export class Directory {
      */
     createSourceFile(relativeFilePath: string, structure: SourceFileStructure, options?: SourceFileCreateOptions): SourceFile;
     createSourceFile(relativeFilePath: string, structureOrText?: string | SourceFileStructure, options?: SourceFileCreateOptions) {
-        const filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this.context.compilerFactory.createSourceFile(filePath, structureOrText || "", options || {});
+        const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
+        return this._context.compilerFactory.createSourceFile(filePath, structureOrText || "", options || {});
     }
 
     /**
@@ -326,8 +326,8 @@ export class Directory {
      * @skipOrThrowCheck
      */
     addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
-        const filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this.context.directoryCoordinator.addExistingSourceFileIfExists(filePath);
+        const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
+        return this._context.directoryCoordinator.addExistingSourceFileIfExists(filePath);
     }
 
     /**
@@ -338,8 +338,8 @@ export class Directory {
      * @throws FileNotFoundError when the file doesn't exist.
      */
     addExistingSourceFile(relativeFilePath: string): SourceFile {
-        const filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this.context.directoryCoordinator.addExistingSourceFile(filePath);
+        const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
+        return this._context.directoryCoordinator.addExistingSourceFile(filePath);
     }
 
     /**
@@ -347,7 +347,7 @@ export class Directory {
      * @param options - Options for emitting.
      */
     async emit(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
-        const {fileSystemWrapper} = this.context;
+        const {fileSystemWrapper} = this._context;
         const writeTasks: Promise<void>[] = [];
         const outputFilePaths: string[] = [];
 
@@ -372,7 +372,7 @@ export class Directory {
      * @param options - Options for emitting.
      */
     emitSync(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
-        const {fileSystemWrapper} = this.context;
+        const {fileSystemWrapper} = this._context;
         const outputFilePaths: string[] = [];
 
         for (const emitResult of this._emitInternal(options)) {
@@ -392,9 +392,9 @@ export class Directory {
         const isJsFile = options.outDir == null ? undefined : /\.js$/i;
         const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
         const isDtsFile = options.declarationDir == null && options.outDir == null ? undefined : /\.d\.ts$/i;
-        const getStandardizedPath = (path: string | undefined) => path == null ? undefined : this.context.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
+        const getStandardizedPath = (path: string | undefined) => path == null ? undefined : this._context.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
         const getSubDirPath = (path: string | undefined, dir: Directory) => path == null ? undefined : FileUtils.pathJoin(path, dir.getBaseName());
-        const hasDeclarationDir = this.context.compilerOptions.get().declarationDir != null || options.declarationDir != null;
+        const hasDeclarationDir = this._context.compilerOptions.get().declarationDir != null || options.declarationDir != null;
 
         return emitDirectory(this, getStandardizedPath(options.outDir), getStandardizedPath(options.declarationDir));
 
@@ -443,8 +443,8 @@ export class Directory {
      */
     copy(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions) {
         const originalPath = this.getPath();
-        const fileSystem = this.context.fileSystemWrapper;
-        const newPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsolutePath, this.getPath());
+        const fileSystem = this._context.fileSystemWrapper;
+        const newPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsolutePath, this.getPath());
 
         if (originalPath === newPath)
             return this;
@@ -463,7 +463,7 @@ export class Directory {
      * @remarks If includeTrackedFiles is true, then it will execute the pending operations in the current directory.
      */
     async copyImmediately(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions) {
-        const fileSystem = this.context.fileSystemWrapper;
+        const fileSystem = this._context.fileSystemWrapper;
         const originalPath = this.getPath();
         const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
 
@@ -487,7 +487,7 @@ export class Directory {
      * @remarks If includeTrackedFiles is true, then it will execute the pending operations in the current directory.
      */
     copyImmediatelySync(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions) {
-        const fileSystem = this.context.fileSystemWrapper;
+        const fileSystem = this._context.fileSystemWrapper;
         const originalPath = this.getPath();
         const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
 
@@ -511,7 +511,7 @@ export class Directory {
         if (originalPath === newPath)
             return this;
 
-        const fileSystem = this.context.fileSystemWrapper;
+        const fileSystem = this._context.fileSystemWrapper;
         const copyingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
             directory,
             oldPath: directory.getPath(),
@@ -525,7 +525,7 @@ export class Directory {
 
         // copy directories
         for (const { directory, oldPath, newDirPath } of copyingDirectories)
-            this.context.compilerFactory.createDirectoryOrAddIfExists(newDirPath);
+            this._context.compilerFactory.createDirectoryOrAddIfExists(newDirPath);
 
         // copy source files
         for (const { sourceFile, newFilePath } of copyingSourceFiles)
@@ -535,7 +535,7 @@ export class Directory {
         for (const { references, newFilePath } of copyingSourceFiles)
             this.getSourceFileOrThrow(newFilePath)._updateReferencesForCopyInternal(references);
 
-        return this.context.compilerFactory.getDirectoryFromCache(newPath)!;
+        return this._context.compilerFactory.getDirectoryFromCache(newPath)!;
     }
 
     /**
@@ -554,7 +554,7 @@ export class Directory {
      * @param options - Options for moving the directory.
      */
     move(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions) {
-        const fileSystem = this.context.fileSystemWrapper;
+        const fileSystem = this._context.fileSystemWrapper;
         const originalPath = this.getPath();
         const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
 
@@ -571,7 +571,7 @@ export class Directory {
      * @param options - Options for moving the directory.
      */
     async moveImmediately(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions) {
-        const fileSystem = this.context.fileSystemWrapper;
+        const fileSystem = this._context.fileSystemWrapper;
         const originalPath = this.getPath();
         const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
 
@@ -592,7 +592,7 @@ export class Directory {
      * @param options - Options for moving the directory.
      */
     moveImmediatelySync(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions) {
-        const fileSystem = this.context.fileSystemWrapper;
+        const fileSystem = this._context.fileSystemWrapper;
         const originalPath = this.getPath();
         const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
 
@@ -614,8 +614,8 @@ export class Directory {
         if (originalPath === newPath)
             return this;
 
-        const fileSystem = this.context.fileSystemWrapper;
-        const compilerFactory = this.context.compilerFactory;
+        const fileSystem = this._context.fileSystemWrapper;
+        const compilerFactory = this._context.compilerFactory;
         const movingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
             directory,
             oldPath: directory.getPath(),
@@ -655,7 +655,7 @@ export class Directory {
      * The directory will be deleted when calling ast.save(). If you wish to delete the file immediately, then use deleteImmediately().
      */
     delete() {
-        const {fileSystemWrapper} = this.context;
+        const {fileSystemWrapper} = this._context;
         const path = this.getPath();
         for (const sourceFile of this.getSourceFiles())
             sourceFile.delete();
@@ -669,7 +669,7 @@ export class Directory {
      * Asyncronously deletes the directory and all its descendants from the file system.
      */
     async deleteImmediately() {
-        const {fileSystemWrapper} = this.context;
+        const {fileSystemWrapper} = this._context;
         const path = this.getPath();
         this.forget();
         await fileSystemWrapper.deleteDirectoryImmediately(path);
@@ -679,7 +679,7 @@ export class Directory {
      * Synchronously deletes the directory and all its descendants from the file system.
      */
     deleteImmediatelySync() {
-        const {fileSystemWrapper} = this.context;
+        const {fileSystemWrapper} = this._context;
         const path = this.getPath();
         this.forget();
         fileSystemWrapper.deleteDirectoryImmediatelySync(path);
@@ -708,15 +708,15 @@ export class Directory {
         if (this.wasForgotten())
             return;
 
-        this.context.compilerFactory.removeDirectoryFromCache(this.getPath());
-        this._context = undefined;
+        this._context.compilerFactory.removeDirectoryFromCache(this.getPath());
+        this.__context = undefined;
     }
 
     /**
      * Asynchronously saves the directory and all the unsaved source files to the disk.
      */
     async save() {
-        await this.context.fileSystemWrapper.saveForDirectory(this.getPath());
+        await this._context.fileSystemWrapper.saveForDirectory(this.getPath());
         const unsavedSourceFiles = this.getDescendantSourceFiles().filter(s => !s.isSaved());
         await Promise.all(unsavedSourceFiles.map(s => s.save()));
     }
@@ -725,7 +725,7 @@ export class Directory {
      * Synchronously saves the directory and all the unsaved source files to the disk.
      */
     saveSync() {
-        this.context.fileSystemWrapper.saveForDirectorySync(this.getPath());
+        this._context.fileSystemWrapper.saveForDirectorySync(this.getPath());
         const unsavedSourceFiles = this.getDescendantSourceFiles().filter(s => !s.isSaved());
         unsavedSourceFiles.forEach(s => s.saveSync());
     }
@@ -763,7 +763,7 @@ export class Directory {
     /** @internal */
     getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory): string;
     getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory) {
-        const moduleResolution = this.context.program.getEmitModuleResolutionKind();
+        const moduleResolution = this._context.program.getEmitModuleResolutionKind();
         const thisDirectory = this;
         const moduleSpecifier = FileUtils.getRelativePathTo(this.getPath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
         return StringUtils.startsWith(moduleSpecifier, "../") ? moduleSpecifier : "./" + moduleSpecifier;
@@ -804,12 +804,12 @@ export class Directory {
      * Gets if the directory was forgotten.
      */
     wasForgotten() {
-        return this._context == null;
+        return this.__context == null;
     }
 
     /** @internal */
     _hasLoadedParent() {
-        return this.context.compilerFactory.containsDirectoryAtPath(FileUtils.getDirPath(this.getPath()));
+        return this._context.compilerFactory.containsDirectoryAtPath(FileUtils.getDirPath(this.getPath()));
     }
 
     /** @internal */
@@ -829,12 +829,12 @@ export class Directory {
         const { literalReferences, referencingLiterals } = sourceFile._getReferencesForMoveInternal();
         return {
             literalReferences: literalReferences.filter(r => !this.isAncestorOf(r[1])),
-            referencingLiterals: referencingLiterals.filter(l => !this.isAncestorOf(l.sourceFile))
+            referencingLiterals: referencingLiterals.filter(l => !this.isAncestorOf(l._sourceFile))
         };
     }
 
     /** @internal */
-    private static isAncestorOfDir(ancestor: Directory, descendant: Directory | SourceFile) {
+    private static _isAncestorOfDir(ancestor: Directory, descendant: Directory | SourceFile) {
         if (descendant instanceof SourceFile) {
             descendant = descendant.getDirectory();
             if (ancestor === descendant)

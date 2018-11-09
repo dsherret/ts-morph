@@ -64,7 +64,7 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
             // ideally this wouldn't replace the existing syntax list
             insertIntoParentTextRange({
                 insertPos: pos,
-                newText: getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction),
+                newText: getTextFromStringOrWriter(this._getWriter(), textOrWriterFunction),
                 parent: childSyntaxList.getParentOrThrow(),
                 replacing: {
                     textLength: end - pos,

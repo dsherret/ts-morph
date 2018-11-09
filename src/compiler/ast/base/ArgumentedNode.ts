@@ -53,7 +53,7 @@ export interface ArgumentedNode {
 export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType>>(Base: T): Constructor<ArgumentedNode> & T {
     return class extends Base implements ArgumentedNode {
         getArguments() {
-            return this.compilerNode.arguments.map(a => this.getNodeFromCompilerNode(a));
+            return this.compilerNode.arguments.map(a => this._getNodeFromCompilerNode(a));
         }
 
         addArgument(argumentText: string | WriterFunction) {
@@ -78,7 +78,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
             const originalArgs = this.getArguments();
             index = verifyAndGetIndex(index, originalArgs.length);
 
-            const writer = this.getWriterWithQueuedChildIndentation();
+            const writer = this._getWriterWithQueuedChildIndentation();
             for (let i = 0; i < argumentTexts.length; i++) {
                 writer.conditionalWrite(i > 0, ", ");
                 printTextFromStringOrWriter(writer, argumentTexts[i]);

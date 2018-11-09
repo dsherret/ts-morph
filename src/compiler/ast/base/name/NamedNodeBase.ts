@@ -24,7 +24,7 @@ export function NamedNodeBase<TCompilerNode extends ts.Node, U extends Construct
 {
     return class extends Base implements NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>> {
         getNameNode() {
-            return this.getNodeFromCompilerNode(this.compilerNode.name);
+            return this._getNodeFromCompilerNode(this.compilerNode.name);
         }
 
         getName() {

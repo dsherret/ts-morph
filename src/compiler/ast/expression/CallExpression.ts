@@ -10,6 +10,6 @@ export class CallExpression<T extends ts.CallExpression = ts.CallExpression> ext
      * Gets the return type of the call expression.
      */
     getReturnType(): Type {
-        return this.context.typeChecker.getTypeAtLocation(this);
+        return this._context.typeChecker.getTypeAtLocation(this);
     }
 }

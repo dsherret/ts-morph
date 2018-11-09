@@ -581,7 +581,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                    this.context.structurePrinterFactory.forConstructorDeclaration({ isAmbient }).printTexts(writer, structures);
+                    this._context.structurePrinterFactory.forConstructorDeclaration({ isAmbient }).printTexts(writer, structures);
                     if (!isAmbient && info.nextMember != null)
                         writer.blankLineIfLastNot();
                     else
@@ -618,7 +618,11 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                    this.context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: TypeGuards.isAmbientableNode(this) && this.isAmbient() }).printTexts(writer, structures);
+
+                    this._context.structurePrinterFactory.forGetAccessorDeclaration({
+                        isAmbient: TypeGuards.isAmbientableNode(this) && this.isAmbient()
+                    }).printTexts(writer, structures);
+
                     if (info.nextMember != null)
                         writer.blankLineIfLastNot();
                     else
@@ -651,7 +655,11 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                    this.context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: TypeGuards.isAmbientableNode(this) && this.isAmbient() }).printTexts(writer, structures);
+
+                    this._context.structurePrinterFactory.forSetAccessorDeclaration({
+                        isAmbient: TypeGuards.isAmbientableNode(this) && this.isAmbient()
+                    }).printTexts(writer, structures);
+
                     if (info.nextMember != null)
                         writer.blankLineIfLastNot();
                     else
@@ -684,7 +692,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                    this.context.structurePrinterFactory.forPropertyDeclaration().printTexts(writer, structures);
+                    this._context.structurePrinterFactory.forPropertyDeclaration().printTexts(writer, structures);
                     if (info.nextMember != null && TypeGuards.hasBody(info.nextMember))
                         writer.blankLineIfLastNot();
                     else
@@ -814,7 +822,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                    this.context.structurePrinterFactory.forMethodDeclaration({ isAmbient }).printTexts(writer, structures);
+                    this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient }).printTexts(writer, structures);
                     if (!isAmbient && info.nextMember != null)
                         writer.blankLineIfLastNot();
                     else
@@ -938,7 +946,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return getAllMembers(this).filter(m => isSupportedClassMember(m)) as ClassMemberTypes[];
 
             function getAllMembers(classDec: Node<ts.ClassLikeDeclarationBase>) {
-                const members = classDec.compilerNode.members.map(m => classDec.getNodeFromCompilerNode(m));
+                const members = classDec.compilerNode.members.map(m => classDec._getNodeFromCompilerNode(m));
                 const isAmbient = TypeGuards.isAmbientableNode(classDec) && classDec.isAmbient();
 
                 // filter out the method declarations or constructor declarations without a body if not ambient

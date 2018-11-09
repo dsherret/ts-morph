@@ -10,14 +10,14 @@ export class TemplateExpression extends TemplateExpressionBase<ts.TemplateExpres
      * Gets the template head.
      */
     getHead(): TemplateHead {
-        return this.getNodeFromCompilerNode(this.compilerNode.head);
+        return this._getNodeFromCompilerNode(this.compilerNode.head);
     }
 
     /**
      * Gets the template spans.
      */
     getTemplateSpans() {
-        return this.compilerNode.templateSpans.map(s => this.getNodeFromCompilerNode(s));
+        return this.compilerNode.templateSpans.map(s => this._getNodeFromCompilerNode(s));
     }
 
     /**
@@ -31,7 +31,7 @@ export class TemplateExpression extends TemplateExpressionBase<ts.TemplateExpres
         const childIndex = this.getChildIndex();
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         replaceNodeText({
-            sourceFile: this.sourceFile,
+            sourceFile: this._sourceFile,
             start: this.getStart() + 1,
             replacingLength: this.getWidth() - 2,
             newText: value

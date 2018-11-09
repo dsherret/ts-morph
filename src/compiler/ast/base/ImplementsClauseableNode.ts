@@ -75,7 +75,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             else if (texts.length === 0)
                 return [];
 
-            const writer = this.getWriterWithQueuedChildIndentation();
+            const writer = this._getWriterWithQueuedChildIndentation();
             const structurePrinter = new CommaSeparatedStructuresPrinter<string>(new StringStructurePrinter());
 
             structurePrinter.printText(writer, texts);

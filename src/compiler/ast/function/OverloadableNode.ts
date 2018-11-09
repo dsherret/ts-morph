@@ -116,7 +116,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     }
 
     const indentationText = opts.node.getIndentationText();
-    const newLineKind = opts.node.context.manipulationSettings.getNewLineKindAsString();
+    const newLineKind = opts.node._context.manipulationSettings.getNewLineKindAsString();
 
     insertIntoParentTextRange({
         parent: parentSyntaxList,

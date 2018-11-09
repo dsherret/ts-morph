@@ -28,7 +28,7 @@ export class ChangeChildOrderParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const currentNodeChildren = this.getChildrenInNewOrder(currentNode.getCompilerChildren());
+        const currentNodeChildren = this.getChildrenInNewOrder(currentNode._getCompilerChildren());
         const newNodeChildren = newNode.getChildren(newSourceFile);
 
         errors.throwIfNotEqual(newNodeChildren.length, currentNodeChildren.length, "New children length should match the old children length.");

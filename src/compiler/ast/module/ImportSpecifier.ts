@@ -35,7 +35,7 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
      * Gets the name node of what's being imported.
      */
     getNameNode() {
-        return this.getNodeFromCompilerNode(this.compilerNode.propertyName || this.compilerNode.name);
+        return this._getNodeFromCompilerNode(this.compilerNode.propertyName || this.compilerNode.name);
     }
 
     /**
@@ -120,7 +120,7 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
     getAliasNode() {
         if (this.compilerNode.propertyName == null)
             return undefined;
-        return this.getNodeFromCompilerNode(this.compilerNode.name);
+        return this._getNodeFromCompilerNode(this.compilerNode.name);
     }
 
     /**

@@ -11,7 +11,7 @@ export class CaseClause extends CaseClauseBase<ts.CaseClause> {
      * Gets this switch statement's expression.
      */
     getExpression(): Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression);
+        return this._getNodeFromCompilerNode(this.compilerNode.expression);
     }
 
     /**

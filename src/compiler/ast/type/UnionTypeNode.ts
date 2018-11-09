@@ -6,6 +6,6 @@ export class UnionTypeNode extends TypeNode<ts.UnionTypeNode> {
      * Gets the union type nodes.
      */
     getTypeNodes(): TypeNode[] {
-        return this.compilerNode.types.map(t => this.getNodeFromCompilerNode(t));
+        return this.compilerNode.types.map(t => this._getNodeFromCompilerNode(t));
     }
 }

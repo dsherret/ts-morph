@@ -20,7 +20,7 @@ export function replaceNodeText(opts: ReplaceNodeTextOptions) {
             newText: opts.newText,
             replacingLength: opts.replacingLength
         }),
-        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile.context.compilerFactory));
+        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile._context.compilerFactory));
 }
 
 /**
@@ -32,7 +32,7 @@ export function replaceSourceFileTextForFormatting(opts: { sourceFile: SourceFil
     const {sourceFile, newText} = opts;
     doManipulation(sourceFile,
         new FullReplacementTextManipulator(newText),
-        new NodeHandlerFactory().getForStraightReplacement(sourceFile.context.compilerFactory));
+        new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory));
 }
 
 /**
@@ -44,7 +44,7 @@ export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; r
 
     doManipulation(sourceFile,
         new RenameLocationTextManipulator(renameLocations, newName),
-        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForForgetChanged(sourceFile.context.compilerFactory)));
+        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForForgetChanged(sourceFile._context.compilerFactory)));
 }
 
 export interface ReplaceTextPossiblyCreatingChildNodesOptions {
@@ -60,7 +60,7 @@ export interface ReplaceTextPossiblyCreatingChildNodesOptions {
 export function replaceTextPossiblyCreatingChildNodes(opts: ReplaceTextPossiblyCreatingChildNodesOptions) {
     const {replacePos, replacingLength, newText, parent} = opts;
 
-    doManipulation(parent.sourceFile, new InsertionTextManipulator({
+    doManipulation(parent._sourceFile, new InsertionTextManipulator({
         insertPos: replacePos,
         replacingLength,
         newText
@@ -84,7 +84,7 @@ export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFileP
 
     doManipulation(sourceFile,
         new UnchangedTextManipulator(),
-        new NodeHandlerFactory().getForStraightReplacement(sourceFile.context.compilerFactory),
+        new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory),
         newFilePath);
 }
 

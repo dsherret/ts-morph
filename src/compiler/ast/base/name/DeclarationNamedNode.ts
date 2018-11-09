@@ -56,7 +56,7 @@ function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNode
 
             switch (compilerNameNode.kind) {
                 case SyntaxKind.Identifier:
-                    return this.getNodeFromCompilerNode(compilerNameNode);
+                    return this._getNodeFromCompilerNode(compilerNameNode);
                 /* istanbul ignore next */
                 default:
                     throw errors.getNotImplementedForSyntaxKindError(compilerNameNode.kind);

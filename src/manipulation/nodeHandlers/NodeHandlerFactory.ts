@@ -57,7 +57,7 @@ export class NodeHandlerFactory {
     getDefault(opts: DefaultReplaceTreeOptions) {
         const {parent: changingParent, isFirstChild, childCount, customMappings} = opts;
         const sourceFile = changingParent.getSourceFile();
-        const compilerFactory = sourceFile.context.compilerFactory;
+        const compilerFactory = sourceFile._context.compilerFactory;
         const replacingNodes = opts.replacingNodes == null ? undefined : [...opts.replacingNodes];
 
         const parentHandler = new DefaultParentHandler(compilerFactory, { childCount, isFirstChild, replacingNodes, customMappings });
@@ -71,7 +71,7 @@ export class NodeHandlerFactory {
     getForRange(opts: ReplaceTreeWithRangeOptions) {
         const {parent: changingParent, start, end, replacingLength, replacingNodes, customMappings} = opts;
         const sourceFile = changingParent.getSourceFile();
-        const compilerFactory = sourceFile.context.compilerFactory;
+        const compilerFactory = sourceFile._context.compilerFactory;
 
         const parentHandler = new RangeParentHandler(compilerFactory, { start, end, replacingLength, replacingNodes, customMappings });
         if (changingParent === sourceFile)
@@ -113,7 +113,7 @@ export class NodeHandlerFactory {
     getForChangingChildOrder(opts: ReplaceTreeChangingChildOrderOptions) {
         const {parent: changingParent, oldIndex, newIndex} = opts;
         const sourceFile = changingParent.getSourceFile();
-        const compilerFactory = sourceFile.context.compilerFactory;
+        const compilerFactory = sourceFile._context.compilerFactory;
         const changeChildOrderParentHandler = new ChangeChildOrderParentHandler(compilerFactory, { oldIndex, newIndex });
 
         if (changingParent === sourceFile)
@@ -126,7 +126,7 @@ export class NodeHandlerFactory {
         const changingParent = unwrappingNode.getParentSyntaxList() || unwrappingNode.getParentOrThrow();
         const childIndex = unwrappingNode.getChildIndex();
         const sourceFile = changingParent.getSourceFile();
-        const compilerFactory = sourceFile.context.compilerFactory;
+        const compilerFactory = sourceFile._context.compilerFactory;
         const unwrapParentHandler = new UnwrapParentHandler(compilerFactory, childIndex);
 
         if (changingParent === sourceFile)

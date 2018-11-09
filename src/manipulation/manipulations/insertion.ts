@@ -25,7 +25,7 @@ export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions
     const {insertPos, newText, parent} = opts;
 
     // todo: this should only forget the existing node if the kind changes
-    doManipulation(parent.sourceFile,
+    doManipulation(parent._sourceFile,
         new InsertionTextManipulator({
             insertPos,
             newText,
@@ -56,7 +56,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     const { currentNodes, insertIndex, parent } = opts;
     const nextNode = currentNodes[insertIndex] as Node | undefined;
     const previousNode = currentNodes[insertIndex - 1] as Node | undefined;
-    const separator = opts.useNewLines ? parent.context.manipulationSettings.getNewLineKindAsString() : " ";
+    const separator = opts.useNewLines ? parent._context.manipulationSettings.getNewLineKindAsString() : " ";
     const parentNextSibling = parent.getNextSibling();
     const isContained = parentNextSibling != null && (
         parentNextSibling.getKind() === SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === SyntaxKind.CloseBracketToken
@@ -167,13 +167,13 @@ export interface InsertIntoBracesOrSourceFileOptions {
  */
 export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileOptions) {
     const { parent, index, children } = opts;
-    const fullText = parent.sourceFile.getFullText();
+    const fullText = parent._sourceFile.getFullText();
     const insertPos = getInsertPosFromIndex(index, parent.getChildSyntaxListOrThrow(), children);
     const endPos = getEndPosFromIndex(index, parent, children, fullText);
     const replacingLength = endPos - insertPos;
     const newText = getNewText();
 
-    doManipulation(parent.sourceFile, new InsertionTextManipulator({ insertPos, replacingLength, newText }), new NodeHandlerFactory().getForRange({
+    doManipulation(parent._sourceFile, new InsertionTextManipulator({ insertPos, replacingLength, newText }), new NodeHandlerFactory().getForRange({
         parent: parent.getChildSyntaxListOrThrow(),
         start: insertPos,
         end: insertPos + newText.length,
@@ -182,7 +182,7 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
 
     function getNewText() {
         // todo: make this configurable
-        const writer = parent.getWriterWithChildIndentation();
+        const writer = parent._getWriterWithChildIndentation();
         opts.write(writer, {
             previousMember: getChild(children[index - 1]),
             nextMember: getChild(children[index]),

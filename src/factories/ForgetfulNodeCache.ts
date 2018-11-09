@@ -56,7 +56,7 @@ export class ForgetfulNodeCache extends KeyValueCache<ts.Node, Node> {
         for (const node of nodes) {
             if (node.wasForgotten() || node.getKind() === SyntaxKind.SourceFile)
                 continue;
-            node.forgetOnlyThis();
+            node._forgetOnlyThis();
         }
     }
 }

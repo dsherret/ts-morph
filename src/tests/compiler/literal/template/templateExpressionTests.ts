@@ -33,7 +33,7 @@ describe(nameof(TemplateExpression), () => {
     describe(nameof<TemplateExpression>(n => n.setLiteralValue), () => {
         function doTest(text: string, newText: string, expectedText: string) {
             const expression = getExpression(text);
-            const sourceFile = expression.sourceFile;
+            const sourceFile = expression._sourceFile;
             expect(expression.setLiteralValue(newText).wasForgotten()).to.be.false;
             expect(sourceFile.getText()).to.equal(expectedText);
         }

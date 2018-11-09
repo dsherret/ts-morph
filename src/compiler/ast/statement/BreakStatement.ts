@@ -10,7 +10,7 @@ export class BreakStatement extends BreakStatementBase<ts.BreakStatement> {
      * Gets this break statement's label or undefined if it does not exist.
      */
     getLabel(): Identifier | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.label);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.label);
     }
 
     /**

@@ -7,7 +7,7 @@ export class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {
      * Gets the type name.
      */
     getTypeName(): EntityName {
-        return this.getNodeFromCompilerNode(this.compilerNode.typeName);
+        return this._getNodeFromCompilerNode(this.compilerNode.typeName);
     }
 
     /**
@@ -16,6 +16,6 @@ export class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {
     getTypeArguments(): TypeNode[] {
         if (this.compilerNode.typeArguments == null)
             return [];
-        return this.compilerNode.typeArguments.map(a => this.getNodeFromCompilerNode(a));
+        return this.compilerNode.typeArguments.map(a => this._getNodeFromCompilerNode(a));
     }
 }

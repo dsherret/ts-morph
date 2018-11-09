@@ -7,7 +7,7 @@ import { Symbol } from "./Symbol";
 
 export class Signature {
     /** @internal */
-    private readonly context: ProjectContext;
+    private readonly _context: ProjectContext;
     /** @internal */
     private readonly _compilerSignature: ts.Signature;
 
@@ -18,7 +18,7 @@ export class Signature {
      * @param signature - Compiler signature.
      */
     constructor(context: ProjectContext, signature: ts.Signature) {
-        this.context = context;
+        this._context = context;
         this._compilerSignature = signature;
     }
 
@@ -34,29 +34,29 @@ export class Signature {
      */
     getTypeParameters() {
         const typeParameters = this.compilerSignature.typeParameters || [];
-        return typeParameters.map(t => this.context.compilerFactory.getTypeParameter(t));
+        return typeParameters.map(t => this._context.compilerFactory.getTypeParameter(t));
     }
 
     /**
      * Gets the parameters.
      */
     getParameters(): Symbol[] {
-        return this.compilerSignature.parameters.map(p => this.context.compilerFactory.getSymbol(p));
+        return this.compilerSignature.parameters.map(p => this._context.compilerFactory.getSymbol(p));
     }
 
     /**
      * Gets the signature return type.
      */
     getReturnType(): Type {
-        return this.context.compilerFactory.getType(this.compilerSignature.getReturnType());
+        return this._context.compilerFactory.getType(this.compilerSignature.getReturnType());
     }
 
     /**
      * Get the documentation comments.
      */
     getDocumentationComments(): SymbolDisplayPart[] {
-        const docs = this.compilerSignature.getDocumentationComment(this.context.typeChecker.compilerObject);
-        return docs.map(d => this.context.compilerFactory.getSymbolDisplayPart(d));
+        const docs = this.compilerSignature.getDocumentationComment(this._context.typeChecker.compilerObject);
+        return docs.map(d => this._context.compilerFactory.getSymbolDisplayPart(d));
     }
 
     /**
@@ -64,6 +64,6 @@ export class Signature {
      */
     getJsDocTags(): JSDocTagInfo[] {
         const tags = this.compilerSignature.getJsDocTags();
-        return tags.map(t => this.context.compilerFactory.getJSDocTagInfo(t));
+        return tags.map(t => this._context.compilerFactory.getJSDocTagInfo(t));
     }
 }

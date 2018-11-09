@@ -3,10 +3,10 @@ import { ts } from "../../typescript";
 import { TypeGuards } from "../TypeGuards";
 
 export function isNodeAmbientOrInAmbientContext(node: Node) {
-    if (checkNodeIsAmbient(node) || node.sourceFile.isDeclarationFile())
+    if (checkNodeIsAmbient(node) || node._sourceFile.isDeclarationFile())
         return true;
 
-    for (const ancestor of node.getAncestorsIterator(false)) {
+    for (const ancestor of node._getAncestorsIterator(false)) {
         if (checkNodeIsAmbient(ancestor))
             return true;
     }

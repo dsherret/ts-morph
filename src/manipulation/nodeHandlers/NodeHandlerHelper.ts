@@ -31,7 +31,7 @@ export class NodeHandlerHelper {
         const hasChildren = (currentNode.compilerNode as any)._children != null;
 
         if (hasChildren)
-            return [currentNode.getCompilerChildren(), newNode.getChildren(newSourceFile)];
+            return [currentNode._getCompilerChildren(), newNode.getChildren(newSourceFile)];
 
         // great, we don't have to parse the tokens and we can instead just use ts.forEachChild (faster)
         return [getForEachChildren(currentNode.compilerNode), getForEachChildren(newNode)];

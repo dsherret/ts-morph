@@ -198,7 +198,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forImportDeclaration().printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forImportDeclaration().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => TypeGuards.isImportDeclaration(previousMember),
                         nextNewLine: nextMember => TypeGuards.isImportDeclaration(nextMember)
@@ -246,7 +246,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forExportDeclaration().printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forExportDeclaration().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember),
                         nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
@@ -294,7 +294,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forExportAssignment().printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forExportAssignment().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember),
                         nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)
@@ -331,7 +331,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
 
         getExportSymbols(): Symbol[] {
             const symbol = this.getSymbol();
-            return symbol == null ? [] : this.context.typeChecker.getExportsOfModule(symbol);
+            return symbol == null ? [] : this._context.typeChecker.getExportsOfModule(symbol);
         }
 
         getExportedDeclarations(): Node[] {

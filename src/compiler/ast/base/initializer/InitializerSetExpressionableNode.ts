@@ -39,7 +39,7 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
         }
 
         setInitializer(textOrWriterFunction: string | WriterFunction) {
-            const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
+            const text = getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction);
             errors.throwIfWhitespaceOrNotString(text, nameof(textOrWriterFunction));
 
             if (this.hasInitializer())

@@ -37,7 +37,7 @@ export class RangeParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode.getCompilerChildren()));
+        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
         const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(newNode.getChildren(newSourceFile)));
 
         // handle any custom mappings
@@ -75,7 +75,7 @@ export class RangeParentHandler implements NodeHandler {
         const customMappings = this.customMappings(newParentNode);
 
         for (const mapping of customMappings)
-            mapping.currentNode.context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
+            mapping.currentNode._context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
     }
 
     private straightReplace(currentNode: ts.Node, nextNode: ts.Node, newSourceFile: ts.SourceFile) {
