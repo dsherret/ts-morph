@@ -1,11 +1,11 @@
 {
   "name": "ts-simple-ast",
-  "version": "18.0.0",
+  "version": "18.0.1",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/main.js",
   "typings": "dist-declarations/ts-simple-ast.d.ts",
   "scripts": {
-    "dopublish": "yarn run type-check-docs && yarn run package && yarn run publish-code-verification && npm publish",
+    "dopublish": "yarn run type-check-docs && yarn run package && yarn run publish-code-verification && npm publish --otp",
     "lint": "yarn run lint-src && yarn run lint-scripts",
     "lint-src": "tslint \"src/**/*.ts\"",
     "lint-scripts": "tslint \"scripts/**/*.ts\"",

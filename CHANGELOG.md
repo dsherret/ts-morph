@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="18.0.1"></a>
+## [18.0.1](https://github.com/dsherret/ts-simple-ast/compare/18.0.0...18.0.1) (2018-11-10)
+
+
+### Bug Fixes
+
+* [#493](https://github.com/dsherret/ts-simple-ast/issues/493) - Renaming sometimes renamed at wrong text location. ([1f4316e](https://github.com/dsherret/ts-simple-ast/commit/1f4316e))
+
+
+
 <a name="18.0.0"></a>
 # [18.0.0](https://github.com/dsherret/ts-simple-ast/compare/17.1.1...18.0.0) (2018-10-28)
 
