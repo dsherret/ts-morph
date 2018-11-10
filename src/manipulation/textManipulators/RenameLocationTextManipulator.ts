@@ -6,17 +6,14 @@ export class RenameLocationTextManipulator implements TextManipulator {
     }
 
     getNewText(inputText: string) {
-        // todo: go in reverse so that the difference doesn't need to be kept track of
+        // get the rename locations in reverse order
+        const renameLocations = this.renameLocations.map(l => l.getTextSpan()).sort((a, b) => b.getStart() - a.getStart());
         let newFileText = inputText;
-        let difference = 0;
 
-        for (const textSpan of this.renameLocations.map(l => l.getTextSpan())) {
-            let start = textSpan.getStart();
-            let end = start + textSpan.getLength();
-            start -= difference;
-            end -= difference;
+        for (const textSpan of renameLocations) {
+            const start = textSpan.getStart();
+            const end = start + textSpan.getLength();
             newFileText = newFileText.substring(0, start) + this.newName + newFileText.substring(end);
-            difference += textSpan.getLength() - this.newName.length;
         }
 
         return newFileText;
