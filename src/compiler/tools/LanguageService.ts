@@ -242,7 +242,7 @@ export class LanguageService {
     getSuggestionDiagnostics(filePathOrSourceFile: SourceFile | string): DiagnosticWithLocation[] {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const suggestionDiagnostics = this.compilerObject.getSuggestionDiagnostics(filePath);
-        return suggestionDiagnostics.map(d => this.context.compilerFactory.getDiagnosticWithLocation(d));
+        return suggestionDiagnostics.map(d => this._context.compilerFactory.getDiagnosticWithLocation(d));
     }
 
     /**
