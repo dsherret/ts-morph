@@ -617,7 +617,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             if (stop || skip || up)
                 return;
 
-            forEachChildForNode(node);
+            if (!node.wasForgotten())
+                forEachChildForNode(node);
         };
         const arrayCallback = cbNodeArray == null ? undefined : (nodes: Node[]) => {
             if (stop)

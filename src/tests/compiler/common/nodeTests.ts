@@ -1455,6 +1455,23 @@ class MyClass {
                 "" // end of file token
             ]);
         });
+
+        it("should not error when the current node is forgotten/removed", () => {
+            const {sourceFile} = getInfoFromText("class Test {} interface Test2 {}");
+            const nodeTexts: string[] = [];
+            sourceFile.forEachDescendant(node => {
+                nodeTexts.push(node.getText());
+                if (TypeGuards.isClassDeclaration(node))
+                    node.remove();
+            });
+
+            expect(nodeTexts).to.deep.equal([
+                "class Test {}",
+                "interface Test2 {}",
+                "Test2",
+                "" // end of file token
+            ]);
+        });
     });
 
     describe(nameof<Node>(n => n.getNodeProperty), () => {
