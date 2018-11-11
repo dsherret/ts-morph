@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="18.1.0"></a>
+# [18.1.0](https://github.com/dsherret/ts-simple-ast/compare/18.0.1...18.1.0) (2018-11-11)
+
+
+### Bug Fixes
+
+* forEachDescendant would error when the node in the callback parameter was forgotten. ([152c785](https://github.com/dsherret/ts-simple-ast/commit/152c785))
+
+
+### Features
+
+Thanks to [@cancerberoSgx](https://github.com/cancerberoSgx) for both these features!
+
+* [#488](https://github.com/dsherret/ts-simple-ast/issues/488) - LanguageService - getSuggestionDiagnostics, getEditsForRefactor, getCodeFixesAtPosition ([9e42b10](https://github.com/dsherret/ts-simple-ast/commit/9e42b10))
+* [#491](https://github.com/dsherret/ts-simple-ast/issues/491) Project - applyFileTextChanges ([4de796c](https://github.com/dsherret/ts-simple-ast/commit/4de796c))
+
+
+
 <a name="18.0.1"></a>
 ## [18.0.1](https://github.com/dsherret/ts-simple-ast/compare/18.0.0...18.0.1) (2018-11-10)
 
