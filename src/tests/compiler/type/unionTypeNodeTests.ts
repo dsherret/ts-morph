@@ -10,7 +10,7 @@ describe(nameof(UnionTypeNode), () => {
 
     describe(nameof<UnionTypeNode>(d => d.getTypeNodes), () => {
         it("should get the type nodes of the union type nodes", () => {
-            const {descendant} = getNode("var t: string | number");
+            const { descendant } = getNode("var t: string | number");
             expect(descendant.getTypeNodes().map(t => t.getText())).to.deep.equal(["string", "number"]);
         });
     });

@@ -4,7 +4,7 @@ import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(PropertyAccessExpression), () => {
     function getPropertyAccessExpression(text: string) {
-        const {sourceFile} = getInfoFromText(text);
+        const { sourceFile } = getInfoFromText(text);
         return sourceFile.getVariableDeclarations()[0].getInitializerOrThrow() as PropertyAccessExpression;
     }
 

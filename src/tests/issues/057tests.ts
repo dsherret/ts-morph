@@ -10,7 +10,7 @@ export class Class {
 `;
 
 describe("tests for issue #57", () => {
-    const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+    const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
 
     it("should add the property", () => {
         firstChild.addProperty({

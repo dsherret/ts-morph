@@ -4,7 +4,7 @@ import { DiagnosticCategory } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Diagnostic), () => {
-    const {project, sourceFile} = getInfoFromText("const a: string;", { disableErrorCheck: true, includeLibDts: true });
+    const { project, sourceFile } = getInfoFromText("const a: string;", { disableErrorCheck: true, includeLibDts: true });
     project.createSourceFile("file.ts", "interface MyInterface { declare prop: string; }");
     const diagnostics = project.getPreEmitDiagnostics();
     const constError = diagnostics[1];

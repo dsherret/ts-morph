@@ -12,7 +12,7 @@ class Identifier {
     /** Other text */
     prop: string;
 }`;
-        const {firstChild} = getInfoFromText<ClassDeclaration>(text);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(text);
         firstChild.rename("NewName");
         firstChild.getInstanceProperties()[0].rename("newPropName");
         expect(firstChild.getFullText()).to.equal(text.replace("Identifier", "NewName").replace("prop", "newPropName"));

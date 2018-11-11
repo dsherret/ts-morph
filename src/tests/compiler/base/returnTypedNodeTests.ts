@@ -5,7 +5,7 @@ import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ReturnTypedNode), () => {
-    const {sourceFile: mainSourceFile} = getInfoFromText("function myImplicit() { return 5; }\nfunction myExplicit(): string { return ''; }");
+    const { sourceFile: mainSourceFile } = getInfoFromText("function myImplicit() { return 5; }\nfunction myExplicit(): string { return ''; }");
     const implicitDeclaration = mainSourceFile.getFunctions()[0];
     const explicitDeclaration = mainSourceFile.getFunctions()[1];
 
@@ -41,7 +41,7 @@ describe(nameof(ReturnTypedNode), () => {
 
     describe(nameof<ReturnTypedNode>(n => n.setReturnType), () => {
         function doTest(startText: string, returnType: string, expectedText: string) {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>(startText);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startText);
             firstChild.setReturnType(returnType);
             expect(firstChild.getText()).to.equal(expectedText);
         }
@@ -67,7 +67,7 @@ describe(nameof(ReturnTypedNode), () => {
         });
 
         function doWriterTest(startText: string, returnType: WriterFunction, expectedText: string) {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>(startText);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startText);
             firstChild.setReturnType(returnType);
             expect(firstChild.getText()).to.equal(expectedText);
         }
@@ -79,7 +79,7 @@ describe(nameof(ReturnTypedNode), () => {
 
     describe(nameof<ReturnTypedNode>(n => n.removeReturnType), () => {
         function doTest(startText: string, expectedText: string) {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>(startText);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startText);
             firstChild.removeReturnType();
             expect(firstChild.getText()).to.equal(expectedText);
         }
@@ -95,7 +95,7 @@ describe(nameof(ReturnTypedNode), () => {
 
     describe(nameof<FunctionDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: ReturnTypedNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }

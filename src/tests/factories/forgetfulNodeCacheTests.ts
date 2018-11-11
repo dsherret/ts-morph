@@ -5,7 +5,7 @@ import { getInfoFromText } from "../compiler/testHelpers";
 
 describe(nameof(ForgetfulNodeCache), () => {
     it("should forget nodes created after a forget point", () => {
-        const {firstChild} = getInfoFromText("class MyClass { prop: string; }");
+        const { firstChild } = getInfoFromText("class MyClass { prop: string; }");
         const cache = new ForgetfulNodeCache();
         cache.getOrCreate(firstChild.compilerNode, () => firstChild);
 

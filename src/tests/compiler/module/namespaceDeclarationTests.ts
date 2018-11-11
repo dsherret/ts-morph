@@ -7,7 +7,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(NamespaceDeclaration), () => {
     describe(nameof<NamespaceDeclaration>(d => d.getName), () => {
         function doTest(text: string, expectedName: string) {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             expect(firstChild.getName()).to.equal(expectedName);
         }
 
@@ -22,7 +22,7 @@ describe(nameof(NamespaceDeclaration), () => {
 
     describe(nameof<NamespaceDeclaration>(d => d.getNameNodes), () => {
         function doTest(text: string, expectedNames: string[]) {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             expect(firstChild.getNameNodes().map(n => n.getText())).to.deep.equal(expectedNames);
         }
 
@@ -56,12 +56,12 @@ describe(nameof(NamespaceDeclaration), () => {
         });
 
         it("should throw an exception when passing in a name with a period", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace {}");
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace {}");
             expect(() => firstChild.rename("NewName.Inner")).to.throw(errors.NotSupportedError);
         });
 
         it("should throw an exception when renaming a namespace whose name uses dot notation", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace.MyInner {}");
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace.MyInner {}");
             expect(() => firstChild.rename("NewName")).to.throw(errors.NotSupportedError);
         });
     });
@@ -86,19 +86,19 @@ describe(nameof(NamespaceDeclaration), () => {
         });
 
         it("should throw an exception when using dot notation because it's not implemented", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace {}");
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace {}");
             expect(() => firstChild.setName("NewName.NewName")).to.throw(errors.NotImplementedError);
         });
 
         it("should throw an exception when setting a namepsace name that already uses dot notation because it's not implemented", () => {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace.Name {}");
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace.Name {}");
             expect(() => firstChild.setName("NewName")).to.throw(errors.NotImplementedError);
         });
     });
 
     describe(nameof<NamespaceDeclaration>(d => d.hasNamespaceKeyword), () => {
         function doTest(text: string, expected: boolean) {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             expect(firstChild.hasNamespaceKeyword()).to.equal(expected);
         }
 
@@ -117,7 +117,7 @@ describe(nameof(NamespaceDeclaration), () => {
 
     describe(nameof<NamespaceDeclaration>(d => d.hasModuleKeyword), () => {
         function doTest(text: string, expected: boolean) {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             expect(firstChild.hasModuleKeyword()).to.equal(expected);
         }
 
@@ -136,7 +136,7 @@ describe(nameof(NamespaceDeclaration), () => {
 
     describe(nameof<NamespaceDeclaration>(d => d.getDeclarationKind), () => {
         function doTest(text: string, expected: NamespaceDeclarationKind) {
-            const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             expect(firstChild.getDeclarationKind()).to.equal(expected);
         }
 
@@ -210,7 +210,7 @@ describe(nameof(NamespaceDeclaration), () => {
 
     describe(nameof<NamespaceDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: Partial<NamespaceDeclarationStructure>, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -291,7 +291,7 @@ export declare module Identifier {
 
     describe(nameof<NamespaceDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getNamespaces()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

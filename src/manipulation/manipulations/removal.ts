@@ -15,7 +15,7 @@ export interface RemoveChildrenOptions {
 }
 
 export function removeChildren(opts: RemoveChildrenOptions) {
-    const {children} = opts;
+    const { children } = opts;
     if (children.length === 0)
         return;
 
@@ -34,7 +34,7 @@ export interface RemoveChildrenWithFormattingOptions<TNode extends Node> {
 }
 
 export function removeChildrenWithFormattingFromCollapsibleSyntaxList<TNode extends Node>(opts: RemoveChildrenWithFormattingOptions<TNode>) {
-    const {children} = opts;
+    const { children } = opts;
     if (children.length === 0)
         return;
 
@@ -50,7 +50,7 @@ export function removeChildrenWithFormattingFromCollapsibleSyntaxList<TNode exte
 }
 
 export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChildrenWithFormattingOptions<TNode>) {
-    const {children, getSiblingFormatting} = opts;
+    const { children, getSiblingFormatting } = opts;
     if (children.length === 0)
         return;
 

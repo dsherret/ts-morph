@@ -8,7 +8,7 @@ describe(nameof(BodyableNode), () => {
     describe(nameof<BodyableNode>(n => n.setBodyText), () => {
         describe("using a writer", () => {
             function doTest(startCode: string, writerFunc: WriterFunction, expectedCode: string) {
-                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+                const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
                 firstChild.setBodyText(writerFunc);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -32,7 +32,7 @@ describe(nameof(BodyableNode), () => {
 
         describe("class method", () => {
             function doTest(startCode: string, newText: string, expectedCode: string) {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+                const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
                 firstChild.getInstanceMethods()[0].setBodyText(newText);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -52,7 +52,7 @@ describe(nameof(BodyableNode), () => {
 
         describe("function", () => {
             function doTest(startCode: string, newText: string, expectedCode: string) {
-                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+                const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
                 firstChild.setBodyText(newText);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -85,7 +85,7 @@ describe(nameof(BodyableNode), () => {
 
         describe("nested function", () => {
             function doTest(startCode: string, newText: string, expectedCode: string) {
-                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+                const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
                 firstChild.getFunctions()[0].setBodyText(newText);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }

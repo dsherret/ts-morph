@@ -10,7 +10,7 @@ describe(nameof(TupleTypeNode), () => {
 
     describe(nameof<TupleTypeNode>(d => d.getElementTypeNodes), () => {
         it("should get the element type nodes of the tuple type node", () => {
-            const {descendant} = getNode("var t: [string, number];");
+            const { descendant } = getNode("var t: [string, number];");
             expect(descendant.getElementTypeNodes().map(t => t.getText())).to.deep.equal(["string", "number"]);
         });
     });

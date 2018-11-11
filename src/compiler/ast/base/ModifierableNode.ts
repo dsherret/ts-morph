@@ -103,7 +103,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
                 return existingModifier;
 
             // get insert position & index
-            const {insertPos, insertIndex} = getInsertInfo(this);
+            const { insertPos, insertIndex } = getInsertInfo(this);
 
             // insert setup
             let startPos: number;

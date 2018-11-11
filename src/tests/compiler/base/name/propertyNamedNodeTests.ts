@@ -11,7 +11,7 @@ function getInfoFromTextWithFirstInterfaceProperty(text: string) {
 describe(nameof(PropertyNamedNode), () => {
     describe(nameof<PropertyNamedNode>(n => n.rename), () => {
         function renameTest(startText: string, newName: string, expectedText: string) {
-            const {firstProp, sourceFile, project} = getInfoFromTextWithFirstInterfaceProperty(startText);
+            const { firstProp, sourceFile, project } = getInfoFromTextWithFirstInterfaceProperty(startText);
             firstProp.rename(newName);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -28,7 +28,7 @@ describe(nameof(PropertyNamedNode), () => {
         });
 
         function throwTest(text: any) {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty("interface MyInterface { prop: string; }");
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface MyInterface { prop: string; }");
             expect(() => firstProp.rename(text)).to.throw();
         }
 
@@ -51,50 +51,50 @@ describe(nameof(PropertyNamedNode), () => {
 
     describe(nameof<PropertyNamedNode>(n => n.getName), () => {
         it("should get the name when regularly named", () => {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty("interface identifier { prop: string; }");
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { prop: string; }");
             expect(firstProp.getName()).to.equal("prop");
         });
 
         it("should get the name when a string literal", () => {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty("interface identifier { 'str': string; }");
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { 'str': string; }");
             expect(firstProp.getName()).to.equal("'str'");
         });
 
         it("should get the name when a numeric literal", () => {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty("interface identifier { 5: string; }");
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { 5: string; }");
             expect(firstProp.getName()).to.equal("5");
         });
 
         it("should get the name when a computed property", () => {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty("interface identifier { [5]: string; }");
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { [5]: string; }");
             expect(firstProp.getName()).to.equal("[5]");
         });
     });
 
     describe(nameof<PropertyNamedNode>(n => n.getNameNode), () => {
         it("should get a regularly named node property", () => {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty("interface identifier { prop: string; }");
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { prop: string; }");
             const nameNode = firstProp.getNameNode();
             expect(nameNode.getText()).to.equal("prop");
             expect(nameNode).to.be.instanceOf(Identifier);
         });
 
         it("should get a string literal property", () => {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty("interface identifier { 'str': string; }");
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { 'str': string; }");
             const nameNode = firstProp.getNameNode();
             expect(nameNode.getText()).to.equal("'str'");
             expect(nameNode).to.be.instanceOf(StringLiteral);
         });
 
         it("should get a numeric literal property", () => {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty("interface identifier { 5: string; }");
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { 5: string; }");
             const nameNode = firstProp.getNameNode();
             expect(nameNode.getText()).to.equal("5");
             expect(nameNode).to.be.instanceOf(NumericLiteral);
         });
 
         it("should get a computed property name", () => {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty("interface identifier { [5]: string; }");
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { [5]: string; }");
             const nameNode = firstProp.getNameNode();
             expect(nameNode.getText()).to.equal("[5]");
             expect(nameNode).to.be.instanceOf(ComputedPropertyName);

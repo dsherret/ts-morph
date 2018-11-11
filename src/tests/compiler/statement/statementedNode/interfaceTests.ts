@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertInterfaces), () => {
         function doTest(startCode: string, index: number, structures: InterfaceDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertInterfaces(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -37,7 +37,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should have the expected text adding to non-source file", () => {
-            const {sourceFile} = getInfoFromText("namespace Namespace {\n}\n");
+            const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertInterfaces(0, [{
                 name: "Identifier"
@@ -74,7 +74,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.insertInterface), () => {
         function doTest(startCode: string, index: number, structure: InterfaceDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertInterface(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
@@ -87,7 +87,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addInterfaces), () => {
         function doTest(startCode: string, structures: InterfaceDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addInterfaces(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -101,7 +101,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addInterface), () => {
         function doTest(startCode: string, structure: InterfaceDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addInterface(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
@@ -113,7 +113,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getInterfaces), () => {
-        const {sourceFile} = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
+        const { sourceFile } = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
         const interfaces = sourceFile.getInterfaces();
 
         it("should have the expected number of interfaces", () => {
@@ -131,7 +131,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getInterface), () => {
-        const {sourceFile} = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
+        const { sourceFile } = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
 
         it("should get an interface by a name", () => {
             expect(sourceFile.getInterface("Identifier2")!.getName()).to.equal("Identifier2");
@@ -147,7 +147,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getInterfaceOrThrow), () => {
-        const {sourceFile} = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
+        const { sourceFile } = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
 
         it("should get an interface by a name", () => {
             expect(sourceFile.getInterfaceOrThrow("Identifier2").getName()).to.equal("Identifier2");

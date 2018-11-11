@@ -6,7 +6,7 @@ import { getInfoFromTextWithDescendant } from "../testHelpers";
 describe(nameof(MetaProperty), () => {
     describe(nameof<MetaProperty>(n => n.getKeywordToken), () => {
         function doTest(text: string, expectedText: SyntaxKind) {
-            const {descendant} = getInfoFromTextWithDescendant<MetaProperty>(text, SyntaxKind.MetaProperty);
+            const { descendant } = getInfoFromTextWithDescendant<MetaProperty>(text, SyntaxKind.MetaProperty);
             expect(descendant.getKeywordToken()).to.equal(expectedText);
         }
 

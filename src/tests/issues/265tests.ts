@@ -8,7 +8,7 @@ describe("tests for issue #265", () => {
 class Identifier {
     method() {};
 }`;
-        const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
+        const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
         expect(() => firstChild.getStaticMembers()).to.not.throw();
     });
 });

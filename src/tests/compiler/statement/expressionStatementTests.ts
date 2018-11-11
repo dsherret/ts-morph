@@ -5,7 +5,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(ExpressionStatement), () => {
     describe(nameof<ExpressionStatement>(d => d.getExpression), () => {
         it("should get the expression", () => {
-            const {firstChild} = getInfoFromText<ExpressionStatement>("hello();");
+            const { firstChild } = getInfoFromText<ExpressionStatement>("hello();");
             expect(firstChild.getText()).to.equal("hello();");
             expect(firstChild.getExpression().getText()).to.equal("hello()");
         });
@@ -13,7 +13,7 @@ describe(nameof(ExpressionStatement), () => {
 
     describe(nameof<ExpressionStatement>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             (sourceFile.getChildSyntaxListOrThrow().getChildren()[index] as ExpressionStatement).remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

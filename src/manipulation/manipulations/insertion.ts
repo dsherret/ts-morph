@@ -22,7 +22,7 @@ export interface InsertIntoParentTextRangeOptions {
  * Inserts a text range into a parent.
  */
 export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions) {
-    const {insertPos, newText, parent} = opts;
+    const { insertPos, newText, parent } = opts;
 
     // todo: this should only forget the existing node if the kind changes
     doManipulation(parent._sourceFile,

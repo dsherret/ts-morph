@@ -11,7 +11,7 @@ describe(nameof(PropertySignature), () => {
 
     describe(nameof<PropertySignature>(n => n.set), () => {
         function doTest(code: string, structure: Partial<PropertySignatureStructure>, expectedCode: string) {
-            const {firstProperty, sourceFile} = getFirstPropertyWithInfo(code);
+            const { firstProperty, sourceFile } = getFirstPropertyWithInfo(code);
             firstProperty.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -27,7 +27,7 @@ describe(nameof(PropertySignature), () => {
 
     describe(nameof<PropertySignature>(n => n.remove), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getProperty(nameToRemove)!.remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

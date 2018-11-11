@@ -18,7 +18,7 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
     }
 
     getNewText(inputText: string) {
-        const {children, getSiblingFormatting} = this.opts;
+        const { children, getSiblingFormatting } = this.opts;
         const parent = children[0].getParentOrThrow() as TNode;
         const sourceFile = parent.getSourceFile();
         const fullText = sourceFile.getFullText();

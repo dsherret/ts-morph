@@ -10,7 +10,7 @@ describe(nameof(ArrayTypeNode), () => {
 
     describe(nameof<ArrayTypeNode>(d => d.getElementTypeNode), () => {
         it("should get the element type node", () => {
-            const {descendant} = getNode("var t: string[]");
+            const { descendant } = getNode("var t: string[]");
             expect(descendant.getElementTypeNode().getText()).to.equal("string");
         });
     });

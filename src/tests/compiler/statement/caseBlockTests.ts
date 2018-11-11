@@ -25,7 +25,7 @@ describe(nameof(CaseBlock), () => {
     const switchStatement = makeSwitch([firstCase, secondCase, defaultCase]);
     describe(nameof<CaseBlock>(s => s.getClauses), () => {
         function doTest(code: string, clauses: string[]) {
-            const {caseBlock} = getCaseBlock(code);
+            const { caseBlock } = getCaseBlock(code);
             expect(caseBlock.getClauses().map(s => s.getText())).to.deep.equal(clauses);
         }
 
@@ -36,7 +36,7 @@ describe(nameof(CaseBlock), () => {
 
     describe(nameof<CaseBlock>(s => s.removeClauses), () => {
         function doTest(code: string, range: [number, number], expectedCode: string) {
-            const {sourceFile, caseBlock} = getCaseBlock(code);
+            const { sourceFile, caseBlock } = getCaseBlock(code);
             const nodes = caseBlock.removeClauses(range);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -56,13 +56,13 @@ describe(nameof(CaseBlock), () => {
 
     describe(nameof<CaseBlock>(s => s.removeClause), () => {
         function doTest(code: string, index: number, expectedCode: string) {
-            const {sourceFile, caseBlock} = getCaseBlock(code);
+            const { sourceFile, caseBlock } = getCaseBlock(code);
             caseBlock.removeClause(index);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should throw when specifying an invalid index", () => {
-            const {caseBlock} = getCaseBlock(switchStatement);
+            const { caseBlock } = getCaseBlock(switchStatement);
             expect(() => caseBlock.removeClause(5)).to.throw();
         });
 

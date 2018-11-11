@@ -6,7 +6,7 @@ import { getInfoFromTextWithDescendant } from "../../testHelpers";
 describe(nameof(SuperExpressionedNode), () => {
     describe(nameof<SuperExpressionedNode>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {descendant} = getInfoFromTextWithDescendant<PropertyAccessExpression>(text, SyntaxKind.PropertyAccessExpression);
+            const { descendant } = getInfoFromTextWithDescendant<PropertyAccessExpression>(text, SyntaxKind.PropertyAccessExpression);
             expect(descendant.getExpression().getText()).to.equal(expectedText);
         }
 

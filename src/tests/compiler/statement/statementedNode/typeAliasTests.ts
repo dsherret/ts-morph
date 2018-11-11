@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertTypeAliases), () => {
         function doTest(startCode: string, index: number, structures: TypeAliasDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAliases(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -45,7 +45,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should have the expected text adding to non-source file", () => {
-            const {sourceFile} = getInfoFromText("namespace Identifier {\n}\n");
+            const { sourceFile } = getInfoFromText("namespace Identifier {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertTypeAliases(0, [{
                 name: "Identifier",
@@ -72,7 +72,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.insertTypeAlias), () => {
         function doTest(startCode: string, index: number, structure: TypeAliasDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAlias(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(TypeAliasDeclaration);
@@ -85,7 +85,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addTypeAliases), () => {
         function doTest(startCode: string, structures: TypeAliasDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addTypeAliases(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -99,7 +99,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addTypeAlias), () => {
         function doTest(startCode: string, structure: TypeAliasDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addTypeAlias(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(TypeAliasDeclaration);
@@ -111,7 +111,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getTypeAliases), () => {
-        const {sourceFile} = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
+        const { sourceFile } = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
         const typeAliases = sourceFile.getTypeAliases();
 
         it("should have the expected number of typeAliases", () => {
@@ -129,7 +129,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getTypeAlias), () => {
-        const {sourceFile} = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
+        const { sourceFile } = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
 
         it("should get a type alias by a name", () => {
             expect(sourceFile.getTypeAlias("Identifier2")!.getName()).to.equal("Identifier2");
@@ -145,7 +145,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getTypeAliasOrThrow), () => {
-        const {sourceFile} = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
+        const { sourceFile } = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
 
         it("should get a type alias by a name", () => {
             expect(sourceFile.getTypeAliasOrThrow("Identifier2").getName()).to.equal("Identifier2");

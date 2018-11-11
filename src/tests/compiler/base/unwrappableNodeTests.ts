@@ -5,7 +5,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(UnwrappableNode), () => {
     describe(nameof<UnwrappableNode>(n => n.unwrap), () => {
         function doTest(startCode: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText(startCode);
+            const { firstChild, sourceFile } = getInfoFromText(startCode);
             const nodeInBody = firstChild.getChildSyntaxListOrThrow().getChildren()[0];
             (firstChild as any as UnwrappableNode).unwrap();
             expect(() => firstChild.compilerNode).to.throw(); // should be forgotten

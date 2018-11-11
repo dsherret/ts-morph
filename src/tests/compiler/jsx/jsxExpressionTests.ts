@@ -10,7 +10,7 @@ function getInfo(text: string) {
 describe(nameof(JsxExpression), () => {
     describe(nameof<JsxExpression>(n => n.getExpression), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             if (expected == null)
                 expect(descendant.getExpression()).to.be.undefined;
             else
@@ -28,7 +28,7 @@ describe(nameof(JsxExpression), () => {
 
     describe(nameof<JsxExpression>(n => n.getExpressionOrThrow), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             if (expected == null)
                 expect(() => descendant.getExpressionOrThrow()).to.throw();
             else
@@ -46,7 +46,7 @@ describe(nameof(JsxExpression), () => {
 
     describe(nameof<JsxExpression>(n => n.getDotDotDotToken), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             if (expected == null)
                 expect(descendant.getDotDotDotToken()).to.be.undefined;
             else
@@ -64,7 +64,7 @@ describe(nameof(JsxExpression), () => {
 
     describe(nameof<JsxExpression>(n => n.getDotDotDotTokenOrThrow), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             if (expected == null)
                 expect(() => descendant.getDotDotDotTokenOrThrow()).to.throw();
             else

@@ -5,7 +5,7 @@ import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ModifierableNode), () => {
     describe(nameof<ModifierableNode>(n => n.getFirstModifierByKind), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+        const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should return the modifier when it exists", () => {
             expect(firstChild.getFirstModifierByKind(SyntaxKind.ExportKeyword)).to.not.be.undefined;
         });
@@ -16,7 +16,7 @@ describe(nameof(ModifierableNode), () => {
     });
 
     describe(nameof<ModifierableNode>(n => n.getFirstModifierByKindOrThrow), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+        const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should return the modifier when it exists", () => {
             expect(firstChild.getFirstModifierByKindOrThrow(SyntaxKind.ExportKeyword)).to.not.be.undefined;
         });
@@ -27,7 +27,7 @@ describe(nameof(ModifierableNode), () => {
     });
 
     describe(nameof<ModifierableNode>(n => n.hasModifier), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+        const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         describe("providing string", () => {
             it("should be true when it does", () => {
                 expect(firstChild.hasModifier("export")).to.be.true;
@@ -50,7 +50,7 @@ describe(nameof(ModifierableNode), () => {
     });
 
     describe(nameof<ModifierableNode>(n => n.getModifiers), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("export abstract class Identifier {}");
+        const { firstChild } = getInfoFromText<ClassDeclaration>("export abstract class Identifier {}");
         const modifiers = firstChild.getModifiers();
 
         it("should get all the modifiers", () => {
@@ -65,14 +65,14 @@ describe(nameof(ModifierableNode), () => {
 
     describe(nameof<ModifierableNode>(n => n.addModifier), () => {
         it("should add a modifier in the correct order in a simple scenario", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.addModifier("abstract");
             firstChild.addModifier("export");
             expect(firstChild.getText()).to.equal("export abstract class Identifier {}");
         });
 
         it("should add a modifier in the correct order in an advanced scenario", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.addModifier("export");
             firstChild.addModifier("abstract");
             firstChild.addModifier("declare");
@@ -80,20 +80,20 @@ describe(nameof(ModifierableNode), () => {
         });
 
         it("should not add the same modifier twice", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.addModifier("export");
             firstChild.addModifier("export");
             expect(firstChild.getText()).to.equal("export class Identifier {}");
         });
 
         it("should add when there's a decorator", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("@dec class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("@dec class Identifier {}");
             firstChild.addModifier("export");
             expect(firstChild.getText()).to.equal("@dec export class Identifier {}");
         });
 
         it("should add when there's a js doc", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("/** Test */ class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("/** Test */ class Identifier {}");
             firstChild.addModifier("export");
             expect(firstChild.getFullText()).to.equal("/** Test */ export class Identifier {}");
         });
@@ -101,37 +101,37 @@ describe(nameof(ModifierableNode), () => {
 
     describe(nameof<ModifierableNode>(n => n.toggleModifier), () => {
         it("should add a modifier when toggling on", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.toggleModifier("export");
             expect(firstChild.getText()).to.equal("export class Identifier {}");
         });
 
         it("should remove the modifier when toggling off", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
             firstChild.toggleModifier("export");
             expect(firstChild.getText()).to.equal("class Identifier {}");
         });
 
         it("should use the value for toggling that's provided when toggling on and on", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
             firstChild.toggleModifier("export", true);
             expect(firstChild.getText()).to.equal("export class Identifier {}");
         });
 
         it("should use the value for toggling that's provided when toggling on and off", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.toggleModifier("export", true);
             expect(firstChild.getText()).to.equal("export class Identifier {}");
         });
 
         it("should use the value for toggling that's provided when toggling off and on", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
             firstChild.toggleModifier("export", false);
             expect(firstChild.getText()).to.equal("class Identifier {}");
         });
 
         it("should use the value for toggling that's provided when toggling off and off", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.toggleModifier("export", false);
             expect(firstChild.getText()).to.equal("class Identifier {}");
         });

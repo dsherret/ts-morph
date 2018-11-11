@@ -11,7 +11,7 @@ describe(nameof(MethodSignature), () => {
 
     describe(nameof<MethodSignature>(n => n.set), () => {
         function doTest(code: string, structure: Partial<MethodSignatureStructure>, expectedCode: string) {
-            const {firstMethod, sourceFile} = getFirstMethodWithInfo(code);
+            const { firstMethod, sourceFile } = getFirstMethodWithInfo(code);
             firstMethod.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -27,7 +27,7 @@ describe(nameof(MethodSignature), () => {
 
     describe(nameof<MethodSignature>(n => n.remove), () => {
         function doTest(code: string, nameToRemove: string, indexToRemove: number, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getMethods().filter(m => m.getName() === nameToRemove)[indexToRemove].remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

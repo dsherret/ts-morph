@@ -10,7 +10,7 @@ function getInfo(text: string) {
 describe(nameof(JsxClosingElement), () => {
     describe(nameof<JsxClosingElement>(n => n.getTagNameNode), () => {
         function doTest(text: string, expected: string) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.getTagNameNode().getText()).to.equal(expected);
         }
 

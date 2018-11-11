@@ -11,7 +11,7 @@ describe(nameof(ConstructSignatureDeclaration), () => {
 
     describe(nameof<ConstructSignatureDeclaration>(n => n.set), () => {
         function doTest(code: string, structure: Partial<ConstructSignatureDeclarationStructure>, expectedCode: string) {
-            const {firstConstructSignature, sourceFile} = getFirstConstructSignatureWithInfo(code);
+            const { firstConstructSignature, sourceFile } = getFirstConstructSignatureWithInfo(code);
             firstConstructSignature.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -27,7 +27,7 @@ describe(nameof(ConstructSignatureDeclaration), () => {
 
     describe(nameof<ConstructSignatureDeclaration>(n => n.remove), () => {
         function doTest(code: string, indexToRemove: number, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getConstructSignatures()[indexToRemove].remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

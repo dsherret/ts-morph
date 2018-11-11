@@ -12,7 +12,7 @@ describe(nameof(NameableNode), () => {
 
     describe(nameof<NameableNode>(n => n.rename), () => {
         function doTest(startCode: string, newName: string, expectedCode: string) {
-            const {funcExpr, sourceFile} = getFunctionExpression(startCode);
+            const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             funcExpr.rename(newName);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -36,7 +36,7 @@ describe(nameof(NameableNode), () => {
 
     describe(nameof<NameableNode>(n => n.removeName), () => {
         function doTest(startCode: string, expectedCode: string) {
-            const {funcExpr, sourceFile} = getFunctionExpression(startCode);
+            const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             funcExpr.removeName();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -52,7 +52,7 @@ describe(nameof(NameableNode), () => {
 
     describe(nameof<NameableNode>(n => n.getName), () => {
         function doTest(startCode: string, expectedName: string | undefined) {
-            const {funcExpr, sourceFile} = getFunctionExpression(startCode);
+            const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             expect(funcExpr.getName()).to.equal(expectedName);
         }
 
@@ -67,19 +67,19 @@ describe(nameof(NameableNode), () => {
 
     describe(nameof<NameableNode>(n => n.getNameOrThrow), () => {
         it("should get the name when it exists", () => {
-            const {funcExpr, sourceFile} = getFunctionExpression("const v = function name() {};");
+            const { funcExpr, sourceFile } = getFunctionExpression("const v = function name() {};");
             expect(funcExpr.getNameOrThrow()).to.equal("name");
         });
 
         it("should throw when it doesn't exist", () => {
-            const {funcExpr, sourceFile} = getFunctionExpression("const v = function() {};");
+            const { funcExpr, sourceFile } = getFunctionExpression("const v = function() {};");
             expect(() => funcExpr.getNameOrThrow()).to.throw();
         });
     });
 
     describe(nameof<NameableNode>(n => n.getNameNode), () => {
         function doTest(startCode: string, expectedName: string | undefined) {
-            const {funcExpr, sourceFile} = getFunctionExpression(startCode);
+            const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             const identifier = funcExpr.getNameNode();
             expect(identifier == null ? undefined : identifier.getText()).to.equal(expectedName);
         }
@@ -95,12 +95,12 @@ describe(nameof(NameableNode), () => {
 
     describe(nameof<NameableNode>(n => n.getNameNodeOrThrow), () => {
         it("should get the name when it exists", () => {
-            const {funcExpr} = getFunctionExpression("const v = function name() {};");
+            const { funcExpr } = getFunctionExpression("const v = function name() {};");
             expect(funcExpr.getNameNodeOrThrow().getText()).to.equal("name");
         });
 
         it("should throw when it doesn't exist", () => {
-            const {funcExpr} = getFunctionExpression("const v = function() {};");
+            const { funcExpr } = getFunctionExpression("const v = function() {};");
             expect(() => funcExpr.getNameNodeOrThrow()).to.throw();
         });
     });
@@ -108,14 +108,14 @@ describe(nameof(NameableNode), () => {
     describe(nameof<NameableNode>(n => n.findReferences), () => {
         it("should find the references when there is a name", () => {
             // most of the tests for this are in identifierTests
-            const {firstChild, project} = getInfoFromText<ClassDeclaration>("class MyClass {}");
+            const { firstChild, project } = getInfoFromText<ClassDeclaration>("class MyClass {}");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = MyClass;");
             const referencedSymbols = firstChild.findReferences();
             expect(referencedSymbols.length).to.equal(1);
         });
 
         it("should find the references when there isn't a name", () => {
-            const {firstChild, project} = getInfoFromText<ClassDeclaration>("export default class {}");
+            const { firstChild, project } = getInfoFromText<ClassDeclaration>("export default class {}");
             const secondSourceFile = project.createSourceFile("/second.ts", "import MyClass from './MyClass';\nconst reference2 = MyClass;");
             const referencedSymbols = firstChild.findReferences();
             expect(referencedSymbols.length).to.equal(1);
@@ -124,7 +124,7 @@ describe(nameof(NameableNode), () => {
 
     describe(nameof<NameableNode>(n => n.findReferencesAsNodes), () => {
         it("should find all the references and exclude the definition when there is a name", () => {
-            const {firstChild, project} = getInfoFromText<ClassDeclaration>("class MyClass {}\nconst reference = MyClass;");
+            const { firstChild, project } = getInfoFromText<ClassDeclaration>("class MyClass {}\nconst reference = MyClass;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = MyClass;");
             const referencingNodes = firstChild.findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);
@@ -133,7 +133,7 @@ describe(nameof(NameableNode), () => {
         });
 
         it("should find all the references and exclude the definition when there isn't a name", () => {
-            const {firstChild, project} = getInfoFromText<ClassDeclaration>("export default class {}", { filePath: "/MyClass.ts" });
+            const { firstChild, project } = getInfoFromText<ClassDeclaration>("export default class {}", { filePath: "/MyClass.ts" });
             const secondSourceFile = project.createSourceFile("/second.ts", "import MyClass from './MyClass';\nconst reference2 = MyClass;");
             const referencingNodes = firstChild.findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);

@@ -11,7 +11,7 @@ describe(nameof(CallSignatureDeclaration), () => {
 
     describe(nameof<CallSignatureDeclaration>(n => n.set), () => {
         function doTest(code: string, structure: Partial<CallSignatureDeclarationStructure>, expectedCode: string) {
-            const {firstCallSignature, sourceFile} = getFirstCallSignatureWithInfo(code);
+            const { firstCallSignature, sourceFile } = getFirstCallSignatureWithInfo(code);
             firstCallSignature.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -61,7 +61,7 @@ interface Identifier {
 
     describe(nameof<CallSignatureDeclaration>(n => n.remove), () => {
         function doTest(code: string, indexToRemove: number, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getCallSignatures()[indexToRemove].remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

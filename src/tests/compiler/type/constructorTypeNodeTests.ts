@@ -10,14 +10,14 @@ describe(nameof(ConstructorTypeNode), () => {
 
     describe(nameof<ConstructorTypeNode>(d => d.getReturnTypeNodeOrThrow), () => {
         it("should get the return type", () => {
-            const {descendant} = getNode("var t: new() => SomeClass;");
+            const { descendant } = getNode("var t: new() => SomeClass;");
             expect(descendant.getReturnTypeNodeOrThrow().getText()).to.equal("SomeClass");
         });
     });
 
     describe(nameof<ConstructorTypeNode>(d => d.getParameters), () => {
         it("should get the parameters", () => {
-            const {descendant} = getNode("var t: new(param1, param2) => SomeClass;");
+            const { descendant } = getNode("var t: new(param1, param2) => SomeClass;");
             expect(descendant.getParameters().map(p => p.getText())).to.deep.equal(["param1", "param2"]);
         });
     });

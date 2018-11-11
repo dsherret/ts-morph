@@ -7,7 +7,7 @@ describe(nameof(Identifier), () => {
     describe(nameof<Identifier>(n => n.rename), () => {
         it("should rename", () => {
             const text = "function myFunction() {} const reference = myFunction;";
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(text);
             firstChild.getNameNodeOrThrow().rename("newFunction");
             expect(sourceFile.getFullText()).to.equal(text.replace(/myFunction/g, "newFunction"));
         });
@@ -25,7 +25,7 @@ describe(nameof(Identifier), () => {
     describe(nameof<Identifier>(n => n.getDefinitions), () => {
         it("should get the definition", () => {
             const sourceFileText = "function myFunction() {}\nconst reference = myFunction;";
-            const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>(sourceFileText);
+            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>(sourceFileText);
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
             const definitions = (secondSourceFile.getVariableDeclarationOrThrow("reference2").getInitializerOrThrow() as any as Identifier).getDefinitions();
             expect(definitions.length).to.equal(1);
@@ -37,7 +37,7 @@ describe(nameof(Identifier), () => {
         });
 
         it("should get the definition when nested inside a namespace", () => {
-            const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("namespace N { export function myFunction() {} }\nconst reference = N.myFunction;");
+            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("namespace N { export function myFunction() {} }\nconst reference = N.myFunction;");
             const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression).getNameNode().getDefinitions();
             expect(definitions.length).to.equal(1);
             expect(definitions[0].getDeclarationNode()).to.equal(firstChild.getFunctions()[0]);
@@ -47,7 +47,7 @@ describe(nameof(Identifier), () => {
     describe(nameof<Identifier>(n => n.getImplementations), () => {
         it("should get the implementations", () => {
             const sourceFileText = "interface MyInterface {}\nexport class Class1 implements MyInterface {}\nclass Class2 implements MyInterface {}";
-            const {firstChild, sourceFile, project} = getInfoFromText<InterfaceDeclaration>(sourceFileText);
+            const { firstChild, sourceFile, project } = getInfoFromText<InterfaceDeclaration>(sourceFileText);
             const implementations = firstChild.getNameNode().getImplementations();
             expect(implementations.length).to.equal(2);
             expect(implementations[0].getNode().getText()).to.equal("Class1");
@@ -57,7 +57,7 @@ describe(nameof(Identifier), () => {
 
     describe(nameof<Identifier>(n => n.findReferences), () => {
         it("should find all the references", () => {
-            const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
             const referencedSymbols = firstChild.getNameNodeOrThrow().findReferences();
             expect(referencedSymbols.length).to.equal(1);
@@ -105,7 +105,7 @@ describe(nameof(Identifier), () => {
         });
 
         it("should get the right node when the reference is at the start of a property access expression", () => {
-            const {firstChild, sourceFile, project} = getInfoFromText<NamespaceDeclaration>(`
+            const { firstChild, sourceFile, project } = getInfoFromText<NamespaceDeclaration>(`
 namespace MyNamespace {
     export class MyClass {
     }
@@ -124,7 +124,7 @@ const t = MyNamespace.MyClass;
 
     describe(nameof<Identifier>(n => n.findReferencesAsNodes), () => {
         it("should find all the references and exclude the definition", () => {
-            const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
             const referencingNodes = firstChild.getNameNodeOrThrow().findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);
@@ -135,7 +135,7 @@ const t = MyNamespace.MyClass;
 
     describe(nameof<Identifier>(n => n.getDefinitionNodes), () => {
         it("should get the definition nodes", () => {
-            const {sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const { sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const definitionNodes = sourceFile.getVariableDeclarationOrThrow("reference").getInitializerIfKindOrThrow(SyntaxKind.Identifier).getDefinitionNodes();
             expect(definitionNodes.length).to.equal(1);
             expect(definitionNodes[0].getText()).to.equal("function myFunction() {}");
@@ -144,7 +144,7 @@ const t = MyNamespace.MyClass;
 
     describe(nameof<Identifier>(n => n.getType), () => {
         function doTest(text: string, expectedTypes: string[]) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier);
             expect(identifiers.map(i => i.getType().getText())).to.deep.equal(expectedTypes);
         }

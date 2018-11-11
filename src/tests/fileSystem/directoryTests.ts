@@ -1295,37 +1295,37 @@ describe(nameof(Directory), () => {
         }
 
         it("should emit correctly when not specifying anything", async () => {
-            const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
+            const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
             const result = await directory.emit();
             runChecks(fileSystem, result, "/dist", "/dist");
         });
 
         it("should emit correctly when specifying a different out dir and no declaration dir in compiler options", async () => {
-            const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
+            const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
             const result = await directory.emit({ outDir: "../newOutDir" });
             runChecks(fileSystem, result, "/newOutDir", "/newOutDir");
         });
 
         it("should emit correctly when specifying a different out dir and a declaration dir in compiler options", async () => {
-            const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+            const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
             const result = await directory.emit({ outDir: "../newOutDir" });
             runChecks(fileSystem, result, "/newOutDir", "/dec");
         });
 
         it("should emit correctly when specifying a different declaration dir", async () => {
-            const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+            const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
             const result = await directory.emit({ declarationDir: "newDeclarationDir" });
             runChecks(fileSystem, result, "/dist", "/dir/newDeclarationDir");
         });
 
         it("should emit correctly when specifying a different out and declaration dir", async () => {
-            const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+            const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
             const result = await directory.emit({ outDir: "", declarationDir: "newDeclarationDir" });
             runChecks(fileSystem, result, "/dir", "/dir/newDeclarationDir");
         });
 
         it("should emit correctly when specifying to only emit declaration files", async () => {
-            const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+            const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
             const result = await directory.emit({ outDir: "", declarationDir: "newDeclarationDir", emitOnlyDtsFiles: true });
 
             const writeLog = fileSystem.getWriteLog();
@@ -1380,7 +1380,7 @@ describe(nameof(Directory), () => {
         }
 
         it("should emit correctly when not specifying anything", () => {
-            const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
+            const { directory, fileSystem } = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
             const result = directory.emitSync();
             runChecks(fileSystem, result, "/dist", "/dist");
         });

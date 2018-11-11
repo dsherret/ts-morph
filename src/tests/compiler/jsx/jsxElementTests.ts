@@ -12,7 +12,7 @@ function getInfo(text: string) {
 describe(nameof(JsxElement), () => {
     describe(nameof<JsxElement>(n => n.getOpeningElement), () => {
         function doTest(text: string, expected: string) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.getOpeningElement().getText()).to.equal(expected);
         }
 
@@ -23,7 +23,7 @@ describe(nameof(JsxElement), () => {
 
     describe(nameof<JsxElement>(n => n.getClosingElement), () => {
         function doTest(text: string, expected: string) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.getClosingElement().getText()).to.equal(expected);
         }
 
@@ -34,7 +34,7 @@ describe(nameof(JsxElement), () => {
 
     describe(nameof<JsxElement>(n => n.getJsxChildren), () => {
         function doTest(text: string, expected: string[]) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.getJsxChildren().map(c => c.getText())).to.deep.equal(expected);
         }
 
@@ -45,7 +45,7 @@ describe(nameof(JsxElement), () => {
 
     describe(nameof<JsxElement>(n => n.setBodyText), () => {
         function doTest(text: string, bodyText: string, expected: string) {
-            const {descendant, sourceFile} = getInfo(text);
+            const { descendant, sourceFile } = getInfo(text);
             descendant.setBodyText(bodyText);
             expect(sourceFile.getFullText()).to.equal(expected);
         }
@@ -69,7 +69,7 @@ describe(nameof(JsxElement), () => {
 
     describe(nameof<JsxElement>(n => n.setBodyTextInline), () => {
         function doTest(text: string, bodyText: string, expected: string) {
-            const {descendant, sourceFile} = getInfo(text);
+            const { descendant, sourceFile } = getInfo(text);
             descendant.setBodyTextInline(bodyText);
             expect(sourceFile.getFullText()).to.equal(expected);
         }

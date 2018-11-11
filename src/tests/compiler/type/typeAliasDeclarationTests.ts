@@ -6,7 +6,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(TypeAliasDeclaration), () => {
     describe(nameof<TypeAliasDeclaration>(n => n.set), () => {
         function doTest(code: string, structure: Partial<TypeAliasDeclarationStructure>, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<TypeAliasDeclaration>(code);
             firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -26,7 +26,7 @@ describe(nameof(TypeAliasDeclaration), () => {
 
     describe(nameof<TypeAliasDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getTypeAliases()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

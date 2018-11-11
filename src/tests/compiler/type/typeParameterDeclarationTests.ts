@@ -6,7 +6,7 @@ import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypeParameterDeclaration), () => {
     function getTypeParameterFromText(text: string, index = 0) {
-        const {firstChild} = getInfoFromText<FunctionDeclaration>(text);
+        const { firstChild } = getInfoFromText<FunctionDeclaration>(text);
         return firstChild.getTypeParameters()[index];
     }
 
@@ -164,7 +164,7 @@ describe(nameof(TypeParameterDeclaration), () => {
     describe(nameof<TypeParameterDeclaration>(d => d.remove), () => {
         function doTest(startText: string, indexToRemove: number, expectedText: string) {
             const typeParameterDeclaration = getTypeParameterFromText(startText, indexToRemove);
-            const {_sourceFile} = typeParameterDeclaration;
+            const { _sourceFile } = typeParameterDeclaration;
 
             typeParameterDeclaration.remove();
 

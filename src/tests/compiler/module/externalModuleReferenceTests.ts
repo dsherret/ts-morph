@@ -13,21 +13,21 @@ describe(nameof(ExternalModuleReference), () => {
 
     describe(nameof<ExternalModuleReference>(n => n.getExpression), () => {
         it("should get the expression", () => {
-            const {descendant} = getNode("import test = require('expression');");
+            const { descendant } = getNode("import test = require('expression');");
             expect(descendant.getExpression()!.getText()).to.equal("'expression'");
         });
     });
 
     describe(nameof<ExternalModuleReference>(n => n.getExpressionOrThrow), () => {
         it("should get the expression", () => {
-            const {descendant} = getNode("import test = require('expression');");
+            const { descendant } = getNode("import test = require('expression');");
             expect(descendant.getExpressionOrThrow().getText()).to.equal("'expression'");
         });
     });
 
     describe(nameof<ExternalModuleReference>(n => n.isRelative), () => {
         function doTest(text: string, expected: boolean) {
-            const {descendant} = getNode(text);
+            const { descendant } = getNode(text);
             expect(descendant.isRelative()).to.equal(expected);
         }
 

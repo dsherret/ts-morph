@@ -12,7 +12,7 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
         describe("general", () => {
             const fileText = "    interface Identifier {}    ";
-            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
+            const { sourceFile, project } = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
             const relativeSourceFile = sourceFile.copy("../NewFolder/NewFile.ts");
             const absoluteSourceFile = sourceFile.copy("/NewFile.ts");
             const testFile = sourceFile.copy("/TestFile.ts");
@@ -147,7 +147,7 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.move), () => {
         function doTest(filePath: string, newFilePath: string, absoluteNewFilePath?: string, overwrite?: boolean) {
             const fileText = "    interface Identifier {}    ";
-            const {sourceFile, project} = getInfoFromText(fileText, { filePath });
+            const { sourceFile, project } = getInfoFromText(fileText, { filePath });
             const fileSystem = project.getFileSystem();
             const existingFile = project.createSourceFile("/existingFile.ts");
             project.saveSync();

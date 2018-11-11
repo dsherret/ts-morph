@@ -56,7 +56,7 @@ let stringWithUndefinedType: string | undefined;
 let stringWithNullType: string | null;
 let stringWithUndefinedAndNullType: string | undefined | null;
 `;
-        const {sourceFile} = getInfoFromTextWithTypeChecking(text);
+        const { sourceFile } = getInfoFromTextWithTypeChecking(text);
         const typesByName: { [name: string]: Type; } = {};
         for (const dec of sourceFile.getVariableDeclarations()) {
             typesByName[dec.getName()] = dec.getType();
@@ -526,7 +526,7 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
 
             it("should return true for an optional property", () => {
-                const {firstChild} = getInfoFromTextWithTypeChecking<FunctionDeclaration>("function test(param?: string) {}");
+                const { firstChild } = getInfoFromTextWithTypeChecking<FunctionDeclaration>("function test(param?: string) {}");
                 expect(firstChild.getParameters()[0].getType().isNullable()).to.equal(true);
             });
         });
@@ -670,7 +670,7 @@ let stringWithUndefinedAndNullType: string | undefined | null;
 
     describe(nameof<Type>(t => t.getConstraint), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {firstType} = getTypeAliasTypeFromText(text);
+            const { firstType } = getTypeAliasTypeFromText(text);
             if (expected == null)
                 expect(firstType.getConstraint()).to.be.undefined;
             else
@@ -688,7 +688,7 @@ let stringWithUndefinedAndNullType: string | undefined | null;
 
     describe(nameof<Type>(t => t.getConstraintOrThrow), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {firstType} = getTypeAliasTypeFromText(text);
+            const { firstType } = getTypeAliasTypeFromText(text);
             if (expected == null)
                 expect(() => firstType.getConstraintOrThrow()).to.throw();
             else
@@ -706,7 +706,7 @@ let stringWithUndefinedAndNullType: string | undefined | null;
 
     describe(nameof<Type>(t => t.getDefault), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {firstType} = getTypeAliasTypeFromText(text);
+            const { firstType } = getTypeAliasTypeFromText(text);
             if (expected == null)
                 expect(firstType.getDefault()).to.be.undefined;
             else
@@ -724,7 +724,7 @@ let stringWithUndefinedAndNullType: string | undefined | null;
 
     describe(nameof<Type>(t => t.getDefaultOrThrow), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {firstType} = getTypeAliasTypeFromText(text);
+            const { firstType } = getTypeAliasTypeFromText(text);
             if (expected == null)
                 expect(() => firstType.getDefaultOrThrow()).to.throw();
             else
@@ -742,7 +742,7 @@ let stringWithUndefinedAndNullType: string | undefined | null;
 
     describe(nameof<Type>(t => t.getBaseTypes), () => {
         it("should return the base types of a type", () => {
-            const {firstType} = getTypeFromText("let myType: MyInterface; interface MyInterface extends OtherInterface {}\ninterface OtherInterface");
+            const { firstType } = getTypeFromText("let myType: MyInterface; interface MyInterface extends OtherInterface {}\ninterface OtherInterface");
             const baseTypes = firstType.getBaseTypes();
             expect(baseTypes.length).to.equal(1);
             expect(baseTypes[0].getText()).to.equal("OtherInterface");
@@ -751,36 +751,36 @@ let stringWithUndefinedAndNullType: string | undefined | null;
 
     describe(nameof<Type>(t => t.getAliasSymbol), () => {
         it("should return the alias symbol when it exists", () => {
-            const {firstType} = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
+            const { firstType } = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
             expect(firstType.getAliasSymbol()!.getFlags()).to.equal(SymbolFlags.TypeAlias);
         });
 
         it("should return undefined when not exists", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
+            const { firstType } = getTypeFromText("let myType: string;");
             expect(firstType.getAliasSymbol()).to.be.undefined;
         });
     });
 
     describe(nameof<Type>(t => t.getAliasSymbolOrThrow), () => {
         it("should return the alias symbol when it exists", () => {
-            const {firstType} = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
+            const { firstType } = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
             expect(firstType.getAliasSymbolOrThrow().getFlags()).to.equal(SymbolFlags.TypeAlias);
         });
 
         it("should throw when not exists", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
+            const { firstType } = getTypeFromText("let myType: string;");
             expect(() => firstType.getAliasSymbolOrThrow()).to.throw();
         });
     });
 
     describe(nameof<Type>(t => t.getAliasTypeArguments), () => {
         it("should not have any when none exist", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
+            const { firstType } = getTypeFromText("let myType: string;");
             expect(firstType.getAliasTypeArguments().length).to.equal(0);
         });
 
         it("should return the type args when they exist", () => {
-            const {firstType} = getTypeFromText("let myType: MyAlias<string>; type MyAlias<T> = {str: T;};");
+            const { firstType } = getTypeFromText("let myType: MyAlias<string>; type MyAlias<T> = {str: T;};");
             const typeArgs = firstType.getAliasTypeArguments();
             expect(typeArgs.length).to.equal(1);
             expect(typeArgs[0].getText()).to.equal("string");

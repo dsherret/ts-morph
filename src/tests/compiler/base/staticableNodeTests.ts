@@ -5,7 +5,7 @@ import { TypeGuards } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(StaticableNode), () => {
-    const {sourceFile: mainSourceFile} = getInfoFromText("class MyClass { static prop: string; prop2: string; }");
+    const { sourceFile: mainSourceFile } = getInfoFromText("class MyClass { static prop: string; prop2: string; }");
     const classDec = mainSourceFile.getClasses()[0];
     const staticProp = classDec.getStaticProperties()[0];
     const instanceProp = classDec.getInstanceProperties()[0] as PropertyDeclaration;
@@ -42,13 +42,13 @@ describe(nameof(StaticableNode), () => {
 
     describe(nameof<StaticableNode>(n => n.setIsStatic), () => {
         it("should set as static when not static", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");
             (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsStatic(true);
             expect(sourceFile.getText()).to.equal("class MyClass { static prop: string; }");
         });
 
         it("should set as not static when static", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { static prop: string; }");
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class MyClass { static prop: string; }");
             firstChild.getStaticProperties()[0].setIsStatic(false);
             expect(sourceFile.getText()).to.equal("class MyClass { prop: string; }");
         });
@@ -62,7 +62,7 @@ describe(nameof(StaticableNode), () => {
 
     describe(nameof<MethodDeclaration>(n => n.set), () => {
         function doTest(startCode: string, structure: StaticableNodeStructure, expectedCode: string) {
-            const {firstMethod, sourceFile} = getFirstMethod(startCode);
+            const { firstMethod, sourceFile } = getFirstMethod(startCode);
             firstMethod.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }

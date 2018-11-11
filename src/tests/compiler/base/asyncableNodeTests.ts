@@ -5,7 +5,7 @@ import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(AsyncableNode), () => {
     describe("navigation", () => {
-        const {sourceFile: mainSourceFile} = getInfoFromText("async function Identifier() {}\nfunction Identifier2() {}");
+        const { sourceFile: mainSourceFile } = getInfoFromText("async function Identifier() {}\nfunction Identifier2() {}");
         const asyncFunc = mainSourceFile.getFunctions()[0];
         const nonAsyncFunc  = mainSourceFile.getFunctions()[1];
 
@@ -42,7 +42,7 @@ describe(nameof(AsyncableNode), () => {
 
     describe(nameof<AsyncableNode>(n => n.setIsAsync), () => {
         function doTest(text: string, value: boolean, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(text);
             firstChild.setIsAsync(value);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -73,7 +73,7 @@ describe(nameof(AsyncableNode), () => {
 
     describe(nameof<FunctionDeclaration>(n => n.set), () => {
         function doTest(startCode: string, structure: AsyncableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }

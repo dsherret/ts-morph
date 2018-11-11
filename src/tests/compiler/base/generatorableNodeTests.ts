@@ -4,7 +4,7 @@ import { GeneratorableNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(GeneratorableNode), () => {
-    const {sourceFile: mainSourceFile} = getInfoFromText("function* Identifier() {}\nfunction Identifier2() {}");
+    const { sourceFile: mainSourceFile } = getInfoFromText("function* Identifier() {}\nfunction Identifier2() {}");
     const generatorFunc = mainSourceFile.getFunctions()[0];
     const func  = mainSourceFile.getFunctions()[1];
 
@@ -41,19 +41,19 @@ describe(nameof(GeneratorableNode), () => {
     describe(nameof<GeneratorableNode>(n => n.setIsGenerator), () => {
         describe("Functions", () => {
             it("should set as generator when not a generator", () => {
-                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function Identifier() {}");
+                const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>("function Identifier() {}");
                 firstChild.setIsGenerator(true);
                 expect(sourceFile.getText()).to.equal("function* Identifier() {}");
             });
 
             it("should set as not a generator when a generator", () => {
-                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function* Identifier() {}");
+                const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>("function* Identifier() {}");
                 firstChild.setIsGenerator(false);
                 expect(sourceFile.getText()).to.equal("function Identifier() {}");
             });
 
             it("should not change the generator when already that value", () => {
-                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function* Identifier() {}");
+                const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>("function* Identifier() {}");
                 firstChild.setIsGenerator(true);
                 expect(sourceFile.getText()).to.equal("function* Identifier() {}");
             });
@@ -61,14 +61,14 @@ describe(nameof(GeneratorableNode), () => {
 
         describe("Methods", () => {
             it("should set as generator when not a generator", () => {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier { public identifier() { } }");
+                const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class Identifier { public identifier() { } }");
                 const method = firstChild.getInstanceMethods()[0];
                 method.setIsGenerator(true);
                 expect(sourceFile.getText()).to.equal("class Identifier { public *identifier() { } }");
             });
 
             it("should set as not a generator when a generator", () => {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier { public *identifier() { } }");
+                const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class Identifier { public *identifier() { } }");
                 const method = firstChild.getInstanceMethods()[0];
                 method.setIsGenerator(false);
                 expect(sourceFile.getText()).to.equal("class Identifier { public identifier() { } }");
@@ -78,7 +78,7 @@ describe(nameof(GeneratorableNode), () => {
 
     describe(nameof<FunctionDeclaration>(f => f.set), () => {
         function doTest(startCode: string, structure: GeneratorableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }

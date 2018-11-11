@@ -285,7 +285,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /** @internal */
     _moveInternal(filePath: string, options: SourceFileMoveOptions = {}) {
-        const {overwrite = false} = options;
+        const { overwrite = false } = options;
         filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
         if (filePath === this.getFilePath())

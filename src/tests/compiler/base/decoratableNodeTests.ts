@@ -6,7 +6,7 @@ import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(DecoratableNode), () => {
     describe(nameof<DecoratableNode>(d => d.getDecorator), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("@log\n@log2\nclass Class {}");
+        const { firstChild } = getInfoFromText<ClassDeclaration>("@log\n@log2\nclass Class {}");
 
         it("should get the decorator by name", () => {
             expect(firstChild.getDecorator("log")!.getName()).to.equal("log");
@@ -22,7 +22,7 @@ describe(nameof(DecoratableNode), () => {
     });
 
     describe(nameof<DecoratableNode>(d => d.getDecoratorOrThrow), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("@log\n@log2\nclass Class {}");
+        const { firstChild } = getInfoFromText<ClassDeclaration>("@log\n@log2\nclass Class {}");
 
         it("should get the decorator by name", () => {
             expect(firstChild.getDecoratorOrThrow("log").getName()).to.equal("log");
@@ -39,7 +39,7 @@ describe(nameof(DecoratableNode), () => {
 
     describe(nameof<DecoratableNode>(n => n.getDecorators), () => {
         function doTest(text: string, expectedLength: number) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(text);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(text);
             expect(firstChild.getDecorators().length).to.equal(expectedLength);
         }
 
@@ -55,7 +55,7 @@ describe(nameof(DecoratableNode), () => {
     describe(nameof<DecoratableNode>(n => n.insertDecorators), () => {
         describe("class decorators", () => {
             function doTest(startCode: string, index: number, structures: DecoratorStructure[], expectedCode: string) {
-                const {descendant, sourceFile} = getInfoFromTextWithDescendant<ClassDeclaration>(startCode, SyntaxKind.ClassDeclaration);
+                const { descendant, sourceFile } = getInfoFromTextWithDescendant<ClassDeclaration>(startCode, SyntaxKind.ClassDeclaration);
                 const result = descendant.insertDecorators(index, structures);
                 expect(result.length).to.equal(structures.length);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -110,7 +110,7 @@ describe(nameof(DecoratableNode), () => {
 
         describe("parameter decorator", () => {
             function doTest(startCode: string, index: number, structures: DecoratorStructure[], expectedCode: string) {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+                const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
                 const result = firstChild.getInstanceMethods()[0].getParameters()[0].insertDecorators(index, structures);
                 expect(result.length).to.equal(structures.length);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -141,7 +141,7 @@ describe(nameof(DecoratableNode), () => {
 
     describe(nameof<DecoratableNode>(n => n.insertDecorator), () => {
         function doTest(startCode: string, index: number, structure: DecoratorStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertDecorator(index, structure);
             expect(result).to.be.instanceOf(Decorator);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -154,7 +154,7 @@ describe(nameof(DecoratableNode), () => {
 
     describe(nameof<DecoratableNode>(n => n.addDecorator), () => {
         function doTest(startCode: string, structure: DecoratorStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addDecorator(structure);
             expect(result).to.be.instanceOf(Decorator);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -171,7 +171,7 @@ describe(nameof(DecoratableNode), () => {
 
     describe(nameof<DecoratableNode>(n => n.addDecorators), () => {
         function doTest(startCode: string, structures: DecoratorStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addDecorators(structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -184,7 +184,7 @@ describe(nameof(DecoratableNode), () => {
 
     describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: DecoratableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }

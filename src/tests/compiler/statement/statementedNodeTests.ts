@@ -18,12 +18,12 @@ function getInfoFromTextWithSyntax<T extends Node>(text: string, kind?: SyntaxKi
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(s => s.getStatements), () => {
         it("should get the statements of a source file", () => {
-            const {sourceFile} = getInfoFromText("var t; var m;");
+            const { sourceFile } = getInfoFromText("var t; var m;");
             expect(sourceFile.getStatements().map(s => s.getText())).to.deep.equal(["var t;", "var m;"]);
         });
 
         function doFirstChildTest<T extends Node>(code: string, statements: string[], kind?: SyntaxKind) {
-            const {firstChild} = getInfoFromTextWithSyntax<T>(code, kind);
+            const { firstChild } = getInfoFromTextWithSyntax<T>(code, kind);
             expect((firstChild as any as StatementedNode).getStatements().map(s => s.getText())).to.deep.equal(statements);
         }
 
@@ -54,55 +54,55 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(s => s.getStatement), () => {
         it("should get the statement when it exists", () => {
-            const {sourceFile} = getInfoFromText("var t; class T {}");
+            const { sourceFile } = getInfoFromText("var t; class T {}");
             expect(sourceFile.getStatement(s => TypeGuards.isClassDeclaration(s))!.getText()).to.equal("class T {}");
         });
 
         it("should return undefined when it doesn't exist", () => {
-            const {sourceFile} = getInfoFromText("var t; class T {}");
+            const { sourceFile } = getInfoFromText("var t; class T {}");
             expect(sourceFile.getStatement(s => TypeGuards.isInterfaceDeclaration(s))).to.be.undefined;
         });
     });
 
     describe(nameof<StatementedNode>(s => s.getStatementOrThrow), () => {
         it("should get the statement when it exists", () => {
-            const {sourceFile} = getInfoFromText("var t; class T {}");
+            const { sourceFile } = getInfoFromText("var t; class T {}");
             expect(sourceFile.getStatementOrThrow(s => TypeGuards.isClassDeclaration(s)).getText()).to.equal("class T {}");
         });
 
         it("should throw when it doesn't exist", () => {
-            const {sourceFile} = getInfoFromText("var t; class T {}");
+            const { sourceFile } = getInfoFromText("var t; class T {}");
             expect(() => sourceFile.getStatementOrThrow(s => TypeGuards.isInterfaceDeclaration(s))).to.throw();
         });
     });
 
     describe(nameof<StatementedNode>(s => s.getStatementByKind), () => {
         it("should get the statement when it exists", () => {
-            const {sourceFile} = getInfoFromText("var t; class T {}");
+            const { sourceFile } = getInfoFromText("var t; class T {}");
             expect(sourceFile.getStatementByKind(SyntaxKind.ClassDeclaration)!.getText()).to.equal("class T {}");
         });
 
         it("should return undefined when it doesn't exist", () => {
-            const {sourceFile} = getInfoFromText("var t; class T {}");
+            const { sourceFile } = getInfoFromText("var t; class T {}");
             expect(sourceFile.getStatementByKind(SyntaxKind.InterfaceDeclaration)).to.be.undefined;
         });
     });
 
     describe(nameof<StatementedNode>(s => s.getStatementByKindOrThrow), () => {
         it("should get the statement when it exists", () => {
-            const {sourceFile} = getInfoFromText("var t; class T {}");
+            const { sourceFile } = getInfoFromText("var t; class T {}");
             expect(sourceFile.getStatementByKindOrThrow(SyntaxKind.ClassDeclaration).getText()).to.equal("class T {}");
         });
 
         it("should throw when it doesn't exist", () => {
-            const {sourceFile} = getInfoFromText("var t; class T {}");
+            const { sourceFile } = getInfoFromText("var t; class T {}");
             expect(() => sourceFile.getStatementByKindOrThrow(SyntaxKind.InterfaceDeclaration)).to.throw();
         });
     });
 
     describe(nameof<StatementedNode>(s => s.insertStatements), () => {
         function doSourceFileTest(code: string, index: number, statements: string, expectedLength: number, expectedCode: string) {
-            const {sourceFile} = getInfoFromText(code);
+            const { sourceFile } = getInfoFromText(code);
             const nodes = sourceFile.insertStatements(index, statements);
             expect(nodes.length).to.equal(expectedLength);
             if (nodes.length > 0)
@@ -128,12 +128,12 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should throw when specifying an invalid index", () => {
-            const {sourceFile} = getInfoFromText("");
+            const { sourceFile } = getInfoFromText("");
             expect(() => sourceFile.insertStatements(1, "statements;")).to.throw();
         });
 
         it("should allow writing", () => {
-            const {sourceFile} = getInfoFromText("");
+            const { sourceFile } = getInfoFromText("");
             sourceFile.insertStatements(0, writer => writer.writeLine("statements;"));
             expect(sourceFile.getFullText()).to.equal("statements;\n");
         });
@@ -154,7 +154,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         function doFirstChildTest<T extends Node>(code: string, index: number, statements: string, expectedLength: number, expectedCode: string, kind?: SyntaxKind) {
-            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<T>(code, kind);
+            const { sourceFile, firstChild } = getInfoFromTextWithSyntax<T>(code, kind);
             const nodes = (firstChild as any as StatementedNode).insertStatements(index, statements);
             expect(nodes.length).to.equal(expectedLength);
             expect(nodes[0]).to.be.instanceOf(Node);
@@ -234,7 +234,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert statements in a Block", () => {
-            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
+            const { sourceFile, firstChild } = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
             expect(firstChild.getStatementByKind(SyntaxKind.IfStatement)).equals(undefined);
             firstChild.insertStatements(1, "if(b){return 1;}else {return 2;}");
             expect(firstChild.getStatementByKindOrThrow(SyntaxKind.IfStatement).getText()).equals("if(b){return 1;}else {return 2;}");
@@ -243,7 +243,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(s => s.addStatements), () => {
         function doSourceFileTest(code: string, statements: string, expectedLength: number, expectedCode: string) {
-            const {sourceFile} = getInfoFromText(code);
+            const { sourceFile } = getInfoFromText(code);
             const nodes = sourceFile.addStatements(statements);
             expect(nodes.length).to.equal(expectedLength);
             expect(nodes[0]).to.be.instanceOf(Node);
@@ -258,13 +258,13 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(s => s.removeStatements), () => {
         function doSourceFileTest(code: string, range: [number, number], expectedCode: string) {
-            const {sourceFile} = getInfoFromText(code);
+            const { sourceFile } = getInfoFromText(code);
             sourceFile.removeStatements(range);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should throw when specifying an invalid range", () => {
-            const {sourceFile} = getInfoFromText("");
+            const { sourceFile } = getInfoFromText("");
             expect(() => sourceFile.removeStatements([5, 7])).to.throw();
         });
 
@@ -285,7 +285,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         function doFirstChildTest<T extends Node>(code: string, range: [number, number], expectedCode: string, kind?: SyntaxKind) {
-            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<T>(code, kind);
+            const { sourceFile, firstChild } = getInfoFromTextWithSyntax<T>(code, kind);
             const nodes = (firstChild as any as StatementedNode).removeStatements(range);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -317,7 +317,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should remove statements in a Block", () => {
-            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
+            const { sourceFile, firstChild } = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
             expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.not.be.undefined;
             firstChild.removeStatement(0);
             expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.be.undefined;
@@ -326,13 +326,13 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(s => s.removeStatement), () => {
         function doSourceFileTest(code: string, index: number, expectedCode: string) {
-            const {sourceFile} = getInfoFromText(code);
+            const { sourceFile } = getInfoFromText(code);
             sourceFile.removeStatement(index);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should throw when specifying an invalid index", () => {
-            const {sourceFile} = getInfoFromText("class myClass {}");
+            const { sourceFile } = getInfoFromText("class myClass {}");
             expect(() => sourceFile.removeStatement(1)).to.throw();
         });
 
@@ -343,7 +343,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<SourceFile>(s => s.set), () => {
         function doTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
-            const {sourceFile} = getInfoFromText(startingCode);
+            const { sourceFile } = getInfoFromText(startingCode);
             sourceFile.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

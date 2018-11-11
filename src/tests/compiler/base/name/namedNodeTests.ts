@@ -5,13 +5,13 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(NamedNode), () => {
     describe(nameof<NamedNode>(n => n.rename), () => {
         it("should set the name and rename any referenced nodes", () => {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
+            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
             firstChild.rename("MyNewEnum");
             expect(sourceFile.getFullText()).to.equal("enum MyNewEnum {}\nlet myEnum: MyNewEnum;");
         });
 
         function optionsTest(startText: string, options: RenameOptions, expectedText: string) {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>(startText);
+            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startText);
             firstChild.rename("MyNewEnum", options);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -38,7 +38,7 @@ describe(nameof(NamedNode), () => {
         });
 
         function throwTest(text: any) {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
             expect(() => firstChild.rename(text)).to.throw();
         }
 
@@ -60,7 +60,7 @@ describe(nameof(NamedNode), () => {
     });
 
     describe(nameof<NamedNode>(n => n.getName), () => {
-        const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+        const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
 
         it("should get the name", () => {
             expect(firstChild.getName()).to.equal("MyEnum");
@@ -68,7 +68,7 @@ describe(nameof(NamedNode), () => {
     });
 
     describe(nameof<NamedNode>(n => n.getNameNode), () => {
-        const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+        const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
         const nameNode = firstChild.getNameNode();
 
         it("should have correct text", () => {
@@ -83,7 +83,7 @@ describe(nameof(NamedNode), () => {
     describe(nameof<NamedNode>(n => n.findReferences), () => {
         it("should find all the references", () => {
             // most of the tests for this are in identifierTests
-            const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const referencedSymbols = firstChild.findReferences();
             expect(referencedSymbols.length).to.equal(1);
         });
@@ -91,7 +91,7 @@ describe(nameof(NamedNode), () => {
 
     describe(nameof<NamedNode>(n => n.findReferencesAsNodes), () => {
         it("should find all the references and exclude the definition", () => {
-            const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
             const referencingNodes = firstChild.findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);
@@ -111,7 +111,7 @@ describe(nameof(NamedNode), () => {
 
     describe(nameof<EnumDeclaration>(n => n.set), () => {
         it("should fill the node with a new name not via a rename", () => {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
+            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
             firstChild.set({ name: "MyNewEnum" });
             expect(sourceFile.getFullText()).to.equal("enum MyNewEnum {}\nlet myEnum: MyEnum;");
         });

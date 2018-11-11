@@ -17,7 +17,7 @@ describe(nameof(SpreadAssignment), () => {
 
     describe(nameof<SpreadAssignment>(a => a.getExpression), () => {
         it("should get the spread assignment expression", () => {
-            const {spreadAssignment} = getSpreadAssignment("const t = { ...obj }");
+            const { spreadAssignment } = getSpreadAssignment("const t = { ...obj }");
             expect(spreadAssignment.getExpression().getText()).to.equal("obj");
         });
     });

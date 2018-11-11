@@ -5,7 +5,7 @@ export function getParentSyntaxList(node: ts.Node) {
     if (parent == null)
         return undefined;
 
-    const {pos, end} = node;
+    const { pos, end } = node;
     for (const child of parent.getChildren()) {
         if (child.pos > end || child === node)
             return undefined;

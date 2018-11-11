@@ -37,7 +37,7 @@ describe("helpers", () => {
     });
 
     describe(nameof(errors.throwIfNotSyntaxKind), () => {
-        const {firstChild} = getInfoFromText("class Identifier {}");
+        const { firstChild } = getInfoFromText("class Identifier {}");
 
         it("should throw when not the expected syntax kind and no message is specified", () => {
             expect(() => errors.throwIfNotSyntaxKind(firstChild, SyntaxKind.AbstractKeyword))

@@ -10,7 +10,7 @@ function getInfo(text: string) {
 describe(nameof(JsxText), () => {
     describe(nameof<JsxText>(n => n.containsOnlyWhiteSpaces), () => {
         function doTest(text: string, value: boolean) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.containsOnlyWhiteSpaces()).to.equal(value);
         }
 

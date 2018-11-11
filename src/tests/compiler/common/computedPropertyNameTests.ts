@@ -11,7 +11,7 @@ function getInfoFromTextWithFirstInterfaceProperty(text: string) {
 describe(nameof(ComputedPropertyName), () => {
     describe(nameof<ComputedPropertyName>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {firstProp} = getInfoFromTextWithFirstInterfaceProperty(text);
+            const { firstProp } = getInfoFromTextWithFirstInterfaceProperty(text);
             const computedPropertyName = (firstProp.getNameNode() as ComputedPropertyName);
             expect(computedPropertyName.getExpression().getText()).to.equal(expectedText);
         }

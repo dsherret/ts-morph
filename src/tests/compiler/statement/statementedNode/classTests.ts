@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertClasses), () => {
         function doTest(startCode: string, index: number, structures: ClassDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertClasses(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -39,7 +39,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should have the expected text adding to non-source file", () => {
-            const {sourceFile} = getInfoFromText("namespace Namespace {\n}\n");
+            const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertClasses(0, [{
                 name: "Identifier"
@@ -78,7 +78,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert an ambient method into a class when inserting a class into an ambient module", () => {
-            const {sourceFile} = getInfoFromText("declare module Namespace {\n}\n");
+            const { sourceFile } = getInfoFromText("declare module Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertClasses(0, [{
                 name: "Identifier",
@@ -105,7 +105,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.insertClass), () => {
         function doTest(startCode: string, index: number, structure: ClassDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertClass(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(ClassDeclaration);
@@ -118,7 +118,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addClasses), () => {
         function doTest(startCode: string, structures: ClassDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addClasses(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -131,7 +131,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addClass), () => {
         function doTest(startCode: string, structure: ClassDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addClass(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(ClassDeclaration);
@@ -143,7 +143,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getClasses), () => {
-        const {sourceFile} = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
+        const { sourceFile } = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
         const classes = sourceFile.getClasses();
 
         it("should have the expected number of classes", () => {
@@ -161,7 +161,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getClass), () => {
-        const {sourceFile} = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
+        const { sourceFile } = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
 
         it("should get a class by a name", () => {
             expect(sourceFile.getClass("Identifier2")!.getName()).to.equal("Identifier2");
@@ -177,7 +177,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getClassOrThrow), () => {
-        const {sourceFile} = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
+        const { sourceFile } = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
 
         it("should get a class by a name", () => {
             expect(sourceFile.getClassOrThrow("Identifier2").getName()).to.equal("Identifier2");

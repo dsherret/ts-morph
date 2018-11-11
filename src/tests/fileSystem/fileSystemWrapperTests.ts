@@ -26,7 +26,7 @@ describe(nameof(FileSystemWrapper), () => {
     describe(nameof<FileSystemWrapper>(w => w.queueFileDelete), () => {
         it("should queue a file for delete", () => {
             const objs = setup();
-            const {wrapper} = objs;
+            const { wrapper } = objs;
             const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"];
             for (const filePath of filePaths)
                 wrapper.writeFileSync(filePath, "");
@@ -42,7 +42,7 @@ describe(nameof(FileSystemWrapper), () => {
     describe(nameof<FileSystemWrapper>(w => w.removeFileDelete), () => {
         it("should remove a file from being deleted", async () => {
             const objs = setup();
-            const {wrapper} = objs;
+            const { wrapper } = objs;
             const filePath = "/file.ts";
             wrapper.writeFileSync(filePath, "");
             wrapper.queueFileDelete(filePath);
@@ -55,7 +55,7 @@ describe(nameof(FileSystemWrapper), () => {
 
         it("should not dequeue the parent folder from deletion when the file is dequeued", () => {
             const objs = setup();
-            const {wrapper} = objs;
+            const { wrapper } = objs;
             const dirPath = "/dir";
             const filePath = "/dir/file.ts";
             const filePath2 = "/dir/file2.ts";
@@ -561,7 +561,7 @@ describe(nameof(FileSystemWrapper), () => {
 
     describe(nameof<FileSystemWrapper>(w => w.fileExistsSync), () => {
         it("should not exist after queued for delete", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const filePath = "/file.ts";
             expect(wrapper.fileExistsSync(filePath)).to.equal(false);
             wrapper.writeFileSync(filePath, "");
@@ -573,7 +573,7 @@ describe(nameof(FileSystemWrapper), () => {
         });
 
         it("should not exist after a dequeued for delete when originally existed", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const filePath = "/file.ts";
             wrapper.writeFileSync(filePath, "");
             wrapper.queueFileDelete(filePath);
@@ -582,7 +582,7 @@ describe(nameof(FileSystemWrapper), () => {
         });
 
         it("should not exist after a dequeued for delete when not originally existed", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const filePath = "/file.ts";
             wrapper.queueFileDelete(filePath);
             wrapper.removeFileDelete(filePath);
@@ -590,7 +590,7 @@ describe(nameof(FileSystemWrapper), () => {
         });
 
         it("should not exist if the parent directory was queued for delete", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const dirPath = "/dir";
             const filePath = "/dir/file.ts";
             wrapper.writeFileSync(filePath, "");
@@ -600,7 +600,7 @@ describe(nameof(FileSystemWrapper), () => {
 
         it("should not exist after its parent directory moved", () => {
             const objs = setup();
-            const {wrapper} = objs;
+            const { wrapper } = objs;
             const filePath = "/dir/file.ts";
             wrapper.writeFileSync(filePath, "");
             wrapper.queueMoveDirectory("/dir", "/dir2");
@@ -638,7 +638,7 @@ describe(nameof(FileSystemWrapper), () => {
 
     describe(nameof<FileSystemWrapper>(w => w.directoryExistsSync), () => {
         it("should not exist after queued for delete", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const dirPath = "/dir";
             expect(wrapper.directoryExistsSync(dirPath)).to.equal(false);
             wrapper.queueMkdir(dirPath);
@@ -650,7 +650,7 @@ describe(nameof(FileSystemWrapper), () => {
         });
 
         it("should exist after a queued for mkdir", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const dirPath = "/dir";
             wrapper.writeFileSync(dirPath + "/file.ts", "");
             wrapper.queueDirectoryDelete(dirPath);
@@ -659,7 +659,7 @@ describe(nameof(FileSystemWrapper), () => {
         });
 
         it("should not exist if the parent directory was queued for delete", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const dirPath = "/dir";
             const subDirPath = "/dir/sub";
             wrapper.writeFileSync(subDirPath + "/file.ts", "");
@@ -670,7 +670,7 @@ describe(nameof(FileSystemWrapper), () => {
 
     describe(nameof<FileSystemWrapper>(w => w.readFileSync), () => {
         it("should not read the file after it was deleted", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const filePath = "/file.ts";
             const fileText = "test";
             wrapper.writeFileSync(filePath, fileText);
@@ -682,7 +682,7 @@ describe(nameof(FileSystemWrapper), () => {
         });
 
         it("should not read the file after its parent was once deleted", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const filePath = "/dir/sub/file.ts";
             const fileText = "test";
             wrapper.writeFileSync(filePath, fileText);
@@ -696,7 +696,7 @@ describe(nameof(FileSystemWrapper), () => {
 
     describe(nameof<FileSystemWrapper>(w => w.readDirSync), () => {
         it("should not read the dir after it was deleted", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const dirPath = "/dir";
             const filePaths = ["/dir/file.ts", "/dir/file2.ts"];
             for (const filePath of filePaths)
@@ -743,7 +743,7 @@ describe(nameof(FileSystemWrapper), () => {
 
     describe(nameof<FileSystemWrapper>(w => w.readFileOrNotExistsSync), () => {
         it("should return false after it was deleted", () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const filePath = "/file.ts";
             const fileText = "test";
             wrapper.writeFileSync(filePath, fileText);
@@ -757,7 +757,7 @@ describe(nameof(FileSystemWrapper), () => {
 
     describe(nameof<FileSystemWrapper>(w => w.readFileOrNotExists), () => {
         it("should return false after it was deleted", async () => {
-            const {wrapper} = setup();
+            const { wrapper } = setup();
             const filePath = "/file.ts";
             const fileText = "test";
             wrapper.writeFileSync(filePath, fileText);

@@ -12,8 +12,8 @@ describe(nameof(YieldExpression), () => {
     const expression = "x";
     const expr = `yield ${expression}`;
     const emptyExpr = "function*() { yield; }";
-    const {yieldExpression} = getInfoFromTextWithYieldExpression(expr);
-    const {yieldExpression: emptyYieldExpression} = getInfoFromTextWithYieldExpression(emptyExpr);
+    const { yieldExpression } = getInfoFromTextWithYieldExpression(expr);
+    const { yieldExpression: emptyYieldExpression } = getInfoFromTextWithYieldExpression(emptyExpr);
 
     describe(nameof<YieldExpression>(n => n.getExpression), () => {
         it("should get the correct expression", () => {

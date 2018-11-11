@@ -6,7 +6,7 @@ describe(nameof(ChildOrderableNode), () => {
     describe(nameof<ChildOrderableNode>(n => n.setOrder), () => {
         describe("enum", () => {
             function doThrowTest(startCode: string, newIndex: number) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 const enumDec = (sourceFile.getChildSyntaxListOrThrow().getChildren()[0] as EnumDeclaration);
                 expect(() => enumDec.setOrder(newIndex)).to.throw();
             }
@@ -20,7 +20,7 @@ describe(nameof(ChildOrderableNode), () => {
             });
 
             function doTest(startCode: string, oldIndex: number, newIndex: number, expectedCode: string) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 (sourceFile.getChildSyntaxListOrThrow().getChildren()[oldIndex] as EnumDeclaration).setOrder(newIndex);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -80,7 +80,7 @@ describe(nameof(ChildOrderableNode), () => {
 
         describe("class member", () => {
             function doTest(startCode: string, oldIndex: number, newIndex: number, expectedCode: string) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 (sourceFile.getClasses()[0].getChildSyntaxListOrThrow().getChildren()[oldIndex] as any as ChildOrderableNode).setOrder(newIndex);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -108,7 +108,7 @@ describe(nameof(ChildOrderableNode), () => {
 
         describe("interface member", () => {
             function doTest(startCode: string, oldIndex: number, newIndex: number, expectedCode: string) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 (sourceFile.getInterfaces()[0].getChildSyntaxListOrThrow().getChildren()[oldIndex] as any as ChildOrderableNode).setOrder(newIndex);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }

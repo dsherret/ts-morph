@@ -6,7 +6,7 @@ import { getInfoFromTextWithDescendant } from "../testHelpers";
 describe(nameof(LiteralLikeNode), () => {
     describe(nameof<LiteralLikeNode>(n => n.getLiteralText), () => {
         function doTest(text: string, kind: SyntaxKind, expectedValue: string) {
-            const {descendant} = getInfoFromTextWithDescendant<LiteralLikeNode & Node>(text, kind);
+            const { descendant } = getInfoFromTextWithDescendant<LiteralLikeNode & Node>(text, kind);
             expect(descendant.getLiteralText()).to.equal(expectedValue);
         }
 

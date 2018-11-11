@@ -5,7 +5,7 @@ import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(AmbientableNode), () => {
     describe("navigation", () => {
-        const {sourceFile: mainSourceFile} = getInfoFromText("declare var ambientedVar; var myExplicitVar: string;");
+        const { sourceFile: mainSourceFile } = getInfoFromText("declare var ambientedVar; var myExplicitVar: string;");
         const statements = mainSourceFile.getVariableStatements();
         const ambientedStatement = statements[0];
         const notAmbientedStatement = statements[1];
@@ -42,7 +42,7 @@ describe(nameof(AmbientableNode), () => {
 
         describe(nameof<AmbientableNode>(n => n.isAmbient), () => {
             function doTest(text: string, expectedValue: boolean) {
-                const {firstChild} = getInfoFromText<AmbientableNode & Node>(text);
+                const { firstChild } = getInfoFromText<AmbientableNode & Node>(text);
                 expect(firstChild.isAmbient()).to.equal(expectedValue);
             }
             it("should not be ambient when not", () => {
@@ -54,12 +54,12 @@ describe(nameof(AmbientableNode), () => {
             });
 
             it("should be ambient when it's in a declaration file", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}", { isDefinitionFile: true });
+                const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {}", { isDefinitionFile: true });
                 expect(firstChild.isAmbient()).to.be.true;
             });
 
             it("should be ambient when it's parent is ambient", () => {
-                const {firstChild} = getInfoFromText<NamespaceDeclaration>("declare namespace Identifier { class Identifier {} }");
+                const { firstChild } = getInfoFromText<NamespaceDeclaration>("declare namespace Identifier { class Identifier {} }");
                 const innerClass = firstChild.getClasses()[0];
                 expect(innerClass.isAmbient()).to.be.true;
             });
@@ -76,7 +76,7 @@ describe(nameof(AmbientableNode), () => {
 
     describe(nameof<AmbientableNode>(n => n.setHasDeclareKeyword), () => {
         function doTest(text: string, value: boolean, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<AmbientableNode & Node>(text);
+            const { firstChild, sourceFile } = getInfoFromText<AmbientableNode & Node>(text);
             firstChild.setHasDeclareKeyword(value);
             expect(sourceFile.getFullText()).to.equal(expected);
         }
@@ -97,7 +97,7 @@ describe(nameof(AmbientableNode), () => {
 
     describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
         function doTest(startingCode: string, hasDeclareKeyword: boolean) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             expect(firstChild.getStructure().hasDeclareKeyword).to.equal(hasDeclareKeyword);
         }
 
@@ -112,7 +112,7 @@ describe(nameof(AmbientableNode), () => {
 
     describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: AmbientableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }

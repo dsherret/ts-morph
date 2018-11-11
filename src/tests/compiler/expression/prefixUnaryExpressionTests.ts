@@ -6,7 +6,7 @@ import { getInfoFromTextWithDescendant } from "../testHelpers";
 describe(nameof(PrefixUnaryExpression), () => {
     const expression = "x";
     const expr = `++${expression}`;
-    const {descendant: prefixUnaryExpression} = getInfoFromTextWithDescendant<PrefixUnaryExpression>(expr, SyntaxKind.PrefixUnaryExpression);
+    const { descendant: prefixUnaryExpression } = getInfoFromTextWithDescendant<PrefixUnaryExpression>(expr, SyntaxKind.PrefixUnaryExpression);
 
     describe(nameof<PrefixUnaryExpression>(n => n.getOperand), () => {
         it("should get the correct expression", () => {

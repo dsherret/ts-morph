@@ -13,7 +13,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getKeyName), () => {
         function doTest(code: string, expectedName: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getKeyName()).to.equal(expectedName);
         }
 
@@ -24,7 +24,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getKeyNameNode), () => {
         function doTest(code: string, expectedName: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getKeyNameNode().getText()).to.equal(expectedName);
         }
 
@@ -35,7 +35,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.setKeyName), () => {
         function doTest(code: string, name: string, expectedCode: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.setKeyName(name);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -99,7 +99,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getReturnType), () => {
         function doTest(code: string, expected: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getReturnType().getText()).to.equal(expected);
         }
 
@@ -133,7 +133,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.setReturnType), () => {
         function doTest(code: string, textOrWriterFunction: string | WriterFunction, expectedCode: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.setReturnType(textOrWriterFunction);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -157,7 +157,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.setIsReadonly), () => {
         function doTest(code: string, value: boolean, expectedCode: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.setIsReadonly(value);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -173,7 +173,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.remove), () => {
         function doTest(code: string, indexToRemove: number, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             firstChild.getIndexSignatures()[indexToRemove].remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -205,7 +205,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.set), () => {
         function doTest(code: string, structure: Partial<IndexSignatureDeclarationStructure>, expectedCode: string) {
-            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

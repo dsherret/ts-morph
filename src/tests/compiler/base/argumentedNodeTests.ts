@@ -6,7 +6,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(ArgumentedNode), () => {
     describe(nameof<ArgumentedNode>(n => n.getArguments), () => {
         function doTest(code: string, expectedArgs: string[]) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const args = firstChild.getDecorators()[0].getCallExpression()!.getArguments();
             expect(args.map(a => a.getText())).to.deep.equal(expectedArgs);
         }
@@ -22,7 +22,7 @@ describe(nameof(ArgumentedNode), () => {
 
     describe(nameof<ArgumentedNode>(n => n.insertArguments), () => {
         function doTest(code: string, index: number, texts: (string | WriterFunction)[] | WriterFunction, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
             const originalCount = callExpr.getArguments().length;
             const result = callExpr.insertArguments(index, texts);
@@ -65,7 +65,7 @@ describe(nameof(ArgumentedNode), () => {
 
     describe(nameof<ArgumentedNode>(n => n.insertArgument), () => {
         function doTest(code: string, index: number, text: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
             const result = callExpr.insertArgument(index, text);
             expect(result.getText()).to.equal(text);
@@ -79,7 +79,7 @@ describe(nameof(ArgumentedNode), () => {
 
     describe(nameof<ArgumentedNode>(n => n.addArguments), () => {
         function doTest(code: string, texts: string[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
             const result = callExpr.addArguments(texts);
             expect(result.map(t => t.getText())).to.deep.equal(texts);
@@ -93,7 +93,7 @@ describe(nameof(ArgumentedNode), () => {
 
     describe(nameof<ArgumentedNode>(n => n.addArgument), () => {
         function doTest(code: string, text: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
             const result = callExpr.addArgument(text);
             expect(result.getText()).to.equal(text);
@@ -111,20 +111,20 @@ describe(nameof(ArgumentedNode), () => {
             doTestByArg();
 
             function doTestByIndex() {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
+                const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
                 firstChild.getDecorators()[0].getCallExpressionOrThrow().removeArgument(removeIndex);
                 expect(sourceFile.getFullText()).to.equal(expectedText);
             }
 
             function doTestByArg() {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
+                const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
                 firstChild.getDecorators()[0].getCallExpressionOrThrow().removeArgument(firstChild.getDecorators()[0].getArguments()[removeIndex]);
                 expect(sourceFile.getFullText()).to.equal(expectedText);
             }
         }
 
         it("should throw when specifying an invalid index", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("@test(1, 2, 3)\nclass T {}");
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("@test(1, 2, 3)\nclass T {}");
             expect(() => firstChild.getDecorators()[0].getCallExpressionOrThrow().removeArgument(3)).to.throw();
         });
 

@@ -4,7 +4,7 @@ import { SymbolFlags } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Symbol), () => {
-    const {sourceFile: enumSourceFile} = getInfoFromText("enum MyEnum {}");
+    const { sourceFile: enumSourceFile } = getInfoFromText("enum MyEnum {}");
     const enumDeclaration = enumSourceFile.getEnums()[0];
     const enumNameNodeSymbol = enumDeclaration.getNameNode().getSymbol()!;
 

@@ -10,7 +10,7 @@ describe(nameof(ImportTypeNode), () => {
 
     describe(nameof<ImportTypeNode>(d => d.getArgument), () => {
         function doTest(text: string, expected: string) {
-            const {descendant} = getNode(text);
+            const { descendant } = getNode(text);
             expect(descendant.getArgument().getText()).to.equal(expected);
         }
 
@@ -21,7 +21,7 @@ describe(nameof(ImportTypeNode), () => {
 
     describe(nameof<ImportTypeNode>(d => d.setArgument), () => {
         function doTest(text: string, newValue: string, expected: string) {
-            const {descendant} = getNode(text);
+            const { descendant } = getNode(text);
             descendant.setArgument(newValue);
             expect(descendant.getText()).to.equal(expected);
         }
@@ -37,7 +37,7 @@ describe(nameof(ImportTypeNode), () => {
 
     describe(nameof<ImportTypeNode>(d => d.getQualifier), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {descendant} = getNode(text);
+            const { descendant } = getNode(text);
             if (expected == null)
                 expect(descendant.getQualifier()).to.be.undefined;
             else
@@ -55,7 +55,7 @@ describe(nameof(ImportTypeNode), () => {
 
     describe(nameof<ImportTypeNode>(d => d.getQualifierOrThrow), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {descendant} = getNode(text);
+            const { descendant } = getNode(text);
             if (expected == null)
                 expect(() => descendant.getQualifierOrThrow()).to.throw();
             else

@@ -13,7 +13,7 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.getNameNode), () => {
         function doTest(text: string, name: string) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedExport = firstChild.getNamedExports()[0];
             expect(namedExport.getNameNode().getText()).to.equal(name);
         }
@@ -33,7 +33,7 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.getName), () => {
         function doTest(text: string, name: string) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedImport = firstChild.getNamedExports()[0];
             expect(namedImport.getName()).to.equal(name);
         }
@@ -81,7 +81,7 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.getAliasNode), () => {
         function doTest(text: string, alias: string | undefined) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedExport = firstChild.getNamedExports()[0];
             if (alias == null)
                 expect(namedExport.getAliasNode()).to.equal(undefined);
@@ -247,7 +247,7 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.getExportDeclaration), () => {
         it("should get the parent export declaration", () => {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(`export {name} from "./test";`);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(`export {name} from "./test";`);
             const namedExport = firstChild.getNamedExports()[0];
             expect(namedExport.getExportDeclaration()).to.equal(firstChild);
         });
@@ -255,7 +255,7 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.remove), () => {
         function doTest(text: string, nameToRemove: string, expectedText: string) {
-            const {sourceFile, firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { sourceFile, firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedExport = ArrayUtils.find(firstChild.getNamedExports(), e => e.getNameNode().getText() === nameToRemove);
             namedExport!.remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);

@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertNamespaces), () => {
         function doTest(startCode: string, index: number, structures: NamespaceDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespaces(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -38,7 +38,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should have the expected text adding to non-source file", () => {
-            const {sourceFile} = getInfoFromText("namespace Namespace {\n}\n");
+            const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertNamespaces(0, [{
                 name: "Identifier"
@@ -108,7 +108,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.insertNamespace), () => {
         function doTest(startCode: string, index: number, structure: NamespaceDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespace(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(NamespaceDeclaration);
@@ -121,7 +121,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addNamespaces), () => {
         function doTest(startCode: string, structures: NamespaceDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespaces(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -135,7 +135,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addNamespace), () => {
         function doTest(startCode: string, structure: NamespaceDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespace(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(NamespaceDeclaration);
@@ -147,7 +147,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getNamespaces), () => {
-        const {sourceFile} = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
+        const { sourceFile } = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
         const namespaces = sourceFile.getNamespaces();
 
         it("should have the expected number of namespaces", () => {
@@ -165,7 +165,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getNamespace), () => {
-        const {sourceFile} = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
+        const { sourceFile } = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
 
         it("should get a namespace by a name", () => {
             expect(sourceFile.getNamespace("Identifier2")!.getName()).to.equal("Identifier2");
@@ -181,7 +181,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getNamespaceOrThrow), () => {
-        const {sourceFile} = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
+        const { sourceFile } = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
 
         it("should get a namespace by a name", () => {
             expect(sourceFile.getNamespaceOrThrow("Identifier2").getName()).to.equal("Identifier2");

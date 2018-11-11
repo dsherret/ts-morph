@@ -55,7 +55,7 @@ export interface ReplaceTreeUnwrappingNodeOptions {
 
 export class NodeHandlerFactory {
     getDefault(opts: DefaultReplaceTreeOptions) {
-        const {parent: changingParent, isFirstChild, childCount, customMappings} = opts;
+        const { parent: changingParent, isFirstChild, childCount, customMappings } = opts;
         const sourceFile = changingParent.getSourceFile();
         const compilerFactory = sourceFile._context.compilerFactory;
         const replacingNodes = opts.replacingNodes == null ? undefined : [...opts.replacingNodes];
@@ -69,7 +69,7 @@ export class NodeHandlerFactory {
     }
 
     getForRange(opts: ReplaceTreeWithRangeOptions) {
-        const {parent: changingParent, start, end, replacingLength, replacingNodes, customMappings} = opts;
+        const { parent: changingParent, start, end, replacingLength, replacingNodes, customMappings } = opts;
         const sourceFile = changingParent.getSourceFile();
         const compilerFactory = sourceFile._context.compilerFactory;
 
@@ -81,7 +81,7 @@ export class NodeHandlerFactory {
     }
 
     getForChildIndex(opts: ReplaceTreeWithChildIndexOptions) {
-        const {parent, childIndex, childCount, replacingNodes, customMappings} = opts;
+        const { parent, childIndex, childCount, replacingNodes, customMappings } = opts;
         const parentChildren = parent.getChildren();
         errors.throwIfOutOfRange(childIndex, [0, parentChildren.length], nameof.full(opts.childIndex));
         if (childCount < 0)
@@ -111,7 +111,7 @@ export class NodeHandlerFactory {
     }
 
     getForChangingChildOrder(opts: ReplaceTreeChangingChildOrderOptions) {
-        const {parent: changingParent, oldIndex, newIndex} = opts;
+        const { parent: changingParent, oldIndex, newIndex } = opts;
         const sourceFile = changingParent.getSourceFile();
         const compilerFactory = sourceFile._context.compilerFactory;
         const changeChildOrderParentHandler = new ChangeChildOrderParentHandler(compilerFactory, { oldIndex, newIndex });

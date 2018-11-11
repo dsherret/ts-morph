@@ -5,7 +5,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(AwaitableNode), () => {
     const awaitForOfText = "for await (const x of [Promise.resolve(1)]) {}";
     const forOfText = "for (const x of [Promise.resolve(1)]) {}";
-    const {sourceFile: mainSourceFile} = getInfoFromText(`${awaitForOfText}\n${forOfText}`);
+    const { sourceFile: mainSourceFile } = getInfoFromText(`${awaitForOfText}\n${forOfText}`);
     const awaitForOf = mainSourceFile.getStatements()[0] as ForOfStatement;
     const forOf = mainSourceFile.getStatements()[1] as ForOfStatement;
 
@@ -42,32 +42,32 @@ describe(nameof(AwaitableNode), () => {
     describe(nameof<AwaitableNode>(n => n.setIsAwaited), () => {
         describe("For of", () => {
             it("should set as await when not a await", () => {
-                const {firstChild, sourceFile} = getInfoFromText<ForOfStatement>(forOfText);
+                const { firstChild, sourceFile } = getInfoFromText<ForOfStatement>(forOfText);
                 firstChild.setIsAwaited(true);
                 expect(sourceFile.getText()).to.equal(awaitForOfText);
             });
 
             it("should set as not a await when a await", () => {
-                const {firstChild, sourceFile} = getInfoFromText<ForOfStatement>(awaitForOfText);
+                const { firstChild, sourceFile } = getInfoFromText<ForOfStatement>(awaitForOfText);
                 firstChild.setIsAwaited(false);
                 expect(sourceFile.getText()).to.equal(forOfText);
             });
 
             it("should not change the await when already that value", () => {
-                const {firstChild, sourceFile} = getInfoFromText<ForOfStatement>(awaitForOfText);
+                const { firstChild, sourceFile } = getInfoFromText<ForOfStatement>(awaitForOfText);
                 firstChild.setIsAwaited(true);
                 expect(sourceFile.getText()).to.equal(awaitForOfText);
             });
 
             //  Well, sort of properly - it maintains there is no space before the first parens.
             it("should handle for spacing properly when adding await", () => {
-                const {firstChild, sourceFile} = getInfoFromText<ForOfStatement>("for(const x of [Promise.resolve(1)]) {}");
+                const { firstChild, sourceFile } = getInfoFromText<ForOfStatement>("for(const x of [Promise.resolve(1)]) {}");
                 firstChild.setIsAwaited(true);
                 expect(sourceFile.getText()).to.equal("for await(const x of [Promise.resolve(1)]) {}");
             });
 
             it("should handle for spacing properly when removing await", () => {
-                const {firstChild, sourceFile} = getInfoFromText<ForOfStatement>("for await(const x of [Promise.resolve(1)]) {}");
+                const { firstChild, sourceFile } = getInfoFromText<ForOfStatement>("for await(const x of [Promise.resolve(1)]) {}");
                 firstChild.setIsAwaited(false);
                 expect(sourceFile.getText()).to.equal("for(const x of [Promise.resolve(1)]) {}");
             });
@@ -76,7 +76,7 @@ describe(nameof(AwaitableNode), () => {
 
     describe("fill", () => {
         function doTest(startCode: string, structure: AwaitableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ForOfStatement>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ForOfStatement>(startCode);
             (firstChild as any).set(structure); // nothing is using this yet
             expect(firstChild.getText()).to.equal(expectedCode);
         }

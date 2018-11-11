@@ -6,7 +6,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(FunctionDeclaration), () => {
     describe(nameof<FunctionDeclaration>(f => f.getName), () => {
         function doTest(startCode: string, name: string | undefined) {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             expect(firstChild.getName()).to.equal(name);
         }
 
@@ -21,7 +21,7 @@ describe(nameof(FunctionDeclaration), () => {
 
     describe(nameof<FunctionDeclaration>(f => f.insertOverloads), () => {
         function doTest(startCode: string, index: number, structures: FunctionDeclarationOverloadStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertOverloads(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -55,7 +55,7 @@ describe(nameof(FunctionDeclaration), () => {
 
     describe(nameof<FunctionDeclaration>(f => f.insertOverload), () => {
         function doTest(startCode: string, index: number, structure: FunctionDeclarationOverloadStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertOverload(index, structure);
             expect(result).to.be.instanceOf(FunctionDeclaration);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -69,7 +69,7 @@ describe(nameof(FunctionDeclaration), () => {
 
     describe(nameof<FunctionDeclaration>(f => f.addOverloads), () => {
         function doTest(startCode: string, structures: FunctionDeclarationOverloadStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addOverloads(structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -83,7 +83,7 @@ describe(nameof(FunctionDeclaration), () => {
 
     describe(nameof<FunctionDeclaration>(f => f.addOverload), () => {
         function doTest(startCode: string, structure: FunctionDeclarationOverloadStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addOverload(structure);
             expect(result).to.be.instanceOf(FunctionDeclaration);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -97,13 +97,13 @@ describe(nameof(FunctionDeclaration), () => {
 
     describe(nameof<FunctionDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getFunctions()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
         function doOverloadTest(text: string, index: number, overloadIndex: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getFunctions()[index].getOverloads()[overloadIndex].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

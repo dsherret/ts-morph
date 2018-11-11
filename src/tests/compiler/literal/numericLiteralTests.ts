@@ -6,7 +6,7 @@ import { getInfoFromTextWithDescendant } from "../testHelpers";
 describe(nameof(NumericLiteral), () => {
     describe(nameof<NumericLiteral>(n => n.getLiteralValue), () => {
         function doTest(text: string, expectedValue: number) {
-            const {descendant} = getInfoFromTextWithDescendant<NumericLiteral>(text, SyntaxKind.NumericLiteral);
+            const { descendant } = getInfoFromTextWithDescendant<NumericLiteral>(text, SyntaxKind.NumericLiteral);
             expect(descendant.getLiteralValue()).to.equal(expectedValue);
         }
 
@@ -25,7 +25,7 @@ describe(nameof(NumericLiteral), () => {
 
     describe(nameof<NumericLiteral>(n => n.setLiteralValue), () => {
         function doTest(text: string, value: number, expectedText: string) {
-            const {descendant, sourceFile} = getInfoFromTextWithDescendant<NumericLiteral>(text, SyntaxKind.NumericLiteral);
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<NumericLiteral>(text, SyntaxKind.NumericLiteral);
             descendant.setLiteralValue(value);
             expect(sourceFile.getText()).to.equal(expectedText);
         }

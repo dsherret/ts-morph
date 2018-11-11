@@ -4,11 +4,11 @@ import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(OverloadableNode), () => {
     const functionCode = `function myFunction();function myFunction() {}`;
-    const {sourceFile: functionSourceFile} = getInfoFromText<FunctionDeclaration>(functionCode);
+    const { sourceFile: functionSourceFile } = getInfoFromText<FunctionDeclaration>(functionCode);
     const functions = functionSourceFile.getChildSyntaxListOrThrow().getChildren() as FunctionDeclaration[];
 
     const constructorCode = `class MyClass { constructor();constructor();constructor() {} myMethod(): void;myMethod() {} abstract test(); }`;
-    const {firstChild: classChild} = getInfoFromText<ClassDeclaration>(constructorCode);
+    const { firstChild: classChild } = getInfoFromText<ClassDeclaration>(constructorCode);
     const constructors = classChild.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof ConstructorDeclaration) as ConstructorDeclaration[];
 
     describe(nameof<OverloadableNode>(d => d.isImplementation), () => {
@@ -71,7 +71,7 @@ describe(nameof(OverloadableNode), () => {
         describe("ambient context", () => {
             it("should return all the overloads in an ambient context", () => {
                 const code = `declare function myFunction(): void;declare function myFunction(): void;`;
-                const {firstChild} = getInfoFromText<FunctionDeclaration>(code);
+                const { firstChild } = getInfoFromText<FunctionDeclaration>(code);
                 expect(firstChild.getOverloads().length).to.equal(2);
             });
         });
@@ -105,7 +105,7 @@ describe(nameof(OverloadableNode), () => {
         describe("ambient context", () => {
             it("should return undefined in an ambient context", () => {
                 const code = `declare function myFunction(): void;declare function myFunction(): void;`;
-                const {firstChild} = getInfoFromText<FunctionDeclaration>(code);
+                const { firstChild } = getInfoFromText<FunctionDeclaration>(code);
                 expect(firstChild.getImplementation()).to.be.undefined;
             });
         });
@@ -119,7 +119,7 @@ describe(nameof(OverloadableNode), () => {
 
         it("should throw in an ambient context", () => {
             const code = `declare function myFunction(): void;declare function myFunction(): void;`;
-            const {firstChild} = getInfoFromText<FunctionDeclaration>(code);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(code);
             expect(() => firstChild.getImplementationOrThrow()).to.throw();
         });
     });

@@ -11,49 +11,49 @@ describe(nameof(ReadonlyableNode), () => {
 
     describe(nameof<ReadonlyableNode>(d => d.isReadonly), () => {
         it("should be readonly when readonly", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
             expect(firstProperty.isReadonly()).to.be.true;
         });
 
         it("should not be readonly when not readonly", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
             expect(firstProperty.isReadonly()).to.be.false;
         });
     });
 
     describe(nameof<ReadonlyableNode>(d => d.getReadonlyKeyword), () => {
         it("should be get the readonly keyword when readonly", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
             expect(firstProperty.getReadonlyKeyword()!.getText()).to.equal("readonly");
         });
 
         it("should return undefined when not readonly", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
             expect(firstProperty.getReadonlyKeyword()).to.be.undefined;
         });
     });
 
     describe(nameof<ReadonlyableNode>(d => d.getReadonlyKeywordOrThrow), () => {
         it("should be get the readonly keyword when readonly", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
             expect(firstProperty.getReadonlyKeywordOrThrow().getText()).to.equal("readonly");
         });
 
         it("should throw when not readonly", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
             expect(() => firstProperty.getReadonlyKeywordOrThrow()).to.throw();
         });
     });
 
     describe(nameof<ReadonlyableNode>(n => n.setIsReadonly), () => {
         it("should set as readonly when not readonly", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");
             (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsReadonly(true);
             expect(sourceFile.getText()).to.equal("class MyClass { readonly prop: string; }");
         });
 
         it("should set as not readonly when readonly", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { readonly prop: string; }");
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("class MyClass { readonly prop: string; }");
             (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsReadonly(false);
             expect(sourceFile.getText()).to.equal("class MyClass { prop: string; }");
         });
@@ -61,7 +61,7 @@ describe(nameof(ReadonlyableNode), () => {
 
     describe(nameof<PropertyDeclaration>(n => n.set), () => {
         function doTest(startCode: string, structure: ReadonlyableNodeStructure, expectedCode: string) {
-            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
+            const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
             firstProperty.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }

@@ -6,7 +6,7 @@ import { getInfoFromTextWithDescendant } from "../../testHelpers";
 describe(nameof(ImportExpressionedNode), () => {
     describe(nameof<ImportExpressionedNode>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {descendant} = getInfoFromTextWithDescendant<CallExpression>(text, SyntaxKind.CallExpression);
+            const { descendant } = getInfoFromTextWithDescendant<CallExpression>(text, SyntaxKind.CallExpression);
             expect(descendant.getExpression().getText()).to.equal(expectedText);
         }
 

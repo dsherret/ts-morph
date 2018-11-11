@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertVariableStatements), () => {
         function doTest(startCode: string, index: number, structures: VariableStatementStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertVariableStatements(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -53,7 +53,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should have the expected text adding to non-source file", () => {
-            const {sourceFile} = getInfoFromText("namespace Identifier {\n}\n");
+            const { sourceFile } = getInfoFromText("namespace Identifier {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertVariableStatements(0, [{ declarations: [{ name: "Identifier" }] }]);
 
@@ -82,7 +82,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.insertVariableStatement), () => {
         function doTest(startCode: string, index: number, structure: VariableStatementStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertVariableStatement(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(VariableStatement);
@@ -95,7 +95,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addVariableStatements), () => {
         function doTest(startCode: string, structures: VariableStatementStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addVariableStatements(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -109,7 +109,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addVariableStatement), () => {
         function doTest(startCode: string, structure: VariableStatementStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addVariableStatement(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(VariableStatement);
@@ -120,7 +120,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    const {sourceFile: variablesSourceFile} = getInfoFromText("var Identifier1;\nvar Identifier2, Identifier3;");
+    const { sourceFile: variablesSourceFile } = getInfoFromText("var Identifier1;\nvar Identifier2, Identifier3;");
     describe(nameof<StatementedNode>(n => n.getVariableStatements), () => {
         const statements = variablesSourceFile.getVariableStatements();
         it("should have the expected number of statements", () => {

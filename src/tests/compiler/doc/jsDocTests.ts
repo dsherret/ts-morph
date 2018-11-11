@@ -7,7 +7,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(JSDoc), () => {
     describe(nameof<JSDoc>(d => d.remove), () => {
         function doTest(text: string, index: number, jsDocIndex: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getFunctions()[index].getJsDocs()[jsDocIndex].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -31,7 +31,7 @@ describe(nameof(JSDoc), () => {
 
     describe(nameof<JSDoc>(d => d.getComment), () => {
         function doTest(text: string, expectedComment: string | undefined) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const comment = sourceFile.getFunctions()[0].getJsDocs()[0].getComment();
             expect(comment).to.equal(expectedComment);
         }
@@ -47,7 +47,7 @@ describe(nameof(JSDoc), () => {
 
     describe(nameof<JSDoc>(d => d.setComment), () => {
         function doTest(text: string, comment: string, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getFunctions()[0].getJsDocs()[0].setComment(comment);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -75,7 +75,7 @@ describe(nameof(JSDoc), () => {
 
     describe(nameof<JSDoc>(d => d.getTags), () => {
         function doTest(text: string, expectedTags: string[]) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const tags = sourceFile.getFunctions()[0].getJsDocs()[0].getTags();
             expect(tags.map(t => t.getText())).to.deep.equal(expectedTags);
         }
@@ -92,7 +92,7 @@ describe(nameof(JSDoc), () => {
 
     describe(nameof<JSDoc>(d => d.getInnerText), () => {
         function doTest(text: string, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const innerText = sourceFile.getFunctions()[0].getJsDocs()[0].getInnerText();
             expect(innerText).to.deep.equal(expectedText);
         }

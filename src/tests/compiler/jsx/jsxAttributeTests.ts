@@ -17,7 +17,7 @@ function getInfoForSelfClosingElement(text: string) {
 describe(nameof(JsxAttribute), () => {
     describe(nameof<JsxAttribute>(n => n.getName), () => {
         function doTest(text: string, expected: string) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.getName()).to.equal(expected);
         }
 
@@ -28,7 +28,7 @@ describe(nameof(JsxAttribute), () => {
 
     describe(nameof<JsxAttribute>(n => n.rename), () => {
         function doTest(text: string, newName: string, expected: string) {
-            const {descendant, sourceFile} = getInfo(text);
+            const { descendant, sourceFile } = getInfo(text);
             descendant.rename(newName);
             expect(sourceFile.getFullText()).to.equal(expected);
         }
@@ -40,7 +40,7 @@ describe(nameof(JsxAttribute), () => {
 
     describe(nameof<JsxAttribute>(n => n.getInitializer), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             const initializer = descendant.getInitializer();
             if (expected == null)
                 expect(initializer).to.be.undefined;
@@ -123,7 +123,7 @@ describe(nameof(JsxAttribute), () => {
 
     describe(nameof<JsxAttribute>(n => n.remove), () => {
         function doTest(text: string, index: number, expected: string) {
-            const {descendant, sourceFile} = getInfoForSelfClosingElement(text);
+            const { descendant, sourceFile } = getInfoForSelfClosingElement(text);
             (descendant.getAttributes()[index] as JsxAttribute).remove();
             expect(sourceFile.getFullText()).to.equal(expected);
         }

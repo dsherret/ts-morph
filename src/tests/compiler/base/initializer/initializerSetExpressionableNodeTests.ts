@@ -48,12 +48,12 @@ describe(nameof(InitializerSetExpressionableNode), () => {
     describe(nameof<InitializerSetExpressionableNode>(n => n.setInitializer), () => {
         describe("enum member", () => {
             function doThrowTest(initializerText: any) {
-                const {member} = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
+                const { member } = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
                 expect(() => member.setInitializer(initializerText)).to.throw();
             }
 
             function doEnumMemberTest(startCode: string, initializer: string, expectedCode: string) {
-                const {member, sourceFile} = getEnumMemberFromText(startCode);
+                const { member, sourceFile } = getEnumMemberFromText(startCode);
                 member.setInitializer(initializer);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -89,7 +89,7 @@ describe(nameof(InitializerSetExpressionableNode), () => {
 
         describe("class property", () => {
             function doClassPropTest(text: string, newInitializer: string, expected: string) {
-                const {firstChild} = getInfoFromText<ClassDeclaration>(text);
+                const { firstChild } = getInfoFromText<ClassDeclaration>(text);
                 const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
                 prop.setInitializer(newInitializer);
                 expect(firstChild.getFullText()).to.equal(expected);
@@ -156,7 +156,7 @@ describe(nameof(InitializerSetExpressionableNode), () => {
 
     describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: InitializerSetExpressionableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const firstProperty = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
             firstProperty.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);

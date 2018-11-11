@@ -16,7 +16,7 @@ function getInfoForSelfClosingElement(text: string) {
 describe(nameof(JsxSpreadAttribute), () => {
     describe(nameof<JsxSpreadAttribute>(n => n.getExpression), () => {
         function doTest(text: string, expected: string) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.getExpression().getText()).to.equal(expected);
         }
 

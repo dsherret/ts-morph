@@ -42,8 +42,8 @@ const markDownFilesWithCodeBlocks = markDownFiles
     }));
 
 // collect diagnostics
-for (const {markDownFile, codeBlocksWithSourceFiles} of markDownFilesWithCodeBlocks) {
-    for (const {codeBlock, tempSourceFile} of codeBlocksWithSourceFiles) {
+for (const { markDownFile, codeBlocksWithSourceFiles } of markDownFilesWithCodeBlocks) {
+    for (const { codeBlock, tempSourceFile } of codeBlocksWithSourceFiles) {
         const ignoredErrorCodes = codeBlock.getIgnoredErrorCodes();
         const codeBlockDiagnostics = tempSourceFile.getPreEmitDiagnostics()
             .filter(d => [...errorCodesToIgnore, ...ignoredErrorCodes].indexOf(d.getCode()) === -1);

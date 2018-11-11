@@ -7,7 +7,7 @@ describe(nameof(SyntaxList), () => {
     describe(nameof<SyntaxList>(s => s.insertChildText), () => {
         // most of these tests are in StatementedNode
         it("should insert a class member", () => {
-            const {sourceFile, firstChild} = getInfoFromText("class MyClass {\n}\n");
+            const { sourceFile, firstChild } = getInfoFromText("class MyClass {\n}\n");
             firstChild.getChildSyntaxListOrThrow().insertChildText(0, writer => {
                 writer.write("get myNumber()").block(() => {
                     writer.writeLine("return 5;");
@@ -51,7 +51,7 @@ describe(nameof(SyntaxList), () => {
 
     describe(nameof<SyntaxList>(s => s.addChildText), () => {
         function doSourceFileTest(code: string, statements: string, expectedLength: number, expectedCode: string) {
-            const {sourceFile} = getInfoFromText(code);
+            const { sourceFile } = getInfoFromText(code);
             const nodes = sourceFile.getChildSyntaxListOrThrow().addChildText(statements);
             expect(nodes.length).to.equal(expectedLength);
             expect(nodes[0]).to.be.instanceOf(Node);

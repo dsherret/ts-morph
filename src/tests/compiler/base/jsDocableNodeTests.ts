@@ -7,7 +7,7 @@ import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(JSDocableNode), () => {
     describe(nameof(VariableStatement), () => {
-        const {sourceFile} = getInfoFromText("/** Text */\nvar docedComment;\n/** First */\n/** Second */var multiCommented;\nvar nonDocedComment;");
+        const { sourceFile } = getInfoFromText("/** Text */\nvar docedComment;\n/** First */\n/** Second */var multiCommented;\nvar nonDocedComment;");
         const statements = sourceFile.getVariableStatements();
         const docedStatement = statements[0];
         const multiDocedStatement = statements[1];
@@ -44,7 +44,7 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof(FunctionDeclaration), () => {
-        const {firstChild} = getInfoFromText<FunctionDeclaration>("/**\n * Test.\n * @name - Test\n */\nfunction myFunction(name: string) {}");
+        const { firstChild } = getInfoFromText<FunctionDeclaration>("/**\n * Test.\n * @name - Test\n */\nfunction myFunction(name: string) {}");
         const doc = firstChild.getJsDocs()[0];
 
         it("should have the right node kind", () => {
@@ -56,7 +56,7 @@ describe(nameof(JSDocableNode), () => {
         function doTest(startCode: string, insertIndex: number, structures: (JSDocStructure | string | WriterFunction)[],
             expectedCode: string, syntaxKind = SyntaxKind.FunctionDeclaration)
         {
-            const {descendant, sourceFile} = getInfoFromTextWithDescendant(startCode, syntaxKind);
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant(startCode, syntaxKind);
             const result = (descendant as any as JSDocableNode).insertJsDocs(insertIndex, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -95,7 +95,7 @@ describe(nameof(JSDocableNode), () => {
 
     describe(nameof<JSDocableNode>(n => n.insertJsDoc), () => {
         function doTest(startCode: string, index: number, structure: JSDocStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertJsDoc(index, structure);
             expect(result).to.be.instanceOf(Node);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -109,7 +109,7 @@ describe(nameof(JSDocableNode), () => {
 
     describe(nameof<JSDocableNode>(n => n.addJsDocs), () => {
         function doTest(startCode: string, structures: (JSDocStructure | string)[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addJsDocs(structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -123,7 +123,7 @@ describe(nameof(JSDocableNode), () => {
 
     describe(nameof<JSDocableNode>(n => n.addJsDoc), () => {
         function doTest(startCode: string, structure: JSDocStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addJsDoc(structure);
             expect(result).to.be.instanceOf(Node);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -137,7 +137,7 @@ describe(nameof(JSDocableNode), () => {
 
     describe(nameof<ClassDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: JSDocableNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

@@ -12,7 +12,7 @@ export class InsertionTextManipulator implements TextManipulator {
     }
 
     getNewText(inputText: string) {
-        const {insertPos, newText, replacingLength = 0} = this.opts;
+        const { insertPos, newText, replacingLength = 0 } = this.opts;
         return inputText.substring(0, insertPos) + newText + inputText.substring(insertPos + replacingLength);
     }
 

@@ -14,7 +14,7 @@ function getInfoFromTextWithBooleanLiteral(text: string) {
 describe(nameof(BooleanLiteral), () => {
     describe(nameof<BooleanLiteral>(n => n.getLiteralValue), () => {
         function doTest(text: string, expectedValue: boolean) {
-            const {literal} = getInfoFromTextWithBooleanLiteral(text);
+            const { literal } = getInfoFromTextWithBooleanLiteral(text);
             expect(literal.getLiteralValue()).to.equal(expectedValue);
         }
 
@@ -29,7 +29,7 @@ describe(nameof(BooleanLiteral), () => {
 
     describe(nameof<BooleanLiteral>(n => n.setLiteralValue), () => {
         function doTest(text: string, value: boolean, expectedText: string) {
-            const {literal, sourceFile} = getInfoFromTextWithBooleanLiteral(text);
+            const { literal, sourceFile } = getInfoFromTextWithBooleanLiteral(text);
             literal.setLiteralValue(value);
             expect(sourceFile.getText()).to.equal(expectedText);
         }

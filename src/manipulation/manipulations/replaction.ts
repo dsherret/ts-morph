@@ -29,7 +29,7 @@ export function replaceNodeText(opts: ReplaceNodeTextOptions) {
  * This is very useful when making formatting changes that won't change the AST structure.
  */
 export function replaceSourceFileTextForFormatting(opts: { sourceFile: SourceFile; newText: string; }) {
-    const {sourceFile, newText} = opts;
+    const { sourceFile, newText } = opts;
     doManipulation(sourceFile,
         new FullReplacementTextManipulator(newText),
         new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory));
@@ -39,7 +39,7 @@ export function replaceSourceFileTextForFormatting(opts: { sourceFile: SourceFil
  * Replaces the text in a source file based on rename locations.
  */
 export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; renameLocations: RenameLocation[]; newName: string; }) {
-    const {sourceFile, renameLocations, newName} = opts;
+    const { sourceFile, renameLocations, newName } = opts;
     const nodeHandlerFactory = new NodeHandlerFactory();
 
     doManipulation(sourceFile,
@@ -58,7 +58,7 @@ export interface ReplaceTextPossiblyCreatingChildNodesOptions {
  * Replaces a node text while possibly creating new child nodes.
  */
 export function replaceTextPossiblyCreatingChildNodes(opts: ReplaceTextPossiblyCreatingChildNodesOptions) {
-    const {replacePos, replacingLength, newText, parent} = opts;
+    const { replacePos, replacingLength, newText, parent } = opts;
 
     doManipulation(parent._sourceFile, new InsertionTextManipulator({
         insertPos: replacePos,
@@ -80,7 +80,7 @@ export interface ReplaceSourceFileForFilePathMoveOptions {
  * Replaces a source file for a file path move.
  */
 export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFilePathMoveOptions) {
-    const {sourceFile, newFilePath} = opts;
+    const { sourceFile, newFilePath } = opts;
 
     doManipulation(sourceFile,
         new UnchangedTextManipulator(),

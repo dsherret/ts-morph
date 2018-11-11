@@ -9,7 +9,7 @@ describe(nameof(RegularExpressionLiteral), () => {
 
     describe(nameof<RegularExpressionLiteral>(n => n.getLiteralValue), () => {
         function doTest(text: string, pattern: string, flags: string) {
-            const {descendant} = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
+            const { descendant } = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
             const regExpr = descendant.getLiteralValue();
             expect(regExpr.source).to.equal(pattern);
 
@@ -29,7 +29,7 @@ describe(nameof(RegularExpressionLiteral), () => {
 
     describe(nameof<RegularExpressionLiteral>(n => n.setLiteralValue), () => {
         function doObjectTest(text: string, value: RegExp, expectedText: string) {
-            const {descendant, sourceFile} = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
             descendant.setLiteralValue(value);
             expect(sourceFile.getText()).to.equal(expectedText);
         }
@@ -45,7 +45,7 @@ describe(nameof(RegularExpressionLiteral), () => {
         }
 
         function doStringTest(text: string, pattern: string, flags: string | undefined, expectedText: string) {
-            const {descendant, sourceFile} = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
             descendant.setLiteralValue(pattern, flags);
             expect(sourceFile.getText()).to.equal(expectedText);
         }

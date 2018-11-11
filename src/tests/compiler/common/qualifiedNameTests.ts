@@ -5,7 +5,7 @@ import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(QualifiedName), () => {
     function getQualifiedName(text: string) {
-        const {sourceFile} = getInfoFromText(text);
+        const { sourceFile } = getInfoFromText(text);
         const typeRefNode = sourceFile.getVariableDeclarations()[0].getTypeNodeOrThrow() as TypeReferenceNode;
         const qualifiedName = typeRefNode.getTypeName() as QualifiedName;
         expect(qualifiedName.getKind()).to.equal(SyntaxKind.QualifiedName);

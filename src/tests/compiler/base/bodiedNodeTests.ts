@@ -13,7 +13,7 @@ describe(nameof(BodiedNode), () => {
         }
 
         function doWriterTest(startCode: string, writerFunc: WriterFunction, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(startCode);
             firstChild.setBodyText(writerFunc);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

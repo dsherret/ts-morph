@@ -7,7 +7,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(ImportEqualsDeclaration), () => {
     describe(nameof<ImportEqualsDeclaration>(n => n.getName), () => {
         function doTest(text: string, expected: string) {
-            const {firstChild} = getInfoFromText<ImportEqualsDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             expect(firstChild.getName()).to.equal(expected);
         }
 
@@ -18,7 +18,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
 
     describe(nameof<ImportEqualsDeclaration>(n => n.getModuleReference), () => {
         function doTest(text: string, expected: string) {
-            const {firstChild} = getInfoFromText<ImportEqualsDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             expect(firstChild.getModuleReference().getText()).to.equal(expected);
         }
 
@@ -33,7 +33,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
 
     describe(nameof<ImportEqualsDeclaration>(n => n.isExternalModuleReferenceRelative), () => {
         function doTest(text: string, expected: boolean) {
-            const {firstChild} = getInfoFromText<ImportEqualsDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             expect(firstChild.isExternalModuleReferenceRelative()).to.equal(expected);
         }
 
@@ -68,7 +68,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
 
     describe(nameof<ImportEqualsDeclaration>(n => n.setExternalModuleReference), () => {
         function doTest(text: string, externalModuleReference: string, expected: string) {
-            const {firstChild} = getInfoFromText<ImportEqualsDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             firstChild.setExternalModuleReference(externalModuleReference);
             expect(firstChild.getText()).to.equal(expected);
         }
@@ -86,7 +86,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
 
         it("should set the external module reference when specifying a source file", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ImportEqualsDeclaration>("import test = require('./test2');");
+            const { firstChild, sourceFile } = getInfoFromText<ImportEqualsDeclaration>("import test = require('./test2');");
             firstChild.setExternalModuleReference(sourceFile.getDirectory().createSourceFile("test3.ts"));
             expect(firstChild.getText()).to.equal(`import test = require("./test3");`);
         });
@@ -94,7 +94,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
 
     describe(nameof<ImportEqualsDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             (sourceFile.getStatements()[index] as ImportEqualsDeclaration).remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

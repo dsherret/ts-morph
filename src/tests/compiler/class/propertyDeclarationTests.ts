@@ -11,7 +11,7 @@ describe(nameof(PropertyDeclaration), () => {
 
     describe(nameof<PropertyDeclaration>(n => n.set), () => {
         function doTest(code: string, structure: Partial<PropertyDeclarationStructure>, expectedCode: string) {
-            const {firstProperty, sourceFile} = getFirstPropertyWithInfo(code);
+            const { firstProperty, sourceFile } = getFirstPropertyWithInfo(code);
             firstProperty.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -90,7 +90,7 @@ class T {
 
     describe(nameof<PropertyDeclaration>(n => n.remove), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             (firstChild.getInstanceProperty(nameToRemove)! as PropertyDeclaration).remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

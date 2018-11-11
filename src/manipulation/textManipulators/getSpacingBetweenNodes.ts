@@ -10,7 +10,7 @@ export interface GetSpacingBetweenNodesOptions<TParentNode extends Node> {
 }
 
 export function getSpacingBetweenNodes<TParentNode extends Node>(opts: GetSpacingBetweenNodesOptions<TParentNode>) {
-    const {parent, previousSibling, nextSibling, newLineKind, getSiblingFormatting} = opts;
+    const { parent, previousSibling, nextSibling, newLineKind, getSiblingFormatting } = opts;
     if (previousSibling == null || nextSibling == null)
         return "";
 

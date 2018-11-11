@@ -16,7 +16,7 @@ export interface ChangeChildOrderOptions<TParentNode extends Node> {
  * @param opts - Options.
  */
 export function changeChildOrder<TParentNode extends Node>(opts: ChangeChildOrderOptions<TParentNode>) {
-    const {parent, getSiblingFormatting, oldIndex, newIndex} = opts;
+    const { parent, getSiblingFormatting, oldIndex, newIndex } = opts;
 
     doManipulation(parent._sourceFile,
         new ChangingChildOrderTextManipulator(opts),

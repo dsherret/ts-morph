@@ -10,8 +10,8 @@ function getInfoFromTextWithElementAccessExpression(text: string) {
 
 describe(nameof(ElementAccessExpression), () => {
     const emptyExpr = "x[]";
-    const {elementAccessExpression} = getInfoFromTextWithElementAccessExpression("x[1]");
-    const {elementAccessExpression: emptyElementAccessExpression} = getInfoFromTextWithElementAccessExpression(emptyExpr);
+    const { elementAccessExpression } = getInfoFromTextWithElementAccessExpression("x[1]");
+    const { elementAccessExpression: emptyElementAccessExpression } = getInfoFromTextWithElementAccessExpression(emptyExpr);
 
     describe(nameof<ElementAccessExpression>(n => n.getArgumentExpression), () => {
         it("should get the correct argument expression", () => {

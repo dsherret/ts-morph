@@ -9,7 +9,7 @@ describe("tests for issue #89", () => {
 @dec
 class Identifier {
 }`;
-        const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
+        const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
         firstChild.setIsExported(true);
         expect(sourceFile.getFullText()).to.equal(`/** Description */
 @dec

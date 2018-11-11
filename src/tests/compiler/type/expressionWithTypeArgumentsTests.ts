@@ -4,7 +4,7 @@ import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExpressionWithTypeArguments), () => {
     function getFirstExpressionWithTypeArgs(text: string) {
-        const {firstChild} = getInfoFromText<ClassDeclaration>(text);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(text);
         return firstChild.getExtends()!;
     }
 

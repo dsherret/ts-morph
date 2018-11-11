@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe("getting a declaration within a namespace", () => {
-        const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Namespace1 {\n    class Class1 {}\n}\n");
+        const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Namespace1 {\n    class Class1 {}\n}\n");
         const classes = firstChild.getClasses();
 
         it("should have the expected number of classes", () => {
@@ -19,7 +19,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe("getting a declaration within a namespace with dot tokens", () => {
-        const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Namespace1.Namespace2.Namespace3 { class MyClass {} }\n");
+        const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Namespace1.Namespace2.Namespace3 { class MyClass {} }\n");
         const classes = firstChild.getClasses();
 
         it("should have the expected number of classes", () => {
@@ -29,14 +29,14 @@ describe(nameof(StatementedNode), () => {
 
     it("should get items inside a namespace", () => {
         // only need to check for one kind in here
-        const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { function function1() {}\nfunction function2() {} }");
+        const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Identifier { function function1() {}\nfunction function2() {} }");
         const functions = firstChild.getFunctions();
         expect(functions.length).to.equal(2);
     });
 
     it("should get items inside a function", () => {
         // only need to check for one kind in here
-        const {firstChild} = getInfoFromText<FunctionDeclaration>("function Identifier() { function function1() {}\nfunction function2() {} }");
+        const { firstChild } = getInfoFromText<FunctionDeclaration>("function Identifier() { function function1() {}\nfunction function2() {} }");
         const functions = firstChild.getFunctions();
         expect(functions.length).to.equal(2);
     });

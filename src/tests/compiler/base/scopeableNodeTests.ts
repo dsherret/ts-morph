@@ -11,74 +11,74 @@ describe(nameof(ScopeableNode), () => {
 
     describe(nameof<ScopeableNode>(d => d.getScope), () => {
         it("should return undefined when there's no scope", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(param: string) {} }");
+            const { firstParam } = getFirstParameter("class Identifier { constructor(param: string) {} }");
             expect(firstParam.getScope()).to.be.undefined;
         });
 
         it("should return public when public", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(public param: string) {} }");
+            const { firstParam } = getFirstParameter("class Identifier { constructor(public param: string) {} }");
             expect(firstParam.getScope()).to.equal(Scope.Public);
         });
 
         it("should return protected when protected", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(protected param: string) {} }");
+            const { firstParam } = getFirstParameter("class Identifier { constructor(protected param: string) {} }");
             expect(firstParam.getScope()).to.equal(Scope.Protected);
         });
 
         it("should return private when private", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(private param: string) {} }");
+            const { firstParam } = getFirstParameter("class Identifier { constructor(private param: string) {} }");
             expect(firstParam.getScope()).to.equal(Scope.Private);
         });
 
         it("should return public when readonly", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(readonly param: string) {} }");
+            const { firstParam } = getFirstParameter("class Identifier { constructor(readonly param: string) {} }");
             expect(firstParam.getScope()).to.equal(Scope.Public);
         });
 
         it("should return private when readonly and private", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(private readonly param: string) {} }");
+            const { firstParam } = getFirstParameter("class Identifier { constructor(private readonly param: string) {} }");
             expect(firstParam.getScope()).to.equal(Scope.Private);
         });
     });
 
     describe(nameof<ScopeableNode>(d => d.hasScopeKeyword), () => {
         it("should not have one when there's no scope", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(param: string) {} }");
+            const { firstParam } = getFirstParameter("class Identifier { constructor(param: string) {} }");
             expect(firstParam.hasScopeKeyword()).to.be.false;
         });
 
         it("should not have one when there's no scope and readonly", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(readonly param: string) {} }");
+            const { firstParam } = getFirstParameter("class Identifier { constructor(readonly param: string) {} }");
             expect(firstParam.hasScopeKeyword()).to.be.false;
         });
 
         it("should have one when there is a scope", () => {
-            const {firstParam} = getFirstParameter("class Identifier { constructor(public param: string) {} }");
+            const { firstParam } = getFirstParameter("class Identifier { constructor(public param: string) {} }");
             expect(firstParam.hasScopeKeyword()).to.be.true;
         });
     });
 
     describe(nameof<ScopeableNode>(d => d.setScope), () => {
         it("should set to public when set to public", () => {
-            const {firstChild, firstParam} = getFirstParameter("class Identifier { constructor(param: string) {} }");
+            const { firstChild, firstParam } = getFirstParameter("class Identifier { constructor(param: string) {} }");
             firstParam.setScope(Scope.Public);
             expect(firstChild.getText()).to.be.equal("class Identifier { constructor(public param: string) {} }");
         });
 
         it("should set to protected when set to protected", () => {
-            const {firstChild, firstParam} = getFirstParameter("class Identifier { constructor(public param: string) {} }");
+            const { firstChild, firstParam } = getFirstParameter("class Identifier { constructor(public param: string) {} }");
             firstParam.setScope(Scope.Protected);
             expect(firstChild.getText()).to.be.equal("class Identifier { constructor(protected param: string) {} }");
         });
 
         it("should set to private when set to private", () => {
-            const {firstChild, firstParam} = getFirstParameter("class Identifier { constructor(public param: string) {} }");
+            const { firstChild, firstParam } = getFirstParameter("class Identifier { constructor(public param: string) {} }");
             firstParam.setScope(Scope.Private);
             expect(firstChild.getText()).to.be.equal("class Identifier { constructor(private param: string) {} }");
         });
 
         it("should clear when set to undefined", () => {
-            const {firstChild, firstParam} = getFirstParameter("class Identifier { constructor(public param: string) {} }");
+            const { firstChild, firstParam } = getFirstParameter("class Identifier { constructor(public param: string) {} }");
             firstParam.setScope(undefined);
             expect(firstChild.getText()).to.be.equal("class Identifier { constructor(param: string) {} }");
         });
@@ -86,7 +86,7 @@ describe(nameof(ScopeableNode), () => {
 
     describe(nameof<ParameterDeclaration>(p => p.set), () => {
         function doTest(startCode: string, structure: ScopeableNodeStructure, expectedCode: string) {
-            const {firstParam, sourceFile} = getFirstParameter(startCode);
+            const { firstParam, sourceFile } = getFirstParameter(startCode);
             firstParam.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }

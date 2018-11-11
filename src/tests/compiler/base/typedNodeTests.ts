@@ -6,7 +6,7 @@ import { TypedNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypedNode), () => {
-    const {sourceFile: mainSourceFile} = getInfoFromText("var myImplicitVar = 1; var myExplicitVar: string; type TypeAlias1 = string;");
+    const { sourceFile: mainSourceFile } = getInfoFromText("var myImplicitVar = 1; var myExplicitVar: string; type TypeAlias1 = string;");
     const implicitVarDeclaration = mainSourceFile.getVariableStatements()[0].getDeclarations()[0];
     const explicitVarDeclaration = mainSourceFile.getVariableStatements()[1].getDeclarations()[0];
     const typeAliasDeclaration = mainSourceFile.getTypeAliases()[0];
@@ -52,7 +52,7 @@ describe(nameof(TypedNode), () => {
     describe(nameof<TypedNode>(n => n.setType), () => {
         describe("class properties", () => {
             function doTest(startText: string, type: string, expectedText: string) {
-                const {firstChild} = getInfoFromText<ClassDeclaration>(startText);
+                const { firstChild } = getInfoFromText<ClassDeclaration>(startText);
                 const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
                 prop.setType(type);
                 expect(firstChild.getText()).to.equal(expectedText);
@@ -89,7 +89,7 @@ describe(nameof(TypedNode), () => {
 
         describe("function parameters", () => {
             function doTest(startText: string, type: string, expectedText: string) {
-                const {firstChild} = getInfoFromText<FunctionDeclaration>(startText);
+                const { firstChild } = getInfoFromText<FunctionDeclaration>(startText);
                 const param = firstChild.getParameters()[0];
                 param.setType(type);
                 expect(firstChild.getText()).to.equal(expectedText);
@@ -127,20 +127,20 @@ describe(nameof(TypedNode), () => {
             */
 
             it("should set when type exists", () => {
-                const {firstChild} = getInfoFromText<TypeAliasDeclaration>(`type Identifier = string;`);
+                const { firstChild } = getInfoFromText<TypeAliasDeclaration>(`type Identifier = string;`);
                 firstChild.setType("number");
                 expect(firstChild.getText()).to.equal(`type Identifier = number;`);
             });
 
             it("should throw an error when providing nothing", () => {
-                const {firstChild} = getInfoFromText<TypeAliasDeclaration>(`type Identifier = string;`);
+                const { firstChild } = getInfoFromText<TypeAliasDeclaration>(`type Identifier = string;`);
                 expect(() => firstChild.setType("")).to.throw();
             });
         });
 
         describe("variable declaration", () => {
             function doTest(startText: string, type: string, expectedText: string) {
-                const {firstChild} = getInfoFromText<VariableStatement>(expectedText);
+                const { firstChild } = getInfoFromText<VariableStatement>(expectedText);
                 const declaration = firstChild.getDeclarations()[0];
                 declaration.setType(type);
                 expect(firstChild.getText()).to.equal(expectedText);
@@ -159,7 +159,7 @@ describe(nameof(TypedNode), () => {
             });
 
             it("should set for other declaration in list", () => {
-                const {firstChild} = getInfoFromText<VariableStatement>(`var var1, var2, var3;`);
+                const { firstChild } = getInfoFromText<VariableStatement>(`var var1, var2, var3;`);
                 const declaration = firstChild.getDeclarations()[1];
                 declaration.setType("number");
                 expect(firstChild.getText()).to.equal(`var var1, var2: number, var3;`);
@@ -173,7 +173,7 @@ describe(nameof(TypedNode), () => {
 
     describe(nameof<TypedNode>(n => n.removeType), () => {
         function doTest(startText: string, expectedText: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startText);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startText);
             const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
             prop.removeType();
             expect(firstChild.getText()).to.equal(expectedText);
@@ -188,7 +188,7 @@ describe(nameof(TypedNode), () => {
         });
 
         it("should throw an error when removing a type alias", () => {
-            const {firstChild} = getInfoFromText<TypeAliasDeclaration>(`type Identifier = string;`);
+            const { firstChild } = getInfoFromText<TypeAliasDeclaration>(`type Identifier = string;`);
             expect(() => firstChild.removeType()).to.throw();
         });
     });

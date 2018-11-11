@@ -10,7 +10,7 @@ describe(nameof(LiteralTypeNode), () => {
 
     describe(nameof<LiteralTypeNode>(d => d.getLiteral), () => {
         function doTest(text: string, expected: string) {
-            const {descendant} = getNode(text);
+            const { descendant } = getNode(text);
             expect(descendant.getLiteral().getText()).to.equal(expected);
         }
 

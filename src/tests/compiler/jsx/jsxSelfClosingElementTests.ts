@@ -12,7 +12,7 @@ function getInfo(text: string) {
 describe(nameof(JsxSelfClosingElement), () => {
     describe(nameof<JsxSelfClosingElement>(n => n.getTagNameNode), () => {
         function doTest(text: string, expected: string) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.getTagNameNode().getText()).to.equal(expected);
         }
 
@@ -23,7 +23,7 @@ describe(nameof(JsxSelfClosingElement), () => {
 
     describe(nameof<JsxSelfClosingElement>(n => n.getAttributes), () => {
         function doTest(text: string, expected: string[]) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.getAttributes().map(c => c.getText())).to.deep.equal(expected);
         }
 

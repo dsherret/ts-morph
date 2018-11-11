@@ -6,7 +6,7 @@ import { getInfoFromTextWithDescendant } from "../../testHelpers";
 describe(nameof(ObjectDestructuringAssignment), () => {
     describe(nameof<ObjectDestructuringAssignment>(n => n.getLeft), () => {
         function doTest(text: string, expectedText: string) {
-            const {descendant} = getInfoFromTextWithDescendant<ObjectDestructuringAssignment>(text, SyntaxKind.BinaryExpression);
+            const { descendant } = getInfoFromTextWithDescendant<ObjectDestructuringAssignment>(text, SyntaxKind.BinaryExpression);
             expect(descendant.getLeft().getText()).to.equal(expectedText);
         }
 

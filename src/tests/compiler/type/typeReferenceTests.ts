@@ -5,7 +5,7 @@ import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypeReferenceNode), () => {
     function getTypeReferenceNode(text: string) {
-        const {sourceFile} = getInfoFromText(text);
+        const { sourceFile } = getInfoFromText(text);
         return sourceFile.getVariableDeclarations()[0].getTypeNodeOrThrow() as TypeReferenceNode;
     }
 

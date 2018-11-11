@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertEnums), () => {
         function doTest(startCode: string, index: number, structures: EnumDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertEnums(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -37,7 +37,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should have the expected text adding to non-source file", () => {
-            const {sourceFile} = getInfoFromText("namespace MyNamespace {\n}\n");
+            const { sourceFile } = getInfoFromText("namespace MyNamespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertEnums(0, [{
                 name: "MyEnum",
@@ -64,7 +64,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.insertEnum), () => {
         function doTest(startCode: string, index: number, structure: EnumDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertEnum(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(EnumDeclaration);
@@ -77,7 +77,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addEnums), () => {
         function doTest(startCode: string, structures: EnumDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addEnums(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -90,7 +90,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addEnum), () => {
         function doTest(startCode: string, structure: EnumDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addEnum(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(EnumDeclaration);
@@ -102,7 +102,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getEnums), () => {
-        const {sourceFile} = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
+        const { sourceFile } = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
         const enums = sourceFile.getEnums();
 
         it("should have the expected number of enums", () => {
@@ -120,7 +120,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getEnum), () => {
-        const {sourceFile} = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
+        const { sourceFile } = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
 
         it("should get an enum by a name", () => {
             expect(sourceFile.getEnum("Identifier2")!.getName()).to.equal("Identifier2");
@@ -136,7 +136,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getEnumOrThrow), () => {
-        const {sourceFile} = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
+        const { sourceFile } = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
 
         it("should get an enum by a name", () => {
             expect(sourceFile.getEnumOrThrow("Identifier2").getName()).to.equal("Identifier2");

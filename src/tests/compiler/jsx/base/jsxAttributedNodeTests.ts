@@ -15,7 +15,7 @@ function getInfoFromSelfClosing(text: string) {
 describe(nameof(JsxAttributedNode), () => {
     describe(nameof<JsxAttributedNode>(n => n.getAttributes), () => {
         function doTest(text: string, expected: string[]) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.getAttributes().map(c => c.getText())).to.deep.equal(expected);
         }
 
@@ -26,7 +26,7 @@ describe(nameof(JsxAttributedNode), () => {
 
     describe(nameof<JsxAttributedNode>(n => n.getAttribute), () => {
         function doNameTest(text: string, name: string, expected: string | undefined) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             const attrib = descendant.getAttribute(name);
             if (expected == null)
                 expect(attrib).to.be.undefined;
@@ -43,7 +43,7 @@ describe(nameof(JsxAttributedNode), () => {
         });
 
         function doFindFunctionTest(text: string, findFunc: (attrib: JsxAttributeLike) => boolean, expected: string | undefined) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             const attrib = descendant.getAttribute(findFunc);
             if (expected == null)
                 expect(attrib).to.be.undefined;
@@ -62,7 +62,7 @@ describe(nameof(JsxAttributedNode), () => {
 
     describe(nameof<JsxAttributedNode>(n => n.getAttributeOrThrow), () => {
         function doNameTest(text: string, name: string, expected: string | undefined) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             if (expected == null)
                 expect(() => descendant.getAttributeOrThrow(name)).to.throw();
             else
@@ -81,7 +81,7 @@ describe(nameof(JsxAttributedNode), () => {
     describe(nameof<JsxAttributedNode>(n => n.insertAttributes), () => {
         describe("element", () => {
             function doTest(text: string, index: number, structures: (JsxAttributeStructure | JsxSpreadAttributeStructure)[], expected: string) {
-                const {descendant} = getInfo(text);
+                const { descendant } = getInfo(text);
                 expect(descendant.insertAttributes(index, structures).length).to.equal(structures.length);
                 expect(descendant.getFullText()).to.equal(expected);
             }
@@ -107,7 +107,7 @@ describe(nameof(JsxAttributedNode), () => {
 
         describe("self closing", () => {
             function doTest(text: string, index: number, structures: JsxAttributeStructure[], expected: string) {
-                const {descendant} = getInfoFromSelfClosing(text);
+                const { descendant } = getInfoFromSelfClosing(text);
                 expect(descendant.insertAttributes(index, structures).length).to.equal(structures.length);
                 expect(descendant.getFullText()).to.equal(expected);
             }
@@ -124,7 +124,7 @@ describe(nameof(JsxAttributedNode), () => {
 
     describe(nameof<JsxAttributedNode>(n => n.insertAttribute), () => {
         function doTest(text: string, index: number, structure: JsxAttributeStructure, expected: string) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             descendant.insertAttribute(index, structure);
             expect(descendant.getFullText()).to.equal(expected);
         }
@@ -136,7 +136,7 @@ describe(nameof(JsxAttributedNode), () => {
 
     describe(nameof<JsxAttributedNode>(n => n.addAttributes), () => {
         function doTest(text: string, structures: JsxAttributeStructure[], expected: string) {
-            const {descendant} = getInfo(text);
+            const { descendant } = getInfo(text);
             expect(descendant.addAttributes(structures).length).to.equal(structures.length);
             expect(descendant.getFullText()).to.equal(expected);
         }

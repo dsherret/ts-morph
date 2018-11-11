@@ -10,7 +10,7 @@ describe(nameof(IntersectionTypeNode), () => {
 
     describe(nameof<IntersectionTypeNode>(d => d.getTypeNodes), () => {
         it("should get the type nodes of the intersection type node", () => {
-            const {descendant} = getNode("var t: string & number");
+            const { descendant } = getNode("var t: string & number");
             expect(descendant.getTypeNodes().map(t => t.getText())).to.deep.equal(["string", "number"]);
         });
     });

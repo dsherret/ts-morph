@@ -7,34 +7,34 @@ describe(nameof(TextInsertableNode), () => {
     describe(nameof<TextInsertableNode>(n => n.replaceText), () => {
         describe(nameof(SourceFile), () => {
             function doTest(startCode: string, range: [number, number], insertCode: string, expectedCode: string) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 sourceFile.replaceText(range, insertCode);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
 
             function doWriterTest(startCode: string, range: [number, number], insertCode: string, expectedCode: string) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 sourceFile.replaceText(range, writer => writer.write(insertCode));
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
 
             it("should throw when specifying a position outside the lower bound", () => {
-                const {sourceFile} = getInfoFromText("");
+                const { sourceFile } = getInfoFromText("");
                 expect(() => sourceFile.replaceText([-1, 0], "text;")).to.throw(errors.InvalidOperationError);
             });
 
             it("should throw when specifying a position outside the upper bound", () => {
-                const {sourceFile} = getInfoFromText("");
+                const { sourceFile } = getInfoFromText("");
                 expect(() => sourceFile.replaceText([1, 1], "text;")).to.throw(errors.InvalidOperationError);
             });
 
             it("should throw when specifying an end position outside the upper bound", () => {
-                const {sourceFile} = getInfoFromText("");
+                const { sourceFile } = getInfoFromText("");
                 expect(() => sourceFile.replaceText([0, 1], "text;")).to.throw(errors.InvalidOperationError);
             });
 
             it("should throw when specifying a position greater than the end position", () => {
-                const {sourceFile} = getInfoFromText("  ");
+                const { sourceFile } = getInfoFromText("  ");
                 expect(() => sourceFile.replaceText([1, 0], "text;")).to.throw(errors.ArgumentError);
             });
 
@@ -49,19 +49,19 @@ describe(nameof(TextInsertableNode), () => {
 
         describe(nameof(ClassDeclaration), () => {
             function doTest(startCode: string, range: [number, number], insertCode: string, expectedCode: string) {
-                const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+                const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
                 firstChild.replaceText(range, insertCode);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
                 expect(() => firstChild.getInstanceProperties()).to.not.throw();
             }
 
             it("should throw when specifying a position outside the lower bound", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class MyClass {}");
+                const { firstChild } = getInfoFromText<ClassDeclaration>("class MyClass {}");
                 expect(() => firstChild.replaceText([14, 14], "prop;")).to.throw(errors.InvalidOperationError);
             });
 
             it("should throw when specifying a position outside the upper bound", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class MyClass {}");
+                const { firstChild } = getInfoFromText<ClassDeclaration>("class MyClass {}");
                 expect(() => firstChild.replaceText([16, 16], "prop;")).to.throw(errors.InvalidOperationError);
             });
 
@@ -78,13 +78,13 @@ describe(nameof(TextInsertableNode), () => {
     describe(nameof<TextInsertableNode>(n => n.insertText), () => {
         describe(nameof(SourceFile), () => {
             function doTest(startCode: string, pos: number, insertCode: string, expectedCode: string) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 sourceFile.insertText(pos, insertCode);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
 
             function doWriterTest(startCode: string, pos: number, insertCode: string, expectedCode: string) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 sourceFile.insertText(pos, writer => writer.write(insertCode));
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -114,7 +114,7 @@ describe(nameof(TextInsertableNode), () => {
     describe(nameof<TextInsertableNode>(n => n.removeText), () => {
         describe(nameof(SourceFile), () => {
             function doSourceFileTest(startCode: string, expectedCode: string) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 sourceFile.removeText();
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -124,7 +124,7 @@ describe(nameof(TextInsertableNode), () => {
             });
 
             function doFirstChildTest(startCode: string, expectedCode: string) {
-                const {firstChild, sourceFile} = getInfoFromText<TextInsertableNode & Node>(startCode);
+                const { firstChild, sourceFile } = getInfoFromText<TextInsertableNode & Node>(startCode);
                 firstChild.removeText();
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -134,7 +134,7 @@ describe(nameof(TextInsertableNode), () => {
             });
 
             function doRangeTest(startCode: string, pos: number, end: number, expectedCode: string) {
-                const {sourceFile} = getInfoFromText(startCode);
+                const { sourceFile } = getInfoFromText(startCode);
                 sourceFile.removeText(pos, end);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }

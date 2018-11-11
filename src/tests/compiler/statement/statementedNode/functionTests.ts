@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertFunctions), () => {
         function doTest(startCode: string, index: number, structures: FunctionDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertFunctions(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -48,7 +48,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should have the expected text adding to non-source file", () => {
-            const {sourceFile} = getInfoFromText("namespace Namespace {\n}\n");
+            const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertFunctions(0, [{
                 name: "Identifier"
@@ -67,7 +67,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert into an ambient context", () => {
-            const {sourceFile} = getInfoFromText("declare namespace Namespace {\n}\n");
+            const { sourceFile } = getInfoFromText("declare namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertFunctions(0, [{
                 name: "Identifier"
@@ -109,7 +109,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.insertFunction), () => {
         function doTest(startCode: string, index: number, structure: FunctionDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertFunction(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(FunctionDeclaration);
@@ -122,7 +122,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addFunctions), () => {
         function doTest(startCode: string, structures: FunctionDeclarationStructure[], expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addFunctions(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.equal(structures.length);
@@ -136,7 +136,7 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.addFunction), () => {
         function doTest(startCode: string, structure: FunctionDeclarationStructure, expectedText: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addFunction(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result).to.be.instanceOf(FunctionDeclaration);
@@ -148,7 +148,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getFunctions), () => {
-        const {sourceFile} = getInfoFromText("function Identifier1();function Identifier1() {}\nfunction Identifier2() {}" +
+        const { sourceFile } = getInfoFromText("function Identifier1();function Identifier1() {}\nfunction Identifier2() {}" +
             "declare function Identifier3(); declare function Identifier3();");
         const functions = sourceFile.getFunctions();
 
@@ -167,7 +167,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getFunction), () => {
-        const {sourceFile} = getInfoFromText("function Identifier1() {}\nfunction Identifier2() {}");
+        const { sourceFile } = getInfoFromText("function Identifier1() {}\nfunction Identifier2() {}");
 
         it("should get a function by a name", () => {
             expect(sourceFile.getFunction("Identifier2")!.getName()).to.equal("Identifier2");
@@ -183,7 +183,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getFunctionOrThrow), () => {
-        const {sourceFile} = getInfoFromText("function Identifier1() {}\nfunction Identifier2() {}");
+        const { sourceFile } = getInfoFromText("function Identifier1() {}\nfunction Identifier2() {}");
 
         it("should get a function by a name", () => {
             expect(sourceFile.getFunctionOrThrow("Identifier2").getName()).to.equal("Identifier2");

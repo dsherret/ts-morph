@@ -347,7 +347,7 @@ export class Directory {
      * @param options - Options for emitting.
      */
     async emit(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
-        const {fileSystemWrapper} = this._context;
+        const { fileSystemWrapper } = this._context;
         const writeTasks: Promise<void>[] = [];
         const outputFilePaths: string[] = [];
 
@@ -372,7 +372,7 @@ export class Directory {
      * @param options - Options for emitting.
      */
     emitSync(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
-        const {fileSystemWrapper} = this._context;
+        const { fileSystemWrapper } = this._context;
         const outputFilePaths: string[] = [];
 
         for (const emitResult of this._emitInternal(options)) {
@@ -388,7 +388,7 @@ export class Directory {
 
     private _emitInternal(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {})
     {
-        const {emitOnlyDtsFiles = false} = options;
+        const { emitOnlyDtsFiles = false } = options;
         const isJsFile = options.outDir == null ? undefined : /\.js$/i;
         const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
         const isDtsFile = options.declarationDir == null && options.outDir == null ? undefined : /\.d\.ts$/i;
@@ -655,7 +655,7 @@ export class Directory {
      * The directory will be deleted when calling ast.save(). If you wish to delete the file immediately, then use deleteImmediately().
      */
     delete() {
-        const {fileSystemWrapper} = this._context;
+        const { fileSystemWrapper } = this._context;
         const path = this.getPath();
         for (const sourceFile of this.getSourceFiles())
             sourceFile.delete();
@@ -669,7 +669,7 @@ export class Directory {
      * Asyncronously deletes the directory and all its descendants from the file system.
      */
     async deleteImmediately() {
-        const {fileSystemWrapper} = this._context;
+        const { fileSystemWrapper } = this._context;
         const path = this.getPath();
         this.forget();
         await fileSystemWrapper.deleteDirectoryImmediately(path);
@@ -679,7 +679,7 @@ export class Directory {
      * Synchronously deletes the directory and all its descendants from the file system.
      */
     deleteImmediatelySync() {
-        const {fileSystemWrapper} = this._context;
+        const { fileSystemWrapper } = this._context;
         const path = this.getPath();
         this.forget();
         fileSystemWrapper.deleteDirectoryImmediatelySync(path);

@@ -8,7 +8,7 @@ describe("tests for issue #90", () => {
 class Identifier {
     private prop: string;
 }`;
-        const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
+        const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
         (firstChild.getInstancePropertyOrThrow("prop") as PropertyDeclaration).addDecorator({
             name: "dec"
         });

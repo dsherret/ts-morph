@@ -11,41 +11,41 @@ describe(nameof(ScopedNode), () => {
 
     describe(nameof<ScopedNode>(d => d.getScope), () => {
         it("should get the correct scope when there is no modifier", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class Identifier {\nprop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class Identifier {\nprop: string;}\n");
             expect(firstProperty.getScope()).to.be.equal(Scope.Public);
         });
 
         it("should get the correct scope when there is a public modifier", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class Identifier {\npublic prop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class Identifier {\npublic prop: string;}\n");
             expect(firstProperty.getScope()).to.be.equal(Scope.Public);
         });
 
         it("should get the correct scope when there is a protected modifier", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class Identifier {\nprotected prop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class Identifier {\nprotected prop: string;}\n");
             expect(firstProperty.getScope()).to.be.equal(Scope.Protected);
         });
 
         it("should get the correct scope when there is a private modifier", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class Identifier {\nprivate prop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class Identifier {\nprivate prop: string;}\n");
             expect(firstProperty.getScope()).to.be.equal(Scope.Private);
         });
     });
 
     describe(nameof<ScopedNode>(d => d.hasScopeKeyword), () => {
         it("should not have a scope keyword when there isn't one", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class Identifier {\nprop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class Identifier {\nprop: string;}\n");
             expect(firstProperty.hasScopeKeyword()).to.be.false;
         });
 
         it("should have a scope keyword when there is one", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class Identifier {\npublic prop: string;}\n");
+            const { firstProperty } = getInfoWithFirstPropertyFromText("class Identifier {\npublic prop: string;}\n");
             expect(firstProperty.hasScopeKeyword()).to.be.true;
         });
     });
 
     describe(nameof<ScopedNode>(d => d.setScope), () => {
         function doTest(startText: string, scope: Scope | undefined, expectedText: string) {
-            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText(startText);
+            const { firstChild, firstProperty } = getInfoWithFirstPropertyFromText(startText);
             firstProperty.setScope(scope);
             expect(firstChild.getText()).to.be.equal(expectedText);
         }
@@ -81,7 +81,7 @@ describe(nameof(ScopedNode), () => {
 
     describe(nameof<PropertyDeclaration>(p => p.set), () => {
         function doTest(startCode: string, structure: ScopedNodeStructure, expectedCode: string) {
-            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
+            const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
             firstProperty.set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }

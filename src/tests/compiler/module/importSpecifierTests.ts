@@ -7,7 +7,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(ImportSpecifier), () => {
     describe(nameof<ImportSpecifier>(n => n.setName), () => {
         it("should only change what's imported", () => {
-            const {firstChild, sourceFile, project} = getInfoFromText<ImportDeclaration>("import {name} from './file'; const t = name;");
+            const { firstChild, sourceFile, project } = getInfoFromText<ImportDeclaration>("import {name} from './file'; const t = name;");
             const namedImport = firstChild.getNamedImports()[0];
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}\nexport class newName {}");
             namedImport.setName("newName");
@@ -16,7 +16,7 @@ describe(nameof(ImportSpecifier), () => {
         });
 
         it("should set only the identifier when an alias already exists", () => {
-            const {firstChild, sourceFile, project} = getInfoFromText<ImportDeclaration>("import {name as alias} from './file'; const t = alias;");
+            const { firstChild, sourceFile, project } = getInfoFromText<ImportDeclaration>("import {name as alias} from './file'; const t = alias;");
             const namedImport = firstChild.getNamedImports()[0];
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}\nexport class newName {}");
             namedImport.setName("newName");
@@ -27,7 +27,7 @@ describe(nameof(ImportSpecifier), () => {
 
     describe(nameof<ImportSpecifier>(n => n.getNameNode), () => {
         function doTest(text: string, name: string) {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const namedImport = firstChild.getNamedImports()[0];
             expect(namedImport.getNameNode().getText()).to.equal(name);
         }
@@ -47,7 +47,7 @@ describe(nameof(ImportSpecifier), () => {
 
     describe(nameof<ImportSpecifier>(n => n.getName), () => {
         function doTest(text: string, name: string) {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const namedImport = firstChild.getNamedImports()[0];
             expect(namedImport.getName()).to.equal(name);
         }
@@ -59,7 +59,7 @@ describe(nameof(ImportSpecifier), () => {
 
     describe(nameof<ImportSpecifier>(n => n.renameAlias), () => {
         function doTest(text: string, alias: string, expected: string) {
-            const {firstChild, sourceFile, project} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile, project } = getInfoFromText<ImportDeclaration>(text);
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
             const namedImport = firstChild.getNamedImports()[0];
             namedImport.renameAlias(alias);
@@ -86,7 +86,7 @@ describe(nameof(ImportSpecifier), () => {
 
     describe(nameof<ImportSpecifier>(n => n.setAlias), () => {
         function doTest(text: string, alias: string, expected: string) {
-            const {firstChild, sourceFile, project} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile, project } = getInfoFromText<ImportDeclaration>(text);
             const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
             const namedImport = firstChild.getNamedImports()[0];
             namedImport.setAlias(alias);
@@ -151,7 +151,7 @@ describe(nameof(ImportSpecifier), () => {
 
     describe(nameof<ImportSpecifier>(n => n.getAliasNode), () => {
         function doTest(text: string, alias: string | undefined) {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const namedImport = firstChild.getNamedImports()[0];
             if (alias == null)
                 expect(namedImport.getAliasNode()).to.equal(undefined);
@@ -174,7 +174,7 @@ describe(nameof(ImportSpecifier), () => {
 
     describe(nameof<ImportSpecifier>(n => n.getImportDeclaration), () => {
         it("should get the parent import declaration", () => {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(`import {name} from "./test";`);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(`import {name} from "./test";`);
             const namedImport = firstChild.getNamedImports()[0];
             expect(namedImport.getImportDeclaration()).to.equal(firstChild);
         });
@@ -182,7 +182,7 @@ describe(nameof(ImportSpecifier), () => {
 
     describe(nameof<ImportSpecifier>(n => n.remove), () => {
         function doTest(text: string, nameToRemove: string, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const importSpecifier = ArrayUtils.find(sourceFile.getImportDeclarations()[0].getNamedImports(), i => i.getNameNode().getText() === nameToRemove)!;
             importSpecifier.remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);

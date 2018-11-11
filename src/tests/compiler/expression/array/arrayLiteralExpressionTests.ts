@@ -16,7 +16,7 @@ describe(nameof(ArrayLiteralExpression), () => {
 
     describe(nameof<ArrayLiteralExpression>(e => e.getElements), () => {
         function doTest(text: string, elementTexts: string[]) {
-            const {arrayLiteralExpression} = getArrayLiteralExpression(text);
+            const { arrayLiteralExpression } = getArrayLiteralExpression(text);
             expect(arrayLiteralExpression.getElements().map(e => e.getText())).to.deep.equal(elementTexts);
         }
 
@@ -31,7 +31,7 @@ describe(nameof(ArrayLiteralExpression), () => {
 
     describe(nameof<ArrayLiteralExpression>(e => e.insertElements), () => {
         function doTest(text: string, index: number, elementTexts: string[], expectedText: string, options?: { useNewLines?: boolean; }) {
-            const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
+            const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
             const result = arrayLiteralExpression.insertElements(index, elementTexts, options);
             expect(result.map(r => r.getText())).to.deep.equal(elementTexts);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -76,7 +76,7 @@ describe(nameof(ArrayLiteralExpression), () => {
         function doWriterTest(text: string, index: number, elements: WriterFunction | ReadonlyArray<string | WriterFunction>, expectedText: string,
             options?: { useNewLines?: boolean; })
         {
-            const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
+            const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
             arrayLiteralExpression.insertElements(index, elements, options);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -92,7 +92,7 @@ describe(nameof(ArrayLiteralExpression), () => {
 
     describe(nameof<ArrayLiteralExpression>(e => e.insertElement), () => {
         function doTest(text: string, index: number, elementText: string, expectedText: string) {
-            const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
+            const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
             const result = arrayLiteralExpression.insertElement(index, elementText);
             expect(result.getText()).to.equal(elementText);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -117,7 +117,7 @@ describe(nameof(ArrayLiteralExpression), () => {
 
     describe(nameof<ArrayLiteralExpression>(e => e.addElements), () => {
         function doTest(text: string, elementTexts: string[], expectedText: string) {
-            const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
+            const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
             const result = arrayLiteralExpression.addElements(elementTexts);
             expect(result.map(r => r.getText())).to.deep.equal(elementTexts);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -134,7 +134,7 @@ describe(nameof(ArrayLiteralExpression), () => {
 
     describe(nameof<ArrayLiteralExpression>(e => e.addElement), () => {
         function doTest(text: string, elementText: string, expectedText: string) {
-            const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
+            const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
             const result = arrayLiteralExpression.addElement(elementText);
             expect(result.getText()).to.equal(elementText);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -151,18 +151,18 @@ describe(nameof(ArrayLiteralExpression), () => {
 
     describe(nameof<ArrayLiteralExpression>(e => e.removeElement), () => {
         it("should throw when none exist", () => {
-            const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression("var t = []");
+            const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression("var t = []");
             expect(() => arrayLiteralExpression.removeElement(0)).to.throw();
         });
 
         it("should throw when specifying an invalid index", () => {
-            const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression("var t = [1]");
+            const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression("var t = [1]");
             expect(() => arrayLiteralExpression.removeElement(1)).to.throw();
         });
 
         describe("index", () => {
             function doTest(text: string, index: number, expectedText: string) {
-                const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
+                const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
                 arrayLiteralExpression.removeElement(index);
                 expect(sourceFile.getFullText()).to.equal(expectedText);
             }
@@ -182,7 +182,7 @@ describe(nameof(ArrayLiteralExpression), () => {
 
         describe("element", () => {
             function doTest(text: string, index: number, expectedText: string) {
-                const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
+                const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
                 arrayLiteralExpression.removeElement(arrayLiteralExpression.getElements()[index]);
                 expect(sourceFile.getFullText()).to.equal(expectedText);
             }

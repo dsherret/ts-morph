@@ -6,7 +6,7 @@ import { getInfoFromTextWithDescendant } from "../testHelpers";
 describe(nameof(PostfixUnaryExpression), () => {
     const expression = "x";
     const expr = `${expression}++`;
-    const {descendant: postfixUnaryExpression} = getInfoFromTextWithDescendant<PostfixUnaryExpression>(expr, SyntaxKind.PostfixUnaryExpression);
+    const { descendant: postfixUnaryExpression } = getInfoFromTextWithDescendant<PostfixUnaryExpression>(expr, SyntaxKind.PostfixUnaryExpression);
 
     describe(nameof<PostfixUnaryExpression>(n => n.getOperand), () => {
         it("should get the correct expression", () => {
