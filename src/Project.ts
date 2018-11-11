@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
-import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
+import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker, FileTextChanges } from "./compiler";
 import * as errors from "./errors";
 import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { ProjectContext } from "./ProjectContext";
@@ -342,8 +342,9 @@ export class Project {
      */
     getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
     getSourceFiles(globPatterns?: string | ReadonlyArray<string>): SourceFile[] {
-        const {compilerFactory, fileSystemWrapper} = this._context;
+        const { compilerFactory, fileSystemWrapper } = this._context;
         const sourceFiles = this._context.compilerFactory.getSourceFilesByDirectoryDepth();
+
         if (typeof globPatterns === "string" || globPatterns instanceof Array)
             return ArrayUtils.from(getFilteredSourceFiles());
         else
@@ -421,7 +422,7 @@ export class Project {
     private _getUnsavedSourceFiles() {
         return ArrayUtils.from(getUnsavedIterator(this._context.compilerFactory.getSourceFilesByDirectoryDepth()));
 
-        function *getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {
+        function* getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {
             for (const sourceFile of sourceFiles) {
                 if (!sourceFile.isSaved())
                     yield sourceFile;
@@ -524,6 +525,34 @@ export class Project {
             getCanonicalFileName: fileName => fileName,
             getNewLine: () => opts.newLineChar || require("os").EOL
         });
+    }
+
+    /**
+     * Applies the given file text changes to this project. This modifies and possibly creates new SourceFiles.
+     *
+     * WARNING: This will forget any previously navigated descendant nodes of changed files. It's best to do
+     * this when you're all done.
+     * @param fileTextChanges - Collections of file changes to apply to this project.
+     * @param options - Options for applying the text changes.
+     */
+    applyFileTextChanges(fileTextChanges: FileTextChanges[], options: { overwrite?: boolean } = {}) {
+        for (const fileTextChange of fileTextChanges) {
+            let file = this.getSourceFile(fileTextChange.getFilePath());
+
+            if (fileTextChange.isNewFile() && file != null && !options.overwrite) {
+                throw new errors.InvalidOperationError(`Cannot apply file text change for creating a new file when the ` +
+                    `file exists at path ${fileTextChange.getFilePath()}. Did you mean to provide the overwrite option?`);
+            }
+
+            if (fileTextChange.isNewFile())
+                file = this.createSourceFile(fileTextChange.getFilePath(), "", { overwrite: options.overwrite });
+            else if (file == null) {
+                throw new errors.InvalidOperationError(`Cannot apply file text change to modify existing file ` +
+                    `that doesn't exist at path: ${fileTextChange.getFilePath()}`);
+            }
+
+            file.applyTextChanges(fileTextChange.getTextChanges());
+        }
     }
 }
 

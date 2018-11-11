@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { EOL } from "os";
 import * as path from "path";
-import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile } from "../compiler";
+import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile, FileTextChanges } from "../compiler";
 import * as errors from "../errors";
 import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
@@ -576,12 +576,12 @@ describe(nameof(Project), () => {
         const project = new Project({ compilerOptions }, fileSystem);
         project.createSourceFile("file1.ts", "const num1 = 1;");
         project.createSourceFile("file2.ts", "const num2 = 2;");
-        return {fileSystem, project};
+        return { fileSystem, project };
     }
 
     describe(nameof<Project>(project => project.emit), () => {
         it("should emit multiple files when not specifying any options", () => {
-            const {project, fileSystem} = emitSetup({ noLib: true, outDir: "dist" });
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
             const result = project.emit();
             expect(result).to.be.instanceof(EmitResult);
 
@@ -594,7 +594,7 @@ describe(nameof(Project), () => {
         });
 
         it("should emit the source file when specified", () => {
-            const {project, fileSystem} = emitSetup({ noLib: true, outDir: "dist" });
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
             project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
 
             const writeLog = fileSystem.getWriteLog();
@@ -604,7 +604,7 @@ describe(nameof(Project), () => {
         });
 
         it("should only emit the declaration file when specified", () => {
-            const {project, fileSystem} = emitSetup({ noLib: true, outDir: "dist", declaration: true });
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", declaration: true });
             project.emit({ emitOnlyDtsFiles: true });
 
             const writeLog = fileSystem.getWriteLog();
@@ -1034,6 +1034,59 @@ describe(nameof(Project), () => {
             const project = setup();
             const text = project.formatDiagnosticsWithColorAndContext(project.getPreEmitDiagnostics(), { newLineChar: "\r\n" });
             testForCarriageReturnLineFeed(text);
+        });
+    });
+
+    describe(nameof<Project>(p => p.applyFileTextChanges), () => {
+        function setup() {
+            const project = new Project({ useVirtualFileSystem: true });
+            project.createSourceFile("test.ts", "const t; const u;");
+            return project;
+        }
+
+        it("should throw if a file text change instruct to create a new file that already exists", () => {
+            const project = setup();
+            expect(() => project.applyFileTextChanges([
+                new FileTextChanges({ fileName: "test.ts", isNewFile: true, textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }] })
+            ])).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should not throw if a file text change instruct to create a new file that already exists and the overwrite option is provided", () => {
+            const project = setup();
+            project.applyFileTextChanges([
+                new FileTextChanges({ fileName: "test.ts", isNewFile: true, textChanges: [{ newText: "console;", span: { start: 0, length: 3 } }] })
+            ], { overwrite: true });
+            expect(project.getSourceFileOrThrow("test.ts").getText()).to.equal("console;");
+        });
+
+        it("should throw if a file text change instruct to modify a file that doesn't exists and a isNewFile is false", () => {
+            const project = setup();
+            expect(() => project.applyFileTextChanges([
+                new FileTextChanges({ fileName: "nonExistent.ts", textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }] })
+            ])).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should create new files if isNewFile is true", () => {
+            const project = setup();
+            project.applyFileTextChanges([
+                new FileTextChanges({ fileName: "newFile.ts", isNewFile: true, textChanges: [{ newText: "new text", span: { start: 0, length: 0 } }] })
+            ]);
+            expect(project.getSourceFileOrThrow("newFile.ts").getText()).to.equal("new text");
+        });
+
+        it("should support multiple FileTextChanges", () => {
+            const project = setup();
+            project.applyFileTextChanges([
+                new FileTextChanges({ fileName: "newFile.ts", isNewFile: true, textChanges: [{ newText: "new text", span: { start: 0, length: 0 } }] }),
+                new FileTextChanges({
+                    fileName: "test.ts", textChanges: [{
+                        newText: "let",
+                        span: { start: project.getSourceFileOrThrow("test.ts").getFullText().indexOf("const t"), length: 5 }
+                    }]
+                })
+            ]);
+            expect(project.getSourceFileOrThrow("newFile.ts").getText()).to.equal("new text");
+            expect(project.getSourceFileOrThrow("test.ts").getText()).to.equal("let t; const u;");
         });
     });
 });
