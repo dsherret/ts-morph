@@ -527,22 +527,31 @@ export class Project {
     }
 
     /**
-     * Apply given file text changes to this project, modifying and possibly creating new SourceFiles.
+     * Applies the given file text changes to this project. This modifies and possibly creates new SourceFiles.
      *
-     * WARNING: Internally it uses `SourceFile.applyTextChanges()` so this will forget any previously navigated descendant nodes of changed files.
-     * @param fileTextChanges description of the changes to files to apply to this project.
+     * WARNING: This will forget any previously navigated descendant nodes of changed files. It's best to do
+     * this when you're all done.
+     * @param fileTextChanges - Collections of file changes to apply to this project.
+     * @param options - Options for applying the text changes.
      */
-    applyFileTextChanges(fileTextChanges: FileTextChanges[]) {
-        fileTextChanges.forEach(fileTextChange => {
-            let file: SourceFile | undefined = this.getSourceFile(fileTextChange.getFilePath());
-            errors.throwIfTrue(fileTextChange.isNewFile() && !!file, "FileTextChanges instructed to create file " + fileTextChange.getFilePath() +
-                " but it already exists on the project. Aborting.");
-            errors.throwIfTrue(!file && !fileTextChange.isNewFile(), "FileTextChanges instructed to modify existing file " + fileTextChange.getFilePath() +
-                " but it doesn\'t exist. Refusing to create it. Aborting.");
-            if (!file)
-                file = this.createSourceFile(fileTextChange.getFilePath());
+    applyFileTextChanges(fileTextChanges: FileTextChanges[], options: { overwrite?: boolean } = {}) {
+        for (const fileTextChange of fileTextChanges) {
+            let file = this.getSourceFile(fileTextChange.getFilePath());
+
+            if (fileTextChange.isNewFile() && file != null && !options.overwrite) {
+                throw new errors.InvalidOperationError(`Cannot apply file text change for creating a new file when the ` +
+                    `file exists at path ${fileTextChange.getFilePath()}. Did you mean to provide the overwrite option?`);
+            }
+
+            if (fileTextChange.isNewFile())
+                file = this.createSourceFile(fileTextChange.getFilePath(), "", { overwrite: options.overwrite });
+            else if (file == null) {
+                throw new errors.InvalidOperationError(`Cannot apply file text change to modify existing file ` +
+                    `that doesn't exist at path: ${fileTextChange.getFilePath()}`);
+            }
+
             file.applyTextChanges(fileTextChange.getTextChanges());
-        });
+        }
     }
 }
 
