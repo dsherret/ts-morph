@@ -18,7 +18,7 @@ function getReplacementText(node: Node) {
     const indentationDifference = childIndentationText.replace(indentationText, "");
     const replaceRegex = new RegExp("^" + indentationDifference);
     const originalText = childSyntaxList.getFullText();
-    const sourceFile = node.sourceFile;
+    const sourceFile = node._sourceFile;
     const lines = originalText.split("\n");
 
     let pos = childSyntaxList.getPos();

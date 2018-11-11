@@ -16,6 +16,6 @@ export class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.Referenced
      */
     @Memoize
     getDisplayParts() {
-        return this.compilerObject.displayParts.map(p => this.context.compilerFactory.getSymbolDisplayPart(p));
+        return this.compilerObject.displayParts.map(p => this._context.compilerFactory.getSymbolDisplayPart(p));
     }
 }

@@ -22,7 +22,7 @@ describe(nameof(NoSubstitutionTemplateLiteral), () => {
     describe(nameof<NoSubstitutionTemplateLiteral>(n => n.setLiteralValue), () => {
         function doTest(text: string, newValue: string, expectedText: string) {
             const literal = getLiteral(text);
-            const sourceFile = literal.sourceFile;
+            const sourceFile = literal._sourceFile;
             expect(literal.setLiteralValue(newValue).wasForgotten()).to.be.false;
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

@@ -20,7 +20,7 @@ export class UnwrapParentHandler implements NodeHandler {
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         const helper = this.helper;
-        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode.getCompilerChildren()));
+        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
         const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(newNode.getChildren(newSourceFile)));
         let index = 0;
 
@@ -31,21 +31,21 @@ export class UnwrapParentHandler implements NodeHandler {
         // the child syntax list's children should map to the newNodes next children
         const currentChild = this.compilerFactory.getExistingCompilerNode(currentNodeChildren.next())!;
         const childSyntaxList = currentChild.getChildSyntaxListOrThrow();
-        for (const child of childSyntaxList.getCompilerChildren())
+        for (const child of childSyntaxList._getCompilerChildren())
             this.helper.handleForValues(this.straightReplacementNodeHandler, child, newNodeChildren.next(), newSourceFile);
 
         // destroy all the current child's children except for the children of its child syntax list
         forgetNodes(currentChild);
         function forgetNodes(node: Node) {
             if (node === childSyntaxList) {
-                node.forgetOnlyThis();
+                node._forgetOnlyThis();
                 return;
             }
 
-            for (const child of node.getChildrenInCacheIterator())
+            for (const child of node._getChildrenInCacheIterator())
                 forgetNodes(child);
 
-            node.forgetOnlyThis();
+            node._forgetOnlyThis();
         }
 
         // handle the rest

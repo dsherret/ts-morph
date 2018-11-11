@@ -75,7 +75,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             const typeParameters = this.compilerNode.typeParameters;
             if (typeParameters == null)
                 return [];
-            return typeParameters.map(t => this.getNodeFromCompilerNode(t));
+            return typeParameters.map(t => this._getNodeFromCompilerNode(t));
         }
 
         addTypeParameter(structure: TypeParameterDeclarationStructure) {
@@ -95,8 +95,8 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                 return [];
 
             const typeParameters = this.getTypeParameters();
-            const writer = this.getWriterWithQueuedChildIndentation();
-            const structurePrinter = this.context.structurePrinterFactory.forTypeParameterDeclaration();
+            const writer = this._getWriterWithQueuedChildIndentation();
+            const structurePrinter = this._context.structurePrinterFactory.forTypeParameterDeclaration();
             index = verifyAndGetIndex(index, typeParameters.length);
 
             structurePrinter.printTexts(writer, structures);

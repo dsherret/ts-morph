@@ -9,13 +9,13 @@ export class LabeledStatement extends LabeledStatementBase<ts.LabeledStatement> 
      * Gets this labeled statement's label
      */
     getLabel(): Identifier {
-        return this.getNodeFromCompilerNode(this.compilerNode.label);
+        return this._getNodeFromCompilerNode(this.compilerNode.label);
     }
 
     /**
      * Gets this labeled statement's statement
      */
     getStatement(): Statement {
-        return this.getNodeFromCompilerNode(this.compilerNode.statement);
+        return this._getNodeFromCompilerNode(this.compilerNode.statement);
     }
 }

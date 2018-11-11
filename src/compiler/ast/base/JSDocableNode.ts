@@ -46,7 +46,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             const nodes = this.compilerNode.jsDoc;
             if (nodes == null)
                 return [];
-            return nodes.map(n => this.getNodeFromCompilerNode(n));
+            return nodes.map(n => this._getNodeFromCompilerNode(n));
         }
 
         addJsDoc(structure: JSDocStructure | string | WriterFunction) {
@@ -65,8 +65,8 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
-            const writer = this.getWriterWithQueuedIndentation();
-            const structurePrinter = this.context.structurePrinterFactory.forJSDoc();
+            const writer = this._getWriterWithQueuedIndentation();
+            const structurePrinter = this._context.structurePrinterFactory.forJSDoc();
             structurePrinter.printDocs(writer, structures);
             writer.write(""); // final indentation
             const code = writer.toString();

@@ -19,9 +19,9 @@ export class ChangingChildOrderTextManipulator<TParentNode extends Node> impleme
     getNewText(inputText: string) {
         const {parent, oldIndex, newIndex, getSiblingFormatting} = this.opts;
         const children = parent.getChildren();
-        const newLineKind = parent.context.manipulationSettings.getNewLineKindAsString();
+        const newLineKind = parent._context.manipulationSettings.getNewLineKindAsString();
         const movingNode = children[oldIndex];
-        const fullText = parent.sourceFile.getFullText();
+        const fullText = parent._sourceFile.getFullText();
         const movingNodeStart = getPosAtNextNonBlankLine(fullText, movingNode.getPos());
         const movingNodeText = fullText.substring(movingNodeStart, movingNode.getEnd());
         const lowerIndex = Math.min(newIndex, oldIndex);

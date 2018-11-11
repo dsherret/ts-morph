@@ -21,7 +21,7 @@ export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {
      */
     setLiteralValue(value: string) {
         replaceNodeText({
-            sourceFile: this.sourceFile,
+            sourceFile: this._sourceFile,
             start: this.getStart() + 1,
             replacingLength: this.getWidth() - 2,
             newText: StringUtils.escapeForWithinString(value, this.getQuoteKind())

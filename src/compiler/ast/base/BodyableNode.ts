@@ -49,7 +49,7 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
         }
 
         getBody() {
-            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.body);
+            return this._getNodeFromCompilerNodeIfExists(this.compilerNode.body);
         }
 
         getBodyText() {
@@ -76,7 +76,7 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
             insertIntoParentTextRange({
                 parent: this,
                 insertPos: semiColon == null ? this.getEnd() : semiColon.getStart(),
-                newText: this.getWriterWithQueuedIndentation().block().toString(),
+                newText: this._getWriterWithQueuedIndentation().block().toString(),
                 replacing: {
                     textLength: semiColon == null ? 0 : semiColon.getFullWidth()
                 }

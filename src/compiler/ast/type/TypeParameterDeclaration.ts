@@ -16,7 +16,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      * Gets the constraint of the type parameter.
      */
     getConstraint(): TypeNode | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.constraint);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.constraint);
     }
 
     /**
@@ -65,7 +65,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      * Gets the default node of the type parameter.
      */
     getDefault(): TypeNode | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.default);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.default);
     }
 
     /**

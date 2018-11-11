@@ -20,11 +20,11 @@ export interface ReferenceFindableNode {
 export function ReferenceFindableNode<T extends Constructor<ReferenceFindableNodeExtensionType>>(Base: T): Constructor<ReferenceFindableNode> & T {
     return class extends Base implements ReferenceFindableNode {
         findReferences() {
-            return this.context.languageService.findReferences(getNodeForReferences(this));
+            return this._context.languageService.findReferences(getNodeForReferences(this));
         }
 
         findReferencesAsNodes() {
-            return this.context.languageService.findReferencesAsNodes(getNodeForReferences(this));
+            return this._context.languageService.findReferencesAsNodes(getNodeForReferences(this));
         }
     };
 }

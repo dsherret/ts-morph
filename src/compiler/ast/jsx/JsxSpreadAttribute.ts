@@ -13,7 +13,7 @@ export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttri
      * Gets the JSX spread attribute's expression.
      */
     getExpression() {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression);
+        return this._getNodeFromCompilerNode(this.compilerNode.expression);
     }
 
     /**

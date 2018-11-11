@@ -34,7 +34,7 @@ export class DefaultParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode.getCompilerChildren()));
+        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
         const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(newNode.getChildren(newSourceFile)));
         let count = this.childCount;
 
@@ -80,7 +80,7 @@ export class DefaultParentHandler implements NodeHandler {
         const customMappings = this.customMappings(newParentNode);
 
         for (const mapping of customMappings)
-            mapping.currentNode.context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
+            mapping.currentNode._context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
     }
 
     private tryReplaceNode(currentCompilerNode: ts.Node) {

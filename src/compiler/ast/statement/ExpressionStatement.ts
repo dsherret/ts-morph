@@ -9,6 +9,6 @@ export class ExpressionStatement extends ExpressionStatementBase<ts.ExpressionSt
      * Gets this expression statement's expression.
      */
     getExpression(): Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression);
+        return this._getNodeFromCompilerNode(this.compilerNode.expression);
     }
 }

@@ -11,14 +11,14 @@ export class TryStatement extends TryStatementBase<ts.TryStatement> {
      * Gets this try statement's try block.
      */
     getTryBlock(): Block {
-        return this.getNodeFromCompilerNode(this.compilerNode.tryBlock);
+        return this._getNodeFromCompilerNode(this.compilerNode.tryBlock);
     }
 
     /**
      * Gets this try statement's catch clause or undefined if none exists.
      */
     getCatchClause(): CatchClause | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.catchClause);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.catchClause);
     }
 
     /**
@@ -35,7 +35,7 @@ export class TryStatement extends TryStatementBase<ts.TryStatement> {
         if (this.compilerNode.finallyBlock == null || this.compilerNode.finallyBlock.getFullWidth() === 0)
             return undefined;
 
-        return this.getNodeFromCompilerNode(this.compilerNode.finallyBlock);
+        return this._getNodeFromCompilerNode(this.compilerNode.finallyBlock);
     }
 
     /**

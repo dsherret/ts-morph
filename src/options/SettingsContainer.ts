@@ -2,31 +2,31 @@
 
 export abstract class SettingsContainer<T extends object> {
     /** @internal */
-    private readonly defaultSettings: T;
+    private readonly _defaultSettings: T;
     /** @internal */
     private _modifiedEventContainer: EventContainer | undefined;
     /** @internal */
-    protected settings: T;
+    protected _settings: T;
 
     /** @private */
     constructor(defaultSettings: T) {
-        this.defaultSettings = ObjectUtils.assign({}, defaultSettings);
-        this.settings = defaultSettings;
+        this._defaultSettings = ObjectUtils.assign({}, defaultSettings);
+        this._settings = defaultSettings;
     }
 
     /**
      * Resets the settings to the default.
      */
     reset() {
-        this.settings = ObjectUtils.assign({}, this.defaultSettings);
-        this.fireModified();
+        this._settings = ObjectUtils.assign({}, this._defaultSettings);
+        this._fireModified();
     }
 
     /**
      * Gets a copy of the settings as an object.
      */
     get(): T {
-        return ObjectUtils.assign({}, this.settings);
+        return ObjectUtils.assign({}, this._settings);
     }
 
     /**
@@ -34,8 +34,8 @@ export abstract class SettingsContainer<T extends object> {
      * @param settings - Settings to set.
      */
     set(settings: Partial<T>) {
-        ObjectUtils.assign(this.settings, settings);
-        this.fireModified();
+        ObjectUtils.assign(this._settings, settings);
+        this._fireModified();
     }
 
     /**
@@ -43,14 +43,14 @@ export abstract class SettingsContainer<T extends object> {
      * @param action - Action to execute when the settings change.
      * @internal
      */
-    onModified(action: () => void) {
+    _onModified(action: () => void) {
         if (this._modifiedEventContainer == null)
             this._modifiedEventContainer = new EventContainer();
         this._modifiedEventContainer.subscribe(action);
     }
 
     /** @internal */
-    private fireModified() {
+    private _fireModified() {
         if (this._modifiedEventContainer != null)
             this._modifiedEventContainer.fire(undefined);
     }

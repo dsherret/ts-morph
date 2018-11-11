@@ -36,7 +36,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
      * Gets the name node of what's being exported.
      */
     getNameNode() {
-        return this.getNodeFromCompilerNode(this.compilerNode.propertyName || this.compilerNode.name);
+        return this._getNodeFromCompilerNode(this.compilerNode.propertyName || this.compilerNode.name);
     }
 
     /**
@@ -121,7 +121,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
     getAliasNode() {
         if (this.compilerNode.propertyName == null)
             return undefined;
-        return this.getNodeFromCompilerNode(this.compilerNode.name);
+        return this._getNodeFromCompilerNode(this.compilerNode.name);
     }
 
     /**
@@ -142,7 +142,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
      * Gets the local target symbol of the export specifier or undefined if it doesn't exist.
      */
     getLocalTargetSymbol(): Symbol | undefined {
-        return this.context.typeChecker.getExportSpecifierLocalTargetSymbol(this);
+        return this._context.typeChecker.getExportSpecifierLocalTargetSymbol(this);
     }
 
     /**

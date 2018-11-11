@@ -71,7 +71,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
         }
 
         getParameters() {
-            return this.compilerNode.parameters.map(p => this.getNodeFromCompilerNode(p));
+            return this.compilerNode.parameters.map(p => this._getNodeFromCompilerNode(p));
         }
 
         addParameter(structure: ParameterDeclarationStructure) {
@@ -94,8 +94,8 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             const syntaxList = this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList);
             index = verifyAndGetIndex(index, parameters.length);
 
-            const writer = this.getWriterWithQueuedChildIndentation();
-            const structurePrinter = this.context.structurePrinterFactory.forParameterDeclaration();
+            const writer = this._getWriterWithQueuedChildIndentation();
+            const structurePrinter = this._context.structurePrinterFactory.forParameterDeclaration();
 
             structurePrinter.printTexts(writer, structures);
 

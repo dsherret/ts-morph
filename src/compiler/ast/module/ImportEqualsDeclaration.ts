@@ -12,7 +12,7 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
      * Gets the module reference of the import equals declaration.
      */
     getModuleReference(): ModuleReference {
-        return this.getNodeFromCompilerNode(this.compilerNode.moduleReference);
+        return this._getNodeFromCompilerNode(this.compilerNode.moduleReference);
     }
 
     /**
@@ -37,7 +37,7 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
      */
     setExternalModuleReference(sourceFile: SourceFile): this;
     setExternalModuleReference(textOrSourceFile: string | SourceFile) {
-        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
+        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this._sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
         const moduleReference = this.getModuleReference();
         if (TypeGuards.isExternalModuleReference(moduleReference) && moduleReference.getExpression() != null)
             moduleReference.getExpressionOrThrow().replaceWithText(writer => writer.quote(text));

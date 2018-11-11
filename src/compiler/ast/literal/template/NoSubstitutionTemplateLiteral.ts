@@ -24,7 +24,7 @@ export class NoSubstitutionTemplateLiteral extends NoSubstitutionTemplateLiteral
         const childIndex = this.getChildIndex();
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         replaceNodeText({
-            sourceFile: this.sourceFile,
+            sourceFile: this._sourceFile,
             start: this.getStart() + 1,
             replacingLength: this.getWidth() - 2,
             newText: value

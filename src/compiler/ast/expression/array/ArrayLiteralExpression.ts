@@ -11,7 +11,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
      * Gets the array's elements.
      */
     getElements(): Expression[] {
-        return this.compilerNode.elements.map(e => this.getNodeFromCompilerNode(e));
+        return this.compilerNode.elements.map(e => this._getNodeFromCompilerNode(e));
     }
 
     /**
@@ -53,7 +53,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
         index = verifyAndGetIndex(index, elements.length);
         const useNewLines = getUseNewLines(this);
 
-        const writer = useNewLines ? this.getWriterWithChildIndentation() : this.getWriterWithQueuedChildIndentation();
+        const writer = useNewLines ? this._getWriterWithChildIndentation() : this._getWriterWithQueuedChildIndentation();
         const stringStructurePrinter = new StringStructurePrinter();
         const structurePrinter = useNewLines ?
             new CommaNewLineSeparatedStructuresPrinter(stringStructurePrinter) :

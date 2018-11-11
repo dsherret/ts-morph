@@ -70,8 +70,8 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
 
         // create member code
         // todo: pass in the StructureToText to the function below
-        const writer = this.getWriterWithChildIndentation();
-        const structurePrinter = this.context.structurePrinterFactory.forEnumMember();
+        const writer = this._getWriterWithChildIndentation();
+        const structurePrinter = this._context.structurePrinterFactory.forEnumMember();
         structurePrinter.printTexts(writer, structures);
 
         // insert
@@ -122,7 +122,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Gets the enum's members.
      */
     getMembers(): EnumMember[] {
-        return this.compilerNode.members.map(m => this.getNodeFromCompilerNode(m));
+        return this.compilerNode.members.map(m => this._getNodeFromCompilerNode(m));
     }
 
     /**

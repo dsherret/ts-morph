@@ -145,7 +145,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.offsetPositions), () => {
+    describe(nameof<Node>(n => n._offsetPositions), () => {
         const {sourceFile} = getInfoFromText("enum MyEnum {}");
         const allNodes = [sourceFile, ...sourceFile.getDescendants()];
 
@@ -153,7 +153,7 @@ describe(nameof(Node), () => {
         const originalStartPosSum = allNodes.map(n => n.getPos()).reduce((a, b) => a + b, 0);
         const originalEndPosSum = allNodes.map(n => n.getEnd()).reduce((a, b) => a + b, 0);
         it("should offset all the positions", () => {
-            sourceFile.offsetPositions(5);
+            sourceFile._offsetPositions(5);
             const adjustedStartPosSum = allNodes.map(n => n.getPos() - 5).reduce((a, b) => a + b, 0);
             const adjustedEndPosSum = allNodes.map(n => n.getEnd() - 5).reduce((a, b) => a + b, 0);
             expect(adjustedStartPosSum).to.equal(originalStartPosSum);
@@ -1455,6 +1455,23 @@ class MyClass {
                 "" // end of file token
             ]);
         });
+
+        it("should not error when the current node is forgotten/removed", () => {
+            const {sourceFile} = getInfoFromText("class Test {} interface Test2 {}");
+            const nodeTexts: string[] = [];
+            sourceFile.forEachDescendant(node => {
+                nodeTexts.push(node.getText());
+                if (TypeGuards.isClassDeclaration(node))
+                    node.remove();
+            });
+
+            expect(nodeTexts).to.deep.equal([
+                "class Test {}",
+                "interface Test2 {}",
+                "Test2",
+                "" // end of file token
+            ]);
+        });
     });
 
     describe(nameof<Node>(n => n.getNodeProperty), () => {
@@ -1499,7 +1516,7 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getTrailingTriviaNonWhitespaceEnd), () => {
+    describe(nameof<Node>(n => n._getTrailingTriviaNonWhitespaceEnd), () => {
         it("should get the non whitespace end for a jsx child syntax list", () => {
             let code = "const v = (<div>\n    <div />";
             const expectedNonWhitepsaceEnd = code.length;
@@ -1510,7 +1527,7 @@ class MyClass {
             const element = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.JsxElement);
             const syntaxList = element.getChildSyntaxListOrThrow();
 
-            expect(syntaxList.getTrailingTriviaNonWhitespaceEnd()).to.equal(expectedNonWhitepsaceEnd);
+            expect(syntaxList._getTrailingTriviaNonWhitespaceEnd()).to.equal(expectedNonWhitepsaceEnd);
             expect(syntaxList.getTrailingTriviaEnd()).to.equal(expectedTriviaEnd);
         });
     });

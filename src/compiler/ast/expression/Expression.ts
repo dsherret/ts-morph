@@ -7,6 +7,6 @@ export class Expression<T extends ts.Expression = ts.Expression> extends Node<T>
      * Gets the contextual type of the expression.
      */
     getContextualType(): Type | undefined {
-        return this.context.typeChecker.getContextualType(this);
+        return this._context.typeChecker.getContextualType(this);
     }
 }

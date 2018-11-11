@@ -9,24 +9,24 @@ import { TextSpan } from "./TextSpan";
  */
 export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentSpan> {
     /** @internal */
-    protected readonly context: ProjectContext;
+    protected readonly _context: ProjectContext;
     /** @internal */
     protected readonly _compilerObject: TCompilerObject;
     /** @internal */
-    protected readonly sourceFile: SourceFile;
+    protected readonly _sourceFile: SourceFile;
 
     /**
      * @private
      */
     constructor(context: ProjectContext, compilerObject: TCompilerObject) {
-        this.context = context;
+        this._context = context;
         this._compilerObject = compilerObject;
 
         // store this node so that it's start doesn't go out of date because of manipulation (though the text span may)
         // Note: this will cause the source file to transitively hold a reference to this node and so it won't be released
         // from the WeakMap until a manipulation happens on the source file.
-        this.sourceFile = this.context.compilerFactory.getSourceFileFromCacheFromFilePath(this.compilerObject.fileName)!;
-        this.sourceFile._doActionPreNextModification(() => this.getNode());
+        this._sourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(this.compilerObject.fileName)!;
+        this._sourceFile._doActionPreNextModification(() => this.getNode());
     }
 
     /**
@@ -40,7 +40,7 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
      * Gets the source file this reference is in.
      */
     getSourceFile(): SourceFile {
-        return this.sourceFile;
+        return this._sourceFile;
     }
 
     /**
@@ -67,7 +67,7 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
             // more relaxed getDescendantAtStartWithWidth because the position may be within a string literal
             let bestNode: Node | undefined;
 
-            sourceFile.context.compilerFactory.forgetNodesCreatedInBlock(remember => {
+            sourceFile._context.compilerFactory.forgetNodesCreatedInBlock(remember => {
                 let foundNode: Node | undefined;
                 let nextNode: Node | undefined = sourceFile;
 

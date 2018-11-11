@@ -5,6 +5,7 @@ import { ensureOverloadStructuresMatch } from "./ensureOverloadStructuresMatch";
 import { ensureStructuresMatchClasses } from "./ensureStructuresMatchClasses";
 import { ensureClassesImplementStructureMethods } from "./ensureClassesImplementStructureMethods";
 import { ensurePublicApiHasTests } from "./ensurePublicApiHasTests";
+import { validatePublicApiClassMemberNames } from "./validatePublicApiClassMemberNames";
 import { Problem } from "./Problem";
 
 const args = process.argv.slice(2);
@@ -28,6 +29,8 @@ if (checkHasArg("ensure-classes-implement-structure-methods"))
     ensureClassesImplementStructureMethods(factory.getTsSimpleAstInspector(), addProblem);
 if (checkHasArg("ensure-public-api-has-tests"))
     ensurePublicApiHasTests(factory.getTsSimpleAstInspector(), addProblem);
+if (checkHasArg("validate-public-api-class-member-names"))
+    validatePublicApiClassMemberNames(factory.getTsSimpleAstInspector(), addProblem);
 
 if (args.length > 0)
     console.error(`Unknown args: ${args}`);

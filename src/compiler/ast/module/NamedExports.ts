@@ -6,6 +6,6 @@ export const NamedExportsBase = Node;
 export class NamedExports extends NamedExportsBase<ts.NamedExports> {
     /** Gets the export specifiers. */
     getElements(): ExportSpecifier[] {
-        return this.compilerNode.elements.map(e => this.getNodeFromCompilerNode(e));
+        return this.compilerNode.elements.map(e => this._getNodeFromCompilerNode(e));
     }
 }

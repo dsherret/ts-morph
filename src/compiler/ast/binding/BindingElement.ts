@@ -16,7 +16,7 @@ export class BindingElement extends BindingElementBase<ts.BindingElement> {
      * Gets the binding element's dot dot dot token (...) if it exists or returns undefined.
      */
     getDotDotDotToken() {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.dotDotDotToken);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.dotDotDotToken);
     }
 
     /**
@@ -34,6 +34,6 @@ export class BindingElement extends BindingElementBase<ts.BindingElement> {
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
     getPropertyNameNode() {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.propertyName);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.propertyName);
     }
 }

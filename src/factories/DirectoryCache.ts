@@ -56,7 +56,7 @@ export class DirectoryCache {
         }
 
         function addToDirLevels(dir: Directory) {
-            const dirDepth = dir.getDepth();
+            const dirDepth = dir._getDepth();
 
             /* istanbul ignore if */
             if (depth > dirDepth)
