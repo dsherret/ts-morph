@@ -603,7 +603,7 @@ export declare class Project {
      * @param fileTextChanges - Collections of file changes to apply to this project.
      * @param options - Options for applying the text changes.
      */
-    applyFileTextChanges(fileTextChanges: FileTextChanges[], options?: {
+    applyFileTextChanges(fileTextChanges: ReadonlyArray<FileTextChanges>, options?: {
         overwrite?: boolean;
     }): void;
 }

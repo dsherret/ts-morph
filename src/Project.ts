@@ -535,7 +535,7 @@ export class Project {
      * @param fileTextChanges - Collections of file changes to apply to this project.
      * @param options - Options for applying the text changes.
      */
-    applyFileTextChanges(fileTextChanges: FileTextChanges[], options: { overwrite?: boolean } = {}) {
+    applyFileTextChanges(fileTextChanges: ReadonlyArray<FileTextChanges>, options: { overwrite?: boolean } = {}) {
         for (const fileTextChange of fileTextChanges) {
             let file = this.getSourceFile(fileTextChange.getFilePath());
 

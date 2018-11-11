@@ -94,4 +94,9 @@ export class TsSimpleAstInspector {
             return propAccessExpr.getNameNode().getText();
         }
     }
+
+    @Memoize
+    getCodeBlockWriterClass() {
+        return this.project.getSourceFileOrThrow("src/codeBlockWriter/code-block-writer.ts").getClassOrThrow("CodeBlockWriter");
+    }
 }

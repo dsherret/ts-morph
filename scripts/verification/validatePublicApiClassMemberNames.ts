@@ -11,7 +11,9 @@ import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
 
 export function validatePublicApiClassMemberNames(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
-    for (const classDec of inspector.getPublicClasses()) {
+    const codeBlockWriterClass = inspector.getCodeBlockWriterClass();
+
+    for (const classDec of inspector.getPublicClasses().filter(c => c !== codeBlockWriterClass)) {
         for (const member of classDec.getMembers())
             validateNode(member);
     }

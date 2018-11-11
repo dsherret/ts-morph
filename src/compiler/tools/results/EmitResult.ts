@@ -1,7 +1,6 @@
 import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
-import { OutputFile } from "./OutputFile";
 
 /**
  * Result of an emit.
@@ -81,7 +80,7 @@ export class MemoryEmitResult extends EmitResult {
     /**
      * @private
      */
-    constructor(context: ProjectContext, compilerObject: ts.EmitResult, private readonly _files: MemoryEmitResultFile[]) {
+    constructor(context: ProjectContext, compilerObject: ts.EmitResult, private readonly _files: ReadonlyArray<MemoryEmitResultFile>) {
         super(context, compilerObject);
     }
 
@@ -89,6 +88,6 @@ export class MemoryEmitResult extends EmitResult {
      * Gets the files that were emitted to memory.
      */
     getFiles() {
-        return this._files;
+        return this._files as MemoryEmitResultFile[]; // assert mutable array
     }
 }
