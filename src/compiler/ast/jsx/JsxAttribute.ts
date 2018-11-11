@@ -24,7 +24,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
      * Gets the JSX attribute's initializer or returns undefined if it doesn't exist.
      */
     getInitializer(): StringLiteral | JsxExpression | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
     }
 
     /**
@@ -33,7 +33,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
      * @remarks You need to provide the quotes or braces.
      */
     setInitializer(textOrWriterFunction: string | WriterFunction) {
-        const text = getTextFromStringOrWriter(this.getWriterWithQueuedIndentation(), textOrWriterFunction);
+        const text = getTextFromStringOrWriter(this._getWriterWithQueuedIndentation(), textOrWriterFunction);
 
         if (StringUtils.isNullOrWhitespace(text)) {
             this.removeInitializer();

@@ -266,7 +266,7 @@ describe(nameof(ExportDeclaration), () => {
         {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ExportDeclaration>(text, SyntaxKind.ExportDeclaration);
             if (!surroundWithSpaces)
-                descendant.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+                descendant._context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             const originalCount = descendant.getNamedExports().length;
             const result = descendant.insertNamedExports(index, structures);
             const afterCount = descendant.getNamedExports().length;

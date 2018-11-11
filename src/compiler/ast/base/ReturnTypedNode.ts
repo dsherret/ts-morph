@@ -48,7 +48,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
         }
 
         getReturnTypeNode() {
-            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.type);
+            return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
         }
 
         getReturnTypeNodeOrThrow() {
@@ -56,7 +56,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
         }
 
         setReturnType(textOrWriterFunction: string | WriterFunction) {
-            const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
+            const text = getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction);
             if (StringUtils.isNullOrWhitespace(text))
                 return this.removeReturnType();
 
@@ -94,7 +94,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
         }
 
         getSignature() {
-            const signature = this.context.typeChecker.getSignatureFromNode(this);
+            const signature = this._context.typeChecker.getSignatureFromNode(this);
             if (signature == null)
                 throw new errors.NotImplementedError("Expected the node to have a signature.");
             return signature;

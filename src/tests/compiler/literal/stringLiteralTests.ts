@@ -22,7 +22,7 @@ describe(nameof(StringLiteral), () => {
     describe(nameof<StringLiteral>(n => n.setLiteralValue), () => {
         function doTest(text: string, newValue: string, expectedText: string, expectedLiteralText?: string) {
             const literal = getStringLiteral(text);
-            const sourceFile = literal.sourceFile;
+            const sourceFile = literal._sourceFile;
             literal.setLiteralValue(newValue);
             expect(literal.wasForgotten()).to.be.false;
             expect(sourceFile.getFullText()).to.equal(expectedText);

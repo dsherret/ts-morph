@@ -73,7 +73,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
         getDecorators(): Decorator[] {
             if (this.compilerNode.decorators == null)
                 return [];
-            return this.compilerNode.decorators.map(d => this.getNodeFromCompilerNode(d));
+            return this.compilerNode.decorators.map(d => this._getNodeFromCompilerNode(d));
         }
 
         addDecorator(structure: DecoratorStructure) {
@@ -139,8 +139,8 @@ function getDecoratorLines(node: Node, structures: ReadonlyArray<DecoratorStruct
     const lines: string[] = [];
     for (const structure of structures) {
         // todo: temporary code... refactor this later
-        const writer = node.getWriter();
-        const structurePrinter = node.context.structurePrinterFactory.forDecorator();
+        const writer = node._getWriter();
+        const structurePrinter = node._context.structurePrinterFactory.forDecorator();
         structurePrinter.printText(writer, structure);
         lines.push(writer.toString());
     }

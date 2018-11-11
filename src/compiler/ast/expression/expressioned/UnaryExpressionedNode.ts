@@ -15,7 +15,7 @@ export interface UnaryExpressionedNode {
 export function UnaryExpressionedNode<T extends Constructor<UnaryExpressionedNodeExtensionType>>(Base: T): Constructor<UnaryExpressionedNode> & T {
     return class extends Base implements UnaryExpressionedNode {
         getExpression() {
-            return this.getNodeFromCompilerNode(this.compilerNode.expression);
+            return this._getNodeFromCompilerNode(this.compilerNode.expression);
         }
     };
 }

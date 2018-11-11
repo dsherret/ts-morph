@@ -26,7 +26,7 @@ export class Identifier extends IdentifierBase<ts.Identifier> {
      * @remarks This is similar to "go to definition." Use `.getDefinitionNodes()` if you only care about the nodes.
      */
     getDefinitions(): DefinitionInfo[] {
-        return this.context.languageService.getDefinitions(this);
+        return this._context.languageService.getDefinitions(this);
     }
 
     /**
@@ -35,6 +35,6 @@ export class Identifier extends IdentifierBase<ts.Identifier> {
      * This is similar to "go to implementation."
      */
     getImplementations(): ImplementationLocation[] {
-        return this.context.languageService.getImplementations(this);
+        return this._context.languageService.getImplementations(this);
     }
 }

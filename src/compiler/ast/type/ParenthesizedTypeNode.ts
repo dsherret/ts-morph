@@ -7,7 +7,7 @@ export class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedTypeNode> {
      * Gets the node within the parentheses.
      */
     getTypeNode(): TypeNode {
-        return this.getNodeFromCompilerNode(this.compilerNode.type);
+        return this._getNodeFromCompilerNode(this.compilerNode.type);
     }
 
     /**

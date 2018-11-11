@@ -14,7 +14,7 @@ export class JsxExpression extends Expression<ts.JsxExpression> {
      * Gets the dot dot dot token (...) or returns undefined if it doesn't exist.
      */
     getDotDotDotToken() {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.dotDotDotToken);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.dotDotDotToken);
     }
 
     /**
@@ -28,6 +28,6 @@ export class JsxExpression extends Expression<ts.JsxExpression> {
      * Gets the expression or returns undefined if it doesn't exist
      */
     getExpression(): Expression | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
     }
 }

@@ -18,21 +18,21 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
      * Gets the children of the JSX element.
      */
     getJsxChildren(): JsxChild[] {
-        return this.compilerNode.children.map(c => this.getNodeFromCompilerNode(c));
+        return this.compilerNode.children.map(c => this._getNodeFromCompilerNode(c));
     }
 
     /**
      * Gets the opening element.
      */
     getOpeningElement(): JsxOpeningElement {
-        return this.getNodeFromCompilerNode(this.compilerNode.openingElement);
+        return this._getNodeFromCompilerNode(this.compilerNode.openingElement);
     }
 
     /**
      * Gets the closing element.
      */
     getClosingElement(): JsxClosingElement {
-        return this.getNodeFromCompilerNode(this.compilerNode.closingElement);
+        return this._getNodeFromCompilerNode(this.compilerNode.closingElement);
     }
 
     /**
@@ -40,7 +40,7 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
      * @param textOrWriterFunction - Text or writer function to set as the body.
      */
     setBodyText(textOrWriterFunction: string | WriterFunction) {
-        const newText = getBodyText(this.getWriterWithIndentation(), textOrWriterFunction);
+        const newText = getBodyText(this._getWriterWithIndentation(), textOrWriterFunction);
         setText(this, newText);
         return this;
     }
@@ -50,7 +50,7 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
      * @param textOrWriterFunction - Text to set as the body.
      */
     setBodyTextInline(textOrWriterFunction: string | WriterFunction) {
-        const writer = this.getWriterWithQueuedChildIndentation();
+        const writer = this._getWriterWithQueuedChildIndentation();
         printTextFromStringOrWriter(writer, textOrWriterFunction);
         if (writer.isLastNewLine()) {
             writer.setIndentationLevel(Math.max(0, this.getIndentationLevel() - 1));

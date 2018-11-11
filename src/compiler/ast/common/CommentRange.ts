@@ -72,7 +72,7 @@ export class CommentRange {
      * Forgets the comment range.
      * @internal
      */
-    forget() {
+    _forget() {
         this._compilerObject = undefined;
         this._sourceFile = undefined;
     }

@@ -8,14 +8,14 @@ export class TaggedTemplateExpression extends MemberExpression<ts.TaggedTemplate
      * Gets the tag.
      */
     getTag(): LeftHandSideExpression {
-        return this.getNodeFromCompilerNode(this.compilerNode.tag);
+        return this._getNodeFromCompilerNode(this.compilerNode.tag);
     }
 
     /**
      * Gets the template literal.
      */
     getTemplate(): TemplateLiteral {
-        return this.getNodeFromCompilerNode(this.compilerNode.template);
+        return this._getNodeFromCompilerNode(this.compilerNode.template);
     }
 
     /**

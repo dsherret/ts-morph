@@ -8,22 +8,22 @@ import { ReferenceEntry } from "./ReferenceEntry";
  */
 export class ReferencedSymbol {
     /** @internal */
-    protected readonly context: ProjectContext;
+    protected readonly _context: ProjectContext;
     /** @internal */
     private readonly _compilerObject: ts.ReferencedSymbol;
     /** @internal */
-    private readonly references: ReferenceEntry[];
+    private readonly _references: ReferenceEntry[];
 
     /**
      * @private
      */
     constructor(context: ProjectContext, compilerObject: ts.ReferencedSymbol) {
-        this.context = context;
+        this._context = context;
         this._compilerObject = compilerObject;
 
         // it's important to store the references so that the nodes referenced inside will point
         // to the right node in case the user does manipulation between getting this object and getting the references
-        this.references = this.compilerObject.references.map(r => context.compilerFactory.getReferenceEntry(r));
+        this._references = this.compilerObject.references.map(r => context.compilerFactory.getReferenceEntry(r));
     }
 
     /**
@@ -38,13 +38,13 @@ export class ReferencedSymbol {
      */
     @Memoize
     getDefinition() {
-        return this.context.compilerFactory.getReferencedSymbolDefinitionInfo(this.compilerObject.definition);
+        return this._context.compilerFactory.getReferencedSymbolDefinitionInfo(this.compilerObject.definition);
     }
 
     /**
      * Gets the references.
      */
     getReferences() {
-        return this.references;
+        return this._references;
     }
 }

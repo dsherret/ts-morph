@@ -25,7 +25,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      */
     setModuleSpecifier(sourceFile: SourceFile): this;
     setModuleSpecifier(textOrSourceFile: string | SourceFile) {
-        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
+        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this._sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
 
         if (StringUtils.isNullOrEmpty(text)) {
             this.removeModuleSpecifier();
@@ -36,7 +36,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
 
         if (stringLiteral == null) {
             const semiColonToken = this.getLastChildIfKind(SyntaxKind.SemicolonToken);
-            const quoteKind = this.context.manipulationSettings.getQuoteKind();
+            const quoteKind = this._context.manipulationSettings.getQuoteKind();
             insertIntoParentTextRange({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
                 parent: this,
@@ -53,7 +53,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      * Gets the module specifier or undefined if it doesn't exist.
      */
     getModuleSpecifier(): StringLiteral | undefined {
-        const moduleSpecifier = this.getNodeFromCompilerNodeIfExists(this.compilerNode.moduleSpecifier);
+        const moduleSpecifier = this._getNodeFromCompilerNodeIfExists(this.compilerNode.moduleSpecifier);
         if (moduleSpecifier == null)
             return undefined;
         if (!TypeGuards.isStringLiteral(moduleSpecifier))
@@ -174,8 +174,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 return [];
 
         const originalNamedExports = this.getNamedExports();
-        const writer = this.getWriterWithIndentation();
-        const namedExportStructurePrinter = this.context.structurePrinterFactory.forNamedImportExportSpecifier();
+        const writer = this._getWriterWithIndentation();
+        const namedExportStructurePrinter = this._context.structurePrinterFactory.forNamedImportExportSpecifier();
 
         index = verifyAndGetIndex(index, originalNamedExports.length);
 
@@ -198,7 +198,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 currentNodes: originalNamedExports,
                 insertIndex: index,
                 newText: writer.toString(),
-                surroundWithSpaces: this.context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+                surroundWithSpaces: this._context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
             });
         }
 
@@ -213,7 +213,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
         const namedExports = this.compilerNode.exportClause;
         if (namedExports == null)
             return [];
-        return namedExports.elements.map(e => this.getNodeFromCompilerNode(e));
+        return namedExports.elements.map(e => this._getNodeFromCompilerNode(e));
     }
 
     /**

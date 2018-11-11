@@ -10,13 +10,13 @@ export class ForOfStatement extends ForOfStatementBase<ts.ForOfStatement> {
      * Gets this for of statement's initializer.
      */
     getInitializer(): VariableDeclarationList | Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.initializer);
+        return this._getNodeFromCompilerNode(this.compilerNode.initializer);
     }
 
     /**
      * Gets this for of statement's expression.
      */
     getExpression(): Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression);
+        return this._getNodeFromCompilerNode(this.compilerNode.expression);
     }
 }

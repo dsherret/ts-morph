@@ -21,7 +21,7 @@ export function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagE
         }
 
         getNameNode() {
-            return this.getNodeFromCompilerNode(this.compilerNode.name);
+            return this._getNodeFromCompilerNode(this.compilerNode.name);
         }
     };
 }

@@ -249,7 +249,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.ConstructSignature,
-                createStructurePrinter: () => this.context.structurePrinterFactory.forConstructSignatureDeclaration()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forConstructSignatureDeclaration()
             });
         }
 
@@ -263,7 +263,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getConstructSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.ConstructSignature)
-                .map(m => this.getNodeFromCompilerNode(m as ts.ConstructSignatureDeclaration));
+                .map(m => this._getNodeFromCompilerNode(m as ts.ConstructSignatureDeclaration));
         }
 
         addCallSignature(structure: CallSignatureDeclarationStructure) {
@@ -284,7 +284,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.CallSignature,
-                createStructurePrinter: () => this.context.structurePrinterFactory.forCallSignatureDeclaration()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forCallSignatureDeclaration()
             });
         }
 
@@ -298,7 +298,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getCallSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.CallSignature)
-                .map(m => this.getNodeFromCompilerNode(m as ts.CallSignatureDeclaration));
+                .map(m => this._getNodeFromCompilerNode(m as ts.CallSignatureDeclaration));
         }
 
         addIndexSignature(structure: IndexSignatureDeclarationStructure) {
@@ -319,7 +319,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.IndexSignature,
-                createStructurePrinter: () => this.context.structurePrinterFactory.forIndexSignatureDeclaration()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forIndexSignatureDeclaration()
             });
         }
 
@@ -333,7 +333,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getIndexSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.IndexSignature)
-                .map(m => this.getNodeFromCompilerNode(m as ts.IndexSignatureDeclaration));
+                .map(m => this._getNodeFromCompilerNode(m as ts.IndexSignatureDeclaration));
         }
 
         addMethod(structure: MethodSignatureStructure) {
@@ -354,7 +354,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.MethodSignature,
-                createStructurePrinter: () => this.context.structurePrinterFactory.forMethodSignature()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forMethodSignature()
             });
         }
 
@@ -369,7 +369,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getMethods() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.MethodSignature)
-                .map(m => this.getNodeFromCompilerNode(m as ts.MethodSignature));
+                .map(m => this._getNodeFromCompilerNode(m as ts.MethodSignature));
         }
 
         addProperty(structure: PropertySignatureStructure) {
@@ -390,7 +390,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.PropertySignature,
-                createStructurePrinter: () => this.context.structurePrinterFactory.forPropertySignature()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forPropertySignature()
             });
         }
 
@@ -405,11 +405,11 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getProperties() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.PropertySignature)
-                .map(m => this.getNodeFromCompilerNode(m as ts.PropertySignature));
+                .map(m => this._getNodeFromCompilerNode(m as ts.PropertySignature));
         }
 
         getMembers() {
-            return this.compilerNode.members.map(m => this.getNodeFromCompilerNode(m)) as TypeElementTypes[];
+            return this.compilerNode.members.map(m => this._getNodeFromCompilerNode(m)) as TypeElementTypes[];
         }
 
         set(structure: Partial<TypeElementMemberedNodeStructure>) {

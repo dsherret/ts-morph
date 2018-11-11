@@ -16,7 +16,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      * Get the variable declarations.
      */
     getDeclarations(): VariableDeclaration[] {
-        return this.compilerNode.declarations.map(d => this.getNodeFromCompilerNode(d));
+        return this.compilerNode.declarations.map(d => this._getNodeFromCompilerNode(d));
     }
 
     /**
@@ -102,8 +102,8 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      * @param structures - Structures representing the variable declarations to insert.
      */
     insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>) {
-        const writer = this.getWriterWithQueuedChildIndentation();
-        const structurePrinter = new CommaSeparatedStructuresPrinter(this.context.structurePrinterFactory.forVariableDeclaration());
+        const writer = this._getWriterWithQueuedChildIndentation();
+        const structurePrinter = new CommaSeparatedStructuresPrinter(this._context.structurePrinterFactory.forVariableDeclaration());
 
         structurePrinter.printText(writer, structures);
 

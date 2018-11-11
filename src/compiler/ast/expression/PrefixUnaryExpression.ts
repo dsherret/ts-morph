@@ -14,6 +14,6 @@ export class PrefixUnaryExpression extends PrefixUnaryExpressionBase<ts.PrefixUn
      * Gets the operand of the prefix unary expression.
      */
     getOperand(): UnaryExpression {
-        return this.getNodeFromCompilerNode(this.compilerNode.operand);
+        return this._getNodeFromCompilerNode(this.compilerNode.operand);
     }
 }

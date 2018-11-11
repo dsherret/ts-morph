@@ -22,7 +22,7 @@ export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
             }
         }
 
-        arg.replaceWithText(writer => writer.quote(text), this.getWriterWithQueuedChildIndentation());
+        arg.replaceWithText(writer => writer.quote(text), this._getWriterWithQueuedChildIndentation());
         return this;
     }
 
@@ -30,7 +30,7 @@ export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
      * Gets the argument passed into the import type.
      */
     getArgument(): TypeNode {
-        return this.getNodeFromCompilerNode(this.compilerNode.argument);
+        return this._getNodeFromCompilerNode(this.compilerNode.argument);
     }
 
     /**
@@ -41,13 +41,13 @@ export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
         const qualifier = this.getQualifier();
 
         if (qualifier != null)
-            qualifier.replaceWithText(text, this.getWriterWithQueuedChildIndentation());
+            qualifier.replaceWithText(text, this._getWriterWithQueuedChildIndentation());
         else {
             const paren = this.getFirstChildByKindOrThrow(SyntaxKind.CloseParenToken);
             insertIntoParentTextRange({
                 insertPos: paren.getEnd(),
                 parent: this,
-                newText: this.getWriterWithQueuedIndentation().write(".").write(text).toString()
+                newText: this._getWriterWithQueuedIndentation().write(".").write(text).toString()
             });
         }
 
@@ -65,6 +65,6 @@ export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
      * Gets the qualifier of the import type if it exists or returns undefined.
      */
     getQualifier(): EntityName | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
     }
 }

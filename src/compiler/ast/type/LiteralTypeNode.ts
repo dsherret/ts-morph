@@ -10,6 +10,6 @@ export class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {
     getLiteral(): BooleanLiteral | LiteralExpression | PrefixUnaryExpression {
         // this statement is to be notified in case this changes
         const tsLiteral: ts.BooleanLiteral | ts.LiteralExpression | ts.PrefixUnaryExpression = this.compilerNode.literal;
-        return this.getNodeFromCompilerNode(tsLiteral);
+        return this._getNodeFromCompilerNode(tsLiteral);
     }
 }

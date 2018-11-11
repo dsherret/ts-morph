@@ -2,5 +2,5 @@
 
 export function hasInternalDocTag(node: Node) {
     return TypeGuards.isJSDocableNode(node)
-        && node.getJsDocs().some(d => d.getTags().some(t => t.getName() === "internal"));
+        && node.getJsDocs().some(d => d.getTags().some(t => t.getTagName() === "internal"));
 }

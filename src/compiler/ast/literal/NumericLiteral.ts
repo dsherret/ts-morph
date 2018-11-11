@@ -20,7 +20,7 @@ export class NumericLiteral extends NumericLiteralBase<ts.NumericLiteral> {
      */
     setLiteralValue(value: number) {
         replaceNodeText({
-            sourceFile: this.sourceFile,
+            sourceFile: this._sourceFile,
             start: this.getStart(),
             replacingLength: this.getWidth(),
             newText: value.toString(10)

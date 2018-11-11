@@ -24,7 +24,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      */
     setModuleSpecifier(sourceFile: SourceFile): this;
     setModuleSpecifier(textOrSourceFile: string | SourceFile) {
-        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
+        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this._sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
         this.getModuleSpecifier().setLiteralValue(text);
         return this;
     }
@@ -33,7 +33,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * Gets the module specifier.
      */
     getModuleSpecifier(): StringLiteral {
-        const moduleSpecifier =  this.getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
+        const moduleSpecifier =  this._getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
         if (!TypeGuards.isStringLiteral(moduleSpecifier))
             throw new errors.InvalidOperationError("Expected the module specifier to be a string literal.");
         return moduleSpecifier;
@@ -283,8 +283,8 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
                 return [];
 
         const originalNamedImports = this.getNamedImports();
-        const writer = this.getWriterWithQueuedIndentation();
-        const namedImportStructurePrinter = this.context.structurePrinterFactory.forNamedImportExportSpecifier();
+        const writer = this._getWriterWithQueuedIndentation();
+        const namedImportStructurePrinter = this._context.structurePrinterFactory.forNamedImportExportSpecifier();
         const importClause = this.getImportClause();
         index = verifyAndGetIndex(index, originalNamedImports.length);
 
@@ -326,7 +326,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
                 currentNodes: originalNamedImports,
                 insertIndex: index,
                 newText: writer.toString(),
-                surroundWithSpaces: this.context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+                surroundWithSpaces: this._context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
             });
         }
 
@@ -381,7 +381,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * Gets the import clause or returns undefined if it doesn't exist.
      */
     getImportClause() {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
     }
 
     /**
@@ -433,8 +433,8 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
 
 function setEmptyNamedImport(node: ImportDeclaration) {
     const importClause = node.getNodeProperty("importClause");
-    const writer = node.getWriterWithQueuedChildIndentation();
-    const namedImportStructurePrinter = node.context.structurePrinterFactory.forNamedImportExportSpecifier();
+    const writer = node._getWriterWithQueuedChildIndentation();
+    const namedImportStructurePrinter = node._context.structurePrinterFactory.forNamedImportExportSpecifier();
     namedImportStructurePrinter.printTextsWithBraces(writer, []);
     const emptyBracesText = writer.toString();
 

@@ -9,13 +9,13 @@ import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
  */
 export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
     /** @internal */
-    readonly context: ProjectContext | undefined;
+    readonly _context: ProjectContext | undefined;
     /** @internal */
     readonly _compilerObject: TCompilerObject;
 
     /** @private */
     constructor(context: ProjectContext | undefined, compilerObject: TCompilerObject) {
-        this.context = context;
+        this._context = context;
         this._compilerObject = compilerObject;
 
         // memoize
@@ -34,10 +34,10 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
      */
     @Memoize
     getSourceFile(): SourceFile | undefined {
-        if (this.context == null)
+        if (this._context == null)
             return undefined;
         const file = this.compilerObject.file;
-        return file == null ? undefined : this.context.compilerFactory.getSourceFile(file);
+        return file == null ? undefined : this._context.compilerFactory.getSourceFile(file);
     }
 
     /**
@@ -48,10 +48,10 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
         if (typeof messageText === "string")
             return messageText;
 
-        if (this.context == null)
+        if (this._context == null)
             return new DiagnosticMessageChain(messageText);
         else
-            return this.context.compilerFactory.getDiagnosticMessageChain(messageText);
+            return this._context.compilerFactory.getDiagnosticMessageChain(messageText);
     }
 
     /**

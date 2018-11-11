@@ -34,7 +34,7 @@ export interface TypedNode {
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
     return class extends Base implements TypedNode {
         getTypeNode() {
-            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.type);
+            return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
         }
 
         getTypeNodeOrThrow() {
@@ -42,7 +42,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         }
 
         setType(textOrWriterFunction: string | WriterFunction) {
-            const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
+            const text = getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction);
             if (StringUtils.isNullOrWhitespace(text))
                 return this.removeType();
 

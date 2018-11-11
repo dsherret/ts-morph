@@ -431,7 +431,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         /* General */
         getStatements() {
-            return this.getCompilerStatements().map(s => this.getNodeFromCompilerNode(s));
+            return this.getCompilerStatements().map(s => this._getNodeFromCompilerNode(s));
         }
 
         getStatement(findFunction: (statement: Node) => boolean) {
@@ -445,7 +445,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getStatementByKind(kind: SyntaxKind) {
             const statement = ArrayUtils.find(this.getCompilerStatements(), s => s.kind === kind);
-            return this.getNodeFromCompilerNodeIfExists(statement);
+            return this._getNodeFromCompilerNodeIfExists(statement);
         }
 
         getStatementByKindOrThrow(kind: SyntaxKind) {
@@ -510,7 +510,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forClassDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forClassDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
                     });
                 }
             });
@@ -557,7 +557,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forEnumDeclaration().printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forEnumDeclaration().printTexts(writer, structures);
                     });
                 }
             });
@@ -604,7 +604,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forFunctionDeclaration({
+                        this._context.structurePrinterFactory.forFunctionDeclaration({
                             isAmbient: isNodeAmbientOrInAmbientContext(this)
                         }).printTexts(writer, structures);
                     }, {
@@ -659,7 +659,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forInterfaceDeclaration().printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forInterfaceDeclaration().printTexts(writer, structures);
                     });
                 }
             });
@@ -706,7 +706,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
                     });
                 }
             });
@@ -753,7 +753,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forTypeAliasDeclaration().printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forTypeAliasDeclaration().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
                         nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
@@ -818,7 +818,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.context.structurePrinterFactory.forVariableStatement().printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forVariableStatement().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => TypeGuards.isVariableStatement(previousMember),
                         nextNewLine: nextMember => TypeGuards.isVariableStatement(nextMember)
@@ -916,7 +916,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 return this.compilerNode.statements;
             else if (TypeGuards.isNamespaceDeclaration(this)) {
                 // need to get the inner-most body for namespaces
-                return (this.getInnerBody().compilerNode as ts.Block).statements;
+                return (this._getInnerBody().compilerNode as ts.Block).statements;
             }
             else if (TypeGuards.isBodyableNode(this)) {
                 const body = this.getBody();
