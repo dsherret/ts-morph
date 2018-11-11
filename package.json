@@ -30,7 +30,7 @@
     "ensure-declaration-files-not-changed": "ts-node --transpileOnly scripts/verification/ensureDeclarationFilesNotChanged",
     "ensure-array-inputs-readonly": "ts-node --transpileOnly scripts/verification/main ensure-array-inputs-readonly",
     "ensure-or-throw-exists": "ts-node --transpileOnly scripts/verification/main ensure-or-throw-exists",
-    "overwrite-declaration-files": "yarn run build-declarations && shx cp -rf dist-declarations/ts-simple-ast.d.ts lib/ts-simple-ast.d.ts && shx cp -rf dist-declarations/codeBlockWriter/code-block-writer.d.ts lib/codeBlockWriter/code-block-writer.d.ts",
+    "overwrite-declaration-files": "yarn run build-declarations && shx cp -rf dist-declarations/ts-simple-ast.d.ts lib/ts-simple-ast.d.ts && shx cp -rf dist-declarations/code-block-writer.d.ts lib/code-block-writer.d.ts",
     "type-check-docs": "ts-node --transpileOnly scripts/typeCheckDocumentation.ts",
     "maintain-barrels": "barrel-maintainer src"
   },

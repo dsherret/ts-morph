@@ -17,6 +17,8 @@ export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) 
         "ModuleResolutionKind"
     ];
 
+    codeBlockWriterFile.moveToDirectory(project.getDirectoryOrThrow("dist-declarations"));
+
     mainFile.removeText();
 
     for (let declaration of exportedDeclarations) {

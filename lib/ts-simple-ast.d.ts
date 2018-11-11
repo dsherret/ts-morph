@@ -1,6 +1,6 @@
 import * as ts from "typescript";
 import { SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind } from "typescript";
-import { CodeBlockWriter } from "./codeBlockWriter/code-block-writer";
+import { CodeBlockWriter } from "./code-block-writer";
 
 export declare class Directory {
     private __context;
@@ -595,6 +595,17 @@ export declare class Project {
     formatDiagnosticsWithColorAndContext(diagnostics: ReadonlyArray<Diagnostic>, opts?: {
         newLineChar?: "\n" | "\r\n";
     }): string;
+    /**
+     * Applies the given file text changes to this project. This modifies and possibly creates new SourceFiles.
+     *
+     * WARNING: This will forget any previously navigated descendant nodes of changed files. It's best to do
+     * this when you're all done.
+     * @param fileTextChanges - Collections of file changes to apply to this project.
+     * @param options - Options for applying the text changes.
+     */
+    applyFileTextChanges(fileTextChanges: FileTextChanges[], options?: {
+        overwrite?: boolean;
+    }): void;
 }
 
 export interface SourceFileCreateOptions {
@@ -8753,6 +8764,11 @@ export interface RenameOptions {
 export interface UserPreferences extends ts.UserPreferences {
 }
 
+export interface TextRange {
+    getPos(): number;
+    getEnd(): number;
+}
+
 export declare class LanguageService {
     private readonly _compilerObject;
     private readonly _compilerHost;
@@ -8824,6 +8840,11 @@ export declare class LanguageService {
      */
     findRenameLocations(node: Node, options?: RenameOptions): RenameLocation[];
     /**
+     * Gets the suggestion diagnostics.
+     * @param filePathOrSourceFile - The source file or file path to get suggestions for.
+     */
+    getSuggestionDiagnostics(filePathOrSourceFile: SourceFile | string): DiagnosticWithLocation[];
+    /**
      * Gets the formatting edits for a range.
      * @param filePath - File path.
      * @param range - Position range.
@@ -8884,6 +8905,26 @@ export declare class LanguageService {
      * @param userPreferences - User preferences for refactoring.
      */
     organizeImports(filePath: string, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
+    /**
+     * Gets the edit information for applying a refactor at a the provided position in a source file.
+     * @param filePathOrSourceFile - File path or source file to get the edits for.
+     * @param formatOptions - Fomat code settings.
+     * @param positionOrRange - Position in the source file where to apply given refactor.
+     * @param refactorName - Refactor name.
+     * @param actionName - Refactor action name.
+     * @param preferences - User preferences for refactoring.
+     */
+    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatOptions: FormatCodeSettings, positionOrRange: number | TextRange, refactorName: string, actionName: string, preferences?: UserPreferences): RefactorEditInfo | undefined;
+    /**
+     * Gets the edit information for applying a code fix at the provided text range in a source file.
+     * @param filePathOrSourceFile - File path or source file to get the code fixes for.
+     * @param start - Start position of the text range to be fixed.
+     * @param end - End position of the text range to be fixed.
+     * @param errorCodes - One or more error codes associated with the code fixes to apply.
+     * @param formatOptions - Format code settings.
+     * @param preferences - User preferences for refactoring.
+     */
+    getCodeFixesAtPosition(filePathOrSourceFile: string | SourceFile, start: number, end: number, errorCodes: ReadonlyArray<number>, formatOptions?: FormatCodeSettings, preferences?: UserPreferences): CodeFixAction[];
     private _getFilePathFromFilePathOrSourceFile;
     private _getFilledSettings;
     private _getFilledUserPreferences;
@@ -8968,6 +9009,38 @@ export declare class Program {
      * @param sourceFile - Source file.
      */
     isSourceFileFromExternalLibrary(sourceFile: SourceFile): boolean;
+}
+
+/**
+ * Represents a code action.
+ */
+export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
+    protected constructor();
+    /** Gets the compiler text change. */
+    readonly compilerObject: TCompilerObject;
+    /** Description of the code action. */
+    getDescription(): string;
+    /** Text changes to apply to each file as part of the code action. */
+    getChanges(): FileTextChanges[];
+}
+
+/**
+ * Represents a code fix action.
+ */
+export declare class CodeFixAction extends CodeAction<ts.CodeFixAction> {
+    /**
+     * Short name to identify the fix, for use by telemetry.
+     */
+    getFixName(): string;
+    /**
+     * If present, one may call 'getCombinedCodeFix' with this fixId.
+     * This may be omitted to indicate that the code fix can't be applied in a group.
+     */
+    getFixId(): {} | undefined;
+    /**
+     * Gets the description of the code fix when fixing everything.
+     */
+    getFixAllDescription(): string | undefined;
 }
 
 /**
@@ -9199,6 +9272,10 @@ export declare class FileTextChanges {
      * Gets the text changes
      */
     getTextChanges(): TextChange[];
+    /**
+     * Gets if this change is for creating a new file.
+     */
+    isNewFile(): boolean;
 }
 
 export declare class ImplementationLocation extends DocumentSpan<ts.ImplementationLocation> {
@@ -9234,6 +9311,27 @@ export declare class OutputFile {
      * Gets the file text.
      */
     getText(): string;
+}
+
+/**
+ * Set of edits to make in response to a refactor action, plus an optional location where renaming should be invoked from.
+ */
+export declare class RefactorEditInfo {
+    private constructor();
+    /** Gets the compiler refactor edit info. */
+    readonly compilerObject: ts.RefactorEditInfo;
+    /**
+     * Gets refactor file text changes
+     */
+    getEdits(): FileTextChanges[];
+    /**
+     * Gets the file path for a rename refactor.
+     */
+    getRenameFilePath(): string | undefined;
+    /**
+     * Location where renaming should be invoked from.
+     */
+    getRenameLocation(): number | undefined;
 }
 
 /**
@@ -10255,7 +10353,7 @@ interface TypeParameterDeclarationSpecificStructure {
 }
 
 export { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind };
-export * from "./codeBlockWriter/code-block-writer";
+export * from "./code-block-writer";
 
 /** @deprecated Use the named export "Project" */
 export default Project;
