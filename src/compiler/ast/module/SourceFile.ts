@@ -6,7 +6,7 @@ import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulatio
 import { SourceFileStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { LanguageVariant, ScriptTarget, ts } from "../../../typescript";
-import { ArrayUtils, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../../utils";
+import { ArrayUtils, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, Memoize } from "../../../utils";
 import { getBodyTextWithoutLeadingIndentation } from "../base/helpers";
 import { TextInsertableNode, ModuledNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -68,6 +68,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         super(context, node, undefined as any);
         this._sourceFile = this;
         // end hack
+
+        // store this before a modification happens to the file
+        const onPreModified = () => {
+            this.isFromExternalLibrary(); // memoize
+            this._preModifiedEventContainer.unsubscribe(onPreModified);
+        };
+        this._preModifiedEventContainer.subscribe(onPreModified);
     }
 
     /**
@@ -494,8 +501,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets if the source file is from an external library.
      */
+    @Memoize
     isFromExternalLibrary() {
-        return this._context.program.isSourceFileFromExternalLibrary(this);
+        // This needs to be memoized and stored before modification because the TypeScript
+        // compiler does the following code:
+        //
+        // function isSourceFileFromExternalLibrary(file: SourceFile): boolean {
+        //    return !!sourceFilesFoundSearchingNodeModules.get(file.path);
+        // }
+        //
+        // So the compiler node will become out of date after a manipulation occurs and
+        // this will return false.
+        const compilerProgram = this._context.program.compilerObject;
+        return compilerProgram.isSourceFileFromExternalLibrary(this.compilerNode);
     }
 
     /**

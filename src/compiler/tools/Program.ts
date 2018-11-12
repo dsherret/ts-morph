@@ -168,6 +168,9 @@ export class Program {
      * @param sourceFile - Source file.
      */
     isSourceFileFromExternalLibrary(sourceFile: SourceFile) {
-        return this.compilerObject.isSourceFileFromExternalLibrary(sourceFile.compilerNode);
+        // Do not use compilerObject.isSourceFileFromExternalLibrary because that method
+        // will become out of date after a manipulation has happened to a source file.
+        // Read more in sourceFile.isFromExternalLibrary()'s method body.
+        return sourceFile.isFromExternalLibrary();
     }
 }

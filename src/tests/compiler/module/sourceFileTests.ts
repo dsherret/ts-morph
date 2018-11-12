@@ -512,6 +512,17 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should be when is", () => {
+            const { librarySourceFile } = trueSetup();
+            expect(librarySourceFile.isFromExternalLibrary()).to.be.true;
+        });
+
+        it("should be after manipulating the file", () => {
+            const { librarySourceFile } = trueSetup();
+            librarySourceFile.addStatements("console;");
+            expect(librarySourceFile.isFromExternalLibrary()).to.be.true;
+        });
+
+        function trueSetup() {
             const fileSystem = getFileSystemHostWithFiles([
                 { filePath: "package.json", text: `{ "name": "testing", "version": "0.0.1" }` },
                 {
@@ -523,8 +534,8 @@ describe(nameof(SourceFile), () => {
             ], ["node_modules", "node_modules/library"]);
             const { sourceFile } = getInfoFromText("import { Test } from 'library';", { host: fileSystem });
             const librarySourceFile = sourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow();
-            expect(librarySourceFile.isFromExternalLibrary()).to.be.true;
-        });
+            return { librarySourceFile };
+        }
     });
 
     describe(nameof<SourceFile>(n => n.getLanguageVariant), () => {
