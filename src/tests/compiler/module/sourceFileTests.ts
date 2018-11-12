@@ -565,7 +565,7 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.emit), () => {
         it("should emit the source file", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
-            const project = new Project({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
+            const project = new Project({ compilerOptions: { noLib: true, outDir: "dist" }, fileSystem });
             const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
             project.createSourceFile("file2.ts", "const num2 = 2;");
             const result = sourceFile.emit();

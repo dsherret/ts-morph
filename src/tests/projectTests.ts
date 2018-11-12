@@ -26,32 +26,32 @@ describe(nameof(Project), () => {
         });
 
         it("should add the files from tsconfig.json by default with the target in the tsconfig.json", () => {
-            const fs = new VirtualFileSystemHost();
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
-            fs.writeFileSync("/otherFile.ts", "");
-            fs.writeFileSync("/test/file.ts", "");
-            fs.writeFileSync("/test/test2/file2.ts", "");
-            const project = new Project({ tsConfigFilePath: "tsconfig.json" }, fs);
+            const fileSystem = new VirtualFileSystemHost();
+            fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            fileSystem.writeFileSync("/otherFile.ts", "");
+            fileSystem.writeFileSync("/test/file.ts", "");
+            fileSystem.writeFileSync("/test/test2/file2.ts", "");
+            const project = new Project({ tsConfigFilePath: "tsconfig.json", fileSystem });
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/test/file.ts", "/test/test2/file2.ts"].sort());
             expect(project.getSourceFiles().map(s => s.getLanguageVersion())).to.deep.equal([ScriptTarget.ES5, ScriptTarget.ES5]);
         });
 
         it("should add the files from tsconfig.json by default and also take into account the passed in compiler options", () => {
-            const fs = new VirtualFileSystemHost();
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "target": "ES5" } }`);
-            fs.writeFileSync("/otherFile.ts", "");
-            fs.writeFileSync("/test/file.ts", "");
-            fs.writeFileSync("/test/test2/file2.ts", "");
-            const project = new Project({ tsConfigFilePath: "tsconfig.json", compilerOptions: { rootDir: "/test/test2" } }, fs);
+            const fileSystem = new VirtualFileSystemHost();
+            fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "target": "ES5" } }`);
+            fileSystem.writeFileSync("/otherFile.ts", "");
+            fileSystem.writeFileSync("/test/file.ts", "");
+            fileSystem.writeFileSync("/test/test2/file2.ts", "");
+            const project = new Project({ tsConfigFilePath: "tsconfig.json", compilerOptions: { rootDir: "/test/test2" }, fileSystem });
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/test/test2/file2.ts"].sort());
         });
 
         it("should not add the files from tsconfig.json when specifying not to", () => {
-            const fs = new VirtualFileSystemHost();
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
-            fs.writeFileSync("/test/file.ts", "");
-            fs.writeFileSync("/test/test2/file2.ts", "");
-            const project = new Project({ tsConfigFilePath: "tsconfig.json", addFilesFromTsConfig: false }, fs);
+            const fileSystem = new VirtualFileSystemHost();
+            fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            fileSystem.writeFileSync("/test/file.ts", "");
+            fileSystem.writeFileSync("/test/test2/file2.ts", "");
+            const project = new Project({ tsConfigFilePath: "tsconfig.json", addFilesFromTsConfig: false, fileSystem });
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([]);
         });
 
@@ -94,49 +94,50 @@ describe(nameof(Project), () => {
     });
 
     function fileDependencyResolutionSetup(options: Options = {}) {
-        const virtualFileSystemHost = new VirtualFileSystemHost();
+        const fileSystem = new VirtualFileSystemHost();
 
-        virtualFileSystemHost.writeFileSync("/package.json", `{ "name": "testing", "version": "0.0.1" }`);
-        virtualFileSystemHost.writeFileSync("/node_modules/library/package.json",
+        fileSystem.writeFileSync("/package.json", `{ "name": "testing", "version": "0.0.1" }`);
+        fileSystem.writeFileSync("/node_modules/library/package.json",
             `{ "name": "library", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`);
-        virtualFileSystemHost.writeFileSync("/node_modules/library/index.js", "export class Test {}");
-        virtualFileSystemHost.writeFileSync("/node_modules/library/index.d.ts", "export class Test {}");
-        virtualFileSystemHost.writeFileSync("/main.ts", "import { Test } from 'library';");
-        virtualFileSystemHost.writeFileSync("/tsconfig.json", `{ "files": ["main.ts"] }`);
+        fileSystem.writeFileSync("/node_modules/library/index.js", "export class Test {}");
+        fileSystem.writeFileSync("/node_modules/library/index.d.ts", "export class Test {}");
+        fileSystem.writeFileSync("/main.ts", "import { Test } from 'library';");
+        fileSystem.writeFileSync("/tsconfig.json", `{ "files": ["main.ts"] }`);
 
-        const project = new Project({ tsConfigFilePath: "tsconfig.json", ...options }, virtualFileSystemHost);
+        const project = new Project({ tsConfigFilePath: "tsconfig.json", fileSystem, ...options });
         return { project };
     }
 
     describe(nameof<Project>(project => project.getCompilerOptions), () => {
         it(`should get the default compiler options when not providing anything and no tsconfig exists`, () => {
-            const host = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project({}, host);
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const project = new Project({ fileSystem });
             expect(project.getCompilerOptions()).to.deep.equal({});
         });
 
         it(`should not get the compiler options from tsconfig.json when not providing anything and a tsconfig exists`, () => {
-            const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
-            const project = new Project({}, host);
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+            const project = new Project({ fileSystem });
             expect(project.getCompilerOptions()).to.deep.equal({});
         });
 
         it(`should get empty compiler options when providing an empty compiler options object`, () => {
-            const host = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project({ compilerOptions: {} }, host);
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const project = new Project({ compilerOptions: {}, fileSystem });
             expect(project.getCompilerOptions()).to.deep.equal({});
         });
 
         function doTsConfigTest(addFilesFromTsConfig: boolean) {
-            const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
             const project = new Project({
                 tsConfigFilePath: "tsconfig.json",
                 compilerOptions: {
                     target: 2,
                     allowJs: true
                 },
-                addFilesFromTsConfig // the behaviour changes based on this value so it's good to test both of these
-            }, host);
+                addFilesFromTsConfig, // the behaviour changes based on this value so it's good to test both of these
+                fileSystem
+            });
             expect(project.getCompilerOptions()).to.deep.equal({ rootDir: "/test", target: 2, allowJs: true });
         }
 
@@ -152,13 +153,13 @@ describe(nameof(Project), () => {
     describe(nameof<Project>(project => project.addExistingDirectoryIfExists), () => {
         it("should throw if the directory doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             expect(project.addExistingDirectoryIfExists("someDir")).to.be.undefined;
         });
 
         it("should add the directory if it exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["someDir"]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             const dir = project.addExistingDirectoryIfExists("someDir");
             expect(dir).to.not.be.undefined;
         });
@@ -184,7 +185,7 @@ describe(nameof(Project), () => {
     describe(nameof<Project>(project => project.addExistingDirectory), () => {
         it("should throw if the directory doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             expect(() => {
                 project.addExistingDirectory("someDir");
             }).to.throw(errors.DirectoryNotFoundError);
@@ -192,7 +193,7 @@ describe(nameof(Project), () => {
 
         it("should add the directory if it exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["someDir"]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             const dir = project.addExistingDirectory("someDir");
             expect(dir).to.not.be.undefined;
         });
@@ -218,7 +219,7 @@ describe(nameof(Project), () => {
     describe(nameof<Project>(project => project.createDirectory), () => {
         it("should create the directory when it doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             const createdDir = project.createDirectory("someDir");
             expect(createdDir).to.not.be.undefined;
             expect(project.getDirectoryOrThrow("someDir")).to.equal(createdDir);
@@ -226,7 +227,7 @@ describe(nameof(Project), () => {
 
         it("should create the parent directory if it doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             project.createSourceFile("file.txt");
             const createdDir = project.createDirectory("someDir");
             expect(createdDir).to.not.be.undefined;
@@ -235,7 +236,7 @@ describe(nameof(Project), () => {
 
         it("should not throw when a directory already exists at the specified path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             const createdDir = project.createDirectory("someDir");
             expect(() => project.createDirectory("someDir")).to.not.throw();
             expect(project.createDirectory("someDir")).to.equal(createdDir);
@@ -243,14 +244,14 @@ describe(nameof(Project), () => {
 
         it("should not throw when a directory already exists on the file system at the specified path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["childDir"]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             expect(() => project.createDirectory("childDir")).to.not.throw();
         });
     });
 
     describe(nameof<Project>(project => project.getDirectory), () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const project = new Project(undefined, fileSystem);
+        const project = new Project({ fileSystem });
         project.createSourceFile("dir/file.ts");
 
         it("should get a directory if it exists", () => {
@@ -264,7 +265,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.getDirectoryOrThrow), () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const project = new Project(undefined, fileSystem);
+        const project = new Project({ fileSystem });
         project.createSourceFile("dir/file.ts");
 
         it("should get a directory if it exists", () => {
@@ -279,7 +280,7 @@ describe(nameof(Project), () => {
     describe(nameof<Project>(project => project.getRootDirectories), () => {
         function getProject() {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             project.createSourceFile("/dir/sub/file.ts");
             project.createSourceFile("/dir/sub/child/file.ts");
             project.createSourceFile("/dir/sub2/file2.ts");
@@ -317,7 +318,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.getDirectories), () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const project = new Project(undefined, fileSystem);
+        const project = new Project({ fileSystem });
         project.createSourceFile("dir/child/file.ts");
         project.createSourceFile("dir2/child/file2.ts");
         project.createSourceFile("dir3/child/file2.ts");
@@ -337,21 +338,21 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.addSourceFilesFromTsConfig), () => {
         it("should throw if the tsconfig doesn't exist", () => {
-            const fs = new VirtualFileSystemHost();
-            const project = new Project({}, fs);
+            const fileSystem = new VirtualFileSystemHost();
+            const project = new Project({ fileSystem });
             expect(() => project.addSourceFilesFromTsConfig("tsconfig.json")).to.throw(errors.FileNotFoundError);
         });
 
         it("should add the files from tsconfig.json", () => {
-            const fs = new VirtualFileSystemHost();
+            const fileSystem = new VirtualFileSystemHost();
             // todo: why did I need a slash at the start of `/test/exclude`?
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "exclude": ["/test/exclude"] }`);
-            fs.writeFileSync("/otherFile.ts", "");
-            fs.writeFileSync("/test/file.ts", "");
-            fs.writeFileSync("/test/test2/file2.ts", "");
-            fs.writeFileSync("/test/exclude/file.ts", "");
-            fs.mkdirSync("/test/emptyDir");
-            const project = new Project({}, fs);
+            fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "exclude": ["/test/exclude"] }`);
+            fileSystem.writeFileSync("/otherFile.ts", "");
+            fileSystem.writeFileSync("/test/file.ts", "");
+            fileSystem.writeFileSync("/test/test2/file2.ts", "");
+            fileSystem.writeFileSync("/test/exclude/file.ts", "");
+            fileSystem.mkdirSync("/test/emptyDir");
+            const project = new Project({ fileSystem });
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([].sort());
             expect(project.getDirectories().map(s => s.getPath()).sort()).to.deep.equal([].sort());
             const returnedFiles = project.addSourceFilesFromTsConfig("tsconfig.json");
@@ -368,7 +369,7 @@ describe(nameof(Project), () => {
     describe(nameof<Project>(project => project.addExistingSourceFile), () => {
         it("should throw an exception if adding a source file at a non-existent path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             expect(() => {
                 project.addExistingSourceFile("non-existent-file.ts");
             }).to.throw(errors.FileNotFoundError, `File not found: /non-existent-file.ts`);
@@ -376,7 +377,7 @@ describe(nameof(Project), () => {
 
         it("should add a source file that exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             const sourceFile = project.addExistingSourceFile("file.ts");
             expect(sourceFile).to.not.be.undefined;
             expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.Latest);
@@ -391,7 +392,7 @@ describe(nameof(Project), () => {
 
         it("should add a source file that exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             const sourceFile = project.addExistingSourceFileIfExists("file.ts");
             expect(sourceFile).to.not.be.undefined;
             expect(sourceFile!.getLanguageVersion()).to.equal(ScriptTarget.Latest);
@@ -472,7 +473,7 @@ describe(nameof(Project), () => {
 
         it("should throw an exception if creating a source file at an existing path on the disk", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             expect(() => project.createSourceFile("file.ts", "")).to.throw(errors.InvalidOperationError);
         });
 
@@ -579,7 +580,7 @@ describe(nameof(Project), () => {
     describe(nameof<Project>(project => project.save), () => {
         it("should save all the unsaved source files asynchronously", async () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             project.createSourceFile("file1.ts", "").saveSync();
             project.createSourceFile("file2.ts", "");
             project.createSourceFile("file3.ts", "");
@@ -590,7 +591,7 @@ describe(nameof(Project), () => {
 
         it("should delete any deleted source files & directories and save unsaved source files", async () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             const sourceFileToDelete = project.createDirectory("dir").createSourceFile("file.ts");
             sourceFileToDelete.saveSync();
             sourceFileToDelete.delete();
@@ -612,7 +613,7 @@ describe(nameof(Project), () => {
     describe(nameof<Project>(project => project.saveSync), () => {
         it("should save all the unsaved source files synchronously", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project(undefined, fileSystem);
+            const project = new Project({ fileSystem });
             project.createSourceFile("file1.ts", "").saveSync();
             project.createSourceFile("file2.ts", "");
             project.createSourceFile("file3.ts", "");
@@ -625,7 +626,7 @@ describe(nameof(Project), () => {
 
     function emitSetup(compilerOptions: CompilerOptions) {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const project = new Project({ compilerOptions }, fileSystem);
+        const project = new Project({ compilerOptions, fileSystem });
         project.createSourceFile("file1.ts", "const num1 = 1;");
         project.createSourceFile("file2.ts", "const num2 = 2;");
         return { fileSystem, project };

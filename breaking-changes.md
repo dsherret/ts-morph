@@ -43,6 +43,20 @@ const project = new Project({
 });
 ```
 
+### Project constructor changes
+
+Previously a custom file system host could be passed to the constructor like so:
+
+```ts
+const project = new Project({ }, fileSystem);
+```
+
+This was mostly for legacy reasons. It's now been moved to be an option.
+
+```ts
+const project = new Project({ fileSystem });
+```
+
 ## Version 18
 
 * `JSDocTag.getName()` is now `.getTagName()`. This was originally incorrectly named and `.getName()` is necessary for js doc tags that have one (such as `JSDocPropertyLikeTag`).

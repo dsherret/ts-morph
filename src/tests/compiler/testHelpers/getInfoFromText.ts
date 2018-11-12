@@ -76,7 +76,7 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
             host.writeFileSync(libFile.filePath, libFile.text);
     }
 
-    const project = new Project({ compilerOptions }, host);
+    const project = new Project({ compilerOptions, fileSystem: host });
     const sourceFile = project.createSourceFile(getFilePath(), text);
 
     return {project, sourceFile};

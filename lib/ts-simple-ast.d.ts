@@ -348,10 +348,15 @@ export interface Options {
     addFilesFromTsConfig?: boolean;
     /** Manipulation settings */
     manipulationSettings?: Partial<ManipulationSettings>;
-    /** Whether to use a virtual file system. */
-    useVirtualFileSystem?: boolean;
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. */
     skipFileDependencyResolution?: boolean;
+    /** Whether to use a virtual file system. */
+    useVirtualFileSystem?: boolean;
+    /**
+     * Optional file system host. Useful for mocking access to the file system.
+     * @remarks Consider using `useVirtualFileSystem` instead.
+     */
+    fileSystem?: FileSystemHost;
 }
 
 /**
@@ -361,9 +366,8 @@ export declare class Project {
     /**
      * Initializes a new instance.
      * @param options - Optional options.
-     * @param fileSystem - Optional file system host. Useful for mocking access to the file system.
      */
-    constructor(options?: Options, fileSystem?: FileSystemHost);
+    constructor(options?: Options);
     /** Gets the manipulation settings. */
     readonly manipulationSettings: ManipulationSettingsContainer;
     /** Gets the compiler options for modification. */

@@ -6,7 +6,7 @@ import * as testHelpers from "../../testHelpers";
 describe(nameof(EmitResult), () => {
     it("should get the emit result when there are no errors", () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const project = new Project({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
+        const project = new Project({ compilerOptions: { noLib: true, outDir: "dist" }, fileSystem });
         project.createSourceFile("file1.ts", "const num1 = 1;");
         project.createSourceFile("file2.ts", "const num2 = 2;");
         const result = project.emit();
@@ -17,7 +17,7 @@ describe(nameof(EmitResult), () => {
 
     it("should get the emit result when there are errors", () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const project = new Project({ compilerOptions: { noLib: true, outDir: "dist", noEmitOnError: true } }, fileSystem);
+        const project = new Project({ compilerOptions: { noLib: true, outDir: "dist", noEmitOnError: true }, fileSystem });
         project.createSourceFile("file1.ts", "const num1;");
         const result = project.emit();
 
