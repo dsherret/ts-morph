@@ -512,6 +512,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         //
         // So the compiler node will become out of date after a manipulation occurs and
         // this will return false.
+
+        // do not create the program if not created before... if the program is
+        // not created then we know this source file wasn't discovered by the program
+        if (!this._context.program._isCompilerProgramCreated())
+            return false;
+
         const compilerProgram = this._context.program.compilerObject;
         return compilerProgram.isSourceFileFromExternalLibrary(this.compilerNode);
     }

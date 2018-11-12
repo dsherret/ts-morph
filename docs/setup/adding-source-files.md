@@ -18,12 +18,47 @@ const project = new Project({
 });
 ```
 
-...and this can be disabled by setting `addFilesFromTsConfig: false`.
+...and this can be disabled by setting `addFilesFromTsConfig: false`:
+
+```ts
+const project = new Project({
+    tsConfigFilePath: "path/to/tsconfig.json",
+    addFilesFromTsConfig: false
+});
+```
 
 Alternatively, populate the `project` object by calling `addSourceFilesFromTsConfig`:
 
 ```ts
 project.addSourceFilesFromTsConfig("path/to/tsconfig.json");
+```
+
+#### Source File Dependency Resolution
+
+By default, all the source files added to the project in the constructor via a *tsconfig.json* will automatically be analyzed to
+include the source files they depend on. If you wish to skip this analysis step, then provide the `skipFileDependencyResolution` option:
+
+```ts
+const project = new Project({
+    tsConfigFilePath: "path/to/tsconfig.json",
+    skipFileDependencyResolution: true
+});
+```
+
+If you are adding source files to a project in other ways and want to ensure the all the source files dependended on by the added source files
+are also included in the Project, then call the `.resolveSourceFileDependencies()` after adding everything:
+
+```ts
+const project = new Project();
+
+// add everything to the project
+project.addSourceFilesFromTsConfig("dir1/tsconfig.json");
+project.addSourceFilesFromTsConfig("dir2/tsconfig.json");
+project.addExistingSourceFiles("dir3/**/*{.d.ts,.ts}");
+
+// optionally call this when complete to resolve and
+// add the depenent source files to the project
+project.resolveSourceFileDependencies();
 ```
 
 ### By file globs or file paths

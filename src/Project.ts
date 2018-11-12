@@ -8,7 +8,7 @@ import { SourceFileStructure } from "./structures";
 import { ts, CompilerOptions } from "./typescript";
 import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
 
-export interface Options {
+export interface Options { // todo: rename to ProjectOptions
     /** Compiler options */
     compilerOptions?: CompilerOptions;
     /** File path to the tsconfig.json file */
@@ -19,6 +19,8 @@ export interface Options {
     manipulationSettings?: Partial<ManipulationSettings>;
     /** Whether to use a virtual file system. */
     useVirtualFileSystem?: boolean;
+    /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. */
+    skipFileDependencyResolution?: boolean;
 }
 
 export interface SourceFileCreateOptions {
@@ -59,8 +61,12 @@ export class Project {
             this._context.manipulationSettings.set(options.manipulationSettings);
 
         // add any file paths from the tsconfig if necessary
-        if (tsConfigResolver != null && options.addFilesFromTsConfig !== false)
+        if (tsConfigResolver != null && options.addFilesFromTsConfig !== false) {
             this._addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions);
+
+            if (!options.skipFileDependencyResolution)
+                this.resolveSourceFileDependencies();
+        }
 
         function getCompilerOptions(): CompilerOptions {
             return {
@@ -91,6 +97,28 @@ export class Project {
     /** Gets the compiler options for modification. */
     get compilerOptions(): CompilerOptionsContainer {
         return this._context.compilerOptions;
+    }
+
+    /**
+     * Adds the source files the project's source files depend on to the project.
+     * @returns The added source files.
+     * @remarks
+     * * This should be done after source files are added to the project, preferably once to
+     * avoid doing more work than necessary.
+     * * This is done by default when creating a Project and providing a tsconfig.json and
+     * not specifying to not add the source files.
+     */
+    resolveSourceFileDependencies() {
+        const sourceFiles: SourceFile[] = [];
+        const onSourceFileAdded = (sourceFile: SourceFile) => sourceFiles.push(sourceFile);
+        this._context.compilerFactory.onSourceFileAdded(onSourceFileAdded);
+
+        try {
+            this.getProgram().compilerObject; // create the program
+            return sourceFiles;
+        } finally {
+            this._context.compilerFactory.onSourceFileAdded(onSourceFileAdded, false); // unsubscribe
+        }
     }
 
     /**
@@ -161,7 +189,7 @@ export class Project {
     }
 
     /**
-     * Add source files based on file globs.
+     * Adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */

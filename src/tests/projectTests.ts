@@ -5,7 +5,7 @@ import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, N
 import * as errors from "../errors";
 import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
-import { Project } from "../Project";
+import { Project, Options } from "../Project";
 import { SourceFileStructure } from "../structures";
 import { CompilerOptions, ScriptTarget, SyntaxKind, ts } from "../typescript";
 import * as testHelpers from "./testHelpers";
@@ -54,7 +54,59 @@ describe(nameof(Project), () => {
             const project = new Project({ tsConfigFilePath: "tsconfig.json", addFilesFromTsConfig: false }, fs);
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([]);
         });
+
+        describe("skipFileDependencyResolution", () => {
+            it("should not skip dependency resolution by default", () => {
+                const { project } = fileDependencyResolutionSetup();
+                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts", "/node_modules/library/index.d.ts"]);
+            });
+
+            it("should not skip dependency resolution when false", () => {
+                const { project } = fileDependencyResolutionSetup({ skipFileDependencyResolution: false });
+                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts", "/node_modules/library/index.d.ts"]);
+            });
+
+            it("should skip dependency resolution when specified", () => {
+                const { project } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts"]);
+            });
+        });
     });
+
+    describe(nameof<Project>(p => p.resolveSourceFileDependencies), () => {
+        it("should resolve file dependencies once specified", () => {
+            const { project } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts"]);
+            const result = project.resolveSourceFileDependencies();
+            expect(result.map(s => s.getFilePath())).to.deep.equal(["/node_modules/library/index.d.ts"]);
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts", "/node_modules/library/index.d.ts"]);
+        });
+
+        it("should not resolve file dependencies until called", () => {
+            const { project } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts"], "initial");
+            project.getSourceFiles()[0].addStatements("console.log(5);");
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts"], "after add");
+            const result = project.resolveSourceFileDependencies();
+            expect(result.map(s => s.getFilePath())).to.deep.equal(["/node_modules/library/index.d.ts"]);
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts", "/node_modules/library/index.d.ts"]);
+        });
+    });
+
+    function fileDependencyResolutionSetup(options: Options = {}) {
+        const virtualFileSystemHost = new VirtualFileSystemHost();
+
+        virtualFileSystemHost.writeFileSync("/package.json", `{ "name": "testing", "version": "0.0.1" }`);
+        virtualFileSystemHost.writeFileSync("/node_modules/library/package.json",
+            `{ "name": "library", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`);
+        virtualFileSystemHost.writeFileSync("/node_modules/library/index.js", "export class Test {}");
+        virtualFileSystemHost.writeFileSync("/node_modules/library/index.d.ts", "export class Test {}");
+        virtualFileSystemHost.writeFileSync("/main.ts", "import { Test } from 'library';");
+        virtualFileSystemHost.writeFileSync("/tsconfig.json", `{ "files": ["main.ts"] }`);
+
+        const project = new Project({ tsConfigFilePath: "tsconfig.json", ...options }, virtualFileSystemHost);
+        return { project };
+    }
 
     describe(nameof<Project>(project => project.getCompilerOptions), () => {
         it(`should get the default compiler options when not providing anything and no tsconfig exists`, () => {

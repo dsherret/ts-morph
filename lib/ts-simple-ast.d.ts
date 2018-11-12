@@ -350,6 +350,8 @@ export interface Options {
     manipulationSettings?: Partial<ManipulationSettings>;
     /** Whether to use a virtual file system. */
     useVirtualFileSystem?: boolean;
+    /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. */
+    skipFileDependencyResolution?: boolean;
 }
 
 /**
@@ -366,6 +368,16 @@ export declare class Project {
     readonly manipulationSettings: ManipulationSettingsContainer;
     /** Gets the compiler options for modification. */
     readonly compilerOptions: CompilerOptionsContainer;
+    /**
+     * Adds the source files the project's source files depend on to the project.
+     * @returns The added source files.
+     * @remarks
+     * * This should be done after source files are added to the project, preferably once to
+     * avoid doing more work than necessary.
+     * * This is done by default when creating a Project and providing a tsconfig.json and
+     * not specifying to not add the source files.
+     */
+    resolveSourceFileDependencies(): SourceFile[];
     /**
      * Adds an existing directory from the path or returns undefined if it doesn't exist.
      *
@@ -407,7 +419,7 @@ export declare class Project {
      */
     getRootDirectories(): Directory[];
     /**
-     * Add source files based on file globs.
+     * Adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */

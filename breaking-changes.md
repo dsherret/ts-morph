@@ -2,6 +2,47 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 19
+
+### Source file dependencies automatically added
+
+Referenced source files in module specifiers and references are now added to the project when constructing a project and providing a tsconfig.
+
+For example, say you had the following files:
+
+```ts
+// src/main.ts
+export * from "./classes";
+
+// src/classes.ts
+export class Test {}
+
+// tsconfig.json
+{
+    "files": ["src/main.ts"],
+    "compilerOptions" {
+        // etc...
+    }
+}
+```
+
+Now when constructing a project like so...
+
+```ts
+const project = new Project({ tsConfigFilePath: "tsconfig.json" });
+```
+
+...the project will now include both source files instead of only *src/main.ts*.
+
+Doing this requires an extra analysis step so if you want to revert back to the old behaviour, provide the `skipFileDependencyResolution` option and set it to true:
+
+```ts
+const project = new Project({
+    tsConfigFilePath: "tsconfig.json",
+    skipFileDependencyResolution: true
+});
+```
+
 ## Version 18
 
 * `JSDocTag.getName()` is now `.getTagName()`. This was originally incorrectly named and `.getName()` is necessary for js doc tags that have one (such as `JSDocPropertyLikeTag`).

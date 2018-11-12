@@ -63,6 +63,14 @@ export class Program {
     }
 
     /**
+     * Gets if the internal compiler program is created.
+     * @internal
+     */
+    _isCompilerProgramCreated() {
+        return this._createdCompilerObject != null;
+    }
+
+    /**
      * Resets the program.
      * @internal
      */
