@@ -7464,9 +7464,13 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     isDeclarationFile(): boolean;
     /**
-     * Gets if the source file is from an external library.
+     * Gets if the source file was discovered while loading an external library.
      */
     isFromExternalLibrary(): boolean;
+    /**
+     * Gets if the source file is a descendant of a node_modules directory.
+     */
+    isInNodeModules(): boolean;
     /**
      * Gets if this source file has been saved or if the latest changes have been saved.
      */
@@ -9005,7 +9009,7 @@ export declare class Program {
      */
     getEmitModuleResolutionKind(): ModuleResolutionKind;
     /**
-     * Gets if the provided source file is from an external library.
+     * Gets if the provided source file was discovered while loading an external library.
      * @param sourceFile - Source file.
      */
     isSourceFileFromExternalLibrary(sourceFile: SourceFile): boolean;

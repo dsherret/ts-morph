@@ -538,6 +538,18 @@ describe(nameof(SourceFile), () => {
         }
     });
 
+    describe(nameof<SourceFile>(n => n.isInNodeModules), () => {
+        it("should not be when not", () => {
+            const { sourceFile } = getInfoFromText("", { filePath: "/main.ts" });
+            expect(sourceFile.isInNodeModules()).to.be.false;
+        });
+
+        it("should be when is", () => {
+            const { sourceFile } = getInfoFromText("", { filePath: "/node_modules/library/main.d.ts" });
+            expect(sourceFile.isInNodeModules()).to.be.true;
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.getLanguageVariant), () => {
         it("should return standard when in a ts file", () => {
             const { sourceFile } = getInfoFromText("");

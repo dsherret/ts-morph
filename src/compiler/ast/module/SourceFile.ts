@@ -499,7 +499,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets if the source file is from an external library.
+     * Gets if the source file was discovered while loading an external library.
      */
     @Memoize
     isFromExternalLibrary() {
@@ -514,6 +514,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // this will return false.
         const compilerProgram = this._context.program.compilerObject;
         return compilerProgram.isSourceFileFromExternalLibrary(this.compilerNode);
+    }
+
+    /**
+     * Gets if the source file is a descendant of a node_modules directory.
+     */
+    isInNodeModules() {
+        return this.getFilePath().indexOf("/node_modules/") >= 0;
     }
 
     /**

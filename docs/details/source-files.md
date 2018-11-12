@@ -19,12 +19,24 @@ sourceFile.getFilePath();
 sourceFile.getBaseName();
 ```
 
-### Check if declaration file
+### Other Information
 
-Use:
+Check if it's a declaration file:
 
 ```ts
 sourceFile.isDeclarationFile(); // returns: boolean
+```
+
+Check if it was discovered from an external module:
+
+```ts
+sourceFile.isFromExternalLibrary();
+```
+
+Check if it's a descendant of a `node_modules` directory:
+
+```ts
+sourceFile.isInNodeModules();
 ```
 
 ### Save
