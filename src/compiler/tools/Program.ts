@@ -44,6 +44,8 @@ export class Program {
     /** @internal */
     private _createdCompilerObject: ts.Program | undefined;
     /** @internal */
+    private _oldProgram: ts.Program | undefined;
+    /** @internal */
     private _getOrCreateCompilerObject!: () => ts.Program;
 
     /** @private */
@@ -69,13 +71,19 @@ export class Program {
         this._getOrCreateCompilerObject = () => {
             // need to use ts.createProgram instead of languageService.getProgram() because the
             // program created by the language service is not fully featured (ex. does not write to the file system)
-            if (this._createdCompilerObject == null)
-                this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host);
+            if (this._createdCompilerObject == null) {
+                this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host, this._oldProgram);
+                delete this._oldProgram;
+            }
 
-            // this needs to be on a separate line in case the program was reset between the line above and here
-            return this._createdCompilerObject || this._getOrCreateCompilerObject();
+            return this._createdCompilerObject;
         };
-        this._createdCompilerObject = undefined;
+
+        if (this._createdCompilerObject != null) {
+            this._oldProgram = this._createdCompilerObject;
+            delete this._createdCompilerObject;
+        }
+
         this._typeChecker._reset(() => this.compilerObject.getTypeChecker());
     }
 
