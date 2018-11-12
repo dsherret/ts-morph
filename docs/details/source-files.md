@@ -48,6 +48,8 @@ await sourceFile.save();
 sourceFile.saveSync();
 ```
 
+Note: This does not emit the files (see [Emitting](../emitting.md)).
+
 ### Unsaved files
 
 Use the `sourceFile.isSaved()` method that will tell you if the file is saved to the file system.

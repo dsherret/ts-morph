@@ -4,7 +4,9 @@ title: Emitting
 
 ## Emitting
 
-Emitting is easy. Here's an example:
+Emitting is is the process of taking the original TypeScript files and outputting them as JavaScript (`.js`) and/or declaration files (`.d.ts`).
+
+Here's an example:
 
 ```ts
 const project = new Project({ compilerOptions: { outDir: "dist", declaration: true } });
@@ -12,7 +14,7 @@ project.createSourceFile("MyFile.ts", "const num = 1;");
 project.emit();
 ```
 
-Outputs two files in the `dist` folder:
+This outputs two files in the `dist` folder:
 
 ```ts
 // MyFile.js
