@@ -5,7 +5,7 @@ import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, N
 import * as errors from "../errors";
 import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
-import { Project, Options } from "../Project";
+import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
 import { CompilerOptions, ScriptTarget, SyntaxKind, ts } from "../typescript";
 import * as testHelpers from "./testHelpers";
@@ -93,7 +93,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    function fileDependencyResolutionSetup(options: Options = {}) {
+    function fileDependencyResolutionSetup(options: ProjectOptions = {}) {
         const fileSystem = new VirtualFileSystemHost();
 
         fileSystem.writeFileSync("/package.json", `{ "name": "testing", "version": "0.0.1" }`);

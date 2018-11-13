@@ -339,7 +339,7 @@ export interface FileSystemHost {
     glob(patterns: ReadonlyArray<string>): string[];
 }
 
-export interface Options {
+export interface ProjectOptions {
     /** Compiler options */
     compilerOptions?: CompilerOptions;
     /** File path to the tsconfig.json file */
@@ -367,7 +367,7 @@ export declare class Project {
      * Initializes a new instance.
      * @param options - Optional options.
      */
-    constructor(options?: Options);
+    constructor(options?: ProjectOptions);
     /** Gets the manipulation settings. */
     readonly manipulationSettings: ManipulationSettingsContainer;
     /** Gets the compiler options for modification. */

@@ -4,6 +4,8 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 
 ## Version 19
 
+* `Options` interface renamed to `ProjectOptions` in order to be more specific.
+
 ### Source file dependencies automatically added
 
 Referenced source files in module specifiers and references are now added to the project when constructing a project and providing a tsconfig.

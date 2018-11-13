@@ -4,7 +4,7 @@ export * from "./compiler";
 export * from "./errors/classes";
 export { Directory, DirectoryAddOptions, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions, FileSystemHost } from "./fileSystem";
 export * from "./options";
-export { Options, Project, SourceFileCreateOptions } from "./Project";
+export { ProjectOptions, Project, SourceFileCreateOptions } from "./Project";
 export { Project as default } from "./Project";
 export * from "./structures";
 export { Constructor, WriterFunction } from "./types";

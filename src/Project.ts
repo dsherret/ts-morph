@@ -8,7 +8,7 @@ import { SourceFileStructure } from "./structures";
 import { ts, CompilerOptions } from "./typescript";
 import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
 
-export interface Options { // todo: rename to ProjectOptions
+export interface ProjectOptions {
     /** Compiler options */
     compilerOptions?: CompilerOptions;
     /** File path to the tsconfig.json file */
@@ -43,7 +43,7 @@ export class Project {
      * Initializes a new instance.
      * @param options - Optional options.
      */
-    constructor(options: Options = {}) {
+    constructor(options: ProjectOptions = {}) {
         // setup file system
         let fileSystem = options.fileSystem;
         if (fileSystem != null && options.useVirtualFileSystem)
