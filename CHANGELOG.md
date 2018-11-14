@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="19.0.0"></a>
+# [19.0.0](https://github.com/dsherret/ts-simple-ast/compare/18.1.0...19.0.0) (2018-11-14)
+
+
+### Bug Fixes
+
+* sourceFile.isFromExternalLibrary() would become out of date after a manipulation. ([43c6149](https://github.com/dsherret/ts-simple-ast/commit/43c6149))
+
+
+### Code Refactoring
+
+* Project now accepts file system host on the options object rather than as a parameter. ([7f892fb](https://github.com/dsherret/ts-simple-ast/commit/7f892fb))
+* The `Options` interface was renamed to `ProjectOptions` ([15316a3](https://github.com/dsherret/ts-simple-ast/commit/15316a3))
+
+
+### Features
+
+* [#492](https://github.com/dsherret/ts-simple-ast/issues/492) - Resolve dependencies when constructing a project and providing a tsconfig. ([548ae43](https://github.com/dsherret/ts-simple-ast/commit/548ae43))
+* Add SourceFile.isInNodeModules() ([0a1817c](https://github.com/dsherret/ts-simple-ast/commit/0a1817c))
+
+
+### Performance Improvements
+
+* Reuse the old program when creating a new one. ([6dc60f8](https://github.com/dsherret/ts-simple-ast/commit/6dc60f8))
+
+
+### BREAKING CHANGES
+
+* The `Options` interface was renamed to `ProjectOptions`. This was so it's less ambiguous.
+* The Project constructor changed to accept a file system host on the first options object parameter rather than as its own parameter.
+* Referenced source files in module specifiers and references are now added to the project when constructing a project and providing a tsconfig. To revert back to the old behaviour, provide the `skipFileDependencyResolution` option and set it to true.
+
+
+
 <a name="18.1.0"></a>
 # [18.1.0](https://github.com/dsherret/ts-simple-ast/compare/18.0.1...18.1.0) (2018-11-11)
 
