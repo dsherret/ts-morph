@@ -516,6 +516,13 @@ describe(nameof(SourceFile), () => {
             expect(librarySourceFile.isFromExternalLibrary()).to.be.true;
         });
 
+        it("should not be for a referenced file", () => {
+            const { referencedSourceFile } = trueSetup();
+            // I would have thought this would return true, but it returns false...
+            // todo: write up a simple example and report this in the TypeScript repo
+            expect(referencedSourceFile.isFromExternalLibrary()).to.be.false;
+        });
+
         it("should be after manipulating the file", () => {
             const { librarySourceFile } = trueSetup();
             librarySourceFile.addStatements("console;");
@@ -530,11 +537,14 @@ describe(nameof(SourceFile), () => {
                     text: `{ "name": "library", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`
                 },
                 { filePath: "node_modules/library/index.js", text: "export class Test {}" },
-                { filePath: "node_modules/library/index.d.ts", text: "export class Test {}" }
+                { filePath: "node_modules/library/index.d.ts", text: "export class Test {}" },
+                { filePath: "node_modules/other/referenced-file.d.ts", text: "declare function nameof(): void;" }
             ], ["node_modules", "node_modules/library"]);
-            const { sourceFile } = getInfoFromText("import { Test } from 'library';", { host: fileSystem });
+            const fileText = "/// <reference path='node_modules/other/referenced-file.d.ts' />\n\nimport { Test } from 'library';";
+            const { sourceFile, project } = getInfoFromText(fileText, { host: fileSystem });
             const librarySourceFile = sourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow();
-            return { librarySourceFile };
+            const referencedSourceFile = project.getSourceFileOrThrow("referenced-file.d.ts");
+            return { librarySourceFile, referencedSourceFile };
         }
     });
 

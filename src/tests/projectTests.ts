@@ -55,41 +55,41 @@ describe(nameof(Project), () => {
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([]);
         });
 
-        describe("skipFileDependencyResolution", () => {
-            it("should not skip dependency resolution by default", () => {
-                const { project } = fileDependencyResolutionSetup();
-                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts", "/node_modules/library/index.d.ts"]);
-            });
+        it("should resolve dependencies by default", () => {
+            const { project, initialFiles, resolvedFiles } = fileDependencyResolutionSetup();
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles, ...resolvedFiles]);
+        });
 
+        describe("skipFileDependencyResolution", () => {
             it("should not skip dependency resolution when false", () => {
-                const { project } = fileDependencyResolutionSetup({ skipFileDependencyResolution: false });
-                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts", "/node_modules/library/index.d.ts"]);
+                const { project, initialFiles, resolvedFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: false });
+                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles, ...resolvedFiles]);
             });
 
             it("should skip dependency resolution when specified", () => {
-                const { project } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
-                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts"]);
+                const { project, initialFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(initialFiles);
             });
         });
     });
 
     describe(nameof<Project>(p => p.resolveSourceFileDependencies), () => {
         it("should resolve file dependencies once specified", () => {
-            const { project } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
-            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts"]);
+            const { project, initialFiles, resolvedFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles]);
             const result = project.resolveSourceFileDependencies();
-            expect(result.map(s => s.getFilePath())).to.deep.equal(["/node_modules/library/index.d.ts"]);
-            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts", "/node_modules/library/index.d.ts"]);
+            expect(result.map(s => s.getFilePath())).to.deep.equal(resolvedFiles);
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles, ...resolvedFiles]);
         });
 
         it("should not resolve file dependencies until called", () => {
-            const { project } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
-            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts"], "initial");
+            const { project, initialFiles, resolvedFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles], "initial");
             project.getSourceFiles()[0].addStatements("console.log(5);");
-            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts"], "after add");
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles], "after add");
             const result = project.resolveSourceFileDependencies();
-            expect(result.map(s => s.getFilePath())).to.deep.equal(["/node_modules/library/index.d.ts"]);
-            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(["/main.ts", "/node_modules/library/index.d.ts"]);
+            expect(result.map(s => s.getFilePath())).to.deep.equal(resolvedFiles);
+            expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles, ...resolvedFiles]);
         });
     });
 
@@ -101,11 +101,12 @@ describe(nameof(Project), () => {
             `{ "name": "library", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`);
         fileSystem.writeFileSync("/node_modules/library/index.js", "export class Test {}");
         fileSystem.writeFileSync("/node_modules/library/index.d.ts", "export class Test {}");
-        fileSystem.writeFileSync("/main.ts", "import { Test } from 'library';");
+        fileSystem.writeFileSync("/main.ts", "/// <reference path='referenced-file.d.ts' />\n\nimport { Test } from 'library'; nameof();");
+        fileSystem.writeFileSync("/referenced-file.d.ts", "declare function nameof(): void;");
         fileSystem.writeFileSync("/tsconfig.json", `{ "files": ["main.ts"] }`);
 
         const project = new Project({ tsConfigFilePath: "tsconfig.json", fileSystem, ...options });
-        return { project };
+        return { project, initialFiles: ["/main.ts"], resolvedFiles: ["/referenced-file.d.ts", "/node_modules/library/index.d.ts"] };
     }
 
     describe(nameof<Project>(project => project.getCompilerOptions), () => {

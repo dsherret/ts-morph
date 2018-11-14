@@ -183,18 +183,10 @@ export class CompilerFactory {
     addOrGetSourceFileFromFilePath(filePath: string): SourceFile | undefined {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
-        if (sourceFile == null) {
-            if (this.context.fileSystemWrapper.fileExistsSync(filePath)) {
-                this.context.logger.log(`Loading file: ${filePath}`);
-                sourceFile = this.createSourceFileFromTextInternal(filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()));
-                sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
-            }
-
-            if (sourceFile != null) {
-                // ensure these are added to the ast
-                sourceFile.getReferencedFiles();
-                sourceFile.getTypeReferenceDirectives();
-            }
+        if (sourceFile == null && this.context.fileSystemWrapper.fileExistsSync(filePath)) {
+            this.context.logger.log(`Loading file: ${filePath}`);
+            sourceFile = this.createSourceFileFromTextInternal(filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()));
+            sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
         }
 
         return sourceFile;
