@@ -87,5 +87,5 @@ class MyCustomFileSystem implements FileSystemHost {
 }
 
 const fs = new MyCustomFileSystem();
-const project = new Project({}, fs);
+const project = new Project({ fileSystem: fs });
 ```
