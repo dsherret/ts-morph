@@ -4192,6 +4192,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     forget(): void;
     /**
+     * Forgets the descendants of this node.
+     */
+    forgetDescendants(): this;
+    /**
      * Gets if the compiler node was forgotten.
      *
      * This will be true when the compiler node was forgotten or removed.
@@ -8190,9 +8194,19 @@ export interface StatementedNode {
     getVariableStatements(): VariableStatement[];
     /**
      * Gets a variable statement.
+     * @param name - Name of one of the variable statement's declarations.
+     */
+    getVariableStatement(name: string): VariableStatement | undefined;
+    /**
+     * Gets a variable statement.
      * @param findFunction - Function to use to find the variable statement.
      */
     getVariableStatement(findFunction: (declaration: VariableStatement) => boolean): VariableStatement | undefined;
+    /**
+     * Gets a variable statement or throws if it doesn't exist.
+     * @param name - Name of one of the variable statement's declarations.
+     */
+    getVariableStatementOrThrow(name: string): VariableStatement;
     /**
      * Gets a variable statement or throws if it doesn't exist.
      * @param findFunction - Function to use to find the variable statement.

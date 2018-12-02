@@ -1542,6 +1542,17 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.forgetDescendants), () => {
+        it("should only forget the descendants", () => {
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member }");
+            const member = firstChild.getMembers()[0];
+            firstChild.forgetDescendants();
+            expect(member.wasForgotten()).to.be.true;
+            expect(firstChild.wasForgotten()).to.be.false;
+            expect(() => member.compilerNode).to.throw(errors.InvalidOperationError, getExpectedForgottenMessage("member"));
+        });
+    });
+
     describe(nameof<Node>(n => n.getNonWhitespaceStart), () => {
         function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, expected: number) {
             const { sourceFile } = getInfoFromText(text);

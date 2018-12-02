@@ -736,7 +736,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param textChanges - Text changes.
      */
     applyTextChanges(textChanges: ReadonlyArray<TextChange>) {
-        this._forgetChildren();
+        this.forgetDescendants();
         replaceNodeText({
             sourceFile: this._sourceFile,
             start: 0,

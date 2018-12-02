@@ -86,6 +86,9 @@ The main way to improve performance when manipulating, is to "forget" a node whe
 
 ```ts setup: let personInterface: InterfaceDeclaration;
 personInterface.forget();
+
+// or to only forget a node's descendants that are currently in the wrapped cache
+sourceFile.forgetDescendants();
 ```
 
 That will stop tracking the node and all its previously navigated descendants (ex. in this case, `nameProperty` as well).
