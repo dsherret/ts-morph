@@ -17,16 +17,16 @@ Search autocomplete for methods like `.getChildren()`, `.getParent()`, `.getFirs
 
 Many exist. If you find one you would really like, then please [open an issue](https://github.com/dsherret/ts-simple-ast/issues).
 
-### `getChildren()` and `forEachChild`
+### `getChildren()` and `forEachChild(child => ...)`
 
 In general, you can easily navigate the tree by using methods such as `.getClasses()`, `.getClass('MyClass')`, `.getNamespaces()`, and so on, but in some cases you might want to get all the child nodes.
 
-In the compiler API, there exists a `node.getChildren()` method and a `ts.forEachChild(node, cb)`/`node.forEachChild(cb)` function/method.
+In the compiler API, there exists a `node.getChildren()` method and `ts.forEachChild(node, child => { })`/`node.forEachChild(child => { })` function/method.
 
 * `.getChildren()` - Returns all the children including the all the tokens (ex. `OpenBraceToken`, `SemiColonToken` etc.).
 * `.forEachChild(child => {})` - Iterates all the child nodes that are properties of the node.
 
-[![getChildren vs forEachChild](images/getChildrenVsForEachKind.gif)](http://ts-ast-viewer.com)
+[![getChildren vs forEachChild](images/getChildrenVsForEachChild.gif)](http://ts-ast-viewer.com)
 
 In ts-simple-ast, these methods also exist and they can be used similarly to the compiler API:
 
