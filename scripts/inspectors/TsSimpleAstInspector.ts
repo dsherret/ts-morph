@@ -5,6 +5,12 @@ import { isNodeClass } from "../common";
 import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsSimpleAst";
 import { WrapperFactory } from "./WrapperFactory";
 
+export interface DependencyNode {
+    node: WrappedNode;
+    childNodes: DependencyNode[];
+    parentNodes: DependencyNode[];
+}
+
 export class TsSimpleAstInspector {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: Project) {
     }
@@ -24,6 +30,37 @@ export class TsSimpleAstInspector {
         const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
 
         return classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrappedNode(c));
+    }
+
+    @Memoize
+    getDependencyNodes() {
+        const nodes = new Map<WrappedNode, DependencyNode>();
+
+        for (const node of this.getWrappedNodes()) {
+            const dependencyNode = getDependencyNode(node);
+            const baseNode = node.getBase();
+
+            if (baseNode != null) {
+                const base = getDependencyNode(node.getBase());
+                dependencyNode.parentNodes.push(base);
+                base.childNodes.push(dependencyNode);
+            }
+        }
+
+        return Array.from(nodes.values());
+
+        function getDependencyNode(node: WrappedNode) {
+            if (nodes.has(node))
+                return nodes.get(node);
+
+            const dependencyNode: DependencyNode = {
+                node,
+                childNodes: [],
+                parentNodes: []
+            };
+            nodes.set(node, dependencyNode);
+            return dependencyNode;
+        }
     }
 
     @Memoize

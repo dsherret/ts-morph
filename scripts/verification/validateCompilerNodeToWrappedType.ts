@@ -28,6 +28,7 @@ export function validateCompilerNodeToWrappedType(inspector: TsSimpleAstInspecto
                 type: `CompilerNodeToWrappedType<ts.${nodes[0].getNameForType()}>`
             });
         }
+
         const addedNodes = sourceFile.addTypeAliases(structures);
         const diagnostics = sourceFile.getPreEmitDiagnostics();
 

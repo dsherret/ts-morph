@@ -6,9 +6,8 @@
  */
 import { TsSimpleAstInspector, WrappedNode } from "../inspectors";
 
-// this can go away once conditional types are well supported (maybe a few versions after)
-
 export function createCompilerNodeToWrappedType(inspector: TsSimpleAstInspector) {
+    // todo: use inspector.getDependencyNodes() and remove getWrappedNodesInDependencyOrder
     const project = inspector.getProject();
     const kindToNodeMappingsFile = project.getSourceFileOrThrow("CompilerNodeToWrappedType.ts");
     const wrappedNodes = getWrappedNodesInDependencyOrder([...inspector.getWrappedNodes()]);
