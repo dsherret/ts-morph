@@ -5,7 +5,7 @@
  * and hides any declarations that should be internal.
  * -------------------------------------------
  */
-import { Node, VariableStatement, TypeGuards, Scope } from "ts-simple-ast";
+import { Node, VariableStatement, TypeGuards, Scope, ClassDeclaration } from "ts-simple-ast";
 import { StringUtils } from "../../src/utils";
 import { createDeclarationProject, removeImportTypes } from "../common";
 import { flattenDeclarationFiles } from "./flattenDeclarationFiles";
@@ -62,18 +62,27 @@ export async function createDeclarationFile() {
     }
 
     function makeConstructorsPrivate() {
-        mainFile.forEachDescendant(node => {
-            if (!TypeGuards.isClassDeclaration(node))
-                return;
+        forEachDescendant(mainFile);
 
-            for (const ctor of node.getConstructors()) {
-                const hasPrivateTag = ctor.getJsDocs().some(doc => doc.getTags().some(tag => tag.getTagName() === "private"));
-                if (hasPrivateTag) {
-                    ctor.getParameters().forEach(p => p.remove());
-                    ctor.getJsDocs().forEach(d => d.remove());
-                    ctor.setScope(node.getDerivedClasses().length > 0 ? Scope.Protected : Scope.Private);
+        function forEachDescendant(node: Node) {
+            node.forEachChild(forEachDescendant);
+
+            if (TypeGuards.isClassDeclaration(node))
+                withClass(node);
+
+            if (!TypeGuards.isSourceFile(node))
+                node.forget();
+
+            function withClass(classDec: ClassDeclaration) {
+                for (const ctor of classDec.getConstructors()) {
+                    const hasPrivateTag = ctor.getJsDocs().some(doc => doc.getTags().some(tag => tag.getTagName() === "private"));
+                    if (hasPrivateTag) {
+                        ctor.getParameters().forEach(p => p.remove());
+                        ctor.getJsDocs().forEach(d => d.remove());
+                        ctor.setScope(classDec.getDerivedClasses().length > 0 ? Scope.Protected : Scope.Private);
+                    }
                 }
             }
-        });
+        }
     }
 }

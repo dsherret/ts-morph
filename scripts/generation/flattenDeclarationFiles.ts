@@ -19,8 +19,7 @@ export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) 
 
     codeBlockWriterFile.moveToDirectory(project.getDirectoryOrThrow("dist-declarations"));
 
-    mainFile.removeText();
-
+    let text = "";
     for (let declaration of exportedDeclarations) {
         const sourceFile = declaration.getSourceFile();
         if (sourceFile === codeBlockWriterFile || sourceFile.getBaseName() === "typescript.d.ts")
@@ -28,25 +27,27 @@ export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) 
         if (TypeGuards.isVariableDeclaration(declaration))
             declaration = declaration.getFirstAncestorByKindOrThrow(SyntaxKind.VariableStatement);
 
-        mainFile.insertText(mainFile.getFullWidth(), declaration.getFullText() + "\n");
+        text += declaration.getFullText() + "\n";
     }
 
+    mainFile.replaceWithText(text);
+
     // add imports the typescript compiler api and code block writer files
-    mainFile.addImportDeclaration({
+    mainFile.addImportDeclarations([{
         namespaceImport: "ts",
         moduleSpecifier: "typescript"
-    });
-    mainFile.addImportDeclaration({
+    }, {
         namedImports: flattenedCompilerApiExports,
         moduleSpecifier: "typescript"
-    });
-    mainFile.addImportDeclaration({
+    }, {
         namedImports: ["CodeBlockWriter"],
         moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(codeBlockWriterFile)
-    });
+    }]);
 
-    mainFile.addExportDeclaration({ namedExports: ["ts", ...flattenedCompilerApiExports] });
-    mainFile.addExportDeclaration({ moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(codeBlockWriterFile) });
+    mainFile.addExportDeclarations([
+        { namedExports: ["ts", ...flattenedCompilerApiExports] },
+        { moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(codeBlockWriterFile) }
+    ]);
     // todo: no JSDoc? seems like TypeScript declaration file says no, but the compiler parses it anyway
     const defaultExport = mainFile.addExportAssignment({ expression: "Project", isExportEquals: false });
     mainFile.insertText(defaultExport.getStart(), writer => writer.write(`/** @deprecated Use the named export "Project" */`).newLine());
