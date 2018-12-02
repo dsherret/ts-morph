@@ -138,24 +138,58 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getVariableStatement), () => {
-        it("should get a variable statement when something matches", () => {
-            const statement = variablesSourceFile.getVariableStatement(s => s.getDeclarations().length === 2)!;
-            expect(statement.getDeclarations()[0].getName()).to.equal("Identifier2");
+        function doTest(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean), expectedFirstDeclarationName: string | undefined) {
+            const statement = variablesSourceFile.getVariableStatement(nameOrFindFunction);
+            if (expectedFirstDeclarationName == null)
+                expect(statement).to.be.undefined;
+            else
+                expect(statement!.getDeclarations()[0].getName()).to.equal(expectedFirstDeclarationName);
+        }
+
+        it("should get a variable statement when something matches the provided identifier", () => {
+            doTest("Identifier2", "Identifier2");
         });
 
-        it("should return undefined when nothing matches", () => {
-            const statement = variablesSourceFile.getVariableStatement(s => s.getDeclarations().length === 5);
-            expect(statement).to.be.undefined;
+        it("should get a variable statement by identifier name when there are multiple", () => {
+            doTest("Identifier3", "Identifier2");
+        });
+
+        it("should return undefined when nothing matches the provided name", () => {
+            doTest("DoesNotExist", undefined);
+        });
+
+        it("should get a variable statement when something matches the provided function", () => {
+            doTest(s => s.getDeclarations().length === 2, "Identifier2");
+        });
+
+        it("should return undefined when nothing matches the provided function", () => {
+            doTest(s => s.getDeclarations().length === 5, undefined);
         });
     });
 
     describe(nameof<StatementedNode>(n => n.getVariableStatementOrThrow), () => {
-        it("should get a variable statement when something matches", () => {
-            const statement = variablesSourceFile.getVariableStatementOrThrow(s => s.getDeclarations().length === 2);
-            expect(statement.getDeclarations()[0].getName()).to.equal("Identifier2");
+        function doTrueTest(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean), expectedFirstDeclarationName: string) {
+            const statement = variablesSourceFile.getVariableStatementOrThrow(nameOrFindFunction);
+            expect(statement.getDeclarations()[0].getName()).to.equal(expectedFirstDeclarationName);
+        }
+
+        it("should get a variable statement by identifier name", () => {
+            doTrueTest("Identifier1", "Identifier1");
         });
 
-        it("should throw when nothing matches", () => {
+        it("should get a variable statement by identifier name when there are multiple", () => {
+            doTrueTest("Identifier3", "Identifier2");
+        });
+
+        it("should throw when nothing matches the provided name", () => {
+            expect(() => variablesSourceFile.getVariableStatementOrThrow("DoesNotExist")).to.throw();
+        });
+
+        it("should get a variable statement by function when something matches", () => {
+            doTrueTest(s => s.getDeclarations().length === 2, "Identifier2");
+        });
+
+        it("should throw when nothing matches the provided function", () => {
             expect(() => variablesSourceFile.getVariableStatementOrThrow(s => s.getDeclarations().length === 5)).to.throw();
         });
     });

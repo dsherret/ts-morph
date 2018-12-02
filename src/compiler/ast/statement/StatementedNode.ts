@@ -373,14 +373,28 @@ export interface StatementedNode {
     getVariableStatements(): VariableStatement[];
     /**
      * Gets a variable statement.
+     * @param name - Name of one of the variable statement's declarations.
+     */
+    getVariableStatement(name: string): VariableStatement | undefined;
+    /**
+     * Gets a variable statement.
      * @param findFunction - Function to use to find the variable statement.
      */
     getVariableStatement(findFunction: (declaration: VariableStatement) => boolean): VariableStatement | undefined;
+    /** @internal */
+    getVariableStatement(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean)): VariableStatement | undefined;
+    /**
+     * Gets a variable statement or throws if it doesn't exist.
+     * @param name - Name of one of the variable statement's declarations.
+     */
+    getVariableStatementOrThrow(name: string): VariableStatement;
     /**
      * Gets a variable statement or throws if it doesn't exist.
      * @param findFunction - Function to use to find the variable statement.
      */
     getVariableStatementOrThrow(findFunction: (declaration: VariableStatement) => boolean): VariableStatement;
+    /** @internal */
+    getVariableStatementOrThrow(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean)): VariableStatement;
     /**
      * Gets all the variable declarations within all the variable declarations of the direct variable statement children.
      */
@@ -791,12 +805,18 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return childSyntaxList.getChildrenOfKind(SyntaxKind.VariableStatement);
         }
 
-        getVariableStatement(findFunction: (declaration: VariableStatement) => boolean): VariableStatement | undefined {
-            return ArrayUtils.find(this.getVariableStatements(), findFunction);
+        getVariableStatement(nameOrFindFunction: string | ((statement: VariableStatement) => boolean)): VariableStatement | undefined {
+            return ArrayUtils.find(this.getVariableStatements(), getFindFunction());
+
+            function getFindFunction() {
+                if (typeof nameOrFindFunction === "string")
+                    return (statement: VariableStatement) => statement.getDeclarations().some(d => d.getName() === nameOrFindFunction);
+                return nameOrFindFunction;
+            }
         }
 
-        getVariableStatementOrThrow(findFunction: (declaration: VariableStatement) => boolean): VariableStatement {
-            return errors.throwIfNullOrUndefined(this.getVariableStatement(findFunction), "Expected to find a variable statement that matched the provided condition.");
+        getVariableStatementOrThrow(nameOrFindFunction: string | ((statement: VariableStatement) => boolean)): VariableStatement {
+            return errors.throwIfNullOrUndefined(this.getVariableStatement(nameOrFindFunction), "Expected to find a variable statement that matched the provided condition.");
         }
 
         addVariableStatement(structure: VariableStatementStructure) {
