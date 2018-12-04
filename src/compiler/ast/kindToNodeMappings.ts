@@ -2,8 +2,7 @@
 import * as compiler from "./index";
 import { SyntaxKind } from "../../typescript";
 
-export interface KindToNodeMappings {
-    [kind: number]: compiler.Node;
+export interface ImplementedKindToNodeMappings {
     [SyntaxKind.SourceFile]: compiler.SourceFile;
     [SyntaxKind.ArrayBindingPattern]: compiler.ArrayBindingPattern;
     [SyntaxKind.ArrayLiteralExpression]: compiler.ArrayLiteralExpression;
@@ -168,7 +167,11 @@ export interface KindToNodeMappings {
     [SyntaxKind.NullKeyword]: compiler.NullLiteral;
     [SyntaxKind.SuperKeyword]: compiler.SuperExpression;
     [SyntaxKind.ThisKeyword]: compiler.ThisExpression;
-    [SyntaxKind.VoidKeyword]: compiler.VoidExpression;
+    [SyntaxKind.VoidExpression]: compiler.VoidExpression;
+}
+
+export interface KindToNodeMappings extends ImplementedKindToNodeMappings {
+    [kind: number]: compiler.Node;
 }
 
 export interface KindToExpressionMappings {
@@ -230,5 +233,5 @@ export interface KindToExpressionMappings {
     [SyntaxKind.NullKeyword]: compiler.NullLiteral;
     [SyntaxKind.SuperKeyword]: compiler.SuperExpression;
     [SyntaxKind.ThisKeyword]: compiler.ThisExpression;
-    [SyntaxKind.VoidKeyword]: compiler.VoidExpression;
+    [SyntaxKind.VoidExpression]: compiler.VoidExpression;
 }

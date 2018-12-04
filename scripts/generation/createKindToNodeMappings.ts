@@ -5,7 +5,7 @@
  * the getDescendantsOfKind, getChildrenOfKind, etc... methods.
  * ----------------------------------------------
  */
-import { ClassDeclaration, SyntaxKind } from "ts-simple-ast";
+import { ClassDeclaration, InterfaceDeclaration, PropertySignatureStructure, SyntaxKind } from "ts-simple-ast";
 import { hasDescendantBaseType } from "../common";
 import { TsSimpleAstInspector, TsInspector } from "../inspectors";
 
@@ -27,23 +27,23 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector, tsInsp
         moduleSpecifier: kindToNodeMappingsFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/typescript/index.ts"))
     });
 
-    addTypeForSubSet("KindToNodeMappings", project.getSourceFileOrThrow("Node.ts").getClassOrThrow("Node"));
-    addTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression"));
+    addTypeForSubSet("ImplementedKindToNodeMappings", project.getSourceFileOrThrow("Node.ts").getClassOrThrow("Node"));
+    addDefaultIndexSignature(kindToNodeMappingsFile.addInterface({
+        isExported: true,
+        name: "KindToNodeMappings",
+        extends: ["ImplementedKindToNodeMappings"]
+    }));
+    addDefaultIndexSignature(addTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression")));
 
     kindToNodeMappingsFile.insertText(0, writer =>
         writer.writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while."));
 
     function addTypeForSubSet(name: string, nodeClass: ClassDeclaration) {
         const classType = nodeClass.getType();
+        const addingProperties: PropertySignatureStructure[] = [];
         const newInterface = kindToNodeMappingsFile.addInterface({
             isExported: true,
             name
-        });
-
-        newInterface.addIndexSignature({
-            keyName: "kind",
-            keyType: "number",
-            returnType: "compiler.Node"
         });
 
         for (const mapping of kindToWrapperMappings) {
@@ -51,12 +51,25 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector, tsInsp
                 continue;
             for (const kindName of mapping.syntaxKindNames) {
                 for (const possibleKindName of tsInspector.getNamesFromKind((SyntaxKind as any)[kindName])) {
-                    newInterface.addProperty({
+                    addingProperties.push({
                         name: `[SyntaxKind.${possibleKindName}]`,
                         type: `compiler.${mapping.wrapperName}`
                     });
                 }
             }
         }
+
+        newInterface.addProperties(addingProperties);
+        newInterface.getChildren().forEach(c => c.forget());
+
+        return newInterface;
+    }
+
+    function addDefaultIndexSignature(interfaceDec: InterfaceDeclaration) {
+        interfaceDec.insertIndexSignature(0, {
+            keyName: "kind",
+            keyType: "number",
+            returnType: "compiler.Node"
+        });
     }
 }

@@ -3,7 +3,6 @@ import { createGetStructureFunctions } from "./createGetStructureFunctions";
 import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
 import { createCodeBlockWriterFile } from "./createCodeBlockWriterFile";
 import { createKindToNodeMappings } from "./createKindToNodeMappings";
-import { createCompilerNodeToWrappedType } from "./createCompilerNodeToWrappedType";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
 import { createDeclarationFile } from "./createDeclarationFile";
 import { InspectorFactory } from "../inspectors";
@@ -35,10 +34,6 @@ if (checkHasArg("create-code-block-writer-file")) {
 if (checkHasArg("create-kind-to-node-mappings")) {
     console.log("Creating kind to node mappings...");
     createKindToNodeMappings(inspector, tsInspector);
-}
-if (checkHasArg("create-compiler-node-to-wrapped-type")) {
-    console.log("Creating compiler node to wrapped type...");
-    createCompilerNodeToWrappedType(inspector);
 }
 if (checkHasExplicitArg("create-declaration-file")) {
     console.log("Creating declaration file...");

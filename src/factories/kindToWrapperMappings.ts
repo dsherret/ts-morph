@@ -161,5 +161,5 @@ export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.ThisKeyword]: compiler.ThisExpression,
     [SyntaxKind.TrueKeyword]: compiler.BooleanLiteral,
     [SyntaxKind.UndefinedKeyword]: compiler.Expression,
-    [SyntaxKind.VoidKeyword]: compiler.VoidExpression
+    [SyntaxKind.VoidExpression]: compiler.VoidExpression
 };
