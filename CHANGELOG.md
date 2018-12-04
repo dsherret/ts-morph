@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="19.1.0"></a>
+# [19.1.0](https://github.com/dsherret/ts-simple-ast/compare/19.0.0...19.1.0) (2018-12-04)
+
+
+### Bug Fixes
+
+* [#507](https://github.com/dsherret/ts-simple-ast/issues/507) - CompilerNodeToWrappedType sometimes resolved to any. ([91e0e1e](https://github.com/dsherret/ts-simple-ast/commit/91e0e1e))
+
+
+### Features
+
+* [#506](https://github.com/dsherret/ts-simple-ast/issues/506) - Get variable statement by a declaration's name. ([6b94548](https://github.com/dsherret/ts-simple-ast/commit/6b94548))
+* [#508](https://github.com/dsherret/ts-simple-ast/issues/508) - Expose Node.forgetDescendants. ([ee87eac](https://github.com/dsherret/ts-simple-ast/commit/ee87eac))
+
+
+
 <a name="19.0.0"></a>
 # [19.0.0](https://github.com/dsherret/ts-simple-ast/compare/18.1.0...19.0.0) (2018-11-14)
 
