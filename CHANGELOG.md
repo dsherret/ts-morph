@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* [#507](https://github.com/dsherret/ts-simple-ast/issues/507) - CompilerNodeToWrappedType sometimes resolved to any. ([91e0e1e](https://github.com/dsherret/ts-simple-ast/commit/91e0e1e))
+* [#507](https://github.com/dsherret/ts-simple-ast/issues/507) - CompilerNodeToWrappedType sometimes resolved to any. ([91e0e1e](https://github.com/dsherret/ts-simple-ast/commit/91e0e1e)) - Huge thank you to [@Gerrit0](https://github.com/Gerrit0) for the help on this one.
 
 
 ### Features

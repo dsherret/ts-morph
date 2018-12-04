@@ -23,6 +23,8 @@ mocha.opts
 .npmignore
 breaking-changes.md
 CHANGELOG.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
 gulpfile.js
 tsconfig.json
 tsconfig.*.json
