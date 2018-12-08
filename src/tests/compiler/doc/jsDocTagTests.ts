@@ -9,13 +9,6 @@ describe(nameof(JSDocTag), () => {
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocTag), ...info };
     }
 
-    describe(nameof<JSDocTag>(d => d.getAtToken), () => {
-        it("should get the at token", () => {
-            const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");
-            expect(descendant.getAtToken().getText()).to.equal("@");
-        });
-    });
-
     describe(nameof<JSDocTag>(d => d.getTagName), () => {
         it("should get the tag name", () => {
             const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");

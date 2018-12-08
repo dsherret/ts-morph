@@ -4989,10 +4989,6 @@ export declare class JSDocReturnTag extends JSDocTag<ts.JSDocReturnTag> {
  */
 export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends Node<NodeType> {
     /**
-     * Gets the at token.
-     */
-    getAtToken(): Node;
-    /**
      * Gets the tag's name as a string.
      */
     getTagName(): string;

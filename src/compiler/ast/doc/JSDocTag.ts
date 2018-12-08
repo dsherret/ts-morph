@@ -1,17 +1,10 @@
-import { ts } from "../../../typescript";
+import { ts, SyntaxKind } from "../../../typescript";
 import { Identifier, Node } from "../common";
 
 /**
  * JS doc tag node.
  */
 export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends Node<NodeType> {
-    /**
-     * Gets the at token.
-     */
-    getAtToken(): Node {
-        return this._getNodeFromCompilerNode(this.compilerNode.atToken);
-    }
-
     /**
      * Gets the tag's name as a string.
      */
