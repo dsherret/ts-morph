@@ -2,6 +2,11 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 20
+
+* Added support for TS 3.2.
+* Removed `JSDocTag#getAtToken()`. The `atToken` property was removed in the compiler api.
+
 ## Version 19
 
 * `Options` interface renamed to `ProjectOptions` in order to be more specific.
