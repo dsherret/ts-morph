@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="20.0.0"></a>
+# [20.0.0](https://github.com/dsherret/ts-simple-ast/compare/19.1.0...20.0.0) (2018-12-08)
+
+
+### Code Refactoring
+
+* Remove JSDocTag.getAtToken(). ([20ccd0a](https://github.com/dsherret/ts-simple-ast/commit/20ccd0a))
+
+
+### Features
+
+* [#505](https://github.com/dsherret/ts-simple-ast/issues/505) - TypeParameteredNodeStructure - Accept strings ([a11ff0a](https://github.com/dsherret/ts-simple-ast/commit/a11ff0a))
+* Support TS 3.2. ([e800f8b](https://github.com/dsherret/ts-simple-ast/commit/e800f8b))
+
+
+### BREAKING CHANGES
+
+* `JSDocTag.getAtToken()` was removed because `jsDocTag.atToken` no longer exists in ts 3.2.
+
+
+
 <a name="19.1.0"></a>
 # [19.1.0](https://github.com/dsherret/ts-simple-ast/compare/19.0.0...19.1.0) (2018-12-04)
 
