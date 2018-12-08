@@ -47,7 +47,12 @@ export type NodeParentType<NodeType extends ts.Node> =
     ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
     CompilerNodeToWrappedType<NodeType["parent"]>;
 
-export class Node<NodeType extends ts.Node = ts.Node> {
+export interface TextRange {
+    getPos(): number;
+    getEnd(): number;
+}
+
+export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     /** @internal */
     readonly _context: ProjectContext;
     /** @internal */
