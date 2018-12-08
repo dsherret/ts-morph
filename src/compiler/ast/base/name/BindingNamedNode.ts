@@ -1,7 +1,5 @@
-import * as errors from "../../../../errors";
 import { Constructor } from "../../../../types";
-import { SyntaxKind, ts } from "../../../../typescript";
-import { Node } from "../../common";
+import { ts } from "../../../../typescript";
 import { BindingName } from "../../aliases";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { RenameableNode } from "./RenameableNode";

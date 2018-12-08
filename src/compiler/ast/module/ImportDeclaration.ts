@@ -4,6 +4,7 @@ import { ImportSpecifierStructure, ImportDeclarationStructure } from "../../../s
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, ModuleUtils, StringUtils, TypeGuards } from "../../../utils";
+import { Node } from "../common";
 import { StringLiteral } from "../literal";
 import { Statement } from "../statement";
 import { ImportSpecifier } from "./ImportSpecifier";
@@ -199,7 +200,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
             if (defaultImport == null)
                 return [this.getImportClauseOrThrow(), this.getLastChildByKindOrThrow(SyntaxKind.FromKeyword)];
             else
-                return [defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken), namespaceImport];
+                return [defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken), namespaceImport!];
         }
     }
 

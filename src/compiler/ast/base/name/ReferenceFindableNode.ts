@@ -4,7 +4,7 @@ import { TypeGuards } from "../../../../utils";
 import { Node } from "../../common";
 import { ReferencedSymbol } from "../../../tools";
 
-export type ReferenceFindableNodeExtensionType = Node<ts.Node & { name?: ts.PropertyName | ts.BindingName; }>;
+export type ReferenceFindableNodeExtensionType = Node<ts.Node & { name?: ts.PropertyName | ts.BindingName | ts.DeclarationName; }>;
 
 export interface ReferenceFindableNode {
     /**
