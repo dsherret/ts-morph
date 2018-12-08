@@ -1,6 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Scope } from "../../../compiler";
-import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure } from "../../../structures";
+import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure,
+    TypeParameterDeclarationStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
@@ -229,11 +230,11 @@ describe(nameof(MethodDeclaration), () => {
             const structure = method.getStructure() as MethodDeclarationStructure;
 
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
             structure.overloads = structure.overloads!.map(o => ({
                 ...o,
                 parameters: o.parameters!.map(p => ({ name: p.name })),
-                typeParameters: o.typeParameters!.map(p => ({ name: p.name }))
+                typeParameters: o.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }))
             }));
 
             expect(structure).to.deep.equal(expectedStructure);

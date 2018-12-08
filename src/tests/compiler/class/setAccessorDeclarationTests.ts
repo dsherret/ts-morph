@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ClassDeclaration, SetAccessorDeclaration, Scope } from "../../../compiler";
-import { SetAccessorDeclarationStructure } from "../../../structures";
+import { SetAccessorDeclarationStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
@@ -146,7 +146,7 @@ class Identifier {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getSetAccessors()[0].getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
             structure.decorators = structure.decorators!.map(p => ({ name: p.name }));
 
             expect(structure).to.deep.equal(expectedStructure);

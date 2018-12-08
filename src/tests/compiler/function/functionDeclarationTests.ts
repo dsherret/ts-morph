@@ -1,6 +1,7 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration } from "../../../compiler";
-import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure } from "../../../structures";
+import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure,
+    TypeParameterDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(FunctionDeclaration), () => {
@@ -167,11 +168,11 @@ describe(nameof(FunctionDeclaration), () => {
             const structure = functionDec.getStructure() as FunctionDeclarationStructure;
 
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
 
             structure.overloads!.forEach(o => {
                 o.parameters = o.parameters!.map(p => ({ name: p.name }));
-                o.typeParameters = o.typeParameters!.map(p => ({ name: p.name }));
+                o.typeParameters = o.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
             });
 
             expect(structure).to.deep.equal(expectedStructure);

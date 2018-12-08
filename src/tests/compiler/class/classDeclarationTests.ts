@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration } from "../../../compiler";
 import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure,
-    InterfaceDeclarationStructure } from "../../../structures";
+    InterfaceDeclarationStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
@@ -121,7 +121,7 @@ class Identifier {
             structure.methods = structure.methods!.map(s => ({ name: s.name }));
             structure.properties = structure.properties!.map(s => ({ name: s.name }));
             structure.setAccessors = structure.setAccessors!.map(s => ({ name: s.name }));
-            structure.typeParameters = structure.typeParameters!.map(s => ({ name: s.name }));
+            structure.typeParameters = structure.typeParameters!.map(s => ({ name: (s as TypeParameterDeclarationStructure).name }));
 
             expect(structure).to.deep.equal(expectedStructure);
         }

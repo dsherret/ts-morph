@@ -9,7 +9,7 @@ describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
         formatCodeSettings?: FormatCodeSettings;
     }
 
-    function doTest(structure: TypeParameterDeclarationStructure, expectedOutput: string, options: Options = {}) {
+    function doTest(structure: TypeParameterDeclarationStructure | string, expectedOutput: string, options: Options = {}) {
         const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
         factory.forTypeParameterDeclaration().printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);
@@ -18,6 +18,10 @@ describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
     // todo: more tests
 
     describe(nameof<TypeParameterDeclarationStructurePrinter>(p => p.printText), () => {
+        it("should write when a string", () => {
+            doTest("T extends string", `T extends string`);
+        });
+
         describe("constraint", () => {
             it("should write with string", () => {
                 doTest({ name: "T", constraint: "string" }, `T extends string`);

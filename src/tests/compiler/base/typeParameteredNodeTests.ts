@@ -60,7 +60,7 @@ describe(nameof(TypeParameteredNode), () => {
     });
 
     describe(nameof<TypeParameteredNode>(n => n.addTypeParameter), () => {
-        function doTest(startCode: string, structure: TypeParameterDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: TypeParameterDeclarationStructure | string, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addTypeParameter(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -71,13 +71,17 @@ describe(nameof(TypeParameteredNode), () => {
             doTest("function identifier() {}", { name: "T" }, "function identifier<T>() {}");
         });
 
+        it("should add when providing a string", () => {
+            doTest("function identifier() {}", "T", "function identifier<T>() {}");
+        });
+
         it("should add when one exists", () => {
             doTest("function identifier<T>() {}", { name: "U" }, "function identifier<T, U>() {}");
         });
     });
 
     describe(nameof<TypeParameteredNode>(n => n.addTypeParameters), () => {
-        function doTest(startCode: string, structures: TypeParameterDeclarationStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: (TypeParameterDeclarationStructure | string)[], expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addTypeParameters(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -85,7 +89,7 @@ describe(nameof(TypeParameteredNode), () => {
         }
 
         it("should add multiple", () => {
-            doTest("function identifier<T>() {}", [{ name: "U" }, { name: "V" }], "function identifier<T, U, V>() {}");
+            doTest("function identifier<T>() {}", [{ name: "U" }, { name: "V" }, "W"], "function identifier<T, U, V, W>() {}");
         });
     });
 
@@ -97,7 +101,7 @@ describe(nameof(TypeParameteredNode), () => {
             expect(sourceFile.getFullText()).to.equal("interface Identifier {\n    <T>(): void;\n}\n");
         });
 
-        function doTest(startCode: string, insertIndex: number, structure: TypeParameterDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: TypeParameterDeclarationStructure | string, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertTypeParameter(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -128,6 +132,10 @@ describe(nameof(TypeParameteredNode), () => {
             doTest("function identifier<T, U>() {}", 1, { name: "V", default: "string" }, "function identifier<T, V = string, U>() {}");
         });
 
+        it("should insert as a string", () => {
+            doTest("function identifier<T, U>() {}", 1, "V = string", "function identifier<T, V = string, U>() {}");
+        });
+
         it("should insert all the properties of the structure", () => {
             const structure: MakeRequired<TypeParameterDeclarationStructure> = {
                 name: "V",
@@ -139,7 +147,7 @@ describe(nameof(TypeParameteredNode), () => {
     });
 
     describe(nameof<TypeParameteredNode>(n => n.insertTypeParameters), () => {
-        function doTest(startCode: string, insertIndex: number, structures: TypeParameterDeclarationStructure[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: (TypeParameterDeclarationStructure | string)[], expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertTypeParameters(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -148,6 +156,10 @@ describe(nameof(TypeParameteredNode), () => {
 
         it("should insert multiple", () => {
             doTest("function identifier<V>() {}", 0, [{ name: "T" }, { name: "U" }], "function identifier<T, U, V>() {}");
+        });
+
+        it("should insert multiple as a string", () => {
+            doTest("function identifier<V>() {}", 0, ["T", "U extends T"], "function identifier<T, U extends T, V>() {}");
         });
 
         it("should do nothing if empty array", () => {
@@ -182,7 +194,7 @@ describe(nameof(TypeParameteredNode), () => {
     describe(nameof<TypeAliasDeclaration>(n => n.getStructure), () => {
         function doTest(startingCode: string, names: string[]) {
             const { firstChild, sourceFile } = getInfoFromText<TypeAliasDeclaration>(startingCode);
-            expect(firstChild.getStructure().typeParameters!.map(p => p.name)).to.deep.equal(names);
+            expect(firstChild.getStructure().typeParameters!.map(p => (p as TypeParameterDeclarationStructure).name)).to.deep.equal(names);
         }
 
         it("should be empty when there are none", () => {

@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, InterfaceDeclaration } from "../../../compiler";
-import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure } from "../../../structures";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 import { TypeGuards } from "../../../utils";
 
@@ -105,7 +105,7 @@ describe(nameof(InterfaceDeclaration), () => {
             structure.indexSignatures = structure.indexSignatures!.map(s => ({ keyName: s.keyName, returnType: s.returnType }));
             structure.callSignatures = structure.callSignatures!.map(s => ({ }));
             structure.constructSignatures = structure.constructSignatures!.map(s => ({ }));
-            structure.typeParameters = structure.typeParameters!.map(s => ({ name: s.name }));
+            structure.typeParameters = structure.typeParameters!.map(s => ({ name: (s as TypeParameterDeclarationStructure).name }));
 
             expect(structure).to.deep.equal(expectedStructure);
         }

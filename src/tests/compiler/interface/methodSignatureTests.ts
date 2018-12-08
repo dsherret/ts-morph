@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, MethodSignature } from "../../../compiler";
-import { MethodSignatureStructure } from "../../../structures";
+import { MethodSignatureStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(MethodSignature), () => {
@@ -62,7 +62,7 @@ describe(nameof(MethodSignature), () => {
             const { firstMethod, sourceFile } = getFirstMethodWithInfo(code);
             const structure = firstMethod.getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
             expect(structure).to.deep.equal(expectedStructure);
         }
 

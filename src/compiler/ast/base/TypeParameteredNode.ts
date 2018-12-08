@@ -41,24 +41,24 @@ export interface TypeParameteredNode {
      * Adds a type parameter.
      * @param structure - Structure of the type parameter.
      */
-    addTypeParameter(structure: TypeParameterDeclarationStructure): TypeParameterDeclaration;
+    addTypeParameter(structure: TypeParameterDeclarationStructure | string): TypeParameterDeclaration;
     /**
      * Adds type parameters.
      * @param structures - Structures of the type parameters.
      */
-    addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure>): TypeParameterDeclaration[];
+    addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure | string>): TypeParameterDeclaration[];
     /**
      * Inserts a type parameter.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the type parameter.
      */
-    insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure): TypeParameterDeclaration;
+    insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure | string): TypeParameterDeclaration;
     /**
      * Inserts type parameters.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structures - Structures of the type parameters.
      */
-    insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure>): TypeParameterDeclaration[];
+    insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure | string>): TypeParameterDeclaration[];
 }
 
 export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExtensionType>>(Base: T): Constructor<TypeParameteredNode> & T {
@@ -78,19 +78,19 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             return typeParameters.map(t => this._getNodeFromCompilerNode(t));
         }
 
-        addTypeParameter(structure: TypeParameterDeclarationStructure) {
+        addTypeParameter(structure: TypeParameterDeclarationStructure | string) {
             return this.addTypeParameters([structure])[0];
         }
 
-        addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure>) {
+        addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure | string>) {
             return this.insertTypeParameters(getEndIndexFromArray(this.compilerNode.typeParameters), structures);
         }
 
-        insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure) {
+        insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure | string) {
             return this.insertTypeParameters(index, [structure])[0];
         }
 
-        insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure>) {
+        insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure | string>) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

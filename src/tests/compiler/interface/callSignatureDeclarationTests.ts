@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { CallSignatureDeclaration, InterfaceDeclaration } from "../../../compiler";
-import { CallSignatureDeclarationStructure } from "../../../structures";
+import { CallSignatureDeclarationStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(CallSignatureDeclaration), () => {
@@ -29,7 +29,7 @@ describe(nameof(CallSignatureDeclaration), () => {
         function doTest(text: string, expectedStructure: MakeRequired<CallSignatureDeclarationStructure>) {
             const { firstCallSignature } = getFirstCallSignatureWithInfo(text);
             const structure = firstCallSignature.getStructure();
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
             expect(structure).to.deep.equal(expectedStructure);
         }

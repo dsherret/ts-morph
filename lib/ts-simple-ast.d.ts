@@ -2788,7 +2788,7 @@ export interface ReferenceFindableNode {
 }
 
 declare type ReferenceFindableNodeExtensionType = Node<ts.Node & {
-    name?: ts.PropertyName | ts.BindingName;
+    name?: ts.PropertyName | ts.BindingName | ts.DeclarationName;
 }>;
 
 export declare function RenameableNode<T extends Constructor<RenameableNodeExtensionType>>(Base: T): Constructor<RenameableNode> & T;
@@ -3362,24 +3362,24 @@ export interface TypeParameteredNode {
      * Adds a type parameter.
      * @param structure - Structure of the type parameter.
      */
-    addTypeParameter(structure: TypeParameterDeclarationStructure): TypeParameterDeclaration;
+    addTypeParameter(structure: TypeParameterDeclarationStructure | string): TypeParameterDeclaration;
     /**
      * Adds type parameters.
      * @param structures - Structures of the type parameters.
      */
-    addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure>): TypeParameterDeclaration[];
+    addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure | string>): TypeParameterDeclaration[];
     /**
      * Inserts a type parameter.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the type parameter.
      */
-    insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure): TypeParameterDeclaration;
+    insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure | string): TypeParameterDeclaration;
     /**
      * Inserts type parameters.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structures - Structures of the type parameters.
      */
-    insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure>): TypeParameterDeclaration[];
+    insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure | string>): TypeParameterDeclaration[];
 }
 
 declare type TypeParameteredNodeExtensionType = Node<ts.Node & {
@@ -4179,7 +4179,12 @@ export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName 
 
 export declare type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
 
-export declare class Node<NodeType extends ts.Node = ts.Node> {
+export interface TextRange {
+    getPos(): number;
+    getEnd(): number;
+}
+
+export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     /**
      * Gets the underlying compiler node.
      */
@@ -8797,11 +8802,6 @@ export interface RenameOptions {
 export interface UserPreferences extends ts.UserPreferences {
 }
 
-export interface TextRange {
-    getPos(): number;
-    getEnd(): number;
-}
-
 export declare class LanguageService {
     private readonly _compilerObject;
     private readonly _compilerHost;
@@ -10103,7 +10103,7 @@ export interface TypeElementMemberedNodeStructure {
 }
 
 export interface TypeParameteredNodeStructure {
-    typeParameters?: TypeParameterDeclarationStructure[];
+    typeParameters?: (TypeParameterDeclarationStructure | string)[];
 }
 
 export interface ClassLikeDeclarationBaseStructure extends NameableNodeStructure, ClassLikeDeclarationBaseSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AbstractableNodeStructure {

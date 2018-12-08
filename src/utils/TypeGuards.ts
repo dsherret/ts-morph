@@ -644,7 +644,7 @@ export class TypeGuards {
             case SyntaxKind.ThisKeyword:
             case SyntaxKind.TypeAssertionExpression:
             case SyntaxKind.TypeOfExpression:
-            case SyntaxKind.VoidKeyword:
+            case SyntaxKind.VoidExpression:
             case SyntaxKind.YieldExpression:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionExpression:
@@ -2563,7 +2563,7 @@ export class TypeGuards {
             case SyntaxKind.ThisKeyword:
             case SyntaxKind.TypeAssertionExpression:
             case SyntaxKind.TypeOfExpression:
-            case SyntaxKind.VoidKeyword:
+            case SyntaxKind.VoidExpression:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
@@ -2595,7 +2595,7 @@ export class TypeGuards {
             case SyntaxKind.DeleteExpression:
             case SyntaxKind.TypeAssertionExpression:
             case SyntaxKind.TypeOfExpression:
-            case SyntaxKind.VoidKeyword:
+            case SyntaxKind.VoidExpression:
                 return true;
             default:
                 return false;
@@ -2699,7 +2699,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isVoidExpression(node: compiler.Node): node is compiler.VoidExpression {
-        return node.getKind() === SyntaxKind.VoidKeyword;
+        return node.getKind() === SyntaxKind.VoidExpression;
     }
 
     /**

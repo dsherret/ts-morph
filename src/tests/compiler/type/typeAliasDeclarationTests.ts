@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { TypeAliasDeclaration } from "../../../compiler";
-import { TypeAliasDeclarationStructure } from "../../../structures";
+import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypeAliasDeclaration), () => {
@@ -40,7 +40,7 @@ describe(nameof(TypeAliasDeclaration), () => {
         function doTest(text: string, expectedStructure: MakeRequired<TypeAliasDeclarationStructure>) {
             const { firstChild } = getInfoFromText<TypeAliasDeclaration>(text);
             const structure = firstChild.getStructure();
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
             expect(structure).to.deep.equal(expectedStructure);
         }
 

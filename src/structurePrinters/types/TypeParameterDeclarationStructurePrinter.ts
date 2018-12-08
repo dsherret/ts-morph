@@ -7,7 +7,7 @@ import { CommaSeparatedStructuresPrinter } from "../formatting";
 export class TypeParameterDeclarationStructurePrinter extends FactoryStructurePrinter<TypeParameterDeclarationStructure> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
-    printTextsWithBrackets(writer: CodeBlockWriter, structures: ReadonlyArray<TypeParameterDeclarationStructure> | undefined) {
+    printTextsWithBrackets(writer: CodeBlockWriter, structures: ReadonlyArray<TypeParameterDeclarationStructure | string> | undefined) {
         if (structures == null || structures.length === 0)
             return;
         writer.write("<");
@@ -15,11 +15,16 @@ export class TypeParameterDeclarationStructurePrinter extends FactoryStructurePr
         writer.write(">");
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TypeParameterDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TypeParameterDeclarationStructure | string> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: TypeParameterDeclarationStructure) {
+    printText(writer: CodeBlockWriter, structure: TypeParameterDeclarationStructure | string) {
+        if (typeof structure === "string") {
+            writer.write(structure);
+            return;
+        }
+
         writer.write(structure.name);
         if (structure.constraint != null) {
             const constraintText = this.getTextWithQueuedChildIndentation(writer, structure.constraint);

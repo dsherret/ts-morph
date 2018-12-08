@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../compiler";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, JSDocStructure,
-    ClassDeclarationStructure } from "../../../structures";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure,
+    TypeParameterDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
@@ -161,7 +161,7 @@ describe(nameof(ConstructorDeclaration), () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getConstructors()[0].getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
 
             expect(structure).to.deep.equal(expectedStructure);
         }
