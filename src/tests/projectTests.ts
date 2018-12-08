@@ -995,6 +995,7 @@ describe(nameof(Project), () => {
             fileSystem.writeFileSync("/node_modules/@types/jquery/package.json",
                 `{ "name": "@types/jquery", "version": "1.0.0", "typeScriptVersion": "2.3" }`);
 
+            project.createSourceFile("test.ts", "import * as ts from 'jquery';");
             return project;
         }
 

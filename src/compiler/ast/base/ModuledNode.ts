@@ -365,7 +365,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                         const symbol = identifier.getSymbol();
                         if (symbol == null)
                             return;
-                        yield* getDeclarationsForSymbol(symbol.getAliasedSymbol());
+                        yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
                     }
                     else if (TypeGuards.isImportClause(declaration)) {
                         const identifier = declaration.getDefaultImport();
@@ -374,7 +374,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                         const symbol = identifier.getSymbol();
                         if (symbol == null)
                             return;
-                        yield* getDeclarationsForSymbol(symbol.getAliasedSymbol());
+                        yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
                     }
                     else
                         yield declaration;

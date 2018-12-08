@@ -115,9 +115,9 @@ describe(nameof(LanguageService), () => {
 
     describe(nameof<LanguageService>(l => l.getEditsForRefactor), () => {
         it("should get edits for known refactor 'Move to a new file'", () => {
-            const { sourceFile, project } = getInfoFromText("export class A {}; function f(){return new A(); }", { filePath: "/file.ts" });
-            const classId = sourceFile.getClassOrThrow("A").getNameNodeOrThrow();
-            const results = project.getLanguageService().getEditsForRefactor(sourceFile, {}, classId, "Move to a new file", "Move to a new file", {});
+            const { sourceFile, project } = getInfoFromText("export class A {}\nfunction f() { return new A(); }", { filePath: "/file.ts" });
+            const nameNode = sourceFile.getClassOrThrow("A").getNameNodeOrThrow();
+            const results = project.getLanguageService().getEditsForRefactor(sourceFile, {}, nameNode, "Move to a new file", "Move to a new file", {});
             expect(results!.getEdits()).to.lengthOf(2);
             expect(results!.getRenameFilePath()).to.be.undefined;
             expect(results!.getRenameLocation()).to.be.undefined;
@@ -135,14 +135,14 @@ describe(nameof(LanguageService), () => {
                     span: { start: 0, length: 0 }
                 }, {
                     newText: "",
-                    span: { start: 0, length: 17 }
+                    span: { start: 0, length: 18 }
                 }]
             });
 
             checkFileTextChanges(edit2!, {
                 fileName: "/A.ts",
                 textChanges: [{
-                    newText: "export class A {\n}",
+                    newText: "export class A {\n}" + (ts.version === "3.2.2" ? "\n" : ""),
                     span: { start: 0, length: 0 }
                 }]
             });
