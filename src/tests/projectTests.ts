@@ -948,26 +948,23 @@ describe(nameof(Project), () => {
             });
         });
 
-        describe("asynchronous", async () => {
-            const project = new Project({ useVirtualFileSystem: true });
-            const sourceFile = project.createSourceFile("file.ts");
-            let interfaceDec: InterfaceDeclaration;
-            let classDec: ClassDeclaration;
-            await project.forgetNodesCreatedInBlock(async remember => {
-                // do something to cause this code to be added to the end of the execution queue
-                await new Promise((resolve, reject) => resolve());
+        describe("asynchronous", () => {
+            it("should have forgotten the class or interface", async () => {
+                const project = new Project({ useVirtualFileSystem: true });
+                const sourceFile = project.createSourceFile("file.ts");
+                let interfaceDec: InterfaceDeclaration;
+                let classDec: ClassDeclaration;
+                await project.forgetNodesCreatedInBlock(async remember => {
+                    // do something to cause this code to be added to the end of the execution queue
+                    await new Promise((resolve, reject) => resolve());
 
-                classDec = sourceFile.addClass({ name: "Class" });
-                interfaceDec = sourceFile.addInterface({ name: "Interface" });
-                remember(interfaceDec);
-            });
+                    classDec = sourceFile.addClass({ name: "Class" });
+                    interfaceDec = sourceFile.addInterface({ name: "Interface" });
+                    remember(interfaceDec);
+                });
 
-            it("should have forgotten the class", () => {
-                expect(classDec.wasForgotten()).to.be.true;
-            });
-
-            it("should have not forgotten the interface", () => {
-                expect(interfaceDec.wasForgotten()).to.be.false;
+                expect(classDec!.wasForgotten()).to.be.true;
+                expect(interfaceDec!.wasForgotten()).to.be.false;
             });
         });
     });
