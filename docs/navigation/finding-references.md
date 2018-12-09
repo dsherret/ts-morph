@@ -31,7 +31,7 @@ for (const referencedSymbol of referencedSymbols) {
 ## Finding Referencing Nodes
 
 The `.findReferences()` method returns back a lot of information that might not be necessary.
-If you just went the nodes that reference the named/nameable declaration, then use the
+If you just want the nodes that reference the named/nameable declaration, then use the
 following method:
 
 ```ts
