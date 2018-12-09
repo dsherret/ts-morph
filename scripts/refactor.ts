@@ -20,7 +20,7 @@ const start = new Date();
 for (let i = 0; i < sourceFiles.length; i++) {
     const sourceFile = sourceFiles[i];
     console.log(`[${i + 1}/${sourceFiles.length}] Updating: ${sourceFile.getFilePath()}`);
-    /* DON'T CHECK IN THE CHANGES WITHIN THIS BLOCK */
+    // DON'T CHECK IN THE CHANGES WITHIN THIS BLOCK
 }
 
 project.save();

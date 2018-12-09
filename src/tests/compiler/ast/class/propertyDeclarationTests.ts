@@ -1,0 +1,132 @@
+﻿import { expect } from "chai";
+import { Scope, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
+import { PropertyDeclarationStructure } from "../../../../structures";
+import { getInfoFromText } from "../../testHelpers";
+
+describe(nameof(PropertyDeclaration), () => {
+    function getFirstPropertyWithInfo(code: string) {
+        const opts = getInfoFromText<ClassDeclaration>(code);
+        return { ...opts, firstProperty: opts.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
+    }
+
+    describe(nameof<PropertyDeclaration>(n => n.set), () => {
+        function doTest(code: string, structure: Partial<PropertyDeclarationStructure>, expectedCode: string) {
+            const { firstProperty, sourceFile } = getFirstPropertyWithInfo(code);
+            firstProperty.set(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should not change the property when nothing is set", () => {
+            doTest("class Identifier { prop: string; }", {}, "class Identifier { prop: string; }");
+        });
+
+        it("should change the property when setting", () => {
+            doTest("class Identifier { prop: string; }", { type: "number" }, "class Identifier { prop: number; }");
+        });
+    });
+
+    describe(nameof<PropertyDeclaration>(n => n.getStructure), () => {
+        function doTest(code: string, expectedStructure: MakeRequired<PropertyDeclarationStructure>) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const structure = firstChild.getProperties()[0].getStructure();
+            structure.decorators = structure.decorators!.map(d => ({ name: d.name }));
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when empty", () => {
+            doTest("class T { prop; }", {
+                decorators: [],
+                docs: [],
+                hasExclamationToken: false,
+                hasQuestionToken: false,
+                initializer: undefined,
+                isAbstract: false,
+                isReadonly: false,
+                isStatic: false,
+                name: "prop",
+                scope: undefined,
+                type: undefined
+            });
+        });
+
+        it("should get when has everything", () => {
+            const code = `
+class T {
+    /** test */
+    @dec public static readonly abstract prop?: number = 5;
+}
+`;
+            doTest(code, {
+                decorators: [{ name: "dec" }],
+                docs: [{ description: "test" }],
+                hasExclamationToken: false,
+                hasQuestionToken: true,
+                initializer: "5",
+                isAbstract: true,
+                isReadonly: true,
+                isStatic: true,
+                name: "prop",
+                scope: Scope.Public,
+                type: "number"
+            });
+        });
+
+        it("should get when has exclamation token", () => {
+            doTest("class T { prop!; }", {
+                decorators: [],
+                docs: [],
+                hasExclamationToken: true,
+                hasQuestionToken: false,
+                initializer: undefined,
+                isAbstract: false,
+                isReadonly: false,
+                isStatic: false,
+                name: "prop",
+                scope: undefined,
+                type: undefined
+            });
+        });
+    });
+
+    describe(nameof<PropertyDeclaration>(n => n.remove), () => {
+        function doTest(code: string, nameToRemove: string, expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
+            (firstChild.getInstanceProperty(nameToRemove)! as PropertyDeclaration).remove();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should remove when it's the only property", () => {
+            doTest("class Identifier {\n    prop: string;\n}", "prop", "class Identifier {\n}");
+        });
+
+        it("should remove when it's the first property", () => {
+            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n}", "prop",
+                "class Identifier {\n    prop2: string;\n}");
+        });
+
+        it("should remove when it's the middle property", () => {
+            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n    prop3: string;\n}", "prop2",
+                "class Identifier {\n    prop: string;\n    prop3: string;\n}");
+        });
+
+        it("should remove when it's the last property", () => {
+            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n}", "prop2",
+                "class Identifier {\n    prop: string;\n}");
+        });
+
+        it("should remove when it's beside a method with a body", () => {
+            doTest("class Identifier {\n    method(){}\n\n    prop: string;\n}", "prop",
+                "class Identifier {\n    method(){}\n}");
+        });
+
+        it("should remove when it's inside two methods", () => {
+            doTest("class Identifier {\n    method(){}\n\n    prop: string;\n\n    method2() {}\n}", "prop",
+                "class Identifier {\n    method(){}\n\n    method2() {}\n}");
+        });
+
+        it("should remove when it's in an ambient class", () => {
+            doTest("declare class Identifier {\n    method(): void;\n\n    prop: string;\n\n    method2(): void;\n}", "prop",
+                "declare class Identifier {\n    method(): void;\n    method2(): void;\n}");
+        });
+    });
+});
