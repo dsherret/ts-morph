@@ -4,6 +4,7 @@ import * as errors from "../../errors";
 import { Directory, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions, FileSystemHost } from "../../fileSystem";
 import { Project } from "../../Project";
 import { SourceFileStructure } from "../../structures";
+import { WriterFunction } from "../../types";
 import { CompilerOptions, ModuleResolutionKind, ScriptTarget } from "../../typescript";
 import { FileUtils } from "../../utils";
 import { CustomFileSystemProps, getFileSystemHostWithFiles, testDirectoryTree } from "../testHelpers";
@@ -259,7 +260,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.createSourceFile), () => {
-        function doTest(input: string | SourceFileStructure | undefined, expectedText: string) {
+        function doTest(input: string | SourceFileStructure | WriterFunction | undefined, expectedText: string) {
             const project = getProject();
             const directory = project.createDirectory("dir");
             let sourceFile: SourceFile;
@@ -282,6 +283,10 @@ describe(nameof(Directory), () => {
         it("should create a source file in the directory when specifying text", () => {
             const code = "const t = 34;";
             doTest(code, code);
+        });
+
+        it("should create a source file in the directory when specifying a writer function", () => {
+            doTest(writer => writer.writeLine("enum MyEnum {}"), "enum MyEnum {}\n");
         });
 
         it("should create a source file in the directory when specifying a structure", () => {

@@ -5,9 +5,10 @@ import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
+import { WriterFunction } from "../types";
 import { SyntaxKind, ts, TypeFlags } from "../typescript";
 import { replaceSourceFileForCacheUpdate } from "../manipulation";
-import { ArrayUtils, EventContainer, FileUtils, KeyValueCache, WeakCache, StringUtils } from "../utils";
+import { ArrayUtils, EventContainer, FileUtils, KeyValueCache, WeakCache, StringUtils, getTextFromStringOrWriter } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
 import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
 import { kindToWrapperMappings } from "./kindToWrapperMappings";
@@ -115,15 +116,16 @@ export class CompilerFactory {
      * @param structureOrText - Structure or text.
      * @param options - Options.
      */
-    createSourceFile(filePath: string, structureOrText: string | SourceFileStructure, options: SourceFileCreateOptions) {
-        if (structureOrText == null || typeof structureOrText === "string")
-            return this.createSourceFileFromText(filePath, structureOrText || "", options);
+    createSourceFile(filePath: string, sourceFileText: string | SourceFileStructure | WriterFunction, options: SourceFileCreateOptions) {
+        sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.context.createWriter(), sourceFileText) : sourceFileText || "";
+        if (typeof sourceFileText === "string")
+            return this.createSourceFileFromText(filePath, sourceFileText, options);
 
         const writer = this.context.createWriter();
         const structurePrinter = this.context.structurePrinterFactory.forSourceFile({
             isAmbient: FileUtils.getExtension(filePath) === ".d.ts"
         });
-        structurePrinter.printText(writer, structureOrText);
+        structurePrinter.printText(writer, sourceFileText);
 
         return this.createSourceFileFromText(filePath, writer.toString(), options);
     }

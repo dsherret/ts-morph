@@ -494,6 +494,12 @@ describe(nameof(Project), () => {
             expect(project.createSourceFile("file.ts", "").getLanguageVersion()).to.equal(ScriptTarget.ES2015);
         });
 
+        it("should add a source file based on a writer function", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("test.ts", writer => writer.writeLine("enum MyEnum {}"));
+            expect(sourceFile.getFullText()).to.equal("enum MyEnum {}\n");
+        });
+
         it("should add a source file based on a structure", () => {
             // basic test
             const project = new Project({ useVirtualFileSystem: true });

@@ -108,8 +108,6 @@ class MyClass {
 }
 ```
 
-Note: The file will not be created and saved to the file system until calling `.save()` on the source file.
-
 ### By string
 
 ```ts
@@ -117,7 +115,15 @@ const fileText = "enum MyEnum {\n}\n";
 const sourceFile = project.createSourceFile("path/to/myNewFile.ts", fileText);
 ```
 
-Note: The file will not be created and saved to the file system until calling `.save()` on the source file.
+### By writer function
+
+```ts
+const sourceFile = project.createSourceFile("path/to/myOtherNewFile.ts", writer => {
+    writer
+        .writeLine("import * as ts from 'typescript';").blankLine()
+        .writeLine("export class MyClass {}");
+});
+```
 
 ### Options
 
@@ -130,7 +136,7 @@ const sourceFile = project.createSourceFile("path/to/myNewFile.ts", "", { overwr
 
 ### Note
 
-Adding source files to the AST from a structure or text will act like any other source file, but they will not be saved to the disk unless you ask it to be.
+Adding source files to the project from a structure, writer function, or text will act like any other source file, but they will not be saved to the disk unless you ask it to be.
 
 ```ts
 // save it to the disk if you wish:

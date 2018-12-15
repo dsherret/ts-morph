@@ -112,6 +112,11 @@ const sourceFiles = directory.getSourceFiles();
 const sourceFile = directory.getSourceFile("someFile.ts"); // or getSourceFileOrThrow
 const indexFile = directory.addExistingSourceFile("index.ts"); // or addExistingSourceFileIfExists
 const descendantSourceFiles = directory.getDescendantSourceFiles();
+
+directory.createSourceFile("someFile.ts");
+directory.createSourceFile("someFile2.ts", "// some text");
+directory.createSourceFile("someFile3.ts", writer => writer.writeLine("// some text"));
+directory.createSourceFile("someFile4.ts", { enums: [{ name: "MyEnum" }] });
 ```
 
 ### Saving

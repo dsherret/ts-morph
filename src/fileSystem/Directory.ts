@@ -3,7 +3,8 @@ import * as errors from "../errors";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
-import { ModuleResolutionKind, ScriptTarget } from "../typescript";
+import { WriterFunction } from "../types";
+import { ModuleResolutionKind } from "../typescript";
 import { ArrayUtils, FileUtils, ObjectUtils, setValueIfUndefined, StringUtils } from "../utils";
 import { DirectoryEmitResult } from "./DirectoryEmitResult";
 
@@ -89,14 +90,14 @@ export class Directory {
     }
 
     /**
-     * Gets the parent directory or throws if it doesn't exist or was never added to the AST.
+     * Gets the parent directory or throws if it doesn't exist or was never added to the project.
      */
     getParentOrThrow() {
         return errors.throwIfNullOrUndefined(this.getParent(), () => `Parent directory of ${this.getPath()} does not exist or was never added.`);
     }
 
     /**
-     * Gets the parent directory if it exists and was added to the AST.
+     * Gets the parent directory if it exists and was added to the project.
      */
     getParent() {
         if (FileUtils.isRootDirPath(this.getPath()))
@@ -252,7 +253,7 @@ export class Directory {
     }
 
     /**
-     * Adds an existing directory to the AST from the relative path or directory name, or returns undefined if it doesn't exist.
+     * Adds an existing directory from the relative path or directory name, or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
      * @param dirPath - Directory name or path to the directory that should be added.
@@ -265,7 +266,7 @@ export class Directory {
     }
 
     /**
-     * Adds an existing directory to the AST from the relative path or directory name, or throws if it doesn't exist.
+     * Adds an existing directory from the relative path or directory name, or throws if it doesn't exist.
      *
      * Will return the directory if it was already added.
      * @param dirPath - Directory name or path to the directory that should be added.
@@ -286,40 +287,21 @@ export class Directory {
     }
 
     /**
-     * Creates a source file in the AST, relative to this directory.
+     * Creates a source file, relative to this directory.
      *
      * Note: The file will not be created and saved to the file system until .save() is called on the source file.
      * @param relativeFilePath - Relative file path of the source file to create.
-     * @throws - InvalidOperationError if a source file already exists at the provided file name.
-     */
-    createSourceFile(relativeFilePath: string): SourceFile;
-    /**
-     * Creates a source file in the AST, relative to this directory.
-     *
-     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
-     * @param relativeFilePath - Relative file path of the source file to create.
-     * @param sourceFileText - Text of the source file.
+     * @param sourceFileText - Text, structure, or writer function to create the source file text with.
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, sourceFileText: string, options?: SourceFileCreateOptions): SourceFile;
-    /**
-     * Creates a source file in the AST, relative to this directory.
-     *
-     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
-     * @param relativeFilePath - Relative file path of the source file to create.
-     * @param structure - Structure that represents the source file.
-     * @param options - Options.
-     * @throws - InvalidOperationError if a source file already exists at the provided file name.
-     */
-    createSourceFile(relativeFilePath: string, structure: SourceFileStructure, options?: SourceFileCreateOptions): SourceFile;
-    createSourceFile(relativeFilePath: string, structureOrText?: string | SourceFileStructure, options?: SourceFileCreateOptions) {
+    createSourceFile(relativeFilePath: string, sourceFileText?: string | SourceFileStructure | WriterFunction, options?: SourceFileCreateOptions) {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this._context.compilerFactory.createSourceFile(filePath, structureOrText || "", options || {});
+        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", options || {});
     }
 
     /**
-     * Adds an existing source file to the AST, relative to this directory, or returns undefined.
+     * Adds an existing source file, relative to this directory, or returns undefined.
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
@@ -331,7 +313,7 @@ export class Directory {
     }
 
     /**
-     * Adds an existing source file to the AST, relative to this directory, or throws if it doesn't exist.
+     * Adds an existing source file, relative to this directory, or throws if it doesn't exist.
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
