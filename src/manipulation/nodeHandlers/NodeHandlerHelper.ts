@@ -27,13 +27,10 @@ export class NodeHandlerHelper {
      * Gets the children of the node according to whether the tokens have previously been parsed.
      */
     getChildrenFast(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [ts.Node[], ts.Node[]] {
-        // if this is true, it means the compiler has previously parsed the tokens
-        const hasChildren = (currentNode.compilerNode as any)._children != null;
-
-        if (hasChildren)
+        if (currentNode._hasParsedTokens())
             return [currentNode._getCompilerChildren(), newNode.getChildren(newSourceFile)];
 
-        // great, we don't have to parse the tokens and we can instead just use ts.forEachChild (faster)
+        // great, we don't have to parse the tokens and can instead just use ts.forEachChild (faster)
         return [getForEachChildren(currentNode.compilerNode), getForEachChildren(newNode)];
 
         function getForEachChildren(node: ts.Node) {

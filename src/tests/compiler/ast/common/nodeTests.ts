@@ -134,13 +134,13 @@ describe(nameof(Node), () => {
 
     describe(nameof<Node>(n => n.getText), () => {
         it("should get without jsdoc text when not specifying to", () => {
-            const { firstChild, sourceFile } = getInfoFromText("/**\n * Testing\n */\nclass MyClass {}");
+            const { firstChild } = getInfoFromText("/**\n * Testing\n */\nclass MyClass {}");
             expect(firstChild.getText()).to.equal("class MyClass {}");
         });
 
         it("should get with jsdoc text when specifying to", () => {
             const classCode = "/**\n * Testing\n */\nclass MyClass {}";
-            const { firstChild, sourceFile } = getInfoFromText(classCode);
+            const { firstChild } = getInfoFromText(classCode);
             expect(firstChild.getText(true)).to.equal(classCode);
         });
     });
@@ -186,14 +186,18 @@ describe(nameof(Node), () => {
     });
 
     describe(nameof<Node>(n => n.getFirstChildByKind), () => {
-        const { firstChild } = getInfoFromText("enum MyEnum {}");
+        const { sourceFile, firstChild } = getInfoFromText("enum MyEnum {}");
 
-        it("should return the first node of the specified syntax kind", () => {
+        it("should return the first node of the specified syntax kind for a token", () => {
             expect(firstChild.getFirstChildByKind(SyntaxKind.OpenBraceToken)!.getText()).to.equal("{");
         });
 
+        it("should return the first node of the specified syntax kind for a parsed node", () => {
+            expect(sourceFile.getFirstChildByKind(SyntaxKind.EnumDeclaration)!.getText()).to.equal("enum MyEnum {}");
+        });
+
         it("should return undefined when the specified syntax kind doesn't exist", () => {
-            expect(firstChild.getFirstChildByKind(SyntaxKind.ClassDeclaration)).to.be.undefined;
+            expect(sourceFile.getFirstChildByKind(SyntaxKind.ClassDeclaration)).to.be.undefined;
         });
     });
 
@@ -555,7 +559,7 @@ class MyClass {
     });
 
     describe(nameof<Node>(n => n.getFirstChildOrThrow), () => {
-        const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { prop: string; }\ninterface MyInterface {}");
+        const { sourceFile } = getInfoFromText<ClassDeclaration>("class Identifier { prop: string; }\ninterface MyInterface {}");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
         it("should get the first child by a condition", () => {
@@ -697,29 +701,135 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getDescendantsOfKind), () => {
-        const { sourceFile } = getInfoFromText("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
+    describe(nameof<Node>(n => n.getChildrenOfKind), () => {
+        function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, kind: SyntaxKind, childTexts: string[]) {
+            const { sourceFile } = getInfoFromText(text);
+            const node = selectNode(sourceFile);
+            const children = node.getChildrenOfKind(kind);
+            expect(children.map(c => c.getText())).to.deep.equal(childTexts);
+        }
 
+        it("should get children using .forEachChild when specifying a parsed kind node while not on a syntax list", () => {
+            doTest("class C {} interface I {}", sourceFile => sourceFile, SyntaxKind.ClassDeclaration, ["class C {}"]);
+        });
+
+        it("should get children using .getChildren() when on a syntax list", () => {
+            doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.ClassDeclaration, ["class C {}"]);
+        });
+
+        it("should get children using .getChildren() when specifying a token kind", () => {
+            doTest("class C {}", sourceFile => sourceFile.getClassOrThrow("C"), SyntaxKind.OpenBraceToken, ["{"]);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getDescendantsOfKind), () => {
         it("should get the descendant by a kind", () => {
+            const { sourceFile } = getInfoFromText("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
             const properties = sourceFile.getDescendantsOfKind(SyntaxKind.PropertySignature);
             expect(properties.length).to.equal(2);
             expect(properties[0]).to.be.instanceOf(PropertySignature);
             expect(properties[1]).to.be.instanceOf(PropertySignature);
         });
+
+        function doTest(
+            text: string,
+            selectNode: (sourceFile: SourceFile) => Node,
+            kind: SyntaxKind,
+            descendantTexts: string[],
+            additionalChecks?: (sourceFile: SourceFile) => void
+        ) {
+            const { sourceFile } = getInfoFromText(text);
+            const node = selectNode(sourceFile);
+            const descendants = node.getDescendantsOfKind(kind);
+            expect(descendants.map(c => c.getText())).to.deep.equal(descendantTexts);
+
+            if (additionalChecks)
+                additionalChecks(sourceFile);
+        }
+
+        it("should get descendants using .forEachChild when specifying a parsed kind node while not on a syntax list", () => {
+            doTest("class C1 {} class C2 {}", sourceFile => sourceFile, SyntaxKind.ClassDeclaration, ["class C1 {}", "class C2 {}"], sourceFile => {
+                expect(sourceFile._hasParsedTokens()).to.be.false;
+                expect(sourceFile.getClassOrThrow("C1")._hasParsedTokens()).to.be.false;
+            });
+        });
+
+        it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
+            doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.ClassDeclaration, ["class C {}"], sourceFile => {
+                expect(sourceFile._hasParsedTokens()).to.be.true;
+                expect(sourceFile.getClassOrThrow("C")._hasParsedTokens()).to.be.false;
+            });
+        });
+
+        it("should get descendants using .getChildren() when specifying a token while on a syntax list", () => {
+            doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.OpenBraceToken, ["{", "{"]);
+        });
+
+        it("should get descendants using .getChildren() when specifying a token kind", () => {
+            doTest("class C {} interface I {}", sourceFile => sourceFile, SyntaxKind.OpenBraceToken, ["{", "{"], sourceFile => {
+                expect(sourceFile._hasParsedTokens()).to.be.true;
+            });
+        });
     });
 
     describe(nameof<Node>(n => n.getFirstDescendantByKind), () => {
-        const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
+        function getSourceFile() {
+            return getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }").sourceFile;
+        }
 
         it("should get the first descendant by a condition", () => {
-            const prop = sourceFile.getFirstDescendantByKind(SyntaxKind.PropertySignature);
+            const prop = getSourceFile().getFirstDescendantByKind(SyntaxKind.PropertySignature);
             expect(prop).to.be.instanceOf(PropertySignature);
             expect((prop as PropertySignature).getName()).to.equal("prop");
         });
 
         it("should return undefined when it can't find it", () => {
-            const privateKeyword = sourceFile.getFirstDescendantByKind(SyntaxKind.PrivateKeyword);
+            const privateKeyword = getSourceFile().getFirstDescendantByKind(SyntaxKind.PrivateKeyword);
             expect(privateKeyword).to.be.undefined;
+        });
+
+        function doTest(
+            text: string,
+            selectNode: (sourceFile: SourceFile) => Node,
+            kind: SyntaxKind,
+            descendantText: string | undefined,
+            additionalChecks?: (sourceFile: SourceFile) => void
+        ) {
+            const { sourceFile } = getInfoFromText(text);
+            const node = selectNode(sourceFile);
+            const descendant = node.getFirstDescendantByKind(kind);
+            if (descendantText == null)
+                expect(descendant).to.be.undefined;
+            else
+                expect(descendant!.getText()).to.equal(descendantText);
+
+            if (additionalChecks)
+                additionalChecks(sourceFile);
+        }
+
+        it("should get descendant using .forEachChild when specifying a parsed kind node while not on a syntax list", () => {
+            doTest("class C1 {} class C2 {}", sourceFile => sourceFile, SyntaxKind.ClassDeclaration, "class C1 {}", sourceFile => {
+                expect(sourceFile._hasParsedTokens()).to.be.false;
+                expect(sourceFile.getClassOrThrow("C1")._hasParsedTokens()).to.be.false;
+            });
+        });
+
+        it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
+            doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.InterfaceDeclaration, "interface I {}", sourceFile => {
+                expect(sourceFile._hasParsedTokens()).to.be.true;
+                expect(sourceFile.getClassOrThrow("C")._hasParsedTokens()).to.be.false;
+                expect(sourceFile.getInterfaceOrThrow("I")._hasParsedTokens()).to.be.false;
+            });
+        });
+
+        it("should get descendants using .getChildren() when specifying a token while on a syntax list", () => {
+            doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.OpenBraceToken, "{");
+        });
+
+        it("should get descendants using .getChildren() when specifying a token kind", () => {
+            doTest("class C {} interface I {}", sourceFile => sourceFile, SyntaxKind.OpenBraceToken, "{", sourceFile => {
+                expect(sourceFile._hasParsedTokens()).to.be.true;
+            });
         });
     });
 

@@ -1277,7 +1277,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @param kind - Syntax kind.
      */
     getChildrenOfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind][] {
-        return this._getCompilerChildren().filter(c => c.kind === kind).map(c => this._getNodeFromCompilerNode(c));
+        return this._getCompilerChildrenOfKind(kind).map(c => this._getNodeFromCompilerNode(c));
     }
 
     /**
@@ -1293,7 +1293,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @param kind - Syntax kind.
      */
     getFirstChildByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const child = this._getCompilerFirstChild(c => c.kind === kind);
+        const child = this._getCompilerChildrenOfKind(kind)[0];
         return child == null ? undefined : this._getNodeFromCompilerNode(child);
     }
 
@@ -1327,7 +1327,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @param kind - Syntax kind.
      */
     getLastChildByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const lastChild = this._getCompilerLastChild(c => c.kind === kind);
+        const children = this._getCompilerChildrenOfKind(kind);
+        const lastChild = children[children.length - 1] as ts.Node | undefined;
         return this._getNodeFromCompilerNodeIfExists(lastChild);
     }
 
@@ -1474,10 +1475,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getDescendantsOfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind][] {
         const descendants: Node[] = [];
-        for (const descendant of this._getCompilerDescendantsIterator()) {
-            if (descendant.kind === kind)
-                descendants.push(this._getNodeFromCompilerNode(descendant));
-        }
+        for (const descendant of this._getCompilerDescendantsOfKindIterator(kind))
+            descendants.push(this._getNodeFromCompilerNode(descendant));
         return descendants;
     }
 
@@ -1494,10 +1493,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @param kind - Syntax kind.
      */
     getFirstDescendantByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        for (const descendant of this._getCompilerDescendantsIterator()) {
-            if (descendant.kind === kind)
-                return this._getNodeFromCompilerNode(descendant);
-        }
+        for (const descendant of this._getCompilerDescendantsOfKindIterator(kind))
+            return this._getNodeFromCompilerNode(descendant);
         return undefined;
     }
 
@@ -1510,19 +1507,63 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
+     * Gets the compiler children of the node using .forEachChild
+     * @internal
+     */
+    _getCompilerForEachChildren(): ts.Node[] {
+        const children: ts.Node[] = [];
+        this.compilerNode.forEachChild(child => {
+            children.push(child);
+        });
+        return children;
+    }
+
+    /**
+     * Gets the compiler children of the specified kind.
+     * @internal
+     */
+    _getCompilerChildrenOfKind(kind: SyntaxKind) {
+        const children = useParseTreeSearchForKind(this, kind) ? this._getCompilerForEachChildren() : this._getCompilerChildren();
+        return children.filter(c => c.kind === kind);
+    }
+
+    /**
+     * Gets the node's descendant compiler nodes filtered by syntax kind, based on an iterator.
+     * @internal
+     */
+    *_getCompilerDescendantsOfKindIterator(kind: SyntaxKind): IterableIterator<ts.Node> {
+        // if the first node is a SyntaxList then always use `.getCompilerChildren()`... after that go back to the appropriate search method
+        const children = useParseTreeSearchForKind(this, kind) ? this._getCompilerForEachChildren() : this._getCompilerChildren();
+
+        for (const child of children) {
+            if (child.kind === kind)
+                yield child;
+
+            const descendants = useParseTreeSearchForKind(child.kind, kind)
+                ? getCompilerForEachDescendantsIterator(child)
+                : getCompilerDescendantsIterator(child, this._sourceFile.compilerNode);
+
+            for (const descendant of descendants) {
+                if (descendant.kind === kind)
+                    yield descendant;
+            }
+        }
+    }
+
+    /**
      * Gets the node's descendant compiler nodes as an iterator.
      * @internal
      */
     _getCompilerDescendantsIterator(): IterableIterator<ts.Node> {
-        const compilerSourceFile = this._sourceFile.compilerNode;
-        return getDescendantsIterator(this.compilerNode);
+        return getCompilerDescendantsIterator(this.compilerNode, this._sourceFile.compilerNode);
+    }
 
-        function* getDescendantsIterator(node: ts.Node): IterableIterator<ts.Node> {
-            for (const child of node.getChildren(compilerSourceFile)) {
-                yield child;
-                yield* getDescendantsIterator(child);
-            }
-        }
+    /**
+     * Gets the node's for-each descendant compiler nodes as an iterator.
+     * @internal
+     */
+    _getCompilerForEachDescendantsIterator(): IterableIterator<ts.Node> {
+        return getCompilerForEachDescendantsIterator(this.compilerNode);
     }
 
     /**
@@ -1713,6 +1754,15 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
+     * Gets if this node has previously parsed tokens.
+     * @internal
+     */
+    _hasParsedTokens() {
+        // if this is true, it means the compiler has previously parsed the tokens
+        return (this.compilerNode as any)._children != null;
+    }
+
+    /**
      * Ensures that the binder has bound the node before.
      * @internal
      */
@@ -1739,4 +1789,42 @@ function insertWhiteSpaceTextAtPos(node: Node, insertPos: number, textOrWriterFu
         insertPos,
         newText
     });
+}
+
+function* getCompilerForEachDescendantsIterator(node: ts.Node): IterableIterator<ts.Node> {
+    for (const child of getForEachChildren()) {
+        yield child;
+        yield* getCompilerForEachDescendantsIterator(child);
+    }
+
+    function getForEachChildren() {
+        const children: ts.Node[] = [];
+        node.forEachChild(child => {
+            children.push(child);
+        });
+        return children;
+    }
+}
+
+function* getCompilerDescendantsIterator(node: ts.Node, sourceFile: ts.SourceFile): IterableIterator<ts.Node> {
+    for (const child of node.getChildren(sourceFile)) {
+        yield child;
+        yield* getCompilerDescendantsIterator(child, sourceFile);
+    }
+}
+
+/**
+ * Tells the calling code if it's safe to search for the specified kind
+ * using only the ast (`node.forEachChild(...)`... much faster) instead
+ * of having to parse all the tokens via `node.getChildren()`.
+ */
+function useParseTreeSearchForKind(thisNodeOrSyntaxKind: Node | SyntaxKind, searchingKind: SyntaxKind) {
+    return searchingKind >= SyntaxKind.FirstNode && searchingKind <= SyntaxKind.LastJSDocNode
+        && getThisKind() !== SyntaxKind.SyntaxList;
+
+    function getThisKind() {
+        if (typeof thisNodeOrSyntaxKind === "number")
+            return thisNodeOrSyntaxKind;
+        return thisNodeOrSyntaxKind.compilerNode.kind;
+    }
 }
