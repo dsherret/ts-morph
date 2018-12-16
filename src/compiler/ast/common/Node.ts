@@ -73,6 +73,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     /** @internal */
     private _trailingCommentRanges: CommentRange[] | undefined;
     /** @internal */
+    _wrappedChildCount = 0;
+    /** @internal */
     _sourceFile: SourceFile;
 
     /**
@@ -140,6 +142,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
         if (this.wasForgotten())
             return;
 
+        const parent = this.getParent();
+        if (parent != null)
+            parent._wrappedChildCount--;
+
+        const parentSyntaxList = this._getParentSyntaxListIfWrapped();
+        if (parentSyntaxList != null)
+            parentSyntaxList._wrappedChildCount--;
+
         this._storeTextForForgetting();
         this._context.compilerFactory.removeNodeFromCache(this);
         this._clearInternals();
@@ -152,6 +162,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     wasForgotten() {
         return this._compilerNode == null;
+    }
+
+    /**
+     * Gets if this node has any wrapped children.
+     * @internal
+     */
+    _hasWrappedChildren() {
+        return this._wrappedChildCount > 0;
     }
 
     /**
@@ -392,21 +410,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Offset this node's positions (pos and end) and all of its children by the given offset.
-     * @internal
-     * @param offset - Offset.
-     */
-    _offsetPositions(offset: number) {
-        // todo: remove? Not used internally anymore
-        this.compilerNode.pos += offset;
-        this.compilerNode.end += offset;
-
-        for (const child of this.getChildren()) {
-            child._offsetPositions(offset);
-        }
-    }
-
-    /**
      * Gets the previous sibling or throws.
      * @param condition - Optional condition for getting the previous sibling.
      */
@@ -509,7 +512,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @internal
      */
     *_getChildrenInCacheIterator(): IterableIterator<Node> {
-        for (const child of this._getCompilerChildren()) {
+        const children = this._hasParsedTokens() ? this._getCompilerChildren() : this._getCompilerForEachChildren();
+        for (const child of children) {
             if (this._context.compilerFactory.hasCompilerNode(child))
                 yield this._context.compilerFactory.getExistingCompilerNode(child)!;
             else if (child.kind === SyntaxKind.SyntaxList) {
@@ -1084,9 +1088,20 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     /**
      * Gets the parent if it's a syntax list.
      */
-    getParentSyntaxList(): Node | undefined {
+    getParentSyntaxList(): SyntaxList | undefined {
         const syntaxList = getParentSyntaxList(this.compilerNode);
         return this._getNodeFromCompilerNodeIfExists(syntaxList);
+    }
+
+    /**
+     * Gets the parent syntax list if it's been wrapped.
+     * @internal
+     */
+    _getParentSyntaxListIfWrapped(): SyntaxList | undefined {
+        const parent = this.getParent();
+        if (parent == null || !parent._hasParsedTokens())
+            return undefined;
+        return this.getParentSyntaxList();
     }
 
     /**
@@ -1258,7 +1273,26 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Transforms the node using the compiler api.
+     * Transforms the node using the compiler api nodes and functions (Experimental).
+     *
+     * WARNING: This will forget descendants of transformed nodes.
+     * @example Increments all the numeric literals in a source file.
+     * ```ts
+     * sourceFile.transform(traversal => {
+     *   const node = traversal.visitChildren(); // recommend always visiting the children first (post order)
+     *   if (ts.isNumericLiteral(node))
+     *     return ts.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
+     *   return node;
+     * });
+     * ```
+     * @example Updates the class declaration node without visiting the children.
+     * ```ts
+     * const classDec = sourceFile.getClassOrThrow("MyClass");
+     * classDec.transform(traversal => {
+     *   const node = traversal.currentNode;
+     *   return ts.updateClassDeclaration(node, undefined, undefined, ts.createIdentifier("MyUpdatedClass"), undefined, undefined, []);
+     * });
+     * ```
      */
     transform(visitNode: (traversal: TransformTraversalControl) => ts.Node) {
         const compilerFactory = this._context.compilerFactory;
@@ -1299,7 +1333,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
             if (oldNode === newNode)
                 return;
 
-            const start = oldNode.getStart(compilerSourceFile);
+            const start = oldNode.getStart(compilerSourceFile, true);
             const end = oldNode.end;
             const lastTransformation = transformations[transformations.length - 1];
 
@@ -1314,8 +1348,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
                 compilerNode: newNode
             });
 
-            if (wrappedNode != null && oldNode.kind !== newNode.kind)
-                wrappedNode.forget();
+            // It's very difficult and expensive to tell about changes that could have happened to the descendants
+            // via updating properties. For this reason, descendant nodes will always be forgotten.
+            if (wrappedNode != null) {
+                if (oldNode.kind !== newNode.kind)
+                    wrappedNode.forget();
+                else
+                    wrappedNode.forgetDescendants();
+            }
         }
 
         function getTransformedText() {

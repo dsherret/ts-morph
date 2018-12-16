@@ -251,10 +251,24 @@ export class CompilerFactory {
             return this.getSourceFile(compilerNode as any as ts.SourceFile) as Node as CompilerNodeToWrappedType<NodeType>;
 
         const createNode = (ctor: any) => {
-            // ensure the parent is created
-            if (compilerNode.parent != null && !this.nodeCache.has(compilerNode.parent))
-                this.getNodeFromCompilerNode(compilerNode.parent, sourceFile);
-            return new ctor(this.context, compilerNode, sourceFile);
+            // ensure the parent is created and increment its wrapped child count
+            if (compilerNode.parent != null) {
+                const parentNode = this.getNodeFromCompilerNode(compilerNode.parent, sourceFile);
+                parentNode._wrappedChildCount++;
+            }
+            const node = new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
+            const parentSyntaxList = node._getParentSyntaxListIfWrapped();
+            if (parentSyntaxList != null)
+                parentSyntaxList._wrappedChildCount++;
+
+            if (compilerNode.kind === SyntaxKind.SyntaxList) {
+                let count = 0;
+                for (const _ of node._getChildrenInCacheIterator())
+                    count++;
+                node._wrappedChildCount = count;
+            }
+
+            return node;
         };
 
         if (kindToWrapperMappings[compilerNode.kind] != null)
