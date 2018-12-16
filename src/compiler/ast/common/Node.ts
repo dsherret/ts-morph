@@ -35,6 +35,13 @@ export interface ForEachDescendantTraversalControl extends ForEachChildTraversal
     up(): void;
 }
 
+export interface TransformTraversalControl {
+    /** The current node. */
+    currentNode: ts.Node;
+    /** Visits the children of the current node and returns a new node for the current node. */
+    visitChildren(): ts.Node;
+}
+
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
     NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined :
     NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] :
@@ -1253,8 +1260,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     /**
      * Transforms the node using the compiler api.
      */
-    transform(visitNode: (node: ts.Node) => ts.Node) {
-        // todo: allow not visiting every node
+    transform(visitNode: (traversal: TransformTraversalControl) => ts.Node) {
         const compilerFactory = this._context.compilerFactory;
         const printer = ts.createPrinter({
             newLine: this._context.manipulationSettings.getNewLineKind(),
@@ -1277,8 +1283,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
         return this;
 
         function innerVisit(node: ts.Node, context: ts.TransformationContext) {
-            node = ts.visitEachChild(node, child => innerVisit(child, context), context);
-            const resultNode = visitNode(node);
+            const traversal: TransformTraversalControl = {
+                visitChildren() {
+                    node = ts.visitEachChild(node, child => innerVisit(child, context), context);
+                    return node;
+                },
+                currentNode: node
+            };
+            const resultNode = visitNode(traversal);
             handleTransformation(node, resultNode);
             return resultNode;
         }

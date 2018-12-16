@@ -1697,7 +1697,7 @@ class MyClass {
         function doTest(
             text: string,
             selectNode: (sourceFile: SourceFile) => Node,
-            visitNode: (node: ts.Node) => ts.Node,
+            visitNode: (traversal: { visitChildren(): ts.Node; currentNode: ts.Node; }) => ts.Node,
             expectedText: string
         ) {
             const { sourceFile } = getInfoFromText(text);
@@ -1711,7 +1711,8 @@ class MyClass {
         // todo: way more tests (make sure the nodes are still wrapped properly)
 
         it("should transform the numeric literals", () => {
-            doTest("1; 2; 3;", sourceFile => sourceFile, node => {
+            doTest("1; 2; 3;", sourceFile => sourceFile, traversal => {
+                const node = traversal.visitChildren();
                 if (ts.isNumericLiteral(node))
                     return ts.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
                 return node;
