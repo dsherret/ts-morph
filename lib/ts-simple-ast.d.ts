@@ -4139,6 +4139,13 @@ export interface ForEachDescendantTraversalControl extends ForEachChildTraversal
     up(): void;
 }
 
+export interface TransformTraversalControl {
+    /** The current node. */
+    currentNode: ts.Node;
+    /** Visits the children of the current node and returns a new node for the current node. */
+    visitChildren(): ts.Node;
+}
+
 export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined : NodeType[KeyName];
 
 export declare type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
@@ -4505,11 +4512,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
     /**
      * Gets the parent if it's a syntax list or throws an error otherwise.
      */
-    getParentSyntaxListOrThrow(): Node<ts.Node>;
+    getParentSyntaxListOrThrow(): SyntaxList;
     /**
      * Gets the parent if it's a syntax list.
      */
-    getParentSyntaxList(): Node | undefined;
+    getParentSyntaxList(): SyntaxList | undefined;
     /**
      * Gets the child index of this node relative to the parent.
      */
@@ -4573,6 +4580,29 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
      * @param settings - Format code settings.
      */
     formatText(settings?: FormatCodeSettings): void;
+    /**
+     * Transforms the node using the compiler api nodes and functions (Experimental).
+     *
+     * WARNING: This will forget descendants of transformed nodes.
+     * @example Increments all the numeric literals in a source file.
+     * ```ts
+     * sourceFile.transform(traversal => {
+     *   const node = traversal.visitChildren(); // recommend always visiting the children first (post order)
+     *   if (ts.isNumericLiteral(node))
+     *     return ts.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
+     *   return node;
+     * });
+     * ```
+     * @example Updates the class declaration node without visiting the children.
+     * ```ts
+     * const classDec = sourceFile.getClassOrThrow("MyClass");
+     * classDec.transform(traversal => {
+     *   const node = traversal.currentNode;
+     *   return ts.updateClassDeclaration(node, undefined, undefined, ts.createIdentifier("MyUpdatedClass"), undefined, undefined, []);
+     * });
+     * ```
+     */
+    transform(visitNode: (traversal: TransformTraversalControl) => ts.Node): this;
     /**
      * Gets the leading comment ranges of the current node.
      */
