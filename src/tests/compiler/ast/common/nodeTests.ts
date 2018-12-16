@@ -1663,6 +1663,10 @@ class MyClass {
         });
     });
 
+    function getExpectedForgottenMessage(nodeText: string) {
+        return `Attempted to get information from a node that was removed or forgotten.\n\nNode text: ${nodeText}`;
+    }
+
     describe(nameof<Node>(n => n.getNonWhitespaceStart), () => {
         function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, expected: number) {
             const { sourceFile } = getInfoFromText(text);
@@ -1689,7 +1693,29 @@ class MyClass {
         });
     });
 
-    function getExpectedForgottenMessage(nodeText: string) {
-        return `Attempted to get information from a node that was removed or forgotten.\n\nNode text: ${nodeText}`;
-    }
+    describe(nameof<Node>(n => n.transform), () => {
+        function doTest(
+            text: string,
+            selectNode: (sourceFile: SourceFile) => Node,
+            visitNode: (node: ts.Node) => ts.Node,
+            expectedText: string
+        ) {
+            const { sourceFile } = getInfoFromText(text);
+            const node = selectNode(sourceFile);
+
+            node.transform(visitNode);
+
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        // todo: way more tests (make sure the nodes are still wrapped properly)
+
+        it("should transform the numeric literals", () => {
+            doTest("1; 2; 3;", sourceFile => sourceFile, node => {
+                if (ts.isNumericLiteral(node))
+                    return ts.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
+                return node;
+            }, `2; 3; 4;`);
+        });
+    });
 });

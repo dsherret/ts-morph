@@ -2,7 +2,7 @@ import { CodeBlockWriter } from "../../../codeBlockWriter";
 import * as errors from "../../../errors";
 import { ProjectContext } from "../../../ProjectContext";
 import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits,
-    insertIntoParentTextRange, replaceSourceFileTextForFormatting } from "../../../manipulation";
+    insertIntoParentTextRange, replaceSourceFileTextForFormatting, replaceSourceFileTextStraight } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
@@ -1248,6 +1248,78 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
             sourceFile: this._sourceFile,
             newText: getTextFromFormattingEdits(this._sourceFile, formattingEdits)
         });
+    }
+
+    /**
+     * Transforms the node using the compiler api.
+     */
+    transform(visitNode: (node: ts.Node) => ts.Node) {
+        // todo: allow not visiting every node
+        const compilerFactory = this._context.compilerFactory;
+        const printer = ts.createPrinter({
+            newLine: this._context.manipulationSettings.getNewLineKind(),
+            removeComments: false
+        });
+        const transformations: { start: number; end: number; compilerNode: ts.Node; }[] = [];
+        const compilerSourceFile = this._sourceFile.compilerNode;
+        const compilerNode = this.compilerNode;
+        const transformerFactory: ts.TransformerFactory<ts.Node> = context => {
+            return rootNode => innerVisit(rootNode, context);
+        };
+
+        ts.transform(compilerNode, [transformerFactory], this._context.compilerOptions.get());
+
+        replaceSourceFileTextStraight({
+            sourceFile: this._sourceFile,
+            newText: getTransformedText()
+        });
+
+        return this;
+
+        function innerVisit(node: ts.Node, context: ts.TransformationContext) {
+            node = ts.visitEachChild(node, child => innerVisit(child, context), context);
+            const resultNode = visitNode(node);
+            handleTransformation(node, resultNode);
+            return resultNode;
+        }
+
+        function handleTransformation(oldNode: ts.Node, newNode: ts.Node) {
+            if (oldNode === newNode)
+                return;
+
+            const start = oldNode.getStart(compilerSourceFile);
+            const end = oldNode.end;
+            const lastTransformation = transformations[transformations.length - 1];
+
+            // remove the last transformation if it's nested within this transformation
+            if (lastTransformation != null && lastTransformation.start > start)
+                transformations.pop();
+
+            const wrappedNode = compilerFactory.getExistingCompilerNode(oldNode);
+            transformations.push({
+                start,
+                end,
+                compilerNode: newNode
+            });
+
+            if (wrappedNode != null && oldNode.kind !== newNode.kind)
+                wrappedNode.forget();
+        }
+
+        function getTransformedText() {
+            const fileText = compilerSourceFile.getFullText();
+            let finalText = "";
+            let lastPos = 0;
+
+            for (const transform of transformations) {
+                finalText += fileText.substring(lastPos, transform.start);
+                finalText += printer.printNode(ts.EmitHint.Unspecified, transform.compilerNode, compilerSourceFile);
+                lastPos = transform.end;
+            }
+
+            finalText += fileText.substring(lastPos);
+            return finalText;
+        }
     }
 
     /**
