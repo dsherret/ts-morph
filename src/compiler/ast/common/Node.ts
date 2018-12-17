@@ -36,9 +36,14 @@ export interface ForEachDescendantTraversalControl extends ForEachChildTraversal
 }
 
 export interface TransformTraversalControl {
-    /** The current node. */
+    /**
+     * The node currently being transformed.
+     * @remarks Use the result of `.visitChildren()` instead before transforming if visiting the children.
+     */
     currentNode: ts.Node;
-    /** Visits the children of the current node and returns a new node for the current node. */
+    /**
+     * Visits the children of the current node and returns a new node for the current node.
+     */
     visitChildren(): ts.Node;
 }
 
@@ -1273,7 +1278,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Transforms the node using the compiler api nodes and functions (Experimental).
+     * Transforms the node using the compiler api nodes and functions (experimental).
      *
      * WARNING: This will forget descendants of transformed nodes.
      * @example Increments all the numeric literals in a source file.
