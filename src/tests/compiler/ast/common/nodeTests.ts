@@ -3,7 +3,9 @@ import { assert, IsExactType, IsNullableType } from "conditional-type-checks";
 import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, FunctionDeclaration, Identifier, InterfaceDeclaration, Node,
     PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachChildTraversalControl,
-    ForEachDescendantTraversalControl, VariableStatement, ForStatement, ForOfStatement, ForInStatement } from "../../../../compiler";
+    ForEachDescendantTraversalControl, VariableStatement, ForStatement, ForOfStatement, ForInStatement, NumericLiteral, StringLiteral,
+    ExpressionStatement } from "../../../../compiler";
+import { Project } from "../../../../Project";
 import * as errors from "../../../../errors";
 import { WriterFunction } from "../../../../types";
 import { NewLineKind, SyntaxKind, ts } from "../../../../typescript";
@@ -145,19 +147,67 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n._offsetPositions), () => {
-        const { sourceFile } = getInfoFromText("enum MyEnum {}");
-        const allNodes = [sourceFile, ...sourceFile.getDescendants()];
+    describe(nameof<Node>(n => n._hasWrappedChildren), () => {
+        it("should have wrapped children after calling getChildren()", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
+            expect(sourceFile._hasWrappedChildren()).to.be.false;
+            sourceFile.getChildren();
+            expect(sourceFile._hasWrappedChildren()).to.be.true;
+            sourceFile.forgetDescendants();
+            expect(sourceFile._hasWrappedChildren()).to.be.false;
+        });
 
-        // easiest to just compare the sum of the positions
-        const originalStartPosSum = allNodes.map(n => n.getPos()).reduce((a, b) => a + b, 0);
-        const originalEndPosSum = allNodes.map(n => n.getEnd()).reduce((a, b) => a + b, 0);
-        it("should offset all the positions", () => {
-            sourceFile._offsetPositions(5);
-            const adjustedStartPosSum = allNodes.map(n => n.getPos() - 5).reduce((a, b) => a + b, 0);
-            const adjustedEndPosSum = allNodes.map(n => n.getEnd() - 5).reduce((a, b) => a + b, 0);
-            expect(adjustedStartPosSum).to.equal(originalStartPosSum);
-            expect(adjustedEndPosSum).to.equal(originalEndPosSum);
+        it("should have wrapped children after calling forEachChild()", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
+            sourceFile.forEachChild(_ => {});
+            expect(sourceFile._hasWrappedChildren()).to.be.true;
+            sourceFile.forgetDescendants();
+            expect(sourceFile._hasWrappedChildren()).to.be.false;
+        });
+
+        it("should only have wrapped children after calling getChildren() for syntax lists", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
+            const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+            expect(syntaxList._hasWrappedChildren()).to.be.false;
+            syntaxList.getChildren();
+            expect(syntaxList._hasWrappedChildren()).to.be.true;
+            syntaxList.forgetDescendants();
+            expect(syntaxList._hasWrappedChildren()).to.be.false;
+        });
+
+        it("should have wrapped children after doing forEachChild on the parent for syntax lists", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
+            const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+            expect(syntaxList._hasWrappedChildren()).to.be.false;
+            sourceFile.forEachChild(() => {});
+            expect(syntaxList._hasWrappedChildren()).to.be.true;
+            syntaxList.forgetDescendants();
+            expect(syntaxList._hasWrappedChildren()).to.be.false;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getParentSyntaxList), () => {
+        it("should return undefined for an end of file token", () => {
+            const { sourceFile } = getInfoFromText("class C {}");
+            const endOfFileToken = sourceFile.getFirstChildByKindOrThrow(SyntaxKind.EndOfFileToken);
+            expect(endOfFileToken.getParentSyntaxList()).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n._getParentSyntaxListIfWrapped), () => {
+        it("should return undefined when not wrapped", () => {
+            const { firstChild } = getInfoFromText("class C {}");
+            expect(firstChild._getParentSyntaxListIfWrapped()).to.be.undefined;
+        });
+
+        it("should return the syntax list when wrapped", () => {
+            const { firstChild } = getInfoFromText("class C {}");
+            const syntaxList = firstChild.getParentSyntaxListOrThrow();
+            expect(firstChild._getParentSyntaxListIfWrapped()).to.equal(syntaxList);
         });
     });
 
@@ -1663,6 +1713,10 @@ class MyClass {
         });
     });
 
+    function getExpectedForgottenMessage(nodeText: string) {
+        return `Attempted to get information from a node that was removed or forgotten.\n\nNode text: ${nodeText}`;
+    }
+
     describe(nameof<Node>(n => n.getNonWhitespaceStart), () => {
         function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, expected: number) {
             const { sourceFile } = getInfoFromText(text);
@@ -1689,7 +1743,114 @@ class MyClass {
         });
     });
 
-    function getExpectedForgottenMessage(nodeText: string) {
-        return `Attempted to get information from a node that was removed or forgotten.\n\nNode text: ${nodeText}`;
-    }
+    describe(nameof<Node>(n => n.transform), () => {
+        function doTest(
+            text: string,
+            selectNode: (sourceFile: SourceFile) => Node,
+            visitNode: (traversal: { visitChildren(): ts.Node; currentNode: ts.Node; }) => ts.Node,
+            expectedText: string,
+            additionalChecks?: (sourceFile: SourceFile) => void
+        ) {
+            const { sourceFile } = getInfoFromText(text);
+            const node = selectNode(sourceFile);
+
+            node.transform(visitNode);
+
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+
+            if (additionalChecks)
+                additionalChecks(sourceFile);
+        }
+
+        it("should transform a node to the same kind", () => {
+            let firstNumericLiteral: NumericLiteral;
+            doTest("1; 2; 3;", sourceFile => {
+                sourceFile.getDescendants(); // force wrapping all the children
+                firstNumericLiteral = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.NumericLiteral);
+                return sourceFile;
+            }, traversal => {
+                const node = traversal.visitChildren();
+                if (ts.isNumericLiteral(node))
+                    return ts.createNumericLiteral((parseInt(node.text, 10) + 1).toString());
+                return node;
+            }, `2; 3; 4;`, sourceFile => {
+                const literalValues = sourceFile.getStatements().map(s => ((s as ExpressionStatement).getExpression() as NumericLiteral).getLiteralValue());
+                expect(literalValues).to.deep.equal([2, 3, 4]);
+                expect(firstNumericLiteral!.wasForgotten()).to.be.false;
+            });
+        });
+
+        it("should transform node to a different kind and forget the past nodes", () => {
+            let firstNumericLiteral: NumericLiteral;
+            doTest("1; 2; 3;", sourceFile => {
+                sourceFile.getDescendants(); // force wrapping all the children
+                firstNumericLiteral = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.NumericLiteral);
+                return sourceFile;
+            }, traversal => {
+                const node = traversal.visitChildren();
+                if (ts.isNumericLiteral(node))
+                    return ts.createStringLiteral((parseInt(node.text, 10) + 1).toString());
+                return node;
+            }, `"2"; "3"; "4";`, sourceFile => {
+                const literalValues = sourceFile.getStatements().map(s => ((s as ExpressionStatement).getExpression() as StringLiteral).getLiteralValue());
+                expect(literalValues).to.deep.equal(["2", "3", "4"]);
+                expect(firstNumericLiteral!.wasForgotten()).to.be.true;
+            });
+        });
+
+        it("should allow updating the node", () => {
+            let throwStatement: Node;
+            let newExpression: Node;
+            doTest("throw new Error();", sourceFile => {
+                sourceFile.getDescendants(); // force wrapping all the children
+                throwStatement = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ThrowStatement);
+                newExpression = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.NewExpression);
+                return sourceFile;
+            }, traversal => {
+                const node = traversal.visitChildren();
+                if (ts.isThrowStatement(node))
+                    return ts.updateThrow(node, ts.createStringLiteral("test"));
+                return node;
+            }, `throw "test";`, () => {
+                expect(throwStatement!.wasForgotten()).to.be.false;
+                expect(newExpression!.wasForgotten()).to.be.true;
+            });
+        });
+
+        it("should allow transforming only a portion of the ast", () => {
+            doTest("class C {} class B {}", sourceFile => sourceFile.getClassOrThrow("C"), traversal => {
+                const node = traversal.visitChildren();
+                if (ts.isClassDeclaration(node))
+                    return ts.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
+                return node;
+            }, `interface A {\n} class B {}`);
+        });
+
+        it("should handle comments", () => {
+            doTest("// test\nclass C {}\n// test2\nclass B {}", sourceFile => sourceFile, traversal => {
+                const node = traversal.visitChildren();
+                if (ts.isClassDeclaration(node))
+                    return ts.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
+                return node;
+            }, `// test\ninterface A {\n}\n// test2\ninterface A {\n}`);
+        });
+
+        it("should handle jsdocs when replacing", () => {
+            doTest("/** Testing */\nclass C {}", sourceFile => sourceFile, traversal => {
+                const node = traversal.visitChildren();
+                if (ts.isClassDeclaration(node))
+                    return ts.createInterfaceDeclaration(undefined, undefined, "A", undefined, undefined, []);
+                return node;
+            }, `interface A {\n}`);
+        });
+
+        it("should handle jsdocs when updating", () => {
+            doTest("/** Testing */\nexport class C {}", sourceFile => sourceFile, traversal => {
+                const node = traversal.visitChildren();
+                if (ts.isClassDeclaration(node))
+                    return ts.updateClassDeclaration(node, undefined, undefined, ts.createIdentifier("A"), undefined, undefined, []);
+                return node;
+            }, `/** Testing */\nclass A {\n}`);
+        });
+    });
 });

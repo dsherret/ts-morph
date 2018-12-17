@@ -29,6 +29,13 @@ export function replaceNodeText(opts: ReplaceNodeTextOptions) {
  * This is very useful when making formatting changes that won't change the AST structure.
  */
 export function replaceSourceFileTextForFormatting(opts: { sourceFile: SourceFile; newText: string; }) {
+    replaceSourceFileTextStraight(opts);
+}
+
+/**
+ * Replaces the source file text and assumes the wrapped nodes will be the same (no tree structure should change).
+ */
+export function replaceSourceFileTextStraight(opts: { sourceFile: SourceFile; newText: string; }) {
     const { sourceFile, newText } = opts;
     doManipulation(sourceFile,
         new FullReplacementTextManipulator(newText),
