@@ -1652,7 +1652,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @internal
      */
     _getCompilerChildrenOfKind(kind: SyntaxKind) {
-        const children = useParseTreeSearchForKind(this, kind) ? this._getCompilerForEachChildren() : this._getCompilerChildren();
+        const children: ts.Node[] = useParseTreeSearchForKind(this, kind) ? this._getCompilerForEachChildren() : this._getCompilerChildren();
         return children.filter(c => c.kind === kind);
     }
 
