@@ -159,6 +159,26 @@ describe(nameof(LanguageService), () => {
         });
     });
 
+    describe(nameof<LanguageService>(l => l.getCombinedCodeFix), () => {
+        it("should get the combined code fixes", () => {
+            const { sourceFile, project } = getInfoFromText("export class T extends Node {}", { filePath: "/file.ts" });
+            const languageService = project.getLanguageService();
+            project.createSourceFile("/Node.ts", "export class Node { prop: string; }");
+            const result = languageService.getCombinedCodeFix(sourceFile, "fixMissingImport");
+
+            expect(result.getChanges().map(c => ({ filePath: c.getFilePath(), changes: c.getTextChanges().map(t => t.compilerObject) }))).to.deep.equal([{
+                filePath: "/file.ts",
+                changes: [{
+                    newText: `import { Node } from "./Node";\n\n`,
+                    span: {
+                        length: 0,
+                        start: 0
+                    }
+                }]
+            }]);
+        });
+    });
+
     describe(nameof<LanguageService>(l => l.getCodeFixesAtPosition), () => {
         it("should get code fixes at position for known code fixes convertToEs6Module (error code 80001)", () => {
             const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ", { filePath: "/file.ts" });

@@ -8,7 +8,8 @@ import { Node, TextRange } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
-import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction } from "./results";
+import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction,
+    CombinedCodeActions } from "./results";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -368,11 +369,27 @@ export class LanguageService {
     }
 
     /**
+     * Gets file changes and actions to perform for the provided fixId.
+     * @param filePathOrSourceFile - File path or source file to get the combined code fixes for.
+     * @param fixId - Identifier for the code fix (ex. "fixMissingImport"). These ids are found in the `ts.codefix` namespace in the compiler api source.
+     * @param formatOptions - Format code settings.
+     * @param preferences - User preferences for refactoring.
+     */
+    getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: {}, formatOptions: FormatCodeSettings = {}, preferences: UserPreferences = {}) {
+        const compilerResult = this.compilerObject.getCombinedCodeFix({
+            type: "file",
+            fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
+        }, fixId, this._getFilledSettings(formatOptions), this._getFilledUserPreferences(preferences || {}));
+
+        return new CombinedCodeActions(compilerResult);
+    }
+
+    /**
      * Gets the edit information for applying a code fix at the provided text range in a source file.
      * @param filePathOrSourceFile - File path or source file to get the code fixes for.
      * @param start - Start position of the text range to be fixed.
      * @param end - End position of the text range to be fixed.
-     * @param errorCodes - One or more error codes associated with the code fixes to apply.
+     * @param errorCodes - One or more error codes associated with the code fixes to retrieve.
      * @param formatOptions - Format code settings.
      * @param preferences - User preferences for refactoring.
      */

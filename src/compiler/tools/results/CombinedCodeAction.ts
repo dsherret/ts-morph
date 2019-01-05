@@ -2,14 +2,16 @@ import { ts } from "../../../typescript";
 import {FileTextChanges} from "./FileTextChanges";
 
 /**
- * Represents a code action.
+ * Represents file changes.
+ *
+ * Commands are currently not implemented.
  */
-export class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
+export class CombinedCodeActions {
     /** @internal */
-    private readonly _compilerObject: TCompilerObject;
+    private readonly _compilerObject: ts.CombinedCodeActions;
 
     /** @private */
-    constructor(compilerObject: TCompilerObject) {
+    constructor(compilerObject: ts.CombinedCodeActions) {
         this._compilerObject = compilerObject;
     }
 
@@ -18,12 +20,7 @@ export class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
         return this._compilerObject;
     }
 
-    /** Description of the code action. */
-    getDescription() {
-        return this.compilerObject.description;
-    }
-
-    /** Text changes to apply to each file as part of the code action. */
+    /** Text changes to apply to each file. */
     getChanges() {
         return this.compilerObject.changes.map(change => new FileTextChanges(change));
     }

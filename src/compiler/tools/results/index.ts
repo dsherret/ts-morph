@@ -1,4 +1,5 @@
 export * from "./CodeAction";
+export * from "./CombinedCodeAction";
 export * from "./CodeFixAction";
 export * from "./DefinitionInfo";
 export * from "./Diagnostic";
