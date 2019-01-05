@@ -6,7 +6,7 @@ import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclaratio
     StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, BodiedNodeStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
-import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
+import { ArrayUtils, getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
     TypeGuards, printTextFromStringOrWriter } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { ClassDeclaration } from "../class";
@@ -810,7 +810,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             function getFindFunction() {
                 if (typeof nameOrFindFunction === "string")
-                    return (statement: VariableStatement) => statement.getDeclarations().some(d => d.getName() === nameOrFindFunction);
+                    return (statement: VariableStatement) => statement.getDeclarations().some(d => nodeHasName(d, nameOrFindFunction));
                 return nameOrFindFunction;
             }
         }

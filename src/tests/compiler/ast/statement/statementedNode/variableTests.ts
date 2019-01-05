@@ -165,6 +165,25 @@ describe(nameof(StatementedNode), () => {
         it("should return undefined when nothing matches the provided function", () => {
             doTest(s => s.getDeclarations().length === 5, undefined);
         });
+
+        function doContainedTest(text: string, searchName: string, expectedStatement: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const variableStatement = sourceFile.getVariableStatement(searchName);
+            if (expectedStatement == null)
+                expect(variableStatement).to.be.undefined;
+            else
+                expect(variableStatement!.getText()).to.equal(expectedStatement);
+        }
+
+        it("should get the statement when doing object destructuring", () => {
+            const statement = "const [ a ] = [1];";
+            doContainedTest(statement, "a", statement);
+        });
+
+        it("should get the statement when doing object destructuring", () => {
+            const statement = "const { a } = { a: 1 };";
+            doContainedTest(statement, "a", statement);
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.getVariableStatementOrThrow), () => {
@@ -221,6 +240,59 @@ describe(nameof(StatementedNode), () => {
 
         it("should return undefined when the variable declaration doesn't exist", () => {
             expect(variablesSourceFile.getVariableDeclaration("asdf")).to.be.undefined;
+        });
+
+        function doTest(text: string, searchName: string, expectedDeclaration: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const variableDec = sourceFile.getVariableDeclaration(searchName);
+            if (expectedDeclaration == null)
+                expect(variableDec).to.be.undefined;
+            else
+                expect(variableDec!.getText()).to.equal(expectedDeclaration);
+        }
+
+        it("should get when using object destructuring", () => {
+            doTest("const { a } = { a: 1 };", "a", "{ a } = { a: 1 }");
+        });
+
+        it("should not get the property name for object destructuring", () => {
+            doTest("const { a: b } = { a: 1 };", "a", undefined);
+        });
+
+        it("should get the binding name for object destructuring", () => {
+            doTest("const { a: b } = { a: 1 };", "b", "{ a: b } = { a: 1 }");
+        });
+
+        it("should get nested object destructuring", () => {
+            doTest("const { a: { b } } = { a: { b: 1 } };", "b", "{ a: { b } } = { a: { b: 1 } }");
+        });
+
+        it("should not get the property name for nested object destructuring", () => {
+            doTest("const { a: { b: c } } = { a: { b: 1 } };", "b", undefined);
+        });
+
+        it("should get the binding name for nested object destructuring", () => {
+            doTest("const { a: { b: c } } = { a: { b: 1 } };", "c", "{ a: { b: c } } = { a: { b: 1 } }");
+        });
+
+        it("should get when using array destructuring", () => {
+            doTest("const [ a ] = [1];", "a", "[ a ] = [1]");
+        });
+
+        it("should get when using array destructuring and a rest pattern", () => {
+            doTest("const [ a, ...rest ] = [1, 2];", "rest", "[ a, ...rest ] = [1, 2]");
+        });
+
+        it("should get when nesting array destructuring", () => {
+            doTest("const [[ a ]] = [[1]];", "a", "[[ a ]] = [[1]]");
+        });
+
+        it("should get when nesting object in array destructuring", () => {
+            doTest("const [{ a }] = [{ a: 1 }];", "a", "[{ a }] = [{ a: 1 }]");
+        });
+
+        it("should get when nesting array in object destructuring", () => {
+            doTest("const { a: [b] } = { a: [1] };", "b", "{ a: [b] } = { a: [1] }");
         });
     });
 

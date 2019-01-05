@@ -165,10 +165,14 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getNamespace), () => {
-        const { sourceFile } = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
+        const { sourceFile } = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}, namespace Test.Test {}");
 
         it("should get a namespace by a name", () => {
             expect(sourceFile.getNamespace("Identifier2")!.getName()).to.equal("Identifier2");
+        });
+
+        it("should get namespace by name when it has multiple identifiers", () => {
+            expect(sourceFile.getNamespace("Test.Test")!.getName()).to.equal("Test.Test");
         });
 
         it("should get a namespace by a search function", () => {

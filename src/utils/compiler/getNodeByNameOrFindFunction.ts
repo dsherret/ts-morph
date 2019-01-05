@@ -1,15 +1,28 @@
 ﻿import { Node } from "../../compiler";
+import { TypeGuards } from "../../utils";
 import { ArrayUtils } from "../ArrayUtils";
 
 export function getNodeByNameOrFindFunction<T extends Node>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
     let findFunc: (declaration: T) => boolean;
 
     if (typeof nameOrFindFunc === "string")
-        findFunc = dec => (dec as any).getName != null && (dec as any).getName() === nameOrFindFunc;
+        findFunc = dec => nodeHasName(dec, nameOrFindFunc);
     else
         findFunc = nameOrFindFunc;
 
     return ArrayUtils.find(items, findFunc);
+}
+
+export function nodeHasName(node: Node, name: string): boolean {
+    if ((node as any).getNameNode == null)
+        return false;
+    const nameNode = (node as any).getNameNode() as Node;
+    if (nameNode == null)
+        return false;
+    if (TypeGuards.isArrayBindingPattern(nameNode) || TypeGuards.isObjectBindingPattern(nameNode))
+        return nameNode.getElements().some(element => nodeHasName(element, name));
+    const nodeName = (node as any).getName != null ? (node as any).getName() : nameNode.getText();
+    return nodeName === name;
 }
 
 export function getNotFoundErrorMessageForNameOrFindFunction(findName: string, nameOrFindFunction: string | Function) {
