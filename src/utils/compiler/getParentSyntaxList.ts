@@ -1,6 +1,9 @@
 ﻿import { SyntaxKind, ts } from "../../typescript";
 
 export function getParentSyntaxList(node: ts.Node) {
+    if (node.kind === SyntaxKind.EndOfFileToken)
+        return undefined;
+
     const parent = node.parent;
     if (parent == null)
         return undefined;
@@ -11,7 +14,7 @@ export function getParentSyntaxList(node: ts.Node) {
             return undefined;
 
         if (child.kind === SyntaxKind.SyntaxList && child.pos <= pos && child.end >= end)
-            return child;
+            return child as ts.SyntaxList;
     }
 
     return undefined; // shouldn't happen

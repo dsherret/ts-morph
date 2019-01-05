@@ -21,6 +21,13 @@ export class ForgetChangedNodeHandler implements NodeHandler {
             return;
         }
 
+        if (currentNode._hasWrappedChildren())
+            this.handleChildren(currentNode, newNode, newSourceFile);
+
+        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+    }
+
+    private handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         const [currentNodeChildren, newNodeChildrenArray] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
         const newNodeChildren = ArrayUtils.toIterator(newNodeChildrenArray);
 
@@ -35,7 +42,5 @@ export class ForgetChangedNodeHandler implements NodeHandler {
                 this.helper.handleForValues(this, currentNodeChild, nextNodeChildResult.value, newSourceFile);
             }
         }
-
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
 }

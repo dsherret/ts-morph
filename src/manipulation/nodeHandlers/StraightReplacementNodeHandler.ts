@@ -22,6 +22,13 @@ export class StraightReplacementNodeHandler implements NodeHandler {
             throw new errors.InvalidOperationError(`Error replacing tree! Perhaps a syntax error was inserted ` +
                 `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`);
 
+        if (currentNode._hasWrappedChildren())
+            this.handleChildren(currentNode, newNode, newSourceFile);
+
+        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
+    }
+
+    private handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         const [currentNodeChildren, newNodeChildrenArray] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
         const newNodeChildren = ArrayUtils.toIterator(newNodeChildrenArray);
 
@@ -31,7 +38,5 @@ export class StraightReplacementNodeHandler implements NodeHandler {
         /* istanbul ignore if */
         if (!newNodeChildren.next().done)
             throw new Error("Error replacing tree: Should not have new children left over.");
-
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
 }

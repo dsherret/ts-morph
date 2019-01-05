@@ -123,7 +123,7 @@ export class NodeHandlerFactory {
     }
 
     getForUnwrappingNode(unwrappingNode: Node) {
-        const changingParent = unwrappingNode.getParentSyntaxList() || unwrappingNode.getParentOrThrow();
+        const changingParent: Node = unwrappingNode.getParentSyntaxList() || unwrappingNode.getParentOrThrow();
         const childIndex = unwrappingNode.getChildIndex();
         const sourceFile = changingParent.getSourceFile();
         const compilerFactory = sourceFile._context.compilerFactory;
