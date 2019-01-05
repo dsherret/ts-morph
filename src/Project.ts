@@ -38,7 +38,7 @@ export interface SourceFileCreateOptions {
  */
 export class Project {
     /** @internal */
-    private readonly _context: ProjectContext;
+    readonly _context: ProjectContext;
 
     /**
      * Initializes a new instance.

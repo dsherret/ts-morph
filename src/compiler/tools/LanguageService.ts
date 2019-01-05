@@ -245,37 +245,37 @@ export class LanguageService {
      * Gets the formatting edits for a range.
      * @param filePath - File path.
      * @param range - Position range.
-     * @param settings - Settings.
+     * @param formatSettings - Format code settings.
      */
-    getFormattingEditsForRange(filePath: string, range: [number, number], settings: FormatCodeSettings) {
-        return (this.compilerObject.getFormattingEditsForRange(filePath, range[0], range[1], this._getFilledSettings(settings)) || []).map(e => new TextChange(e));
+    getFormattingEditsForRange(filePath: string, range: [number, number], formatSettings: FormatCodeSettings) {
+        return (this.compilerObject.getFormattingEditsForRange(filePath, range[0], range[1], this._getFilledSettings(formatSettings)) || []).map(e => new TextChange(e));
     }
 
     /**
      * Gets the formatting edits for a document.
      * @param filePath - File path of the source file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      */
-    getFormattingEditsForDocument(filePath: string, settings: FormatCodeSettings) {
-        return (this.compilerObject.getFormattingEditsForDocument(filePath, this._getFilledSettings(settings)) || []).map(e => new TextChange(e));
+    getFormattingEditsForDocument(filePath: string, formatSettings: FormatCodeSettings) {
+        return (this.compilerObject.getFormattingEditsForDocument(filePath, this._getFilledSettings(formatSettings)) || []).map(e => new TextChange(e));
     }
 
     /**
      * Gets the formatted text for a document.
      * @param filePath - File path of the source file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      */
-    getFormattedDocumentText(filePath: string, settings: FormatCodeSettings) {
+    getFormattedDocumentText(filePath: string, formatSettings: FormatCodeSettings) {
         const sourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(filePath);
 
-        settings = this._getFilledSettings(settings);
-        const formattingEdits = this.getFormattingEditsForDocument(filePath, settings);
+        formatSettings = this._getFilledSettings(formatSettings);
+        const formattingEdits = this.getFormattingEditsForDocument(filePath, formatSettings);
         let newText = getTextFromFormattingEdits(sourceFile, formattingEdits);
-        const newLineChar = settings.newLineCharacter!;
+        const newLineChar = formatSettings.newLineCharacter!;
 
-        if (settings.ensureNewLineAtEndOfFile && !StringUtils.endsWith(newText, newLineChar))
+        if (formatSettings.ensureNewLineAtEndOfFile && !StringUtils.endsWith(newText, newLineChar))
             newText += newLineChar;
 
         return newText.replace(/\r?\n/g, newLineChar);
@@ -327,61 +327,61 @@ export class LanguageService {
      * Gets the file text changes for organizing the imports in a source file.
      *
      * @param sourceFile - Source file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(sourceFile: SourceFile, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
+    organizeImports(sourceFile: SourceFile, formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
     /**
      * Gets the file text changes for organizing the imports in a source file.
      *
      * @param filePath - File path of the source file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(filePath: string, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
-    organizeImports(filePathOrSourceFile: string | SourceFile, settings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}): FileTextChanges[] {
+    organizeImports(filePath: string, formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
+    organizeImports(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}): FileTextChanges[] {
         const scope: ts.OrganizeImportsScope = {
             type: "file",
             fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
         };
-        return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings), this._getFilledUserPreferences(userPreferences))
-            .map(fileTextChanges => new FileTextChanges(fileTextChanges));
+        return this.compilerObject.organizeImports(scope, this._getFilledSettings(formatSettings), this._getFilledUserPreferences(userPreferences))
+            .map(fileTextChanges => new FileTextChanges(this._context, fileTextChanges));
     }
 
     /**
      * Gets the edit information for applying a refactor at a the provided position in a source file.
      * @param filePathOrSourceFile - File path or source file to get the edits for.
-     * @param formatOptions - Fomat code settings.
+     * @param formatSettings - Fomat code settings.
      * @param positionOrRange - Position in the source file where to apply given refactor.
      * @param refactorName - Refactor name.
      * @param actionName - Refactor action name.
      * @param preferences - User preferences for refactoring.
      */
-    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatOptions: FormatCodeSettings, positionOrRange: number | TextRange,
+    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings, positionOrRange: number | TextRange,
         refactorName: string, actionName: string, preferences: UserPreferences = {}): RefactorEditInfo | undefined
     {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const position = typeof positionOrRange === "number" ? positionOrRange : { pos: positionOrRange.getPos(), end: positionOrRange.getEnd() };
-        const compilerObject = this.compilerObject.getEditsForRefactor(filePath, this._getFilledSettings(formatOptions),
+        const compilerObject = this.compilerObject.getEditsForRefactor(filePath, this._getFilledSettings(formatSettings),
             position, refactorName, actionName, this._getFilledUserPreferences(preferences));
 
-        return compilerObject != null ? new RefactorEditInfo(compilerObject) : undefined;
+        return compilerObject != null ? new RefactorEditInfo(this._context, compilerObject) : undefined;
     }
 
     /**
      * Gets file changes and actions to perform for the provided fixId.
      * @param filePathOrSourceFile - File path or source file to get the combined code fixes for.
      * @param fixId - Identifier for the code fix (ex. "fixMissingImport"). These ids are found in the `ts.codefix` namespace in the compiler api source.
-     * @param formatOptions - Format code settings.
+     * @param formatSettings - Format code settings.
      * @param preferences - User preferences for refactoring.
      */
-    getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: {}, formatOptions: FormatCodeSettings = {}, preferences: UserPreferences = {}) {
+    getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: {}, formatSettings: FormatCodeSettings = {}, preferences: UserPreferences = {}) {
         const compilerResult = this.compilerObject.getCombinedCodeFix({
             type: "file",
             fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
-        }, fixId, this._getFilledSettings(formatOptions), this._getFilledUserPreferences(preferences || {}));
+        }, fixId, this._getFilledSettings(formatSettings), this._getFilledUserPreferences(preferences || {}));
 
-        return new CombinedCodeActions(compilerResult);
+        return new CombinedCodeActions(this._context, compilerResult);
     }
 
     /**
@@ -400,7 +400,7 @@ export class LanguageService {
         const compilerResult = this.compilerObject.getCodeFixesAtPosition(filePath, start, end, errorCodes,
             this._getFilledSettings(formatOptions), this._getFilledUserPreferences(preferences || {}));
 
-        return compilerResult.map(compilerObject => new CodeFixAction(compilerObject));
+        return compilerResult.map(compilerObject => new CodeFixAction(this._context, compilerObject));
     }
 
     private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {

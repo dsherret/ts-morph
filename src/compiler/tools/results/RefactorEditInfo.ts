@@ -1,4 +1,5 @@
 import { ts } from "../../../typescript";
+import { ProjectContext } from "../../../ProjectContext";
 import { Memoize } from "../../../utils";
 import { FileTextChanges } from "./FileTextChanges";
 
@@ -7,10 +8,13 @@ import { FileTextChanges } from "./FileTextChanges";
  */
 export class RefactorEditInfo {
     /** @internal */
+    private readonly _context: ProjectContext;
+    /** @internal */
     private readonly _compilerObject: ts.RefactorEditInfo;
 
     /** @private */
-    constructor(compilerObject: ts.RefactorEditInfo) {
+    constructor(context: ProjectContext, compilerObject: ts.RefactorEditInfo) {
+        this._context = context;
         this._compilerObject = compilerObject;
     }
 
@@ -24,7 +28,7 @@ export class RefactorEditInfo {
      */
     @Memoize
     getEdits() {
-        return this.compilerObject.edits.map(edit => new FileTextChanges(edit));
+        return this.compilerObject.edits.map(edit => new FileTextChanges(this._context, edit));
     }
 
     /**

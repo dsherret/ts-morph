@@ -1105,14 +1105,14 @@ describe(nameof(Project), () => {
         it("should throw if a file text change instruct to create a new file that already exists", () => {
             const project = setup();
             expect(() => project.applyFileTextChanges([
-                new FileTextChanges({ fileName: "test.ts", isNewFile: true, textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }] })
+                new FileTextChanges(project._context, { fileName: "test.ts", isNewFile: true, textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }] })
             ])).to.throw(errors.InvalidOperationError);
         });
 
         it("should not throw if a file text change instruct to create a new file that already exists and the overwrite option is provided", () => {
             const project = setup();
             project.applyFileTextChanges([
-                new FileTextChanges({ fileName: "test.ts", isNewFile: true, textChanges: [{ newText: "console;", span: { start: 0, length: 3 } }] })
+                new FileTextChanges(project._context, { fileName: "test.ts", isNewFile: true, textChanges: [{ newText: "console;", span: { start: 0, length: 3 } }] })
             ], { overwrite: true });
             expect(project.getSourceFileOrThrow("test.ts").getText()).to.equal("console;");
         });
@@ -1120,14 +1120,14 @@ describe(nameof(Project), () => {
         it("should throw if a file text change instruct to modify a file that doesn't exists and a isNewFile is false", () => {
             const project = setup();
             expect(() => project.applyFileTextChanges([
-                new FileTextChanges({ fileName: "nonExistent.ts", textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }] })
+                new FileTextChanges(project._context, { fileName: "nonExistent.ts", textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }] })
             ])).to.throw(errors.InvalidOperationError);
         });
 
         it("should create new files if isNewFile is true", () => {
             const project = setup();
             project.applyFileTextChanges([
-                new FileTextChanges({ fileName: "newFile.ts", isNewFile: true, textChanges: [{ newText: "new text", span: { start: 0, length: 0 } }] })
+                new FileTextChanges(project._context, { fileName: "newFile.ts", isNewFile: true, textChanges: [{ newText: "new text", span: { start: 0, length: 0 } }] })
             ]);
             expect(project.getSourceFileOrThrow("newFile.ts").getText()).to.equal("new text");
         });
@@ -1135,8 +1135,8 @@ describe(nameof(Project), () => {
         it("should support multiple FileTextChanges", () => {
             const project = setup();
             project.applyFileTextChanges([
-                new FileTextChanges({ fileName: "newFile.ts", isNewFile: true, textChanges: [{ newText: "new text", span: { start: 0, length: 0 } }] }),
-                new FileTextChanges({
+                new FileTextChanges(project._context, { fileName: "newFile.ts", isNewFile: true, textChanges: [{ newText: "new text", span: { start: 0, length: 0 } }] }),
+                new FileTextChanges(project._context, {
                     fileName: "test.ts", textChanges: [{
                         newText: "let",
                         span: { start: project.getSourceFileOrThrow("test.ts").getFullText().indexOf("const t"), length: 5 }
