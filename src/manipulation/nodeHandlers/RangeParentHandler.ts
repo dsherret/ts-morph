@@ -37,6 +37,8 @@ export class RangeParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
+        const currentSourceFile = currentNode._sourceFile.compilerNode;
+        // todo: decide whether to use forEachChild or forEachKind here (might be hard with custom mappings)
         const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
         const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(newNode.getChildren(newSourceFile)));
 
@@ -44,17 +46,17 @@ export class RangeParentHandler implements NodeHandler {
         this.handleCustomMappings(newNode);
 
         // get the first child
-        while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getStart() < this.start)
+        while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) < this.start)
             this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
         // handle the new nodes
-        while (!newNodeChildren.done && newNodeChildren.peek.getStart() >= this.start && newNodeChildren.peek.getEnd() <= this.end)
+        while (!newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) >= this.start && newNodeChildren.peek.getEnd() <= this.end)
             newNodeChildren.next();
 
         // handle the nodes being replaced
         if (this.replacingLength != null) {
             const replacingEnd = this.start + this.replacingLength;
-            while (!currentNodeChildren.done && (currentNodeChildren.peek.end <= replacingEnd || currentNodeChildren.peek.getStart() < replacingEnd))
+            while (!currentNodeChildren.done && (currentNodeChildren.peek.end <= replacingEnd || currentNodeChildren.peek.getStart(currentSourceFile) < replacingEnd))
                 this.helper.forgetNodeIfNecessary(currentNodeChildren.next());
         }
 

@@ -1,7 +1,8 @@
 import * as errors from "../../../errors";
 import { Directory } from "../../../fileSystem";
 import { ProjectContext } from "../../../ProjectContext";
-import { getTextFromFormattingEdits, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting } from "../../../manipulation";
+import { getTextFromFormattingEdits, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting,
+    insertIntoTextRange } from "../../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { SourceFileStructure } from "../../../structures";
 import { Constructor } from "../../../types";
@@ -721,12 +722,59 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Organizes the imports in the file.
      *
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(settings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
-        this.applyTextChanges(ArrayUtils.flatten(this._context.languageService.organizeImports(this, settings, userPreferences).map(r => r.getTextChanges())));
+    organizeImports(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
+        this.applyTextChanges(ArrayUtils.flatten(this._context.languageService.organizeImports(this, formatSettings, userPreferences).map(r => r.getTextChanges())));
         return this;
+    }
+
+    /**
+     * Code fix to add import declarations for identifiers that are referenced, but not imported in the source file.
+     * @param formatSettings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
+     */
+    fixMissingImports(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
+        const combinedCodeFix = this._context.languageService.getCombinedCodeFix(this, "fixMissingImport", formatSettings, userPreferences);
+        const sourceFile = this;
+
+        for (const fileTextChanges of combinedCodeFix.getChanges()) {
+            const changes = fileTextChanges.getTextChanges();
+            removeUnnecessaryDoubleBlankLines(changes);
+            applyTextChanges(changes);
+        }
+
+        return this;
+
+        function removeUnnecessaryDoubleBlankLines(changes: TextChange[]) {
+            changes.sort((a, b) => a.getSpan().getStart() - b.getSpan().getStart());
+            // when a file has no imports, it will add a double newline to every change
+            // so remove them except for the last change
+            for (let i = 0; i < changes.length - 1; i++) { // skip last change
+                const { compilerObject } = changes[i];
+                compilerObject.newText = compilerObject.newText.replace(/(\r?)\n\r?\n$/, "$1\n");
+            }
+        }
+
+        function applyTextChanges(changes: TextChange[]) {
+            // group all the changes by their start position and insert them into the file
+            const groups = ArrayUtils.groupBy(changes, change => change.getSpan().getStart());
+            let addedLength = 0;
+            for (const group of groups) {
+                // these should all be import declarations so it should be safe
+                const insertPos = group[0].getSpan().getStart() + addedLength;
+                const newText = group.map(item => item.getNewText()).join("");
+
+                insertIntoTextRange({
+                    sourceFile,
+                    insertPos,
+                    newText
+                });
+
+                addedLength += newText.length;
+            }
+        }
     }
 
     /**
@@ -736,6 +784,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param textChanges - Text changes.
      */
     applyTextChanges(textChanges: ReadonlyArray<TextChange>) {
+        // do nothing if no changes
+        if (textChanges.length === 0)
+            return this;
+
         this.forgetDescendants();
         replaceNodeText({
             sourceFile: this._sourceFile,

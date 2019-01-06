@@ -6,7 +6,7 @@ import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePo
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
-    TypeGuards, StoredComparer } from "../../../utils";
+    TypeGuards, StoredComparer, getCompilerForEachChildren } from "../../../utils";
 import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
 import { Type } from "../../types";
@@ -517,7 +517,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @internal
      */
     *_getChildrenInCacheIterator(): IterableIterator<Node> {
-        const children = this._hasParsedTokens() ? this._getCompilerChildren() : this._getCompilerForEachChildren();
+        const children = this._getCompilerChildrenFast();
         for (const child of children) {
             if (this._context.compilerFactory.hasCompilerNode(child))
                 yield this._context.compilerFactory.getExistingCompilerNode(child)!;
@@ -1640,11 +1640,15 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @internal
      */
     _getCompilerForEachChildren(): ts.Node[] {
-        const children: ts.Node[] = [];
-        this.compilerNode.forEachChild(child => {
-            children.push(child);
-        });
-        return children;
+        return getCompilerForEachChildren(this.compilerNode);
+    }
+
+    /**
+     * Gets children using forEachChildren if it has no parsed tokens, otherwise getChildren.
+     * @internal
+     */
+    _getCompilerChildrenFast() {
+        return this._hasParsedTokens() ? this._getCompilerChildren() : this._getCompilerForEachChildren();
     }
 
     /**

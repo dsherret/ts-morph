@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { Node } from "../../compiler";
+import { Node, SourceFile } from "../../compiler";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards, StringUtils } from "../../utils";
 import { getEndPosFromIndex, getInsertPosFromIndex, getRangeFromArray, verifyAndGetIndex } from "../helpers";
@@ -30,13 +30,36 @@ export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions
             insertPos,
             newText,
             replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
-        }), new NodeHandlerFactory().getForRange({
+        }), new NodeHandlerFactory().getForParentRange({
             parent,
             start: insertPos,
             end: insertPos + newText.length,
             replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength,
             replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes,
             customMappings: opts.customMappings
+        }));
+}
+
+export interface InsertIntoTextRangeOptions {
+    sourceFile: SourceFile;
+    insertPos: number;
+    newText: string;
+}
+
+/**
+ * Inserts a text range into a source file.
+ */
+export function insertIntoTextRange(opts: InsertIntoTextRangeOptions) {
+    const { insertPos, newText, sourceFile } = opts;
+
+    doManipulation(sourceFile,
+        new InsertionTextManipulator({
+            insertPos,
+            newText
+        }), new NodeHandlerFactory().getForRange({
+            sourceFile,
+            start: insertPos,
+            end: insertPos + newText.length
         }));
 }
 
@@ -173,7 +196,7 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
     const replacingLength = endPos - insertPos;
     const newText = getNewText();
 
-    doManipulation(parent._sourceFile, new InsertionTextManipulator({ insertPos, replacingLength, newText }), new NodeHandlerFactory().getForRange({
+    doManipulation(parent._sourceFile, new InsertionTextManipulator({ insertPos, replacingLength, newText }), new NodeHandlerFactory().getForParentRange({
         parent: parent.getChildSyntaxListOrThrow(),
         start: insertPos,
         end: insertPos + newText.length,

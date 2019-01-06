@@ -5,6 +5,7 @@ export * from "./NodeHandler";
 export * from "./NodeHandlerFactory";
 export * from "./NodeHandlerHelper";
 export * from "./ParentFinderReplacementNodeHandler";
+export * from "./RangeHandler";
 export * from "./RangeParentHandler";
 export * from "./StraightReplacementNodeHandler";
 export * from "./TryOrForgetNodeHandler";

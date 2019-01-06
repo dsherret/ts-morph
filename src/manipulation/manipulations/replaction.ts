@@ -71,7 +71,7 @@ export function replaceTextPossiblyCreatingChildNodes(opts: ReplaceTextPossiblyC
         insertPos: replacePos,
         replacingLength,
         newText
-    }), new NodeHandlerFactory().getForRange({
+    }), new NodeHandlerFactory().getForParentRange({
         parent,
         start: replacePos,
         end: replacePos + newText.length

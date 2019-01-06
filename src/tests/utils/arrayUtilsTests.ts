@@ -164,4 +164,12 @@ describe(nameof(ArrayUtils), () => {
             doTest([1, 2, 3, 4, 5], [3, 4, 5, 6], false);
         });
     });
+
+    describe(`#${nameof(ArrayUtils.groupBy)}()`, () => {
+        it("should group by the specified property", () => {
+            const items = [{ id: 1, name: "Name1" }, { id: 3, name: "Name2" }, { id: 2, name: "Name1" }];
+            const result = ArrayUtils.groupBy(items, item => item.name);
+            expect(result).to.deep.equal([[items[0], items[2]], [items[1]]]);
+        });
+    });
 });

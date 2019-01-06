@@ -228,6 +228,8 @@ Or to get the module specifier text from one source file to another source file 
 const moduleSpecifier = sourceFileFrom.getRelativePathAsModuleSpecifierTo(sourceFileTo);
 ```
 
+## Source File Code Fixes
+
 ### Organizing Imports
 
 It's possible to organize all the imports in a source file via the ["organize imports"](https://blogs.msdn.microsoft.com/typescript/2018/03/27/announcing-typescript-2-8/)
@@ -238,3 +240,11 @@ sourceFile.organizeImports();
 ```
 
 Note: This will forget all the previously navigated nodes so it's recommended to make this either the first or last action you do to a source file.
+
+### Add Missing Imports
+
+To add all the missing import declarations to a source file, use the following method:
+
+```ts
+sourceFile.fixMissingImports();
+```

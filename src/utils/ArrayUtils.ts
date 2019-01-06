@@ -73,6 +73,22 @@ export class ArrayUtils {
         return items;
     }
 
+    static groupBy<T>(items: T[], getGroup: (item: T) => string | number) {
+        const result: T[][] = [];
+        const groups: { [key: string]: T[]; } = {};
+
+        for (const item of items) {
+            const group = getGroup(item).toString();
+            if (groups[group] == null) {
+                groups[group] = [];
+                result.push(groups[group]);
+            }
+            groups[group].push(item);
+        }
+
+        return result;
+    }
+
     static binaryInsertWithOverwrite<T>(items: T[], newItem: T, comparer: Comparer<T>) {
         let top = items.length - 1;
         let bottom = 0;

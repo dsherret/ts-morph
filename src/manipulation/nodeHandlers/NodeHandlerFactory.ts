@@ -1,4 +1,4 @@
-import { Node } from "../../compiler";
+import { Node, SourceFile } from "../../compiler";
 import * as errors from "../../errors";
 import { CompilerFactory } from "../../factories";
 import { SyntaxKind, ts } from "../../typescript";
@@ -7,6 +7,7 @@ import { DefaultParentHandler } from "./DefaultParentHandler";
 import { ForgetChangedNodeHandler } from "./ForgetChangedNodeHandler";
 import { NodeHandler } from "./NodeHandler";
 import { ParentFinderReplacementNodeHandler } from "./ParentFinderReplacementNodeHandler";
+import { RangeHandler } from "./RangeHandler";
 import { RangeParentHandler } from "./RangeParentHandler";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
 import { TryOrForgetNodeHandler } from "./TryOrForgetNodeHandler";
@@ -25,13 +26,19 @@ export interface ReplaceTreeCreatingSyntaxListOptions {
     insertPos: number;
 }
 
-export interface ReplaceTreeWithRangeOptions {
+export interface ReplaceTreeWithParentRangeOptions {
     parent: Node;
     start: number;
     end: number;
     replacingLength?: number;
     replacingNodes?: Node[];
     customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
+}
+
+export interface ReplaceTreeWithRangeOptions {
+    sourceFile: SourceFile;
+    start: number;
+    end: number;
 }
 
 export interface ReplaceTreeWithChildIndexOptions {
@@ -68,7 +75,7 @@ export class NodeHandlerFactory {
             return new ParentFinderReplacementNodeHandler(compilerFactory, parentHandler, changingParent);
     }
 
-    getForRange(opts: ReplaceTreeWithRangeOptions) {
+    getForParentRange(opts: ReplaceTreeWithParentRangeOptions) {
         const { parent: changingParent, start, end, replacingLength, replacingNodes, customMappings } = opts;
         const sourceFile = changingParent.getSourceFile();
         const compilerFactory = sourceFile._context.compilerFactory;
@@ -78,6 +85,13 @@ export class NodeHandlerFactory {
             return parentHandler;
         else
             return new ParentFinderReplacementNodeHandler(compilerFactory, parentHandler, changingParent);
+    }
+
+    getForRange(opts: ReplaceTreeWithRangeOptions) {
+        const { sourceFile, start, end } = opts;
+        const compilerFactory = sourceFile._context.compilerFactory;
+
+        return new RangeHandler(compilerFactory, { start, end });
     }
 
     getForChildIndex(opts: ReplaceTreeWithChildIndexOptions) {
