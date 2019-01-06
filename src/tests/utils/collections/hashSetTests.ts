@@ -2,17 +2,29 @@
 import { ArrayUtils, Es5HashSet } from "../../../utils";
 
 describe(nameof(Es5HashSet), () => {
-    it("should add values to the hash set and say they exist when they do", () => {
-        const hashSet = new Es5HashSet<string>();
+    function runTest<T>(value: T) {
+        const hashSet = new Es5HashSet<T>();
         expect(ArrayUtils.from(hashSet.values())).to.deep.equal([]);
-        expect(hashSet.has("")).to.be.false;
-        hashSet.add("");
-        expect(ArrayUtils.from(hashSet.values())).to.deep.equal([""]);
-        expect(hashSet.has("")).to.be.true;
-        expect(hashSet.delete("")).to.be.true;
-        expect(hashSet.delete("")).to.be.false;
+        expect(hashSet.has(value)).to.be.false;
+        hashSet.add(value);
+        expect(ArrayUtils.from(hashSet.values())).to.deep.equal([value]);
+        expect(hashSet.has(value)).to.be.true;
+        expect(hashSet.delete(value)).to.be.true;
+        expect(hashSet.delete(value)).to.be.false;
         expect(ArrayUtils.from(hashSet.values())).to.deep.equal([]);
-        expect(hashSet.has("")).to.be.false;
+        expect(hashSet.has(value)).to.be.false;
+    }
+
+    it("should add values to the hash set and say they exist when they do for strings", () => {
+        runTest("");
+    });
+
+    it("should add values to the hash set and say they exist when they do for numbers", () => {
+        runTest(5);
+    });
+
+    it("should add values to the hash set and say they exist when they do for objects", () => {
+        runTest({ test: "string" });
     });
 
     describe(nameof<Es5HashSet<any>>(s => s.clear), () => {

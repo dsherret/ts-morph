@@ -1,4 +1,6 @@
-﻿export function createHashSet<T>(): HashSet<T> {
+﻿import { Es5PropSaver } from "../Es5PropSaver";
+
+export function createHashSet<T>(): HashSet<T> {
     if (typeof Set !== "undefined")
         return new Set<T>();
     return new Es5HashSet<T>();
@@ -13,32 +15,59 @@ export interface HashSet<T> {
 }
 
 export class Es5HashSet<T> implements HashSet<T> {
-    private readonly items: T[] = [];
+    private readonly items: { [key: string]: T; } = {};
+    private readonly propSaver = new Es5PropSaver<T, string>();
+    private currentId = 0;
 
     has(value: T) {
-        // slow and O(n)...
-        return this.items.indexOf(value) >= 0;
+        const key = this.getKey(value);
+        if (key == null)
+            return false;
+        return this.items[key] != null;
     }
 
     add(value: T) {
-        if (!this.has(value))
-            this.items.push(value);
+        if (this.has(value))
+            return;
+
+        this.items[this.generateNewKey(value)] = value;
     }
 
     delete(value: T) {
-        const index = this.items.indexOf(value);
-        if (index === -1)
+        const key = this.getKey(value);
+        if (key == null || this.items[key] == null)
             return false;
-        this.items.splice(index, 1);
+
+        delete this.items[key];
         return true;
     }
 
     clear() {
-        this.items.length = 0;
+        for (const key of Object.keys(this.items))
+            delete this.items[key];
     }
 
     *values() {
-        for (const item of this.items)
-            yield item;
+        for (const key of Object.keys(this.items))
+            yield this.items[key];
+    }
+
+    private generateNewKey(value: T) {
+        let id: string;
+
+        if (typeof value === "string" || typeof value === "number")
+            id = value.toString();
+        else {
+            id = (this.currentId++).toString();
+            this.propSaver.set(value, id);
+        }
+
+        return id;
+    }
+
+    private getKey(value: T) {
+        if (typeof value === "string" || typeof value === "number")
+            return value.toString();
+        return this.propSaver.get(value);
     }
 }
