@@ -15,6 +15,7 @@ if (TypeScriptVersionChecker.isGreaterThanOrEqual(3, 2, 0)) {
 
             expect(restSymbolType.isTuple()).to.be.true;
             expect(restType.isTuple()).to.be.true;
+            expect(restType.getTargetTypeOrThrow().isTuple()).to.be.true;
         });
     });
 }
