@@ -8,13 +8,13 @@
 
 [TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (11 October 2018)
+## Library Development - Progress Update (06 January 2019)
 
-TypeScript 3.1 support was added in v17. View information on breaking changes in [breaking-changes.md](breaking-changes.md).
+View information on breaking changes in [breaking-changes.md](breaking-changes.md).
 
 This library is still under early active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
-Please open an issue if find a feature missing or bug that isn't in the issue tracker.
+Please open an issue if you find a feature missing or bug that isn't in the issue tracker.
 
 ### Report
 
@@ -95,7 +95,7 @@ Or navigate existing compiler nodes created with the TypeScript compiler (the `t
 import { createWrappedNode, ClassDeclaration, ts } from "ts-simple-ast";
 
 // some code that creates a class declaration using the ts object
-const classNode: ts.ClassDeclaration = ...; 
+const classNode: ts.ClassDeclaration = ...;
 
 // create and use a wrapped node
 const classDec = createWrappedNode(classNode) as ClassDeclaration;
