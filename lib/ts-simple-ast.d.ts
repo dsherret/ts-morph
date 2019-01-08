@@ -470,17 +470,17 @@ export declare class Project {
      */
     getSourceFile(searchFunction: (file: SourceFile) => boolean): SourceFile | undefined;
     /**
-     * Gets all the source files contained in the compiler wrapper.
+     * Gets all the source files added to the project.
      * @param globPattern - Glob pattern for filtering out the source files.
      */
     getSourceFiles(): SourceFile[];
     /**
-     * Gets all the source files contained in the compiler wrapper that match a pattern.
+     * Gets all the source files added to the project that match a pattern.
      * @param globPattern - Glob pattern for filtering out the source files.
      */
     getSourceFiles(globPattern: string): SourceFile[];
     /**
-     * Gets all the source files contained in the compiler wrapper that match the passed in patterns.
+     * Gets all the source files added to the project that match the passed in patterns.
      * @param globPatterns - Glob patterns for filtering out the source files.
      */
     getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
@@ -3390,7 +3390,7 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
      *
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNode(): NumericLiteral | StringLiteral | Identifier | ComputedPropertyName | undefined;
+    getPropertyNameNode(): Identifier | NumericLiteral | StringLiteral | ComputedPropertyName | undefined;
 }
 
 export declare class ObjectBindingPattern extends Node<ts.ObjectBindingPattern> {
@@ -7451,11 +7451,11 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     saveSync(): void;
     /**
-     * Gets any referenced files.
+     * Gets any source files referenced via `/// <reference path="..." />` comments.
      */
     getReferencedFiles(): SourceFile[];
     /**
-     * Gets the source files for any type reference directives.
+     * Gets any source files referenced via `/// <reference types="..." />` comments.
      */
     getTypeReferenceDirectives(): SourceFile[];
     /**
@@ -7586,10 +7586,16 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Organizes the imports in the file.
      *
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(settings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
+    organizeImports(formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
+    /**
+     * Code fix to add import declarations for identifiers that are referenced, but not imported in the source file.
+     * @param formatSettings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
+     */
+    fixMissingImports(formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
     /**
      * Applies the text changes to the source file.
      *
@@ -8880,21 +8886,21 @@ export declare class LanguageService {
      * Gets the formatting edits for a range.
      * @param filePath - File path.
      * @param range - Position range.
-     * @param settings - Settings.
+     * @param formatSettings - Format code settings.
      */
-    getFormattingEditsForRange(filePath: string, range: [number, number], settings: FormatCodeSettings): TextChange[];
+    getFormattingEditsForRange(filePath: string, range: [number, number], formatSettings: FormatCodeSettings): TextChange[];
     /**
      * Gets the formatting edits for a document.
      * @param filePath - File path of the source file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      */
-    getFormattingEditsForDocument(filePath: string, settings: FormatCodeSettings): TextChange[];
+    getFormattingEditsForDocument(filePath: string, formatSettings: FormatCodeSettings): TextChange[];
     /**
      * Gets the formatted text for a document.
      * @param filePath - File path of the source file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      */
-    getFormattedDocumentText(filePath: string, settings: FormatCodeSettings): string;
+    getFormattedDocumentText(filePath: string, formatSettings: FormatCodeSettings): string;
     /**
      * Gets the emit output of a source file.
      * @param sourceFile - Source file.
@@ -8925,34 +8931,42 @@ export declare class LanguageService {
      * Gets the file text changes for organizing the imports in a source file.
      *
      * @param sourceFile - Source file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(sourceFile: SourceFile, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
+    organizeImports(sourceFile: SourceFile, formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
     /**
      * Gets the file text changes for organizing the imports in a source file.
      *
      * @param filePath - File path of the source file.
-     * @param settings - Format code settings.
+     * @param formatSettings - Format code settings.
      * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(filePath: string, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
+    organizeImports(filePath: string, formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
     /**
      * Gets the edit information for applying a refactor at a the provided position in a source file.
      * @param filePathOrSourceFile - File path or source file to get the edits for.
-     * @param formatOptions - Fomat code settings.
+     * @param formatSettings - Fomat code settings.
      * @param positionOrRange - Position in the source file where to apply given refactor.
      * @param refactorName - Refactor name.
      * @param actionName - Refactor action name.
      * @param preferences - User preferences for refactoring.
      */
-    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatOptions: FormatCodeSettings, positionOrRange: number | TextRange, refactorName: string, actionName: string, preferences?: UserPreferences): RefactorEditInfo | undefined;
+    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings, positionOrRange: number | TextRange, refactorName: string, actionName: string, preferences?: UserPreferences): RefactorEditInfo | undefined;
+    /**
+     * Gets file changes and actions to perform for the provided fixId.
+     * @param filePathOrSourceFile - File path or source file to get the combined code fixes for.
+     * @param fixId - Identifier for the code fix (ex. "fixMissingImport"). These ids are found in the `ts.codefix` namespace in the compiler api source.
+     * @param formatSettings - Format code settings.
+     * @param preferences - User preferences for refactoring.
+     */
+    getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: {}, formatSettings?: FormatCodeSettings, preferences?: UserPreferences): CombinedCodeActions;
     /**
      * Gets the edit information for applying a code fix at the provided text range in a source file.
      * @param filePathOrSourceFile - File path or source file to get the code fixes for.
      * @param start - Start position of the text range to be fixed.
      * @param end - End position of the text range to be fixed.
-     * @param errorCodes - One or more error codes associated with the code fixes to apply.
+     * @param errorCodes - One or more error codes associated with the code fixes to retrieve.
      * @param formatOptions - Format code settings.
      * @param preferences - User preferences for refactoring.
      */
@@ -9048,11 +9062,24 @@ export declare class Program {
  */
 export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
     protected constructor();
-    /** Gets the compiler text change. */
+    /** Gets the compiler object. */
     readonly compilerObject: TCompilerObject;
     /** Description of the code action. */
     getDescription(): string;
     /** Text changes to apply to each file as part of the code action. */
+    getChanges(): FileTextChanges[];
+}
+
+/**
+ * Represents file changes.
+ *
+ * Commands are currently not implemented.
+ */
+export declare class CombinedCodeActions {
+    private constructor();
+    /** Gets the compiler object. */
+    readonly compilerObject: ts.CombinedCodeActions;
+    /** Text changes to apply to each file. */
     getChanges(): FileTextChanges[];
 }
 
@@ -9300,6 +9327,10 @@ export declare class FileTextChanges {
      * Gets the file path.
      */
     getFilePath(): string;
+    /**
+     * Gets the source file if it was in the cache at the time of this class' creation.
+     */
+    getSourceFile(): SourceFile | undefined;
     /**
      * Gets the text changes
      */
