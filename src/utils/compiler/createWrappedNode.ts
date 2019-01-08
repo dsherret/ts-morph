@@ -28,7 +28,7 @@ export interface CreateWrappedNodeOptions {
 export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: CreateWrappedNodeOptions = {}): CompilerNodeToWrappedType<T> {
     const { compilerOptions = {}, sourceFile, typeChecker } = opts;
     const projectContext = new ProjectContext(new FileSystemWrapper(new DefaultFileSystemHost()), compilerOptions, { createLanguageService: false, typeChecker });
-    const wrappedSourceFile = projectContext.compilerFactory.getSourceFile(getSourceFileNode());
+    const wrappedSourceFile = projectContext.compilerFactory.getSourceFile(getSourceFileNode(), { markInProject: true });
 
     return projectContext.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile);
 

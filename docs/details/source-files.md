@@ -161,7 +161,7 @@ Note: This does not delete the file from the file system. To do delete it, call 
 
 ### Referenced files
 
-This returns any files that are referenced via `/// <reference path="..." />` statements:
+This returns any files that are referenced via `/// <reference path="..." />` comments:
 
 ```ts
 const referencedFiles = sourceFile.getReferencedFiles();
@@ -169,7 +169,7 @@ const referencedFiles = sourceFile.getReferencedFiles();
 
 ### Type reference directives
 
-This returns any files that are referenced via `/// <reference types="..." />` statements:
+This returns any files that are referenced via `/// <reference types="..." />` comments:
 
 ```ts
 const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();

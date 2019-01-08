@@ -116,7 +116,7 @@ export class CompilerFactory {
      * @param structureOrText - Structure or text.
      * @param options - Options.
      */
-    createSourceFile(filePath: string, sourceFileText: string | SourceFileStructure | WriterFunction, options: SourceFileCreateOptions) {
+    createSourceFile(filePath: string, sourceFileText: string | SourceFileStructure | WriterFunction, options: SourceFileCreateOptions & { markInProject: boolean; }) {
         sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.context.createWriter(), sourceFileText) : sourceFileText || "";
         if (typeof sourceFileText === "string")
             return this.createSourceFileFromText(filePath, sourceFileText, options);
@@ -138,12 +138,12 @@ export class CompilerFactory {
      * @param options - Options.
      * @throws InvalidOperationError if the file exists.
      */
-    createSourceFileFromText(filePath: string, sourceText: string, options: SourceFileCreateOptions) {
+    createSourceFileFromText(filePath: string, sourceText: string, options: SourceFileCreateOptions & { markInProject: boolean; }) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         if (options != null && options.overwrite === true)
-            return this.createOrOverwriteSourceFileFromText(filePath, sourceText);
+            return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options);
         this.throwIfFileExists(filePath);
-        return this.createSourceFileFromTextInternal(filePath, sourceText);
+        return this.createSourceFileFromTextInternal(filePath, sourceText, options);
     }
 
     /**
@@ -158,15 +158,16 @@ export class CompilerFactory {
         throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
     }
 
-    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string) {
+    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string, options: { markInProject: boolean; }) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath);
+        const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
         if (existingSourceFile != null) {
             existingSourceFile.getChildren().forEach(c => c.forget());
             this.replaceCompilerNode(existingSourceFile, this.createCompilerSourceFileFromText(filePath, sourceText));
             return existingSourceFile;
         }
-        return this.createSourceFileFromTextInternal(filePath, sourceText);
+
+        return this.createSourceFileFromTextInternal(filePath, sourceText, options);
     }
 
     /**
@@ -182,14 +183,17 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    addOrGetSourceFileFromFilePath(filePath: string): SourceFile | undefined {
+    addOrGetSourceFileFromFilePath(filePath: string, options: { markInProject: boolean; }): SourceFile | undefined {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null && this.context.fileSystemWrapper.fileExistsSync(filePath)) {
             this.context.logger.log(`Loading file: ${filePath}`);
-            sourceFile = this.createSourceFileFromTextInternal(filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()));
+            sourceFile = this.createSourceFileFromTextInternal(filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()), options);
             sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
         }
+
+        if (sourceFile != null && options.markInProject)
+            sourceFile._markAsInProject();
 
         return sourceFile;
     }
@@ -223,7 +227,7 @@ export class CompilerFactory {
                 throw new errors.NotImplementedError("Could not find node source file.");
             currentNode = currentNode.parent;
         }
-        return this.getSourceFile(currentNode as ts.SourceFile);
+        return this.getSourceFile(currentNode as ts.SourceFile, { markInProject: false });
     }
 
     /**
@@ -248,7 +252,7 @@ export class CompilerFactory {
      */
     getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: SourceFile): CompilerNodeToWrappedType<NodeType> {
         if (compilerNode.kind === SyntaxKind.SourceFile)
-            return this.getSourceFile(compilerNode as any as ts.SourceFile) as Node as CompilerNodeToWrappedType<NodeType>;
+            return this.getSourceFile(compilerNode as any as ts.SourceFile, { markInProject: false }) as Node as CompilerNodeToWrappedType<NodeType>;
 
         return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode,
             () => createNode.call(this, kindToWrapperMappings[compilerNode.kind] || Node)
@@ -276,11 +280,11 @@ export class CompilerFactory {
         }
     }
 
-    private createSourceFileFromTextInternal(filePath: string, text: string): SourceFile {
+    private createSourceFileFromTextInternal(filePath: string, text: string, options: { markInProject: boolean; }): SourceFile {
         const hasBom = StringUtils.hasBom(text);
         if (hasBom)
             text = StringUtils.stripBom(text);
-        const sourceFile = this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text));
+        const sourceFile = this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text), options);
         if (hasBom)
             sourceFile._hasBom = true;
         return sourceFile;
@@ -294,14 +298,21 @@ export class CompilerFactory {
      * Gets a wrapped source file from a compiler source file.
      * @param sourceFile - Compiler source file.
      */
-    getSourceFile(compilerSourceFile: ts.SourceFile): SourceFile {
+    getSourceFile(compilerSourceFile: ts.SourceFile, options: { markInProject: boolean; }): SourceFile {
         let wasAdded = false;
         const sourceFile = this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
             const createdSourceFile = new SourceFile(this.context, compilerSourceFile);
+
+            if (!options.markInProject)
+                this.context.inProjectCoordinator.setSourceFileNotInProject(createdSourceFile);
+
             this.addSourceFileToCache(createdSourceFile);
             wasAdded = true;
             return createdSourceFile;
         });
+
+        if (options.markInProject)
+            sourceFile._markAsInProject();
 
         if (wasAdded)
             this.sourceFileAddedEventContainer.fire(sourceFile);
@@ -319,12 +330,15 @@ export class CompilerFactory {
      * Gets a directory from a path.
      * @param dirPath - Directory path.
      */
-    getDirectoryFromPath(dirPath: string) {
+    getDirectoryFromPath(dirPath: string, options: { markInProject: boolean; }) {
         dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
         let directory = this.directoryCache.get(dirPath);
 
         if (directory == null && this.context.fileSystemWrapper.directoryExistsSync(dirPath))
             directory = this.directoryCache.createOrAddIfExists(dirPath);
+
+        if (directory != null && options.markInProject)
+            directory._markAsInProject();
 
         return directory;
     }
@@ -333,8 +347,11 @@ export class CompilerFactory {
      * Creates or adds a directory if it doesn't exist.
      * @param dirPath - Directory path.
      */
-    createDirectoryOrAddIfExists(dirPath: string) {
-        return this.directoryCache.createOrAddIfExists(dirPath);
+    createDirectoryOrAddIfExists(dirPath: string, options: { markInProject: boolean; }) {
+        const directory = this.directoryCache.createOrAddIfExists(dirPath);
+        if (directory != null && options.markInProject)
+            directory._markAsInProject();
+        return directory;
     }
 
     /**
@@ -343,6 +360,16 @@ export class CompilerFactory {
      */
     getDirectoryFromCache(dirPath: string) {
         return this.directoryCache.get(dirPath);
+    }
+
+    /**
+     * Gets a directory from the cache, but only if it's in the cache.
+     * @param dirPath - Directory path.
+     */
+    getDirectoryFromCacheOnlyIfInCache(dirPath: string) {
+        return this.directoryCache.has(dirPath)
+            ? this.directoryCache.get(dirPath)
+            : undefined;
     }
 
     /**
@@ -521,11 +548,11 @@ export class CompilerFactory {
         if (compilerNode.kind === SyntaxKind.SourceFile) {
             const sourceFile = compilerNode as ts.SourceFile;
             this.directoryCache.removeSourceFile(sourceFile.fileName);
-            const tsSourceFile = this.sourceFileCacheByFilePath.get(sourceFile.fileName);
+            const wrappedSourceFile = this.sourceFileCacheByFilePath.get(sourceFile.fileName);
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
             this.documentRegistry.removeSourceFile(sourceFile.fileName);
-            if (tsSourceFile != null)
-                this.sourceFileRemovedEventContainer.fire(tsSourceFile);
+            if (wrappedSourceFile != null)
+                this.sourceFileRemovedEventContainer.fire(wrappedSourceFile);
         }
     }
 

@@ -194,7 +194,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     _copyInternal(filePath: string, options: SourceFileCopyOptions = {}) {
         const { overwrite = false } = options;
-        filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        const { compilerFactory, fileSystemWrapper } = this._context;
+        filePath = fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
         if (filePath === this.getFilePath())
             return false;
@@ -203,12 +204,20 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         function getCopiedSourceFile(currentFile: SourceFile) {
             try {
-                return currentFile._context.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), { overwrite });
+                return compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(),
+                    { overwrite, markInProject: getShouldBeInProject() });
             } catch (err) {
                 if (err instanceof errors.InvalidOperationError)
                     throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
                 else
                     throw err;
+            }
+
+            function getShouldBeInProject() {
+                if (currentFile._isInProject())
+                    return true;
+                const destinationFile = compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
+                return destinationFile != null && destinationFile._isInProject();
             }
         }
     }
@@ -299,11 +308,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         if (filePath === this.getFilePath())
             return false;
 
+        let markAsInProject = false;
         if (overwrite) {
             // remove the past file if it exists
             const existingSourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
-            if (existingSourceFile != null)
+            if (existingSourceFile != null) {
+                markAsInProject = existingSourceFile._isInProject();
                 existingSourceFile.forget();
+            }
         }
         else
             this._context.compilerFactory.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
@@ -312,6 +324,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             newFilePath: filePath,
             sourceFile: this
         });
+
+        if (markAsInProject)
+            this._markAsInProject();
+        if (this._isInProject())
+            this.getDirectory()._markAsInProject();
 
         return true;
     }
@@ -427,24 +444,22 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets any referenced files.
+     * Gets any source files referenced via `/// <reference path="..." />` comments.
      */
     getReferencedFiles() {
-        // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.referencedFiles || [])
-            .map(f => this._context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
+            .map(f => this._context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), { markInProject: false }))
             .filter(f => f != null) as SourceFile[];
     }
 
     /**
-     * Gets the source files for any type reference directives.
+     * Gets any source files referenced via `/// <reference types="..." />` comments.
      */
     getTypeReferenceDirectives() {
-        // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.typeReferenceDirectives || [])
-            .map(f => this._context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
+            .map(f => this._context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), { markInProject: false }))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -830,6 +845,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         this.replaceText([0, this.getEnd()], fileText);
         this._setIsSaved(true); // saved when loaded from file system
         return FileSystemRefreshResult.Updated;
+    }
+
+    /** @internal */
+    _isInProject() {
+        return this._context.inProjectCoordinator.isSourceFileInProject(this);
+    }
+
+    /** @internal */
+    _markAsInProject() {
+        this._context.inProjectCoordinator.markSourceFileAsInProject(this);
     }
 }
 

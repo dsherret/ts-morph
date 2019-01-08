@@ -7,7 +7,7 @@ import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsCon
 import { SourceFileStructure } from "./structures";
 import { WriterFunction } from "./types";
 import { ts, CompilerOptions } from "./typescript";
-import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver, getTextFromStringOrWriter } from "./utils";
+import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
 
 export interface ProjectOptions {
     /** Compiler options */
@@ -117,13 +117,16 @@ export class Project {
     resolveSourceFileDependencies() {
         const sourceFiles: SourceFile[] = [];
         const onSourceFileAdded = (sourceFile: SourceFile) => sourceFiles.push(sourceFile);
-        this._context.compilerFactory.onSourceFileAdded(onSourceFileAdded);
+        const { compilerFactory, inProjectCoordinator } = this._context;
+
+        compilerFactory.onSourceFileAdded(onSourceFileAdded);
 
         try {
             this.getProgram().compilerObject; // create the program
+            inProjectCoordinator.markAllSourceFilesAsInProject();
             return sourceFiles;
         } finally {
-            this._context.compilerFactory.onSourceFileAdded(onSourceFileAdded, false); // unsubscribe
+            compilerFactory.onSourceFileAdded(onSourceFileAdded, false); // unsubscribe
         }
     }
 
@@ -137,7 +140,8 @@ export class Project {
      */
     addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
+        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath,
+            { ...options, markInProject: true });
     }
 
     /**
@@ -150,7 +154,8 @@ export class Project {
      */
     addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}): Directory {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addExistingDirectory(dirPath, options);
+        return this._context.directoryCoordinator.addExistingDirectory(dirPath,
+            { ...options, markInProject: true });
     }
 
     /**
@@ -159,7 +164,7 @@ export class Project {
      */
     createDirectory(dirPath: string): Directory {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath);
+        return this._context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath, { markInProject: true });
     }
 
     /**
@@ -177,14 +182,16 @@ export class Project {
      */
     getDirectory(dirPath: string): Directory | undefined {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.compilerFactory.getDirectoryFromCache(dirPath);
+        const { compilerFactory } = this._context;
+        // when a directory path is specified, even return directories not in the project
+        return compilerFactory.getDirectoryFromCache(dirPath);
     }
 
     /**
      * Gets all the directories.
      */
     getDirectories() {
-        return ArrayUtils.from(this._context.compilerFactory.getDirectoriesByDepth());
+        return ArrayUtils.from(this._getProjectDirectoriesByDirectoryDepth());
     }
 
     /**
@@ -200,22 +207,7 @@ export class Project {
      * @returns The matched source files.
      */
     addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
-        if (typeof fileGlobs === "string")
-            fileGlobs = [fileGlobs];
-
-        const sourceFiles: SourceFile[] = [];
-        const globbedDirectories = FileUtils.getParentMostPaths(fileGlobs.filter(g => !FileUtils.isNegatedGlob(g)).map(g => FileUtils.getGlobDir(g)));
-
-        for (const filePath of this._context.fileSystemWrapper.glob(fileGlobs)) {
-            const sourceFile = this.addExistingSourceFileIfExists(filePath);
-            if (sourceFile != null)
-                sourceFiles.push(sourceFile);
-        }
-
-        for (const dirPath of globbedDirectories)
-            this.addExistingDirectoryIfExists(dirPath, { recursive: true });
-
-        return sourceFiles;
+        return this._context.directoryCoordinator.addExistingSourceFiles(fileGlobs, { markInProject: true });
     }
 
     /**
@@ -226,7 +218,7 @@ export class Project {
      * @skipOrThrowCheck
      */
     addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
-        return this._context.directoryCoordinator.addExistingSourceFileIfExists(filePath);
+        return this._context.directoryCoordinator.addExistingSourceFileIfExists(filePath, { markInProject: true });
     }
 
     /**
@@ -237,7 +229,7 @@ export class Project {
      * @throws FileNotFoundError when the file is not found.
      */
     addExistingSourceFile(filePath: string): SourceFile {
-        return this._context.directoryCoordinator.addExistingSourceFile(filePath);
+        return this._context.directoryCoordinator.addExistingSourceFile(filePath, { markInProject: true });
     }
 
     /**
@@ -273,7 +265,8 @@ export class Project {
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
     createSourceFile(filePath: string, sourceFileText?: string | SourceFileStructure | WriterFunction, options?: SourceFileCreateOptions): SourceFile {
-        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", options || {});
+        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "",
+            { ...(options || {}), markInProject: true });
     }
 
     /**
@@ -325,9 +318,12 @@ export class Project {
     getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined {
         const filePathOrSearchFunction = getFilePathOrSearchFunction(this._context.fileSystemWrapper);
 
-        if (typeof filePathOrSearchFunction === "string")
+        if (typeof filePathOrSearchFunction === "string") {
+            // when a file path is specified, return even source files not in the project
             return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
-        return ArrayUtils.find(this._context.compilerFactory.getSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
+        }
+
+        return ArrayUtils.find(this._getProjectSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
 
         function getFilePathOrSearchFunction(fileSystemWrapper: FileSystemWrapper): string | ((file: SourceFile) => boolean) {
             if (fileNameOrSearchFunction instanceof Function)
@@ -342,23 +338,23 @@ export class Project {
     }
 
     /**
-     * Gets all the source files contained in the compiler wrapper.
+     * Gets all the source files added to the project.
      * @param globPattern - Glob pattern for filtering out the source files.
      */
     getSourceFiles(): SourceFile[];
     /**
-     * Gets all the source files contained in the compiler wrapper that match a pattern.
+     * Gets all the source files added to the project that match a pattern.
      * @param globPattern - Glob pattern for filtering out the source files.
      */
     getSourceFiles(globPattern: string): SourceFile[];
     /**
-     * Gets all the source files contained in the compiler wrapper that match the passed in patterns.
+     * Gets all the source files added to the project that match the passed in patterns.
      * @param globPatterns - Glob patterns for filtering out the source files.
      */
     getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
     getSourceFiles(globPatterns?: string | ReadonlyArray<string>): SourceFile[] {
         const { compilerFactory, fileSystemWrapper } = this._context;
-        const sourceFiles = this._context.compilerFactory.getSourceFilesByDirectoryDepth();
+        const sourceFiles = this._getProjectSourceFilesByDirectoryDepth();
 
         if (typeof globPatterns === "string" || globPatterns instanceof Array)
             return ArrayUtils.from(getFilteredSourceFiles());
@@ -376,6 +372,24 @@ export class Project {
                 for (const sourceFile of sourceFiles)
                     yield sourceFile.getFilePath();
             }
+        }
+    }
+
+    /** @internal */
+    private *_getProjectSourceFilesByDirectoryDepth() {
+        const { compilerFactory, inProjectCoordinator } = this._context;
+        for (const sourceFile of compilerFactory.getSourceFilesByDirectoryDepth()) {
+            if (inProjectCoordinator.isSourceFileInProject(sourceFile))
+                yield sourceFile;
+        }
+    }
+
+    /** @internal */
+    private *_getProjectDirectoriesByDirectoryDepth() {
+        const { compilerFactory, inProjectCoordinator } = this._context;
+        for (const directory of compilerFactory.getDirectoriesByDepth()) {
+            if (inProjectCoordinator.isDirectoryInProject(directory))
+                yield directory;
         }
     }
 

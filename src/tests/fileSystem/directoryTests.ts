@@ -36,6 +36,26 @@ describe(nameof(Directory), () => {
         });
     });
 
+    describe(nameof<Directory>(d => d.getDirectories), () => {
+        it("should return directories regardless of whether they are in the project", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir");
+            const subDir = dir.createDirectory("subDir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
+            expect(dir.getDirectories().map(d => d.getPath())).to.deep.equal(["/dir/subDir"]);
+        });
+    });
+
+    describe(nameof<Directory>(d => d.getSourceFiles), () => {
+        it("should return source files regardless of whether they are in the project", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir");
+            const file = dir.createSourceFile("file.ts");
+            project._context.inProjectCoordinator.setSourceFileNotInProject(file);
+            expect(dir.getSourceFiles().map(f => f.getFilePath())).to.deep.equal(["/dir/file.ts"]);
+        });
+    });
+
     describe("ancestor/descendant tests", () => {
         const project = getProject();
         const root = project.addExistingDirectory("");
@@ -306,6 +326,29 @@ describe(nameof(Directory), () => {
             const file = directory.createSourceFile("file.ts", fileText, { overwrite: true });
             expect(file.getFullText()).to.equal(fileText);
         });
+
+        it("should add the created source file to the project when the directory is in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            const sourceFile = dir.createSourceFile("file.ts");
+            expect(sourceFile._isInProject()).to.be.true;
+        });
+
+        it("should not add the created source file to the project when the directory is not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const sourceFile = dir.createSourceFile("file.ts");
+            expect(sourceFile._isInProject()).to.be.false;
+        });
+
+        it("should not add the created source file to the project when the directory is not in the project and adding to a dir in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const sourceFile = dir.createSourceFile("/file.ts");
+            expect(sourceFile._isInProject()).to.be.false;
+        });
     });
 
     describe(nameof<Directory>(d => d.addExistingSourceFileIfExists), () => {
@@ -373,39 +416,74 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.createDirectory), () => {
-        const project = getProject([], ["childDir"]);
-        const directory = project.createDirectory("some/path");
-        directory.createDirectory("child");
-        directory.createDirectory("../../dir/other/deep/path");
-        directory.createDirectory("../../dir/other");
+        describe("common", () => {
+            const project = getProject([], ["childDir"]);
+            const directory = project.createDirectory("some/path");
+            directory.createDirectory("child");
+            directory.createDirectory("../../dir/other/deep/path");
+            directory.createDirectory("../../dir/other");
 
-        it("should have created the directories in the first area", () => {
-            testDirectoryTree(project.getDirectoryOrThrow("some/path"), {
-                directory: project.getDirectoryOrThrow("some/path"),
-                children: [{
-                    directory: project.getDirectoryOrThrow("some/path/child")
-                }]
-            });
-        });
-
-        it("should have created the directories in the second area", () => {
-            testDirectoryTree(project.getDirectoryOrThrow("dir/other"), {
-                directory: project.getDirectoryOrThrow("dir/other"),
-                children: [{
-                    directory: project.getDirectoryOrThrow("dir/other/deep"),
+            it("should have created the directories in the first area", () => {
+                testDirectoryTree(project.getDirectoryOrThrow("some/path"), {
+                    directory: project.getDirectoryOrThrow("some/path"),
                     children: [{
-                        directory: project.getDirectoryOrThrow("dir/other/deep/path")
+                        directory: project.getDirectoryOrThrow("some/path/child")
                     }]
-                }]
+                });
+            });
+
+            it("should have created the directories in the second area", () => {
+                testDirectoryTree(project.getDirectoryOrThrow("dir/other"), {
+                    directory: project.getDirectoryOrThrow("dir/other"),
+                    children: [{
+                        directory: project.getDirectoryOrThrow("dir/other/deep"),
+                        children: [{
+                            directory: project.getDirectoryOrThrow("dir/other/deep/path")
+                        }]
+                    }]
+                });
+            });
+
+            it("should not throw when a directory already exists at the specified path", () => {
+                expect(() => directory.createDirectory("child")).to.not.throw();
+            });
+
+            it("should not throw when a directory already exists on the file system at the specified path", () => {
+                expect(() => project.addExistingDirectory("/").createDirectory("childDir")).to.not.throw();
             });
         });
 
-        it("should not throw when a directory already exists at the specified path", () => {
-            expect(() => directory.createDirectory("child")).to.not.throw();
+        it("should make the created directory in the project when the current directory is", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            const subDir = dir.createDirectory("subDir");
+            expect(subDir._isInProject()).to.be.true;
         });
 
-        it("should not throw when a directory already exists on the file system at the specified path", () => {
-            expect(() => project.addExistingDirectory("/").createDirectory("childDir")).to.not.throw();
+        it("should not make the created directory in the project when the current directory is not", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const subDir = dir.createDirectory("subDir");
+            expect(subDir._isInProject()).to.be.false;
+        });
+
+        it("should not make the directory in the project when specifying an existing directory not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            const subDir = dir.createDirectory("subDir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            expect(subDir._isInProject()).to.be.false;
+            dir.createDirectory("subDir");
+            expect(subDir._isInProject()).to.be.false;
+        });
+
+        it("should not make the directory in the project when creating a directory in a directory within the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const otherDir = dir.createDirectory("/otherDir");
+            expect(otherDir._isInProject()).to.be.false;
         });
     });
 
@@ -452,6 +530,31 @@ describe(nameof(Directory), () => {
                 }]
             }, project.getDirectoryOrThrow("/"));
         });
+
+        it("should add to project when current dir is in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            dir.createDirectory("subDir").forget();
+            const subDir = dir.addExistingDirectoryIfExists("subDir")!;
+            expect(subDir._isInProject()).to.be.true;
+        });
+
+        it("should not add to project when current dir is not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            dir.createDirectory("subDir").forget();
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const subDir = dir.addExistingDirectoryIfExists("subDir")!;
+            expect(subDir._isInProject()).to.be.false;
+        });
+
+        it("should add to project when current dir is in the project, but the added one isn't", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir.createDirectory("subDir"));
+            const subDir = dir.addExistingDirectoryIfExists("subDir")!;
+            expect(subDir._isInProject()).to.be.true;
+        });
     });
 
     describe(nameof<Directory>(d => d.addExistingDirectory), () => {
@@ -486,6 +589,31 @@ describe(nameof(Directory), () => {
                     directory: project.getDirectoryOrThrow("dir/child2")
                 }]
             }, project.getDirectoryOrThrow("/"));
+        });
+
+        it("should add to project when current dir is in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            dir.createDirectory("subDir").forget();
+            const subDir = dir.addExistingDirectory("subDir");
+            expect(subDir._isInProject()).to.be.true;
+        });
+
+        it("should not add to project when current dir is not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            dir.createDirectory("subDir").forget();
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const subDir = dir.addExistingDirectory("subDir");
+            expect(subDir._isInProject()).to.be.false;
+        });
+
+        it("should add to project when current dir is in the project, but the added one isn't", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir.createDirectory("subDir"));
+            const subDir = dir.addExistingDirectory("subDir");
+            expect(subDir._isInProject()).to.be.true;
         });
     });
 
@@ -721,6 +849,56 @@ describe(nameof(Directory), () => {
             // not supported for the time being... it's complicated
             expect(() => dir2.saveSync()).to.throw(errors.InvalidOperationError);
         });
+
+        it("should be in the project when copying from a directory in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            const newDir = dir.copy("/otherDir");
+            expect(newDir._isInProject()).to.be.true;
+        });
+
+        it("should be in the project when copying from a directory in the project to a directory not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            const otherDir = project.createDirectory("/otherDir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(otherDir);
+            const newDir = dir.copy("/otherDir");
+            expect(newDir._isInProject()).to.be.true;
+            expect(otherDir._isInProject()).to.be.true;
+        });
+
+        it("should not be in the project when copying from a directory not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const newDir = dir.copy("/otherDir");
+            expect(newDir._isInProject()).to.be.false;
+        });
+
+        it("should not be in the project when copying from a directory not in the project to a directory not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            project.createDirectory("/dir2");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const newDir = dir.copy("/dir2/dir");
+            expect(newDir._isInProject()).to.be.false;
+        });
+
+        it("should have descendants not in project when copying from a directory not in the project to overwrite a directory in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            const otherDir = dir.createDirectory("/dir/otherDir");
+            otherDir.createDirectory("subDir");
+            otherDir.createSourceFile("file.ts");
+            project.createDirectory("/otherDir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const newDir = otherDir.copy("/otherDir");
+
+            expect(newDir._isInProject()).to.be.true;
+            expect(newDir.getDirectoryOrThrow("subDir")._isInProject()).to.be.false;
+            expect(newDir.getSourceFileOrThrow("file.ts")._isInProject()).to.be.false;
+            expect(dir._isInProject()).to.be.false;
+        });
     });
 
     describe(nameof<Directory>(dir => dir.copyToDirectory), () => {
@@ -840,6 +1018,55 @@ describe(nameof(Directory), () => {
             const dirFile = project.createSourceFile("dir/file.ts", "");
             dirFile.getDirectory().move("./dir2");
             expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal(["/dir2"]);
+        });
+
+        it("should be in the project when moving from a directory in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            const newDir = dir.move("/otherDir");
+            expect(newDir._isInProject()).to.be.true;
+        });
+
+        it("should be in the project when copying from a directory in the project to a directory not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            const otherDir = project.createDirectory("/otherDir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(otherDir);
+            const newDir = dir.move("/otherDir", { overwrite: true });
+            expect(newDir._isInProject()).to.be.true;
+        });
+
+        it("should not be in the project when moving from a directory not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const newDir = dir.move("/otherDir");
+            expect(newDir._isInProject()).to.be.false;
+        });
+
+        it("should not be in the project when moving from a directory not in the project to a directory not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            project.createDirectory("/dir2");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const newDir = dir.move("/dir2/dir");
+            expect(newDir._isInProject()).to.be.false;
+        });
+
+        it("should have descendants not in project when moving from a directory not in the project to overwrite a directory in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            const otherDir = dir.createDirectory("/dir/otherDir");
+            otherDir.createDirectory("subDir");
+            otherDir.createSourceFile("file.ts");
+            project.createDirectory("/otherDir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            const newDir = otherDir.move("/otherDir", { overwrite: true });
+
+            expect(newDir._isInProject()).to.be.true;
+            expect(newDir.getDirectoryOrThrow("subDir")._isInProject()).to.be.false;
+            expect(newDir.getSourceFileOrThrow("file.ts")._isInProject()).to.be.false;
+            expect(dir._isInProject()).to.be.false;
         });
     });
 

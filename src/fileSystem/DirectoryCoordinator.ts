@@ -14,42 +14,42 @@ export class DirectoryCoordinator {
     constructor(private readonly compilerFactory: CompilerFactory, private readonly fileSystemWrapper: FileSystemWrapper) {
     }
 
-    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions) {
-        const directory = this.compilerFactory.getDirectoryFromPath(dirPath);
+    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions & { markInProject: boolean; }) {
+        const directory = this.compilerFactory.getDirectoryFromPath(dirPath, options);
         if (directory == null)
             return undefined;
 
         if (options.recursive) {
             for (const descendantDirPath of FileUtils.getDescendantDirectories(this.fileSystemWrapper, dirPath))
-                this.compilerFactory.createDirectoryOrAddIfExists(descendantDirPath);
+                this.compilerFactory.createDirectoryOrAddIfExists(descendantDirPath, options);
         }
 
         return directory;
     }
 
-    addExistingDirectory(dirPath: string, options: DirectoryAddOptions) {
+    addExistingDirectory(dirPath: string, options: DirectoryAddOptions & { markInProject: boolean; }) {
         const directory = this.addExistingDirectoryIfExists(dirPath, options);
         if (directory == null)
             throw new errors.DirectoryNotFoundError(dirPath);
         return directory;
     }
 
-    createDirectoryOrAddIfExists(dirPath: string) {
-        return this.compilerFactory.createDirectoryOrAddIfExists(dirPath);
+    createDirectoryOrAddIfExists(dirPath: string, options: { markInProject: boolean; }) {
+        return this.compilerFactory.createDirectoryOrAddIfExists(dirPath, options);
     }
 
-    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
-        return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath);
+    addExistingSourceFileIfExists(filePath: string, options: { markInProject: boolean; }): SourceFile | undefined {
+        return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options);
     }
 
-    addExistingSourceFile(filePath: string): SourceFile {
-        const sourceFile = this.addExistingSourceFileIfExists(filePath);
+    addExistingSourceFile(filePath: string, options: { markInProject: boolean; }): SourceFile {
+        const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(this.fileSystemWrapper.getStandardizedAbsolutePath(filePath));
         return sourceFile;
     }
 
-    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>, options: { markInProject: boolean; }): SourceFile[] {
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
 
@@ -57,13 +57,13 @@ export class DirectoryCoordinator {
         const globbedDirectories = FileUtils.getParentMostPaths(fileGlobs.filter(g => !FileUtils.isNegatedGlob(g)).map(g => FileUtils.getGlobDir(g)));
 
         for (const filePath of this.fileSystemWrapper.glob(fileGlobs)) {
-            const sourceFile = this.addExistingSourceFileIfExists(filePath);
+            const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
         }
 
         for (const dirPath of globbedDirectories)
-            this.addExistingDirectoryIfExists(dirPath, { recursive: true });
+            this.addExistingDirectoryIfExists(dirPath, { recursive: true, markInProject: options.markInProject });
 
         return sourceFiles;
     }

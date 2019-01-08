@@ -1,7 +1,7 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { LanguageService, QuoteKind, TypeChecker, SourceFile, Diagnostic } from "./compiler";
 import * as errors from "./errors";
-import { CompilerFactory, StructurePrinterFactory } from "./factories";
+import { CompilerFactory, StructurePrinterFactory, InProjectCoordinator } from "./factories";
 import { DirectoryCoordinator, FileSystemWrapper } from "./fileSystem";
 import { CompilerOptionsContainer, IndentationText, ManipulationSettingsContainer } from "./options";
 import { CompilerOptions, ts } from "./typescript";
@@ -32,11 +32,13 @@ export class ProjectContext {
     readonly manipulationSettings = new ManipulationSettingsContainer();
     readonly structurePrinterFactory: StructurePrinterFactory;
     readonly compilerFactory: CompilerFactory;
+    readonly inProjectCoordinator: InProjectCoordinator;
 
     constructor(fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, opts: ProjectContextOptions) {
         this.fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions.set(compilerOptions);
         this.compilerFactory = new CompilerFactory(this);
+        this.inProjectCoordinator = new InProjectCoordinator(this.compilerFactory);
         this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
         this.lazyReferenceCoordinator = new LazyReferenceCoordinator(this.compilerFactory);
         this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, fileSystemWrapper);

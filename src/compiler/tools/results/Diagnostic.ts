@@ -37,7 +37,7 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
         if (this._context == null)
             return undefined;
         const file = this.compilerObject.file;
-        return file == null ? undefined : this._context.compilerFactory.getSourceFile(file);
+        return file == null ? undefined : this._context.compilerFactory.getSourceFile(file, { markInProject: false });
     }
 
     /**

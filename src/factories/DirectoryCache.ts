@@ -176,18 +176,17 @@ export class DirectoryCache {
 
     private fillParentsOfDirPath(dirPath: string) {
         const passedDirPaths: string[] = [];
-        let dir = dirPath;
-        let parentDir = FileUtils.getDirPath(dir);
-        while (dir !== parentDir) {
-            dir = parentDir;
-            parentDir = FileUtils.getDirPath(dir);
-            if (this.directoriesByPath.has(dir)) {
+        let parentDir = FileUtils.getDirPath(dirPath);
+        while (dirPath !== parentDir) {
+            dirPath = parentDir;
+            parentDir = FileUtils.getDirPath(dirPath);
+            if (this.directoriesByPath.has(dirPath)) {
                 for (const currentDirPath of passedDirPaths)
                     this.createDirectory(currentDirPath);
                 break;
             }
 
-            passedDirPaths.unshift(dir);
+            passedDirPaths.unshift(dirPath);
         }
     }
 }

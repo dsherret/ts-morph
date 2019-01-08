@@ -90,6 +90,55 @@ describe(nameof(SourceFile), () => {
             expect(sourceFile.getFullText()).to.equal(originalText);
             expect(copiedSourceFile.getFullText()).to.equal(originalText);
         });
+
+        describe("being in project", () => {
+            it("should keep the copied file as being in the project when copying to a directory in the project", () => {
+                const { sourceFile } = getInfoFromText("");
+                const newFile = sourceFile.copy("newFile.ts");
+                expect(newFile._isInProject()).to.be.true;
+            });
+
+            it("should keep the copied file as being in the project when copying to a directory not in the project", () => {
+                const { sourceFile, project } = getInfoFromText("");
+                const rootDir = sourceFile.getDirectory();
+                const subDir = rootDir.createDirectory("subDir");
+                project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
+                expect(subDir._isInProject()).to.be.false;
+                const newFile = sourceFile.copyToDirectory(subDir);
+                expect(newFile._isInProject()).to.be.true;
+                expect(subDir._isInProject()).to.be.true;
+            });
+
+            it("should not mark the out of project copied file as being in the project when copying to a directory not in the project", () => {
+                const { sourceFile, project } = getInfoFromText("");
+                const rootDir = sourceFile.getDirectory();
+                const subDir = rootDir.createDirectory("subDir");
+                const subDirFile = subDir.createSourceFile("file.ts");
+                project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
+                const newFile = subDirFile.copy("newFile.ts");
+                expect(newFile._isInProject()).to.be.false;
+            });
+
+            it("should not mark the out of project copied file as being in the project when copying to a directory in the project", () => {
+                const { sourceFile, project } = getInfoFromText("");
+                const rootDir = sourceFile.getDirectory();
+                const subDir = rootDir.createDirectory("subDir");
+                const subDirFile = subDir.createSourceFile("file.ts");
+                project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
+                const newFile = subDirFile.copy("/newFile.ts");
+                expect(newFile._isInProject()).to.be.false;
+            });
+
+            it("should mark the out of project copied file as being in the project when overwriting a file in the project", () => {
+                const { sourceFile, project } = getInfoFromText("");
+                const rootDir = sourceFile.getDirectory();
+                const subDir = rootDir.createDirectory("subDir");
+                const subDirFile = subDir.createSourceFile("file.ts");
+                project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
+                const newFile = subDirFile.copy(sourceFile.getFilePath(), { overwrite: true });
+                expect(newFile._isInProject()).to.be.true;
+            });
+        });
     });
 
     describe(nameof<SourceFile>(n => n.copyToDirectory), () => {
@@ -282,6 +331,55 @@ describe(nameof(SourceFile), () => {
                 `export interface MyInterface {}\n` +
                 `export * from "../dir/OtherInterface";`);
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./NewFile";\nexport interface OtherInterface {}`);
+        });
+
+        describe("being in the project", () => {
+            it("should keep the moved file as being in the project when moving to a directory in the project", () => {
+                const { sourceFile } = getInfoFromText("");
+                sourceFile.move("newFile.ts");
+                expect(sourceFile._isInProject()).to.be.true;
+            });
+
+            it("should keep the moved file as being in the project when moving to a directory not in the project and make the directory in the project", () => {
+                const { sourceFile, project } = getInfoFromText("");
+                const rootDir = sourceFile.getDirectory();
+                const subDir = rootDir.createDirectory("subDir");
+                project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
+                expect(subDir._isInProject()).to.be.false;
+                sourceFile.moveToDirectory(subDir);
+                expect(sourceFile._isInProject()).to.be.true;
+                expect(subDir._isInProject()).to.be.true;
+            });
+
+            it("should not mark the out of project moved file as being in the project when moving to a directory not in the project", () => {
+                const { sourceFile, project } = getInfoFromText("");
+                const rootDir = sourceFile.getDirectory();
+                const subDir = rootDir.createDirectory("subDir");
+                const subDirFile = subDir.createSourceFile("file.ts");
+                project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
+                subDirFile.move("newFile.ts");
+                expect(subDirFile._isInProject()).to.be.false;
+            });
+
+            it("should not mark the out of project moved file as being in the project when moving to a directory in the project", () => {
+                const { sourceFile, project } = getInfoFromText("");
+                const rootDir = sourceFile.getDirectory();
+                const subDir = rootDir.createDirectory("subDir");
+                const subDirFile = subDir.createSourceFile("file.ts");
+                project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
+                subDirFile.move("/newFile.ts");
+                expect(subDirFile._isInProject()).to.be.false;
+            });
+
+            it("should mark the out of project moved file as being in the project when overwriting a file in the project", () => {
+                const { sourceFile, project } = getInfoFromText("");
+                const rootDir = sourceFile.getDirectory();
+                const subDir = rootDir.createDirectory("subDir");
+                const subDirFile = subDir.createSourceFile("file.ts");
+                project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
+                subDirFile.move(sourceFile.getFilePath(), { overwrite: true });
+                expect(subDirFile._isInProject()).to.be.true;
+            });
         });
     });
 
@@ -543,7 +641,7 @@ describe(nameof(SourceFile), () => {
             const fileText = "/// <reference path='node_modules/other/referenced-file.d.ts' />\n\nimport { Test } from 'library';";
             const { sourceFile, project } = getInfoFromText(fileText, { host: fileSystem });
             const librarySourceFile = sourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow();
-            const referencedSourceFile = project.getSourceFileOrThrow("referenced-file.d.ts");
+            const referencedSourceFile = project.getSourceFileOrThrow("node_modules/other/referenced-file.d.ts");
             return { librarySourceFile, referencedSourceFile };
         }
     });
@@ -1224,6 +1322,26 @@ function myFunction(param: MyClass) {
             // need to include code that will generate something like __extends so the import gets added
             const startText = `import './MyInterface';\nclass Base {} class Child extends Base {}`;
             doTest(startText, [`'./MyInterface'`], true);
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.getReferencedFiles), () => {
+        it("should get any files referenced via reference comments", () => {
+            const { sourceFile, project } = getInfoFromText("/// <reference path='file.d.ts' />");
+            project.getFileSystem().writeFileSync("file.d.ts", "");
+            const referencedFiles = sourceFile.getReferencedFiles();
+            expect(referencedFiles.map(f => f.getFilePath())).to.deep.equal(["/file.d.ts"]);
+            expect(referencedFiles[0]._isInProject()).to.be.false;
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.getTypeReferenceDirectives), () => {
+        it("should get any files referenced via reference comments", () => {
+            const { sourceFile, project } = getInfoFromText("/// <reference types='file.d.ts' />");
+            project.getFileSystem().writeFileSync("file.d.ts", "");
+            const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
+            expect(typeReferenceDirectives.map(f => f.getFilePath())).to.deep.equal(["/file.d.ts"]);
+            expect(typeReferenceDirectives[0]._isInProject()).to.be.false;
         });
     });
 

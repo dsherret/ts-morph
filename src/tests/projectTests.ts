@@ -3,7 +3,7 @@ import { EOL } from "os";
 import * as path from "path";
 import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile, FileTextChanges } from "../compiler";
 import * as errors from "../errors";
-import { VirtualFileSystemHost } from "../fileSystem";
+import { VirtualFileSystemHost, Directory } from "../fileSystem";
 import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
@@ -101,12 +101,23 @@ describe(nameof(Project), () => {
             `{ "name": "library", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`);
         fileSystem.writeFileSync("/node_modules/library/index.js", "export class Test {}");
         fileSystem.writeFileSync("/node_modules/library/index.d.ts", "export class Test {}");
+        fileSystem.mkdirSync("/node_modules/library/subDir");
+        fileSystem.writeFileSync("/node_modules/library2/package.json",
+            `{ "name": "library2", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`);
+        fileSystem.writeFileSync("/node_modules/library2/index.js", "export class Library2 {}");
+        fileSystem.writeFileSync("/node_modules/library2/index.d.ts", "export class Library2 {}");
         fileSystem.writeFileSync("/main.ts", "/// <reference path='referenced-file.d.ts' />\n\nimport { Test } from 'library'; nameof();");
         fileSystem.writeFileSync("/referenced-file.d.ts", "declare function nameof(): void;");
         fileSystem.writeFileSync("/tsconfig.json", `{ "files": ["main.ts"] }`);
 
         const project = new Project({ tsConfigFilePath: "tsconfig.json", fileSystem, ...options });
-        return { project, initialFiles: ["/main.ts"], resolvedFiles: ["/referenced-file.d.ts", "/node_modules/library/index.d.ts"] };
+        return {
+            project,
+            initialFiles: ["/main.ts"],
+            initialDirectories: ["/"],
+            resolvedFiles: ["/referenced-file.d.ts", "/node_modules/library/index.d.ts"],
+            resolvedDirectories: ["/node_modules", "/node_modules/library"]
+        };
     }
 
     describe(nameof<Project>(project => project.getCompilerOptions), () => {
@@ -181,6 +192,23 @@ describe(nameof(Project), () => {
                 }]
             }, project.getDirectoryOrThrow("/"));
         });
+
+        it("should add the directory to the project", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "/dir/file.ts", text: "" }]);
+            const project = new Project({ fileSystem });
+            const dir = project.addExistingDirectoryIfExists("/dir")!;
+
+            expect(dir._isInProject()).to.be.true;
+        });
+
+        it("should add the directory to the project if previously not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            expect(dir._isInProject()).to.be.false;
+            project.addExistingDirectoryIfExists("/dir");
+            expect(dir._isInProject()).to.be.true;
+        });
     });
 
     describe(nameof<Project>(project => project.addExistingDirectory), () => {
@@ -215,6 +243,23 @@ describe(nameof(Project), () => {
                 }]
             }, project.getDirectoryOrThrow("/"));
         });
+
+        it("should add the directory to the project", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "/dir/file.ts", text: "" }]);
+            const project = new Project({ fileSystem });
+            const dir = project.addExistingDirectory("/dir");
+
+            expect(dir._isInProject()).to.be.true;
+        });
+
+        it("should add the directory to the project if previously not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            expect(dir._isInProject()).to.be.false;
+            project.addExistingDirectory("/dir");
+            expect(dir._isInProject()).to.be.true;
+        });
     });
 
     describe(nameof<Project>(project => project.createDirectory), () => {
@@ -247,6 +292,24 @@ describe(nameof(Project), () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["childDir"]);
             const project = new Project({ fileSystem });
             expect(() => project.createDirectory("childDir")).to.not.throw();
+        });
+
+        it("should be added to the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+
+            expect(dir._isInProject()).to.be.true;
+        });
+
+        it("should be added to the project when creating a directory that's created, but not in the project", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const dir = project.createDirectory("/dir");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
+            expect(dir._isInProject()).to.be.false;
+            const newDir = project.createDirectory("/dir");
+
+            expect(dir._isInProject()).to.be.true;
+            expect(newDir._isInProject()).to.be.true;
         });
     });
 
@@ -318,23 +381,54 @@ describe(nameof(Project), () => {
     });
 
     describe(nameof<Project>(project => project.getDirectories), () => {
-        const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const project = new Project({ fileSystem });
-        project.createSourceFile("dir/child/file.ts");
-        project.createSourceFile("dir2/child/file2.ts");
-        project.createSourceFile("dir3/child/file2.ts");
-        project.createSourceFile("dir/file.ts");
-        project.createSourceFile("dir2/file2.ts");
-
         it("should get all the directories in the order based on the directory structure", () => {
-            expect(project.getDirectories().map(d => d.getPath())).to.deep.equal([
-                project.getDirectoryOrThrow("dir"),
-                project.getDirectoryOrThrow("dir2"),
-                project.getDirectoryOrThrow("dir3/child"),
-                project.getDirectoryOrThrow("dir/child"),
-                project.getDirectoryOrThrow("dir2/child")
-            ].map(d => d.getPath()));
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const project = new Project({ fileSystem });
+            project.createSourceFile("dir/child/file.ts");
+            project.createSourceFile("dir2/child/file2.ts");
+            project.createSourceFile("dir3/child/file2.ts");
+            project.createSourceFile("dir/file.ts");
+            project.createSourceFile("dir2/file2.ts");
+
+            assertDirectories(project, [
+                "/dir",
+                "/dir2",
+                "/dir3/child", // sorted here because it's an orphan directory
+                "/dir/child",
+                "/dir2/child"
+            ]);
         });
+
+        describe("dependency resolution", () => {
+            it("should not return directories resolved when creating the program", () => {
+                const { project, initialDirectories } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+                project.getProgram().compilerObject; // cause file dependency resolution
+
+                assertDirectories(project, initialDirectories);
+            });
+
+            it(`should return directories resolved when creating the program when calling ${nameof<Project>(p => p.resolveSourceFileDependencies)}`, () => {
+                const { project, initialDirectories, resolvedDirectories } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+                project.getProgram().compilerObject; // cause file dependency resolution
+                project.resolveSourceFileDependencies();
+
+                assertDirectories(project, [...initialDirectories, ...resolvedDirectories]);
+            });
+        });
+
+        it(`should not return an ancestor directory that exists, but is not in the project`, () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const rootDir = project.createDirectory("/");
+            project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(rootDir);
+            project.createDirectory("/subDir");
+            expect(rootDir._isInProject()).to.be.false;
+
+            assertDirectories(project, ["/subDir"]);
+        });
+
+        function assertDirectories(project: Project, dirPaths: string[]) {
+            expect(project.getDirectories().map(d => d.getPath())).to.deep.equal(dirPaths);
+        }
     });
 
     describe(nameof<Project>(project => project.addSourceFilesFromTsConfig), () => {
@@ -796,7 +890,7 @@ describe(nameof(Project), () => {
     });
 
     describe(nameof<Project>(project => project.getSourceFiles), () => {
-        it("should get all the source files added to the ast sorted by directory structure", () => {
+        it("should get all the source files added to the project sorted by directory structure", () => {
             const project = new Project({ useVirtualFileSystem: true });
             project.createSourceFile("dir/child/file.ts");
             project.createSourceFile("dir/file.ts");
@@ -804,7 +898,7 @@ describe(nameof(Project), () => {
             project.createSourceFile("File1.ts");
             project.createSourceFile("file2.ts");
             expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([
-                "/File1.ts", // upercase first
+                "/File1.ts", // uppercase first
                 "/file1.ts",
                 "/file2.ts",
                 "/dir/file.ts",
@@ -855,6 +949,21 @@ describe(nameof(Project), () => {
                 expect(project.getSourceFiles(["**/src/**/*.ts", "!**/src/test/**/*.ts", "!**/*.d.ts"]).map(s => s.getFilePath())).to.deep.equal([
                     "/src/file.ts"
                 ]);
+            });
+        });
+
+        describe("dependency resolution", () => {
+            it("should not return files resolved when creating the program", () => {
+                const { project, initialFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+                project.getProgram().compilerObject; // cause file dependency resolution
+                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(initialFiles);
+            });
+
+            it(`should return files resolved when creating the program when calling ${nameof<Project>(p => p.resolveSourceFileDependencies)}`, () => {
+                const { project, initialFiles, resolvedFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
+                project.getProgram().compilerObject; // cause file dependency resolution
+                project.resolveSourceFileDependencies();
+                expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles, ...resolvedFiles]);
             });
         });
     });

@@ -249,7 +249,7 @@ export class Directory {
             return FileUtils.pathJoin(this.getPath(), g);
         });
 
-        return this._context.directoryCoordinator.addExistingSourceFiles(fileGlobs);
+        return this._context.directoryCoordinator.addExistingSourceFiles(fileGlobs, { markInProject: this._isInProject() });
     }
 
     /**
@@ -262,7 +262,8 @@ export class Directory {
      */
     addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
+        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath,
+            { ...options, markInProject: this._isInProject() });
     }
 
     /**
@@ -274,7 +275,8 @@ export class Directory {
      */
     addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this._context.directoryCoordinator.addExistingDirectory(dirPath, options);
+        return this._context.directoryCoordinator.addExistingDirectory(dirPath,
+            { ...options, markInProject: this._isInProject() });
     }
 
     /**
@@ -283,7 +285,8 @@ export class Directory {
      */
     createDirectory(dirPath: string) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this._context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath);
+        return this._context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath,
+            { markInProject: this._isInProject() });
     }
 
     /**
@@ -297,7 +300,8 @@ export class Directory {
      */
     createSourceFile(relativeFilePath: string, sourceFileText?: string | SourceFileStructure | WriterFunction, options?: SourceFileCreateOptions) {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", options || {});
+        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "",
+            { ...(options || {}), markInProject: this._isInProject() });
     }
 
     /**
@@ -309,7 +313,7 @@ export class Directory {
      */
     addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this._context.directoryCoordinator.addExistingSourceFileIfExists(filePath);
+        return this._context.directoryCoordinator.addExistingSourceFileIfExists(filePath, { markInProject: this._isInProject() });
     }
 
     /**
@@ -321,7 +325,7 @@ export class Directory {
      */
     addExistingSourceFile(relativeFilePath: string): SourceFile {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this._context.directoryCoordinator.addExistingSourceFile(filePath);
+        return this._context.directoryCoordinator.addExistingSourceFile(filePath, { markInProject: this._isInProject() });
     }
 
     /**
@@ -368,8 +372,7 @@ export class Directory {
         return new DirectoryEmitResult(false, outputFilePaths);
     }
 
-    private _emitInternal(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {})
-    {
+    private _emitInternal(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
         const { emitOnlyDtsFiles = false } = options;
         const isJsFile = options.outDir == null ? undefined : /\.js$/i;
         const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
@@ -493,10 +496,8 @@ export class Directory {
         if (originalPath === newPath)
             return this;
 
-        const fileSystem = this._context.fileSystemWrapper;
+        const { fileSystemWrapper: fileSystem, compilerFactory } = this._context;
         const copyingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
-            directory,
-            oldPath: directory.getPath(),
             newDirPath: directory === this ? newPath : fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(directory), newPath)
         }));
         const copyingSourceFiles = this.getDescendantSourceFiles().map(sourceFile => ({
@@ -506,8 +507,8 @@ export class Directory {
         }));
 
         // copy directories
-        for (const { directory, oldPath, newDirPath } of copyingDirectories)
-            this._context.compilerFactory.createDirectoryOrAddIfExists(newDirPath);
+        for (const { newDirPath } of copyingDirectories)
+            this._context.compilerFactory.createDirectoryOrAddIfExists(newDirPath, { markInProject: this._isInProject() });
 
         // copy source files
         for (const { sourceFile, newFilePath } of copyingSourceFiles)
@@ -517,7 +518,7 @@ export class Directory {
         for (const { references, newFilePath } of copyingSourceFiles)
             this.getSourceFileOrThrow(newFilePath)._updateReferencesForCopyInternal(references);
 
-        return this._context.compilerFactory.getDirectoryFromCache(newPath)!;
+        return compilerFactory.getDirectoryFromCache(newPath)!;
     }
 
     /**
@@ -543,8 +544,7 @@ export class Directory {
         if (originalPath === newPath)
             return this;
 
-        fileSystem.queueMoveDirectory(originalPath, newPath);
-        return this._moveInternal(newPath, options);
+        return this._moveInternal(newPath, options, () => fileSystem.queueMoveDirectory(originalPath, newPath));
     }
 
     /**
@@ -590,11 +590,17 @@ export class Directory {
     }
 
     /** @internal */
-    private _moveInternal(newPath: string, options?: DirectoryMoveOptions) {
+    private _moveInternal(newPath: string, options: DirectoryMoveOptions | undefined, preAction?: () => void) {
         const originalPath = this.getPath();
 
         if (originalPath === newPath)
             return this;
+
+        const existingDir = this._context.compilerFactory.getDirectoryFromCacheOnlyIfInCache(newPath);
+        const markInProject = existingDir != null && existingDir._isInProject();
+
+        if (preAction)
+            preAction();
 
         const fileSystem = this._context.fileSystemWrapper;
         const compilerFactory = this._context.compilerFactory;
@@ -627,6 +633,10 @@ export class Directory {
         // update the references
         for (const { sourceFile, references } of movingSourceFiles)
             sourceFile._updateReferencesForMoveInternal(references, originalPath);
+
+        // mark as in the project last to ensure the previous ancestor dirs aren't marked in the project as well
+        if (markInProject)
+            this._markAsInProject();
 
         return this;
     }
@@ -787,6 +797,16 @@ export class Directory {
      */
     wasForgotten() {
         return this.__context == null;
+    }
+
+    /** @internal */
+    _isInProject() {
+        return this._context.inProjectCoordinator.isDirectoryInProject(this);
+    }
+
+    /** @internal */
+    _markAsInProject() {
+        this._context.inProjectCoordinator.markDirectoryAsInProject(this);
     }
 
     /** @internal */
