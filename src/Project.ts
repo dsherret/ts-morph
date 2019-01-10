@@ -7,7 +7,7 @@ import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsCon
 import { SourceFileStructure } from "./structures";
 import { WriterFunction } from "./types";
 import { ts, CompilerOptions } from "./typescript";
-import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
+import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver, createHashSet } from "./utils";
 
 export interface ProjectOptions {
     /** Compiler options */
@@ -115,19 +115,25 @@ export class Project {
      * not specifying to not add the source files.
      */
     resolveSourceFileDependencies() {
-        const sourceFiles: SourceFile[] = [];
-        const onSourceFileAdded = (sourceFile: SourceFile) => sourceFiles.push(sourceFile);
+        const sourceFiles = createHashSet<SourceFile>();
+        const onSourceFileAdded = (sourceFile: SourceFile) => sourceFiles.add(sourceFile);
         const { compilerFactory, inProjectCoordinator } = this._context;
 
         compilerFactory.onSourceFileAdded(onSourceFileAdded);
 
         try {
             this.getProgram().compilerObject; // create the program
-            inProjectCoordinator.markAllSourceFilesAsInProject();
-            return sourceFiles;
         } finally {
             compilerFactory.onSourceFileAdded(onSourceFileAdded, false); // unsubscribe
         }
+
+        const result = inProjectCoordinator.markSourceFilesAsInProjectForResolution();
+        for (const sourceFile of result.changedSourceFiles)
+            sourceFiles.add(sourceFile);
+        for (const sourceFile of result.unchangedSourceFiles)
+            sourceFiles.delete(sourceFile);
+
+        return Array.from(sourceFiles.values());
     }
 
     /**
