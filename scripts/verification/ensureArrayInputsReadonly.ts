@@ -5,7 +5,7 @@
  * only accept readonly arrays.
  * ------------------------------------------------
  */
-import { TypeGuards, SyntaxKind } from "ts-simple-ast";
+import { TypeGuards, SyntaxKind, Node } from "ts-simple-ast";
 import { TsSimpleAstInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
@@ -19,18 +19,24 @@ export function ensureArrayInputsReadonly(inspector: TsSimpleAstInspector, addPr
             continue;
 
         // could be improved, but good enough for now
-        declaration.forEachDescendant((node, traversal) => {
+        declaration.forEachDescendant(node => {
             if (!TypeGuards.isArrayTypeNode(node))
                 return;
 
             // ignore types not found in parameters, rest parameters, callbacks, and arrow functions
             const parameter = node.getFirstAncestorByKind(SyntaxKind.Parameter);
-            const functionType = node.getFirstAncestorByKind(SyntaxKind.FunctionType);
-            if (parameter == null || functionType != null || (node.getParent() === parameter && parameter.isRestParameter())
-                || TypeGuards.isArrowFunction(parameter.getParent()))
+            if (parameter == null)
                 return;
+            const functionType = node.getFirstAncestorByKind(SyntaxKind.FunctionType);
+            if (functionType != null
+                || (node.getParent() === parameter && parameter.isRestParameter())
+                || TypeGuards.isArrowFunction(parameter.getParent()))
+            {
+                return;
+            }
+
             const parameterParent = parameter.getParent();
-            if (hasInternalDocTag(parameterParent))
+            if (hasInternalDocTag(parameterParent) || isNestedFunction(parameterParent))
                 return;
 
             addProblem({
@@ -39,5 +45,11 @@ export function ensureArrayInputsReadonly(inspector: TsSimpleAstInspector, addPr
                 message: `Found input array type (${node.getText()}).`
             });
         });
+    }
+
+    function isNestedFunction(node: Node) {
+        if (!TypeGuards.isFunctionDeclaration(node))
+            return false;
+        return TypeGuards.isBlock(node.getParent());
     }
 }

@@ -182,7 +182,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocReturnTag](src/compiler/ast/doc/JSDocReturnTag.ts)
     * :x: typeExpression
 * [JSDocTag](src/compiler/ast/doc/JSDocTag.ts)
-    * :heavy_check_mark: atToken
     * :heavy_check_mark: tagName
     * :heavy_check_mark: comment
 * [JSDocTypeTag](src/compiler/ast/doc/JSDocTypeTag.ts)
@@ -421,8 +420,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 55
+**Total:** 56
 
+* BigIntLiteral
 * Bundle
 * ClassElement
 * ClassLikeDeclarationBase

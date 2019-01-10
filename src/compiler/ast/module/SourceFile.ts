@@ -772,7 +772,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             }
         }
 
-        function applyTextChanges(changes: TextChange[]) {
+        function applyTextChanges(changes: ReadonlyArray<TextChange>) {
             // group all the changes by their start position and insert them into the file
             const groups = ArrayUtils.groupBy(changes, change => change.getSpan().getStart());
             let addedLength = 0;

@@ -73,7 +73,7 @@ export class ArrayUtils {
         return items;
     }
 
-    static groupBy<T>(items: T[], getGroup: (item: T) => string | number) {
+    static groupBy<T>(items: ReadonlyArray<T>, getGroup: (item: T) => string | number) {
         const result: T[][] = [];
         const groups: { [key: string]: T[]; } = {};
 
