@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="21.0.0"></a>
+# [21.0.0](https://github.com/dsherret/ts-simple-ast/compare/20.0.0...21.0.0) (2019-01-11)
+
+
+### Features
+
+* [#176](https://github.com/dsherret/ts-simple-ast/issues/176) - Support transformations using the compiler API (`Node#transform(...)`) ([3b39edb](https://github.com/dsherret/ts-simple-ast/commit/3b39edb))
+* [#511](https://github.com/dsherret/ts-simple-ast/issues/511) - createSourceFile - Added ability to pass in a writer function. ([9a04103](https://github.com/dsherret/ts-simple-ast/commit/9a04103))
+* [#518](https://github.com/dsherret/ts-simple-ast/issues/518) - Add SourceFile#fixMissingImports() ([28d12e3](https://github.com/dsherret/ts-simple-ast/commit/28d12e3))
+* [#520](https://github.com/dsherret/ts-simple-ast/issues/520) - Search object and array binding patterns when looking for a node by a name. ([20239d7](https://github.com/dsherret/ts-simple-ast/commit/20239d7))
+* [#522](https://github.com/dsherret/ts-simple-ast/issues/522) - Project should not return implicitly resolved files and directories in most scenarios. ([73c5a39](https://github.com/dsherret/ts-simple-ast/commit/73c5a39))
+* [#523](https://github.com/dsherret/ts-simple-ast/issues/523) - Resolved node_module source files or directories are no longer returned from Project#getSourceFiles() and getDirectories() ([6cf2d40](https://github.com/dsherret/ts-simple-ast/commit/6cf2d40))
+* Add FileTextChanges#getSourceFile() ([85deec7](https://github.com/dsherret/ts-simple-ast/commit/85deec7))
+* Add LanguageService#getCombinedCodeFix(...) ([ef9f3a3](https://github.com/dsherret/ts-simple-ast/commit/ef9f3a3))
+
+
+### Performance Improvements
+
+* [#498](https://github.com/dsherret/ts-simple-ast/issues/498) - OfKind and ByKind methods should use ts.forEachChild when appropriate. ([5c249bf](https://github.com/dsherret/ts-simple-ast/commit/5c249bf))
+* Make internal Es5HashSet O(1) instead of O(n) for lookups. ([a12a92c](https://github.com/dsherret/ts-simple-ast/commit/a12a92c))
+
+
+### BREAKING CHANGES
+
+* Source files implicitly resolved in the node_modules directory are no longer returned by `Project#getSourcesFiles()` and `getDirectories()`. Either add them to the project explicitly or navigate to them via methods like `.getSourceFile("node_modules/library/pathToFile.d.ts")` or `.getDirectory("node_modules")`.
+* Implicitly resolved files and directories are no longer returned when calling `project.getSourceFiles()` or `project.getDirectories()`. They can be added by calling `project.addExistingSourceFiles(...)`-like methods or `project.addExistingDirectory(...)`. These source files and directories are still accessible when specifying their path though (ex. `project.getSourceFile("node_modules/typescript/lib/typescript.d.ts")`)
+* `node.getFirstChildByKind` and `node.getChildrenOfKind` now search the parsed tree via `.forEachChild(...)` when specifying a parsed node's syntax kind. Previously it would only search the results of `node.getChildren()`.
+
+
+
 <a name="20.0.0"></a>
 # [20.0.0](https://github.com/dsherret/ts-simple-ast/compare/19.1.0...20.0.0) (2018-12-08)
 
