@@ -6,6 +6,18 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 
 * `node.getFirstChildByKind` and `node.getChildrenOfKind` now search the parsed tree via `.forEachChild(...)` when specifying a parsed node's syntax kind. Previously it would only search the results of `node.getChildren()`.
 
+### Resolved node_module source files and directories are no longer returned from Project#getSourceFiles() and getDirectories()
+
+Previously resolved source files in `node_modules` would be returned when calling `project.getSourceFiles()`. This was sometimes confusing and meant that people iterating over the source files in a project would need to ensure they weren't looking at the files in the `node_modules` directory.
+
+Now they are not added unless done so explicitly:
+
+```ts
+project.addExistingSourceFiles("node_modules/**/*.ts");
+```
+
+Note that the directory and source files are still available when you explicitly specify their path (ex. `project.getDirectory("node_modules")`).
+
 ## Version 20
 
 * Added support for TS 3.2.
