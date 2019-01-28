@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* Project.getSourceFileOrThrow - Improve error message when the source file can't be found. ([811ce1c](https://github.com/dsherret/ts-simple-ast/commit/811ce1c))
+* Project#getSourceFileOrThrow - Improve error message when the source file can't be found. ([811ce1c](https://github.com/dsherret/ts-simple-ast/commit/811ce1c))
 
 
 
