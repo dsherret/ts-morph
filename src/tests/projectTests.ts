@@ -928,19 +928,26 @@ describe(nameof(Project), () => {
         it("should throw when it can't find the source file based on a provided file name", () => {
             const project = new Project({ useVirtualFileSystem: true });
             expect(() => project.getSourceFileOrThrow("fileName.ts")).to.throw(errors.InvalidOperationError,
-                "Could not find source file based on the provided name or path: fileName.ts");
+                "Could not find source file in project with the provided file name: fileName.ts");
+        });
+
+        it("should throw when it can't find the source file based on a provided relative path", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            // this should show the absolute path in the error message
+            expect(() => project.getSourceFileOrThrow("src/fileName.ts")).to.throw(errors.InvalidOperationError,
+                "Could not find source file in project at the provided path: /src/fileName.ts");
         });
 
         it("should throw when it can't find the source file based on a provided absolute path", () => {
             const project = new Project({ useVirtualFileSystem: true });
             expect(() => project.getSourceFileOrThrow("/fileName.ts")).to.throw(errors.InvalidOperationError,
-                "Could not find source file based on the provided name or path: /fileName.ts");
+                "Could not find source file in project at the provided path: /fileName.ts");
         });
 
         it("should throw when it can't find the source file based on a provided condition", () => {
             const project = new Project({ useVirtualFileSystem: true });
-            expect(() => project.getSourceFileOrThrow(s => false)).to.throw(errors.InvalidOperationError,
-                "Could not find source file based on the provided condition.");
+            expect(() => project.getSourceFileOrThrow(() => false)).to.throw(errors.InvalidOperationError,
+                "Could not find source file in project based on the provided condition.");
         });
 
         it("should not throw when it finds the file", () => {

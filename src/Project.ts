@@ -298,13 +298,21 @@ export class Project {
     getSourceFileOrThrow(searchFunction: (file: SourceFile) => boolean): SourceFile;
     getSourceFileOrThrow(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile {
         const sourceFile = this.getSourceFile(fileNameOrSearchFunction);
-        if (sourceFile == null) {
-            if (typeof fileNameOrSearchFunction === "string")
-                throw new errors.InvalidOperationError(`Could not find source file based on the provided name or path: ${fileNameOrSearchFunction}`);
+        if (sourceFile != null)
+            return sourceFile;
+
+        // explain to the user why it couldn't find the file
+        if (typeof fileNameOrSearchFunction === "string") {
+            const fileNameOrPath = FileUtils.standardizeSlashes(fileNameOrSearchFunction);
+            if (FileUtils.pathIsAbsolute(fileNameOrPath) || fileNameOrPath.indexOf("/") >= 0) {
+                const errorFileNameOrPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(fileNameOrPath);
+                throw new errors.InvalidOperationError(`Could not find source file in project at the provided path: ${errorFileNameOrPath}`);
+            }
             else
-                throw new errors.InvalidOperationError(`Could not find source file based on the provided condition.`);
+                throw new errors.InvalidOperationError(`Could not find source file in project with the provided file name: ${fileNameOrSearchFunction}`);
         }
-        return sourceFile;
+        else
+            throw new errors.InvalidOperationError(`Could not find source file in project based on the provided condition.`);
     }
 
     /**
