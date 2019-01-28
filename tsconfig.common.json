@@ -11,7 +11,7 @@
         "noImplicitReturns": true,
         "stripInternal": true,
         "typeRoots": [ "node_modules/@types" ],
-        "types": [ "node", "mocha" ],
+        "types": [ "node", "mocha", "ts-nameof" ],
         "downlevelIteration": true,
         "importHelpers": true,
         "lib": [ "es2015" ],

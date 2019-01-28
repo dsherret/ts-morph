@@ -87,6 +87,7 @@
     "@types/mocha": "^5.2.0",
     "@types/multimatch": "^2.1.2",
     "@types/node": "^6.0.110",
+    "@types/ts-nameof": "^2.0.0",
     "barrel-maintainer": "^1.4.0",
     "chai": "^4.1.2",
     "chalk": "^2.4.0",
