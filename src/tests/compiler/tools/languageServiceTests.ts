@@ -142,7 +142,7 @@ describe(nameof(LanguageService), () => {
             checkFileTextChanges(edit2!, {
                 fileName: "/A.ts",
                 textChanges: [{
-                    newText: "export class A {\n}" + (ts.version === "3.2.2" ? "\n" : ""),
+                    newText: "export class A {\n}" + (ts.version === "3.2.4" ? "\n" : ""),
                     span: { start: 0, length: 0 }
                 }]
             });
