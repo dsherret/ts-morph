@@ -124,6 +124,20 @@ describe(nameof(TsConfigResolver), () => {
             });
         });
 
+        it("should get root dir files when an exclude is also specified", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{
+              "compilerOptions": { "rootDir": "./src" },
+              "exclude": [ "./src/file2.ts" ]
+            }`);
+            fs.writeFileSync("/src/file1.ts", "");
+            fs.writeFileSync("/src/file2.ts", "");
+            doTest(fs, {
+                files: ["/src/file1.ts"],
+                dirs: ["/src"]
+            });
+        });
+
         it("should add the files from tsconfig.json, but only include the specified include", () => {
             const fs = new VirtualFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{ "include": ["test2"] }`);
@@ -138,7 +152,7 @@ describe(nameof(TsConfigResolver), () => {
 
         it("should add the files from tsconfig.json when using rootDir", () => {
             const fs = new VirtualFileSystemHost();
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test" } }`);
+            fs.writeFileSync("/tsconfig.json", `{ "compilerOptions": { "rootDir": "./test" } }`);
             fs.writeFileSync("/otherFile.ts", "");
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
@@ -173,18 +187,50 @@ describe(nameof(TsConfigResolver), () => {
             });
         });
 
-        it("should correctly parse file paths relative to rootDirs", () => {
+        it(`should get files in the "files" array`, () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{
+              "compilerOptions": { },
+              "files": [ "./file1.ts", "./file2.ts" ]
+            }`);
+            fs.writeFileSync("/file1.ts", "");
+            fs.writeFileSync("/file2.ts", "");
+            fs.writeFileSync("/file3.ts", "");
+            doTest(fs, {
+                files: ["/file1.ts", "/file2.ts"],
+                dirs: [
+                    "/"
+                ]
+            });
+        });
+
+        it("should get root dir files when it's also specified as an include", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{
+              "compilerOptions": { "rootDir": "./src" },
+              "include": [ "./src" ]
+            }`);
+            fs.writeFileSync("/src/file1.ts", "");
+            fs.writeFileSync("/src/file2.ts", "");
+            doTest(fs, {
+                files: ["/src/file1.ts", "/src/file2.ts"],
+                dirs: ["/src"]
+            });
+        });
+
+        it(`should parse "files" absolutely`, () => {
             const fs = new VirtualFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{
               "compilerOptions": {"rootDirs": ["/test/test1", "/test/test2"] },
               "files": [ "./file1.ts", "./file2.ts" ]
             }`);
+            // these files will be ignored because they aren't properly specified in "files"
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test/test1/file1.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
             doTest(fs, {
-                files: ["/test/test1/file1.ts", "/test/test2/file2.ts"],
-                dirs: []
+                files: [],
+                dirs: ["/test/test1", "/test/test2"]
             });
         });
 

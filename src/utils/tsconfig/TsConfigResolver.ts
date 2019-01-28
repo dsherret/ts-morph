@@ -17,42 +17,58 @@ export class TsConfigResolver {
 
     @Memoize
     getCompilerOptions() {
-        return this.parseJsonConfigFileContent(this.tsConfigDirPath).options;
+        return this.parseJsonConfigFileContent().options;
     }
 
     @Memoize
     getErrors() {
-        return (this.parseJsonConfigFileContent(this.tsConfigDirPath).errors || []).map(e => new Diagnostic(undefined, e));
+        return (this.parseJsonConfigFileContent().errors || []).map(e => new Diagnostic(undefined, e));
     }
 
     @Memoize
     getPaths(compilerOptions?: CompilerOptions) {
         const files = createHashSet<string>();
-        const tsConfigDirPath = this.tsConfigDirPath;
+        const { tsConfigDirPath, fileSystem } = this;
         const directories = createHashSet<string>();
 
         compilerOptions = compilerOptions || this.getCompilerOptions();
 
-        for (const rootDir of getRootDirs(compilerOptions)) {
-            const result = this.parseJsonConfigFileContent(this.fileSystem.getStandardizedAbsolutePath(rootDir, this.tsConfigDirPath));
-            for (const filePath of result.fileNames) {
-                const absoluteFilePath = this.fileSystem.getStandardizedAbsolutePath(filePath);
-                if (this.fileSystem.fileExistsSync(absoluteFilePath)) {
-                    files.add(absoluteFilePath);
-                }
-            }
-            for (const dirPath of result.directories) {
-                const absoluteDirPath = this.fileSystem.getStandardizedAbsolutePath(dirPath);
-                if (this.fileSystem.directoryExistsSync(absoluteDirPath)) {
-                    directories.add(absoluteDirPath);
-                }
+        const rootDirs = getRootDirs(compilerOptions);
+        const configFileContent = this.parseJsonConfigFileContent();
+
+        for (let dirPath of configFileContent.directories) {
+            dirPath = fileSystem.getStandardizedAbsolutePath(dirPath);
+            if (dirInProject(dirPath) && fileSystem.directoryExistsSync(dirPath))
+                directories.add(dirPath);
+        }
+
+        for (let filePath of configFileContent.fileNames) {
+            filePath = fileSystem.getStandardizedAbsolutePath(filePath);
+            const parentDirPath = FileUtils.getDirPath(filePath);
+            if (dirInProject(parentDirPath) && fileSystem.fileExistsSync(filePath)) {
+                files.add(filePath);
+                directories.add(parentDirPath);
             }
         }
+
+        for (const rootDir of rootDirs)
+            directories.add(rootDir);
 
         return {
             filePaths: ArrayUtils.from(files.values()),
             directoryPaths: ArrayUtils.from(directories.values())
         };
+
+        function dirInProject(dirPath: string) {
+            // fast check
+            if (directories.has(dirPath))
+                return true;
+
+            // otherwise, check the strings
+            if (rootDirs.length > 0)
+                return rootDirs.some(rootDir => FileUtils.pathStartsWith(dirPath, rootDir));
+            return FileUtils.pathStartsWith(dirPath, tsConfigDirPath);
+        }
 
         function getRootDirs(options: CompilerOptions) {
             const result: string[] = [];
@@ -60,18 +76,14 @@ export class TsConfigResolver {
                 result.push(options.rootDir);
             if (options.rootDirs != null)
                 result.push(...options.rootDirs);
-            // use the tsconfig directory if no rootDir or rootDirs is specified
-            if (result.length === 0)
-                result.push(tsConfigDirPath);
-            return result;
+            return result.map(rootDir => fileSystem.getStandardizedAbsolutePath(rootDir, tsConfigDirPath));
         }
     }
 
     @Memoize
-    private parseJsonConfigFileContent(dirPath: string) {
+    private parseJsonConfigFileContent() {
         this.host.clearDirectories();
-        // do not provide a tsconfig.json filepath to this because it will start searching in incorrect directories
-        const result = ts.parseJsonConfigFileContent(this.getTsConfigFileJson(), this.host, dirPath, undefined, undefined);
+        const result = ts.parseJsonConfigFileContent(this.getTsConfigFileJson(), this.host, this.tsConfigDirPath, undefined, this.tsConfigFilePath);
         delete result.options.configFilePath;
         return { ...result, directories: this.host.getDirectories() };
     }

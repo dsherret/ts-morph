@@ -1,8 +1,6 @@
 ﻿/* barrel:ignore */
 import { FileSystemWrapper } from "../../fileSystem";
 import { ts } from "../../typescript";
-import * as tsInternal from "../../typescript/tsInternal";
-import { FileUtils } from "../FileUtils";
 import { readDirectory } from "../compiler";
 
 export interface GetTsParseConfigHostOptions {

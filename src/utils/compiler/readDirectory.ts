@@ -1,5 +1,4 @@
-﻿import { ts } from "../../typescript";
-import * as tsInternal from "../../typescript/tsInternal";
+﻿import * as tsInternal from "../../typescript/tsInternal";
 import { FileSystemWrapper } from "../../fileSystem";
 import { FileUtils } from "../../utils";
 
