@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="21.0.2"></a>
+## [21.0.2](https://github.com/dsherret/ts-simple-ast/compare/21.0.1...21.0.2) (2019-01-28)
+
+
+### Bug Fixes
+
+* tsconfig.json with "include" and "rootDir" would not have files correctly resolved. ([b5b9af8](https://github.com/dsherret/ts-simple-ast/commit/b5b9af8))
+
+
+
 <a name="21.0.1"></a>
 ## [21.0.1](https://github.com/dsherret/ts-simple-ast/compare/21.0.0...21.0.1) (2019-01-28)
 
