@@ -4780,7 +4780,7 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
     insertChildText(index: number, textOrWriterFunction: string | WriterFunction): Node<ts.Node>[];
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>, U> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends ts.Statement ? Statement : Node<T>;
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends ts.Statement ? Statement : Node<T>;
 
 declare const DecoratorBase: typeof Node;
 
@@ -5142,7 +5142,7 @@ export declare class EnumMember extends EnumMemberBase<ts.EnumMember> {
 
 declare const ArrayDestructuringAssignmentBase: typeof AssignmentExpression;
 
-export declare class ArrayDestructuringAssignment extends ArrayDestructuringAssignmentBase<ts.ArrayDestructuringAssignment, ts.EqualsToken> {
+export declare class ArrayDestructuringAssignment extends ArrayDestructuringAssignmentBase<ts.ArrayDestructuringAssignment> {
     /**
      * Gets the left array literal expression of the array destructuring assignment.
      */
@@ -5207,11 +5207,11 @@ export declare class AsExpression extends AsExpressionBase<ts.AsExpression> {
 
 declare const AssignmentExpressionBase: typeof BinaryExpression;
 
-export declare class AssignmentExpression<T extends ts.AssignmentExpression<TOperator> = ts.AssignmentExpression<TOperator>, TOperator extends ts.AssignmentOperatorToken = ts.AssignmentOperatorToken> extends AssignmentExpressionBase<T> {
+export declare class AssignmentExpression<T extends ts.AssignmentExpression<ts.AssignmentOperatorToken> = ts.AssignmentExpression<ts.AssignmentOperatorToken>> extends AssignmentExpressionBase<T> {
     /**
      * Gets the operator token of the assignment expression.
      */
-    getOperatorToken(): CompilerNodeToWrappedType<TOperator>;
+    getOperatorToken(): Node<ts.Token<ts.AssignmentOperator>>;
 }
 
 declare const AwaitExpressionBase: Constructor<UnaryExpressionedNode> & typeof UnaryExpression;
@@ -5411,7 +5411,7 @@ export declare class NonNullExpression extends NonNullExpressionBase<ts.NonNullE
 
 declare const ObjectDestructuringAssignmentBase: typeof AssignmentExpression;
 
-export declare class ObjectDestructuringAssignment extends ObjectDestructuringAssignmentBase<ts.ObjectDestructuringAssignment, ts.EqualsToken> {
+export declare class ObjectDestructuringAssignment extends ObjectDestructuringAssignmentBase<ts.ObjectDestructuringAssignment> {
     /**
      * Gets the left object literal expression of the object destructuring assignment.
      */

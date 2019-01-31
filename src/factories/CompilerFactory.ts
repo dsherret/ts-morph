@@ -398,7 +398,7 @@ export class CompilerFactory {
      * Gets a wrapped type from a compiler type.
      * @param type - Compiler type.
      */
-    getType<TType extends ts.Type = TType>(type: TType): Type<TType> {
+    getType<TType extends ts.Type>(type: TType): Type<TType> {
         if ((type.flags & TypeFlags.TypeParameter) === TypeFlags.TypeParameter)
             return this.getTypeParameter(type as any as ts.TypeParameter) as any as Type<TType>;
         return this.typeCache.getOrCreate(type, () => new Type<TType>(this.context, type));
