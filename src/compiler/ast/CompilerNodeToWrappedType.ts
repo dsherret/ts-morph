@@ -7,7 +7,7 @@ export type CompilerNodeToWrappedType<T extends ts.Node> =
     T extends ts.ArrayDestructuringAssignment ? compiler.ArrayDestructuringAssignment :
     T extends ts.SuperElementAccessExpression ? compiler.SuperElementAccessExpression :
     T extends ts.SuperPropertyAccessExpression ? compiler.SuperPropertyAccessExpression :
-    T extends ts.AssignmentExpression<infer U> ? compiler.AssignmentExpression<ts.AssignmentExpression<U>, U> :
+    T extends ts.AssignmentExpression<infer U> ? compiler.AssignmentExpression<ts.AssignmentExpression<U>> :
     T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] :
     T extends ts.SyntaxList ? compiler.SyntaxList :
     T extends ts.TypeNode ? compiler.TypeNode :

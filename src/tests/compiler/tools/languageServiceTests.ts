@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { EmitOutput, FileTextChanges, LanguageService, SourceFile, TextChange, TextSpan } from "../../../compiler";
+import { TypeScriptVersionChecker } from "../../../utils";
 import { FileNotFoundError } from "../../../errors";
 import { ScriptTarget, ts } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
@@ -142,7 +143,7 @@ describe(nameof(LanguageService), () => {
             checkFileTextChanges(edit2!, {
                 fileName: "/A.ts",
                 textChanges: [{
-                    newText: "export class A {\n}" + (ts.version === "3.2.4" ? "\n" : ""),
+                    newText: "export class A {\n}" + (TypeScriptVersionChecker.isGreaterThanOrEqual(3, 2, 0) ? "\n" : ""),
                     span: { start: 0, length: 0 }
                 }]
             });
