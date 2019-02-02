@@ -1,7 +1,8 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { NamespaceDeclarationKind } from "../../compiler";
+import * as errors from "../../errors";
 import { StructurePrinterFactory } from "../../factories";
-import { ArrayUtils } from "../../utils";
+import { ArrayUtils, StringUtils, ObjectUtils, setValueIfUndefined } from "../../utils";
 import { NamespaceDeclarationStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
@@ -18,6 +19,8 @@ export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinte
     }
 
     printText(writer: CodeBlockWriter, structure: NamespaceDeclarationStructure) {
+        structure = this.validateAndGetStructure(structure);
+
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         if (structure.declarationKind == null || structure.declarationKind !== NamespaceDeclarationKind.Global)
@@ -40,5 +43,20 @@ export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinte
     private conditionalBlankLine(writer: CodeBlockWriter, structures: ReadonlyArray<any> | undefined) {
         if (!ArrayUtils.isNullOrEmpty(structures))
             writer.conditionalBlankLine(!writer.isAtStartOfFirstLineOfBlock());
+    }
+
+    private validateAndGetStructure(structure: NamespaceDeclarationStructure) {
+        const name = structure.name.trim();
+        if (!StringUtils.startsWith(name, "'") && !StringUtils.startsWith(name, `"`))
+            return structure;
+
+        if (structure.declarationKind === NamespaceDeclarationKind.Namespace)
+            throw new errors.InvalidOperationError(`Cannot print a namespace with quotes for namespace with name ${structure.name}. ` +
+                `Use ${nameof.full(NamespaceDeclarationKind.Module)} instead.`);
+
+        structure = ObjectUtils.clone(structure);
+        setValueIfUndefined(structure, "hasDeclareKeyword", true);
+        setValueIfUndefined(structure, "declarationKind", NamespaceDeclarationKind.Module);
+        return structure;
     }
 }

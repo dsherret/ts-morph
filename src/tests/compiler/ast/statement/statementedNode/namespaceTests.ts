@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { NamespaceDeclaration, StatementedNode, Node, NamespaceDeclarationKind } from "../../../../../compiler";
+import * as errors from "../../../../../errors";
 import { NamespaceDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
@@ -103,6 +104,25 @@ describe(nameof(StatementedNode), () => {
                 name: "somethingElse",
                 declarationKind: NamespaceDeclarationKind.Global // priority
             }], "global {\n}\n");
+        });
+
+        it("should default to ambient module when specifying single quotes", () => {
+            doTest("", 0, [{ name: "'Identifier'" }], "declare module 'Identifier' {\n}\n");
+        });
+
+        it("should default to ambient module when specifying double quotes", () => {
+            doTest("", 0, [{ name: `"Identifier"` }], `declare module "Identifier" {\n}\n`);
+        });
+
+        it("should default to ambient module when specifying quotes, but respect hasDeclareKeyword", () => {
+            doTest("", 0, [{ name: `"Identifier"`, hasDeclareKeyword: false }], `module "Identifier" {\n}\n`);
+        });
+
+        it("should throw when specifying quotes and a namespace declaration kind of namespace", () => {
+            const { sourceFile } = getInfoFromText("");
+            expect(() => sourceFile.insertNamespaces(0, [{ name: `"Identifier"`, declarationKind: NamespaceDeclarationKind.Namespace }]))
+                .to.throw(errors.InvalidOperationError, `Cannot print a namespace with quotes for namespace with name "Identifier". ` +
+                    `Use NamespaceDeclarationKind.Module instead.`);
         });
     });
 
