@@ -43,3 +43,10 @@ myEnum.rename("SomeOtherName", {
     renameInStrings: true
 });
 ```
+
+### Renaming Files or Directories
+
+See:
+
+* [Moving Files](../details/source-files#move)
+* [Moving Directories](../navigation/directories#moving)
