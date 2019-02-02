@@ -17,7 +17,7 @@ Version: X.X.X
 <!-- Clearly identify the problem and submit some reproduction code. Prune the reproduction code to remove needless details. State the actual behaviour. -->
 
 ```ts
-import { Project, ts } from "ts-simple-ast";
+import { Project, ts } from "ts-morph";
 
 console.log(ts.version); // x.x.x <-- provide this
 

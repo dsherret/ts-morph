@@ -7,15 +7,15 @@ title: Navigating the AST
 Navigating the AST should be simple and straightforward.
 
 Right now, the best way to explore what's implemented is to look at the autocompletion/intellisense results
-or view [this report](https://github.com/dsherret/ts-simple-ast/blob/master/wrapped-nodes.md).
+or view [this report](https://github.com/dsherret/ts-morph/blob/master/wrapped-nodes.md).
 
-If you can't find something that means it's most likely not implemented and you should [open an issue](https://github.com/dsherret/ts-simple-ast/issues) on GitHub.
+If you can't find something that means it's most likely not implemented and you should [open an issue](https://github.com/dsherret/ts-morph/issues) on GitHub.
 
 ### General methods
 
 Search autocomplete for methods like `.getChildren()`, `.getParent()`, `.getFirstChildBySyntaxKind(kind)`, etc...
 
-Many exist. If you find one you would really like, then please [open an issue](https://github.com/dsherret/ts-simple-ast/issues).
+Many exist. If you find one you would really like, then please [open an issue](https://github.com/dsherret/ts-morph/issues).
 
 ### `getChildren()` and `forEachChild(child => ...)`
 
@@ -28,7 +28,7 @@ In the compiler API, there exists a `node.getChildren()` method and `ts.forEachC
 
 [![getChildren vs forEachChild](images/getChildrenVsForEachChild.gif)](http://ts-ast-viewer.com)
 
-In ts-simple-ast, these methods also exist and they can be used similarly to the compiler API:
+In ts-morph, these methods also exist and they can be used similarly to the compiler API:
 
 ```ts
 const allChildren = node.getChildren();
@@ -38,7 +38,7 @@ node.forEachChild(node => {
 });
 ```
 
-One major difference between the `.forEachChild` method in ts-simple-ast and the compiler API, is that returning a truthy value in the callback will not stop iteration. If you wish to stop iteration, then use the `stop` method on the second parameter:
+One major difference between the `.forEachChild` method in ts-morph and the compiler API, is that returning a truthy value in the callback will not stop iteration. If you wish to stop iteration, then use the `stop` method on the second parameter:
 
 ```ts
 node.forEachChild((node, traversal) => {

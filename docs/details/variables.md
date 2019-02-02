@@ -25,7 +25,7 @@ Add or insert variable statements to a source file, namespace, or function like 
 `insertVariableStatement()`, or `insertVariableStatements()`.
 
 ```ts
-import { Project, VariableDeclarationKind } from "ts-simple-ast";
+import { Project, VariableDeclarationKind } from "ts-morph";
 
 const variableStatement = sourceFile.addVariableStatement({
     declarationKind: VariableDeclarationKind.Const, // defaults to "let"
@@ -59,7 +59,7 @@ const declarationKind = variableStatement.getDeclarationKind();
 It will return one of the following values:
 
 ```ts
-import {VariableDeclarationKind} from "ts-simple-ast";
+import {VariableDeclarationKind} from "ts-morph";
 
 VariableDeclarationKind.Let;
 VariableDeclarationKind.Const;

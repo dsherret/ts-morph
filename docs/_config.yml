@@ -1,5 +1,5 @@
-repository: dsherret/ts-simple-ast
+repository: dsherret/ts-morph
 port: 4001
-title: ts-simple-ast
+title: ts-morph
 description: Simple way to navigate and manipulate the TypeScript AST.
 markdown: GFM

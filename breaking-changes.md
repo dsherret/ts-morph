@@ -313,7 +313,7 @@ import CodeBlockWriter from "code-block-writer";
 It's now a named export from this library:
 
 ```ts
-import { CodeBlockWriter } from "ts-simple-ast";
+import { CodeBlockWriter } from "ts-morph";
 ```
 
 ### New `FileSystemHost` Methods
@@ -385,7 +385,7 @@ Imports will now be written with spaces (as is the default in the compiler):
 import { SomeExport } from "./SomeFile";
 ```
 
-If you don't want this behaviour, then set the `insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces` to `false` in the [manipulation settings](https://dsherret.github.io/ts-simple-ast/manipulation/settings).
+If you don't want this behaviour, then set the `insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces` to `false` in the [manipulation settings](https://dsherret.github.io/ts-morph/manipulation/settings).
 
 ### Upgrade to TypeScript 2.8
 
@@ -422,7 +422,7 @@ someSymbol === otherSymbol
 
 ### ClassDeclaration changes
 
-Class declaration was changed to be more like the compiler. Read [#266](https://github.com/dsherret/ts-simple-ast/issues/266) for more details.
+Class declaration was changed to be more like the compiler. Read [#266](https://github.com/dsherret/ts-morph/issues/266) for more details.
 
 ## Version 8
 
@@ -431,7 +431,7 @@ All file system copies, moves, and deletes are now deffered until `.save()` is c
 For example:
 
 ```ts
-import Project from "ts-simple-ast";
+import Project from "ts-morph";
 
 const project = new Project();
 
@@ -459,7 +459,7 @@ await sourceFile.deleteImmediately();
 await directory.deleteImmediately();
 ```
 
-Moving directories is going to come soon. Follow the progress in [#256](https://github.com/dsherret/ts-simple-ast/issues/256).
+Moving directories is going to come soon. Follow the progress in [#256](https://github.com/dsherret/ts-morph/issues/256).
 
 ## Version 7
 
@@ -468,16 +468,16 @@ The TypeScript peer dependency has been dropped, but there should be no loss of 
 The TypeScript compiler object used by this library can now be accessed via the `ts` named export. Also non-node TypeScript compiler objects used in the public API of this  library are now exported directly as named exports:
 
 ```ts
-import Project, {ts, SyntaxKind, ScriptTarget} from "ts-simple-ast";
+import Project, {ts, SyntaxKind, ScriptTarget} from "ts-morph";
 ```
 
-### Using the TypeScript compiler and ts-simple-ast
+### Using the TypeScript compiler and ts-morph
 
 If you were previously using both like so:
 
 ```ts
 import * as ts from "typescript";
-import Project from "ts-simple-ast";
+import Project from "ts-morph";
 
 // ... other code
 
@@ -488,7 +488,7 @@ const classDeclarations = sourceFile.getDescendantsByKind(ts.SyntaxKind.ClassDec
 Then you should remove the dependency on the TypeScript compiler and change this code to only use a single import declaration:
 
 ```ts
-import Project, {SyntaxKind, ts} from "ts-simple-ast";
+import Project, {SyntaxKind, ts} from "ts-morph";
 
 // ... other code
 

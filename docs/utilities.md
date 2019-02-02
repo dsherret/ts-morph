@@ -11,7 +11,7 @@ This is an outline of any utilities currently available in the library.
 Get the compiler options from a file by using the `getCompilerOptionsFromTsConfig` function:
 
 ```ts
-import { getCompilerOptionsFromTsConfig } from "ts-simple-ast";
+import { getCompilerOptionsFromTsConfig } from "ts-morph";
 
 const result = getCompilerOptionsFromTsConfig("file/path/to/tsconfig.json");
 
@@ -24,7 +24,7 @@ result.errors;  // diagnostics
 There is a collection of type guard functions that are useful for finding out the type of a Node:
 
 ```ts
-import { TypeGuards } from "ts-simple-ast";
+import { TypeGuards } from "ts-morph";
 
 // ... some code here that gets a node ...
 
@@ -44,7 +44,7 @@ node.print(); // returns: string
 But sometimes you might want to print a compiler node. There's a `printNode` utility function for doing that:
 
 ```ts
-import { printNode, ts } from "ts-simple-ast";
+import { printNode, ts } from "ts-morph";
 
 // Source: https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
 const tsFunctionDeclaration = ts.createFunctionDeclaration(

@@ -4,10 +4,10 @@ title: Instantiating
 
 ## Instantiating
 
-Use the `Project` named export from `"ts-simple-ast"`:
+Use the `Project` named export from `"ts-morph"`:
 
 ```ts
-import { Project } from "ts-simple-ast";
+import { Project } from "ts-morph";
 
 const project = new Project();
 ```
@@ -15,7 +15,7 @@ const project = new Project();
 ### Compiler options
 
 ```ts
-import { Project, ScriptTarget } from "ts-simple-ast";
+import { Project, ScriptTarget } from "ts-morph";
 
 const project = new Project({
     compilerOptions: {

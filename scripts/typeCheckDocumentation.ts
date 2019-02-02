@@ -84,7 +84,7 @@ function getInitializedFileText(text: string) {
 
 function changeModuleSpecifiers(file: SourceFile) {
     for (const importExport of [...file.getImportDeclarations(), ...file.getExportDeclarations()]) {
-        if (importExport.getModuleSpecifierValue() === "ts-simple-ast")
+        if (importExport.getModuleSpecifierValue() === "ts-morph")
             importExport.setModuleSpecifier("../../src/main");
     }
 }

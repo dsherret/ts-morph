@@ -1,7 +1,7 @@
 ﻿/**
  * Code Manipulation - Create Declaration File
  * -------------------------------------------
- * This flattens the declaration file output of the TypeScript compiler into one ts-simple-ast.d.ts file
+ * This flattens the declaration file output of the TypeScript compiler into one ts-morph.d.ts file
  * and hides any declarations that should be internal.
  * -------------------------------------------
  */
@@ -22,7 +22,7 @@ export async function createDeclarationFile() {
     hideExtensionTypes();
     hideSpecificDeclarations();
     removeSkipOrThrowCheck();
-    mainFile.move("ts-simple-ast.d.ts");
+    mainFile.move("ts-morph.d.ts");
 
     await project.save();
 

@@ -11,7 +11,7 @@ Setup, navigation, and manipulation of the TypeScript AST can be a challenge. Th
 Install as usual via npm:
 
 ```
-npm install --save-dev ts-simple-ast
+npm install --save-dev ts-morph
 ```
 
 ## Documentation Progress

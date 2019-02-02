@@ -7,7 +7,7 @@ title: Manipulation Settings
 The manipulation settings can be set when creating the main AST object:
 
 ```ts
-import { Project, QuoteKind, NewLineKind, IndentationText } from "ts-simple-ast";
+import { Project, QuoteKind, NewLineKind, IndentationText } from "ts-morph";
 
 const project = new Project({
     // these are the defaults
