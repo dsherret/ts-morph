@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0"></a>
+# 1.0.0 (2019-02-02)
+
+
+### Features
+
+* [#527](https://github.com/dsherret/ts-morph/issues/527) - Adding namespace with quotes defaults to ambient module. ([fadeeea](https://github.com/dsherret/ts-morph/commit/fadeeea))
+
+
+### BREAKING CHANGES
+
+* Library was renamed to ts-morph.
+
+
 ## ts-simple-ast [21.0.3](https://github.com/dsherret/ts-morph/compare/tsa-21.0.2...tsa-21.0.3) (2019-01-31)
 
 

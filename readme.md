@@ -12,7 +12,7 @@ Formerly `ts-simple-ast`.
 
 ## Library Development - Progress Update (02 February 2019)
 
-The library has been renamed from `ts-simple-ast` to `ts-morph`. The version was also reset back to 0.1.0 with this change.
+The library has been renamed from `ts-simple-ast` to `ts-morph`. The version was also reset back to 1.0.0 with this change.
 
 View information on breaking changes in [breaking-changes.md](breaking-changes.md).
 
