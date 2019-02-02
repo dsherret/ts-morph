@@ -2,7 +2,7 @@ import { exec } from "child_process";
 import { rootFolder } from "../config";
 
 export function execScript(command: string) {
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         exec(command, {
             cwd: rootFolder
         }, (err, stdout, stderr) => {
