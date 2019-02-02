@@ -5,7 +5,7 @@
  * only accept readonly arrays.
  * ------------------------------------------------
  */
-import { TypeGuards, SyntaxKind, Node } from "ts-simple-ast";
+import { TypeGuards, SyntaxKind, Node } from "ts-morph";
 import { TsSimpleAstInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";

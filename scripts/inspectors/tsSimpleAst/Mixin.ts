@@ -1,4 +1,4 @@
-﻿import { InterfaceDeclaration, PropertyAccessExpression, ts, SyntaxKind, TypeGuards } from "ts-simple-ast";
+﻿import { InterfaceDeclaration, PropertyAccessExpression, ts, SyntaxKind, TypeGuards } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 

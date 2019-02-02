@@ -3822,6 +3822,20 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
+ts-morph@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-1.0.0.tgz#28ea14a7f526ea434c596eca0e6a02e0d8fe5e3e"
+  dependencies:
+    "@dsherret/to-absolute-glob" "^2.0.2"
+    code-block-writer "^7.2.2"
+    fs-extra "^7.0.0"
+    glob-parent "^3.1.0"
+    globby "^8.0.1"
+    is-negated-glob "^1.0.0"
+    multimatch "^2.1.0"
+    tslib "^1.9.0"
+    typescript "^3.0.1"
+
 ts-nameof@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/ts-nameof/-/ts-nameof-3.0.0.tgz#83e4af26d3c8dfcbf22071f2e755cb1314c02521"
@@ -3857,20 +3871,6 @@ ts-node@^6.0.2:
 ts-simple-ast@17.0.0:
   version "17.0.0"
   resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-17.0.0.tgz#89c73adb6741a7bf825781d49ef4fd23f6239e75"
-  dependencies:
-    "@dsherret/to-absolute-glob" "^2.0.2"
-    code-block-writer "^7.2.2"
-    fs-extra "^7.0.0"
-    glob-parent "^3.1.0"
-    globby "^8.0.1"
-    is-negated-glob "^1.0.0"
-    multimatch "^2.1.0"
-    tslib "^1.9.0"
-    typescript "^3.0.1"
-
-ts-simple-ast@19.1.0:
-  version "19.1.0"
-  resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-19.1.0.tgz#788997552816b27b4e6ac222ea011871b520850f"
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
     code-block-writer "^7.2.2"

@@ -5,7 +5,7 @@
  * and hides any declarations that should be internal.
  * -------------------------------------------
  */
-import { Node, VariableStatement, TypeGuards, Scope, ClassDeclaration } from "ts-simple-ast";
+import { Node, VariableStatement, TypeGuards, Scope, ClassDeclaration } from "ts-morph";
 import { StringUtils } from "../../src/utils";
 import { createDeclarationProject, removeImportTypes } from "../common";
 import { flattenDeclarationFiles } from "./flattenDeclarationFiles";

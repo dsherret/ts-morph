@@ -5,7 +5,7 @@
  * in the public api appear in the tests.
  * -----------------------------------------------
  */
-import { TypeGuards, Node, ReferenceFindableNode, Scope } from "ts-simple-ast";
+import { TypeGuards, Node, ReferenceFindableNode, Scope } from "ts-morph";
 import { TsSimpleAstInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";

@@ -1,4 +1,4 @@
-﻿import { Diagnostic, SourceFile } from "ts-simple-ast";
+﻿import { Diagnostic, SourceFile } from "ts-morph";
 import { getProject } from "./common";
 import { MarkDownFile, CodeBlock } from "./markdown";
 

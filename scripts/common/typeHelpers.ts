@@ -1,4 +1,4 @@
-﻿import { Type } from "ts-simple-ast";
+﻿import { Type } from "ts-morph";
 import { StringUtils } from "../../src/utils";
 
 export function isNodeType(type: Type) {

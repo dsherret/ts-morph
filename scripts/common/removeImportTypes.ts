@@ -1,4 +1,4 @@
-﻿import { Node, TypeGuards } from "ts-simple-ast";
+﻿import { Node, TypeGuards } from "ts-morph";
 
 export function removeImportTypes(node: Node) {
     node.forEachChild(childNode => {

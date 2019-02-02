@@ -4,7 +4,7 @@
  * This flattens the declaration file output of the TypeScript compiler into one main.d.ts file.
  * ----------------------------------------------
  */
-import { Project, SourceFile, TypeGuards, SyntaxKind } from "ts-simple-ast";
+import { Project, SourceFile, TypeGuards, SyntaxKind } from "ts-morph";
 
 export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) {
     const declarationFiles = project.getSourceFiles(["dist-declarations/**/*.d.ts", "!dist-declarations/codeBlockWriter/code-block-writer.d.ts"]);

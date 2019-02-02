@@ -1,4 +1,4 @@
-﻿import { ClassDeclaration, InterfaceDeclaration, Type, TypeGuards } from "ts-simple-ast";
+﻿import { ClassDeclaration, InterfaceDeclaration, Type, TypeGuards } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../../src/utils";
 import { hasDescendantNodeType } from "../../common";
 import { WrapperFactory } from "../WrapperFactory";

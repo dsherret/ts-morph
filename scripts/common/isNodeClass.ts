@@ -1,4 +1,4 @@
-﻿import { ClassDeclaration } from "ts-simple-ast";
+﻿import { ClassDeclaration } from "ts-morph";
 import { hasDescendantNodeType } from "./typeHelpers";
 
 export function isNodeClass(classDec: ClassDeclaration) {

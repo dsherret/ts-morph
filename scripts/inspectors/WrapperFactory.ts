@@ -1,4 +1,4 @@
-﻿import { Node, ClassDeclaration, InterfaceDeclaration, PropertySignature } from "ts-simple-ast";
+﻿import { Node, ClassDeclaration, InterfaceDeclaration, PropertySignature } from "ts-morph";
 import { KeyValueCache } from "../../src/utils";
 import { WrappedNode, Structure, Mixin } from "./tsSimpleAst";
 import { TsNode, TsNodeProperty } from "./ts";

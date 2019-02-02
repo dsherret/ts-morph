@@ -7,7 +7,7 @@
  * might be used to implement issue #45 (if it's decided that should be implemented).
  * -------------------------------------------------
  */
-import { CodeBlockWriter } from "ts-simple-ast";
+import { CodeBlockWriter } from "ts-morph";
 import * as fs from "fs";
 import * as path from "path";
 import { rootFolder } from "../config";

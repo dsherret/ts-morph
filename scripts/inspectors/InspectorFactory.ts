@@ -1,4 +1,4 @@
-﻿import { Project } from "ts-simple-ast";
+﻿import { Project } from "ts-morph";
 import { getProject } from "../common";
 import { WrapperFactory } from "./WrapperFactory";
 import { TsSimpleAstInspector } from "./TsSimpleAstInspector";

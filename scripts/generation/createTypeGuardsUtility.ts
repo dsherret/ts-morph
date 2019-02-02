@@ -11,7 +11,7 @@
  * 3. Forward support: Features we add in the future will be auto-implemented.
  * ------------------------------------------
  */
-import { CodeBlockWriter } from "ts-simple-ast";
+import { CodeBlockWriter } from "ts-morph";
 import { ArrayUtils, KeyValueCache, StringUtils } from "../../src/utils";
 import { TsSimpleAstInspector, WrappedNode, Mixin } from "../inspectors";
 
