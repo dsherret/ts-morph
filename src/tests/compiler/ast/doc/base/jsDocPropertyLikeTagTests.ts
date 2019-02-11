@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { JSDocPropertyLikeTag } from "../../../../../compiler";
+import { JSDocPropertyLikeTag, Type } from "../../../../../compiler";
 import { TypeGuards } from "../../../../../utils";
 import { getInfoFromText } from "../../../testHelpers";
 
@@ -9,6 +9,17 @@ describe(nameof(JSDocPropertyLikeTag), () => {
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocPropertyLikeTag), ...info };
     }
 
+    describe(nameof<JSDocPropertyLikeTag>(d => d.getTypeExpressionNode), () => {
+        function doTest(text: string, expected: string) {
+            const { descendant } = getInfo(text);
+            expect(descendant.getTypeExpressionNode()!.getTypeNode().getText()).to.equal(expected);
+        }
+
+        it("should get when type is given", () => {
+            doTest("/** @param {boolean} t - String */\nfunction test() {}", "boolean");
+        });
+    });
+
     describe(nameof<JSDocPropertyLikeTag>(d => d.getName), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
@@ -16,11 +27,11 @@ describe(nameof(JSDocPropertyLikeTag), () => {
         }
 
         it("should get when identifier", () => {
-            doTest("/** @param t - String */\nfunction test() {}", "t");
+            doTest("/** @param {boolean} t - String */\nfunction test() {}", "t");
         });
 
         it("should get when fully qualified name", () => {
-            doTest("/** @param t.t.t - String */\nfunction test() {}", "t.t.t");
+            doTest("/** @param {boolean} t.t.t - String */\nfunction test() {}", "t.t.t");
         });
     });
 
@@ -31,11 +42,11 @@ describe(nameof(JSDocPropertyLikeTag), () => {
         }
 
         it("should get when identifier", () => {
-            doTest("/** @param t - String */\nfunction test() {}", "t");
+            doTest("/** @param {boolean} t - String */\nfunction test() {}", "t");
         });
 
         it("should get when fully qualified name", () => {
-            doTest("/** @param t.t.t - String */\nfunction test() {}", "t.t.t");
+            doTest("/** @param {boolean} t.t.t - String */\nfunction test() {}", "t.t.t");
         });
     });
 });

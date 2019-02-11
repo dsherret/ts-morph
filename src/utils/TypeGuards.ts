@@ -1116,6 +1116,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a JSDocTypeExpression.
+     * @param node - Node to check.
+     */
+    static isJSDocTypeExpression(node: compiler.Node): node is compiler.JSDocTypeExpression {
+        return node.getKind() === SyntaxKind.JSDocTypeExpression;
+    }
+
+    /**
      * Gets if the node is a JSDocTypeTag.
      * @param node - Node to check.
      */

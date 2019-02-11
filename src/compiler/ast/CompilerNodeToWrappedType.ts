@@ -10,6 +10,7 @@ export type CompilerNodeToWrappedType<T extends ts.Node> =
     T extends ts.AssignmentExpression<infer U> ? compiler.AssignmentExpression<ts.AssignmentExpression<U>> :
     T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] :
     T extends ts.SyntaxList ? compiler.SyntaxList :
+    T extends ts.JSDocTypeExpression ? compiler.JSDocTypeExpression :
     T extends ts.TypeNode ? compiler.TypeNode :
     T extends ts.TypeElement ? compiler.TypeElement :
     T extends ts.JSDocTag ? compiler.JSDocTag :
