@@ -7,6 +7,8 @@ import { JSDocTag } from "../JSDocTag";
 export type JSDocPropertyLikeTagExtensionType = Node<ts.JSDocPropertyLikeTag> & JSDocTag;
 
 export interface JSDocPropertyLikeTag {
+    /** Checks if the JS doc property like tag is bracketed  */
+    isBracketed(): boolean;
     /** Gets the name of the JS doc property like tag. */
     getName(): string;
     /** Gets the name node of the JS doc property like tag. */
@@ -22,6 +24,10 @@ export function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagE
 
         getNameNode() {
             return this._getNodeFromCompilerNode(this.compilerNode.name);
+        }
+
+        isBracketed() {
+            return this.compilerNode.isBracketed;
         }
     };
 }
