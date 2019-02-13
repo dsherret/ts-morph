@@ -10,13 +10,14 @@ describe(nameof(JSDocPropertyLikeTag), () => {
     }
 
     describe(nameof<JSDocPropertyLikeTag>(d => d.getTypeExpressionNode), () => {
-        function doTest(text: string, expected: string) {
-            const { descendant } = getInfo(text);
-            expect(descendant.getTypeExpressionNode()!.getTypeNode().getText()).to.equal(expected);
-        }
+        it("should get undefined when there is no type given", () => {
+            const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");
+            expect(descendant.getTypeExpressionNode()).to.be.undefined;
+        });
 
         it("should get when type is given", () => {
-            doTest("/** @param {boolean} t - String */\nfunction test() {}", "boolean");
+            const { descendant } = getInfo("/** @param {boolean} t - String */\nfunction test() {}");
+            expect(descendant.getTypeExpressionNode()!.getTypeNode().getText()).to.equal("boolean");
         });
     });
 

@@ -9,6 +9,6 @@ export class JSDocTypeExpression extends Node<ts.JSDocTypeExpression> {
      * Gets the type node of the JS Doc type expression
      */
     getTypeNode() {
-        return this.compilerNode.type;
+        return this._getNodeFromCompilerNode(this.compilerNode.type);
     }
 }
