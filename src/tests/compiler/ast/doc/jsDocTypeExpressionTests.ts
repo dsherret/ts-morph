@@ -9,7 +9,7 @@ describe(nameof(JSDocTypeExpression), () => {
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocTypeExpression), ...info };
     }
 
-    describe.only(nameof<JSDocTypeExpression>(d => d.getTypeNode), () => {
+    describe(nameof<JSDocTypeExpression>(d => d.getTypeNode), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getTypeNode().getText()).to.equal(expected);

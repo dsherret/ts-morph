@@ -1196,6 +1196,11 @@ export declare class TypeGuards {
      */
     static isJSDocTag(node: Node): node is JSDocTag;
     /**
+     * Gets if the node is a JSDocTypeExpression.
+     * @param node - Node to check.
+     */
+    static isJSDocTypeExpression(node: Node): node is JSDocTypeExpression;
+    /**
      * Gets if the node is a JSDocTypeTag.
      * @param node - Node to check.
      */
@@ -4780,7 +4785,7 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
     insertChildText(index: number, textOrWriterFunction: string | WriterFunction): Node<ts.Node>[];
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends ts.Statement ? Statement : Node<T>;
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends ts.Statement ? Statement : Node<T>;
 
 declare const DecoratorBase: typeof Node;
 
@@ -4908,10 +4913,14 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
 export declare function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagExtensionType>>(Base: T): Constructor<JSDocPropertyLikeTag> & T;
 
 export interface JSDocPropertyLikeTag {
+    /** Gets the type expression node of the JS doc property like tag */
+    getTypeExpressionNode(): JSDocTypeExpression | undefined;
     /** Gets the name of the JS doc property like tag. */
     getName(): string;
     /** Gets the name node of the JS doc property like tag. */
     getNameNode(): EntityName;
+    /** Checks if the JS doc property like tag is bracketed. */
+    isBracketed(): boolean;
 }
 
 declare type JSDocPropertyLikeTagExtensionType = Node<ts.JSDocPropertyLikeTag> & JSDocTag;
@@ -5039,6 +5048,16 @@ export declare class JSDocTypeTag extends JSDocTag<ts.JSDocTypeTag> {
  * JS doc unknown tag node.
  */
 export declare class JSDocUnknownTag extends JSDocTag<ts.JSDocUnknownTag> {
+}
+
+/**
+ * JS doc type expression node
+ */
+export declare class JSDocTypeExpression extends Node<ts.JSDocTypeExpression> {
+    /**
+     * Gets the type node of the JS Doc type expression
+     */
+    getTypeNode(): ts.TypeNode;
 }
 
 declare const EnumDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
@@ -6399,6 +6418,8 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
     [SyntaxKind.JSDocClassTag]: JSDocClassTag;
     [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
+    [SyntaxKind.JSDocTypeExpression]: JSDocTypeExpression;
+    [SyntaxKind.FirstJSDocNode]: JSDocTypeExpression;
     [SyntaxKind.JSDocTypeTag]: JSDocTypeTag;
     [SyntaxKind.JSDocTypedefTag]: JSDocTypedefTag;
     [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
