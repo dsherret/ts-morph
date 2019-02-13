@@ -1,14 +1,18 @@
-﻿ts-simple-ast
-=============
+﻿ts-morph
+========
 
-[![npm version](https://badge.fury.io/js/ts-simple-ast.svg)](https://badge.fury.io/js/ts-simple-ast)
-[![Build Status](https://travis-ci.org/dsherret/ts-simple-ast.svg?branch=master)](https://travis-ci.org/dsherret/ts-simple-ast)
-[![Coverage Status](https://coveralls.io/repos/dsherret/ts-simple-ast/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-simple-ast?branch=master)
+[![npm version](https://badge.fury.io/js/ts-morph.svg)](https://badge.fury.io/js/ts-morph)
+[![Build Status](https://travis-ci.org/dsherret/ts-morph.svg?branch=master)](https://travis-ci.org/dsherret/ts-morph)
+[![Coverage Status](https://coveralls.io/repos/dsherret/ts-morph/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-morph?branch=master)
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 [TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (06 January 2019)
+Formerly `ts-simple-ast`.
+
+## Library Development - Progress Update (02 February 2019)
+
+The library has been renamed from `ts-simple-ast` to `ts-morph`. The version was also reset back to 1.0.0 with this change.
 
 View information on breaking changes in [breaking-changes.md](breaking-changes.md).
 
@@ -22,28 +26,28 @@ View a generated report on what nodes have been wrapped in the [wrapped-nodes.md
 
 ## Documentation
 
-Work in progress: https://dsherret.github.io/ts-simple-ast/
+Work in progress: https://dsherret.github.io/ts-morph/
 
 ## Getting Started
 
-1. [Installing](https://dsherret.github.io/ts-simple-ast/)
-2. [Instantiating](https://dsherret.github.io/ts-simple-ast/setup/)
-3. [Adding source files](https://dsherret.github.io/ts-simple-ast/setup/adding-source-files)
-4. [Getting source files](https://dsherret.github.io/ts-simple-ast/navigation/getting-source-files)
-5. [Navigating](https://dsherret.github.io/ts-simple-ast/navigation/example)
-6. [Manipulating](https://dsherret.github.io/ts-simple-ast/manipulation/)
+1. [Installing](https://dsherret.github.io/ts-morph/)
+2. [Instantiating](https://dsherret.github.io/ts-morph/setup/)
+3. [Adding source files](https://dsherret.github.io/ts-morph/setup/adding-source-files)
+4. [Getting source files](https://dsherret.github.io/ts-morph/navigation/getting-source-files)
+5. [Navigating](https://dsherret.github.io/ts-morph/navigation/example)
+6. [Manipulating](https://dsherret.github.io/ts-morph/manipulation/)
 
 ## Example
 
 ```ts
-import { Project } from "ts-simple-ast";
+import { Project } from "ts-morph";
 
 // initialize
 const project = new Project({
     // Optionally specify compiler options, tsconfig.json, virtual file system, and more here.
     // If you initialize with a tsconfig.json, then it will automatically populate the project
     // with the associated source files.
-    // Read more: https://dsherret.github.io/ts-simple-ast/setup/
+    // Read more: https://dsherret.github.io/ts-morph/setup/
 });
 
 // add source files
@@ -92,7 +96,7 @@ const compilerNode = myClassFile.compilerNode;
 Or navigate existing compiler nodes created with the TypeScript compiler (the `ts` named export is the TypeScript compiler):
 
 ```ts ignore-error: 1109
-import { createWrappedNode, ClassDeclaration, ts } from "ts-simple-ast";
+import { createWrappedNode, ClassDeclaration, ts } from "ts-morph";
 
 // some code that creates a class declaration using the ts object
 const classNode: ts.ClassDeclaration = ...;
@@ -106,4 +110,4 @@ const firstProperty = classDec.getProperties()[0];
 
 ## Resources
 
-* [AST Viewers](https://dsherret.github.io/ts-simple-ast/setup/ast-viewers)
+* [AST Viewers](https://dsherret.github.io/ts-morph/setup/ast-viewers)

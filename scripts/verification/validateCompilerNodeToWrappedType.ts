@@ -6,7 +6,7 @@
  * wrapped node type.
  * ------------------------------------------------------
  */
-import { TypeAliasDeclarationStructure } from "ts-simple-ast";
+import { TypeAliasDeclarationStructure } from "ts-morph";
 import { TsSimpleAstInspector } from "../inspectors";
 import { Problem } from "./Problem";
 

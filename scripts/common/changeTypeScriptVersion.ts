@@ -1,4 +1,4 @@
-import { Project } from "ts-simple-ast";
+import { Project } from "ts-morph";
 import * as path from "path";
 import { rootFolder } from "../config";
 import { ArrayUtils } from "../../src/utils/ArrayUtils";
@@ -14,7 +14,7 @@ export function resetTypeScriptVersion() {
 function setModuleSpecifierValue(value: string) {
     const project = new Project();
     const sourceFiles = [
-        project.addExistingSourceFile(path.join(rootFolder, "dist-declarations/ts-simple-ast.d.ts")),
+        project.addExistingSourceFile(path.join(rootFolder, "dist-declarations/ts-morph.d.ts")),
         project.addExistingSourceFile(path.join(rootFolder, "src/typescript/public.ts"))
     ];
 

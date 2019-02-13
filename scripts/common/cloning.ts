@@ -1,4 +1,4 @@
-﻿import { StatementedNode, NamespaceDeclaration } from "ts-simple-ast";
+﻿import { StatementedNode, NamespaceDeclaration } from "ts-morph";
 
 export function cloneNamespaces(node: StatementedNode, cloningNamespaces: NamespaceDeclaration[]) {
     const namespaces = node.addNamespaces(cloningNamespaces.map(n => ({

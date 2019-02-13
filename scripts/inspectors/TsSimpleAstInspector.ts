@@ -1,5 +1,5 @@
 ﻿import { Project, Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName,
-    Directory, TypeGuards } from "ts-simple-ast";
+    Directory, TypeGuards } from "ts-morph";
 import { Memoize, ArrayUtils, createHashSet } from "../../src/utils";
 import { isNodeClass } from "../common";
 import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsSimpleAst";

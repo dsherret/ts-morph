@@ -36,7 +36,7 @@ Sometimes you might want to easily navigate an existing compiler node.
 Do that by using the `createWrappedNode` function:
 
 ```ts ignore-error: 1109
-import { createWrappedNode, ClassDeclaration, ts } from "ts-simple-ast";
+import { createWrappedNode, ClassDeclaration, ts } from "ts-morph";
 
 // some code that creates a class declaration using the ts object
 const classNode: ts.ClassDeclaration = ...;
@@ -65,18 +65,18 @@ const classDec = createWrappedNode(classNode, { typeChecker: compilerTypeChecker
 console.log(classDec.getPropertyOrThrow("propName").getType().getText()); // ok, because a type checker was provided
 ```
 
-### Important: Using both the TypeScript API and ts-simple-ast
+### Important: Using both the TypeScript API and ts-morph
 
-It is highly recommended to always use the `ts` named export from ts-simple-ast when
-needing to use the TypeScript Compiler API and ts-simple-ast at the same time:
+It is highly recommended to always use the `ts` named export from ts-morph when
+needing to use the TypeScript Compiler API and ts-morph at the same time:
 
 ```ts
 // do this
-import { ts } from "ts-simple-ast";
+import { ts } from "ts-morph";
 // not this
 import * as ts from "typescript";
 ```
 
-They're almost identical and the `ts` named export from ts-simple-ast should serve your needs.
+They're almost identical and the `ts` named export from ts-morph should serve your needs.
 
-There's lots of reasons why this is done and it's outlined in [#333](https://github.com/dsherret/ts-simple-ast/issues/333#issuecomment-391182952).
+There's lots of reasons why this is done and it's outlined in [#333](https://github.com/dsherret/ts-morph/issues/333#issuecomment-391182952).

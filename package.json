@@ -1,9 +1,9 @@
 {
-  "name": "ts-simple-ast",
-  "version": "21.0.3",
+  "name": "ts-morph",
+  "version": "1.0.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/main.js",
-  "typings": "dist-declarations/ts-simple-ast.d.ts",
+  "typings": "dist-declarations/ts-morph.d.ts",
   "scripts": {
     "dopublish": "yarn run type-check-docs && yarn run package && yarn run publish-code-verification && npm publish --otp",
     "lint": "yarn run lint-src && yarn run lint-scripts",
@@ -31,11 +31,11 @@
     "ensure-declaration-files-not-changed": "ts-node --transpileOnly scripts/verification/ensureDeclarationFilesNotChanged",
     "ensure-array-inputs-readonly": "ts-node --transpileOnly scripts/verification/main ensure-array-inputs-readonly",
     "ensure-or-throw-exists": "ts-node --transpileOnly scripts/verification/main ensure-or-throw-exists",
-    "overwrite-declaration-files": "yarn run build-declarations && shx cp -rf dist-declarations/ts-simple-ast.d.ts lib/ts-simple-ast.d.ts && shx cp -rf dist-declarations/code-block-writer.d.ts lib/code-block-writer.d.ts",
+    "overwrite-declaration-files": "yarn run build-declarations && shx cp -rf dist-declarations/ts-morph.d.ts lib/ts-morph.d.ts && shx cp -rf dist-declarations/code-block-writer.d.ts lib/code-block-writer.d.ts",
     "type-check-docs": "ts-node --transpileOnly scripts/typeCheckDocumentation.ts",
     "maintain-barrels": "barrel-maintainer src"
   },
-  "repository": "git+https://github.com/dsherret/ts-simple-ast.git",
+  "repository": "git+https://github.com/dsherret/ts-morph.git",
   "keywords": [
     "typescript",
     "ast",
@@ -46,9 +46,9 @@
   "author": "David Sherret",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dsherret/ts-simple-ast/issues"
+    "url": "https://github.com/dsherret/ts-morph/issues"
   },
-  "homepage": "https://github.com/dsherret/ts-simple-ast#readme",
+  "homepage": "https://github.com/dsherret/ts-morph#readme",
   "nyc": {
     "extension": [
       ".ts",
@@ -65,7 +65,7 @@
     "all": true
   },
   "typescript": {
-    "definition": "dist-declarations/ts-simple-ast.d.ts"
+    "definition": "dist-declarations/ts-morph.d.ts"
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
@@ -104,7 +104,7 @@
     "source-map-support": "^0.5.5",
     "ts-nameof": "^3.0.0",
     "ts-node": "7.0.0",
-    "ts-simple-ast": "19.1.0",
+    "ts-morph": "1.0.0",
     "tslint": "^5.11.0",
     "ttypescript": "1.5.5",
     "typescript-3.0.1": "npm:typescript@3.0.1",

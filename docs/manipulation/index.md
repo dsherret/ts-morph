@@ -11,7 +11,7 @@ Most information about manipulation can be found in the [Details](../details) se
 All moves, copies, and deletes won't be propagated to the underlying file system until `save()` is called on the main `project` object.
 
 ```ts
-import { Project } from "ts-simple-ast";
+import { Project } from "ts-morph";
 
 const project = new Project();
 

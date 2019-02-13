@@ -5,7 +5,7 @@
  * and internal members of a class have a underscore prefix.
  * ----------------------------------------------------------
  */
-import { TypeGuards, ClassMemberTypes, ParameterDeclaration, Scope } from "ts-simple-ast";
+import { TypeGuards, ClassMemberTypes, ParameterDeclaration, Scope } from "ts-morph";
 import { TsSimpleAstInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";

@@ -6,7 +6,7 @@ title: Performance
 
 There's a lot of opportunity for performance improvements. The library originally started off favouring correctness, but it's now starting to switch to improving performance.
 
-[View Issues](https://github.com/dsherret/ts-simple-ast/labels/performance)
+[View Issues](https://github.com/dsherret/ts-morph/labels/performance)
 
 
 ### Performance Tip: Analyze then Manipulate
@@ -99,7 +99,7 @@ It won't be updated when manipulation happens again. Note that after doing this,
 It's possible to make sure all created nodes within a block are forgotten:
 
 ```ts
-import { Project, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration } from "ts-simple-ast";
+import { Project, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration } from "ts-morph";
 
 const project = new Project();
 const text = "namespace Namespace { interface Interface {} class Class {} }";

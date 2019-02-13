@@ -4,7 +4,7 @@
  * Automatically maintains this class based on changes in the application.
  * --------------------------------------------------------
  */
-import { TypeGuards, SyntaxKind, MethodDeclarationStructure, ParameterDeclaration, Scope } from "ts-simple-ast";
+import { TypeGuards, SyntaxKind, MethodDeclarationStructure, ParameterDeclaration, Scope } from "ts-morph";
 import { TsSimpleAstInspector } from "../inspectors";
 
 export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {

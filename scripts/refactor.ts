@@ -7,7 +7,7 @@
  */
 
 import { InspectorFactory } from "./inspectors";
-import { SyntaxKind, TypeGuards } from "ts-simple-ast";
+import { SyntaxKind, TypeGuards } from "ts-morph";
 import { ArrayUtils } from "../src/utils";
 
 const factory = new InspectorFactory();

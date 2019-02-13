@@ -1,4 +1,4 @@
-﻿import { ts } from "ts-simple-ast";
+﻿import { ts } from "ts-morph";
 import { createGetStructureFunctions } from "./createGetStructureFunctions";
 import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
 import { createCodeBlockWriterFile } from "./createCodeBlockWriterFile";

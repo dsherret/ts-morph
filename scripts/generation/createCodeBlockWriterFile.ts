@@ -5,7 +5,7 @@
  * ----------------------------------------------
  */
 import * as path from "path";
-import { ClassDeclaration } from "ts-simple-ast";
+import { ClassDeclaration } from "ts-morph";
 import { rootFolder } from "../config";
 import { TsSimpleAstInspector } from "../inspectors";
 

@@ -10,7 +10,7 @@ by useful in some scenarios (for example, using a virtual file system is useful 
 ### Current File System Object
 
 ```ts
-import { Project } from "ts-simple-ast";
+import { Project } from "ts-morph";
 const project = new Project();
 
 const fs = project.getFileSystem(); // returns: FileSystemHost
@@ -24,7 +24,7 @@ here (ex. `writeFile(filePath: string, fileText: string): Promise<void>`, `readF
 If you want to use a virtual file system that is stored in memory, specify that when creating an `Ast` object:
 
 ```ts
-import { Project } from "ts-simple-ast";
+import { Project } from "ts-morph";
 
 const project = new Project({ useVirtualFileSystem: true });
 const fs = project.getFileSystem();
@@ -45,7 +45,7 @@ you won't be able to resolve the types they define.
 If you need this information, you will have to write them to the virtual file system manually using a method that works well in your environment:
 
 ```ts ignore-error: 1109
-import { Project, FileSystemHost } from "ts-simple-ast";
+import { Project, FileSystemHost } from "ts-morph";
 
 function loadDtsFiles(fs: FileSystemHost) {
     // Example that loads every single lib file. You most likely don't need all of these.
@@ -80,7 +80,7 @@ When using a non-default file system, the library will search for these files in
 It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Ast` object:
 
 ```ts ignore-error: 2420, 2345
-import { Project, FileSystemHost } from "ts-simple-ast";
+import { Project, FileSystemHost } from "ts-morph";
 
 class MyCustomFileSystem implements FileSystemHost {
     // implement it

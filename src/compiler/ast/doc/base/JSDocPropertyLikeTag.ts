@@ -11,6 +11,8 @@ export interface JSDocPropertyLikeTag {
     getName(): string;
     /** Gets the name node of the JS doc property like tag. */
     getNameNode(): EntityName;
+    /** Checks if the JS doc property like tag is bracketed. */
+    isBracketed(): boolean;
 }
 
 export function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagExtensionType>>(Base: T): Constructor<JSDocPropertyLikeTag> & T {
@@ -22,6 +24,10 @@ export function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagE
 
         getNameNode() {
             return this._getNodeFromCompilerNode(this.compilerNode.name);
+        }
+
+        isBracketed() {
+            return this.compilerNode.isBracketed;
         }
     };
 }

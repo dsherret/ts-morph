@@ -1,10 +1,10 @@
 ﻿# Logging Bugs
 
-1. Start logging an issue in the [issue tracker](https://github.com/dsherret/ts-simple-ast/issues).
+1. Start logging an issue in the [issue tracker](https://github.com/dsherret/ts-morph/issues).
 1. Clearly identify the problem and submit some reproduction code.
     * Prune the reproduction to remove needless details.
 1. State the current and expected behaviour.
-1. State the version of ts-simple-ast (always show a reproduction of the bug on the latest version).
+1. State the version of ts-morph (always show a reproduction of the bug on the latest version).
 
 # Contributing Bug Fixes
 
@@ -15,7 +15,7 @@
 
 # Contributing Features
 
-1. Log an issue in the [issue tracker](https://github.com/dsherret/ts-simple-ast/issues). In the issue:
+1. Log an issue in the [issue tracker](https://github.com/dsherret/ts-morph/issues). In the issue:
     1. Propose the change.
         * Outline all changes that will be made to the public API.
         * Discuss any structural changes to the code if necessary.

@@ -1,4 +1,4 @@
-﻿import { Diagnostic, SourceFile } from "ts-simple-ast";
+﻿import { Diagnostic, SourceFile } from "ts-morph";
 import { getProject } from "./common";
 import { MarkDownFile, CodeBlock } from "./markdown";
 
@@ -84,7 +84,7 @@ function getInitializedFileText(text: string) {
 
 function changeModuleSpecifiers(file: SourceFile) {
     for (const importExport of [...file.getImportDeclarations(), ...file.getExportDeclarations()]) {
-        if (importExport.getModuleSpecifierValue() === "ts-simple-ast")
+        if (importExport.getModuleSpecifierValue() === "ts-morph")
             importExport.setModuleSpecifier("../../src/main");
     }
 }
