@@ -554,6 +554,12 @@ export declare class Project {
      */
     createWriter(): CodeBlockWriter;
     /**
+     * Gets writer functions for writing with the project's formatting settings.
+     *
+     * @remarks This is an experimental feature.
+     */
+    getWriterFunctions(): WriterFunctions;
+    /**
      * Forgets the nodes created in the scope of the passed in block.
      *
      * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
@@ -1828,19 +1834,32 @@ export declare class TypeGuards {
 }
 
 /**
- * Functions for writing.
- * @remarks These functions are currently very experimental.
+ * Writer functions. Retrieve these from Project#getWriterFunctions().
  */
-export declare class WriterFunctions {
-    private constructor();
+export interface WriterFunctions {
     /**
      * Gets a writer function for writing the provided object as an object literal expression.
      * @param obj - Object to write.
      */
-    static object(obj: {
-        [key: string]: string | number | WriterFunction | undefined;
+    object(obj: {
+        [key: string]: WriterFunctionOrValue | undefined;
     }): WriterFunction;
+    /** Gets a writer function for writing an object type. */
+    objectType(structure: TypeElementMemberedNodeStructure): WriterFunction;
+    /** Gets a writer function for writing a union type. */
+    unionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): WriterFunction;
+    /** Gets a writer function for writing an intersection type. */
+    intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): WriterFunction;
 }
+
+/** @deprecated Deprecated writer functions. Use Project#getWriterFunctions() instead. */
+export declare const WriterFunctions: {
+    object: (obj: {
+        [key: string]: string | number | WriterFunction | undefined;
+    }) => WriterFunction;
+};
+
+export declare type WriterFunctionOrValue = string | number | WriterFunction;
 
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
 
@@ -4912,6 +4931,8 @@ export interface JSDocPropertyLikeTag {
     getName(): string;
     /** Gets the name node of the JS doc property like tag. */
     getNameNode(): EntityName;
+    /** Checks if the JS doc property like tag is bracketed. */
+    isBracketed(): boolean;
 }
 
 declare type JSDocPropertyLikeTagExtensionType = Node<ts.JSDocPropertyLikeTag> & JSDocTag;

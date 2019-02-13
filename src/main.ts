@@ -13,5 +13,5 @@ export { printNode, PrintNodeOptions } from "./utils/compiler/printNode";
 export { SourceFileReferencingNodes } from "./utils/references/SourceFileReferenceContainer";
 export { CompilerOptionsFromTsConfigOptions, CompilerOptionsFromTsConfigResult, getCompilerOptionsFromTsConfig } from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
 export { TypeGuards } from "./utils/TypeGuards";
-export { WriterFunctions } from "./utils/WriterFunctions";
+export { WriterFunctions, WriterFunctionOrValue } from "./utils/WriterFunctions";
 export * from "./typescript/public";
