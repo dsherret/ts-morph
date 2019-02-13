@@ -20,6 +20,21 @@ describe(nameof(JSDocPropertyLikeTag), () => {
         });
     });
 
+    describe(nameof<JSDocPropertyLikeTag>(d => d.isBracketed), () => {
+        function doTest(text: string, expected: boolean) {
+            const { descendant } = getInfo(text);
+            expect(descendant.isBracketed()).to.equal(expected);
+        }
+
+        it("should return true when bracketed", () => {
+            doTest("/** @param {Object} [t] - String */\nfunction test() {}", true);
+        });
+
+        it("should return false when not bracketed", () => {
+            doTest("/** @param {Object} t - String */\nfunction test() {}", false);
+        });
+    });
+
     describe(nameof<JSDocPropertyLikeTag>(d => d.getName), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
