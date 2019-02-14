@@ -69,6 +69,8 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag;
     [SyntaxKind.JSDocClassTag]: compiler.JSDocClassTag;
     [SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag;
+    [SyntaxKind.JSDocTypeExpression]: compiler.JSDocTypeExpression;
+    [SyntaxKind.FirstJSDocNode]: compiler.JSDocTypeExpression;
     [SyntaxKind.JSDocTypeTag]: compiler.JSDocTypeTag;
     [SyntaxKind.JSDocTypedefTag]: compiler.JSDocTypedefTag;
     [SyntaxKind.JSDocParameterTag]: compiler.JSDocParameterTag;
