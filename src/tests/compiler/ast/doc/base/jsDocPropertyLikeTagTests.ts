@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { JSDocPropertyLikeTag } from "../../../../../compiler";
+import { JSDocPropertyLikeTag, Type } from "../../../../../compiler";
 import { TypeGuards } from "../../../../../utils";
 import { getInfoFromText } from "../../../testHelpers";
 
@@ -8,6 +8,18 @@ describe(nameof(JSDocPropertyLikeTag), () => {
         const info = getInfoFromText(text);
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocPropertyLikeTag), ...info };
     }
+
+    describe(nameof<JSDocPropertyLikeTag>(d => d.getTypeExpression), () => {
+        it("should get undefined when there is no type given", () => {
+            const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");
+            expect(descendant.getTypeExpression()).to.be.undefined;
+        });
+
+        it("should get when type is given", () => {
+            const { descendant } = getInfo("/** @param {boolean} t - String */\nfunction test() {}");
+            expect(descendant.getTypeExpression()!.getTypeNode().getText()).to.equal("boolean");
+        });
+    });
 
     describe(nameof<JSDocPropertyLikeTag>(d => d.isBracketed), () => {
         function doTest(text: string, expected: boolean) {
@@ -31,11 +43,11 @@ describe(nameof(JSDocPropertyLikeTag), () => {
         }
 
         it("should get when identifier", () => {
-            doTest("/** @param t - String */\nfunction test() {}", "t");
+            doTest("/** @param {boolean} t - String */\nfunction test() {}", "t");
         });
 
         it("should get when fully qualified name", () => {
-            doTest("/** @param t.t.t - String */\nfunction test() {}", "t.t.t");
+            doTest("/** @param {boolean} t.t.t - String */\nfunction test() {}", "t.t.t");
         });
     });
 
@@ -46,11 +58,11 @@ describe(nameof(JSDocPropertyLikeTag), () => {
         }
 
         it("should get when identifier", () => {
-            doTest("/** @param t - String */\nfunction test() {}", "t");
+            doTest("/** @param {boolean} t - String */\nfunction test() {}", "t");
         });
 
         it("should get when fully qualified name", () => {
-            doTest("/** @param t.t.t - String */\nfunction test() {}", "t.t.t");
+            doTest("/** @param {boolean} t.t.t - String */\nfunction test() {}", "t.t.t");
         });
     });
 });

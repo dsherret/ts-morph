@@ -69,6 +69,7 @@ export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag,
     [SyntaxKind.JSDocClassTag]: compiler.JSDocClassTag,
     [SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag,
+    [SyntaxKind.JSDocTypeExpression]: compiler.JSDocTypeExpression,
     [SyntaxKind.JSDocTypeTag]: compiler.JSDocTypeTag,
     [SyntaxKind.JSDocTypedefTag]: compiler.JSDocTypedefTag,
     [SyntaxKind.JSDocParameterTag]: compiler.JSDocParameterTag,
