@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {TypeGuards, JSDocTypeTag} from '../../../../main';
-import {getInfoFromText} from '../../testHelpers';
+import {TypeGuards, JSDocTypeTag} from "../../../../main";
+import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(JSDocTypeTag), () => {
     function getInfo(text: string) {
