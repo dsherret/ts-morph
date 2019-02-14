@@ -226,7 +226,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [LabeledStatement](src/compiler/ast/statement/LabeledStatement.ts)
     * :heavy_check_mark: label
     * :heavy_check_mark: statement
-* [LeftHandSideExpression](src/compiler/ast/decorator/Decorator.ts)
+* [LeftHandSideExpression](src/compiler/ast/expression/LeftHandSideExpression.ts)
 * [LiteralExpression](src/compiler/ast/expression/LiteralExpression.ts)
 * [LiteralTypeNode](src/compiler/ast/type/LiteralTypeNode.ts)
     * :heavy_check_mark: literal
