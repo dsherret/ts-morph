@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {TypeGuards, JSDocTypeTag} from '../../../../main';
 import {getInfoFromText} from '../../testHelpers';
 
-describe.only(nameof(JSDocTypeTag), () => {
+describe(nameof(JSDocTypeTag), () => {
     function getInfo(text: string) {
         const info = getInfoFromText(text);
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocTypeTag), ...info };
