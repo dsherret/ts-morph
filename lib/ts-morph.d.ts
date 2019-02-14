@@ -4913,8 +4913,8 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
 export declare function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagExtensionType>>(Base: T): Constructor<JSDocPropertyLikeTag> & T;
 
 export interface JSDocPropertyLikeTag {
-    /** Gets the type expression node of the JS doc property like tag */
-    getTypeExpressionNode(): JSDocTypeExpression | undefined;
+    /** Gets the type expression node of the JS doc property like tag. */
+    getTypeExpression(): JSDocTypeExpression | undefined;
     /** Gets the name of the JS doc property like tag. */
     getName(): string;
     /** Gets the name node of the JS doc property like tag. */
@@ -5051,13 +5051,13 @@ export declare class JSDocUnknownTag extends JSDocTag<ts.JSDocUnknownTag> {
 }
 
 /**
- * JS doc type expression node
+ * JS doc type expression node.
  */
 export declare class JSDocTypeExpression extends Node<ts.JSDocTypeExpression> {
     /**
-     * Gets the type node of the JS Doc type expression
+     * Gets the type node of the JS doc type expression.
      */
-    getTypeNode(): ts.TypeNode;
+    getTypeNode(): TypeNode<ts.TypeNode>;
 }
 
 declare const EnumDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;

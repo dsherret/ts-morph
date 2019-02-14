@@ -9,15 +9,15 @@ describe(nameof(JSDocPropertyLikeTag), () => {
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocPropertyLikeTag), ...info };
     }
 
-    describe(nameof<JSDocPropertyLikeTag>(d => d.getTypeExpressionNode), () => {
+    describe(nameof<JSDocPropertyLikeTag>(d => d.getTypeExpression), () => {
         it("should get undefined when there is no type given", () => {
             const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");
-            expect(descendant.getTypeExpressionNode()).to.be.undefined;
+            expect(descendant.getTypeExpression()).to.be.undefined;
         });
 
         it("should get when type is given", () => {
             const { descendant } = getInfo("/** @param {boolean} t - String */\nfunction test() {}");
-            expect(descendant.getTypeExpressionNode()!.getTypeNode().getText()).to.equal("boolean");
+            expect(descendant.getTypeExpression()!.getTypeNode().getText()).to.equal("boolean");
         });
     });
 
