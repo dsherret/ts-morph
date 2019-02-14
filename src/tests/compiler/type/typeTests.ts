@@ -29,6 +29,7 @@ interface MyInterface {}
 class MyClass {}
 
 let anonymousType: { str: string; };
+let anyType: any;
 let stringType: string;
 let booleanType: boolean;
 let numberType: number;
@@ -112,6 +113,20 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
 
             it("should get when it's not an anonymous type", () => {
+                doTest("stringType", false);
+            });
+        });
+
+        describe(nameof<Type>(t => t.isAny), () => {
+            function doTest(typeName: string, expected: boolean) {
+                expect(typesByName[typeName].isAny()).to.equal(expected);
+            }
+
+            it("should be when any", () => {
+                doTest("anyType", true);
+            });
+
+            it("should not be when not any", () => {
                 doTest("stringType", false);
             });
         });

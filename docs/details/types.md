@@ -198,6 +198,7 @@ Use any of the following methods:
 
 ```ts
 type.isAnonymous();
+type.isAny();
 type.isArray();
 type.isBoolean();
 type.isString();
