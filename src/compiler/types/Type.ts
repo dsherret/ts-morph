@@ -277,6 +277,13 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets if this is an any type.
+     */
+    isAny() {
+        return this._hasTypeFlag(TypeFlags.Any);
+    }
+
+    /**
      * Gets if this is an array type.
      */
     isArray() {
