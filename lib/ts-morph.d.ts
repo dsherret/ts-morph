@@ -4995,6 +4995,10 @@ export declare class JSDocPropertyTag extends JSDocPropertyTagBase<ts.JSDocPrope
  * JS doc return tag node.
  */
 export declare class JSDocReturnTag extends JSDocTag<ts.JSDocReturnTag> {
+    /**
+     * Gets the type expression node of the JS doc property like tag.
+     */
+    getTypeExpression(): JSDocTypeExpression | undefined;
 }
 
 /**
@@ -5042,6 +5046,10 @@ export declare class JSDocTypedefTag extends JSDocTag<ts.JSDocTypedefTag> {
  * JS doc type tag node.
  */
 export declare class JSDocTypeTag extends JSDocTag<ts.JSDocTypeTag> {
+    /**
+     * Gets the type expression node of the JS doc property like tag.
+     */
+    getTypeExpression(): JSDocTypeExpression | undefined;
 }
 
 /**
