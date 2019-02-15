@@ -1,12 +1,12 @@
 import { removeInterfaceMember } from "../../../manipulation";
 import { MethodSignatureStructure, MethodSignatureSpecificStructure } from "../../../structures";
 import { ts } from "../../../typescript";
-import { ChildOrderableNode, JSDocableNode, PropertyNamedNode, QuestionTokenableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
+import { ChildOrderableNode, JSDocableNode, PropertyNamedNode, QuestionTokenableNode, SignatureDeclaration, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const MethodSignatureBase = ChildOrderableNode(JSDocableNode(QuestionTokenableNode(TypeParameteredNode(SignaturedDeclaration(PropertyNamedNode(TypeElement))))));
+export const MethodSignatureBase = ChildOrderableNode(JSDocableNode(QuestionTokenableNode(TypeParameteredNode(SignatureDeclaration(PropertyNamedNode(TypeElement))))));
 export class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
     /**
      * Removes this method signature.

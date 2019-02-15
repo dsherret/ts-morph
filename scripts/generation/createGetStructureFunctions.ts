@@ -72,7 +72,7 @@ function shouldAllowExtends(structure: Structure, baseStructure: Structure) {
             case "ParameteredNodeStructure":
             case "TypeParameteredNodeStructure":
             case "JSDocableNodeStructure":
-            case "SignaturedDeclarationStructure":
+            case "SignatureDeclarationStructure":
             case "ReturnTypedNodeStructure":
             case "GeneratorableNodeStructure":
             case "AsyncableNodeStructure":
@@ -86,7 +86,7 @@ function shouldAllowExtends(structure: Structure, baseStructure: Structure) {
             case "ParameteredNodeStructure":
             case "TypeParameteredNodeStructure":
             case "JSDocableNodeStructure":
-            case "SignaturedDeclarationStructure":
+            case "SignatureDeclarationStructure":
             case "ReturnTypedNodeStructure":
             case "GeneratorableNodeStructure":
             case "AsyncableNodeStructure":
@@ -101,7 +101,7 @@ function shouldAllowExtends(structure: Structure, baseStructure: Structure) {
             case "ParameteredNodeStructure":
             case "TypeParameteredNodeStructure":
             case "JSDocableNodeStructure":
-            case "SignaturedDeclarationStructure":
+            case "SignatureDeclarationStructure":
             case "ReturnTypedNodeStructure":
                 return false;
             default:

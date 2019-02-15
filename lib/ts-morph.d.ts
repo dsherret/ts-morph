@@ -1581,10 +1581,10 @@ export declare class TypeGuards {
      */
     static isShorthandPropertyAssignment(node: Node): node is ShorthandPropertyAssignment;
     /**
-     * Gets if the node is a SignaturedDeclaration.
+     * Gets if the node is a SignatureDeclaration.
      * @param node - Node to check.
      */
-    static isSignaturedDeclaration(node: Node): node is SignaturedDeclaration & SignaturedDeclarationExtensionType;
+    static isSignatureDeclaration(node: Node): node is SignatureDeclaration & SignatureDeclarationExtensionType;
     /**
      * Gets if the node is a SourceFile.
      * @param node - Node to check.
@@ -2950,12 +2950,12 @@ export interface ScopedNode {
 
 declare type ScopedNodeExtensionType = Node & ModifierableNode;
 
-export declare function SignaturedDeclaration<T extends Constructor<SignaturedDeclarationExtensionType>>(Base: T): Constructor<SignaturedDeclaration> & T;
+export declare function SignatureDeclaration<T extends Constructor<SignatureDeclarationExtensionType>>(Base: T): Constructor<SignatureDeclaration> & T;
 
-export interface SignaturedDeclaration extends ParameteredNode, ReturnTypedNode {
+export interface SignatureDeclaration extends ParameteredNode, ReturnTypedNode {
 }
 
-declare type SignaturedDeclarationExtensionType = Node<ts.SignatureDeclaration>;
+declare type SignatureDeclarationExtensionType = Node<ts.SignatureDeclaration>;
 
 export declare function StaticableNode<T extends Constructor<StaticableNodeExtensionType>>(Base: T): Constructor<StaticableNode> & T;
 
@@ -3903,7 +3903,7 @@ export declare class ClassExpression extends ClassExpressionBase<ts.ClassExpress
 
 declare const ConstructorDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<ScopedNode> & Constructor<FunctionLikeDeclaration> & Constructor<BodyableNode> & typeof Node;
 
-declare const ConstructorDeclarationOverloadBase: Constructor<TypeParameteredNode> & Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ScopedNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & typeof Node;
+declare const ConstructorDeclarationOverloadBase: Constructor<TypeParameteredNode> & Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ScopedNode> & Constructor<ModifierableNode> & Constructor<SignatureDeclaration> & typeof Node;
 
 export declare class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
@@ -3971,7 +3971,7 @@ export declare class GetAccessorDeclaration extends GetAccessorDeclarationBase<t
 
 declare const MethodDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<QuestionTokenableNode> & Constructor<StaticableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<FunctionLikeDeclaration> & Constructor<PropertyNamedNode> & typeof Node;
 
-declare const MethodDeclarationOverloadBase: Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ScopedNode> & Constructor<TypeParameteredNode> & Constructor<AbstractableNode> & Constructor<QuestionTokenableNode> & Constructor<StaticableNode> & Constructor<AsyncableNode> & Constructor<ModifierableNode> & Constructor<GeneratorableNode> & Constructor<SignaturedDeclaration> & typeof Node;
+declare const MethodDeclarationOverloadBase: Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ScopedNode> & Constructor<TypeParameteredNode> & Constructor<AbstractableNode> & Constructor<QuestionTokenableNode> & Constructor<StaticableNode> & Constructor<AsyncableNode> & Constructor<ModifierableNode> & Constructor<GeneratorableNode> & Constructor<SignatureDeclaration> & typeof Node;
 
 export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
@@ -5815,7 +5815,7 @@ export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
 
 declare const FunctionDeclarationBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<FunctionLikeDeclaration> & Constructor<StatementedNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NameableNode> & typeof Node;
 
-declare const FunctionDeclarationOverloadBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & Constructor<StatementedNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Node;
+declare const FunctionDeclarationOverloadBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignatureDeclaration> & Constructor<StatementedNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Node;
 
 export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
@@ -5855,14 +5855,14 @@ export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.Func
     getStructure(): FunctionDeclarationStructure | FunctionDeclarationOverloadStructure;
 }
 
-declare const FunctionExpressionBase: Constructor<JSDocableNode> & Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<StatementedNode> & Constructor<TypeParameteredNode> & Constructor<SignaturedDeclaration> & Constructor<ModifierableNode> & Constructor<NameableNode> & typeof PrimaryExpression;
+declare const FunctionExpressionBase: Constructor<JSDocableNode> & Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<StatementedNode> & Constructor<TypeParameteredNode> & Constructor<SignatureDeclaration> & Constructor<ModifierableNode> & Constructor<NameableNode> & typeof PrimaryExpression;
 
 export declare class FunctionExpression extends FunctionExpressionBase<ts.FunctionExpression> {
 }
 
 export declare function FunctionLikeDeclaration<T extends Constructor<FunctionLikeDeclarationExtensionType>>(Base: T): Constructor<FunctionLikeDeclaration> & T;
 
-export interface FunctionLikeDeclaration extends JSDocableNode, TypeParameteredNode, SignaturedDeclaration, StatementedNode, ModifierableNode {
+export interface FunctionLikeDeclaration extends JSDocableNode, TypeParameteredNode, SignatureDeclaration, StatementedNode, ModifierableNode {
 }
 
 declare type FunctionLikeDeclarationExtensionType = Node<ts.FunctionLikeDeclaration>;
@@ -5972,7 +5972,7 @@ export declare class HeritageClause extends Node<ts.HeritageClause> {
     removeExpression(expressionNode: ExpressionWithTypeArguments): this;
 }
 
-declare const CallSignatureDeclarationBase: Constructor<TypeParameteredNode> & Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<SignaturedDeclaration> & typeof TypeElement;
+declare const CallSignatureDeclarationBase: Constructor<TypeParameteredNode> & Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<SignatureDeclaration> & typeof TypeElement;
 
 export declare class CallSignatureDeclaration extends CallSignatureDeclarationBase<ts.CallSignatureDeclaration> {
     /**
@@ -5990,7 +5990,7 @@ export declare class CallSignatureDeclaration extends CallSignatureDeclarationBa
     getStructure(): CallSignatureDeclarationStructure;
 }
 
-declare const ConstructSignatureDeclarationBase: Constructor<TypeParameteredNode> & Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<SignaturedDeclaration> & typeof TypeElement;
+declare const ConstructSignatureDeclarationBase: Constructor<TypeParameteredNode> & Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<SignatureDeclaration> & typeof TypeElement;
 
 export declare class ConstructSignatureDeclaration extends ConstructSignatureDeclarationBase<ts.ConstructSignatureDeclaration> {
     /**
@@ -6080,7 +6080,7 @@ export declare class InterfaceDeclaration extends InterfaceDeclarationBase<ts.In
     getStructure(): InterfaceDeclarationStructure;
 }
 
-declare const MethodSignatureBase: Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<QuestionTokenableNode> & Constructor<TypeParameteredNode> & Constructor<SignaturedDeclaration> & Constructor<PropertyNamedNode> & typeof TypeElement;
+declare const MethodSignatureBase: Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<QuestionTokenableNode> & Constructor<TypeParameteredNode> & Constructor<SignatureDeclaration> & Constructor<PropertyNamedNode> & typeof TypeElement;
 
 export declare class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
     /**
@@ -8438,7 +8438,7 @@ declare const FunctionTypeNodeBase: Constructor<TypeParameteredNode> & typeof Fu
 export declare class FunctionTypeNode extends FunctionTypeNodeBase<ts.FunctionTypeNode> {
 }
 
-declare const FunctionOrConstructorTypeNodeBaseBase: Constructor<SignaturedDeclaration> & typeof TypeNode;
+declare const FunctionOrConstructorTypeNodeBaseBase: Constructor<SignatureDeclaration> & typeof TypeNode;
 
 export declare class FunctionOrConstructorTypeNodeBase<T extends ts.FunctionOrConstructorTypeNode = ts.FunctionOrConstructorTypeNode> extends FunctionOrConstructorTypeNodeBaseBase<T> {
 }
@@ -10135,7 +10135,7 @@ export interface ScopedNodeStructure {
     scope?: Scope;
 }
 
-export interface SignaturedDeclarationStructure extends ParameteredNodeStructure, ReturnTypedNodeStructure {
+export interface SignatureDeclarationStructure extends ParameteredNodeStructure, ReturnTypedNodeStructure {
 }
 export interface StaticableNodeStructure {
     isStatic?: boolean;
@@ -10187,7 +10187,7 @@ interface ConstructorDeclarationSpecificStructure {
     overloads?: ConstructorDeclarationOverloadStructure[];
 }
 
-export interface ConstructorDeclarationOverloadStructure extends ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
+export interface ConstructorDeclarationOverloadStructure extends ScopedNodeStructure, SignatureDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
 }
 
 export interface GetAccessorDeclarationStructure extends GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
@@ -10203,7 +10203,7 @@ interface MethodDeclarationSpecificStructure {
     overloads?: MethodDeclarationOverloadStructure[];
 }
 
-export interface MethodDeclarationOverloadStructure extends StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, QuestionTokenableNodeStructure {
+export interface MethodDeclarationOverloadStructure extends StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignatureDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, QuestionTokenableNodeStructure {
 }
 
 export interface PropertyDeclarationStructure extends PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure {
@@ -10274,10 +10274,10 @@ interface FunctionDeclarationSpecificStructure {
     overloads?: FunctionDeclarationOverloadStructure[];
 }
 
-export interface FunctionDeclarationOverloadStructure extends SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+export interface FunctionDeclarationOverloadStructure extends SignatureDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
 }
 
-export interface FunctionLikeDeclarationStructure extends SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, StatementedNodeStructure {
+export interface FunctionLikeDeclarationStructure extends SignatureDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, StatementedNodeStructure {
 }
 
 export interface ParameterDeclarationStructure extends DeclarationNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure {
@@ -10287,13 +10287,13 @@ interface ParameterDeclarationSpecificStructure {
     isRestParameter?: boolean;
 }
 
-export interface CallSignatureDeclarationStructure extends CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+export interface CallSignatureDeclarationStructure extends CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignatureDeclarationStructure, TypeParameteredNodeStructure {
 }
 
 interface CallSignatureDeclarationSpecificStructure {
 }
 
-export interface ConstructSignatureDeclarationStructure extends ConstructSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+export interface ConstructSignatureDeclarationStructure extends ConstructSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignatureDeclarationStructure, TypeParameteredNodeStructure {
 }
 
 interface ConstructSignatureDeclarationSpecificStructure {
@@ -10313,7 +10313,7 @@ export interface InterfaceDeclarationStructure extends NamedNodeStructure, Inter
 interface InterfaceDeclarationSpecificStructure {
 }
 
-export interface MethodSignatureStructure extends PropertyNamedNodeStructure, MethodSignatureSpecificStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+export interface MethodSignatureStructure extends PropertyNamedNodeStructure, MethodSignatureSpecificStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignatureDeclarationStructure, TypeParameteredNodeStructure {
 }
 
 interface MethodSignatureSpecificStructure {

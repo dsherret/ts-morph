@@ -1,4 +1,4 @@
-﻿import { BodyableNodeStructure, JSDocableNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
+﻿import { BodyableNodeStructure, JSDocableNodeStructure, ScopedNodeStructure, SignatureDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface ConstructorDeclarationStructure
@@ -10,6 +10,6 @@ export interface ConstructorDeclarationSpecificStructure {
     overloads?: ConstructorDeclarationOverloadStructure[];
 }
 
-export interface ConstructorDeclarationOverloadStructure extends ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure,
+export interface ConstructorDeclarationOverloadStructure extends ScopedNodeStructure, SignatureDeclarationStructure, TypeParameteredNodeStructure,
     JSDocableNodeStructure {
 }

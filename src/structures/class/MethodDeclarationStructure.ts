@@ -1,5 +1,5 @@
 ﻿import { AbstractableNodeStructure, AsyncableNodeStructure, BodyableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure,
-    JSDocableNodeStructure, PropertyNamedNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure,
+    JSDocableNodeStructure, PropertyNamedNodeStructure, ScopedNodeStructure, SignatureDeclarationStructure, StaticableNodeStructure,
     TypeParameteredNodeStructure, QuestionTokenableNodeStructure } from "../base";
 import { FunctionLikeDeclarationStructure } from "../function";
 
@@ -16,7 +16,7 @@ export interface MethodDeclarationSpecificStructure {
 
 export interface MethodDeclarationOverloadStructure
     extends StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure,
-        GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure,
+        GeneratorableNodeStructure, SignatureDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure,
         QuestionTokenableNodeStructure
 {
 }

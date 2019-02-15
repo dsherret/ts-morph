@@ -3,7 +3,7 @@ import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFu
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode,
-    TextInsertableNode, UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
+    TextInsertableNode, UnwrappableNode, SignatureDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { NamespaceChildableNode } from "../module";
@@ -16,7 +16,7 @@ export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextIn
     FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NameableNode(Node)))))))
 )))))));
 export const FunctionDeclarationOverloadBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(AsyncableNode(GeneratorableNode(ModifierableNode(
-    SignaturedDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Node))))))))
+    SignatureDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Node))))))))
 ))))));
 
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {

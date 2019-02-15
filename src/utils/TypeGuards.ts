@@ -2087,10 +2087,10 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a SignaturedDeclaration.
+     * Gets if the node is a SignatureDeclaration.
      * @param node - Node to check.
      */
-    static isSignaturedDeclaration(node: compiler.Node): node is compiler.SignaturedDeclaration & compiler.SignaturedDeclarationExtensionType {
+    static isSignatureDeclaration(node: compiler.Node): node is compiler.SignatureDeclaration & compiler.SignatureDeclarationExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
