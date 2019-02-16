@@ -6,6 +6,7 @@ import { Node } from "../ast/common";
 import { EnumMember } from "../ast/enum";
 import { Expression } from "../ast/expression";
 import { ExportSpecifier } from "../ast/module";
+import * as errors from "../../errors";
 
 /**
  * Wrapper around the TypeChecker.
@@ -177,6 +178,27 @@ export class TypeChecker {
     getExportSpecifierLocalTargetSymbol(exportSpecifier: ExportSpecifier) {
         const symbol = this.compilerObject.getExportSpecifierLocalTargetSymbol(exportSpecifier.compilerNode);
         return symbol == null ? undefined : this._context.compilerFactory.getSymbol(symbol);
+    }
+
+    /**
+     * Gets the resolved signature from a node.
+     * @param node - Node to get the signature from.
+     * @returns undefined if signature cannot be resolved
+     */
+    getResolvedSignature(node: Node<ts.CallLikeExpression>): Signature | undefined {
+        const resolvedSignature = this.compilerObject.getResolvedSignature(node.compilerNode);
+        if (!resolvedSignature || !resolvedSignature.declaration) {
+            return undefined;
+        }
+        return this._context.compilerFactory.getSignature(resolvedSignature);
+    }
+
+    /**
+     * Gets the resolved signature from a node. Throws an error if signature cannot be resolved.
+     * @param node - Node to get the signature from.
+     */
+    getResolvedSignatureOrThrow(node: Node<ts.CallLikeExpression>): Signature {
+        return errors.throwIfNullOrUndefined(this.getResolvedSignature(node), "signature could not be resolved");
     }
 
     /**

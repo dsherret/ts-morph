@@ -1,5 +1,5 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
-    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
+    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SignaturedDeclaration, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
@@ -24,6 +24,7 @@ export class CompilerFactory {
     private readonly definitionInfoCache = new WeakCache<ts.DefinitionInfo, DefinitionInfo>();
     private readonly documentSpanCache = new WeakCache<ts.DocumentSpan, DocumentSpan>();
     private readonly diagnosticMessageChainCache = new WeakCache<ts.DiagnosticMessageChain, DiagnosticMessageChain>();
+    private readonly signatureDeclarationCache = new WeakCache<ts.SignatureDeclaration, SignaturedDeclaration>();
     private readonly jsDocTagInfoCache = new WeakCache<ts.JSDocTagInfo, JSDocTagInfo>();
     private readonly signatureCache = new WeakCache<ts.Signature, Signature>();
     private readonly symbolCache = new WeakCache<ts.Symbol, Symbol>();
@@ -503,6 +504,16 @@ export class CompilerFactory {
      */
     getJSDocTagInfo(jsDocTagInfo: ts.JSDocTagInfo): JSDocTagInfo {
         return this.jsDocTagInfoCache.getOrCreate(jsDocTagInfo, () => new JSDocTagInfo(jsDocTagInfo));
+    }
+
+    /**
+     * Gets a wrapped signature declaration from a compiler signature declaration.
+     * @param compilerObject - Compiler signature declaration.
+     */
+    getSignatureDeclaration(compilerObject: ts.SignatureDeclaration): SignaturedDeclaration {
+        const constructor = kindToWrapperMappings[compilerObject.kind];
+        const sourceFile = this.getSourceFile(compilerObject.getSourceFile(), {markInProject: true});
+        return this.signatureDeclarationCache.getOrCreate(compilerObject, () => new constructor(this.context, compilerObject, sourceFile));
     }
 
     /**
