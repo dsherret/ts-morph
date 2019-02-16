@@ -1,6 +1,6 @@
 import { ProjectContext } from "../../ProjectContext";
 import { ts } from "../../typescript";
-import { JSDocTagInfo } from "../ast";
+import { JSDocTagInfo, SignaturedDeclaration } from "../ast";
 import { SymbolDisplayPart } from "../tools";
 import { Type } from "../types";
 import { Symbol } from "./Symbol";
@@ -65,5 +65,13 @@ export class Signature {
     getJsDocTags(): JSDocTagInfo[] {
         const tags = this.compilerSignature.getJsDocTags();
         return tags.map(t => this._context.compilerFactory.getJSDocTagInfo(t));
+    }
+
+    /**
+     * Gets the signature's declaration.
+     */
+    getDeclaration(): SignaturedDeclaration {
+        const compilerSignatureDeclaration = this.compilerSignature.getDeclaration();
+        return this._context.compilerFactory.getSignatureDeclaration(compilerSignatureDeclaration);
     }
 }

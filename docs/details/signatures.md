@@ -33,3 +33,9 @@ const docs = signature.getDocumentationComments();
 ```ts
 const tags = signature.getJsDocTags();
 ```
+
+### Declaration
+
+```ts
+const declaration = signature.getDeclaration();
+```
