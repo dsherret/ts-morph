@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { getInfoFromText } from "../compiler/testHelpers";
-import { ModuleResolutionKind, ScriptTarget } from "../../typescript";
+import { ScriptTarget } from "../../typescript";
 
 describe("tests for issue #415", () => {
     it("should work when using type roots and types in a folder outside the root dir", () => {

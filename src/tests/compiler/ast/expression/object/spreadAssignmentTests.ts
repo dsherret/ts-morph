@@ -1,9 +1,8 @@
 import { expect } from "chai";
-import { SpreadAssignment, Node, ObjectLiteralExpression } from "../../../../../compiler";
+import { SpreadAssignment, ObjectLiteralExpression } from "../../../../../compiler";
 import { SpreadAssignmentStructure } from "../../../../../structures";
 import { SyntaxKind } from "../../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
-import { TypeGuards } from "../../../../../utils/TypeGuards";
 
 describe(nameof(SpreadAssignment), () => {
     function getSpreadAssignment(text: string) {

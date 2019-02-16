@@ -3,7 +3,7 @@ import { insertIntoParentTextRange, removeChildren } from "../../../manipulation
 import { TypedNodeStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
-import { getTextFromStringOrWriter, StringUtils, TypeGuards } from "../../../utils";
+import { getTextFromStringOrWriter, StringUtils } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { TypeNode } from "../type/TypeNode";

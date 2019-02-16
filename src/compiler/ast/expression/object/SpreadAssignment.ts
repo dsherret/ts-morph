@@ -1,7 +1,6 @@
 import { ts } from "../../../../typescript";
 import { Node } from "../../common/Node";
 import { ExpressionedNode } from "../expressioned";
-import { PropertyAssignment } from "./PropertyAssignment";
 import { removeCommaSeparatedChild } from "../../../../manipulation";
 import { SpreadAssignmentStructure } from "../../../../structures";
 import { callBaseSet } from "../../callBaseSet";

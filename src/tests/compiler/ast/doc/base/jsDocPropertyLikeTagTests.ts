@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { JSDocPropertyLikeTag, Type } from "../../../../../compiler";
+import { JSDocPropertyLikeTag } from "../../../../../compiler";
 import { TypeGuards } from "../../../../../utils";
 import { getInfoFromText } from "../../../testHelpers";
 

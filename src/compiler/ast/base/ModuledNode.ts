@@ -7,7 +7,7 @@ import { ArrayUtils, TypeGuards, createHashSet } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Symbol } from "../../symbols";
 import { Node } from "../common";
-import { ImportDeclaration, ExportDeclaration, ExportAssignment, ExportSpecifier } from "../module";
+import { ImportDeclaration, ExportDeclaration, ExportAssignment } from "../module";
 import { StatementedNode } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 

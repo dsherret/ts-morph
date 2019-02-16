@@ -1,8 +1,6 @@
-import { PropertyNamedNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
 import { ts } from "../../../../typescript";
 import { PropertyName } from "../../aliases";
-import { Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { RenameableNode } from "./RenameableNode";
 import { NamedNodeBase, NamedNodeBaseExtensionType, NamedNodeSpecificBase } from "./NamedNodeBase";

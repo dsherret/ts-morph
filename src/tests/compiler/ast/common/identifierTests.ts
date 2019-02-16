@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ClassDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, NamespaceDeclaration, PropertyAccessExpression } from "../../../../compiler";
+import { FunctionDeclaration, Identifier, InterfaceDeclaration, NamespaceDeclaration, PropertyAccessExpression } from "../../../../compiler";
 import { SyntaxKind, ts } from "../../../../typescript";
 import { getInfoFromText } from "../../testHelpers";
 

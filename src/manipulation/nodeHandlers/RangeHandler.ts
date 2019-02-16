@@ -1,4 +1,4 @@
-import { Node, SourceFile } from "../../compiler";
+import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
 import { AdvancedIterator, ArrayUtils, getCompilerForEachChildren } from "../../utils";

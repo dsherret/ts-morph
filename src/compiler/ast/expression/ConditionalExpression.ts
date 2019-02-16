@@ -1,4 +1,4 @@
-import { ts, SyntaxKind } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { Expression } from "./Expression";
 
 export const ConditionalExpressionBase = Expression;

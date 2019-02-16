@@ -3,7 +3,7 @@ import { EOL } from "os";
 import * as path from "path";
 import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile, FileTextChanges } from "../compiler";
 import * as errors from "../errors";
-import { VirtualFileSystemHost, Directory } from "../fileSystem";
+import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure } from "../structures";

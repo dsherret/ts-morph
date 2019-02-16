@@ -1,5 +1,5 @@
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
-import { EnumMemberStructure, EnumMemberSpecificStructure, EnumDeclarationStructure } from "../../../structures";
+import { EnumMemberStructure, EnumMemberSpecificStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { StringUtils } from "../../../utils";
 import { InitializerExpressionableNode, JSDocableNode, PropertyNamedNode } from "../base";

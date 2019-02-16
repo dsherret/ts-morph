@@ -2,7 +2,7 @@ import * as errors from "../../../errors";
 import { AmbientableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
-import { isNodeAmbientOrInAmbientContext, TypeGuards } from "../../../utils";
+import { isNodeAmbientOrInAmbientContext } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";

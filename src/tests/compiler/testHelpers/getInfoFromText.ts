@@ -3,7 +3,7 @@ import * as path from "path";
 import { Node } from "../../../compiler";
 import { FileSystemHost, VirtualFileSystemHost } from "../../../fileSystem";
 import { Project } from "../../../Project";
-import { CompilerOptions, ScriptTarget, SyntaxKind } from "../../../typescript";
+import { CompilerOptions, SyntaxKind } from "../../../typescript";
 
 function getTextForLibFile(fileName: string) {
     return {

@@ -1,7 +1,6 @@
 ﻿import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
 import { JSDocStructure } from "../../../../structures";
-import { ts } from "../../../../typescript";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(JSDoc), () => {
