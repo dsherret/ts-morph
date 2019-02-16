@@ -11,7 +11,6 @@ describe(nameof(JSDocTypeTag), () => {
     describe(nameof<JSDocTypeTag>(d => d.getTypeExpression), () => {
         it("returns undefined when typeExpression is undefined", () => {
             const { descendant } = getInfo("/** @type */\nvar bar = 1;");
-            descendant.compilerNode.typeExpression = undefined;
             expect(descendant.getTypeExpression()).to.be.undefined;
         });
 
