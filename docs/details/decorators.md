@@ -50,9 +50,8 @@ Get the decorator's arguments by calling `.getArguments()`:
 ```ts
 const args = decorator.getArguments(); // returns: Expression[]
 ```
-```
 
-Add and insert via `.addArgument(...)`, `.insertArguments(...)`, `.addArgument(...)`, or `.addArguments(...)`.
+Add and insert via `.addArgument(...)`, `.insertArguments(...)`, `.addArgument(...)`, or `.addArguments(...)`:
 
 ```ts
 const args = decorator.insertArguments(1, ["5", "6"]);
