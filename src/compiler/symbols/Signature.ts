@@ -66,4 +66,13 @@ export class Signature {
         const tags = this.compilerSignature.getJsDocTags();
         return tags.map(t => this._context.compilerFactory.getJSDocTagInfo(t));
     }
+
+    /**
+     * Gets the signature's declaration.
+     */
+    getDeclaration() {
+        const { compilerFactory } = this._context;
+        const compilerSignatureDeclaration = this.compilerSignature.getDeclaration();
+        return compilerFactory.getNodeFromCompilerNode(compilerSignatureDeclaration, compilerFactory.getSourceFileForNode(compilerSignatureDeclaration));
+    }
 }
