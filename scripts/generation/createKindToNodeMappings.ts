@@ -7,11 +7,11 @@
  */
 import { ClassDeclaration, InterfaceDeclaration, PropertySignatureStructure, SyntaxKind } from "ts-morph";
 import { hasDescendantBaseType } from "../common";
-import { TsSimpleAstInspector, TsInspector } from "../inspectors";
+import { TsMorphInspector, TsInspector } from "../inspectors";
 
 // this can go away once conditional types are well supported (maybe a few versions after)
 
-export function createKindToNodeMappings(inspector: TsSimpleAstInspector, tsInspector: TsInspector) {
+export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspector: TsInspector) {
     const project = inspector.getProject();
     const kindToNodeMappingsFile = project.getSourceFileOrThrow("kindToNodeMappings.ts");
     const kindToWrapperMappings = inspector.getKindToWrapperMappings();

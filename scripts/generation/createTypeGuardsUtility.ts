@@ -13,7 +13,7 @@
  */
 import { CodeBlockWriter } from "ts-morph";
 import { ArrayUtils, KeyValueCache, StringUtils } from "../../src/utils";
-import { TsSimpleAstInspector, WrappedNode, Mixin } from "../inspectors";
+import { TsMorphInspector, WrappedNode, Mixin } from "../inspectors";
 
 interface MethodInfo {
     name: string;
@@ -22,7 +22,7 @@ interface MethodInfo {
     isMixin: boolean;
 }
 
-export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
+export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     const file = inspector.getProject().getSourceFileOrThrow("./src/utils/TypeGuards.ts");
     const typeGuardsClass = file.getClassOrThrow("TypeGuards");
     const kindToWrapperMappings = inspector.getKindToWrapperMappings();

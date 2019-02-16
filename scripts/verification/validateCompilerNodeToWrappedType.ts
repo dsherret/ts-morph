@@ -7,10 +7,10 @@
  * ------------------------------------------------------
  */
 import { TypeAliasDeclarationStructure } from "ts-morph";
-import { TsSimpleAstInspector } from "../inspectors";
+import { TsMorphInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
-export function validateCompilerNodeToWrappedType(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
+export function validateCompilerNodeToWrappedType(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
     const wrappedNodes = inspector.getWrappedNodes();
     const sourceFile = inspector.getProject().getSourceFileOrThrow("CompilerNodeToWrappedType.ts");
     const initialText = sourceFile.getFullText();

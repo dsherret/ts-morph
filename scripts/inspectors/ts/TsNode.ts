@@ -1,7 +1,7 @@
 ﻿import { InterfaceDeclaration, ClassDeclaration, ts, SyntaxKind } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
-import { WrappedNode } from "../tsSimpleAst";
+import { WrappedNode } from "../tsMorph";
 import { TsNodeProperty } from "./TsNodeProperty";
 
 export class TsNode {

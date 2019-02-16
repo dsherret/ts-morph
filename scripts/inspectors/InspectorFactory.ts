@@ -1,11 +1,11 @@
 ﻿import { Project } from "ts-morph";
 import { getProject } from "../common";
 import { WrapperFactory } from "./WrapperFactory";
-import { TsSimpleAstInspector } from "./TsSimpleAstInspector";
+import { TsMorphInspector } from "./TsMorphInspector";
 import { TsInspector } from "./TsInspector";
 
 export class InspectorFactory {
-    private readonly tsSimpleAstInspector: TsSimpleAstInspector;
+    private readonly tsMorphInspector: TsMorphInspector;
     private readonly tsInspector: TsInspector;
     private readonly project: Project;
 
@@ -13,12 +13,12 @@ export class InspectorFactory {
         const wrapperFactory = new WrapperFactory();
 
         this.project = getProject();
-        this.tsSimpleAstInspector = new TsSimpleAstInspector(wrapperFactory, this.project);
+        this.tsMorphInspector = new TsMorphInspector(wrapperFactory, this.project);
         this.tsInspector = new TsInspector(wrapperFactory, this.project);
     }
 
-    getTsSimpleAstInspector() {
-        return this.tsSimpleAstInspector;
+    getTsMorphInspector() {
+        return this.tsMorphInspector;
     }
 
     getTsInspector() {

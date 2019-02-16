@@ -1,6 +1,6 @@
 ﻿import { Node, ClassDeclaration, InterfaceDeclaration, PropertySignature } from "ts-morph";
 import { KeyValueCache } from "../../src/utils";
-import { WrappedNode, Structure, Mixin } from "./tsSimpleAst";
+import { WrappedNode, Structure, Mixin } from "./tsMorph";
 import { TsNode, TsNodeProperty } from "./ts";
 
 export class WrapperFactory {

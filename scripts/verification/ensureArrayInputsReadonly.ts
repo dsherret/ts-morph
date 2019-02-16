@@ -6,11 +6,11 @@
  * ------------------------------------------------
  */
 import { TypeGuards, SyntaxKind, Node } from "ts-morph";
-import { TsSimpleAstInspector } from "../inspectors";
+import { TsMorphInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
 
-export function ensureArrayInputsReadonly(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
+export function ensureArrayInputsReadonly(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
     const declarations = inspector.getPublicDeclarations();
 
     for (const declaration of declarations) {

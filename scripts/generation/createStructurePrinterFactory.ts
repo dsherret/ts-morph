@@ -5,9 +5,9 @@
  * --------------------------------------------------------
  */
 import { TypeGuards, SyntaxKind, MethodDeclarationStructure, ParameterDeclaration, Scope } from "ts-morph";
-import { TsSimpleAstInspector } from "../inspectors";
+import { TsMorphInspector } from "../inspectors";
 
-export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
+export function createStructurePrinterFactory(inspector: TsMorphInspector) {
     const project = inspector.getProject();
     const sourceFile = project.getSourceFileOrThrow("StructurePrinterFactory.ts");
     sourceFile.removeText();

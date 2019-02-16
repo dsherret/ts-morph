@@ -10,7 +10,7 @@ import { InspectorFactory } from "../inspectors";
 const args = process.argv.slice(2);
 const originalArgs = [...args];
 const factory = new InspectorFactory();
-const inspector = factory.getTsSimpleAstInspector();
+const inspector = factory.getTsMorphInspector();
 const tsInspector = factory.getTsInspector();
 
 console.log(`TypeScript version: ${ts.version}`);

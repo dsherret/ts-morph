@@ -2,7 +2,7 @@
     Directory, TypeGuards } from "ts-morph";
 import { Memoize, ArrayUtils, createHashSet } from "../../src/utils";
 import { isNodeClass } from "../common";
-import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsSimpleAst";
+import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsMorph";
 import { WrapperFactory } from "./WrapperFactory";
 
 export interface DependencyNode {
@@ -11,7 +11,7 @@ export interface DependencyNode {
     parentNodes: DependencyNode[];
 }
 
-export class TsSimpleAstInspector {
+export class TsMorphInspector {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: Project) {
     }
 
