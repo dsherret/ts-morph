@@ -881,6 +881,13 @@ class MyClass {
                 expect(sourceFile._hasParsedTokens()).to.be.true;
             });
         });
+
+        it("should get js doc descendants", () => {
+            doTest("/**\n * @return {string}\n */\nfunction test() {}", sourceFile => sourceFile, SyntaxKind.JSDocReturnTag, "@return {string}", sourceFile => {
+                // todo: in the future it would be better for this to be false and only parse the tokens on JSDoc nodes
+                expect(sourceFile._hasParsedTokens()).to.be.true;
+            });
+        });
     });
 
     describe(nameof<Node>(n => n.getFirstDescendantByKindOrThrow), () => {

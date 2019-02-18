@@ -1196,10 +1196,20 @@ export declare class TypeGuards {
      */
     static isJSDocReturnTag(node: Node): node is JSDocReturnTag;
     /**
+     * Gets if the node is a JSDocSignature.
+     * @param node - Node to check.
+     */
+    static isJSDocSignature(node: Node): node is JSDocSignature;
+    /**
      * Gets if the node is a JSDocTag.
      * @param node - Node to check.
      */
     static isJSDocTag(node: Node): node is JSDocTag;
+    /**
+     * Gets if the node is a JSDocType.
+     * @param node - Node to check.
+     */
+    static isJSDocType(node: Node): node is JSDocType;
     /**
      * Gets if the node is a JSDocTypeExpression.
      * @param node - Node to check.
@@ -5015,6 +5025,16 @@ export declare class JSDocReturnTag extends JSDocTag<ts.JSDocReturnTag> {
 }
 
 /**
+ * JS doc signature node.
+ */
+export declare class JSDocSignature extends JSDocType<ts.JSDocSignature> {
+    /**
+     * Gets the type node of the JS doc signature.
+     */
+    getTypeNode(): JSDocReturnTag | undefined;
+}
+
+/**
  * JS doc tag node.
  */
 export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends Node<NodeType> {
@@ -5047,6 +5067,12 @@ export declare class JSDocTagInfo {
      * Gets the text.
      */
     getText(): string | undefined;
+}
+
+/**
+ * JS doc type node.
+ */
+export declare class JSDocType<T extends ts.JSDocType = ts.JSDocType> extends TypeNode<T> {
 }
 
 /**
@@ -6435,11 +6461,12 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.IndexSignature]: IndexSignatureDeclaration;
     [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: IntersectionTypeNode;
-    [SyntaxKind.JSDocTag]: JSDocUnknownTag;
-    [SyntaxKind.FirstJSDocTagNode]: JSDocUnknownTag;
     [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
     [SyntaxKind.JSDocClassTag]: JSDocClassTag;
     [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
+    [SyntaxKind.JSDocSignature]: JSDocSignature;
+    [SyntaxKind.JSDocTag]: JSDocUnknownTag;
+    [SyntaxKind.FirstJSDocTagNode]: JSDocUnknownTag;
     [SyntaxKind.JSDocTypeExpression]: JSDocTypeExpression;
     [SyntaxKind.FirstJSDocNode]: JSDocTypeExpression;
     [SyntaxKind.JSDocTypeTag]: JSDocTypeTag;

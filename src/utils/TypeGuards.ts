@@ -1104,6 +1104,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a JSDocSignature.
+     * @param node - Node to check.
+     */
+    static isJSDocSignature(node: compiler.Node): node is compiler.JSDocSignature {
+        return node.getKind() === SyntaxKind.JSDocSignature;
+    }
+
+    /**
      * Gets if the node is a JSDocTag.
      * @param node - Node to check.
      */
@@ -1121,6 +1129,14 @@ export class TypeGuards {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Gets if the node is a JSDocType.
+     * @param node - Node to check.
+     */
+    static isJSDocType(node: compiler.Node): node is compiler.JSDocType {
+        return node.getKind() === SyntaxKind.JSDocSignature;
     }
 
     /**
@@ -2468,6 +2484,7 @@ export class TypeGuards {
     static isTypeNode(node: compiler.Node): node is compiler.TypeNode {
         switch (node.getKind()) {
             case SyntaxKind.TypePredicate:
+            case SyntaxKind.JSDocSignature:
             case SyntaxKind.ArrayType:
             case SyntaxKind.ConstructorType:
             case SyntaxKind.ExpressionWithTypeArguments:
