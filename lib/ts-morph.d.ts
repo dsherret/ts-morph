@@ -1833,7 +1833,7 @@ export declare class TypeGuards {
 }
 
 /**
- * Functions for writing.
+ * Writer functions.
  * @remarks These functions are currently very experimental.
  */
 export declare class WriterFunctions {
@@ -1842,10 +1842,18 @@ export declare class WriterFunctions {
      * Gets a writer function for writing the provided object as an object literal expression.
      * @param obj - Object to write.
      */
-    static object(obj: {
-        [key: string]: string | number | WriterFunction | undefined;
+    object(obj: {
+        [key: string]: WriterFunctionOrValue | undefined;
     }): WriterFunction;
+    /** Gets a writer function for writing an object type. */
+    static objectType(structure: TypeElementMemberedNodeStructure): WriterFunction;
+    /** Gets a writer function for writing a union type. */
+    static unionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
+    /** Gets a writer function for writing an intersection type. */
+    static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
 }
+
+export declare type WriterFunctionOrValue = string | number | WriterFunction;
 
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
 
@@ -4996,7 +5004,7 @@ export declare class JSDocPropertyTag extends JSDocPropertyTagBase<ts.JSDocPrope
  */
 export declare class JSDocReturnTag extends JSDocTag<ts.JSDocReturnTag> {
     /**
-     * Gets the type expression node of the JS doc property like tag.
+     * Gets the type expression node of the JS doc property return tag.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
 }
@@ -5047,7 +5055,7 @@ export declare class JSDocTypedefTag extends JSDocTag<ts.JSDocTypedefTag> {
  */
 export declare class JSDocTypeTag extends JSDocTag<ts.JSDocTypeTag> {
     /**
-     * Gets the type expression node of the JS doc property like tag.
+     * Gets the type expression node of the JS doc property type tag.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
 }
@@ -9767,6 +9775,10 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is an anonymous type.
      */
     isAnonymous(): boolean;
+    /**
+     * Gets if this is an any type.
+     */
+    isAny(): boolean;
     /**
      * Gets if this is an array type.
      */
