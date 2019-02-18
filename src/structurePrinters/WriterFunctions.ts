@@ -2,7 +2,7 @@
 import { CodeBlockWriter } from "../codeBlockWriter";
 import * as errors from "../errors";
 import { TypeElementMemberedNodeStructure } from "../structures";
-import { StructurePrinterFactory } from "../factories";
+import { StructurePrinterFactory } from "../factories/StructurePrinterFactory";
 import { WriterFunction } from "../types";
 
 export type WriterFunctionOrValue = string | number | WriterFunction;
