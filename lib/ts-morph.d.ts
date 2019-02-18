@@ -1126,6 +1126,11 @@ export declare class TypeGuards {
      */
     static isIndexSignatureDeclaration(node: Node): node is IndexSignatureDeclaration;
     /**
+     * Gets if the node is a IndexedAccessTypeNode.
+     * @param node - Node to check.
+     */
+    static isIndexedAccessTypeNode(node: Node): node is IndexedAccessTypeNode;
+    /**
      * Gets if the node is a InitializerExpressionableNode.
      * @param node - Node to check.
      */
@@ -6426,6 +6431,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ImportSpecifier]: ImportSpecifier;
     [SyntaxKind.ImportType]: ImportTypeNode;
     [SyntaxKind.LastTypeNode]: ImportTypeNode;
+    [SyntaxKind.IndexedAccessType]: IndexedAccessTypeNode;
     [SyntaxKind.IndexSignature]: IndexSignatureDeclaration;
     [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: IntersectionTypeNode;
@@ -8484,6 +8490,21 @@ export declare class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode
      * Gets the qualifier of the import type if it exists or returns undefined.
      */
     getQualifier(): EntityName | undefined;
+}
+
+export declare class IndexedAccessTypeNode extends TypeNode<ts.IndexedAccessTypeNode> {
+    /**
+     * Gets the indexed access type node's object type node.
+     *
+     * This is `MyObjectType` in `MyObjectType["myIndex"]`.
+     */
+    getObjectTypeNode(): TypeNode;
+    /**
+     * Gets the indexed access type node's index type node.
+     *
+     * This is `"myIndex"` in `MyObjectType["myIndex"]`.
+     */
+    getIndexTypeNode(): TypeNode;
 }
 
 export declare class IntersectionTypeNode extends TypeNode<ts.IntersectionTypeNode> {

@@ -4,8 +4,8 @@ import { SyntaxKind } from "../typescript";
 // when changing this, make sure to run `npm run code-generate`.
 // that will automatically update all other parts of the application that need to be updated when this changes.
 
-// using an "any" type here because I couldn't figure out a way of getting the typescript compiler to understand this
-export const kindToWrapperMappings: { [key: number]: any } = {
+// using an "unknown" type here because I couldn't figure out a way of getting the typescript compiler to understand this
+export const kindToWrapperMappings: { [key: number]: unknown } = {
     [SyntaxKind.SourceFile]: compiler.SourceFile,
     [SyntaxKind.ArrayBindingPattern]: compiler.ArrayBindingPattern,
     [SyntaxKind.ArrayLiteralExpression]: compiler.ArrayLiteralExpression,
@@ -62,6 +62,7 @@ export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.ImportEqualsDeclaration]: compiler.ImportEqualsDeclaration,
     [SyntaxKind.ImportSpecifier]: compiler.ImportSpecifier,
     [SyntaxKind.ImportType]: compiler.ImportTypeNode,
+    [SyntaxKind.IndexedAccessType]: compiler.IndexedAccessTypeNode,
     [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration,
     [SyntaxKind.InterfaceDeclaration]: compiler.InterfaceDeclaration,
     [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode,

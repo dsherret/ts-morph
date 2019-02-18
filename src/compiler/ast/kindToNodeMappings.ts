@@ -61,6 +61,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ImportSpecifier]: compiler.ImportSpecifier;
     [SyntaxKind.ImportType]: compiler.ImportTypeNode;
     [SyntaxKind.LastTypeNode]: compiler.ImportTypeNode;
+    [SyntaxKind.IndexedAccessType]: compiler.IndexedAccessTypeNode;
     [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration;
     [SyntaxKind.InterfaceDeclaration]: compiler.InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode;
