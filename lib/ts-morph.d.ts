@@ -1842,7 +1842,7 @@ export declare class WriterFunctions {
      * Gets a writer function for writing the provided object as an object literal expression.
      * @param obj - Object to write.
      */
-    object(obj: {
+    static object(obj: {
         [key: string]: WriterFunctionOrValue | undefined;
     }): WriterFunction;
     /** Gets a writer function for writing an object type. */
@@ -9855,6 +9855,10 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is a union or intersection type.
      */
     isUnionOrIntersection(): boolean;
+    /**
+     * Gets if this is the unknown type.
+     */
+    isUnknown(): boolean;
     /**
      * Gets if this is the null type.
      */

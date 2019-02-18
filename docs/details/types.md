@@ -217,6 +217,7 @@ type.isTuple();
 type.isUnion();
 type.isIntersection();
 type.isUnionOrIntersection();
+type.isUnknown();
 type.isNull();
 type.isUndefined();
 ```
