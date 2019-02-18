@@ -1,24 +1,21 @@
 import { expect } from "chai";
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { Project } from "../../Project";
 import { TypeElementMemberedNodeStructure } from "../../structures";
 import { WriterFunction } from "../../types";
-import { WriterFunctions } from "../../utils";
+import { WriterFunctions } from "../../structurePrinters/WriterFunctions";
 
 describe(nameof<WriterFunctions>(), () => {
     function getWriter() {
         return new CodeBlockWriter();
     }
 
-    function doWriterTest(action: (writer: CodeBlockWriter, writerFunctions: WriterFunctions) => void, expected: string) {
-        const project = new Project({ useVirtualFileSystem: true });
-        const writerFunctions = project.getWriterFunctions();
+    function doWriterTest(action: (writer: CodeBlockWriter, writerFunctions: typeof WriterFunctions) => void, expected: string) {
         const writer = getWriter();
-        action(writer, writerFunctions);
+        action(writer, WriterFunctions);
         expect(writer.toString()).to.equal(expected);
     }
 
-    describe(nameof<WriterFunctions>(f => f.object), () => {
+    describe(nameof(WriterFunctions.object), () => {
         function doTest(obj: { [key: string]: string | number | WriterFunction | undefined; }, expected: string) {
             doWriterTest((writer, { object }) => object(obj)(writer), expected);
             // will deprecate this later
@@ -46,7 +43,7 @@ describe(nameof<WriterFunctions>(), () => {
         });
     });
 
-    describe(nameof<WriterFunctions>(f => f.objectType), () => {
+    describe(nameof(WriterFunctions.objectType), () => {
         function doTest(obj: TypeElementMemberedNodeStructure, expected: string) {
             doWriterTest((writer, { objectType }) => objectType(obj)(writer), expected);
         }
@@ -114,7 +111,7 @@ describe(nameof<WriterFunctions>(), () => {
         });
     });
 
-    describe(nameof<WriterFunctions>(f => f.unionType), () => {
+    describe(nameof(WriterFunctions.unionType), () => {
         it("should write when only specifying two types", () => {
             doWriterTest((writer, { unionType }) => unionType("C", "A")(writer), "C | A");
         });
@@ -124,7 +121,7 @@ describe(nameof<WriterFunctions>(), () => {
         });
     });
 
-    describe(nameof<WriterFunctions>(f => f.intersectionType), () => {
+    describe(nameof(WriterFunctions.intersectionType), () => {
         it("should write when only specifying two types", () => {
             doWriterTest((writer, { intersectionType }) => intersectionType("C", "A")(writer), "C & A");
         });

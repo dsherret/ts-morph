@@ -7,7 +7,7 @@ import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsCon
 import { SourceFileStructure } from "./structures";
 import { WriterFunction } from "./types";
 import { ts, CompilerOptions } from "./typescript";
-import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver, createHashSet, getWriterFunctions, Memoize } from "./utils";
+import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver, createHashSet } from "./utils";
 
 export interface ProjectOptions {
     /** Compiler options */
@@ -537,16 +537,6 @@ export class Project {
      */
     createWriter(): CodeBlockWriter {
         return this._context.createWriter();
-    }
-
-    /**
-     * Gets writer functions for writing with the project's formatting settings.
-     *
-     * @remarks This is an experimental feature.
-     */
-    @Memoize
-    getWriterFunctions() {
-        return getWriterFunctions(this._context.structurePrinterFactory);
     }
 
     /**

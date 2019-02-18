@@ -554,12 +554,6 @@ export declare class Project {
      */
     createWriter(): CodeBlockWriter;
     /**
-     * Gets writer functions for writing with the project's formatting settings.
-     *
-     * @remarks This is an experimental feature.
-     */
-    getWriterFunctions(): WriterFunctions;
-    /**
      * Forgets the nodes created in the scope of the passed in block.
      *
      * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
@@ -1839,9 +1833,11 @@ export declare class TypeGuards {
 }
 
 /**
- * Writer functions. Retrieve these from Project#getWriterFunctions().
+ * Writer functions.
+ * @remarks These functions are currently very experimental.
  */
-export interface WriterFunctions {
+export declare class WriterFunctions {
+    private constructor();
     /**
      * Gets a writer function for writing the provided object as an object literal expression.
      * @param obj - Object to write.
@@ -1850,19 +1846,12 @@ export interface WriterFunctions {
         [key: string]: WriterFunctionOrValue | undefined;
     }): WriterFunction;
     /** Gets a writer function for writing an object type. */
-    objectType(structure: TypeElementMemberedNodeStructure): WriterFunction;
+    static objectType(structure: TypeElementMemberedNodeStructure): WriterFunction;
     /** Gets a writer function for writing a union type. */
-    unionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): WriterFunction;
+    static unionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
     /** Gets a writer function for writing an intersection type. */
-    intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): WriterFunction;
+    static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
 }
-
-/** @deprecated Deprecated writer functions. Use Project#getWriterFunctions() instead. */
-export declare const WriterFunctions: {
-    object: (obj: {
-        [key: string]: string | number | WriterFunction | undefined;
-    }) => WriterFunction;
-};
 
 export declare type WriterFunctionOrValue = string | number | WriterFunction;
 
@@ -5015,7 +5004,7 @@ export declare class JSDocPropertyTag extends JSDocPropertyTagBase<ts.JSDocPrope
  */
 export declare class JSDocReturnTag extends JSDocTag<ts.JSDocReturnTag> {
     /**
-     * Gets the type expression node of the JS doc property like tag.
+     * Gets the type expression node of the JS doc property return tag.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
 }
@@ -5066,7 +5055,7 @@ export declare class JSDocTypedefTag extends JSDocTag<ts.JSDocTypedefTag> {
  */
 export declare class JSDocTypeTag extends JSDocTag<ts.JSDocTypeTag> {
     /**
-     * Gets the type expression node of the JS doc property like tag.
+     * Gets the type expression node of the JS doc property type tag.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
 }
@@ -9786,6 +9775,10 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is an anonymous type.
      */
     isAnonymous(): boolean;
+    /**
+     * Gets if this is an any type.
+     */
+    isAny(): boolean;
     /**
      * Gets if this is an array type.
      */
