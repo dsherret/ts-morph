@@ -425,6 +425,13 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets if this is the unknown type.
+     */
+    isUnknown() {
+        return this._hasTypeFlag(TypeFlags.Unknown);
+    }
+
+    /**
      * Gets if this is the null type.
      */
     isNull() {

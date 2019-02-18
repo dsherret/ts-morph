@@ -945,6 +945,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a IndexedAccessTypeNode.
+     * @param node - Node to check.
+     */
+    static isIndexedAccessTypeNode(node: compiler.Node): node is compiler.IndexedAccessTypeNode {
+        return node.getKind() === SyntaxKind.IndexedAccessType;
+    }
+
+    /**
      * Gets if the node is a InitializerExpressionableNode.
      * @param node - Node to check.
      */
@@ -2465,6 +2473,7 @@ export class TypeGuards {
             case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.FunctionType:
             case SyntaxKind.ImportType:
+            case SyntaxKind.IndexedAccessType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
             case SyntaxKind.ParenthesizedType:

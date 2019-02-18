@@ -56,6 +56,7 @@ let emptyObjectType: { };
 let stringWithUndefinedType: string | undefined;
 let stringWithNullType: string | null;
 let stringWithUndefinedAndNullType: string | undefined | null;
+let unknownType: unknown;
 `;
         const { sourceFile } = getInfoFromTextWithTypeChecking(text);
         const typesByName: { [name: string]: Type; } = {};
@@ -412,6 +413,20 @@ let stringWithUndefinedAndNullType: string | undefined | null;
 
             it("should not be when not undefined", () => {
                 doTest("stringType", false);
+            });
+        });
+
+        describe(nameof<Type>(t => t.isUnknown), () => {
+            function doTest(typeName: string, expected: boolean) {
+                expect(typesByName[typeName].isUnknown()).to.equal(expected);
+            }
+
+            it("should get when it is", () => {
+                doTest("unknownType", true);
+            });
+
+            it("should get when it's not", () => {
+                doTest("anyType", false);
             });
         });
 

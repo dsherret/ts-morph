@@ -4,6 +4,7 @@ export * from "./ExpressionWithTypeArguments";
 export * from "./FunctionTypeNode";
 export * from "./FunctionOrConstructorTypeNodeBase";
 export * from "./ImportTypeNode";
+export * from "./IndexedAccessTypeNode";
 export * from "./IntersectionTypeNode";
 export * from "./LiteralTypeNode";
 export * from "./ParenthesizedTypeNode";

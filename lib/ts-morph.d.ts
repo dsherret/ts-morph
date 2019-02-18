@@ -1126,6 +1126,11 @@ export declare class TypeGuards {
      */
     static isIndexSignatureDeclaration(node: Node): node is IndexSignatureDeclaration;
     /**
+     * Gets if the node is a IndexedAccessTypeNode.
+     * @param node - Node to check.
+     */
+    static isIndexedAccessTypeNode(node: Node): node is IndexedAccessTypeNode;
+    /**
      * Gets if the node is a InitializerExpressionableNode.
      * @param node - Node to check.
      */
@@ -1833,7 +1838,7 @@ export declare class TypeGuards {
 }
 
 /**
- * Functions for writing.
+ * Writer functions.
  * @remarks These functions are currently very experimental.
  */
 export declare class WriterFunctions {
@@ -1843,9 +1848,17 @@ export declare class WriterFunctions {
      * @param obj - Object to write.
      */
     static object(obj: {
-        [key: string]: string | number | WriterFunction | undefined;
+        [key: string]: WriterFunctionOrValue | undefined;
     }): WriterFunction;
+    /** Gets a writer function for writing an object type. */
+    static objectType(structure: TypeElementMemberedNodeStructure): WriterFunction;
+    /** Gets a writer function for writing a union type. */
+    static unionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
+    /** Gets a writer function for writing an intersection type. */
+    static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
 }
+
+export declare type WriterFunctionOrValue = string | number | WriterFunction;
 
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
 
@@ -4996,7 +5009,7 @@ export declare class JSDocPropertyTag extends JSDocPropertyTagBase<ts.JSDocPrope
  */
 export declare class JSDocReturnTag extends JSDocTag<ts.JSDocReturnTag> {
     /**
-     * Gets the type expression node of the JS doc property like tag.
+     * Gets the type expression node of the JS doc property return tag.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
 }
@@ -5047,7 +5060,7 @@ export declare class JSDocTypedefTag extends JSDocTag<ts.JSDocTypedefTag> {
  */
 export declare class JSDocTypeTag extends JSDocTag<ts.JSDocTypeTag> {
     /**
-     * Gets the type expression node of the JS doc property like tag.
+     * Gets the type expression node of the JS doc property type tag.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
 }
@@ -6418,6 +6431,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ImportSpecifier]: ImportSpecifier;
     [SyntaxKind.ImportType]: ImportTypeNode;
     [SyntaxKind.LastTypeNode]: ImportTypeNode;
+    [SyntaxKind.IndexedAccessType]: IndexedAccessTypeNode;
     [SyntaxKind.IndexSignature]: IndexSignatureDeclaration;
     [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: IntersectionTypeNode;
@@ -8478,6 +8492,21 @@ export declare class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode
     getQualifier(): EntityName | undefined;
 }
 
+export declare class IndexedAccessTypeNode extends TypeNode<ts.IndexedAccessTypeNode> {
+    /**
+     * Gets the indexed access type node's object type node.
+     *
+     * This is `MyObjectType` in `MyObjectType["myIndex"]`.
+     */
+    getObjectTypeNode(): TypeNode;
+    /**
+     * Gets the indexed access type node's index type node.
+     *
+     * This is `"myIndex"` in `MyObjectType["myIndex"]`.
+     */
+    getIndexTypeNode(): TypeNode;
+}
+
 export declare class IntersectionTypeNode extends TypeNode<ts.IntersectionTypeNode> {
     /**
      * Gets the intersection type nodes.
@@ -9768,6 +9797,10 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      */
     isAnonymous(): boolean;
     /**
+     * Gets if this is an any type.
+     */
+    isAny(): boolean;
+    /**
      * Gets if this is an array type.
      */
     isArray(): boolean;
@@ -9843,6 +9876,10 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is a union or intersection type.
      */
     isUnionOrIntersection(): boolean;
+    /**
+     * Gets if this is the unknown type.
+     */
+    isUnknown(): boolean;
     /**
      * Gets if this is the null type.
      */
