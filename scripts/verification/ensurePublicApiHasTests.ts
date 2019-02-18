@@ -6,11 +6,11 @@
  * -----------------------------------------------
  */
 import { TypeGuards, Node, ReferenceFindableNode, Scope } from "ts-morph";
-import { TsSimpleAstInspector } from "../inspectors";
+import { TsMorphInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
 
-export function ensurePublicApiHasTests(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
+export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
     const nodes: (Node & ReferenceFindableNode)[] = [];
 
     function tryAddNode(node: Node & ReferenceFindableNode) {

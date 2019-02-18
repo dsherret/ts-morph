@@ -7,10 +7,10 @@
  * This code verification ensures that an overload structure matches its "implementation" structure.
  * -----------------------------------------------------
  */
-import { Structure, TsSimpleAstInspector } from "../inspectors";
+import { Structure, TsMorphInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
-export function ensureOverloadStructuresMatch(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
+export function ensureOverloadStructuresMatch(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
     // get structures
     const structures = inspector.getStructures();
     const overloadStructures = inspector.getOverloadStructures();

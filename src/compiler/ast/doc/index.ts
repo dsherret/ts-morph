@@ -10,3 +10,4 @@ export * from "./JSDocTagInfo";
 export * from "./JSDocTypedefTag";
 export * from "./JSDocTypeTag";
 export * from "./JSDocUnknownTag";
+export * from "./JSDocTypeExpression";

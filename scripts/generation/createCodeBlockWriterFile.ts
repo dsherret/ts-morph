@@ -7,9 +7,9 @@
 import * as path from "path";
 import { ClassDeclaration } from "ts-morph";
 import { rootFolder } from "../config";
-import { TsSimpleAstInspector } from "../inspectors";
+import { TsMorphInspector } from "../inspectors";
 
-export function createCodeBlockWriterFile(inspector: TsSimpleAstInspector) {
+export function createCodeBlockWriterFile(inspector: TsMorphInspector) {
     const project = inspector.getProject();
 
     const sourceFile = project.getSourceFileOrThrow(path.join(rootFolder, "src/codeBlockWriter/code-block-writer.ts"));

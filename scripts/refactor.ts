@@ -11,7 +11,7 @@ import { SyntaxKind, TypeGuards } from "ts-morph";
 import { ArrayUtils } from "../src/utils";
 
 const factory = new InspectorFactory();
-const tsaInspector = factory.getTsSimpleAstInspector();
+const tsaInspector = factory.getTsMorphInspector();
 const project = factory.getProject();
 const directory = tsaInspector.getSrcDirectory();
 const sourceFiles = directory.getDescendantSourceFiles();

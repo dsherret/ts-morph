@@ -3,7 +3,7 @@ import { ts } from "../../typescript";
 import { ArrayBindingPattern, ObjectBindingPattern, BindingElement } from "./binding";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "./class";
 import { ComputedPropertyName, Identifier, Node, QualifiedName } from "./common";
-import { PrimaryExpression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment,
+import { PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment,
     ThisExpression, OmittedExpression } from "./expression";
 import { ExternalModuleReference } from "./module";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "./interface";

@@ -1,5 +1,5 @@
 import * as errors from "../../../errors";
-import { ts, SyntaxKind } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { Expression } from "../expression";
 
 export class JsxExpression extends Expression<ts.JsxExpression> {

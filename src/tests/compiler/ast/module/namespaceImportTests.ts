@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { NamespaceImport } from "../../../../compiler";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 describe(nameof(NamespaceImport), () => {
     function getNamespaceImport(text: string) {

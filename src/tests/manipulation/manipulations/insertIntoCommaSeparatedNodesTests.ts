@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ImportDeclaration, ArrayLiteralExpression, NamespaceDeclaration } from "../../../compiler";
+import { ArrayLiteralExpression, NamespaceDeclaration } from "../../../compiler";
 import { SyntaxKind } from "../../../typescript";
 import { WriterFunction } from "../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../compiler/testHelpers";

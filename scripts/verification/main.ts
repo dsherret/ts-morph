@@ -19,21 +19,21 @@ function addProblem(problem: Problem) {
 }
 
 if (checkHasArg("ensure-array-inputs-readonly"))
-    ensureArrayInputsReadonly(factory.getTsSimpleAstInspector(), addProblem);
+    ensureArrayInputsReadonly(factory.getTsMorphInspector(), addProblem);
 if (checkHasArg("ensure-or-throw-exists"))
-    ensureOrThrowExists(factory.getTsSimpleAstInspector(), addProblem);
+    ensureOrThrowExists(factory.getTsMorphInspector(), addProblem);
 if (checkHasArg("ensure-overload-structures-match"))
-    ensureOverloadStructuresMatch(factory.getTsSimpleAstInspector(), addProblem);
+    ensureOverloadStructuresMatch(factory.getTsMorphInspector(), addProblem);
 if (checkHasArg("ensure-structures-match-classes"))
-    ensureStructuresMatchClasses(factory.getTsSimpleAstInspector(), addProblem);
+    ensureStructuresMatchClasses(factory.getTsMorphInspector(), addProblem);
 if (checkHasArg("ensure-classes-implement-structure-methods"))
-    ensureClassesImplementStructureMethods(factory.getTsSimpleAstInspector(), addProblem);
+    ensureClassesImplementStructureMethods(factory.getTsMorphInspector(), addProblem);
 if (checkHasArg("ensure-public-api-has-tests"))
-    ensurePublicApiHasTests(factory.getTsSimpleAstInspector(), addProblem);
+    ensurePublicApiHasTests(factory.getTsMorphInspector(), addProblem);
 if (checkHasArg("validate-public-api-class-member-names"))
-    validatePublicApiClassMemberNames(factory.getTsSimpleAstInspector(), addProblem);
+    validatePublicApiClassMemberNames(factory.getTsMorphInspector(), addProblem);
 if (checkHasArg("validate-compiler-node-to-wrapped-type"))
-    validateCompilerNodeToWrappedType(factory.getTsSimpleAstInspector(), addProblem);
+    validateCompilerNodeToWrappedType(factory.getTsMorphInspector(), addProblem);
 
 if (args.length > 0)
     console.error(`Unknown args: ${args}`);

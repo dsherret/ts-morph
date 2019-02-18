@@ -1,4 +1,4 @@
-import { ClassDeclaration, Node, OverloadableNode } from "../../compiler";
+import { Node, OverloadableNode } from "../../compiler";
 import { SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { FormattingKind, getClassMemberFormatting, getClausedNodeChildFormatting, getInterfaceMemberFormatting, getStatementedNodeChildFormatting } from "../formatting";

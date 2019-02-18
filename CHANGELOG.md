@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/dsherret/ts-morph/compare/1.0.0...1.1.0) (2019-02-14)
+
+Thanks to [@Pineapples](https://github.com/Pineapples) for implementing these features!
+
+### Features
+
+* [#530](https://github.com/dsherret/ts-morph/issues/530) - Add JSDocTypeExpression ([ddc1dd3](https://github.com/dsherret/ts-morph/commit/ddc1dd3))
+* [#532](https://github.com/dsherret/ts-morph/issues/532) - Expose isBracketed on JSDocPropertyLikeTag ([1acc955](https://github.com/dsherret/ts-morph/commit/1acc955))
+
+
+
 <a name="1.0.0"></a>
 # 1.0.0 (2019-02-02)
 

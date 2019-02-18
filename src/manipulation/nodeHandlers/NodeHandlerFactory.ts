@@ -1,7 +1,7 @@
 import { Node, SourceFile } from "../../compiler";
 import * as errors from "../../errors";
 import { CompilerFactory } from "../../factories";
-import { SyntaxKind, ts } from "../../typescript";
+import { ts } from "../../typescript";
 import { ChangeChildOrderParentHandler } from "./ChangeChildOrderParentHandler";
 import { DefaultParentHandler } from "./DefaultParentHandler";
 import { ForgetChangedNodeHandler } from "./ForgetChangedNodeHandler";

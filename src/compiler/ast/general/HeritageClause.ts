@@ -1,5 +1,5 @@
 import { removeChildren, removeCommaSeparatedChild, verifyAndGetIndex } from "../../../manipulation";
-import { ts, SyntaxKind } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { Node } from "../common";
 import { ExpressionWithTypeArguments } from "../type";
 

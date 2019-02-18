@@ -1,7 +1,7 @@
-﻿import { InterfaceDeclaration, ClassDeclaration, ts, SyntaxKind } from "ts-morph";
-import { Memoize, ArrayUtils } from "../../../src/utils";
+﻿import { InterfaceDeclaration, SyntaxKind } from "ts-morph";
+import { Memoize } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
-import { WrappedNode } from "../tsSimpleAst";
+import { WrappedNode } from "../tsMorph";
 import { TsNodeProperty } from "./TsNodeProperty";
 
 export class TsNode {
@@ -25,17 +25,14 @@ export class TsNode {
 
     @Memoize
     getAssociatedWrappedNode(): WrappedNode | undefined {
-        const references = this.node.getNameNode().findReferences();
-        for (const reference of ArrayUtils.flatten(references.map(r => r.getReferences()))) {
-            const sourceFile = reference.getSourceFile();
+        const references = this.node.getNameNode().findReferencesAsNodes();
+        for (const node of references) {
+            const sourceFile = node.getSourceFile();
             if (sourceFile.getFilePath().indexOf("compiler") === -1)
                 continue;
-            const node = reference.getNode();
-            // ignore nodes in blocks
-            if (node.getFirstAncestorByKind(SyntaxKind.Block) != null)
-                continue;
+
             const classDec = node.getFirstAncestorByKind(SyntaxKind.ClassDeclaration);
-            if (classDec != null)
+            if (classDec != null && classDec.getName() === this.getName())
                 return this.wrapperFactory.getWrappedNode(classDec);
         }
         return undefined;

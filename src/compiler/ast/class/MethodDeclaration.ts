@@ -1,6 +1,6 @@
 import { removeOverloadableClassMember } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure } from "../../../structures";
+import { MethodDeclarationOverloadStructure, MethodDeclarationStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode,
     TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode, QuestionTokenableNode } from "../base";

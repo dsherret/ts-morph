@@ -3,7 +3,6 @@ import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpressio
 import { PropertyAssignmentStructure } from "../../../../../structures";
 import { SyntaxKind } from "../../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
-import { TypeGuards } from "../../../../../utils";
 
 describe(nameof(PropertyAssignment), () => {
     describe(nameof<PropertyAssignment>(p => p.removeInitializer), () => {

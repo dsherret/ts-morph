@@ -9,10 +9,10 @@
  * --------------------------------------------
  */
 import { Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature } from "ts-morph";
-import { TsSimpleAstInspector } from "../inspectors";
+import { TsMorphInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
-export function ensureOrThrowExists(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
+export function ensureOrThrowExists(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
     for (const c of inspector.getPublicClasses()) {
         for (const method of c.getInstanceMethods()) {
             if (!doesReturnTypeRequireOrThrow(method.getReturnType()))

@@ -1,5 +1,4 @@
 ﻿import { expect } from "chai";
-import { SyntaxKind } from "../../typescript";
 import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("tests for issue #405", () => {

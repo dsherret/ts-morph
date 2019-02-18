@@ -5,7 +5,6 @@ import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
 import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { Node } from "../../common";
-import { RenameableNode } from "./RenameableNode";
 
 export interface NamedNodeSpecificBase<TNode extends Node> {
     /**

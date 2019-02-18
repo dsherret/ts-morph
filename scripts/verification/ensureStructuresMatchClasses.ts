@@ -8,10 +8,10 @@
  * ----------------------------------------------------
  */
 import { isAllowedMixin, isAllowedMixinForStructure } from "../config";
-import { TsSimpleAstInspector } from "../inspectors";
+import { TsMorphInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
-export function ensureStructuresMatchClasses(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
+export function ensureStructuresMatchClasses(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
     const nodes = inspector.getWrappedNodes();
     const structures = inspector.getStructures();
 

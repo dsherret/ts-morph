@@ -1,4 +1,4 @@
-import { ts, SyntaxKind } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { NamedNode } from "../base";
 import { PrimaryExpression } from "./PrimaryExpression";
 

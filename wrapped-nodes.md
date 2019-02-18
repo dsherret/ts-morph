@@ -180,12 +180,14 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocParameterTag](src/compiler/ast/doc/JSDocParameterTag.ts)
 * [JSDocPropertyTag](src/compiler/ast/doc/JSDocPropertyTag.ts)
 * [JSDocReturnTag](src/compiler/ast/doc/JSDocReturnTag.ts)
-    * :x: typeExpression
+    * :heavy_check_mark: typeExpression
 * [JSDocTag](src/compiler/ast/doc/JSDocTag.ts)
     * :heavy_check_mark: tagName
     * :heavy_check_mark: comment
+* [JSDocTypeExpression](src/compiler/ast/doc/JSDocTypeExpression.ts)
+    * :heavy_check_mark: type
 * [JSDocTypeTag](src/compiler/ast/doc/JSDocTypeTag.ts)
-    * :x: typeExpression
+    * :heavy_check_mark: typeExpression
 * [JSDocTypedefTag](src/compiler/ast/doc/JSDocTypedefTag.ts)
     * :x: fullName
     * :heavy_check_mark: name
@@ -365,7 +367,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ThisExpression](src/compiler/ast/expression/ThisExpression.ts)
 * [ThrowStatement](src/compiler/ast/statement/ThrowStatement.ts)
     * :heavy_check_mark: expression
-* [Token](src/compiler/ast/function/ArrowFunction.ts)
 * [TryStatement](src/compiler/ast/statement/TryStatement.ts)
     * :heavy_check_mark: tryBlock
     * :heavy_check_mark: catchClause
@@ -446,7 +447,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * JSDocTemplateTag
 * JSDocThisTag
 * JSDocType
-* JSDocTypeExpression
 * JSDocTypeLiteral
 * JSDocUnknownType
 * JSDocVariadicType
@@ -472,6 +472,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * SuperCall
 * SyntheticExpression
 * ThisTypeNode
+* Token
 * TransientIdentifier
 * TsConfigSourceFile
 * TypeOperatorNode

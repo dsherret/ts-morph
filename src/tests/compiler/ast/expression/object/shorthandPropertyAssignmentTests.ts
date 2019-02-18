@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression, Node } from "../../../../../compiler";
+import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression } from "../../../../../compiler";
 import { ShorthandPropertyAssignmentStructure } from "../../../../../structures";
 import { SyntaxKind } from "../../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
