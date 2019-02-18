@@ -68,19 +68,19 @@ export class WriterFunctions {
 
     /** Gets a writer function for writing a union type. */
     static unionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]) {
-        const allTypes = [firstType, secondType, ...additionalTypes];
-        return (writer: CodeBlockWriter) => {
-            writeSeparatedByString(writer, " | ", allTypes);
-        };
+        return getWriteFunctionForUnionOrIntersectionType("|", [firstType, secondType, ...additionalTypes]);
     }
 
     /** Gets a writer function for writing an intersection type. */
     static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]) {
-        const allTypes = [firstType, secondType, ...additionalTypes];
-        return (writer: CodeBlockWriter) => {
-            writeSeparatedByString(writer, " & ", allTypes);
-        };
+        return getWriteFunctionForUnionOrIntersectionType("&", [firstType, secondType, ...additionalTypes]);
     }
+}
+
+function getWriteFunctionForUnionOrIntersectionType(separator: "|" | "&", args: WriterFunctionOrValue[]) {
+    return (writer: CodeBlockWriter) => {
+        writeSeparatedByString(writer, ` ${separator} `, args);
+    };
 }
 
 function anyPropertyHasValue(obj: any) {

@@ -18,8 +18,6 @@ describe(nameof<WriterFunctions>(), () => {
     describe(nameof(WriterFunctions.object), () => {
         function doTest(obj: { [key: string]: string | number | WriterFunction | undefined; }, expected: string) {
             doWriterTest((writer, { object }) => object(obj)(writer), expected);
-            // will deprecate this later
-            doWriterTest(writer => WriterFunctions.object(obj)(writer), expected);
         }
 
         it("should write an object with keys", () => {
