@@ -65,11 +65,12 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration;
     [SyntaxKind.InterfaceDeclaration]: compiler.InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode;
-    [SyntaxKind.JSDocTag]: compiler.JSDocUnknownTag;
-    [SyntaxKind.FirstJSDocTagNode]: compiler.JSDocUnknownTag;
     [SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag;
     [SyntaxKind.JSDocClassTag]: compiler.JSDocClassTag;
     [SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag;
+    [SyntaxKind.JSDocSignature]: compiler.JSDocSignature;
+    [SyntaxKind.JSDocTag]: compiler.JSDocUnknownTag;
+    [SyntaxKind.FirstJSDocTagNode]: compiler.JSDocUnknownTag;
     [SyntaxKind.JSDocTypeExpression]: compiler.JSDocTypeExpression;
     [SyntaxKind.FirstJSDocNode]: compiler.JSDocTypeExpression;
     [SyntaxKind.JSDocTypeTag]: compiler.JSDocTypeTag;

@@ -1,11 +1,11 @@
-import {expect} from "chai";
-import {JSDocReturnTag, TypeGuards} from "../../../../main";
-import {getInfoFromText} from "../../testHelpers";
+import { expect } from "chai";
+import { JSDocReturnTag } from "../../../../compiler";
+import { SyntaxKind } from "../../../../typescript";
+import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 describe(nameof(JSDocReturnTag), () => {
     function getInfo(text: string) {
-        const info = getInfoFromText(text);
-        return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocReturnTag), ...info };
+        return getInfoFromTextWithDescendant<JSDocReturnTag>(text, SyntaxKind.JSDocReturnTag);
     }
 
     describe(nameof<JSDocReturnTag>(d => d.getTypeExpression), () => {
