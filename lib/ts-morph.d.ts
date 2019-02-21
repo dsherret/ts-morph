@@ -9696,6 +9696,16 @@ export declare class TypeChecker {
      */
     getExportSpecifierLocalTargetSymbol(exportSpecifier: ExportSpecifier): Symbol | undefined;
     /**
+     * Gets the resolved signature from a node or returns undefined if the signature can't be resolved.
+     * @param node - Node to get the signature from.
+     */
+    getResolvedSignature(node: CallLikeExpression): Signature | undefined;
+    /**
+     * Gets the resolved signature from a node or throws if the signature cannot be resolved.
+     * @param node - Node to get the signature from.
+     */
+    getResolvedSignatureOrThrow(node: CallLikeExpression): Signature;
+    /**
      * Gets the base type of a literal type.
      *
      * For example, for a number literal type it will return the number type.
