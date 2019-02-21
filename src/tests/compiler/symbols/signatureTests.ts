@@ -101,4 +101,12 @@ let t: MyInterface;
             ]);
         });
     });
+
+    describe(nameof<Signature>(s => s.getDeclaration), () => {
+        it("signature<->declaration should match", () => {
+            const signature = getSignature("let t: () => void;");
+            const declaration = signature.getDeclaration();
+            expect(declaration.getSignature()).to.equal(signature);
+        });
+    });
 });
