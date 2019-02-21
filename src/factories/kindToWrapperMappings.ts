@@ -68,6 +68,7 @@ export const kindToWrapperMappings: { [key: number]: unknown } = {
     [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode,
     [SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag,
     [SyntaxKind.JSDocClassTag]: compiler.JSDocClassTag,
+    [SyntaxKind.JSDocFunctionType]: compiler.JSDocFunctionType,
     [SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag,
     [SyntaxKind.JSDocSignature]: compiler.JSDocSignature,
     [SyntaxKind.JSDocTag]: compiler.JSDocUnknownTag,
