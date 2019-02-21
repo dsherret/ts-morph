@@ -1066,6 +1066,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a JSDocFunctionType.
+     * @param node - Node to check.
+     */
+    static isJSDocFunctionType(node: compiler.Node): node is compiler.JSDocFunctionType {
+        return node.getKind() === SyntaxKind.JSDocFunctionType;
+    }
+
+    /**
      * Gets if the node is a JSDocParameterTag.
      * @param node - Node to check.
      */
@@ -1136,7 +1144,13 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDocType(node: compiler.Node): node is compiler.JSDocType {
-        return node.getKind() === SyntaxKind.JSDocSignature;
+        switch (node.getKind()) {
+            case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.JSDocSignature:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -1761,6 +1775,7 @@ export class TypeGuards {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
+            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
@@ -2046,6 +2061,7 @@ export class TypeGuards {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
+            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
@@ -2120,6 +2136,7 @@ export class TypeGuards {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
+            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
@@ -2484,6 +2501,7 @@ export class TypeGuards {
     static isTypeNode(node: compiler.Node): node is compiler.TypeNode {
         switch (node.getKind()) {
             case SyntaxKind.TypePredicate:
+            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.JSDocSignature:
             case SyntaxKind.ArrayType:
             case SyntaxKind.ConstructorType:
