@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { CallExpression, TypeChecker } from "../../../compiler";
+import { CallExpression, TypeChecker, NamedNode } from "../../../compiler";
 import { InvalidOperationError } from "../../../errors";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
@@ -31,42 +31,43 @@ describe(nameof(TypeChecker), () => {
             expect(project.getTypeChecker().getAmbientModules().length).to.equal(0);
         });
     });
-    describe(nameof<TypeChecker>(p => p.getResolvedSignature), () => {
-        function setup(source: string) {
-            const { descendant, project, sourceFile } = getInfoFromTextWithDescendant<CallExpression>(source, SyntaxKind.CallExpression);
-            const typeChecker = project.getTypeChecker();
-            return {descendant, typeChecker, sourceFile};
-        }
-        it("should not resolve unknown signature", () => {
-            const { descendant, typeChecker } = setup("foo();");
-            const resolvedSignature = typeChecker.getResolvedSignature(descendant);
-            expect(resolvedSignature).to.be.undefined;
-            expect(() => typeChecker.getResolvedSignatureOrThrow(descendant)).to.throw(InvalidOperationError);
-        });
-        it("should resolve signature in same file", () => {
-            const { descendant, typeChecker, sourceFile } = setup("function foo(){}; foo();");
-            const resolvedSignature = typeChecker.getResolvedSignature(descendant);
-            expect(resolvedSignature).not.to.be.undefined;
-            expect(() => typeChecker.getResolvedSignatureOrThrow(descendant)).not.to.throw();
-            const foo = sourceFile.getFunctionOrThrow("foo");
-            expect(resolvedSignature).to.equal(foo.getSignature());
-        });
-        it("should resolve signature in ambient module", () => {
-            const { project } = getInfoFromText("");
-            const fileSystem = project.getFileSystem();
 
-            fileSystem.writeFileSync("/node_modules/@types/foo/index.d.ts", `
-    declare module 'foo' {
-        export function bar(x:number): number;
-        export function bar(x:string): string;
-    }`);
-            const fileName = "./test.ts";
-            fileSystem.writeFileSync(fileName, "import {bar} from 'foo'; bar(123);");
-            const sourceFile = project.addExistingSourceFile(fileName);
-            const callExpression = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CallExpression);
-            const typeChecker = project.getTypeChecker();
-            const resolvedSignature = typeChecker.getResolvedSignatureOrThrow(callExpression);
-            expect(resolvedSignature.getReturnType().isNumber()).to.be.true;
+    describe(nameof<TypeChecker>(p => p.getResolvedSignature), () => {
+        function doTest(text: string, declarationName: string | undefined) {
+            const { descendant, project } = getInfoFromTextWithDescendant<CallExpression>(text, SyntaxKind.CallExpression);
+            const result = project.getTypeChecker().getResolvedSignature(descendant);
+            if (declarationName == null)
+                expect(result).to.be.undefined;
+            else
+                expect((result!.getDeclaration() as NamedNode).getName()).to.equal(declarationName);
+        }
+
+        it("should not resolve unknown signature", () => {
+            doTest("foo();", undefined);
+        });
+
+        it("should resolve signature in same file", () => {
+            doTest("function foo(){}; foo();", "foo");
+        });
+    });
+
+    describe(nameof<TypeChecker>(p => p.getResolvedSignatureOrThrow), () => {
+        function doTest(text: string, declarationName: string | undefined) {
+            const { descendant, project } = getInfoFromTextWithDescendant<CallExpression>(text, SyntaxKind.CallExpression);
+            if (declarationName == null)
+                expect(() => project.getTypeChecker().getResolvedSignatureOrThrow(descendant)).to.throw();
+            else {
+                const result = project.getTypeChecker().getResolvedSignatureOrThrow(descendant);
+                expect((result.getDeclaration() as NamedNode).getName()).to.equal(declarationName);
+            }
+        }
+
+        it("should not resolve unknown signature", () => {
+            doTest("foo();", undefined);
+        });
+
+        it("should resolve signature in same file", () => {
+            doTest("function foo(){}; foo();", "foo");
         });
     });
 });

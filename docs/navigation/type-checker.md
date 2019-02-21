@@ -26,6 +26,8 @@ Generally you won't need to use the type checker because most of the functionali
 
 ### Signature Resolution
 
+Get the resolved signature of a call-like expression node (ex. call expression):
+
 ```ts
 const resolvedSignature = typeChecker.getResolvedSignature(callLikeExpression);
 ```

@@ -182,24 +182,22 @@ export class TypeChecker {
     }
 
     /**
-     * Gets the resolved signature from a node.
+     * Gets the resolved signature from a node or returns undefined if the signature can't be resolved.
      * @param node - Node to get the signature from.
-     * @returns undefined if signature cannot be resolved
      */
-    getResolvedSignature(node: CallLikeExpression): Signature | undefined {
+    getResolvedSignature(node: CallLikeExpression) {
         const resolvedSignature = this.compilerObject.getResolvedSignature(node.compilerNode);
-        if (!resolvedSignature || !resolvedSignature.declaration) {
+        if (!resolvedSignature || !resolvedSignature.declaration)
             return undefined;
-        }
         return this._context.compilerFactory.getSignature(resolvedSignature);
     }
 
     /**
-     * Gets the resolved signature from a node. Throws an error if signature cannot be resolved.
+     * Gets the resolved signature from a node or throws if the signature cannot be resolved.
      * @param node - Node to get the signature from.
      */
-    getResolvedSignatureOrThrow(node: CallLikeExpression): Signature {
-        return errors.throwIfNullOrUndefined(this.getResolvedSignature(node), "Signature could not be resolved");
+    getResolvedSignatureOrThrow(node: CallLikeExpression) {
+        return errors.throwIfNullOrUndefined(this.getResolvedSignature(node), "Signature could not be resolved.");
     }
 
     /**
