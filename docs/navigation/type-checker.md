@@ -23,3 +23,11 @@ const tsTypeChecker = typeChecker.compilerObject;
 ### Use
 
 Generally you won't need to use the type checker because most of the functionality is exposed as methods on other objects.
+
+### Signature Resolution
+
+Get the resolved signature of a call-like expression node (ex. call expression):
+
+```ts
+const resolvedSignature = typeChecker.getResolvedSignature(callLikeExpression);
+```
