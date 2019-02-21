@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/dsherret/ts-morph/compare/1.1.0...1.2.0) (2019-02-21)
+
+
+Thanks to [@Pineapples](https://github.com/Pineapples) and [@schiller-manuel](https://github.com/schiller-manuel) for their contributions for this release!
+
+### Bug Fixes
+
+* [#548](https://github.com/dsherret/ts-morph/issues/548) - Getting JS doc descendants by kind should find nodes. ([2fd7cac](https://github.com/dsherret/ts-morph/commit/2fd7cac))
+
+
+### Features
+
+* [#535](https://github.com/dsherret/ts-morph/issues/535) - Add getTypeExpression() to JSDocReturnTag and JSDocTypeTag ([61b71b3](https://github.com/dsherret/ts-morph/commit/61b71b3)) ([@Pineapples](https://github.com/Pineapples))
+* [#538](https://github.com/dsherret/ts-morph/issues/538) - Add Type#isAny() ([1d3c2bb](https://github.com/dsherret/ts-morph/commit/1d3c2bb)) ([@schiller-manuel](https://github.com/schiller-manuel))
+* [#541](https://github.com/dsherret/ts-morph/issues/541) - Add TypeChecker#getResolvedSignature() ([cf5104d](https://github.com/dsherret/ts-morph/commit/cf5104d)) [@schiller-manuel](https://github.com/schiller-manuel)
+* [#543](https://github.com/dsherret/ts-morph/issues/543) - Wrap IndexedAccessTypeNode. ([a1d5696](https://github.com/dsherret/ts-morph/commit/a1d5696))
+* [#547](https://github.com/dsherret/ts-morph/issues/547) - Wrap JSDocSignature and JSDocType. ([9e1b0b2](https://github.com/dsherret/ts-morph/commit/9e1b0b2))
+* [#542](https://github.com/dsherret/ts-morph/issues/542) - Add Signature#getDeclaration(). ([d2bc498](https://github.com/dsherret/ts-morph/commit/d2bc498)) ([@schiller-manuel](https://github.com/schiller-manuel))
+* Add aliases CallLikeExpression and JsxOpeningLikeElement. ([030c6df](https://github.com/dsherret/ts-morph/commit/030c6df))
+* Add Type#isUnknown() ([30bb042](https://github.com/dsherret/ts-morph/commit/30bb042))
+* Add WriterFunctions - objectType, unionType, intersectionType ([d10877f](https://github.com/dsherret/ts-morph/commit/d10877f))
+* Wrap JSDocFunctionType. ([8965da3](https://github.com/dsherret/ts-morph/commit/8965da3))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/dsherret/ts-morph/compare/1.0.0...1.1.0) (2019-02-14)
 
