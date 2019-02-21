@@ -72,6 +72,9 @@ export class Signature {
      */
     getDeclaration() {
         const { compilerFactory } = this._context;
+        // the compiler says this is non-nullable, but it can return undefined for an unknown signature
+        // returned by calling `TypeChecker#getResolvedType()`; however, we're returning undefined in that scenario
+        // and so this should never be null (hopefully)
         const compilerSignatureDeclaration = this.compilerSignature.getDeclaration();
         return compilerFactory.getNodeFromCompilerNode(compilerSignatureDeclaration, compilerFactory.getSourceFileForNode(compilerSignatureDeclaration));
     }
