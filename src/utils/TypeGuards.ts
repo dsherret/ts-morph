@@ -2503,6 +2503,7 @@ export class TypeGuards {
             case SyntaxKind.TypePredicate:
             case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.JSDocSignature:
+            case SyntaxKind.JSDocTypeExpression:
             case SyntaxKind.ArrayType:
             case SyntaxKind.ConstructorType:
             case SyntaxKind.ExpressionWithTypeArguments:

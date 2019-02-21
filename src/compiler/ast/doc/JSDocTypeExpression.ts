@@ -1,10 +1,10 @@
 import { ts } from "../../../typescript";
-import { Node } from "..";
+import { TypeNode } from "../type";
 
 /**
  * JS doc type expression node.
  */
-export class JSDocTypeExpression extends Node<ts.JSDocTypeExpression> {
+export class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression> {
     /**
      * Gets the type node of the JS doc type expression.
      */
