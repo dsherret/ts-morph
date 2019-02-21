@@ -1176,6 +1176,11 @@ export declare class TypeGuards {
      */
     static isJSDocClassTag(node: Node): node is JSDocClassTag;
     /**
+     * Gets if the node is a JSDocFunctionType.
+     * @param node - Node to check.
+     */
+    static isJSDocFunctionType(node: Node): node is JSDocFunctionType;
+    /**
      * Gets if the node is a JSDocParameterTag.
      * @param node - Node to check.
      */
@@ -1880,11 +1885,15 @@ export declare type BindingName = Identifier | BindingPattern;
 
 export declare type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 
+export declare type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
+
 export declare type EntityName = Identifier | QualifiedName;
 
 export declare type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
 
 export declare type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
+
+export declare type JsxOpeningLikeElement = JsxSelfClosingElement | JsxOpeningElement;
 
 export declare type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess;
 
@@ -4998,6 +5007,14 @@ export declare class JSDocAugmentsTag extends JSDocTag<ts.JSDocAugmentsTag> {
 export declare class JSDocClassTag extends JSDocTag<ts.JSDocClassTag> {
 }
 
+declare const JSDocFunctionTypeBase: Constructor<SignaturedDeclaration> & typeof JSDocType;
+
+/**
+ * JS doc function type.
+ */
+export declare class JSDocFunctionType extends JSDocFunctionTypeBase<ts.JSDocFunctionType> {
+}
+
 declare const JSDocParameterTagBase: Constructor<JSDocPropertyLikeTag> & typeof JSDocTag;
 
 /**
@@ -6463,6 +6480,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.IntersectionType]: IntersectionTypeNode;
     [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
     [SyntaxKind.JSDocClassTag]: JSDocClassTag;
+    [SyntaxKind.JSDocFunctionType]: JSDocFunctionType;
     [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
     [SyntaxKind.JSDocSignature]: JSDocSignature;
     [SyntaxKind.JSDocTag]: JSDocUnknownTag;
@@ -8761,6 +8779,10 @@ export declare class Signature {
      * Gets the JS doc tags.
      */
     getJsDocTags(): JSDocTagInfo[];
+    /**
+     * Gets the signature's declaration.
+     */
+    getDeclaration(): MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | ArrowFunction | FunctionDeclaration | JSDocFunctionType;
 }
 
 export declare class Symbol {
