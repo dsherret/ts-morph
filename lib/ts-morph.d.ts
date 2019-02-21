@@ -8779,6 +8779,10 @@ export declare class Signature {
      * Gets the JS doc tags.
      */
     getJsDocTags(): JSDocTagInfo[];
+    /**
+     * Gets the signature's declaration.
+     */
+    getDeclaration(): MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | ArrowFunction | FunctionDeclaration | JSDocFunctionType;
 }
 
 export declare class Symbol {
