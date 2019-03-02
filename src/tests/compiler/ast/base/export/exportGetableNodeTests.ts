@@ -258,8 +258,16 @@ describe(nameof(ExportGetableNode), () => {
                 doTest("export class Identifier {}", true);
             });
 
+            it("should be a when exported on a different line", () => {
+                doTest("class Identifier {} export { Identifier };", true);
+            });
+
             it("should not be a named export when it's a default export", () => {
                 doTest("export default class Identifier {}", false);
+            });
+
+            it("should not be when default exported on a different line", () => {
+                doTest("class Identifier {} export default Identifier;", false);
             });
 
             it("should not be a named export when neither a default or named export", () => {
@@ -283,8 +291,20 @@ describe(nameof(ExportGetableNode), () => {
                 doTest("export const t = 4;", true);
             });
 
-            it("should not be a named export when it's a default export", () => {
+            it("should be when named exported on a different line", () => {
+                doTest("const t = 4, u = 5; export { t };", true);
+            });
+
+            it("should not be when it's a default export", () => {
                 doTest("const t = 4; export default t;", false);
+            });
+
+            it("should not be when another declaration is named exported on a different line", () => {
+                doTest("const t = 4, u = 5; export { u };", false);
+            });
+
+            it("should not be when another declaration is default exported on a different line", () => {
+                doTest("const t = 4, u = 5; export default u;", false);
             });
 
             it("should not be a named export when neither a default or named export", () => {

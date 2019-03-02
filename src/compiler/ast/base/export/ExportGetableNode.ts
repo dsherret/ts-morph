@@ -4,8 +4,6 @@ import { SyntaxKind } from "../../../../typescript";
 import { TypeGuards } from "../../../../utils";
 import { Node } from "../../common";
 import { ModifierableNode } from "../ModifierableNode";
-import { VariableStatement } from "../../statement";
-import { VariableDeclaration } from "../../variable";
 
 export type ExportGetableNodeExtensionType = Node;
 
@@ -102,9 +100,6 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
             if (this.hasDefaultKeyword())
                 return true;
 
-            if (!isSourceFileChild(this))
-                return false;
-
             const thisSymbol = this.getSymbol();
             if (thisSymbol == null)
                 return false;
@@ -121,22 +116,21 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
         }
 
         isNamedExport() {
-            return isSourceFileChild(this) && this.hasExportKeyword() && !this.hasDefaultKeyword();
+            const thisSymbol = this.getSymbol();
+            const sourceFileSymbol = this.getSourceFile().getSymbol();
+            if (thisSymbol == null || sourceFileSymbol == null)
+                return false;
+
+            return !isDefaultExport() && sourceFileSymbol.getExports().some(e => e === thisSymbol || e.getAliasedSymbol() === thisSymbol);
+
+            function isDefaultExport() {
+                const defaultExportSymbol = sourceFileSymbol!.getExportByName("default");
+                if (defaultExportSymbol == null)
+                    return false;
+                return thisSymbol === defaultExportSymbol || thisSymbol === defaultExportSymbol.getAliasedSymbol();
+            }
         }
     };
-}
-
-function isSourceFileChild(node: Node) {
-    const sourceFileParent = getSourceFileParent();
-    return sourceFileParent == null ? false : TypeGuards.isSourceFile(sourceFileParent);
-
-    function getSourceFileParent() {
-        if (TypeGuards.isVariableDeclaration(node)) {
-            const variableStatement = node.getVariableStatement();
-            return variableStatement == null ? undefined : variableStatement.getParent();
-        }
-        return node.getParentOrThrow();
-    }
 }
 
 function throwForNotModifierableNode(): never {
