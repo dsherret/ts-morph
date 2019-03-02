@@ -8685,6 +8685,14 @@ export declare class VariableDeclaration extends VariableDeclarationBase<ts.Vari
      */
     remove(): void;
     /**
+     * Gets the corresponding variable statement if it exists. Throws for variable declarations in for statements.
+     */
+    getVariableStatementOrThrow(): TryStatement & VariableStatement;
+    /**
+     * Gets the corresponding variable statement if it exists. Returns undefined for variable declarations in for statements.
+     */
+    getVariableStatement(): (TryStatement & VariableStatement) | undefined;
+    /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
      */

@@ -1,6 +1,7 @@
 import * as errors from "../../../errors";
 import { removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { VariableDeclarationStructure, VariableDeclarationSpecificStructure } from "../../../structures";
+import { TypeGuards } from "../../../utils";
 import { SyntaxKind, ts } from "../../../typescript";
 import { BindingNamedNode, ExclamationTokenableNode, InitializerExpressionableNode, TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -45,6 +46,21 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
                 removePrecedingSpaces: true
             });
         }
+    }
+
+    /**
+     * Gets the corresponding variable statement if it exists. Throws for variable declarations in for statements.
+     */
+    getVariableStatementOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getVariableStatement(), "Expected the grandparent to be a variable statement.");
+    }
+
+    /**
+     * Gets the corresponding variable statement if it exists. Returns undefined for variable declarations in for statements.
+     */
+    getVariableStatement() {
+        const grandParent = this.getParentOrThrow().getParentOrThrow();
+        return TypeGuards.isVariableStatement(grandParent) ? grandParent : undefined;
     }
 
     /**

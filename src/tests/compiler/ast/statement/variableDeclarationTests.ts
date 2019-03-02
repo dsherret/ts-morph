@@ -1,7 +1,8 @@
 ﻿import { expect } from "chai";
 import { TryStatement, VariableDeclaration } from "../../../../compiler";
 import { VariableDeclarationStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { SyntaxKind } from "../../../../typescript";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 
 describe(nameof(VariableDeclaration), () => {
     describe(nameof<VariableDeclaration>(d => d.remove), () => {
@@ -40,6 +41,45 @@ describe(nameof(VariableDeclaration), () => {
             it("should remove the variable declaration from a catch clause", () => {
                 doTest("try {} catch (ex) {}", "try {} catch {}");
             });
+        });
+    });
+
+    describe.only(nameof<VariableDeclaration>(d => d.getVariableStatement), () => {
+        function doTest(startCode: string, expectedText: string | undefined) {
+            const { descendant } = getInfoFromTextWithDescendant<VariableDeclaration>(startCode, SyntaxKind.VariableDeclaration);
+            const statement = descendant.getVariableStatement();
+
+            if (expectedText == null)
+                expect(statement).to.be.undefined;
+            else
+                expect(statement!.getText()).to.equal(expectedText);
+        }
+
+        it("should get the variable statement when it exists", () => {
+            doTest("const t = 5;", "const t = 5;");
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            doTest("for (const t of test) {}", undefined);
+        });
+    });
+
+    describe(nameof<VariableDeclaration>(d => d.getVariableStatementOrThrow), () => {
+        function doTest(startCode: string, expectedText: string | undefined) {
+            const { descendant } = getInfoFromTextWithDescendant<VariableDeclaration>(startCode, SyntaxKind.VariableDeclaration);
+
+            if (expectedText == null)
+                expect(() => descendant.getVariableStatementOrThrow()).to.throw();
+            else
+                expect(descendant.getVariableStatementOrThrow().getText()).to.equal(expectedText);
+        }
+
+        it("should get the variable statement when it exists", () => {
+            doTest("const t = 5;", "const t = 5;");
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            doTest("for (const t of test) {}", undefined);
         });
     });
 
