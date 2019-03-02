@@ -193,8 +193,10 @@ class Directory {
  */
 export class FileSystemWrapper {
     private readonly directories = new KeyValueCache<string, Directory>();
+    private readonly pathCasingMaintainer: PathCasingMaintainer;
 
     constructor(private readonly fileSystem: FileSystemHost) {
+        this.pathCasingMaintainer = new PathCasingMaintainer(fileSystem);
     }
 
     queueFileDelete(filePath: string) {
@@ -603,7 +605,8 @@ export class FileSystemWrapper {
     }
 
     getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string) {
-        return FileUtils.getStandardizedAbsolutePath(this.fileSystem, fileOrDirPath, relativeBase);
+        fileOrDirPath = FileUtils.getStandardizedAbsolutePath(this.fileSystem, fileOrDirPath, relativeBase);
+        return this.pathCasingMaintainer.getPath(fileOrDirPath);
     }
 
     readFileOrNotExists(filePath: string, encoding: string) {
@@ -770,5 +773,22 @@ export class FileSystemWrapper {
             ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
             this.removeMkDirOperationsForDir(parentDir);
         }
+    }
+}
+
+/** Maintains the file or dir path casing by using the first file path found for case insensistive file systems. */
+class PathCasingMaintainer {
+    private readonly caseInsensitiveMappings: KeyValueCache<string, string> | undefined;
+
+    constructor(fileSystem: FileSystemHost) {
+        if (fileSystem.isCaseSensitive != null && !fileSystem.isCaseSensitive())
+            this.caseInsensitiveMappings = new KeyValueCache();
+    }
+
+    getPath(fileOrDirPath: string) {
+        if (this.caseInsensitiveMappings == null)
+            return fileOrDirPath;
+
+        return this.caseInsensitiveMappings.getOrCreate(fileOrDirPath.toLowerCase(), () => fileOrDirPath);
     }
 }

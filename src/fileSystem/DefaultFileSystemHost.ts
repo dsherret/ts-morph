@@ -155,6 +155,11 @@ export class DefaultFileSystemHost implements FileSystemHost {
         });
     }
 
+    isCaseSensitive() {
+        const platform = process.platform;
+        return platform !== "win32" && platform !== "darwin";
+    }
+
     private getDirectoryNotFoundErrorIfNecessary(err: any, path: string) {
         return FileUtils.isNotExistsError(err) ? new errors.DirectoryNotFoundError(path) : err;
     }

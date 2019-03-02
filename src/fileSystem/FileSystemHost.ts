@@ -18,4 +18,6 @@
     directoryExistsSync(dirPath: string): boolean;
     getCurrentDirectory(): string;
     glob(patterns: ReadonlyArray<string>): string[];
+    /** Gets if this file system is case sensitive. Defaults to true if not implemented. */
+    isCaseSensitive?(): boolean;
 }
