@@ -3,12 +3,12 @@ import { removeChildren, removeCommaSeparatedChild } from "../../../manipulation
 import { VariableDeclarationStructure, VariableDeclarationSpecificStructure } from "../../../structures";
 import { TypeGuards } from "../../../utils";
 import { SyntaxKind, ts } from "../../../typescript";
-import { BindingNamedNode, ExclamationTokenableNode, InitializerExpressionableNode, TypedNode } from "../base";
+import { BindingNamedNode, ExclamationTokenableNode, InitializerExpressionableNode, TypedNode, ExportGetableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const VariableDeclarationBase = ExclamationTokenableNode(TypedNode(InitializerExpressionableNode(BindingNamedNode(Node))));
+export const VariableDeclarationBase = ExportGetableNode(ExclamationTokenableNode(TypedNode(InitializerExpressionableNode(BindingNamedNode(Node)))));
 export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
     /**
      * Removes this variable declaration.

@@ -1,3 +1,5 @@
 ﻿# Deprecations in the next major
 
-None.
+* `InitializerGetExpressionableNode` to `InitializerExpressionGetableNode` for consistency with `ExportGetableNode`
+* Deprecate `InitializerSetExpressionableNode`
+

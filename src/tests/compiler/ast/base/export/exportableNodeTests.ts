@@ -1,166 +1,10 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, ExportableNode, FunctionDeclaration, NamespaceDeclaration } from "../../../../compiler";
-import * as errors from "../../../../errors";
-import { ExportableNodeStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { ClassDeclaration, ExportableNode, FunctionDeclaration, NamespaceDeclaration } from "../../../../../compiler";
+import * as errors from "../../../../../errors";
+import { ExportableNodeStructure } from "../../../../../structures";
+import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(ExportableNode), () => {
-    const { sourceFile: mainSourceFile } = getInfoFromText("export var exportedVar = 1;\nvar myExplicitVar: string;\nexport default class Identifier {}\n");
-    const statements = mainSourceFile.getVariableStatements();
-    const exportedStatement = statements[0];
-    const notExportedStatement = statements[1];
-    const exportedDefaultClass = mainSourceFile.getClasses()[0];
-
-    describe(nameof<ExportableNode>(n => n.hasExportKeyword), () => {
-        it("should have an export keyword when exported", () => {
-            expect(exportedStatement.hasExportKeyword()).to.be.true;
-        });
-
-        it("should not have an export keyword when not exported", () => {
-            expect(notExportedStatement.hasExportKeyword()).to.be.false;
-        });
-    });
-
-    describe(nameof<ExportableNode>(n => n.getExportKeyword), () => {
-        it("should have an export keyword when exported", () => {
-            expect(exportedStatement.getExportKeyword()!.getText()).to.equal("export");
-        });
-
-        it("should not have an export keyword when not exported", () => {
-            expect(notExportedStatement.getExportKeyword()).to.be.undefined;
-        });
-    });
-
-    describe(nameof<ExportableNode>(n => n.getExportKeywordOrThrow), () => {
-        it("should have an export keyword when exported", () => {
-            expect(exportedStatement.getExportKeywordOrThrow().getText()).to.equal("export");
-        });
-
-        it("should not have an export keyword when not exported", () => {
-            expect(() => notExportedStatement.getExportKeywordOrThrow()).to.throw();
-        });
-    });
-
-    describe(nameof<ExportableNode>(n => n.hasDefaultKeyword), () => {
-        it("should have a default keyword when default exported", () => {
-            expect(exportedDefaultClass.hasDefaultKeyword()).to.be.true;
-        });
-
-        describe("not exported node", () => {
-            it("should not have a default keyword when not default exported", () => {
-                expect(exportedStatement.hasDefaultKeyword()).to.be.false;
-            });
-        });
-    });
-
-    describe(nameof<ExportableNode>(n => n.getDefaultKeyword), () => {
-        it("should have a default keyword when default exported", () => {
-            expect(exportedDefaultClass.getDefaultKeyword()!.getText()).to.equal("default");
-        });
-
-        it("should not have an export keyword when not default exported", () => {
-            expect(exportedStatement.getDefaultKeyword()).to.be.undefined;
-        });
-    });
-
-    describe(nameof<ExportableNode>(n => n.getDefaultKeywordOrThrow), () => {
-        it("should have a default keyword when default exported", () => {
-            expect(exportedDefaultClass.getDefaultKeywordOrThrow().getText()).to.equal("default");
-        });
-
-        it("should not have an export keyword when not default exported", () => {
-            expect(() => exportedStatement.getDefaultKeywordOrThrow()).to.throw();
-        });
-    });
-
-    describe(nameof<ExportableNode>(n => n.isExported), () => {
-        function doTest(text: string, expected: boolean) {
-            const { firstChild } = getInfoFromText<ClassDeclaration>(text);
-            expect(firstChild.isExported()).to.equal(expected);
-        }
-
-        it("should not be exported when not", () => {
-            doTest("class Identifier {}", false);
-        });
-
-        it("should be exported when default exported on a different line", () => {
-            doTest("class Identifier {}\nexport default Identifier;", true);
-        });
-
-        it("should be exported when exported via an export statement on a different line", () => {
-            doTest("class Identifier {}\nexport {Identifier};", true);
-        });
-
-        it("should be exported when default exported on the same line", () => {
-            doTest("export default class Identifier {}", true);
-        });
-
-        it("should be when a named export", () => {
-            doTest("export class Identifier {}", true);
-        });
-
-        function doNamespaceTest(text: string, expected: boolean) {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
-            expect(firstChild.getClasses()[0].isExported()).to.equal(expected);
-        }
-
-        it("should be when exported from a namespace", () => {
-            doNamespaceTest("namespace Identifier { export class Identifier {} }", true);
-        });
-
-        it("should not be when not exported from a namespace", () => {
-            doNamespaceTest("namespace Identifier { class Identifier {} }", false);
-        });
-    });
-
-    describe(nameof<ExportableNode>(n => n.isDefaultExport), () => {
-        function doTest(text: string, expected: boolean) {
-            const { firstChild } = getInfoFromText<ClassDeclaration>(text);
-            expect(firstChild.isDefaultExport()).to.equal(expected);
-        }
-
-        it("should be the default export when default exported on a different line", () => {
-            doTest("class Identifier {}\nexport default Identifier;", true);
-        });
-
-        it("should be the default export when default exported on the same line", () => {
-            doTest("export default class Identifier {}", true);
-        });
-
-        it("should not be a default export when not", () => {
-            doTest("class Identifier {}", false);
-        });
-
-        it("should not be a default export when not and there exists another default export", () => {
-            doTest("class Identifier {}\nexport default class Identifier2 {}", false);
-        });
-    });
-
-    describe(nameof<ExportableNode>(n => n.isNamedExport), () => {
-        function doTest(text: string, expected: boolean) {
-            const { firstChild } = getInfoFromText<ClassDeclaration>(text);
-            expect(firstChild.isNamedExport()).to.equal(expected);
-        }
-
-        it("should be a named export when one", () => {
-            doTest("export class Identifier {}", true);
-        });
-
-        it("should not be a named export when it's a default export", () => {
-            doTest("export default class Identifier {}", false);
-        });
-
-        it("should not be a named export when neither a default or named export", () => {
-            doTest("class Identifier {}", false);
-        });
-
-        it("should not be a named export when contained in a namespace", () => {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Namespace { export class Identifier {} }");
-            const innerClass = firstChild.getClasses()[0];
-            expect(innerClass.isNamedExport()).to.be.false;
-        });
-    });
-
     describe(nameof<ExportableNode>(n => n.setIsDefaultExport), () => {
         function doTest(text: string, value: boolean, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(text);
@@ -302,7 +146,7 @@ describe(nameof(ExportableNode), () => {
 
     describe(nameof<FunctionDeclaration>(f => f.set), () => {
         function doTest(startingCode: string, structure: ExportableNodeStructure, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -330,7 +174,7 @@ describe(nameof(ExportableNode), () => {
 
     describe(nameof<FunctionDeclaration>(f => f.getStructure), () => {
         function doTest(startingCode: string, expectedStructure: { isDefaultExport: boolean; isExported: boolean; }) {
-            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             const structure = firstChild.getStructure();
             expect(structure.isDefaultExport).to.equal(expectedStructure.isDefaultExport);
             expect(structure.isExported).to.equal(expectedStructure.isExported);

@@ -971,6 +971,11 @@ export declare class TypeGuards {
      */
     static isExportDeclaration(node: Node): node is ExportDeclaration;
     /**
+     * Gets if the node is an ExportGetableNode.
+     * @param node - Node to check.
+     */
+    static isExportGetableNode(node: Node): node is ExportGetableNode & ExportGetableNodeExtensionType;
+    /**
      * Gets if the node is an ExportSpecifier.
      * @param node - Node to check.
      */
@@ -2186,7 +2191,26 @@ declare type ExclamationTokenableNodeExtensionType = Node<ts.Node & {
 
 export declare function ExportableNode<T extends Constructor<ExportableNodeExtensionType>>(Base: T): Constructor<ExportableNode> & T;
 
-export interface ExportableNode {
+export interface ExportableNode extends ExportGetableNode {
+    /**
+     * Sets if this node is a default export of a file.
+     * @param value - If it should be a default export or not.
+     */
+    setIsDefaultExport(value: boolean): this;
+    /**
+     * Sets if the node is exported.
+     *
+     * Note: Will remove the default keyword if set.
+     * @param value - If it should be exported or not.
+     */
+    setIsExported(value: boolean): this;
+}
+
+declare type ExportableNodeExtensionType = Node & ModifierableNode;
+
+export declare function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensionType>>(Base: T): Constructor<ExportGetableNode> & T;
+
+export interface ExportGetableNode {
     /**
      * If the node has the export keyword.
      */
@@ -2223,21 +2247,9 @@ export interface ExportableNode {
      * Gets if this node is a named export of a file.
      */
     isNamedExport(): boolean;
-    /**
-     * Sets if this node is a default export of a file.
-     * @param value - If it should be a default export or not.
-     */
-    setIsDefaultExport(value: boolean): this;
-    /**
-     * Sets if the node is exported.
-     *
-     * Note: Will remove the default keyword if set.
-     * @param value - If it should be exported or not.
-     */
-    setIsExported(value: boolean): this;
 }
 
-declare type ExportableNodeExtensionType = Node & ModifierableNode;
+declare type ExportGetableNodeExtensionType = Node;
 
 export declare function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T;
 
@@ -8677,7 +8689,7 @@ export declare class UnionTypeNode extends TypeNode<ts.UnionTypeNode> {
     getTypeNodes(): TypeNode[];
 }
 
-declare const VariableDeclarationBase: Constructor<ExclamationTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
+declare const VariableDeclarationBase: Constructor<ExportGetableNode> & Constructor<ExclamationTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
 
 export declare class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
     /**

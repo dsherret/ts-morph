@@ -579,6 +579,26 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is an ExportGetableNode.
+     * @param node - Node to check.
+     */
+    static isExportGetableNode(node: compiler.Node): node is compiler.ExportGetableNode & compiler.ExportGetableNodeExtensionType {
+        switch (node.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.VariableStatement:
+            case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is an ExportSpecifier.
      * @param node - Node to check.
      */

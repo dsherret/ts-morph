@@ -44,7 +44,7 @@ describe(nameof(VariableDeclaration), () => {
         });
     });
 
-    describe.only(nameof<VariableDeclaration>(d => d.getVariableStatement), () => {
+    describe(nameof<VariableDeclaration>(d => d.getVariableStatement), () => {
         function doTest(startCode: string, expectedText: string | undefined) {
             const { descendant } = getInfoFromTextWithDescendant<VariableDeclaration>(startCode, SyntaxKind.VariableDeclaration);
             const statement = descendant.getVariableStatement();
