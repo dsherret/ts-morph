@@ -39,7 +39,8 @@ export class EmitResult {
     /**
      * Contains declaration emit diagnostics.
      *
-     * This is the semantic, syntactic, global, options, and if enabled declaration diagnostics.
+     * If the `noEmitOnError` compiler option is true, this will also include the program's semantic, syntactic, global, options, and if enabled declaration diagnostics.
+     * @remarks If you are looking for non-declaration emit diagnostics, then call `Project#getPreEmitDiagnostics()` or get specific diagnostics available from the program.
      */
     @Memoize
     getDiagnostics() {
