@@ -1,7 +1,7 @@
 import * as errors from "../../errors";
 import { ProjectContext } from "../../ProjectContext";
 import { ObjectFlags, ts, TypeFlags, TypeFormatFlags } from "../../typescript";
-import { getSymbolByNameOrFindFunction } from "../../utils";
+import { getSymbolByNameOrFindFunction, TypeGuards } from "../../utils";
 import { Signature, Symbol } from "../symbols";
 import { Node } from "../ast";
 import { TypeParameter } from "./TypeParameter";
@@ -334,7 +334,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is an enum literal type.
      */
     isEnumLiteral() {
-        return this._hasTypeFlag(TypeFlags.EnumLiteral);
+        return this._hasTypeFlag(TypeFlags.EnumLiteral) && !this.isUnion();
     }
 
     /**
@@ -369,7 +369,19 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is an enum type.
      */
     isEnum() {
-        return this._hasTypeFlag(TypeFlags.Enum);
+        const hasEnumFlag = this._hasTypeFlag(TypeFlags.Enum);
+        if (hasEnumFlag)
+            return true;
+
+        if (this.isEnumLiteral() && !this.isUnion())
+            return false;
+
+        const symbol = this.getSymbol();
+        if (symbol == null)
+            return false;
+
+        const valueDeclaration = symbol.getValueDeclaration();
+        return valueDeclaration != null && TypeGuards.isEnumDeclaration(valueDeclaration);
     }
 
     /**

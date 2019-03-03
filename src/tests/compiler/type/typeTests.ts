@@ -24,7 +24,7 @@ describe(nameof(Type), () => {
     describe("fast test", () => {
         const text = `
 enum EmptyEnum { }
-enum MyEnum { value, value2 }
+enum MyEnum { value, value2, value3 }
 interface MyInterface {}
 class MyClass {}
 
@@ -36,7 +36,10 @@ let numberType: number;
 let booleanLiteralType: true;
 let numberLiteralType: 5;
 let stringLiteralType: 'test';
-let enumType: EmptyEnum; // no clue why, but this is only an enum type for empty enums
+let emptyEnumType: EmptyEnum;
+let enumType: MyEnum;
+let enumIncompleteUnionType: MyEnum.value | MyEnum.value2;
+let enumCompleteUnionType: MyEnum.value | MyEnum.value2 | MyEnum.value3;
 let enumLiteralType: MyEnum.value;
 let interfaceType: MyInterface;
 let intersectionType: string & number;
@@ -223,8 +226,16 @@ let unknownType: unknown;
                 doTest("enumLiteralType", true);
             });
 
-            it("should get when it's not", () => {
+            it("should not for an enum type", () => {
                 doTest("enumType", false);
+            });
+
+            it("should not be for a union of literals", () => {
+                doTest("enumIncompleteUnionType", false);
+            });
+
+            it("should not be for a number literal", () => {
+                doTest("numberLiteralType", false);
             });
         });
 
@@ -295,6 +306,18 @@ let unknownType: unknown;
 
             it("should get when it is an enum type", () => {
                 doTest("enumType", true);
+            });
+
+            it("should get when it is an empty enum type", () => {
+                doTest("emptyEnumType", true);
+            });
+
+            it("should not be when a union of some enum values, but not all", () => {
+                doTest("enumIncompleteUnionType", false);
+            });
+
+            it("should be when a union of all the enum values", () => {
+                doTest("enumCompleteUnionType", true);
             });
 
             it("should get when it's not an enum type", () => {
