@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/dsherret/ts-morph/compare/1.2.0...1.3.0) (2019-03-03)
+
+
+### Bug Fixes
+
+* [#394](https://github.com/dsherret/ts-morph/issues/394) - Handle inconsistent file path casings on case insensitive file systems. ([f7f6a3c](https://github.com/dsherret/ts-morph/commit/f7f6a3c))
+* [#557](https://github.com/dsherret/ts-morph/issues/557) - ExportableNode#isNamedExport() should work when named export is done via export statement. ([7e18296](https://github.com/dsherret/ts-morph/commit/7e18296))
+* [#560](https://github.com/dsherret/ts-morph/issues/560) - Type#isEnum() and isEnumLiteral() would not always return correct values. ([98c82bc](https://github.com/dsherret/ts-morph/commit/98c82bc))
+
+
+### Features
+
+* [#553](https://github.com/dsherret/ts-morph/issues/553) - VariableDeclaration now has read exportable methods like isDefaultExport(). ([0991e96](https://github.com/dsherret/ts-morph/commit/0991e96))
+* Add VariableDeclaration#getVariableStatement() ([bba33ee](https://github.com/dsherret/ts-morph/commit/bba33ee))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/dsherret/ts-morph/compare/1.1.0...1.2.0) (2019-02-21)
 
