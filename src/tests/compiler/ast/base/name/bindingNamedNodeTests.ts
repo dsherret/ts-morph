@@ -1,6 +1,7 @@
 ﻿import { expect } from "chai";
 import { AssertTrue, IsExactType } from "conditional-type-checks";
 import { VariableStatement, BindingNamedNode, BindingName } from "../../../../../compiler";
+import { TypeGuards } from "../../../../../utils";
 import { getInfoFromText } from "../../../testHelpers";
 
 function getInfoFromTextWithFirstVariableDeclaration(text: string) {
@@ -10,6 +11,29 @@ function getInfoFromTextWithFirstVariableDeclaration(text: string) {
 }
 
 describe(nameof(BindingNamedNode), () => {
+    describe(nameof<BindingNamedNode>(n => n.getName), () => {
+        function doTest(text: string, expectedName: string | false) {
+            const { sourceFile } = getInfoFromText(text);
+            const node = sourceFile.getDescendants().find(TypeGuards.isBindingNamedNode)!;
+            if (expectedName === false)
+                expect(() => node.getName()).to.throw();
+            else
+                expect(node.getName()).to.equal(expectedName);
+        }
+
+        it("should get the name when an identifier", () => {
+            doTest(`function test(p) {}`, "p");
+        });
+
+        it("should throw when an array binding pattern", () => {
+            doTest(`function test([p]) {}`, false);
+        });
+
+        it("should throw when an object binding pattern", () => {
+            doTest(`function test({p}) {}`, false);
+        });
+    });
+
     describe(nameof<BindingNamedNode>(n => n.getNameNode), () => {
         it("should get the name", () => {
             const { firstDeclaration } = getInfoFromTextWithFirstVariableDeclaration("const { a: b } = { a: 1 }");

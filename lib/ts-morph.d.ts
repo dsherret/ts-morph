@@ -908,11 +908,6 @@ export declare class TypeGuards {
      */
     static isDebuggerStatement(node: Node): node is DebuggerStatement;
     /**
-     * Gets if the node is a DeclarationNamedNode.
-     * @param node - Node to check.
-     */
-    static isDeclarationNamedNode(node: Node): node is DeclarationNamedNode & DeclarationNamedNodeExtensionType;
-    /**
      * Gets if the node is a DecoratableNode.
      * @param node - Node to check.
      */
@@ -1894,6 +1889,8 @@ export declare type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 
 export declare type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
 
+export declare type DeclarationName = Identifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
+
 export declare type EntityName = Identifier | QualifiedName;
 
 export declare type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
@@ -1913,6 +1910,8 @@ export declare type ObjectLiteralElementLike = PropertyAssignment | ShorthandPro
 export declare type CaseOrDefaultClause = CaseClause | DefaultClause;
 
 export declare type ModuleReference = EntityName | ExternalModuleReference;
+
+export declare type StringLiteralLike = StringLiteral | NoSubstitutionTemplateLiteral;
 
 export declare type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
 
@@ -2695,32 +2694,6 @@ export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFin
 declare type BindingNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.BindingName>;
 
 export declare type BindingNamedNodeSpecific = NamedNodeSpecificBase<BindingName>;
-
-export declare function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T;
-
-export interface DeclarationNamedNode extends DeclarationNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
-}
-
-declare type DeclarationNamedNodeExtensionType = Node<ts.NamedDeclaration>;
-
-export interface DeclarationNamedNodeSpecific {
-    /**
-     * Gets the name node.
-     */
-    getNameNode(): Identifier | undefined;
-    /**
-     * Gets the name node or throws an error if it doesn't exists.
-     */
-    getNameNodeOrThrow(): Identifier;
-    /**
-     * Gets the name.
-     */
-    getName(): string | undefined;
-    /**
-     * Gets the name or throws if it doens't exist.
-     */
-    getNameOrThrow(): string;
-}
 
 export declare function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T;
 
@@ -5975,7 +5948,7 @@ export interface OverloadableNode {
 
 declare type OverloadableNodeExtensionType = Node & BodyableNode;
 
-declare const ParameterDeclarationBase: Constructor<QuestionTokenableNode> & Constructor<DecoratableNode> & Constructor<ScopeableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<DeclarationNamedNode> & typeof Node;
+declare const ParameterDeclarationBase: Constructor<QuestionTokenableNode> & Constructor<DecoratableNode> & Constructor<ScopeableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
 
 export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
     /**

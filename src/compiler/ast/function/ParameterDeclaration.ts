@@ -1,16 +1,15 @@
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { ParameterDeclarationStructure, ParameterDeclarationSpecificStructure } from "../../../structures";
-// import { ParameterDeclarationStructure } from "../../structures";
 import { WriterFunction } from "../../../types";
 import { ts, SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
-import { DeclarationNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode } from "../base";
+import { BindingNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const ParameterDeclarationBase = QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
-    TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node)))
+    TypedNode(InitializerExpressionableNode(BindingNamedNode(Node)))
 )))));
 export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
     /**
@@ -45,7 +44,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
         if (value) {
             addParensIfNecessary(this);
             insertIntoParentTextRange({
-                insertPos: this.getNameNodeOrThrow().getStart(),
+                insertPos: this.getNameNode().getStart(),
                 parent: this,
                 newText: "..."
             });

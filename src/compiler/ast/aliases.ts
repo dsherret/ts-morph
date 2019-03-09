@@ -32,6 +32,9 @@ type _BindingPatternTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<Bind
 export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
 type _CallLikeExpressionTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<CallLikeExpression>, ts.CallLikeExpression>>;
 
+export type DeclarationName = Identifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
+type _DeclarationNameTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<DeclarationName>, ts.DeclarationName>>;
+
 export type EntityName = Identifier | QualifiedName;
 type _EntityNameTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<EntityName>, ts.EntityName>>;
 
@@ -59,6 +62,9 @@ type _CaseOrDefaultClauseTest = AssertTrue<IsExactType<WrappedToCompilerNodeType
 
 export type ModuleReference = EntityName | ExternalModuleReference;
 type _ModuleReferenceTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<ModuleReference>, ts.ModuleReference>>;
+
+export type StringLiteralLike = StringLiteral | NoSubstitutionTemplateLiteral;
+type _StringLiteralLikeTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<StringLiteralLike>, ts.StringLiteralLike>>;
 
 export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
 

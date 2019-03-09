@@ -65,9 +65,9 @@ describe(nameof(PropertyNamedNode), () => {
             expect(firstProp.getName()).to.equal("5");
         });
 
-        it("should get the name when a computed property", () => {
+        it("should throw when getting the name of a computed property", () => {
             const { firstProp } = getInfoFromTextWithFirstInterfaceProperty("interface identifier { [5]: string; }");
-            expect(firstProp.getName()).to.equal("[5]");
+            expect(() => firstProp.getName()).to.throw();
         });
     });
 

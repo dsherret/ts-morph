@@ -202,6 +202,7 @@ export class TypeGuards {
     static isBindingNamedNode(node: compiler.Node): node is compiler.BindingNamedNode & compiler.BindingNamedNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
+            case SyntaxKind.Parameter:
             case SyntaxKind.VariableDeclaration:
                 return true;
             default:
@@ -455,14 +456,6 @@ export class TypeGuards {
      */
     static isDebuggerStatement(node: compiler.Node): node is compiler.DebuggerStatement {
         return node.getKind() === SyntaxKind.DebuggerStatement;
-    }
-
-    /**
-     * Gets if the node is a DeclarationNamedNode.
-     * @param node - Node to check.
-     */
-    static isDeclarationNamedNode(node: compiler.Node): node is compiler.DeclarationNamedNode & compiler.DeclarationNamedNodeExtensionType {
-        return node.getKind() === SyntaxKind.Parameter;
     }
 
     /**
