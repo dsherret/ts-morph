@@ -14,6 +14,10 @@ export class VirtualFileSystemHost implements FileSystemHost {
         this.getOrCreateDir("/");
     }
 
+    isCaseSensitive() {
+        return true;
+    }
+
     delete(path: string) {
         try {
             this.deleteSync(path);

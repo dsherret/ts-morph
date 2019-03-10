@@ -1,4 +1,6 @@
 ﻿export interface FileSystemHost {
+    /** Gets if this file system is case sensitive. */
+    isCaseSensitive(): boolean;
     delete(path: string): Promise<void>;
     deleteSync(path: string): void;
     readDirSync(dirPath: string): string[];
@@ -18,6 +20,4 @@
     directoryExistsSync(dirPath: string): boolean;
     getCurrentDirectory(): string;
     glob(patterns: ReadonlyArray<string>): string[];
-    /** Gets if this file system is case sensitive. Defaults to true if not implemented. */
-    isCaseSensitive?(): boolean;
 }
