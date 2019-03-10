@@ -2,6 +2,22 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 2
+
+### Removed default export
+
+For a while now it's been recommended to use the named export instead of the default export for the project. From now on, only the named export can be used:
+
+```ts
+import { Project } from "ts-morph";
+```
+
+## Version 1
+
+Renamed library to `ts-morph` and reset version to 1.0.0.
+
+# Archive: ts-simple-ast breaking changes
+
 ## Version 21
 
 * `node.getFirstChildByKind` and `node.getChildrenOfKind` now search the parsed tree via `.forEachChild(...)` when specifying a parsed node's syntax kind. Previously it would only search the results of `node.getChildren()`.

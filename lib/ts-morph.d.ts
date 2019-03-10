@@ -10519,6 +10519,3 @@ interface TypeParameterDeclarationSpecificStructure {
 
 export { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind };
 export * from "./code-block-writer";
-
-/** @deprecated Use the named export "Project" */
-export default Project;
