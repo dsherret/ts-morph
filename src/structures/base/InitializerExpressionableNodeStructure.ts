@@ -1,4 +1,5 @@
-﻿import { InitializerSetExpressionableNodeStructure } from "./InitializerSetExpressionableNodeStructure";
+﻿import { WriterFunction } from "../../types";
 
-export interface InitializerExpressionableNodeStructure extends InitializerSetExpressionableNodeStructure {
+export interface InitializerExpressionableNodeStructure {
+    initializer?: string | WriterFunction;
 }

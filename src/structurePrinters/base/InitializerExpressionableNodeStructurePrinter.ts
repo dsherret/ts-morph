@@ -1,10 +1,10 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { InitializerSetExpressionableNodeStructure } from "../../structures";
+import { InitializerExpressionableNodeStructure } from "../../structures";
 import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
-export class InitializerExpressionableNodeStructurePrinter extends FactoryStructurePrinter<InitializerSetExpressionableNodeStructure> {
-    printText(writer: CodeBlockWriter, structure: InitializerSetExpressionableNodeStructure) {
+export class InitializerExpressionableNodeStructurePrinter extends FactoryStructurePrinter<InitializerExpressionableNodeStructure> {
+    printText(writer: CodeBlockWriter, structure: InitializerExpressionableNodeStructure) {
         const { initializer } = structure;
         if (initializer == null)
             return;

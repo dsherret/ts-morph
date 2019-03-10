@@ -1133,20 +1133,15 @@ export declare class TypeGuards {
      */
     static isIndexedAccessTypeNode(node: Node): node is IndexedAccessTypeNode;
     /**
+     * Gets if the node is a InitializerExpressionGetableNode.
+     * @param node - Node to check.
+     */
+    static isInitializerExpressionGetableNode(node: Node): node is InitializerExpressionGetableNode & InitializerExpressionGetableNodeExtensionType;
+    /**
      * Gets if the node is a InitializerExpressionableNode.
      * @param node - Node to check.
      */
     static isInitializerExpressionableNode(node: Node): node is InitializerExpressionableNode & InitializerExpressionableNodeExtensionType;
-    /**
-     * Gets if the node is a InitializerExpressionGetableNode.
-     * @param node - Node to check.
-     */
-    static isInitializertExpressionGetableNode(node: Node): node is InitializerExpressionGetableNode & InitializerExpressionGetableNodeExtensionType;
-    /**
-     * Gets if the node is a InitializerSetExpressionableNode.
-     * @param node - Node to check.
-     */
-    static isInitializerSetExpressionableNode(node: Node): node is InitializerSetExpressionableNode & InitializerSetExpressionableNodeExtensionType;
     /**
      * Gets if the node is a InterfaceDeclaration.
      * @param node - Node to check.
@@ -2385,7 +2380,16 @@ declare type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNo
 
 export declare function InitializerExpressionableNode<T extends Constructor<InitializerExpressionableNodeExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T;
 
-export interface InitializerExpressionableNode extends InitializerExpressionGetableNode, InitializerSetExpressionableNode {
+export interface InitializerExpressionableNode extends InitializerExpressionGetableNode {
+    /**
+     * Removes the initailizer.
+     */
+    removeInitializer(): this;
+    /**
+     * Sets the initializer.
+     * @param text - Text or writer function to set for the initializer.
+     */
+    setInitializer(textOrWriterFunction: string | WriterFunction): this;
 }
 
 declare type InitializerExpressionableNodeExtensionType = Node<ts.Node & {
@@ -2420,24 +2424,6 @@ export interface InitializerExpressionGetableNode {
 declare type InitializerExpressionGetableNodeExtensionType = Node<ts.Node & {
     initializer?: ts.Expression;
 }>;
-
-export declare function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableNodeExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T;
-
-export interface InitializerSetExpressionableNode {
-    /**
-     * Removes the initailizer.
-     */
-    removeInitializer(): this;
-    /**
-     * Sets the initializer.
-     * @param text - Text or writer function to set for the initializer.
-     */
-    setInitializer(textOrWriterFunction: string | WriterFunction): this;
-}
-
-declare type InitializerSetExpressionableNodeExtensionType = Node<ts.Node & {
-    initializer?: ts.Expression;
-}> & InitializerExpressionGetableNode;
 
 export declare function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T;
 
@@ -10180,10 +10166,7 @@ export interface ImplementsClauseableNodeStructure {
     implements?: (string | WriterFunction)[] | WriterFunction;
 }
 
-export interface InitializerExpressionableNodeStructure extends InitializerSetExpressionableNodeStructure {
-}
-
-export interface InitializerSetExpressionableNodeStructure {
+export interface InitializerExpressionableNodeStructure {
     initializer?: string | WriterFunction;
 }
 
@@ -10197,9 +10180,6 @@ export interface ModuledNodeStructure {
 }
 export interface BindingNamedNodeStructure {
     name: string;
-}
-export interface DeclarationNamedNodeStructure {
-    name?: string;
 }
 export interface NameableNodeStructure {
     name?: string;
@@ -10381,7 +10361,7 @@ export interface FunctionDeclarationOverloadStructure extends SignaturedDeclarat
 export interface FunctionLikeDeclarationStructure extends SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, StatementedNodeStructure {
 }
 
-export interface ParameterDeclarationStructure extends DeclarationNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure {
+export interface ParameterDeclarationStructure extends BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure {
 }
 
 interface ParameterDeclarationSpecificStructure {

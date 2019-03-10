@@ -966,28 +966,10 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a InitializerExpressionableNode.
-     * @param node - Node to check.
-     */
-    static isInitializerExpressionableNode(node: compiler.Node): node is compiler.InitializerExpressionableNode & compiler.InitializerExpressionableNodeExtensionType {
-        switch (node.getKind()) {
-            case SyntaxKind.BindingElement:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.EnumMember:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.VariableDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Gets if the node is a InitializerExpressionGetableNode.
      * @param node - Node to check.
      */
-    static isInitializertExpressionGetableNode(node: compiler.Node): node is compiler.InitializerExpressionGetableNode & compiler.InitializerExpressionGetableNodeExtensionType {
+    static isInitializerExpressionGetableNode(node: compiler.Node): node is compiler.InitializerExpressionGetableNode & compiler.InitializerExpressionGetableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.PropertyDeclaration:
@@ -1004,10 +986,10 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a InitializerSetExpressionableNode.
+     * Gets if the node is a InitializerExpressionableNode.
      * @param node - Node to check.
      */
-    static isInitializerSetExpressionableNode(node: compiler.Node): node is compiler.InitializerSetExpressionableNode & compiler.InitializerSetExpressionableNodeExtensionType {
+    static isInitializerExpressionableNode(node: compiler.Node): node is compiler.InitializerExpressionableNode & compiler.InitializerExpressionableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.PropertyDeclaration:

@@ -1,17 +1,17 @@
 import { expect } from "chai";
 import { SyntaxKind } from "../../../../../typescript";
-import { ClassDeclaration, EnumDeclaration, InitializerSetExpressionableNode, PropertyDeclaration, BindingElement } from "../../../../../compiler";
-import { InitializerSetExpressionableNodeStructure } from "../../../../../structures";
+import { ClassDeclaration, EnumDeclaration, InitializerExpressionableNode, PropertyDeclaration, BindingElement } from "../../../../../compiler";
+import { InitializerExpressionableNodeStructure } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
 
-describe(nameof(InitializerSetExpressionableNode), () => {
+describe(nameof(InitializerExpressionableNode), () => {
     function getEnumMemberFromText(text: string) {
         const result = getInfoFromText<EnumDeclaration>(text);
         return { member: result.firstChild.getMembers()[0], ...result };
     }
 
-    describe(nameof<InitializerSetExpressionableNode>(n => n.removeInitializer), () => {
+    describe(nameof<InitializerExpressionableNode>(n => n.removeInitializer), () => {
         describe("enum", () => {
             function doTest(startCode: string, expectedCode: string) {
                 const { member, sourceFile } = getEnumMemberFromText(startCode);
@@ -45,7 +45,7 @@ describe(nameof(InitializerSetExpressionableNode), () => {
         });
     });
 
-    describe(nameof<InitializerSetExpressionableNode>(n => n.setInitializer), () => {
+    describe(nameof<InitializerExpressionableNode>(n => n.setInitializer), () => {
         describe("enum member", () => {
             function doThrowTest(initializerText: any) {
                 const { member } = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
@@ -155,7 +155,7 @@ describe(nameof(InitializerSetExpressionableNode), () => {
     });
 
     describe(nameof<ClassDeclaration>(n => n.set), () => {
-        function doTest(startingCode: string, structure: InitializerSetExpressionableNodeStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: InitializerExpressionableNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const firstProperty = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
             firstProperty.set(structure);
@@ -181,7 +181,7 @@ describe(nameof(InitializerSetExpressionableNode), () => {
 
     describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
         function doTest(startingCode: string, initializer: string | undefined) {
-            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             const firstProperty = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
             expect(firstProperty.getStructure().initializer).to.equal(initializer);
         }

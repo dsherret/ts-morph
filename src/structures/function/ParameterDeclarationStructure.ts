@@ -1,8 +1,8 @@
-﻿import { DeclarationNamedNodeStructure, DecoratableNodeStructure, InitializerExpressionableNodeStructure, QuestionTokenableNodeStructure,
+﻿import { BindingNamedNodeStructure, DecoratableNodeStructure, InitializerExpressionableNodeStructure, QuestionTokenableNodeStructure,
     ReadonlyableNodeStructure, ScopeableNodeStructure, TypedNodeStructure } from "../base";
 
 export interface ParameterDeclarationStructure
-    extends DeclarationNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure,
+    extends BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure,
         InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure
 {
 }

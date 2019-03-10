@@ -3,7 +3,6 @@
         case "ModifierableNode":
         case "NamedNode":
         case "PropertyNamedNode":
-        case "DeclarationNamedNode":
         case "BindingNamedNode":
         case "HeritageClauseableNode":
         case "NamespaceChildableNode":
@@ -11,7 +10,7 @@
         case "TextInsertableNode":
         case "UnwrappableNode":
         case "ChildOrderableNode":
-        case "InitializerGetExpressionableNode":
+        case "InitializerExpressionGetableNode":
         case "ExpressionedNode":
             return false;
         default:

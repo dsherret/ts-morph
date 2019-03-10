@@ -11,7 +11,6 @@ export * from "./ExtendsClauseableNodeStructure";
 export * from "./GeneratorableNodeStructure";
 export * from "./ImplementsClauseableNodeStructure";
 export * from "./InitializerExpressionableNodeStructure";
-export * from "./InitializerSetExpressionableNodeStructure";
 export * from "./JSDocableNodeStructure";
 export * from "./ModuledNodeStructure";
 export * from "./name";
