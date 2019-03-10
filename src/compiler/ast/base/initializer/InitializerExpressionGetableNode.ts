@@ -6,9 +6,9 @@ import { Node } from "../../common";
 import { Expression } from "../../expression";
 import { KindToExpressionMappings } from "../../kindToNodeMappings";
 
-export type InitializerGetExpressionableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
+export type InitializerExpressionGetableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
 
-export interface InitializerGetExpressionableNode {
+export interface InitializerExpressionGetableNode {
     /**
      * Gets if node has an initializer.
      */
@@ -31,8 +31,8 @@ export interface InitializerGetExpressionableNode {
     getInitializerOrThrow(): Expression;
 }
 
-export function InitializerGetExpressionableNode<T extends Constructor<InitializerGetExpressionableNodeExtensionType>>(Base: T): Constructor<InitializerGetExpressionableNode> & T {
-    return class extends Base implements InitializerGetExpressionableNode {
+export function InitializerExpressionGetableNode<T extends Constructor<InitializerExpressionGetableNodeExtensionType>>(Base: T): Constructor<InitializerExpressionGetableNode> & T {
+    return class extends Base implements InitializerExpressionGetableNode {
         hasInitializer() {
             return this.compilerNode.initializer != null;
         }

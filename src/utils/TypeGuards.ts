@@ -984,10 +984,10 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a InitializerGetExpressionableNode.
+     * Gets if the node is a InitializerExpressionGetableNode.
      * @param node - Node to check.
      */
-    static isInitializerGetExpressionableNode(node: compiler.Node): node is compiler.InitializerGetExpressionableNode & compiler.InitializerGetExpressionableNodeExtensionType {
+    static isInitializertExpressionGetableNode(node: compiler.Node): node is compiler.InitializerExpressionGetableNode & compiler.InitializerExpressionGetableNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.PropertyDeclaration:

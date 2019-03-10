@@ -6,10 +6,10 @@ import { SyntaxKind, ts } from "../../../../typescript";
 import { getTextFromStringOrWriter } from "../../../../utils";
 import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
-import { InitializerGetExpressionableNode } from "./InitializerGetExpressionableNode";
+import { InitializerExpressionGetableNode } from "./InitializerExpressionGetableNode";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 
-export type InitializerSetExpressionableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerGetExpressionableNode;
+export type InitializerSetExpressionableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerExpressionGetableNode;
 
 export interface InitializerSetExpressionableNode {
     /**

@@ -1,3 +1,3 @@
 export * from "./InitializerExpressionableNode";
-export * from "./InitializerGetExpressionableNode";
+export * from "./InitializerExpressionGetableNode";
 export * from "./InitializerSetExpressionableNode";

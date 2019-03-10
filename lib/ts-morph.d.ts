@@ -1138,10 +1138,10 @@ export declare class TypeGuards {
      */
     static isInitializerExpressionableNode(node: Node): node is InitializerExpressionableNode & InitializerExpressionableNodeExtensionType;
     /**
-     * Gets if the node is a InitializerGetExpressionableNode.
+     * Gets if the node is a InitializerExpressionGetableNode.
      * @param node - Node to check.
      */
-    static isInitializerGetExpressionableNode(node: Node): node is InitializerGetExpressionableNode & InitializerGetExpressionableNodeExtensionType;
+    static isInitializertExpressionGetableNode(node: Node): node is InitializerExpressionGetableNode & InitializerExpressionGetableNodeExtensionType;
     /**
      * Gets if the node is a InitializerSetExpressionableNode.
      * @param node - Node to check.
@@ -2385,16 +2385,16 @@ declare type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNo
 
 export declare function InitializerExpressionableNode<T extends Constructor<InitializerExpressionableNodeExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T;
 
-export interface InitializerExpressionableNode extends InitializerGetExpressionableNode, InitializerSetExpressionableNode {
+export interface InitializerExpressionableNode extends InitializerExpressionGetableNode, InitializerSetExpressionableNode {
 }
 
 declare type InitializerExpressionableNodeExtensionType = Node<ts.Node & {
     initializer?: ts.Expression;
 }>;
 
-export declare function InitializerGetExpressionableNode<T extends Constructor<InitializerGetExpressionableNodeExtensionType>>(Base: T): Constructor<InitializerGetExpressionableNode> & T;
+export declare function InitializerExpressionGetableNode<T extends Constructor<InitializerExpressionGetableNodeExtensionType>>(Base: T): Constructor<InitializerExpressionGetableNode> & T;
 
-export interface InitializerGetExpressionableNode {
+export interface InitializerExpressionGetableNode {
     /**
      * Gets if node has an initializer.
      */
@@ -2417,7 +2417,7 @@ export interface InitializerGetExpressionableNode {
     getInitializerOrThrow(): Expression;
 }
 
-declare type InitializerGetExpressionableNodeExtensionType = Node<ts.Node & {
+declare type InitializerExpressionGetableNodeExtensionType = Node<ts.Node & {
     initializer?: ts.Expression;
 }>;
 
@@ -2437,7 +2437,7 @@ export interface InitializerSetExpressionableNode {
 
 declare type InitializerSetExpressionableNodeExtensionType = Node<ts.Node & {
     initializer?: ts.Expression;
-}> & InitializerGetExpressionableNode;
+}> & InitializerExpressionGetableNode;
 
 export declare function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T;
 
@@ -2735,7 +2735,8 @@ export interface NamedNodeSpecificBase<TNode extends Node> {
      */
     getNameNode(): TNode;
     /**
-     * Gets the name.
+     * Gets the name as a string.
+     * @throws If the name node is an array binding pattern, object binding pattern, or computed property.
      */
     getName(): string;
 }
@@ -5649,7 +5650,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
     insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
 }
 
-declare const PropertyAssignmentBase: Constructor<InitializerGetExpressionableNode> & Constructor<QuestionTokenableNode> & Constructor<PropertyNamedNode> & typeof Node;
+declare const PropertyAssignmentBase: Constructor<InitializerExpressionGetableNode> & Constructor<QuestionTokenableNode> & Constructor<PropertyNamedNode> & typeof Node;
 
 export declare class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**
@@ -5678,7 +5679,7 @@ export declare class PropertyAssignment extends PropertyAssignmentBase<ts.Proper
     getStructure(): PropertyAssignmentStructure;
 }
 
-declare const ShorthandPropertyAssignmentBase: Constructor<InitializerGetExpressionableNode> & Constructor<QuestionTokenableNode> & Constructor<NamedNode> & typeof Node;
+declare const ShorthandPropertyAssignmentBase: Constructor<InitializerExpressionGetableNode> & Constructor<QuestionTokenableNode> & Constructor<NamedNode> & typeof Node;
 
 export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase<ts.ShorthandPropertyAssignment> {
     /**

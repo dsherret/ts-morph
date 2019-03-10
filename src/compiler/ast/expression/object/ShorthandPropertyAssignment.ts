@@ -1,7 +1,7 @@
 import * as errors from "../../../../errors";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../../manipulation";
 import { SyntaxKind, ts } from "../../../../typescript";
-import { InitializerGetExpressionableNode, NamedNode, QuestionTokenableNode } from "../../base";
+import { InitializerExpressionGetableNode, NamedNode, QuestionTokenableNode } from "../../base";
 import { Node } from "../../common/Node";
 import { Expression } from "../Expression";
 import { PropertyAssignment } from "./PropertyAssignment";
@@ -12,7 +12,7 @@ import { callBaseSet } from "../../callBaseSet";
 // This node only has an object assignment initializer, equals token, and question token, in order to tell the user about bad code
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)
 
-export const ShorthandPropertyAssignmentBase = InitializerGetExpressionableNode(QuestionTokenableNode(NamedNode(Node)));
+export const ShorthandPropertyAssignmentBase = InitializerExpressionGetableNode(QuestionTokenableNode(NamedNode(Node)));
 export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase<ts.ShorthandPropertyAssignment> {
     /**
      * Gets if the shorthand property assignment has an object assignment initializer.
