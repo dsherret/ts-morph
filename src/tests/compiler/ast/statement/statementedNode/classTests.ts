@@ -5,7 +5,7 @@ import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertClasses), () => {
-        function doTest(startCode: string, index: number, structures: ClassDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<ClassDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertClasses(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -49,7 +49,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert everything in a structure", () => {
-            const structure: MakeRequired<ClassDeclarationStructure> = {
+            const structure: OptionalKind<MakeRequired<ClassDeclarationStructure>> = {
                 name: "C",
                 ctors: [{}, {}],
                 decorators: [{ name: "D" }],
@@ -117,7 +117,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addClasses), () => {
-        function doTest(startCode: string, structures: ClassDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKind<ClassDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addClasses(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);

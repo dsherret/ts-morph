@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertNamespaces), () => {
-        function doTest(startCode: string, index: number, structures: NamespaceDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<NamespaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespaces(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -49,7 +49,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: MakeRequired<NamespaceDeclarationStructure> = {
+            const structure: OptionalKind<MakeRequired<NamespaceDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 name: "n",
                 hasDeclareKeyword: false,
@@ -140,7 +140,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespaces), () => {
-        function doTest(startCode: string, structures: NamespaceDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKind<NamespaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespaces(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);

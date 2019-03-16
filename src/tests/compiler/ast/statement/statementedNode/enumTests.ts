@@ -5,7 +5,7 @@ import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertEnums), () => {
-        function doTest(startCode: string, index: number, structures: EnumDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<EnumDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertEnums(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -48,7 +48,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert everything from the structure", () => {
-            const structure: MakeRequired<EnumDeclarationStructure> = {
+            const structure: OptionalKind<MakeRequired<EnumDeclarationStructure>> = {
                 name: "Enum",
                 docs: [{ description: "Testing" }],
                 hasDeclareKeyword: false,
@@ -76,7 +76,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addEnums), () => {
-        function doTest(startCode: string, structures: EnumDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKind<EnumDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addEnums(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);

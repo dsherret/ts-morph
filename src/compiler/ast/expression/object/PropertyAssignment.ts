@@ -5,7 +5,7 @@ import { getTextFromStringOrWriter } from "../../../../utils";
 import { InitializerExpressionGetableNode, PropertyNamedNode, QuestionTokenableNode } from "../../base";
 import { Node } from "../../common";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
-import { PropertyAssignmentStructure, PropertyAssignmentSpecificStructure } from "../../../../structures";
+import { PropertyAssignmentStructure, PropertyAssignmentSpecificStructure, StructureKind } from "../../../../structures";
 import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 
@@ -86,6 +86,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
     getStructure() {
         const initializer = this.getInitializerOrThrow();
         const structure = callBaseGetStructure<PropertyAssignmentSpecificStructure>(PropertyAssignmentBase.prototype, this, {
+            kind: StructureKind.PropertyAssignment,
             initializer: initializer.getText()
         }) as any as PropertyAssignmentStructure;
 

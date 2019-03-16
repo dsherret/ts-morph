@@ -5,7 +5,7 @@ import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertInterfaces), () => {
-        function doTest(startCode: string, index: number, structures: InterfaceDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<InterfaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertInterfaces(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -47,7 +47,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert everything in a structure", () => {
-            const structure: MakeRequired<InterfaceDeclarationStructure> = {
+            const structure: OptionalKind<MakeRequired<InterfaceDeclarationStructure>> = {
                 name: "I",
                 docs: [{ description: "Test" }],
                 extends: ["IBase", "IBase2"],
@@ -86,7 +86,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addInterfaces), () => {
-        function doTest(startCode: string, structures: InterfaceDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKind<InterfaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addInterfaces(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);

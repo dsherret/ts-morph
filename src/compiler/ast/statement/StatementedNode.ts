@@ -518,7 +518,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertClasses(index: number, structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>>): ClassDeclaration[] {
-            return this._insertChildren<ClassDeclaration, ClassDeclarationStructure>({
+            return this._insertChildren<ClassDeclaration, OptionalKind<ClassDeclarationStructure>>({
                 expectedKind: SyntaxKind.ClassDeclaration,
                 index,
                 structures,
@@ -565,7 +565,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertEnums(index: number, structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>>): EnumDeclaration[] {
-            return this._insertChildren<EnumDeclaration, EnumDeclarationStructure>({
+            return this._insertChildren<EnumDeclaration, OptionalKind<EnumDeclarationStructure>>({
                 expectedKind: SyntaxKind.EnumDeclaration,
                 index,
                 structures,
@@ -612,7 +612,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertFunctions(index: number, structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>>): FunctionDeclaration[] {
-            return this._insertChildren<FunctionDeclaration, FunctionDeclarationStructure>({
+            return this._insertChildren<FunctionDeclaration, OptionalKind<FunctionDeclarationStructure>>({
                 expectedKind: SyntaxKind.FunctionDeclaration,
                 index,
                 structures,
@@ -667,7 +667,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertInterfaces(index: number, structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>>): InterfaceDeclaration[] {
-            return this._insertChildren<InterfaceDeclaration, InterfaceDeclarationStructure>({
+            return this._insertChildren<InterfaceDeclaration, OptionalKind<InterfaceDeclarationStructure>>({
                 expectedKind: SyntaxKind.InterfaceDeclaration,
                 index,
                 structures,
@@ -714,7 +714,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[] {
-            return this._insertChildren<NamespaceDeclaration, NamespaceDeclarationStructure>({
+            return this._insertChildren<NamespaceDeclaration, OptionalKind<NamespaceDeclarationStructure>>({
                 expectedKind: SyntaxKind.ModuleDeclaration,
                 index,
                 structures,
@@ -761,7 +761,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertTypeAliases(index: number, structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>>): TypeAliasDeclaration[] {
-            return this._insertChildren<TypeAliasDeclaration, TypeAliasDeclarationStructure>({
+            return this._insertChildren<TypeAliasDeclaration, OptionalKind<TypeAliasDeclarationStructure>>({
                 expectedKind: SyntaxKind.TypeAliasDeclaration,
                 index,
                 structures,
@@ -832,7 +832,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertVariableStatements(index: number, structures: ReadonlyArray<OptionalKind<VariableStatementStructure>>): VariableStatement[] {
-            return this._insertChildren<VariableStatement, VariableStatementStructure>({
+            return this._insertChildren<VariableStatement, OptionalKind<VariableStatementStructure>>({
                 expectedKind: SyntaxKind.VariableStatement,
                 index,
                 structures,

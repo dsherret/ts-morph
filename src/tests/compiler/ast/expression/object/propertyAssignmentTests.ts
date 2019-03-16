@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression } from "../../../../../compiler";
-import { PropertyAssignmentStructure } from "../../../../../structures";
+import { PropertyAssignmentStructure, StructureKind, OptionalKind } from "../../../../../structures";
 import { SyntaxKind } from "../../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
 
@@ -83,7 +83,7 @@ describe(nameof(PropertyAssignment), () => {
         });
 
         it("should set when everything is specified", () => {
-            const structure: MakeRequired<PropertyAssignmentStructure> = {
+            const structure: OptionalKind<MakeRequired<PropertyAssignmentStructure>> = {
                 name: "NewName",
                 initializer: "5"
             };
@@ -102,7 +102,11 @@ describe(nameof(PropertyAssignment), () => {
         }
 
         it("should get the structure", () => {
-            test("const t = { prop1: 1};", { name: "prop1", initializer: "1" });
+            test("const t = { prop1: 1};", {
+                kind: StructureKind.PropertyAssignment,
+                name: "prop1",
+                initializer: "1"
+            });
         });
     });
 });

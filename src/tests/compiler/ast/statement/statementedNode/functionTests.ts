@@ -5,7 +5,7 @@ import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertFunctions), () => {
-        function doTest(startCode: string, index: number, structures: FunctionDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<FunctionDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertFunctions(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -77,7 +77,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: MakeRequired<FunctionDeclarationStructure> = {
+            const structure: OptionalKind<MakeRequired<FunctionDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 name: "f",
                 parameters: [{ name: "param" }],
@@ -121,7 +121,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addFunctions), () => {
-        function doTest(startCode: string, structures: FunctionDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKind<FunctionDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addFunctions(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);

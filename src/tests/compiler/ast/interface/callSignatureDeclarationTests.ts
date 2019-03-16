@@ -32,7 +32,7 @@ describe(nameof(CallSignatureDeclaration), () => {
                 returnType: "string"
             };
             doTest("interface Identifier {\n    (): any;\n}", structure,
-                "interface Identifier {\n    /**\n     *\n    */\n    <T>(param): string;\n}");
+                "interface Identifier {\n    /**\n     * test\n     */\n    <T>(param): string;\n}");
         });
     });
 

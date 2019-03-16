@@ -3,9 +3,9 @@ import { Structure } from "../../Structure";
 import { StructureKind } from "../../StructureKind";
 
 export interface ShorthandPropertyAssignmentStructure
-    extends Structure<StructureKind.ShorthandPropertyAssignment>, ShorthandPropertyAssignmentSpecificStructure, NamedNodeStructure
+    extends ShorthandPropertyAssignmentSpecificStructure, NamedNodeStructure
 {
 }
 
-export interface ShorthandPropertyAssignmentSpecificStructure {
+export interface ShorthandPropertyAssignmentSpecificStructure extends Structure<StructureKind.ShorthandPropertyAssignment> {
 }

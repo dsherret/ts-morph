@@ -29,10 +29,10 @@ describe(nameof(ConstructSignatureDeclaration), () => {
                 docs: ["test"],
                 parameters: [{ name: "param" }],
                 returnType: "string",
-                typeParameters: ["T"]
+                typeParameters: undefined
             };
             doTest("interface Identifier {\n    new(): any;\n}", structure,
-                "interface Identifier {\n    /**\n     * test\n    */\n    new<T>(param): string;\n}");
+                "interface Identifier {\n    /**\n     * test\n     */\n    new(param): string;\n}");
         });
     });
 

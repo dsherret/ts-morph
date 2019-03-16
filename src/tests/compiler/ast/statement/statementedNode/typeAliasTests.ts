@@ -5,7 +5,7 @@ import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertTypeAliases), () => {
-        function doTest(startCode: string, index: number, structures: TypeAliasDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<TypeAliasDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAliases(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -56,7 +56,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert everything from the structure", () => {
-            const structure: MakeRequired<TypeAliasDeclarationStructure> = {
+            const structure: OptionalKind<MakeRequired<TypeAliasDeclarationStructure>> = {
                 docs: [{ description: "Testing" }],
                 hasDeclareKeyword: false,
                 name: "Name",
@@ -84,7 +84,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addTypeAliases), () => {
-        function doTest(startCode: string, structures: TypeAliasDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKind<TypeAliasDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addTypeAliases(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);

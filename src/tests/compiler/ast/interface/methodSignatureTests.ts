@@ -34,7 +34,7 @@ describe(nameof(MethodSignature), () => {
                 returnType: "number"
             };
             doTest("interface Identifier {\n    method(): string;\n}", structure,
-                "interface Identifier {\n    /**\n     * test\n    */\n    name?<T>(param): number;\n}");
+                "interface Identifier {\n    /**\n     * test\n     */\n    name?<T>(param): number;\n}");
         });
     });
 

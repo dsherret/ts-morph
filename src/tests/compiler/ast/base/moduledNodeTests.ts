@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ModuledNode), () => {
     describe(nameof<ModuledNode>(n => n.insertImportDeclarations), () => {
-        function doTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string, useSingleQuotes = false) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<ImportDeclarationStructure>[], expectedCode: string, useSingleQuotes = false) {
             const { sourceFile, project } = getInfoFromText(startCode);
             if (useSingleQuotes)
                 project.manipulationSettings.set({ quoteKind: QuoteKind.Single });
@@ -62,7 +62,7 @@ describe(nameof(ModuledNode), () => {
                 `import { test,\n    test2\n} from "./test";\n`);
         });
 
-        function doNamespaceTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string) {
+        function doNamespaceTest(startCode: string, index: number, structures: OptionalKind<ImportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile, project } = getInfoFromText(startCode);
             const result = sourceFile.getNamespaces()[0].insertImportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
@@ -107,7 +107,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.addImportDeclarations), () => {
-        function doTest(startCode: string, structures: ImportDeclarationStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKind<ImportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addImportDeclarations(structures);
             expect(result.length).to.equal(structures.length);
@@ -185,7 +185,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.insertExportDeclarations), () => {
-        function doTest(startCode: string, index: number, structures: ExportDeclarationStructure[], expectedCode: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<ExportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
@@ -224,7 +224,7 @@ describe(nameof(ModuledNode), () => {
                 `export {\n    test,\n    test2\n};\n`);
         });
 
-        function doNamespaceTest(startCode: string, index: number, structures: ExportDeclarationStructure[], expectedCode: string) {
+        function doNamespaceTest(startCode: string, index: number, structures: OptionalKind<ExportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile, project } = getInfoFromText(startCode);
             const result = sourceFile.getNamespaces()[0].insertExportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
@@ -265,7 +265,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.addExportDeclarations), () => {
-        function doTest(startCode: string, structures: ExportDeclarationStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKind<ExportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addExportDeclarations(structures);
             expect(result.length).to.equal(structures.length);
@@ -338,7 +338,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.insertExportAssignments), () => {
-        function doTest(startCode: string, index: number, structures: ExportAssignmentStructure[], expectedCode: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<ExportAssignmentStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportAssignments(index, structures);
             expect(result.length).to.equal(structures.length);
@@ -370,7 +370,7 @@ describe(nameof(ModuledNode), () => {
             doTest(`export class Class {}\n`, 1, [{ expression: "5" }], `export class Class {}\n\nexport = 5;\n`);
         });
 
-        function doNamespaceTest(startCode: string, index: number, structures: ExportAssignmentStructure[], expectedCode: string) {
+        function doNamespaceTest(startCode: string, index: number, structures: OptionalKind<ExportAssignmentStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.getNamespaces()[0].insertExportAssignments(index, structures);
             expect(result.length).to.equal(structures.length);
@@ -412,7 +412,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.addExportAssignments), () => {
-        function doTest(startCode: string, structures: ExportAssignmentStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKind<ExportAssignmentStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addExportAssignments(structures);
             expect(result.length).to.equal(structures.length);
