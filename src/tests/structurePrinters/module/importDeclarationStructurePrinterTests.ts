@@ -1,11 +1,11 @@
 ﻿import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { ExportDeclarationStructurePrinter } from "../../../structurePrinters";
-import { ExportDeclarationStructure } from "../../../structures";
+import { ExportDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(ExportDeclarationStructurePrinter), () => {
-    function doTest(structure: ExportDeclarationStructure, expectedOutput: string, formatCodeSettings?: FormatCodeSettings) {
+    function doTest(structure: OptionalKind<ExportDeclarationStructure>, expectedOutput: string, formatCodeSettings?: FormatCodeSettings) {
         const { writer, factory } = getStructureFactoryAndWriter(formatCodeSettings);
         factory.forExportDeclaration().printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);

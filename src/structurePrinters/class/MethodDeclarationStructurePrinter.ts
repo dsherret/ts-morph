@@ -1,15 +1,15 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
-import { MethodDeclarationOverloadStructure, MethodDeclarationStructure } from "../../structures";
+import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, OptionalKind } from "../../structures";
 import { ObjectUtils, setValueIfUndefined } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
-export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<MethodDeclarationStructure> {
+export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<MethodDeclarationStructure>> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<MethodDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>> | undefined) {
         if (structures == null)
             return;
 
@@ -24,7 +24,7 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
         }
     }
 
-    printText(writer: CodeBlockWriter, structure: MethodDeclarationStructure) {
+    printText(writer: CodeBlockWriter, structure: OptionalKind<MethodDeclarationStructure>) {
         this.printOverloads(writer, structure.name, getOverloadStructures());
         this.printBase(writer, structure.name, structure);
 

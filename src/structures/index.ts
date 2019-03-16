@@ -10,3 +10,4 @@ export * from "./jsx";
 export * from "./module";
 export * from "./statement";
 export * from "./type";
+export * from "./types";

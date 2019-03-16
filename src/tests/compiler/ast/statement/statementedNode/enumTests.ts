@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { EnumDeclaration, StatementedNode, Node } from "../../../../../compiler";
-import { EnumDeclarationStructure } from "../../../../../structures";
+import { EnumDeclarationStructure, OptionalKind } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
@@ -63,7 +63,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertEnum), () => {
-        function doTest(startCode: string, index: number, structure: EnumDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<EnumDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertEnum(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -89,7 +89,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addEnum), () => {
-        function doTest(startCode: string, structure: EnumDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKind<EnumDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addEnum(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

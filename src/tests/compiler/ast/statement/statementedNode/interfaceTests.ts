@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, StatementedNode, Node } from "../../../../../compiler";
-import { InterfaceDeclarationStructure } from "../../../../../structures";
+import { InterfaceDeclarationStructure, OptionalKind } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
@@ -73,7 +73,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertInterface), () => {
-        function doTest(startCode: string, index: number, structure: InterfaceDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<InterfaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertInterface(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -100,7 +100,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addInterface), () => {
-        function doTest(startCode: string, structure: InterfaceDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKind<InterfaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addInterface(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

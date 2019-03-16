@@ -1,6 +1,7 @@
 ﻿import { ImportDeclarationStructure, ExportDeclarationStructure } from "../module";
+import { OptionalKind } from "../types";
 
 export interface ModuledNodeStructure {
-    imports?: ImportDeclarationStructure[];
-    exports?: ExportDeclarationStructure[];
+    imports?: OptionalKind<ImportDeclarationStructure>[];
+    exports?: OptionalKind<ExportDeclarationStructure>[];
 }

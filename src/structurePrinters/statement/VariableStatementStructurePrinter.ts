@@ -1,17 +1,17 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { VariableDeclarationKind } from "../../compiler/ast/variable/VariableDeclarationKind";
-import { VariableStatementStructure } from "../../structures";
+import { VariableStatementStructure, OptionalKind } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 
-export class VariableStatementStructurePrinter extends FactoryStructurePrinter<VariableStatementStructure> {
+export class VariableStatementStructurePrinter extends FactoryStructurePrinter<OptionalKind<VariableStatementStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<VariableStatementStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<VariableStatementStructure>> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: VariableStatementStructure) {
+    printText(writer: CodeBlockWriter, structure: OptionalKind<VariableStatementStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`${structure.declarationKind || VariableDeclarationKind.Let} `);

@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { NamespaceDeclaration, StatementedNode, Node, NamespaceDeclarationKind } from "../../../../../compiler";
 import * as errors from "../../../../../errors";
-import { NamespaceDeclarationStructure } from "../../../../../structures";
+import { NamespaceDeclarationStructure, OptionalKind } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
@@ -127,7 +127,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertNamespace), () => {
-        function doTest(startCode: string, index: number, structure: NamespaceDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<NamespaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespace(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -154,7 +154,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespace), () => {
-        function doTest(startCode: string, structure: NamespaceDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKind<NamespaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespace(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

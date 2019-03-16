@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { Node, ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
     PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase } from "../../../../../compiler";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure } from "../../../../../structures";
+    SetAccessorDeclarationStructure, OptionalKind } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { SyntaxKind } from "../../../../../typescript";
 import { TypeGuards } from "../../../../../utils";
@@ -109,7 +109,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertConstructor), () => {
-        function doTest(startCode: string, insertIndex: number, structure: ConstructorDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<ConstructorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertConstructor(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -156,7 +156,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addConstructor), () => {
-        function doTest(startCode: string, structure: ConstructorDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<ConstructorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addConstructor(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -280,7 +280,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertGetAccessor), () => {
-        function doTest(startCode: string, insertIndex: number, structure: GetAccessorDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<GetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertGetAccessor(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -308,7 +308,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addGetAccessor), () => {
-        function doTest(startCode: string, structure: GetAccessorDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<GetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addGetAccessor(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -369,7 +369,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertProperty), () => {
-        function doTest(startCode: string, insertIndex: number, structure: PropertyDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<PropertyDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertProperty(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -395,7 +395,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addProperty), () => {
-        function doTest(startCode: string, structure: PropertyDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<PropertyDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addProperty(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -536,7 +536,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertSetAccessor), () => {
-        function doTest(startCode: string, insertIndex: number, structure: SetAccessorDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<SetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertSetAccessor(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -564,7 +564,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addSetAccessor), () => {
-        function doTest(startCode: string, structure: SetAccessorDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<SetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addSetAccessor(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -798,7 +798,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertMethod), () => {
-        function doTest(startCode: string, insertIndex: number, structure: MethodDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<MethodDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertMethod(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -826,7 +826,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addMethod), () => {
-        function doTest(startCode: string, structure: MethodDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<MethodDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMethod(structure);
             expect(firstChild.getText()).to.equal(expectedCode);

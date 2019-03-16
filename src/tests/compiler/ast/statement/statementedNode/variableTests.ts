@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement, Node } from "../../../../../compiler";
-import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../../structures";
+import { VariableDeclarationStructure, VariableStatementStructure, OptionalKind } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
@@ -81,7 +81,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertVariableStatement), () => {
-        function doTest(startCode: string, index: number, structure: VariableStatementStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<VariableStatementStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertVariableStatement(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -108,7 +108,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addVariableStatement), () => {
-        function doTest(startCode: string, structure: VariableStatementStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKind<VariableStatementStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addVariableStatement(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

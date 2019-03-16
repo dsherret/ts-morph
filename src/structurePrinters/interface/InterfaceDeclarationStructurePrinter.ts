@@ -1,17 +1,17 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { InterfaceDeclarationStructure } from "../../structures";
+import { InterfaceDeclarationStructure, OptionalKind } from "../../structures";
 import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
-export class InterfaceDeclarationStructurePrinter extends FactoryStructurePrinter<InterfaceDeclarationStructure> {
+export class InterfaceDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<InterfaceDeclarationStructure>> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<InterfaceDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: InterfaceDeclarationStructure) {
+    printText(writer: CodeBlockWriter, structure: OptionalKind<InterfaceDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`interface ${structure.name}`);

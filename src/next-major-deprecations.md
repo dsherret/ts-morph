@@ -1,4 +1,4 @@
 ﻿# Deprecations in the next major
 
-* None.
+* Do not throw for .getName() when has no name... just return undefined
 

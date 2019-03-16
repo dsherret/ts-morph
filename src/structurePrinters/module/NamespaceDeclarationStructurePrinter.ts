@@ -3,22 +3,22 @@ import { NamespaceDeclarationKind } from "../../compiler";
 import * as errors from "../../errors";
 import { StructurePrinterFactory } from "../../factories";
 import { ArrayUtils, StringUtils, ObjectUtils, setValueIfUndefined } from "../../utils";
-import { NamespaceDeclarationStructure } from "../../structures";
+import { NamespaceDeclarationStructure, OptionalKind } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
-export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinter<NamespaceDeclarationStructure> {
+export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<NamespaceDeclarationStructure>> {
     private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
 
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<NamespaceDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>> | undefined) {
         this.blankLineFormattingWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: NamespaceDeclarationStructure) {
+    printText(writer: CodeBlockWriter, structure: OptionalKind<NamespaceDeclarationStructure>) {
         structure = this.validateAndGetStructure(structure);
 
         this.factory.forJSDoc().printDocs(writer, structure.docs);
@@ -40,12 +40,12 @@ export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinte
         });
     }
 
-    private conditionalBlankLine(writer: CodeBlockWriter, structures: ReadonlyArray<any> | undefined) {
+    private conditionalBlankLine(writer: CodeBlockWriter, structures: ReadonlyArray<unknown> | undefined) {
         if (!ArrayUtils.isNullOrEmpty(structures))
             writer.conditionalBlankLine(!writer.isAtStartOfFirstLineOfBlock());
     }
 
-    private validateAndGetStructure(structure: NamespaceDeclarationStructure) {
+    private validateAndGetStructure(structure: OptionalKind<NamespaceDeclarationStructure>) {
         const name = structure.name.trim();
         if (!StringUtils.startsWith(name, "'") && !StringUtils.startsWith(name, `"`))
             return structure;

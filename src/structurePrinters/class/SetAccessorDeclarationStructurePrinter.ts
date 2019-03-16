@@ -1,21 +1,21 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
-import { SetAccessorDeclarationStructure } from "../../structures";
+import { SetAccessorDeclarationStructure, OptionalKind } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
-export class SetAccessorDeclarationStructurePrinter extends FactoryStructurePrinter<SetAccessorDeclarationStructure> {
+export class SetAccessorDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<SetAccessorDeclarationStructure>> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<SetAccessorDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: SetAccessorDeclarationStructure) {
+    printText(writer: CodeBlockWriter, structure: OptionalKind<SetAccessorDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forDecorator().printTexts(writer, structure.decorators);
         this.factory.forModifierableNode().printText(writer, structure);

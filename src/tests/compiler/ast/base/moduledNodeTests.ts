@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration, ExportAssignment } from "../../../../compiler";
-import { ImportDeclarationStructure, ExportDeclarationStructure, ModuledNodeStructure, ExportAssignmentStructure } from "../../../../structures";
+import { ImportDeclarationStructure, ExportDeclarationStructure, ModuledNodeStructure, ExportAssignmentStructure, OptionalKind } from "../../../../structures";
 import { Project } from "../../../../Project";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -75,7 +75,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.insertImportDeclaration), () => {
-        function doTest(startCode: string, index: number, structure: ImportDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<ImportDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertImportDeclaration(index, structure);
             expect(result).to.be.instanceOf(ImportDeclaration);
@@ -88,7 +88,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.addImportDeclaration), () => {
-        function doTest(startCode: string, structure: ImportDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<ImportDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addImportDeclaration(structure);
             expect(result).to.be.instanceOf(ImportDeclaration);
@@ -237,7 +237,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.insertExportDeclaration), () => {
-        function doTest(startCode: string, index: number, structure: ExportDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<ExportDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportDeclaration(index, structure);
             expect(result).to.be.instanceOf(ExportDeclaration);
@@ -251,7 +251,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.addExportDeclaration), () => {
-        function doTest(startCode: string, structure: ExportDeclarationStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<ExportDeclarationStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addExportDeclaration(structure);
             expect(result).to.be.instanceOf(ExportDeclaration);
@@ -384,7 +384,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.insertExportAssignment), () => {
-        function doTest(startCode: string, index: number, structure: ExportAssignmentStructure, expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<ExportAssignmentStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportAssignment(index, structure);
             expect(result).to.be.instanceOf(ExportAssignment);
@@ -398,7 +398,7 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.addExportAssignment), () => {
-        function doTest(startCode: string, structure: ExportAssignmentStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<ExportAssignmentStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addExportAssignment(structure);
             expect(result).to.be.instanceOf(ExportAssignment);

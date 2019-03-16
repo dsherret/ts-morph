@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { InterfaceDeclarationStructurePrinter } from "../../../structurePrinters";
-import { InterfaceDeclarationStructure } from "../../../structures";
+import { InterfaceDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(InterfaceDeclarationStructurePrinter), () => {
@@ -9,7 +9,7 @@ describe(nameof(InterfaceDeclarationStructurePrinter), () => {
         formatCodeSettings?: FormatCodeSettings;
     }
 
-    function doTest(structure: InterfaceDeclarationStructure, expectedOutput: string, options: Options = {}) {
+    function doTest(structure: OptionalKind<InterfaceDeclarationStructure>, expectedOutput: string, options: Options = {}) {
         const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
         factory.forInterfaceDeclaration().printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);

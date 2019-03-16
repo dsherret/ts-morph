@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration, StatementedNode, Node } from "../../../../../compiler";
-import { FunctionDeclarationStructure } from "../../../../../structures";
+import { FunctionDeclarationStructure, OptionalKind } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
@@ -108,7 +108,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertFunction), () => {
-        function doTest(startCode: string, index: number, structure: FunctionDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<FunctionDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertFunction(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -135,7 +135,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addFunction), () => {
-        function doTest(startCode: string, structure: FunctionDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKind<FunctionDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addFunction(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

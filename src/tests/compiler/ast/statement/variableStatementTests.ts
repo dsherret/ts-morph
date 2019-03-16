@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../compiler";
-import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../structures";
+import { VariableDeclarationStructure, VariableStatementStructure, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(VariableStatement), () => {
@@ -162,7 +162,7 @@ describe(nameof(VariableStatement), () => {
     });
 
     describe(nameof<VariableStatement>(d => d.getStructure), () => {
-        function doTest(text: string, expected: VariableStatementStructure) {
+        function doTest(text: string, expected: OptionalKind<VariableStatementStructure>) {
             const structure = getInfoFromText(text).sourceFile.getVariableStatements()[0].getStructure();
             structure.declarations = structure.declarations.map(d => ({ name: d.name }));
             expect(structure).to.deep.equal(expected);

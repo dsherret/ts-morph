@@ -1,22 +1,22 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
-import { ClassDeclarationStructure } from "../../structures";
+import { ClassDeclarationStructure, OptionalKind } from "../../structures";
 import { ArrayUtils, StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
-export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<ClassDeclarationStructure> {
+export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<ClassDeclarationStructure>> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<ClassDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: ClassDeclarationStructure) {
+    printText(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>) {
         const isAmbient = structure.hasDeclareKeyword || this.options.isAmbient;
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forDecorator().printTexts(writer, structure.decorators);
@@ -55,7 +55,7 @@ export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<Cl
         });
     }
 
-    private printCtors(writer: CodeBlockWriter, structure: ClassDeclarationStructure, isAmbient: boolean) {
+    private printCtors(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>, isAmbient: boolean) {
         if (ArrayUtils.isNullOrEmpty(structure.ctors))
             return;
 
@@ -65,7 +65,7 @@ export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<Cl
         }
     }
 
-    private printGetAndSet(writer: CodeBlockWriter, structure: ClassDeclarationStructure, isAmbient: boolean) {
+    private printGetAndSet(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>, isAmbient: boolean) {
         const getAccessors = [...structure.getAccessors || []];
         const setAccessors = [...structure.setAccessors || []];
         const getAccessorWriter = this.factory.forGetAccessorDeclaration({ isAmbient });

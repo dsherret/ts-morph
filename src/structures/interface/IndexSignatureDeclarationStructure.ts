@@ -1,7 +1,10 @@
 import { JSDocableNodeStructure, ReadonlyableNodeStructure, ReturnTypedNodeStructure } from "../base";
+import { Structure } from "../Structure";
+import { StructureKind } from "../StructureKind";
 
 export interface IndexSignatureDeclarationStructure
-    extends IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, ReturnTypedNodeStructure
+    extends Structure<StructureKind.IndexSignature>, IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure,
+        ReturnTypedNodeStructure
 {
 }
 

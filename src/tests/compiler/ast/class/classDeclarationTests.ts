@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration } from "../../../../compiler";
 import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure,
-    InterfaceDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+    InterfaceDeclarationStructure, TypeParameterDeclarationStructure, OptionalKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 
@@ -209,7 +209,7 @@ declare class Identifier {
     });
 
     describe(nameof<ClassDeclaration>(d => d.extractInterface), () => {
-        function doTest(code: string, name: string | undefined, expectedStructure: InterfaceDeclarationStructure, filePath?: string) {
+        function doTest(code: string, name: string | undefined, expectedStructure: OptionalKind<InterfaceDeclarationStructure>, filePath?: string) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
             const structure = descendant.extractInterface(name);
 
@@ -408,7 +408,7 @@ class Test {
     });
 
     describe(nameof<ClassDeclaration>(d => d.extractStaticInterface), () => {
-        function doTest(code: string, name: string, expectedStructure: InterfaceDeclarationStructure, filePath?: string) {
+        function doTest(code: string, name: string, expectedStructure: OptionalKind<InterfaceDeclarationStructure>, filePath?: string) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
             const structure = descendant.extractStaticInterface(name);
 

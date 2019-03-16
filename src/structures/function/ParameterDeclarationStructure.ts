@@ -2,8 +2,8 @@
     ReadonlyableNodeStructure, ScopeableNodeStructure, TypedNodeStructure } from "../base";
 
 export interface ParameterDeclarationStructure
-    extends BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure,
-        InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure
+    extends BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure,
+        ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure
 {
 }
 

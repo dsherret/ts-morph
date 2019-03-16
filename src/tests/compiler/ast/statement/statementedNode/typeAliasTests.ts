@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { StatementedNode, TypeAliasDeclaration, Node } from "../../../../../compiler";
-import { TypeAliasDeclarationStructure } from "../../../../../structures";
+import { TypeAliasDeclarationStructure, OptionalKind } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
@@ -71,7 +71,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertTypeAlias), () => {
-        function doTest(startCode: string, index: number, structure: TypeAliasDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<TypeAliasDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAlias(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -98,7 +98,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addTypeAlias), () => {
-        function doTest(startCode: string, structure: TypeAliasDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKind<TypeAliasDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addTypeAlias(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

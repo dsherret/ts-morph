@@ -1,16 +1,16 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { ConstructSignatureDeclarationStructure } from "../../structures";
+import { ConstructSignatureDeclarationStructure, OptionalKind } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 
-export class ConstructSignatureDeclarationStructurePrinter extends FactoryStructurePrinter<ConstructSignatureDeclarationStructure> {
+export class ConstructSignatureDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<ConstructSignatureDeclarationStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<ConstructSignatureDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: ConstructSignatureDeclarationStructure) {
+    printText(writer: CodeBlockWriter, structure: OptionalKind<ConstructSignatureDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         writer.write("new");
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
