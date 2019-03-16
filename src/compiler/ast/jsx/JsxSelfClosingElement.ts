@@ -1,6 +1,6 @@
 import { ts } from "../../../typescript";
 import * as errors from "../../../errors";
-import { JsxElementStructure } from "../../../structures";
+import { JsxElementStructure, JsxElementSpecificStructure } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { PrimaryExpression } from "../expression";
@@ -39,7 +39,7 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
      * Gets the structure equivalent to this node.
      */
     getStructure(): JsxElementStructure {
-        const structure = callBaseGetStructure<JsxElementStructure>(JsxSelfClosingElementBase.prototype, this, {
+        const structure = callBaseGetStructure<JsxElementSpecificStructure>(JsxSelfClosingElementBase.prototype, this, {
             name: this.getTagNameNode().getText(),
             attributes: this.getAttributes().map(a => a.getStructure()),
             children: undefined,

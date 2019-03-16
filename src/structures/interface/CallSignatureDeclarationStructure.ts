@@ -1,12 +1,12 @@
 ﻿import { JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
-import { Structure } from "../Structure";
+import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface CallSignatureDeclarationStructure
-    extends CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure,
+    extends Structure, CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure,
         TypeParameteredNodeStructure
 {
 }
 
-export interface CallSignatureDeclarationSpecificStructure extends Structure<StructureKind.CallSignature> {
+export interface CallSignatureDeclarationSpecificStructure extends KindedStructure<StructureKind.CallSignature> {
 }

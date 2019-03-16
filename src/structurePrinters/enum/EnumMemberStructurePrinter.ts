@@ -10,7 +10,7 @@ export class EnumMemberStructurePrinter extends FactoryStructurePrinter<EnumMemb
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: EnumMemberStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: EnumMemberStructure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         writer.write(structure.name);
         if (typeof structure.value === "string")

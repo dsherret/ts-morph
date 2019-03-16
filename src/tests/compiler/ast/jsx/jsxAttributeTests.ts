@@ -4,7 +4,7 @@ import * as errors from "../../../../errors";
 import { JsxAttributeStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxAttribute>(text, SyntaxKind.JsxAttribute, { isJsx: true });
@@ -162,7 +162,7 @@ describe(nameof(JsxAttribute), () => {
         });
 
         it("should set everything when provided", () => {
-            const structure: MakeRequired<JsxAttributeStructure> = {
+            const structure: OptionalTrivia<MakeRequired<JsxAttributeStructure>> = {
                 initializer: "{6}",
                 isSpreadAttribute: false,
                 name: "newName"
@@ -176,14 +176,14 @@ describe(nameof(JsxAttribute), () => {
 
         it("should throw a not implemented error when providing isSpreadAttribute to true", () => {
             const code = `var t = (<jsx a1={5} />);`;
-            const { descendant, sourceFile } = getInfo(code);
+            const { descendant } = getInfo(code);
             // force providing true
             expect(() => descendant.set({ isSpreadAttribute: true as false })).to.throw(errors.NotImplementedError);
         });
     });
 
     describe(nameof<JsxAttribute>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<JsxAttributeStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JsxAttributeStructure>>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();
             expect(structure).to.deep.equal(expectedStructure);

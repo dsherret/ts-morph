@@ -11,7 +11,7 @@ export class ImportDeclarationStructurePrinter extends FactoryStructurePrinter<O
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<ImportDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ImportDeclarationStructure>) {
         const hasNamedImport = structure.namedImports != null && structure.namedImports.length > 0;
         // validation
         if (hasNamedImport && structure.namespaceImport != null)

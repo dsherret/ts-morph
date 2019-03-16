@@ -6,7 +6,7 @@ import { Node } from "../common";
 import { Symbol } from "../../symbols";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
-import { ExportSpecifierStructure } from "../../../structures";
+import { ExportSpecifierStructure, ExportSpecifierSpecificStructure } from "../../../structures";
 
 // todo: There's a lot of common code that could be shared with ImportSpecifier. It could be moved to a mixin.
 
@@ -191,7 +191,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
      */
     getStructure(): ExportSpecifierStructure {
         const alias = this.getAliasNode();
-        return callBaseGetStructure<ExportSpecifierStructure>(Node.prototype, this, {
+        return callBaseGetStructure<ExportSpecifierSpecificStructure>(Node.prototype, this, {
             alias: alias ? alias.getText() : undefined,
             name: this.getNameNode().getText()
         });

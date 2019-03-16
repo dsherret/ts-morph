@@ -2,16 +2,16 @@
 import { AmbientableNodeStructure, BodiedNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure,
     ModuledNodeStructure } from "../base";
 import { StatementedNodeStructure } from "../statement";
-import { Structure } from "../Structure";
+import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface NamespaceDeclarationStructure
-    extends NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure,
+    extends Structure, NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure,
         StatementedNodeStructure, BodiedNodeStructure, ModuledNodeStructure
 {
 }
 
-export interface NamespaceDeclarationSpecificStructure extends Structure<StructureKind.NamespaceDeclaration> {
+export interface NamespaceDeclarationSpecificStructure extends KindedStructure<StructureKind.NamespaceDeclaration> {
     /**
      * The namespace declaration kind.
      *

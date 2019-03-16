@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression } from "../../../../../compiler";
-import { ShorthandPropertyAssignmentStructure, StructureKind, OptionalKind } from "../../../../../structures";
+import { ShorthandPropertyAssignmentStructure, StructureKind } from "../../../../../structures";
 import { SyntaxKind } from "../../../../../typescript";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 
 describe(nameof(ShorthandPropertyAssignment), () => {
     function getShorthandPropertyAssignemntExpression(text: string) {
@@ -155,7 +155,7 @@ describe(nameof(ShorthandPropertyAssignment), () => {
         });
 
         it("should set when everything is specified", () => {
-            const structure: OptionalKind<MakeRequired<ShorthandPropertyAssignmentStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ShorthandPropertyAssignmentStructure>> = {
                 name: "NewName"
             };
             test("const t = { prop1 };", structure, "const t = { NewName };");
@@ -163,7 +163,7 @@ describe(nameof(ShorthandPropertyAssignment), () => {
     });
 
     describe(nameof<ShorthandPropertyAssignment>(p => p.getStructure), () => {
-        function test(code: string, expectedStructure: MakeRequired<ShorthandPropertyAssignmentStructure>) {
+        function test(code: string, expectedStructure: OptionalTrivia<MakeRequired<ShorthandPropertyAssignmentStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<ShorthandPropertyAssignment>(code, SyntaxKind.ShorthandPropertyAssignment);
             expect(descendant.getStructure()).to.deep.equals(expectedStructure);
         }

@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { CallSignatureDeclaration, FunctionDeclaration, TypeAliasDeclaration, TypeParameterDeclaration, TypeParameteredNode } from "../../../../compiler";
 import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(TypeParameteredNode), () => {
     describe(nameof<TypeParameteredNode>(d => d.getTypeParameter), () => {
@@ -137,7 +137,7 @@ describe(nameof(TypeParameteredNode), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: MakeRequired<TypeParameterDeclarationStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<TypeParameterDeclarationStructure>> = {
                 name: "V",
                 constraint: "string",
                 default: "number"
@@ -169,7 +169,7 @@ describe(nameof(TypeParameteredNode), () => {
 
     describe(nameof<TypeAliasDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: TypeParameteredNodeStructure, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<TypeAliasDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<TypeAliasDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -193,7 +193,7 @@ describe(nameof(TypeParameteredNode), () => {
 
     describe(nameof<TypeAliasDeclaration>(n => n.getStructure), () => {
         function doTest(startingCode: string, names: string[]) {
-            const { firstChild, sourceFile } = getInfoFromText<TypeAliasDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<TypeAliasDeclaration>(startingCode);
             expect(firstChild.getStructure().typeParameters!.map(p => (p as TypeParameterDeclarationStructure).name)).to.deep.equal(names);
         }
 

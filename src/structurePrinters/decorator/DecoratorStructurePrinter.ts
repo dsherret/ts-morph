@@ -11,7 +11,7 @@ export class DecoratorStructurePrinter extends FactoryStructurePrinter<Decorator
         this.printMultiple(writer, structures, () => writer.space());
     }
 
-    printText(writer: CodeBlockWriter, structure: DecoratorStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: DecoratorStructure) {
         writer.write(`@${structure.name}`);
         this.printArguments(writer, structure);
     }

@@ -11,7 +11,7 @@ export class InterfaceDeclarationStructurePrinter extends FactoryStructurePrinte
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<InterfaceDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<InterfaceDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`interface ${structure.name}`);

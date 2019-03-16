@@ -3,7 +3,7 @@ import * as errors from "../../../../errors";
 import { JsxElement } from "../../../../compiler";
 import { JsxElementStructure, JsxAttributeStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxElement>(text, SyntaxKind.JsxElement, { isJsx: true });
@@ -104,7 +104,7 @@ describe(nameof(JsxElement), () => {
         });
 
         it("should change when all set", () => {
-            const structure: MakeRequired<JsxElementStructure> = {
+            const structure: OptionalTrivia<MakeRequired<JsxElementStructure>> = {
                 attributes: [{ name: "attr" }],
                 bodyText: "<newElement />",
                 children: undefined,
@@ -129,7 +129,7 @@ describe(nameof(JsxElement), () => {
     });
 
     describe(nameof<JsxElement>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<JsxElementStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JsxElementStructure>>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();
 

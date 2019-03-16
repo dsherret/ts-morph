@@ -31,7 +31,7 @@ export class NamedImportExportSpecifierStructurePrinter extends FactoryStructure
             this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: NamedImportExportSpecifierStructureToTextItem) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: NamedImportExportSpecifierStructureToTextItem) {
         const specifierWriter = this.getNewWriterWithQueuedChildIndentation(writer);
         if (typeof structure === "string")
             specifierWriter.write(structure);

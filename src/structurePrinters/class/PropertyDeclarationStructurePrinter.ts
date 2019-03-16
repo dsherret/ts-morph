@@ -10,7 +10,7 @@ export class PropertyDeclarationStructurePrinter extends FactoryStructurePrinter
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<PropertyDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<PropertyDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forDecorator().printTexts(writer, structure.decorators);
         this.factory.forModifierableNode().printText(writer, structure);

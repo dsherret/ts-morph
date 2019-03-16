@@ -10,7 +10,7 @@ export class ExportDeclarationStructurePrinter extends FactoryStructurePrinter<O
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<ExportDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ExportDeclarationStructure>) {
         const hasModuleSpecifier = structure.moduleSpecifier != null && structure.moduleSpecifier.length > 0;
         writer.write("export");
         if (structure.namedExports != null && structure.namedExports.length > 0) {

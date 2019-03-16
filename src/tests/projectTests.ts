@@ -8,6 +8,7 @@ import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
 import { CompilerOptions, ScriptTarget, SyntaxKind, ts } from "../typescript";
+import { OptionalTrivia } from "./compiler/testHelpers";
 import * as testHelpers from "./testHelpers";
 
 console.log("");
@@ -670,7 +671,7 @@ describe(nameof(Project), () => {
         });
 
         it("should add for everything in the structure", () => {
-            const structure: MakeRequired<SourceFileStructure> = {
+            const structure: OptionalTrivia<MakeRequired<SourceFileStructure>> = {
                 imports: [{ moduleSpecifier: "./test" }],
                 exports: [{ moduleSpecifier: "./test2" }],
                 classes: [{ name: "C" }],

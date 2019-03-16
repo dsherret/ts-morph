@@ -3,7 +3,7 @@ import { JsxAttributeStructure, JsxSpreadAttributeStructure } from "../../struct
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class JsxAttributeDeciderStructurePrinter extends FactoryStructurePrinter<JsxAttributeStructure | JsxSpreadAttributeStructure> {
-    printText(writer: CodeBlockWriter, structure: JsxAttributeStructure | JsxSpreadAttributeStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: JsxAttributeStructure | JsxSpreadAttributeStructure) {
         if (structure.isSpreadAttribute)
             this.factory.forJsxSpreadAttribute().printText(writer, structure);
         else

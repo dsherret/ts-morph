@@ -13,7 +13,7 @@ export class ParameterDeclarationStructurePrinter extends FactoryStructurePrinte
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: ParameterDeclarationStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: ParameterDeclarationStructure) {
         if (structure.name == null)
             throw new NotImplementedError("Not implemented scenario where parameter declaration structure doesn't have a name. Please open an issue if you need this.");
 

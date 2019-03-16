@@ -4,7 +4,7 @@ import { JsxAttributeStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class JsxAttributeStructurePrinter extends FactoryStructurePrinter<JsxAttributeStructure> {
-    printText(writer: CodeBlockWriter, structure: JsxAttributeStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: JsxAttributeStructure) {
         errors.throwIfTrue(structure.isSpreadAttribute, "Should not be a spread attribute when writing an attribute.");
         writer.write(structure.name);
         if (structure.initializer != null)

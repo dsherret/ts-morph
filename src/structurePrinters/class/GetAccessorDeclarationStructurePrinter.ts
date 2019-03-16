@@ -15,7 +15,7 @@ export class GetAccessorDeclarationStructurePrinter extends FactoryStructurePrin
         this.blankLineWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<GetAccessorDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<GetAccessorDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forDecorator().printTexts(writer, structure.decorators);
         this.factory.forModifierableNode().printText(writer, structure);

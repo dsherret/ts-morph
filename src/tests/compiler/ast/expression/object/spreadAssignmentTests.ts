@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { SpreadAssignment, ObjectLiteralExpression } from "../../../../../compiler";
-import { SpreadAssignmentStructure, StructureKind, OptionalKind } from "../../../../../structures";
+import { SpreadAssignmentStructure, StructureKind } from "../../../../../structures";
 import { SyntaxKind } from "../../../../../typescript";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 
 describe(nameof(SpreadAssignment), () => {
     function getSpreadAssignment(text: string) {
@@ -72,7 +72,7 @@ describe(nameof(SpreadAssignment), () => {
         });
 
         it("should set everything", () => {
-            const structure: OptionalKind<MakeRequired<SpreadAssignmentStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<SpreadAssignmentStructure>> = {
                 expression: "newExpression"
             };
             test("const t = { ...assignment };", structure, "const t = { ...newExpression };");
@@ -80,7 +80,7 @@ describe(nameof(SpreadAssignment), () => {
     });
 
     describe(nameof<SpreadAssignment>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<SpreadAssignmentStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<SpreadAssignmentStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<SpreadAssignment>(text, SyntaxKind.SpreadAssignment);
             const structure = descendant.getStructure();
             expect(structure).to.deep.equal(expectedStructure);

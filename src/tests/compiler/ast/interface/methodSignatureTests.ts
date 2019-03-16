@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, MethodSignature } from "../../../../compiler";
-import { MethodSignatureStructure, TypeParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { MethodSignatureStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(MethodSignature), () => {
     function getFirstMethodWithInfo(code: string) {
@@ -25,7 +25,7 @@ describe(nameof(MethodSignature), () => {
         });
 
         it("should change when setting everything", () => {
-            const structure: OptionalKind<MakeRequired<MethodSignatureStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<MethodSignatureStructure>> = {
                 docs: ["test"],
                 hasQuestionToken: true,
                 name: "name",
@@ -71,8 +71,8 @@ describe(nameof(MethodSignature), () => {
     });
 
     describe(nameof<MethodSignature>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<MethodSignatureStructure>) {
-            const { firstMethod, sourceFile } = getFirstMethodWithInfo(code);
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<MethodSignatureStructure>>) {
+            const { firstMethod } = getFirstMethodWithInfo(code);
             const structure = firstMethod.getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
             structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));

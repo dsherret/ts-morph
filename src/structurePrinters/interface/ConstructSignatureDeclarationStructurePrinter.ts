@@ -10,7 +10,7 @@ export class ConstructSignatureDeclarationStructurePrinter extends FactoryStruct
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<ConstructSignatureDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ConstructSignatureDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         writer.write("new");
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);

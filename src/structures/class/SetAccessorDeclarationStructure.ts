@@ -1,13 +1,13 @@
 ﻿import { AbstractableNodeStructure, BodyableNodeStructure, DecoratableNodeStructure, PropertyNamedNodeStructure, ScopedNodeStructure, StaticableNodeStructure } from "../base";
-import { Structure } from "../Structure";
+import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface SetAccessorDeclarationStructure
-    extends SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
+    extends Structure, SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
         AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure
 {
 }
 
-export interface SetAccessorDeclarationSpecificStructure extends Structure<StructureKind.SetAccessor> {
+export interface SetAccessorDeclarationSpecificStructure extends KindedStructure<StructureKind.SetAccessor> {
 }

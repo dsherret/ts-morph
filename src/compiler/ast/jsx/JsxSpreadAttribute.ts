@@ -1,6 +1,6 @@
 import { removeChildren } from "../../../manipulation";
 import * as errors from "../../../errors";
-import { JsxSpreadAttributeStructure } from "../../../structures";
+import { JsxSpreadAttributeStructure, JsxSpreadAttributeSpecificStructure } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { ts } from "../../../typescript";
 import { callBaseSet } from "../callBaseSet";
@@ -56,7 +56,7 @@ export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttri
      * Gets the structure equivalent to this node.
      */
     getStructure(): JsxSpreadAttributeStructure {
-        return callBaseGetStructure<JsxSpreadAttributeStructure>(JsxSpreadAttributeBase.prototype, this, {
+        return callBaseGetStructure<JsxSpreadAttributeSpecificStructure>(JsxSpreadAttributeBase.prototype, this, {
             isSpreadAttribute: true,
             expression: this.getExpression().getText()
         });

@@ -1,10 +1,8 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration } from "../../../../compiler";
 import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure,
-    TypeParameterDeclarationStructure,
-    OptionalKind,
-    StructureKind} from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+    TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(FunctionDeclaration), () => {
     describe(nameof<FunctionDeclaration>(f => f.getName), () => {
@@ -134,7 +132,7 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(f => f.set), () => {
-        function doTest(startingCode: string, structure: OptionalKind<FunctionDeclarationSpecificStructure>, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKindAndTrivia<FunctionDeclarationSpecificStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
             sourceFile.getFunctions()[0].set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
@@ -146,7 +144,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
 
         it("should replace overloads when changed", () => {
-            const structure: OptionalKind<MakeRequired<FunctionDeclarationSpecificStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<FunctionDeclarationSpecificStructure>> = {
                 overloads: [{ returnType: "string" }]
             };
             doTest("function identifier(p): number;\nfunction identifier() {\n}", structure,
@@ -154,7 +152,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
 
         it("should remove overloads when specifying an empty array", () => {
-            const structure: OptionalKind<MakeRequired<FunctionDeclarationSpecificStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<FunctionDeclarationSpecificStructure>> = {
                 overloads: []
             };
             doTest("function identifier(p): number;\nfunction identifier() {\n}", structure,
@@ -163,7 +161,7 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(d => d.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "leadingTrivia" | "trailingTrivia";
         function doTest(text: string, expectedStructure: Omit<MakeRequired<FunctionDeclarationStructure>, PropertyNamesToExclude>) {
             const { sourceFile } = getInfoFromText<any>(text);
             const functionDec = sourceFile.getFunctions()[0];
@@ -207,7 +205,7 @@ export default async function *test<T>(param): string {
     return '';
 }
 `;
-            const overloadStructure: MakeRequired<FunctionDeclarationOverloadStructure> = {
+            const overloadStructure: OptionalTrivia<MakeRequired<FunctionDeclarationOverloadStructure>> = {
                 docs: [{ description: "docs2" }],
                 hasDeclareKeyword: false,
                 isAsync: true,

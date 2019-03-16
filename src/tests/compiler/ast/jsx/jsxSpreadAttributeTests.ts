@@ -3,7 +3,7 @@ import { JsxSelfClosingElement, JsxSpreadAttribute } from "../../../../compiler"
 import * as errors from "../../../../errors";
 import { JsxSpreadAttributeStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxSpreadAttribute>(text, SyntaxKind.JsxSpreadAttribute, { isJsx: true });
@@ -78,7 +78,7 @@ describe(nameof(JsxSpreadAttribute), () => {
         });
 
         it("should change when all set", () => {
-            const structure: MakeRequired<JsxSpreadAttributeStructure> = {
+            const structure: OptionalTrivia<MakeRequired<JsxSpreadAttributeStructure>> = {
                 isSpreadAttribute: true,
                 expression: "newExpr"
             };
@@ -97,7 +97,7 @@ describe(nameof(JsxSpreadAttribute), () => {
     });
 
     describe(nameof<JsxSpreadAttribute>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<JsxSpreadAttributeStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JsxSpreadAttributeStructure>>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();
             expect(structure).to.deep.equal(expectedStructure);

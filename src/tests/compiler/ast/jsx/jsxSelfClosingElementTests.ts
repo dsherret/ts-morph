@@ -3,7 +3,7 @@ import { JsxSelfClosingElement } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { JsxElementStructure, JsxAttributeStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxSelfClosingElement>(text, SyntaxKind.JsxSelfClosingElement, { isJsx: true });
@@ -45,7 +45,7 @@ describe(nameof(JsxSelfClosingElement), () => {
         });
 
         it("should change when all set", () => {
-            const structure: MakeRequired<JsxElementStructure> = {
+            const structure: OptionalTrivia<MakeRequired<JsxElementStructure>> = {
                 attributes: [{ name: "attr" }],
                 bodyText: undefined,
                 children: undefined,
@@ -74,7 +74,7 @@ describe(nameof(JsxSelfClosingElement), () => {
     });
 
     describe(nameof<JsxSelfClosingElement>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<JsxElementStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JsxElementStructure>>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();
             structure.attributes = structure.attributes!.map(a => ({ name: (a as JsxAttributeStructure).name }));

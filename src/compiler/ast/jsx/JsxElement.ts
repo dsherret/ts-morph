@@ -1,7 +1,7 @@
 import * as errors from "../../../errors";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
-import { JsxElementStructure } from "../../../structures";
+import { JsxElementStructure, JsxElementSpecificStructure } from "../../../structures";
 import { ts } from "../../../typescript";
 import { printTextFromStringOrWriter } from "../../../utils";
 import { JsxChild } from "../aliases";
@@ -97,7 +97,7 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
      */
     getStructure(): JsxElementStructure {
         const openingElement = this.getOpeningElement();
-        const structure = callBaseGetStructure<JsxElementStructure>(JsxElementBase.prototype, this, {
+        const structure = callBaseGetStructure<JsxElementSpecificStructure>(JsxElementBase.prototype, this, {
             name: openingElement.getTagNameNode().getText(),
             attributes: openingElement.getAttributes().map(a => a.getStructure()),
             children: undefined,

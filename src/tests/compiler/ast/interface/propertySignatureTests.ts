@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, PropertySignature } from "../../../../compiler";
-import { PropertySignatureStructure, OptionalKind, StructureKind } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { PropertySignatureStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(PropertySignature), () => {
     function getFirstPropertyWithInfo(code: string) {
@@ -25,7 +25,7 @@ describe(nameof(PropertySignature), () => {
         });
 
         it("should change when setting everything", () => {
-            const structure: OptionalKind<MakeRequired<PropertySignatureStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<PropertySignatureStructure>> = {
                 docs: ["test"],
                 hasQuestionToken: true,
                 name: "name",
@@ -66,8 +66,8 @@ describe(nameof(PropertySignature), () => {
     });
 
     describe(nameof<PropertySignature>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<PropertySignatureStructure>) {
-            const { firstProperty, sourceFile } = getFirstPropertyWithInfo(code);
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertySignatureStructure>>) {
+            const { firstProperty } = getFirstPropertyWithInfo(code);
             const structure = firstProperty.getStructure();
             expect(structure).to.deep.equal(expectedStructure);
         }

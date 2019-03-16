@@ -16,22 +16,22 @@ export class StructurePrinterFactory {
 
     @Memoize
     forInitializerExpressionableNode(): structurePrinters.InitializerExpressionableNodeStructurePrinter {
-        return new structurePrinters.InitializerExpressionableNodeStructurePrinter(this);
+        return new structurePrinters.InitializerExpressionableNodeStructurePrinter();
     }
 
     @Memoize
     forModifierableNode(): structurePrinters.ModifierableNodeStructurePrinter {
-        return new structurePrinters.ModifierableNodeStructurePrinter(this);
+        return new structurePrinters.ModifierableNodeStructurePrinter();
     }
 
     @Memoize
     forReturnTypedNode(alwaysWrite?: boolean): structurePrinters.ReturnTypedNodeStructurePrinter {
-        return new structurePrinters.ReturnTypedNodeStructurePrinter(this, alwaysWrite);
+        return new structurePrinters.ReturnTypedNodeStructurePrinter(alwaysWrite);
     }
 
     @Memoize
     forTypedNode(separator: string, alwaysWrite?: boolean): structurePrinters.TypedNodeStructurePrinter {
-        return new structurePrinters.TypedNodeStructurePrinter(this, separator, alwaysWrite);
+        return new structurePrinters.TypedNodeStructurePrinter(separator, alwaysWrite);
     }
 
     @Memoize

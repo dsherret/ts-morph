@@ -2,14 +2,14 @@
 import { StructurePrinterFactory } from "../../factories";
 import { StatementedNodeStructure } from "../../structures";
 import { ArrayUtils } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { StructurePrinter } from "../StructurePrinter";
 
-export class StatementedNodeStructurePrinter extends FactoryStructurePrinter<StatementedNodeStructure> {
-    constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
-        super(factory);
+export class StatementedNodeStructurePrinter extends StructurePrinter<StatementedNodeStructure> {
+    constructor(private readonly factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
+        super();
     }
 
-    printText(writer: CodeBlockWriter, structure: StatementedNodeStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: StatementedNodeStructure) {
         conditionalBlankLine(structure.typeAliases);
         this.factory.forTypeAliasDeclaration().printTexts(writer, structure.typeAliases);
 

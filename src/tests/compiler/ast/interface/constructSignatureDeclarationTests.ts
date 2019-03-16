@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ConstructSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
-import { ConstructSignatureDeclarationStructure, TypeParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { ConstructSignatureDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ConstructSignatureDeclaration), () => {
     function getFirstConstructSignatureWithInfo(code: string) {
@@ -25,7 +25,7 @@ describe(nameof(ConstructSignatureDeclaration), () => {
         });
 
         it("should change when setting everything", () => {
-            const structure: OptionalKind<MakeRequired<ConstructSignatureDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ConstructSignatureDeclarationStructure>> = {
                 docs: ["test"],
                 parameters: [{ name: "param" }],
                 returnType: "string",
@@ -69,8 +69,8 @@ describe(nameof(ConstructSignatureDeclaration), () => {
     });
 
     describe(nameof<ConstructSignatureDeclaration>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<ConstructSignatureDeclarationStructure>) {
-            const { firstConstructSignature, sourceFile } = getFirstConstructSignatureWithInfo(code);
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ConstructSignatureDeclarationStructure>>) {
+            const { firstConstructSignature } = getFirstConstructSignatureWithInfo(code);
             const structure = firstConstructSignature.getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
             structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));

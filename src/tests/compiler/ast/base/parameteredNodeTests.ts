@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, ParameteredNode, Scope } from "../../../../compiler";
 import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(ParameteredNode), () => {
     describe(nameof<ParameteredNode>(d => d.getParameter), () => {
@@ -126,7 +126,7 @@ describe(nameof(ParameteredNode), () => {
         });
 
         it("should insert everything in the structure", () => {
-            const structure: MakeRequired<ParameterDeclarationStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ParameterDeclarationStructure>> = {
                 name: "param",
                 decorators: [{ name: "dec" }],
                 hasQuestionToken: true,

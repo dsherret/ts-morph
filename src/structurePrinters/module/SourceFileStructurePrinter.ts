@@ -9,7 +9,7 @@ export class SourceFileStructurePrinter extends FactoryStructurePrinter<SourceFi
         super(factory);
     }
 
-    printText(writer: CodeBlockWriter, structure: SourceFileStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: SourceFileStructure) {
         this.factory.forImportDeclaration().printTexts(writer, structure.imports);
 
         this.factory.forBodyText(this.options).printText(writer, structure);

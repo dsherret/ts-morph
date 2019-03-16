@@ -2,7 +2,7 @@
 import { FunctionDeclaration, ParameterDeclaration, Scope } from "../../../../compiler";
 import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure } from "../../../../structures";
 import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 import { SyntaxKind } from "../../../../typescript";
 
 describe(nameof(ParameterDeclaration), () => {
@@ -139,7 +139,7 @@ describe(nameof(ParameterDeclaration), () => {
     });
 
     describe(nameof<ParameterDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<ParameterDeclarationStructure>) {
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ParameterDeclarationStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             const structure = descendant.getStructure();
             structure.decorators = structure.decorators!.map(d => ({ name: d.name }));

@@ -10,7 +10,7 @@ export class ExportAssignmentStructurePrinter extends FactoryStructurePrinter<Op
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<ExportAssignmentStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ExportAssignmentStructure>) {
         writer.write("export");
         if (structure.isExportEquals !== false)
             writer.write(" = ");

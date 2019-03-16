@@ -5,11 +5,7 @@ import { StructurePrinter } from "../StructurePrinter";
 export type StringStructureToTextItem = string | WriterFunction;
 
 export class StringStructurePrinter extends StructurePrinter<StringStructureToTextItem> {
-    constructor() {
-        super();
-    }
-
-    printText(writer: CodeBlockWriter, textOrWriterFunc: StringStructureToTextItem) {
+    protected printTextInternal(writer: CodeBlockWriter, textOrWriterFunc: StringStructureToTextItem) {
         if (typeof textOrWriterFunc === "string")
             writer.write(textOrWriterFunc);
         else

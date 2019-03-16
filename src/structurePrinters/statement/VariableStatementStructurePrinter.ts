@@ -11,7 +11,7 @@ export class VariableStatementStructurePrinter extends FactoryStructurePrinter<O
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<VariableStatementStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<VariableStatementStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`${structure.declarationKind || VariableDeclarationKind.Let} `);

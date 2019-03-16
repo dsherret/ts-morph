@@ -1,6 +1,10 @@
 import { WriterFunction } from "../../types";
+import { Structure } from "../Structure";
 
-export interface DecoratorStructure {
+export interface DecoratorStructure extends Structure, DecoratorSpecificStructure {
+}
+
+export interface DecoratorSpecificStructure {
     name: string;
     /**
      * Arguments for a decorator factory.

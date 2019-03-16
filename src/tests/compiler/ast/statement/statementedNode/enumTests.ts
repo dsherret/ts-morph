@@ -1,11 +1,11 @@
 ﻿import { expect } from "chai";
 import { EnumDeclaration, StatementedNode, Node } from "../../../../../compiler";
-import { EnumDeclarationStructure, OptionalKind } from "../../../../../structures";
-import { getInfoFromText } from "../../../testHelpers";
+import { EnumDeclarationStructure } from "../../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertEnums), () => {
-        function doTest(startCode: string, index: number, structures: OptionalKind<EnumDeclarationStructure>[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<EnumDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertEnums(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -48,7 +48,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert everything from the structure", () => {
-            const structure: OptionalKind<MakeRequired<EnumDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<EnumDeclarationStructure>> = {
                 name: "Enum",
                 docs: [{ description: "Testing" }],
                 hasDeclareKeyword: false,
@@ -63,7 +63,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertEnum), () => {
-        function doTest(startCode: string, index: number, structure: OptionalKind<EnumDeclarationStructure>, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<EnumDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertEnum(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -76,7 +76,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addEnums), () => {
-        function doTest(startCode: string, structures: OptionalKind<EnumDeclarationStructure>[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<EnumDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addEnums(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -89,7 +89,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addEnum), () => {
-        function doTest(startCode: string, structure: OptionalKind<EnumDeclarationStructure>, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<EnumDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addEnum(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

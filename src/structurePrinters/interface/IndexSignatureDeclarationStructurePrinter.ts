@@ -10,7 +10,7 @@ export class IndexSignatureDeclarationStructurePrinter extends FactoryStructureP
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<IndexSignatureDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<IndexSignatureDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`[${structure.keyName || "key"}: ${structure.keyType || "string"}]`);

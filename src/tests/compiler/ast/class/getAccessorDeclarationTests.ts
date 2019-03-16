@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { ClassDeclaration, GetAccessorDeclaration, Scope } from "../../../../compiler";
-import { GetAccessorDeclarationStructure, TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { GetAccessorDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
@@ -84,7 +84,7 @@ describe(nameof(GetAccessorDeclaration), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: OptionalKind<MakeRequired<GetAccessorDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<GetAccessorDeclarationStructure>> = {
                 bodyText: "console;",
                 classes: [{ name: "C" }],
                 decorators: [{ name: "dec" }],
@@ -141,7 +141,7 @@ class Identifier {
     });
 
     describe(nameof<GetAccessorDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "leadingTrivia" | "trailingTrivia";
         function doTest(code: string, expectedStructure: Omit<MakeRequired<GetAccessorDeclarationStructure>, PropertyNamesToExclude>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getGetAccessors()[0].getStructure();

@@ -6,7 +6,7 @@ import { Project } from "../../../../Project";
 import { SourceFileStructure } from "../../../../structures";
 import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget } from "../../../../typescript";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
@@ -724,7 +724,7 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: MakeRequired<SourceFileStructure> = {
+            const structure: OptionalTrivia<MakeRequired<SourceFileStructure>> = {
                 imports: [{ moduleSpecifier: "module" }],
                 exports: [{ moduleSpecifier: "export-module" }],
                 bodyText: "console.log()",

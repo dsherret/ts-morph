@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
 import { JSDocStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(JSDoc), () => {
     describe(nameof<JSDoc>(d => d.remove), () => {
@@ -148,7 +148,7 @@ describe(nameof(JSDoc), () => {
     });
 
     describe(nameof<JSDoc>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<JSDocStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JSDocStructure>>) {
             const { sourceFile } = getInfoFromText(text);
             const structure = sourceFile.getFunctions()[0].getJsDocs()[0].getStructure();
             expect(structure).to.deep.equal(expectedStructure);

@@ -10,7 +10,7 @@ export class MethodSignatureStructurePrinter extends FactoryStructurePrinter<Opt
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<MethodSignatureStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodSignatureStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");

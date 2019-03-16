@@ -1,12 +1,12 @@
 ﻿import { expect } from "chai";
 import { NamespaceDeclaration, StatementedNode, Node, NamespaceDeclarationKind } from "../../../../../compiler";
 import * as errors from "../../../../../errors";
-import { NamespaceDeclarationStructure, OptionalKind } from "../../../../../structures";
-import { getInfoFromText } from "../../../testHelpers";
+import { NamespaceDeclarationStructure } from "../../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertNamespaces), () => {
-        function doTest(startCode: string, index: number, structures: OptionalKind<NamespaceDeclarationStructure>[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<NamespaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespaces(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -49,7 +49,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: OptionalKind<MakeRequired<NamespaceDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<NamespaceDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 name: "n",
                 hasDeclareKeyword: false,
@@ -127,7 +127,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertNamespace), () => {
-        function doTest(startCode: string, index: number, structure: OptionalKind<NamespaceDeclarationStructure>, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<NamespaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespace(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -140,7 +140,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespaces), () => {
-        function doTest(startCode: string, structures: OptionalKind<NamespaceDeclarationStructure>[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<NamespaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespaces(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -154,7 +154,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespace), () => {
-        function doTest(startCode: string, structure: OptionalKind<NamespaceDeclarationStructure>, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<NamespaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespace(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

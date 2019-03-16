@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { CallSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
-import { CallSignatureDeclarationStructure, TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { CallSignatureDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(CallSignatureDeclaration), () => {
     function getFirstCallSignatureWithInfo(code: string) {
@@ -25,7 +25,7 @@ describe(nameof(CallSignatureDeclaration), () => {
         });
 
         it("should change when setting everything", () => {
-            const structure: OptionalKind<MakeRequired<CallSignatureDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<CallSignatureDeclarationStructure>> = {
                 docs: ["test"],
                 parameters: [{ name: "param" }],
                 typeParameters: ["T"],
@@ -37,7 +37,7 @@ describe(nameof(CallSignatureDeclaration), () => {
     });
 
     describe(nameof<CallSignatureDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<CallSignatureDeclarationStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<CallSignatureDeclarationStructure>>) {
             const { firstCallSignature } = getFirstCallSignatureWithInfo(text);
             const structure = firstCallSignature.getStructure();
             structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));

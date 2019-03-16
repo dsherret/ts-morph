@@ -12,5 +12,6 @@ export * from "./jsx";
 export * from "./module";
 export * from "./statement";
 export * from "./StructurePrinter";
+export * from "./StructurePrinter";
 export * from "./variable";
 export * from "./types";

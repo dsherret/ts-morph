@@ -2,7 +2,7 @@ import { ts } from "../../../../typescript";
 import { Node } from "../../common/Node";
 import { ExpressionedNode } from "../expressioned";
 import { removeCommaSeparatedChild } from "../../../../manipulation";
-import { SpreadAssignmentStructure, StructureKind } from "../../../../structures";
+import { SpreadAssignmentStructure, SpreadAssignmentSpecificStructure, StructureKind, ExpressionedNodeStructure } from "../../../../structures";
 import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 
@@ -29,9 +29,9 @@ export class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> 
      * Gets the structure equivalent to this node.
      */
     getStructure(): SpreadAssignmentStructure {
-        return callBaseGetStructure<SpreadAssignmentStructure>(SpreadAssignmentBase.prototype, this, {
+        return callBaseGetStructure<SpreadAssignmentSpecificStructure & ExpressionedNodeStructure>(SpreadAssignmentBase.prototype, this, {
             kind: StructureKind.SpreadAssignment,
-            expression: this.getExpression().getText()
+            expression: this.getExpression().getText() // todo: should this be moved down to the base? if not, explain in a comment here
         }) as any as SpreadAssignmentStructure;
     }
 }

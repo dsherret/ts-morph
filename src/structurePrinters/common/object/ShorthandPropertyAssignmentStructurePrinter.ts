@@ -3,7 +3,7 @@ import { ShorthandPropertyAssignmentStructure, OptionalKind } from "../../../str
 import { FactoryStructurePrinter } from "../../FactoryStructurePrinter";
 
 export class ShorthandPropertyAssignmentStructurePrinter extends FactoryStructurePrinter<OptionalKind<ShorthandPropertyAssignmentStructure>> {
-    printText(writer: CodeBlockWriter, structure: OptionalKind<ShorthandPropertyAssignmentStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ShorthandPropertyAssignmentStructure>) {
         writer.write(`${structure.name}`);
     }
 }

@@ -1,7 +1,7 @@
 import { ts, SyntaxKind } from "../../../typescript";
 import { Expression } from "../expression";
 import { Statement } from "../statement";
-import { ExportAssignmentStructure, StructureKind } from "../../../structures";
+import { ExportAssignmentStructure, ExportAssignmentSpecificStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
@@ -68,7 +68,7 @@ export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> 
      * Gets the structure equivalent to this node.
      */
     getStructure(): ExportAssignmentStructure {
-        return callBaseGetStructure<ExportAssignmentStructure>(Statement.prototype, this, {
+        return callBaseGetStructure<ExportAssignmentSpecificStructure>(Statement.prototype, this, {
             kind: StructureKind.ExportAssignment,
             expression: this.getExpression().getText(),
             isExportEquals: this.isExportEquals()

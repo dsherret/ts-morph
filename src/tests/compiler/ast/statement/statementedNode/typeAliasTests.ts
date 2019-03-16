@@ -1,11 +1,11 @@
 ﻿import { expect } from "chai";
 import { StatementedNode, TypeAliasDeclaration, Node } from "../../../../../compiler";
-import { TypeAliasDeclarationStructure, OptionalKind } from "../../../../../structures";
-import { getInfoFromText } from "../../../testHelpers";
+import { TypeAliasDeclarationStructure } from "../../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertTypeAliases), () => {
-        function doTest(startCode: string, index: number, structures: OptionalKind<TypeAliasDeclarationStructure>[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<TypeAliasDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAliases(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -56,7 +56,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert everything from the structure", () => {
-            const structure: OptionalKind<MakeRequired<TypeAliasDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<TypeAliasDeclarationStructure>> = {
                 docs: [{ description: "Testing" }],
                 hasDeclareKeyword: false,
                 name: "Name",
@@ -71,7 +71,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertTypeAlias), () => {
-        function doTest(startCode: string, index: number, structure: OptionalKind<TypeAliasDeclarationStructure>, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<TypeAliasDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAlias(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -84,7 +84,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addTypeAliases), () => {
-        function doTest(startCode: string, structures: OptionalKind<TypeAliasDeclarationStructure>[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<TypeAliasDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addTypeAliases(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -98,7 +98,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addTypeAlias), () => {
-        function doTest(startCode: string, structure: OptionalKind<TypeAliasDeclarationStructure>, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<TypeAliasDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addTypeAlias(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

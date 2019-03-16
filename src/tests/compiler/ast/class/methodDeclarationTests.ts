@@ -1,10 +1,10 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Scope } from "../../../../compiler";
 import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure,
-    TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
+    TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
@@ -193,7 +193,7 @@ describe(nameof(MethodDeclaration), () => {
     });
 
     describe(nameof<MethodDeclaration>(m => m.set), () => {
-        function doTest(startingCode: string, structure: OptionalKind<MethodDeclarationSpecificStructure>, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKindAndTrivia<MethodDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const method = firstChild.getInstanceMethods()[0];
             method.set(structure);
@@ -206,7 +206,7 @@ describe(nameof(MethodDeclaration), () => {
         });
 
         it("should replace existing overloads when changed", () => {
-            const structure: OptionalKind<MakeRequired<MethodDeclarationSpecificStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<MethodDeclarationSpecificStructure>> = {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
             doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure,
@@ -214,7 +214,7 @@ describe(nameof(MethodDeclaration), () => {
         });
 
         it("should remove existing overloads when specifying an empty array", () => {
-            const structure: OptionalKind<MakeRequired<MethodDeclarationSpecificStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<MethodDeclarationSpecificStructure>> = {
                 overloads: []
             };
             doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure,
@@ -223,7 +223,7 @@ describe(nameof(MethodDeclaration), () => {
     });
 
     describe(nameof<MethodDeclaration>(d => d.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "leadingTrivia" | "trailingTrivia";
         function doTest(code: string, expectedStructure: Omit<MakeRequired<MethodDeclarationStructure>, PropertyNamesToExclude>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const method = firstChild.getInstanceMethod("method") || firstChild.getStaticMethodOrThrow("method");

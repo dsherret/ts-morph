@@ -2,12 +2,12 @@
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature, PropertySignature,
     TypeElementMemberedNode } from "../../../../compiler";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind, StructureKind } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+    PropertySignatureStructure, TypeElementMemberedNodeStructure, StructureKind, Structure } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(TypeElementMemberedNode), () => {
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignatures), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKind<ConstructSignatureDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertConstructSignatures(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -24,7 +24,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
 
         it("should insert when the structure has everything", () => {
-            const structure: OptionalKind<MakeRequired<ConstructSignatureDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ConstructSignatureDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 parameters: [{ name: "param" }],
                 returnType: "T",
@@ -35,7 +35,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignature), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<ConstructSignatureDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertConstructSignature(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -48,7 +48,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addConstructSignatures), () => {
-        function doTest(startCode: string, structures: OptionalKind<ConstructSignatureDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addConstructSignatures(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -61,7 +61,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addConstructSignature), () => {
-        function doTest(startCode: string, structure: OptionalKind<ConstructSignatureDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addConstructSignature(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -120,7 +120,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertIndexSignatures), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKind<IndexSignatureDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertIndexSignatures(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -138,7 +138,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
 
         it("should insert when the structure has everything", () => {
-            const structure: OptionalKind<MakeRequired<IndexSignatureDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<IndexSignatureDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 returnType: "string",
                 isReadonly: true,
@@ -150,7 +150,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertIndexSignature), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<IndexSignatureDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertIndexSignature(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -164,7 +164,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addIndexSignatures), () => {
-        function doTest(startCode: string, structures: OptionalKind<IndexSignatureDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addIndexSignatures(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -178,7 +178,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addIndexSignature), () => {
-        function doTest(startCode: string, structure: OptionalKind<IndexSignatureDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addIndexSignature(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -237,7 +237,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertCallSignatures), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKind<CallSignatureDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<CallSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertCallSignatures(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -254,7 +254,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
 
         it("should insert when the structure has everything", () => {
-            const structure: OptionalKind<MakeRequired<CallSignatureDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<CallSignatureDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 parameters: [{ name: "param" }],
                 returnType: "T",
@@ -265,7 +265,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertCallSignature), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<CallSignatureDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<CallSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertCallSignature(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -278,7 +278,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addCallSignatures), () => {
-        function doTest(startCode: string, structures: OptionalKind<CallSignatureDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<CallSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addCallSignatures(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -291,7 +291,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addCallSignature), () => {
-        function doTest(startCode: string, structure: OptionalKind<CallSignatureDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<CallSignatureDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addCallSignature(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -350,7 +350,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertMethods), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKind<MethodSignatureStructure>[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<MethodSignatureStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertMethods(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -367,7 +367,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
 
         it("should insert all the method's properties when specified", () => {
-            const structure: OptionalKind<MakeRequired<MethodSignatureStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<MethodSignatureStructure>> = {
                 docs: [{ description: "Test" }],
                 name: "method",
                 hasQuestionToken: true,
@@ -380,7 +380,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertMethod), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<MethodSignatureStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<MethodSignatureStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertMethod(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -393,7 +393,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addMethods), () => {
-        function doTest(startCode: string, structures: OptionalKind<MethodSignatureStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<MethodSignatureStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addMethods(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -406,7 +406,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addMethod), () => {
-        function doTest(startCode: string, structure: OptionalKind<MethodSignatureStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<MethodSignatureStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addMethod(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -472,7 +472,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertProperties), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKind<PropertySignatureStructure>[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<PropertySignatureStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertProperties(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -489,7 +489,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
 
         it("should insert all the property's properties when specified", () => {
-            const structure: OptionalKind<MakeRequired<PropertySignatureStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<PropertySignatureStructure>> = {
                 name: "prop",
                 isReadonly: true,
                 docs: [{ description: "Test" }],
@@ -502,7 +502,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertProperty), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<PropertySignatureStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<PropertySignatureStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertProperty(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -515,7 +515,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addProperties), () => {
-        function doTest(startCode: string, structures: OptionalKind<PropertySignatureStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<PropertySignatureStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addProperties(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -528,7 +528,7 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.addProperty), () => {
-        function doTest(startCode: string, structure: OptionalKind<PropertySignatureStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<PropertySignatureStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.addProperty(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -638,8 +638,8 @@ describe(nameof(TypeElementMemberedNode), () => {
             expect(structure.callSignatures).to.deep.equal(expectedStructure.callSignatures);
             expect(structure.constructSignatures).to.deep.equal(expectedStructure.constructSignatures);
             expect(structure.indexSignatures).to.deep.equal(expectedStructure.indexSignatures);
-            expect(structure.methods!.map(m => ({ name: m.name, kind: m.kind }))).to.deep.equal(expectedStructure.methods!.map(m => ({ name: m.name, kind: m.kind })));
-            expect(structure.properties!.map(m => ({ name: m.name, kind: m.kind }))).to.deep.equal(expectedStructure.properties!.map(m => ({ name: m.name, kind: m.kind })));
+            expect(structure.methods!.map(m => m.name)).to.deep.equal(expectedStructure.methods!.map(m => m.name));
+            expect(structure.properties!.map(m => m.name)).to.deep.equal(expectedStructure.properties!.map(m => m.name));
         }
 
         it("should be empty arrays when empty", () => {
@@ -660,9 +660,28 @@ describe(nameof(TypeElementMemberedNode), () => {
     method(): string;
     prop: string;
 }`, {
-                callSignatures: [{ kind: StructureKind.CallSignature, docs: [], parameters: [], returnType: "void", typeParameters: [] }],
-                constructSignatures: [{ kind: StructureKind.ConstructSignature, docs: [], parameters: [], returnType: "string", typeParameters: [] }],
-                indexSignatures: [{ kind: StructureKind.IndexSignature, docs: [], isReadonly: false, keyName: "test", keyType: "string", returnType: "string" }],
+                callSignatures: [{
+                    kind: StructureKind.CallSignature,
+                    docs: [],
+                    parameters: [],
+                    returnType: "void",
+                    typeParameters: []
+                }],
+                constructSignatures: [{
+                    kind: StructureKind.ConstructSignature,
+                    docs: [],
+                    parameters: [],
+                    returnType: "string",
+                    typeParameters: []
+                }],
+                indexSignatures: [{
+                    kind: StructureKind.IndexSignature,
+                    docs: [],
+                    isReadonly: false,
+                    keyName: "test",
+                    keyType: "string",
+                    returnType: "string"
+                }],
                 methods: [{ kind: StructureKind.MethodSignature, name: "method" }],
                 properties: [{ kind: StructureKind.PropertySignature, name: "prop" }]
             });

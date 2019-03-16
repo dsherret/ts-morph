@@ -24,7 +24,7 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<O
         }
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<MethodDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodDeclarationStructure>) {
         this.printOverloads(writer, structure.name, getOverloadStructures());
         this.printBase(writer, structure.name, structure);
 

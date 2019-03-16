@@ -3,7 +3,7 @@ import { JsxAttributeStructure, JsxSpreadAttributeStructure, JsxElementStructure
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class JsxElementStructurePrinter extends FactoryStructurePrinter<JsxElementStructure> {
-    printText(writer: CodeBlockWriter, structure: JsxElementStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: JsxElementStructure) {
         writer.write(`<${structure.name}`);
         if (structure.attributes)
             this.printAttributes(writer, structure.attributes);

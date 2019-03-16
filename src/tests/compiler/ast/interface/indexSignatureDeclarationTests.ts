@@ -1,9 +1,9 @@
 ﻿import { expect } from "chai";
 import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
 import * as errors from "../../../../errors";
-import { IndexSignatureDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { IndexSignatureDeclarationStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(IndexSignatureDeclaration), () => {
     function getFirstIndexSignatureWithInfo(code: string) {
@@ -13,7 +13,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getKeyName), () => {
         function doTest(code: string, expectedName: string) {
-            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
+            const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             expect(firstIndexSignature.getKeyName()).to.equal(expectedName);
         }
 
@@ -215,7 +215,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
         });
 
         it("should change when setting", () => {
-            const allProps: OptionalKind<MakeRequired<IndexSignatureDeclarationStructure>> = {
+            const allProps: OptionalKindAndTrivia<MakeRequired<IndexSignatureDeclarationStructure>> = {
                 docs: [{ description: "Desc" }],
                 keyName: "newKeyName",
                 keyType: "number",
@@ -233,8 +233,8 @@ describe(nameof(IndexSignatureDeclaration), () => {
     });
 
     describe(nameof<IndexSignatureDeclaration>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<IndexSignatureDeclarationStructure>) {
-            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<IndexSignatureDeclarationStructure>>) {
+            const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             const structure = firstIndexSignature.getStructure();
             expect(structure).to.deep.equal(expectedStructure);
         }

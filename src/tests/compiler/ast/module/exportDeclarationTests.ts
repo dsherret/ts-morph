@@ -4,8 +4,8 @@ import * as errors from "../../../../errors";
 import { Project } from "../../../../Project";
 import { WriterFunction } from "../../../../types";
 import { SyntaxKind } from "../../../../typescript";
-import { ExportSpecifierStructure, ExportDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { ExportSpecifierStructure, ExportDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {
     describe(nameof<ExportDeclaration>(n => n.isNamespaceExport), () => {
@@ -437,7 +437,7 @@ describe(nameof(ExportDeclaration), () => {
         });
 
         it("should set everything when specified", () => {
-            const structure: OptionalKind<MakeRequired<ExportDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ExportDeclarationStructure>> = {
                 namedExports: [{ name: "test" }, { name: "test2", alias: "alias" }],
                 moduleSpecifier: "asdf"
             };
@@ -459,7 +459,7 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<ExportDeclarationStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<ExportDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }

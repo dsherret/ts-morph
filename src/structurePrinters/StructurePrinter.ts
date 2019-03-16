@@ -2,7 +2,11 @@
 import { WriterFunction } from "../types";
 
 export abstract class StructurePrinter<TStructure> {
-    abstract printText(writer: CodeBlockWriter, structure: TStructure): void;
+    printText(writer: CodeBlockWriter, structure: TStructure) {
+        this.printTextInternal(writer, structure);
+    }
+
+    protected abstract printTextInternal(writer: CodeBlockWriter, structure: TStructure): void;
 
     // todo: this should not be a method on the base
     protected printTextOrWriterFunc(writer: CodeBlockWriter, textOrWriterFunc: string | WriterFunction | undefined) {

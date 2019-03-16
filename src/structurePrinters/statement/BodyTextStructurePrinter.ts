@@ -2,16 +2,16 @@
 import { StructurePrinterFactory } from "../../factories";
 import { BodyableNodeStructure, StatementedNodeStructure } from "../../structures";
 import { WriterFunction } from "../../types";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { StructurePrinter } from "../StructurePrinter";
 
 export type BodyTextStructures = StatementedNodeStructure | { bodyText?: string | WriterFunction; };
 
-export class BodyTextStructurePrinter extends FactoryStructurePrinter<BodyTextStructures> {
-    constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
-        super(factory);
+export class BodyTextStructurePrinter extends StructurePrinter<BodyTextStructures> {
+    constructor(private readonly factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
+        super();
     }
 
-    printText(writer: CodeBlockWriter, structure: BodyTextStructures) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: BodyTextStructures) {
         this.factory.forStatementedNode(this.options).printText(writer, structure as StatementedNodeStructure);
 
         const newWriter = this.getNewWriter(writer);

@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { TypeAliasDeclaration } from "../../../../compiler";
 import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(TypeAliasDeclaration), () => {
     describe(nameof<TypeAliasDeclaration>(n => n.set), () => {
@@ -37,7 +37,7 @@ describe(nameof(TypeAliasDeclaration), () => {
     });
 
     describe(nameof<TypeAliasDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<TypeAliasDeclarationStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<TypeAliasDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<TypeAliasDeclaration>(text);
             const structure = firstChild.getStructure();
             structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));

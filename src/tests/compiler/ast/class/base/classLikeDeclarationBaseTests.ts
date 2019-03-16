@@ -2,11 +2,11 @@ import { expect } from "chai";
 import { Node, ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
     PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase } from "../../../../../compiler";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure, OptionalKind } from "../../../../../structures";
+    SetAccessorDeclarationStructure } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { SyntaxKind } from "../../../../../typescript";
 import { TypeGuards } from "../../../../../utils";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(ClassLikeDeclarationBase), () => {
     function getInfoFromTextForClassLike(text: string) {
@@ -109,7 +109,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertConstructor), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<ConstructorDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<ConstructorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertConstructor(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -131,7 +131,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: OptionalKind<MakeRequired<ConstructorDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ConstructorDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 overloads: [{}, { scope: Scope.Private }],
                 scope: Scope.Public,
@@ -156,7 +156,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addConstructor), () => {
-        function doTest(startCode: string, structure: OptionalKind<ConstructorDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<ConstructorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addConstructor(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -170,7 +170,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addConstructors), () => {
-        function doTest(startCode: string, structure: OptionalKind<ConstructorDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<ConstructorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addConstructors(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -189,7 +189,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertConstructors), () => {
-        function doTest(startCode: string, index: number, structure: OptionalKind<ConstructorDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<ConstructorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertConstructors(index, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -230,7 +230,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertGetAccessors), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKind<GetAccessorDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<GetAccessorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertGetAccessors(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -252,7 +252,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: OptionalKind<MakeRequired<GetAccessorDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<GetAccessorDeclarationStructure>> = {
                 decorators: [{ name: "dec" }],
                 isAbstract: false,
                 isStatic: true,
@@ -280,7 +280,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertGetAccessor), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<GetAccessorDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<GetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertGetAccessor(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -294,7 +294,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addGetAccessors), () => {
-        function doTest(startCode: string, structures: OptionalKind<GetAccessorDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<GetAccessorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addGetAccessors(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -308,7 +308,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addGetAccessor), () => {
-        function doTest(startCode: string, structure: OptionalKind<GetAccessorDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<GetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addGetAccessor(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -322,7 +322,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertProperties), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKind<PropertyDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<PropertyDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertProperties(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -349,7 +349,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: OptionalKind<MakeRequired<PropertyDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<PropertyDeclarationStructure>> = {
                 decorators: [{ name: "dec" }],
                 isStatic: true,
                 name: "prop",
@@ -369,7 +369,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertProperty), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<PropertyDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<PropertyDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertProperty(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -382,7 +382,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addProperties), () => {
-        function doTest(startCode: string, structures: OptionalKind<PropertyDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<PropertyDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addProperties(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -395,7 +395,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addProperty), () => {
-        function doTest(startCode: string, structure: OptionalKind<PropertyDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<PropertyDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addProperty(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -486,7 +486,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertSetAccessors), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKind<SetAccessorDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<SetAccessorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertSetAccessors(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -508,7 +508,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: OptionalKind<MakeRequired<SetAccessorDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<SetAccessorDeclarationStructure>> = {
                 decorators: [{ name: "dec" }],
                 isAbstract: false,
                 isStatic: true,
@@ -536,7 +536,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertSetAccessor), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<SetAccessorDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<SetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertSetAccessor(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -550,7 +550,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addSetAccessors), () => {
-        function doTest(startCode: string, structures: OptionalKind<SetAccessorDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<SetAccessorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addSetAccessors(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -564,7 +564,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addSetAccessor), () => {
-        function doTest(startCode: string, structure: OptionalKind<SetAccessorDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<SetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addSetAccessor(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -740,7 +740,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertMethods), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKind<MethodDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<MethodDeclarationStructure>[], expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ClassDeclaration>(startCode, SyntaxKind.ClassDeclaration);
             const result = descendant.insertMethods(insertIndex, structures);
             expect(sourceFile.getText()).to.equal(expectedCode);
@@ -757,7 +757,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: OptionalKind<MakeRequired<MethodDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<MethodDeclarationStructure>> = {
                 decorators: [{ name: "dec" }],
                 isAbstract: false,
                 isStatic: true,
@@ -798,7 +798,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.insertMethod), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<MethodDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<MethodDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertMethod(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -812,7 +812,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addMethods), () => {
-        function doTest(startCode: string, structures: OptionalKind<MethodDeclarationStructure>[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<MethodDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMethods(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -826,7 +826,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.addMethod), () => {
-        function doTest(startCode: string, structure: OptionalKind<MethodDeclarationStructure>, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<MethodDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMethod(structure);
             expect(firstChild.getText()).to.equal(expectedCode);

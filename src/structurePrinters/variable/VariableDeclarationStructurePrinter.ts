@@ -10,7 +10,7 @@ export class VariableDeclarationStructurePrinter extends FactoryStructurePrinter
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: VariableDeclarationStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: VariableDeclarationStructure) {
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasExclamationToken, "!");
         this.factory.forTypedNode(":").printText(writer, structure);

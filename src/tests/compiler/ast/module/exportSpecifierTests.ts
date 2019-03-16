@@ -4,7 +4,7 @@ import { Project } from "../../../../Project";
 import { ExportSpecifierStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ExportSpecifier), () => {
     function getProject() {
@@ -325,17 +325,23 @@ describe(nameof(ExportSpecifier), () => {
     });
 
     describe(nameof<ExportSpecifier>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<ExportSpecifierStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<ExportSpecifierStructure>>) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.getNamedExports()[0].getStructure()).to.deep.equal(expectedStructure);
         }
 
         it("should get structure when no alias", () => {
-            doTest(`export { name } from "./test";`, { alias: undefined, name: "name" });
+            doTest(`export { name } from "./test";`, {
+                alias: undefined,
+                name: "name"
+            });
         });
 
         it("should get structure when has alias", () => {
-            doTest(`export { name as alias } from "./test";`, { alias: "alias", name: "name" });
+            doTest(`export { name as alias } from "./test";`, {
+                alias: "alias",
+                name: "name"
+            });
         });
     });
 });

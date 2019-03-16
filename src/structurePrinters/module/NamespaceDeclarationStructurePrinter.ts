@@ -18,7 +18,7 @@ export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinte
         this.blankLineFormattingWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<NamespaceDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<NamespaceDeclarationStructure>) {
         structure = this.validateAndGetStructure(structure);
 
         this.factory.forJSDoc().printDocs(writer, structure.docs);

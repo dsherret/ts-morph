@@ -27,7 +27,7 @@ export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter
         }
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<FunctionDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<FunctionDeclarationStructure>) {
         this.printOverloads(writer, structure.name, getOverloadStructures());
         this.printBase(writer, structure.name, structure);
         if (this.options.isAmbient || structure.hasDeclareKeyword)

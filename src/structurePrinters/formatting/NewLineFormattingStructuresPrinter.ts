@@ -1,17 +1,22 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinter } from "../StructurePrinter";
 
-export class NewLineFormattingStructuresPrinter<T> extends StructurePrinter<T[]> {
-    constructor(private readonly structurePrinter: StructurePrinter<T>) {
+export class NewLineFormattingStructuresPrinter<T> extends StructurePrinter<ReadonlyArray<T>> {
+    constructor(private readonly printer: StructurePrinter<T>) {
         super();
     }
 
     printText(writer: CodeBlockWriter, structures: ReadonlyArray<T> | undefined) {
         if (structures == null)
             return;
+
+        super.printText(writer, structures);
+    }
+
+    protected printTextInternal(writer: CodeBlockWriter, structures: ReadonlyArray<T>) {
         for (let i = 0; i < structures.length; i++) {
             writer.conditionalNewLine(i > 0);
-            this.structurePrinter.printText(writer, structures[i]);
+            this.printer.printText(writer, structures[i]);
         }
     }
 }

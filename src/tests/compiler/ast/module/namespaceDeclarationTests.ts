@@ -1,8 +1,8 @@
 ﻿import { expect } from "chai";
 import { NamespaceDeclaration, NamespaceDeclarationKind } from "../../../../compiler";
 import * as errors from "../../../../errors";
-import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(NamespaceDeclaration), () => {
     describe(nameof<NamespaceDeclaration>(d => d.getName), () => {
@@ -220,7 +220,7 @@ describe(nameof(NamespaceDeclaration), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: OptionalKind<MakeRequired<NamespaceDeclarationSpecificStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<NamespaceDeclarationSpecificStructure>> = {
                 declarationKind: NamespaceDeclarationKind.Module
             };
             doTest("namespace Identifier {\n}", structure, "module Identifier {\n}");
@@ -240,7 +240,8 @@ describe(nameof(NamespaceDeclaration), () => {
     });
 
     describe(nameof<NamespaceDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "imports" | "exports";
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "imports" | "exports"
+            | "leadingTrivia" | "trailingTrivia";
         function doTest(text: string, expectedStructure: Omit<MakeRequired<NamespaceDeclarationStructure>, PropertyNamesToExclude>) {
             const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             const structure = firstChild.getStructure();

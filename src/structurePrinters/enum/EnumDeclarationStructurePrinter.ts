@@ -10,7 +10,7 @@ export class EnumDeclarationStructurePrinter extends FactoryStructurePrinter<Opt
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<EnumDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<EnumDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.conditionalWrite(structure.isConst, "const ");

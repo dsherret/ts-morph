@@ -1,14 +1,14 @@
 ﻿import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure } from "../base";
-import { Structure } from "../Structure";
+import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { EnumMemberStructure } from "./EnumMemberStructure";
 
 export interface EnumDeclarationStructure
-    extends NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
+    extends Structure, NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
 {
 }
 
-export interface EnumDeclarationSpecificStructure extends Structure<StructureKind.Enum> {
+export interface EnumDeclarationSpecificStructure extends KindedStructure<StructureKind.Enum> {
     isConst?: boolean;
     members?: EnumMemberStructure[];
 }

@@ -16,7 +16,7 @@ export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<Op
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>) {
         const isAmbient = structure.hasDeclareKeyword || this.options.isAmbient;
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forDecorator().printTexts(writer, structure.decorators);

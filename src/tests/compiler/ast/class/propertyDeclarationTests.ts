@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { Scope, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
-import { PropertyDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { PropertyDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(PropertyDeclaration), () => {
     function getFirstPropertyWithInfo(code: string) {
@@ -25,7 +25,7 @@ describe(nameof(PropertyDeclaration), () => {
         });
 
         it("should change everything setting", () => {
-            const structure: OptionalKind<MakeRequired<PropertyDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<PropertyDeclarationStructure>> = {
                 name: "newName",
                 type: "string",
                 decorators: [{ name: "dec" }],
@@ -45,7 +45,7 @@ describe(nameof(PropertyDeclaration), () => {
     });
 
     describe(nameof<PropertyDeclaration>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<PropertyDeclarationStructure>) {
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertyDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getProperties()[0].getStructure();
             structure.decorators = structure.decorators!.map(d => ({ name: d.name }));

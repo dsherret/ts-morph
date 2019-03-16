@@ -1,9 +1,9 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration } from "../../../../compiler";
 import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure,
-    InterfaceDeclarationStructure, TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
+    InterfaceDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getType), () => {
@@ -26,7 +26,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(c => c.set), () => {
-        function doTest(startingCode: string, structure: OptionalKind<ClassDeclarationSpecificStructure> & ClassLikeDeclarationBaseSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKindAndTrivia<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -72,7 +72,7 @@ class Identifier extends Other {
     }
 }
 `;
-            const structure: OptionalKind<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
                 extends: "Other",
                 ctors: [{}],
                 properties: [{ name: "p" }],
@@ -97,7 +97,7 @@ class Identifier extends Test {
 class Identifier {
 }
 `;
-            const structure: OptionalKind<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
                 extends: undefined,
                 ctors: [],
                 properties: [],
@@ -110,7 +110,7 @@ class Identifier {
     });
 
     describe(nameof<ClassDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<ClassDeclarationStructure>) {
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ClassDeclarationStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
             const structure = descendant.getStructure();
 
@@ -638,10 +638,15 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             type: "string",
                             scope: undefined
                         }],
-                        typeParameters: [
-                            { name: "T", constraint: "string", default: "number" },
-                            { name: "U", constraint: undefined, default: undefined }
-                        ]
+                        typeParameters: [{
+                            name: "T",
+                            constraint: "string",
+                            default: "number"
+                        }, {
+                            name: "U",
+                            constraint: undefined,
+                            default: undefined
+                        }]
                     }, {
                         kind: StructureKind.MethodSignature,
                         docs: [],

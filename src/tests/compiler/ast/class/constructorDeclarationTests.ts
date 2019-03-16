@@ -1,8 +1,8 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../../compiler";
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure,
-    TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+    TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.insertOverloads), () => {
@@ -126,7 +126,7 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(n => n.set), () => {
-        function doTest(startingCode: string, structure: OptionalKind<ConstructorDeclarationSpecificStructure>, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKindAndTrivia<ConstructorDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const ctor = firstChild.getConstructors()[0];
             ctor.set(structure);
@@ -139,7 +139,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
 
         it("should replace existing overloads when changed", () => {
-            const structure: OptionalKind<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
             doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
@@ -147,7 +147,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
 
         it("should remove existing overloads when specifying an empty array", () => {
-            const structure: OptionalKind<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
                 overloads: []
             };
             doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
@@ -156,7 +156,7 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "leadingTrivia" | "trailingTrivia";
         function doTest(code: string, expectedStructure: Omit<MakeRequired<ConstructorDeclarationStructure>, PropertyNamesToExclude>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getConstructors()[0].getStructure();

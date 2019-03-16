@@ -1,10 +1,15 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { TypeElementMemberedNodeStructure } from "../../structures";
 import { ArrayUtils } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { StructurePrinterFactory } from "../../factories";
+import { StructurePrinter } from "../StructurePrinter";
 
-export class TypeElementMemberedNodeStructurePrinter extends FactoryStructurePrinter<TypeElementMemberedNodeStructure> {
-    printText(writer: CodeBlockWriter, structure: TypeElementMemberedNodeStructure) {
+export class TypeElementMemberedNodeStructurePrinter extends StructurePrinter<TypeElementMemberedNodeStructure> {
+    constructor(private readonly factory: StructurePrinterFactory) {
+        super();
+    }
+
+    protected printTextInternal(writer: CodeBlockWriter, structure: TypeElementMemberedNodeStructure) {
         this.factory.forCallSignatureDeclaration().printTexts(writer, structure.callSignatures);
 
         this.conditionalSeparator(writer, structure.constructSignatures);

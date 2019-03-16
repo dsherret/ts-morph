@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex, removeChildren } from "../../../manipulation";
-import { ExportSpecifierStructure, ExportDeclarationStructure, StructureKind } from "../../../structures";
+import { ExportSpecifierStructure, ExportDeclarationSpecificStructure, ExportDeclarationStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, ModuleUtils, TypeGuards, StringUtils } from "../../../utils";
@@ -268,7 +268,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      */
     getStructure(): ExportDeclarationStructure {
         const moduleSpecifier = this.getModuleSpecifier();
-        return callBaseGetStructure<ExportDeclarationStructure>(ExportDeclarationBase.prototype, this, {
+        return callBaseGetStructure<ExportDeclarationSpecificStructure>(ExportDeclarationBase.prototype, this, {
             kind: StructureKind.ExportDeclaration,
             moduleSpecifier: moduleSpecifier ? moduleSpecifier.getLiteralText() : undefined,
             namedExports: this.getNamedExports().map(node => node.getStructure())

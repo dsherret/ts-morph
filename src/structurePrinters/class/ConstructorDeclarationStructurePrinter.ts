@@ -25,7 +25,7 @@ export class ConstructorDeclarationStructurePrinter extends FactoryStructurePrin
         }
     }
 
-    printText(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure>) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure>) {
         this.printOverloads(writer, getOverloadStructures());
         this.printBase(writer, structure);
         if (this.options.isAmbient)
