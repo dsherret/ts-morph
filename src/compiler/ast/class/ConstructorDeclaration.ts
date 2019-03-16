@@ -1,6 +1,6 @@
 import { removeOverloadableClassMember } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure } from "../../../structures";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -87,8 +87,24 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
         const hasImplementation = this.getImplementation() != null;
         const isOverload = this.isOverload();
         const basePrototype = isOverload && hasImplementation ? ConstructorDeclarationOverloadBase.prototype : ConstructorDeclarationBase.prototype;
-        const structure: ConstructorDeclarationSpecificStructure = !hasImplementation || isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
 
-        return callBaseGetStructure<any>(basePrototype, this, structure) as ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure;
+        return callBaseGetStructure<any>(basePrototype, this, getSpecificStructure(this)) as ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure;
+
+        function getSpecificStructure(thisNode: ConstructorDeclaration) {
+            // this is not the best typing... unit tests will catch issues though
+            if (hasImplementation && isOverload)
+                return {};
+            return getSpecificStructure();
+
+            function getSpecificStructure(): ConstructorDeclarationSpecificStructure {
+                if (!hasImplementation)
+                    return { kind: StructureKind.Constructor };
+                else
+                    return {
+                        kind: StructureKind.Constructor,
+                        overloads: thisNode.getOverloads().map(o => o.getStructure())
+                    };
+            }
+        }
     }
 }

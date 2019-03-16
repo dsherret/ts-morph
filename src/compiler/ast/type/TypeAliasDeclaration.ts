@@ -1,4 +1,4 @@
-import { TypeAliasDeclarationStructure, TypeAliasDeclarationSpecificStructure } from "../../../structures";
+import { TypeAliasDeclarationStructure, TypeAliasDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TypedNode,
     TypeParameteredNode } from "../base";
@@ -26,6 +26,7 @@ export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasD
      */
     getStructure(): TypeAliasDeclarationStructure {
         return callBaseGetStructure<TypeAliasDeclarationSpecificStructure>(TypeAliasDeclarationBase.prototype, this, {
+            kind: StructureKind.TypeAlias,
             type: this.getTypeNodeOrThrow().getText()
         });
     }

@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../compiler";
-import { VariableDeclarationStructure, VariableStatementStructure, OptionalKind } from "../../../../structures";
+import { VariableDeclarationStructure, VariableStatementStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(VariableStatement), () => {
@@ -162,7 +162,7 @@ describe(nameof(VariableStatement), () => {
     });
 
     describe(nameof<VariableStatement>(d => d.getStructure), () => {
-        function doTest(text: string, expected: OptionalKind<VariableStatementStructure>) {
+        function doTest(text: string, expected: VariableStatementStructure) {
             const structure = getInfoFromText(text).sourceFile.getVariableStatements()[0].getStructure();
             structure.declarations = structure.declarations.map(d => ({ name: d.name }));
             expect(structure).to.deep.equal(expected);
@@ -170,6 +170,7 @@ describe(nameof(VariableStatement), () => {
 
         it("should get for statement with nothing", () => {
             doTest("declare const a;", {
+                kind: StructureKind.VariableStatement,
                 isExported: false,
                 isDefaultExport: false,
                 hasDeclareKeyword: true,
@@ -185,6 +186,7 @@ describe(nameof(VariableStatement), () => {
 export var test;
 `;
             doTest(code, {
+                kind: StructureKind.VariableStatement,
                 isExported: true,
                 isDefaultExport: false,
                 hasDeclareKeyword: false,

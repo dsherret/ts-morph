@@ -4,10 +4,10 @@ import { AbstractableNodeStructure, BodyableNodeStructure, DecoratableNodeStruct
 import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface GetAccessorDeclarationStructure
-    extends Structure<StructureKind.GetAccessor>, GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
+    extends GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
         AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure
 {
 }
 
-export interface GetAccessorDeclarationSpecificStructure {
+export interface GetAccessorDeclarationSpecificStructure extends Structure<StructureKind.GetAccessor> {
 }

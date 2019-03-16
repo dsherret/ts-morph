@@ -3,10 +3,10 @@ import { Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface CallSignatureDeclarationStructure
-    extends Structure<StructureKind.CallSignature>, CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure,
+    extends CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure,
         TypeParameteredNodeStructure
 {
 }
 
-export interface CallSignatureDeclarationSpecificStructure {
+export interface CallSignatureDeclarationSpecificStructure extends Structure<StructureKind.CallSignature> {
 }

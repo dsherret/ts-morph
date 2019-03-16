@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { ConstructSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
-import { ConstructSignatureDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { ConstructSignatureDeclarationStructure, TypeParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ConstructSignatureDeclaration), () => {
@@ -22,6 +22,17 @@ describe(nameof(ConstructSignatureDeclaration), () => {
 
         it("should change when setting", () => {
             doTest("interface Identifier { new(): any; }", { returnType: "string" }, "interface Identifier { new(): string; }");
+        });
+
+        it("should change when setting everything", () => {
+            const structure: OptionalKind<MakeRequired<ConstructSignatureDeclarationStructure>> = {
+                docs: ["test"],
+                parameters: [{ name: "param" }],
+                returnType: "string",
+                typeParameters: ["T"]
+            };
+            doTest("interface Identifier {\n    new(): any;\n}", structure,
+                "interface Identifier {\n    /**\n     * test\n    */\n    new<T>(param): string;\n}");
         });
     });
 
@@ -68,6 +79,7 @@ describe(nameof(ConstructSignatureDeclaration), () => {
 
         it("should get when not has anything", () => {
             doTest("interface Identifier { new(); }", {
+                kind: StructureKind.ConstructSignature,
                 docs: [],
                 parameters: [],
                 returnType: undefined,
@@ -82,6 +94,7 @@ interface Identifier {
     new<T>(p): Test;
 }`;
             doTest(code, {
+                kind: StructureKind.ConstructSignature,
                 docs: [{ description: "Test" }],
                 parameters: [{ name: "p" }],
                 returnType: "Test",

@@ -1,5 +1,5 @@
 import { removeInterfaceMember } from "../../../manipulation";
-import { IndexSignatureDeclarationStructure, IndexSignatureDeclarationSpecificStructure } from "../../../structures";
+import { IndexSignatureDeclarationStructure, IndexSignatureDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import * as errors from "../../../errors";
 import { ts } from "../../../typescript";
 import { Type } from "../../types";
@@ -98,6 +98,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
         const keyTypeNode = this.getKeyTypeNode();
 
         return callBaseGetStructure<IndexSignatureDeclarationSpecificStructure>(IndexSignatureDeclarationBase.prototype, this, {
+            kind: StructureKind.IndexSignature,
             keyName: this.getKeyName(),
             keyType: keyTypeNode.getText()
         });

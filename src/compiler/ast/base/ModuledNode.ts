@@ -1,6 +1,6 @@
 ﻿import * as errors from "../../../errors";
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
-import { ModuledNodeStructure, ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure } from "../../../structures";
+import { ModuledNodeStructure, ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { ts, SyntaxKind } from "../../../typescript";
 import { ArrayUtils, TypeGuards, createHashSet } from "../../../utils";
@@ -18,24 +18,24 @@ export interface ModuledNode {
      * Adds an import.
      * @param structure - Structure that represents the import.
      */
-    addImportDeclaration(structure: ImportDeclarationStructure): ImportDeclaration;
+    addImportDeclaration(structure: OptionalKind<ImportDeclarationStructure>): ImportDeclaration;
     /**
      * Adds imports.
      * @param structures - Structures that represent the imports.
      */
-    addImportDeclarations(structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
+    addImportDeclarations(structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>>): ImportDeclaration[];
     /**
      * Insert an import.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the import.
      */
-    insertImportDeclaration(index: number, structure: ImportDeclarationStructure): ImportDeclaration;
+    insertImportDeclaration(index: number, structure: OptionalKind<ImportDeclarationStructure>): ImportDeclaration;
     /**
      * Inserts imports.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the imports to insert.
      */
-    insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
+    insertImportDeclarations(index: number, structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>>): ImportDeclaration[];
     /**
      * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the import declaration by.
@@ -68,24 +68,24 @@ export interface ModuledNode {
      * Add export declarations.
      * @param structure - Structure that represents the export.
      */
-    addExportDeclaration(structure: ExportDeclarationStructure): ExportDeclaration;
+    addExportDeclaration(structure: OptionalKind<ExportDeclarationStructure>): ExportDeclaration;
     /**
      * Add export declarations.
      * @param structures - Structures that represent the exports.
      */
-    addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
+    addExportDeclarations(structures: ReadonlyArray<OptionalKind<ExportDeclarationStructure>>): ExportDeclaration[];
     /**
      * Insert an export declaration.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the export.
      */
-    insertExportDeclaration(index: number, structure: ExportDeclarationStructure): ExportDeclaration;
+    insertExportDeclaration(index: number, structure: OptionalKind<ExportDeclarationStructure>): ExportDeclaration;
     /**
      * Insert export declarations.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
+    insertExportDeclarations(index: number, structures: ReadonlyArray<OptionalKind<ExportDeclarationStructure>>): ExportDeclaration[];
     /*
      * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the export declaration by.
@@ -118,24 +118,24 @@ export interface ModuledNode {
      * Add export assignments.
      * @param structure - Structure that represents the export.
      */
-    addExportAssignment(structure: ExportAssignmentStructure): ExportAssignment;
+    addExportAssignment(structure: OptionalKind<ExportAssignmentStructure>): ExportAssignment;
     /**
      * Add export assignments.
      * @param structures - Structures that represent the exports.
      */
-    addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
+    addExportAssignments(structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>>): ExportAssignment[];
     /**
      * Insert an export assignment.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the export.
      */
-    insertExportAssignment(index: number, structure: ExportAssignmentStructure): ExportAssignment;
+    insertExportAssignment(index: number, structure: OptionalKind<ExportAssignmentStructure>): ExportAssignment;
     /**
      * Insert export assignments into a file.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
+    insertExportAssignments(index: number, structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>>): ExportAssignment[];
     /**
      * Gets the first export assignment that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the export assignment by.
@@ -177,22 +177,22 @@ export interface ModuledNode {
 
 export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Base: T): Constructor<ModuledNode> & T {
     return class extends Base implements ModuledNode {
-        addImportDeclaration(structure: ImportDeclarationStructure) {
+        addImportDeclaration(structure: OptionalKind<ImportDeclarationStructure>) {
             return this.addImportDeclarations([structure])[0];
         }
 
-        addImportDeclarations(structures: ReadonlyArray<ImportDeclarationStructure>) {
+        addImportDeclarations(structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>>) {
             const imports = this.getImportDeclarations();
             const insertIndex = imports.length === 0 ? 0 : imports[imports.length - 1].getChildIndex() + 1;
             return this.insertImportDeclarations(insertIndex, structures);
         }
 
-        insertImportDeclaration(index: number, structure: ImportDeclarationStructure) {
+        insertImportDeclaration(index: number, structure: OptionalKind<ImportDeclarationStructure>) {
             return this.insertImportDeclarations(index, [structure])[0];
         }
 
-        insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[] {
-            return this._insertChildren<ImportDeclaration, ImportDeclarationStructure>({
+        insertImportDeclarations(index: number, structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>>): ImportDeclaration[] {
+            return this._insertChildren({
                 expectedKind: SyntaxKind.ImportDeclaration,
                 index,
                 structures,
@@ -226,21 +226,21 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ImportDeclaration);
         }
 
-        addExportDeclaration(structure: ExportDeclarationStructure) {
+        addExportDeclaration(structure: OptionalKind<ExportDeclarationStructure>) {
             return this.addExportDeclarations([structure])[0];
         }
 
-        addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>) {
+        addExportDeclarations(structures: ReadonlyArray<OptionalKind<ExportDeclarationStructure>>) {
             // always insert at end of module because of export {Identifier}; statements
             return this.insertExportDeclarations(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
-        insertExportDeclaration(index: number, structure: ExportDeclarationStructure) {
+        insertExportDeclaration(index: number, structure: OptionalKind<ExportDeclarationStructure>) {
             return this.insertExportDeclarations(index, [structure])[0];
         }
 
-        insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[] {
-            return this._insertChildren<ExportDeclaration, ExportDeclarationStructure>({
+        insertExportDeclarations(index: number, structures: ReadonlyArray<OptionalKind<ExportDeclarationStructure>>): ExportDeclaration[] {
+            return this._insertChildren({
                 expectedKind: SyntaxKind.ExportDeclaration,
                 index,
                 structures,
@@ -274,21 +274,21 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration);
         }
 
-        addExportAssignment(structure: ExportAssignmentStructure) {
+        addExportAssignment(structure: OptionalKind<ExportAssignmentStructure>) {
             return this.addExportAssignments([structure])[0];
         }
 
-        addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>) {
+        addExportAssignments(structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>>) {
             // always insert at end of file because of export {Identifier}; statements
             return this.insertExportAssignments(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
-        insertExportAssignment(index: number, structure: ExportAssignmentStructure) {
+        insertExportAssignment(index: number, structure: OptionalKind<ExportAssignmentStructure>) {
             return this.insertExportAssignments(index, [structure])[0];
         }
 
-        insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[] {
-            return this._insertChildren<ExportAssignment, ExportAssignmentStructure>({
+        insertExportAssignments(index: number, structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>>): ExportAssignment[] {
+            return this._insertChildren({
                 expectedKind: SyntaxKind.ExportAssignment,
                 index,
                 structures,

@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
-import { EnumDeclarationStructure, EnumMemberStructure, EnumDeclarationSpecificStructure } from "../../../structures";
+import { EnumDeclarationStructure, EnumMemberStructure, EnumDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
@@ -151,6 +151,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      */
     getStructure() {
         return callBaseGetStructure<EnumDeclarationSpecificStructure>(EnumDeclarationBase.prototype, this, {
+            kind: StructureKind.Enum,
             isConst: this.isConstEnum(),
             members: this.getMembers().map(member => member.getStructure())
         }) as EnumDeclarationStructure;

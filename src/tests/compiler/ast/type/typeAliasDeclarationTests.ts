@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { TypeAliasDeclaration } from "../../../../compiler";
-import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(TypeAliasDeclaration), () => {
@@ -46,6 +46,7 @@ describe(nameof(TypeAliasDeclaration), () => {
 
         it("should get when has nothing", () => {
             doTest("type Identifier = OtherType; type OtherType = { str: string; }", {
+                kind: StructureKind.TypeAlias,
                 docs: [],
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
@@ -62,6 +63,7 @@ describe(nameof(TypeAliasDeclaration), () => {
 export declare type Identifier<T> = string;
 `;
             doTest(code, {
+                kind: StructureKind.TypeAlias,
                 docs: [{ description: "Test" }],
                 hasDeclareKeyword: true,
                 isDefaultExport: false,

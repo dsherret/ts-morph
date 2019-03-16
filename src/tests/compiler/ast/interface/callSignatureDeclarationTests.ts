@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { CallSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
-import { CallSignatureDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { CallSignatureDeclarationStructure, TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(CallSignatureDeclaration), () => {
@@ -23,6 +23,17 @@ describe(nameof(CallSignatureDeclaration), () => {
         it("should change when setting", () => {
             doTest("interface Identifier { (): any; }", { returnType: "string", typeParameters: [{ name: "T" }] }, "interface Identifier { <T>(): string; }");
         });
+
+        it("should change when setting everything", () => {
+            const structure: OptionalKind<MakeRequired<CallSignatureDeclarationStructure>> = {
+                docs: ["test"],
+                parameters: [{ name: "param" }],
+                typeParameters: ["T"],
+                returnType: "string"
+            };
+            doTest("interface Identifier {\n    (): any;\n}", structure,
+                "interface Identifier {\n    /**\n     *\n    */\n    <T>(param): string;\n}");
+        });
     });
 
     describe(nameof<CallSignatureDeclaration>(n => n.getStructure), () => {
@@ -36,6 +47,7 @@ describe(nameof(CallSignatureDeclaration), () => {
 
         it("should get when has nothing", () => {
             doTest("interface Identifier { (); }", {
+                kind: StructureKind.CallSignature,
                 docs: [],
                 parameters: [],
                 returnType: undefined,
@@ -51,6 +63,7 @@ interface Identifier {
 }
 `;
             doTest(code, {
+                kind: StructureKind.CallSignature,
                 docs: [{ description: "Test" }],
                 parameters: [{ name: "p" }],
                 returnType: "string",

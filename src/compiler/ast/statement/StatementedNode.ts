@@ -3,7 +3,7 @@ import * as errors from "../../../errors";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../../manipulation";
 import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
-    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, BodiedNodeStructure } from "../../../structures";
+    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, BodiedNodeStructure, OptionalKind } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
@@ -75,24 +75,24 @@ export interface StatementedNode {
      * Adds an class declaration as a child.
      * @param structure - Structure of the class declaration to add.
      */
-    addClass(structure: ClassDeclarationStructure): ClassDeclaration;
+    addClass(structure: OptionalKind<ClassDeclarationStructure>): ClassDeclaration;
     /**
      * Adds class declarations as a child.
      * @param structures - Structures of the class declarations to add.
      */
-    addClasses(structures: ReadonlyArray<ClassDeclarationStructure>): ClassDeclaration[];
+    addClasses(structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>>): ClassDeclaration[];
     /**
      * Inserts an class declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the class declaration to insert.
      */
-    insertClass(index: number, structure: ClassDeclarationStructure): ClassDeclaration;
+    insertClass(index: number, structure: OptionalKind<ClassDeclarationStructure>): ClassDeclaration;
     /**
      * Inserts class declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the class declarations to insert.
      */
-    insertClasses(index: number, structures: ReadonlyArray<ClassDeclarationStructure>): ClassDeclaration[];
+    insertClasses(index: number, structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>>): ClassDeclaration[];
     /**
      * Gets the direct class declaration children.
      */
@@ -121,24 +121,24 @@ export interface StatementedNode {
      * Adds an enum declaration as a child.
      * @param structure - Structure of the enum declaration to add.
      */
-    addEnum(structure: EnumDeclarationStructure): EnumDeclaration;
+    addEnum(structure: OptionalKind<EnumDeclarationStructure>): EnumDeclaration;
     /**
      * Adds enum declarations as a child.
      * @param structures - Structures of the enum declarations to add.
      */
-    addEnums(structures: ReadonlyArray<EnumDeclarationStructure>): EnumDeclaration[];
+    addEnums(structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>>): EnumDeclaration[];
     /**
      * Inserts an enum declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the enum declaration to insert.
      */
-    insertEnum(index: number, structure: EnumDeclarationStructure): EnumDeclaration;
+    insertEnum(index: number, structure: OptionalKind<EnumDeclarationStructure>): EnumDeclaration;
     /**
      * Inserts enum declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the enum declarations to insert.
      */
-    insertEnums(index: number, structures: ReadonlyArray<EnumDeclarationStructure>): EnumDeclaration[];
+    insertEnums(index: number, structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>>): EnumDeclaration[];
     /**
      * Gets the direct enum declaration children.
      */
@@ -167,24 +167,24 @@ export interface StatementedNode {
      * Adds a function declaration as a child.
      * @param structure - Structure of the function declaration to add.
      */
-    addFunction(structure: FunctionDeclarationStructure): FunctionDeclaration;
+    addFunction(structure: OptionalKind<FunctionDeclarationStructure>): FunctionDeclaration;
     /**
      * Adds function declarations as a child.
      * @param structures - Structures of the function declarations to add.
      */
-    addFunctions(structures: ReadonlyArray<FunctionDeclarationStructure>): FunctionDeclaration[];
+    addFunctions(structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>>): FunctionDeclaration[];
     /**
      * Inserts an function declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the function declaration to insert.
      */
-    insertFunction(index: number, structure: FunctionDeclarationStructure): FunctionDeclaration;
+    insertFunction(index: number, structure: OptionalKind<FunctionDeclarationStructure>): FunctionDeclaration;
     /**
      * Inserts function declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the function declarations to insert.
      */
-    insertFunctions(index: number, structures: ReadonlyArray<FunctionDeclarationStructure>): FunctionDeclaration[];
+    insertFunctions(index: number, structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>>): FunctionDeclaration[];
     /**
      * Gets the direct function declaration children.
      */
@@ -213,24 +213,24 @@ export interface StatementedNode {
      * Adds a interface declaration as a child.
      * @param structure - Structure of the interface declaration to add.
      */
-    addInterface(structure: InterfaceDeclarationStructure): InterfaceDeclaration;
+    addInterface(structure: OptionalKind<InterfaceDeclarationStructure>): InterfaceDeclaration;
     /**
      * Adds interface declarations as a child.
      * @param structures - Structures of the interface declarations to add.
      */
-    addInterfaces(structures: ReadonlyArray<InterfaceDeclarationStructure>): InterfaceDeclaration[];
+    addInterfaces(structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>>): InterfaceDeclaration[];
     /**
      * Inserts an interface declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the interface declaration to insert.
      */
-    insertInterface(index: number, structure: InterfaceDeclarationStructure): InterfaceDeclaration;
+    insertInterface(index: number, structure: OptionalKind<InterfaceDeclarationStructure>): InterfaceDeclaration;
     /**
      * Inserts interface declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the interface declarations to insert.
      */
-    insertInterfaces(index: number, structures: ReadonlyArray<InterfaceDeclarationStructure>): InterfaceDeclaration[];
+    insertInterfaces(index: number, structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>>): InterfaceDeclaration[];
     /**
      * Gets the direct interface declaration children.
      */
@@ -259,24 +259,24 @@ export interface StatementedNode {
      * Adds a namespace declaration as a child.
      * @param structure - Structure of the namespace declaration to add.
      */
-    addNamespace(structure: NamespaceDeclarationStructure): NamespaceDeclaration;
+    addNamespace(structure: OptionalKind<NamespaceDeclarationStructure>): NamespaceDeclaration;
     /**
      * Adds namespace declarations as a child.
      * @param structures - Structures of the namespace declarations to add.
      */
-    addNamespaces(structures: ReadonlyArray<NamespaceDeclarationStructure>): NamespaceDeclaration[];
+    addNamespaces(structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[];
     /**
      * Inserts an namespace declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
-    insertNamespace(index: number, structure: NamespaceDeclarationStructure): NamespaceDeclaration;
+    insertNamespace(index: number, structure: OptionalKind<NamespaceDeclarationStructure>): NamespaceDeclaration;
     /**
      * Inserts namespace declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
-    insertNamespaces(index: number, structures: ReadonlyArray<NamespaceDeclarationStructure>): NamespaceDeclaration[];
+    insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[];
     /**
      * Gets the direct namespace declaration children.
      */
@@ -305,24 +305,24 @@ export interface StatementedNode {
      * Adds a type alias declaration as a child.
      * @param structure - Structure of the type alias declaration to add.
      */
-    addTypeAlias(structure: TypeAliasDeclarationStructure): TypeAliasDeclaration;
+    addTypeAlias(structure: OptionalKind<TypeAliasDeclarationStructure>): TypeAliasDeclaration;
     /**
      * Adds type alias declarations as a child.
      * @param structures - Structures of the type alias declarations to add.
      */
-    addTypeAliases(structures: ReadonlyArray<TypeAliasDeclarationStructure>): TypeAliasDeclaration[];
+    addTypeAliases(structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>>): TypeAliasDeclaration[];
     /**
      * Inserts an type alias declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the type alias declaration to insert.
      */
-    insertTypeAlias(index: number, structure: TypeAliasDeclarationStructure): TypeAliasDeclaration;
+    insertTypeAlias(index: number, structure: OptionalKind<TypeAliasDeclarationStructure>): TypeAliasDeclaration;
     /**
      * Inserts type alias declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the type alias declarations to insert.
      */
-    insertTypeAliases(index: number, structures: ReadonlyArray<TypeAliasDeclarationStructure>): TypeAliasDeclaration[];
+    insertTypeAliases(index: number, structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>>): TypeAliasDeclaration[];
     /**
      * Gets the direct type alias declaration children.
      */
@@ -351,22 +351,22 @@ export interface StatementedNode {
      * Adds a variable statement.
      * @param structure - Structure of the variable statement.
      */
-    addVariableStatement(structure: VariableStatementStructure): VariableStatement;
+    addVariableStatement(structure: OptionalKind<VariableStatementStructure>): VariableStatement;
     /**
      * Adds variable statements.
      * @param structures - Structures of the variable statements.
      */
-    addVariableStatements(structures: ReadonlyArray<VariableStatementStructure>): VariableStatement[];
+    addVariableStatements(structures: ReadonlyArray<OptionalKind<VariableStatementStructure>>): VariableStatement[];
     /**
      * Inserts a variable statement.
      * @param structure - Structure of the variable statement.
      */
-    insertVariableStatement(index: number, structure: VariableStatementStructure): VariableStatement;
+    insertVariableStatement(index: number, structure: OptionalKind<VariableStatementStructure>): VariableStatement;
     /**
      * Inserts variable statements.
      * @param structures - Structures of the variable statements.
      */
-    insertVariableStatements(index: number, structures: ReadonlyArray<VariableStatementStructure>): VariableStatement[];
+    insertVariableStatements(index: number, structures: ReadonlyArray<OptionalKind<VariableStatementStructure>>): VariableStatement[];
     /**
      * Gets the direct variable statement children.
      */
@@ -505,19 +505,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Classes */
 
-        addClass(structure: ClassDeclarationStructure) {
+        addClass(structure: OptionalKind<ClassDeclarationStructure>) {
             return this.addClasses([structure])[0];
         }
 
-        addClasses(structures: ReadonlyArray<ClassDeclarationStructure>) {
+        addClasses(structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>>) {
             return this.insertClasses(this.getCompilerStatements().length, structures);
         }
 
-        insertClass(index: number, structure: ClassDeclarationStructure) {
+        insertClass(index: number, structure: OptionalKind<ClassDeclarationStructure>) {
             return this.insertClasses(index, [structure])[0];
         }
 
-        insertClasses(index: number, structures: ReadonlyArray<ClassDeclarationStructure>): ClassDeclaration[] {
+        insertClasses(index: number, structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>>): ClassDeclaration[] {
             return this._insertChildren<ClassDeclaration, ClassDeclarationStructure>({
                 expectedKind: SyntaxKind.ClassDeclaration,
                 index,
@@ -552,19 +552,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Enums */
 
-        addEnum(structure: EnumDeclarationStructure) {
+        addEnum(structure: OptionalKind<EnumDeclarationStructure>) {
             return this.addEnums([structure])[0];
         }
 
-        addEnums(structures: ReadonlyArray<EnumDeclarationStructure>) {
+        addEnums(structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>>) {
             return this.insertEnums(this.getCompilerStatements().length, structures);
         }
 
-        insertEnum(index: number, structure: EnumDeclarationStructure) {
+        insertEnum(index: number, structure: OptionalKind<EnumDeclarationStructure>) {
             return this.insertEnums(index, [structure])[0];
         }
 
-        insertEnums(index: number, structures: ReadonlyArray<EnumDeclarationStructure>): EnumDeclaration[] {
+        insertEnums(index: number, structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>>): EnumDeclaration[] {
             return this._insertChildren<EnumDeclaration, EnumDeclarationStructure>({
                 expectedKind: SyntaxKind.EnumDeclaration,
                 index,
@@ -599,19 +599,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Functions */
 
-        addFunction(structure: FunctionDeclarationStructure) {
+        addFunction(structure: OptionalKind<FunctionDeclarationStructure>) {
             return this.addFunctions([structure])[0];
         }
 
-        addFunctions(structures: ReadonlyArray<FunctionDeclarationStructure>) {
+        addFunctions(structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>>) {
             return this.insertFunctions(this.getCompilerStatements().length, structures);
         }
 
-        insertFunction(index: number, structure: FunctionDeclarationStructure) {
+        insertFunction(index: number, structure: OptionalKind<FunctionDeclarationStructure>) {
             return this.insertFunctions(index, [structure])[0];
         }
 
-        insertFunctions(index: number, structures: ReadonlyArray<FunctionDeclarationStructure>): FunctionDeclaration[] {
+        insertFunctions(index: number, structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>>): FunctionDeclaration[] {
             return this._insertChildren<FunctionDeclaration, FunctionDeclarationStructure>({
                 expectedKind: SyntaxKind.FunctionDeclaration,
                 index,
@@ -654,19 +654,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Interfaces */
 
-        addInterface(structure: InterfaceDeclarationStructure) {
+        addInterface(structure: OptionalKind<InterfaceDeclarationStructure>) {
             return this.addInterfaces([structure])[0];
         }
 
-        addInterfaces(structures: ReadonlyArray<InterfaceDeclarationStructure>) {
+        addInterfaces(structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>>) {
             return this.insertInterfaces(this.getCompilerStatements().length, structures);
         }
 
-        insertInterface(index: number, structure: InterfaceDeclarationStructure) {
+        insertInterface(index: number, structure: OptionalKind<InterfaceDeclarationStructure>) {
             return this.insertInterfaces(index, [structure])[0];
         }
 
-        insertInterfaces(index: number, structures: ReadonlyArray<InterfaceDeclarationStructure>): InterfaceDeclaration[] {
+        insertInterfaces(index: number, structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>>): InterfaceDeclaration[] {
             return this._insertChildren<InterfaceDeclaration, InterfaceDeclarationStructure>({
                 expectedKind: SyntaxKind.InterfaceDeclaration,
                 index,
@@ -701,19 +701,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Namespaces */
 
-        addNamespace(structure: NamespaceDeclarationStructure) {
+        addNamespace(structure: OptionalKind<NamespaceDeclarationStructure>) {
             return this.addNamespaces([structure])[0];
         }
 
-        addNamespaces(structures: ReadonlyArray<NamespaceDeclarationStructure>) {
+        addNamespaces(structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>) {
             return this.insertNamespaces(this.getCompilerStatements().length, structures);
         }
 
-        insertNamespace(index: number, structure: NamespaceDeclarationStructure) {
+        insertNamespace(index: number, structure: OptionalKind<NamespaceDeclarationStructure>) {
             return this.insertNamespaces(index, [structure])[0];
         }
 
-        insertNamespaces(index: number, structures: ReadonlyArray<NamespaceDeclarationStructure>): NamespaceDeclaration[] {
+        insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[] {
             return this._insertChildren<NamespaceDeclaration, NamespaceDeclarationStructure>({
                 expectedKind: SyntaxKind.ModuleDeclaration,
                 index,
@@ -748,19 +748,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Type aliases */
 
-        addTypeAlias(structure: TypeAliasDeclarationStructure) {
+        addTypeAlias(structure: OptionalKind<TypeAliasDeclarationStructure>) {
             return this.addTypeAliases([structure])[0];
         }
 
-        addTypeAliases(structures: ReadonlyArray<TypeAliasDeclarationStructure>) {
+        addTypeAliases(structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>>) {
             return this.insertTypeAliases(this.getCompilerStatements().length, structures);
         }
 
-        insertTypeAlias(index: number, structure: TypeAliasDeclarationStructure) {
+        insertTypeAlias(index: number, structure: OptionalKind<TypeAliasDeclarationStructure>) {
             return this.insertTypeAliases(index, [structure])[0];
         }
 
-        insertTypeAliases(index: number, structures: ReadonlyArray<TypeAliasDeclarationStructure>): TypeAliasDeclaration[] {
+        insertTypeAliases(index: number, structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>>): TypeAliasDeclaration[] {
             return this._insertChildren<TypeAliasDeclaration, TypeAliasDeclarationStructure>({
                 expectedKind: SyntaxKind.TypeAliasDeclaration,
                 index,
@@ -819,19 +819,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return errors.throwIfNullOrUndefined(this.getVariableStatement(nameOrFindFunction), "Expected to find a variable statement that matched the provided condition.");
         }
 
-        addVariableStatement(structure: VariableStatementStructure) {
+        addVariableStatement(structure: OptionalKind<VariableStatementStructure>) {
             return this.addVariableStatements([structure])[0];
         }
 
-        addVariableStatements(structures: ReadonlyArray<VariableStatementStructure>) {
+        addVariableStatements(structures: ReadonlyArray<OptionalKind<VariableStatementStructure>>) {
             return this.insertVariableStatements(this.getCompilerStatements().length, structures);
         }
 
-        insertVariableStatement(index: number, structure: VariableStatementStructure) {
+        insertVariableStatement(index: number, structure: OptionalKind<VariableStatementStructure>) {
             return this.insertVariableStatements(index, [structure])[0];
         }
 
-        insertVariableStatements(index: number, structures: ReadonlyArray<VariableStatementStructure>): VariableStatement[] {
+        insertVariableStatements(index: number, structures: ReadonlyArray<OptionalKind<VariableStatementStructure>>): VariableStatement[] {
             return this._insertChildren<VariableStatement, VariableStatementStructure>({
                 expectedKind: SyntaxKind.VariableStatement,
                 index,

@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../../compiler";
-import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure } from "../../../../structures";
+import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
@@ -179,7 +179,7 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(n => n.set), () => {
-        function doTest(startingCode: string, structure: EnumDeclarationSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<EnumDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -191,7 +191,7 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should replace existing members when changed", () => {
-            const structure: MakeRequired<EnumDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<EnumDeclarationSpecificStructure>> = {
                 isConst: true,
                 members: [{
                     name: "member"
@@ -201,7 +201,7 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should remove existing members when specifying an empty array", () => {
-            const structure: MakeRequired<EnumDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<EnumDeclarationSpecificStructure>> = {
                 isConst: true,
                 members: []
             };
@@ -231,6 +231,7 @@ describe(nameof(EnumDeclaration), () => {
 
         it("should get structure of an empty enum", () => {
             doTest("declare enum Identifier {}", {
+                kind: StructureKind.Enum,
                 name: "Identifier",
                 isExported: false,
                 isDefaultExport: false,
@@ -249,6 +250,7 @@ export const enum Enum {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Enum,
                 name: "Enum",
                 isExported: true,
                 isDefaultExport: false, // enums can't have a default keyword

@@ -4,10 +4,10 @@ import { StructureKind } from "../StructureKind";
 import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface SetAccessorDeclarationStructure
-    extends Structure<StructureKind.SetAccessor>, SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
+    extends SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
         AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure
 {
 }
 
-export interface SetAccessorDeclarationSpecificStructure {
+export interface SetAccessorDeclarationSpecificStructure extends Structure<StructureKind.SetAccessor> {
 }

@@ -1,5 +1,5 @@
 import { removeInterfaceMember } from "../../../manipulation";
-import { MethodSignatureStructure, MethodSignatureSpecificStructure } from "../../../structures";
+import { MethodSignatureStructure, MethodSignatureSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ChildOrderableNode, JSDocableNode, PropertyNamedNode, QuestionTokenableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -30,6 +30,7 @@ export class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
      */
     getStructure(): MethodSignatureStructure {
         return callBaseGetStructure<MethodSignatureSpecificStructure>(MethodSignatureBase.prototype, this, {
+            kind: StructureKind.MethodSignature
         });
     }
 }

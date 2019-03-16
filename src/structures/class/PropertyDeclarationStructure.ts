@@ -5,11 +5,11 @@ import { Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface PropertyDeclarationStructure
-    extends Structure<StructureKind.Property>, PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure,
+    extends PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure,
         ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure,
         InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure
 {
 }
 
-export interface PropertyDeclarationSpecificStructure {
+export interface PropertyDeclarationSpecificStructure extends Structure<StructureKind.Property> {
 }

@@ -6,12 +6,12 @@ import { StatementedNodeStructure } from "../statement";
 import { FunctionLikeDeclarationStructure } from "./FunctionLikeDeclarationStructure";
 
 export interface FunctionDeclarationStructure
-    extends Structure<StructureKind.Function>, FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure,
+    extends FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure,
         GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodyableNodeStructure
 {
 }
 
-export interface FunctionDeclarationSpecificStructure {
+export interface FunctionDeclarationSpecificStructure extends Structure<StructureKind.Function> {
     overloads?: FunctionDeclarationOverloadStructure[];
 }
 

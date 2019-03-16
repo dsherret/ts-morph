@@ -3,12 +3,10 @@ import { StructureKind } from "../StructureKind";
 import { BodyableNodeStructure, JSDocableNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { FunctionLikeDeclarationStructure } from "../function";
 
-export interface ConstructorDeclarationStructure
-    extends Structure<StructureKind.Constructor>, ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure
-{
+export interface ConstructorDeclarationStructure extends ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
 }
 
-export interface ConstructorDeclarationSpecificStructure {
+export interface ConstructorDeclarationSpecificStructure extends Structure<StructureKind.Constructor> {
     overloads?: ConstructorDeclarationOverloadStructure[];
 }
 

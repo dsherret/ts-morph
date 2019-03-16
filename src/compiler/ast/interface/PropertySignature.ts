@@ -1,5 +1,5 @@
 import { removeInterfaceMember } from "../../../manipulation";
-import { PropertySignatureStructure, PropertySignatureSpecificStructure } from "../../../structures";
+import { PropertySignatureStructure, PropertySignatureSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ChildOrderableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
     QuestionTokenableNode, ReadonlyableNode, TypedNode } from "../base";
@@ -33,6 +33,7 @@ export class PropertySignature extends PropertySignatureBase<ts.PropertySignatur
      */
     getStructure(): PropertySignatureStructure {
         return callBaseGetStructure<PropertySignatureSpecificStructure>(PropertySignatureBase.prototype, this, {
+            kind: StructureKind.PropertySignature
         });
     }
 }

@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration } from "../../../../compiler";
-import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
@@ -57,7 +57,7 @@ describe(nameof(InterfaceDeclaration), () => {
     });
 
     describe(nameof<InterfaceDeclaration>(d => d.set), () => {
-        function doTest(startingCode: string, structure: InterfaceDeclarationSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<InterfaceDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -111,6 +111,7 @@ describe(nameof(InterfaceDeclaration), () => {
 
         it("should get for an empty interface", () => {
             doTest(`interface Test {}`, {
+                kind: StructureKind.Interface,
                 callSignatures: [],
                 constructSignatures: [],
                 docs: [],
@@ -138,6 +139,7 @@ export default interface Test<T> extends Test2 {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Interface,
                 callSignatures: [{}],
                 constructSignatures: [{}],
                 docs: [{ description: "Test" }],

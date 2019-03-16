@@ -1,6 +1,6 @@
 import { removeOverloadableClassMember } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { MethodDeclarationOverloadStructure, MethodDeclarationStructure } from "../../../structures";
+import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode,
     TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode, QuestionTokenableNode } from "../base";
@@ -92,9 +92,25 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
         const hasImplementation = this.getImplementation() != null;
         const isOverload = this.isOverload();
         const basePrototype = isOverload && hasImplementation ? MethodDeclarationOverloadBase.prototype : MethodDeclarationBase.prototype;
-        const structure = !hasImplementation || isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
 
         return callBaseGetStructure<any>(basePrototype, this,
-            structure) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;
+            getSpecificStructure(this)) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;
+
+        function getSpecificStructure(thisNode: MethodDeclaration) {
+            // this is not the best typing... unit tests will catch issues though
+            if (hasImplementation && isOverload)
+                return {};
+            return getSpecificStructure();
+
+            function getSpecificStructure(): MethodDeclarationSpecificStructure {
+                if (!hasImplementation)
+                    return { kind: StructureKind.Method };
+                else
+                    return {
+                        kind: StructureKind.Method,
+                        overloads: thisNode.getOverloads().map(o => o.getStructure())
+                    };
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ClassDeclaration, GetAccessorDeclaration, Scope } from "../../../../compiler";
-import { GetAccessorDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { GetAccessorDeclarationStructure, TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
 import { getInfoFromText } from "../../testHelpers";
@@ -84,7 +84,7 @@ describe(nameof(GetAccessorDeclaration), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: MakeRequired<GetAccessorDeclarationStructure> = {
+            const structure: OptionalKind<MakeRequired<GetAccessorDeclarationStructure>> = {
                 bodyText: "console;",
                 classes: [{ name: "C" }],
                 decorators: [{ name: "dec" }],
@@ -154,6 +154,7 @@ class Identifier {
 
         it("should get structure when empty", () => {
             doTest("abstract class T { abstract get test(); }", {
+                kind: StructureKind.GetAccessor,
                 bodyText: undefined,
                 docs: [],
                 parameters: [],
@@ -177,6 +178,7 @@ class T {
 }
 `;
             doTest(code, {
+                kind: StructureKind.GetAccessor,
                 bodyText: "return 5;",
                 docs: [{ description: "test" }],
                 parameters: [{ name: "p" }],

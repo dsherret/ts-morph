@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, MethodSignature } from "../../../../compiler";
-import { MethodSignatureStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { MethodSignatureStructure, TypeParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(MethodSignature), () => {
@@ -22,6 +22,19 @@ describe(nameof(MethodSignature), () => {
 
         it("should change when setting", () => {
             doTest("interface Identifier { method(): string; }", { returnType: "number" }, "interface Identifier { method(): number; }");
+        });
+
+        it("should change when setting everything", () => {
+            const structure: OptionalKind<MakeRequired<MethodSignatureStructure>> = {
+                docs: ["test"],
+                hasQuestionToken: true,
+                name: "name",
+                parameters: [{ name: "param" }],
+                typeParameters: ["T"],
+                returnType: "number"
+            };
+            doTest("interface Identifier {\n    method(): string;\n}", structure,
+                "interface Identifier {\n    /**\n     * test\n    */\n    name?<T>(param): number;\n}");
         });
     });
 
@@ -68,6 +81,7 @@ describe(nameof(MethodSignature), () => {
 
         it("should get when not has anything", () => {
             doTest("interface Identifier { method(); }", {
+                kind: StructureKind.MethodSignature,
                 docs: [],
                 hasQuestionToken: false,
                 name: "method",
@@ -84,6 +98,7 @@ interface Identifier {
     method?<T>(p): string;
 }`;
             doTest(code, {
+                kind: StructureKind.MethodSignature,
                 docs: [{ description: "Test" }],
                 hasQuestionToken: true,
                 name: "method",

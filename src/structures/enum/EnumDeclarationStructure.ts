@@ -4,11 +4,11 @@ import { StructureKind } from "../StructureKind";
 import { EnumMemberStructure } from "./EnumMemberStructure";
 
 export interface EnumDeclarationStructure
-    extends Structure<StructureKind.Enum>, NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
+    extends NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
 {
 }
 
-export interface EnumDeclarationSpecificStructure {
+export interface EnumDeclarationSpecificStructure extends Structure<StructureKind.Enum> {
     isConst?: boolean;
     members?: EnumMemberStructure[];
 }

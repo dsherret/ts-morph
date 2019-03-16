@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { removeClassMember } from "../../../manipulation";
-import { GetAccessorDeclarationStructure, GetAccessorDeclarationSpecificStructure } from "../../../structures";
+import { GetAccessorDeclarationStructure, GetAccessorDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -56,6 +56,7 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      */
     getStructure(): GetAccessorDeclarationStructure {
         return callBaseGetStructure<GetAccessorDeclarationSpecificStructure>(GetAccessorDeclarationBase.prototype, this, {
+            kind: StructureKind.GetAccessor
         }) as any as GetAccessorDeclarationStructure;
     }
 }

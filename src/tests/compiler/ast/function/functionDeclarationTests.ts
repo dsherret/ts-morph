@@ -1,7 +1,9 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration } from "../../../../compiler";
 import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure,
-    TypeParameterDeclarationStructure } from "../../../../structures";
+    TypeParameterDeclarationStructure,
+    OptionalKind,
+    StructureKind} from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(FunctionDeclaration), () => {
@@ -132,7 +134,7 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(f => f.set), () => {
-        function doTest(startingCode: string, structure: FunctionDeclarationSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<FunctionDeclarationSpecificStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
             sourceFile.getFunctions()[0].set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
@@ -144,7 +146,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
 
         it("should replace overloads when changed", () => {
-            const structure: MakeRequired<FunctionDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<FunctionDeclarationSpecificStructure>> = {
                 overloads: [{ returnType: "string" }]
             };
             doTest("function identifier(p): number;\nfunction identifier() {\n}", structure,
@@ -152,7 +154,7 @@ describe(nameof(FunctionDeclaration), () => {
         });
 
         it("should remove overloads when specifying an empty array", () => {
-            const structure: MakeRequired<FunctionDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<FunctionDeclarationSpecificStructure>> = {
                 overloads: []
             };
             doTest("function identifier(p): number;\nfunction identifier() {\n}", structure,
@@ -180,6 +182,7 @@ describe(nameof(FunctionDeclaration), () => {
 
         it("should get the structure for an empty function", () => {
             doTest("declare function test() {}", {
+                kind: StructureKind.Function,
                 bodyText: "",
                 docs: [],
                 hasDeclareKeyword: true,
@@ -217,6 +220,7 @@ export default async function *test<T>(param): string {
             };
 
             doTest(code, {
+                kind: StructureKind.Function,
                 bodyText: "return '';",
                 docs: [{ description: "docs" }],
                 hasDeclareKeyword: false,

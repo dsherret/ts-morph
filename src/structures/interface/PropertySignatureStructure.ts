@@ -4,10 +4,10 @@ import { Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface PropertySignatureStructure
-    extends Structure<StructureKind.PropertySignature>, PropertySignatureSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure,
-        QuestionTokenableNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure
+    extends PropertySignatureSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure,
+        JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure
 {
 }
 
-export interface PropertySignatureSpecificStructure {
+export interface PropertySignatureSpecificStructure extends Structure<StructureKind.PropertySignature> {
 }

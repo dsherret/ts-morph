@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../../compiler";
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure,
-    TypeParameterDeclarationStructure } from "../../../../structures";
+    TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
@@ -126,7 +126,7 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(n => n.set), () => {
-        function doTest(startingCode: string, structure: ConstructorDeclarationSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<ConstructorDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const ctor = firstChild.getConstructors()[0];
             ctor.set(structure);
@@ -139,7 +139,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
 
         it("should replace existing overloads when changed", () => {
-            const structure: MakeRequired<ConstructorDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
             doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
@@ -147,7 +147,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
 
         it("should remove existing overloads when specifying an empty array", () => {
-            const structure: MakeRequired<ConstructorDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
                 overloads: []
             };
             doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
@@ -168,6 +168,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
         it("should get structure when empty", () => {
             doTest("class T { constructor() {} }", {
+                kind: StructureKind.Constructor,
                 bodyText: "",
                 docs: [],
                 overloads: [],
@@ -190,6 +191,7 @@ class T {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Constructor,
                 bodyText: "test;",
                 docs: [{ description: "implementation" }],
                 overloads: [{

@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Scope } from "../../../../compiler";
 import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure,
-    TypeParameterDeclarationStructure } from "../../../../structures";
+    TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
 import { getInfoFromText } from "../../testHelpers";
@@ -193,7 +193,7 @@ describe(nameof(MethodDeclaration), () => {
     });
 
     describe(nameof<MethodDeclaration>(m => m.set), () => {
-        function doTest(startingCode: string, structure: MethodDeclarationSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<MethodDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const method = firstChild.getInstanceMethods()[0];
             method.set(structure);
@@ -206,7 +206,7 @@ describe(nameof(MethodDeclaration), () => {
         });
 
         it("should replace existing overloads when changed", () => {
-            const structure: MakeRequired<MethodDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<MethodDeclarationSpecificStructure>> = {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
             doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure,
@@ -214,7 +214,7 @@ describe(nameof(MethodDeclaration), () => {
         });
 
         it("should remove existing overloads when specifying an empty array", () => {
-            const structure: MakeRequired<MethodDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<MethodDeclarationSpecificStructure>> = {
                 overloads: []
             };
             doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure,
@@ -242,6 +242,7 @@ describe(nameof(MethodDeclaration), () => {
 
         it("should get structure when abstract", () => {
             doTest("class Test { abstract method?() {} }", {
+                kind: StructureKind.Method,
                 bodyText: "",
                 decorators: [],
                 docs: [],
@@ -270,6 +271,7 @@ class Test {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Method,
                 bodyText: "",
                 decorators: [],
                 docs: [{ description: "implementation" }],

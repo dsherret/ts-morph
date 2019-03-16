@@ -2,7 +2,7 @@
 import * as errors from "../../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren } from "../../../manipulation";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure } from "../../../structures";
+    PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
@@ -19,24 +19,24 @@ export interface TypeElementMemberedNode {
      * Add construct signature.
      * @param structure - Structure representing the construct signature.
      */
-    addConstructSignature(structure: ConstructSignatureDeclarationStructure): ConstructSignatureDeclaration;
+    addConstructSignature(structure: OptionalKind<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration;
     /**
      * Add construct signatures.
      * @param structures - Structures representing the construct signatures.
      */
-    addConstructSignatures(structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[];
+    addConstructSignatures(structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>): ConstructSignatureDeclaration[];
     /**
      * Insert construct signature.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the construct signature.
      */
-    insertConstructSignature(index: number, structure: ConstructSignatureDeclarationStructure): ConstructSignatureDeclaration;
+    insertConstructSignature(index: number, structure: OptionalKind<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration;
     /**
      * Insert construct signatures.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the construct signatures.
      */
-    insertConstructSignatures(index: number, structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[];
+    insertConstructSignatures(index: number, structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>): ConstructSignatureDeclaration[];
     /**
      * Gets the first construct signature by a find function.
      * @param findFunction - Function to find the construct signature by.
@@ -56,24 +56,24 @@ export interface TypeElementMemberedNode {
      * Add call signature.
      * @param structure - Structure representing the call signature.
      */
-    addCallSignature(structure: CallSignatureDeclarationStructure): CallSignatureDeclaration;
+    addCallSignature(structure: OptionalKind<CallSignatureDeclarationStructure>): CallSignatureDeclaration;
     /**
      * Add call signatures.
      * @param structures - Structures representing the call signatures.
      */
-    addCallSignatures(structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[];
+    addCallSignatures(structures: ReadonlyArray<OptionalKind<CallSignatureDeclarationStructure>>): CallSignatureDeclaration[];
     /**
      * Insert call signature.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the call signature.
      */
-    insertCallSignature(index: number, structure: CallSignatureDeclarationStructure): CallSignatureDeclaration;
+    insertCallSignature(index: number, structure: OptionalKind<CallSignatureDeclarationStructure>): CallSignatureDeclaration;
     /**
      * Insert call signatures.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the call signatures.
      */
-    insertCallSignatures(index: number, structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[];
+    insertCallSignatures(index: number, structures: ReadonlyArray<OptionalKind<CallSignatureDeclarationStructure>>): CallSignatureDeclaration[];
     /**
      * Gets the first call signature by a find function.
      * @param findFunction - Function to find the call signature by.
@@ -93,24 +93,24 @@ export interface TypeElementMemberedNode {
      * Add index signature.
      * @param structure - Structure representing the index signature.
      */
-    addIndexSignature(structure: IndexSignatureDeclarationStructure): IndexSignatureDeclaration;
+    addIndexSignature(structure: OptionalKind<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration;
     /**
      * Add index signatures.
      * @param structures - Structures representing the index signatures.
      */
-    addIndexSignatures(structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[];
+    addIndexSignatures(structures: ReadonlyArray<OptionalKind<IndexSignatureDeclarationStructure>>): IndexSignatureDeclaration[];
     /**
      * Insert index signature.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the index signature.
      */
-    insertIndexSignature(index: number, structure: IndexSignatureDeclarationStructure): IndexSignatureDeclaration;
+    insertIndexSignature(index: number, structure: OptionalKind<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration;
     /**
      * Insert index signatures.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the index signatures.
      */
-    insertIndexSignatures(index: number, structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[];
+    insertIndexSignatures(index: number, structures: ReadonlyArray<OptionalKind<IndexSignatureDeclarationStructure>>): IndexSignatureDeclaration[];
     /**
      * Gets the first index signature by a find function.
      * @param findFunction - Function to find the index signature by.
@@ -130,24 +130,24 @@ export interface TypeElementMemberedNode {
      * Add method.
      * @param structure - Structure representing the method.
      */
-    addMethod(structure: MethodSignatureStructure): MethodSignature;
+    addMethod(structure: OptionalKind<MethodSignatureStructure>): MethodSignature;
     /**
      * Add methods.
      * @param structures - Structures representing the methods.
      */
-    addMethods(structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[];
+    addMethods(structures: ReadonlyArray<OptionalKind<MethodSignatureStructure>>): MethodSignature[];
     /**
      * Insert method.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the method.
      */
-    insertMethod(index: number, structure: MethodSignatureStructure): MethodSignature;
+    insertMethod(index: number, structure: OptionalKind<MethodSignatureStructure>): MethodSignature;
     /**
      * Insert methods.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
-    insertMethods(index: number, structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[];
+    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodSignatureStructure>>): MethodSignature[];
     /**
      * Gets the first method by name.
      * @param name - Name.
@@ -179,24 +179,24 @@ export interface TypeElementMemberedNode {
      * Add property.
      * @param structure - Structure representing the property.
      */
-    addProperty(structure: PropertySignatureStructure): PropertySignature;
+    addProperty(structure: OptionalKind<PropertySignatureStructure>): PropertySignature;
     /**
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addProperties(structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[];
+    addProperties(structures: ReadonlyArray<OptionalKind<PropertySignatureStructure>>): PropertySignature[];
     /**
      * Insert property.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the property.
      */
-    insertProperty(index: number, structure: PropertySignatureStructure): PropertySignature;
+    insertProperty(index: number, structure: OptionalKind<PropertySignatureStructure>): PropertySignature;
     /**
      * Insert properties.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertProperties(index: number, structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[];
+    insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertySignatureStructure>>): PropertySignature[];
     /**
      * Gets the first property by name.
      * @param name - Name.
@@ -231,20 +231,20 @@ export interface TypeElementMemberedNode {
 
 export function TypeElementMemberedNode<T extends Constructor<TypeElementMemberedNodeExtensionType>>(Base: T): Constructor<TypeElementMemberedNode> & T {
     return class extends Base implements TypeElementMemberedNode {
-        addConstructSignature(structure: ConstructSignatureDeclarationStructure) {
+        addConstructSignature(structure: OptionalKind<ConstructSignatureDeclarationStructure>) {
             return this.addConstructSignatures([structure])[0];
         }
 
-        addConstructSignatures(structures: ReadonlyArray<ConstructSignatureDeclarationStructure>) {
+        addConstructSignatures(structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>) {
             return this.insertConstructSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
-        insertConstructSignature(index: number, structure: ConstructSignatureDeclarationStructure) {
+        insertConstructSignature(index: number, structure: OptionalKind<ConstructSignatureDeclarationStructure>) {
             return this.insertConstructSignatures(index, [structure])[0];
         }
 
-        insertConstructSignatures(index: number, structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[] {
-            return insertChildren<ConstructSignatureDeclaration, ConstructSignatureDeclarationStructure>({
+        insertConstructSignatures(index: number, structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>): ConstructSignatureDeclaration[] {
+            return insertChildren({
                 thisNode: this,
                 index,
                 structures,
@@ -266,20 +266,20 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 .map(m => this._getNodeFromCompilerNode(m as ts.ConstructSignatureDeclaration));
         }
 
-        addCallSignature(structure: CallSignatureDeclarationStructure) {
+        addCallSignature(structure: OptionalKind<CallSignatureDeclarationStructure>) {
             return this.addCallSignatures([structure])[0];
         }
 
-        addCallSignatures(structures: ReadonlyArray<CallSignatureDeclarationStructure>) {
+        addCallSignatures(structures: ReadonlyArray<OptionalKind<CallSignatureDeclarationStructure>>) {
             return this.insertCallSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
-        insertCallSignature(index: number, structure: CallSignatureDeclarationStructure) {
+        insertCallSignature(index: number, structure: OptionalKind<CallSignatureDeclarationStructure>) {
             return this.insertCallSignatures(index, [structure])[0];
         }
 
-        insertCallSignatures(index: number, structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[] {
-            return insertChildren<CallSignatureDeclaration, CallSignatureDeclarationStructure>({
+        insertCallSignatures(index: number, structures: ReadonlyArray<OptionalKind<CallSignatureDeclarationStructure>>): CallSignatureDeclaration[] {
+            return insertChildren({
                 thisNode: this,
                 index,
                 structures,
@@ -301,20 +301,20 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 .map(m => this._getNodeFromCompilerNode(m as ts.CallSignatureDeclaration));
         }
 
-        addIndexSignature(structure: IndexSignatureDeclarationStructure) {
+        addIndexSignature(structure: OptionalKind<IndexSignatureDeclarationStructure>) {
             return this.addIndexSignatures([structure])[0];
         }
 
-        addIndexSignatures(structures: ReadonlyArray<IndexSignatureDeclarationStructure>) {
+        addIndexSignatures(structures: ReadonlyArray<OptionalKind<IndexSignatureDeclarationStructure>>) {
             return this.insertIndexSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
-        insertIndexSignature(index: number, structure: IndexSignatureDeclarationStructure) {
+        insertIndexSignature(index: number, structure: OptionalKind<IndexSignatureDeclarationStructure>) {
             return this.insertIndexSignatures(index, [structure])[0];
         }
 
-        insertIndexSignatures(index: number, structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[] {
-            return insertChildren<IndexSignatureDeclaration, IndexSignatureDeclarationStructure>({
+        insertIndexSignatures(index: number, structures: ReadonlyArray<OptionalKind<IndexSignatureDeclarationStructure>>): IndexSignatureDeclaration[] {
+            return insertChildren({
                 thisNode: this,
                 index,
                 structures,
@@ -336,20 +336,20 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 .map(m => this._getNodeFromCompilerNode(m as ts.IndexSignatureDeclaration));
         }
 
-        addMethod(structure: MethodSignatureStructure) {
+        addMethod(structure: OptionalKind<MethodSignatureStructure>) {
             return this.addMethods([structure])[0];
         }
 
-        addMethods(structures: ReadonlyArray<MethodSignatureStructure>) {
+        addMethods(structures: ReadonlyArray<OptionalKind<MethodSignatureStructure>>) {
             return this.insertMethods(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
-        insertMethod(index: number, structure: MethodSignatureStructure) {
+        insertMethod(index: number, structure: OptionalKind<MethodSignatureStructure>) {
             return this.insertMethods(index, [structure])[0];
         }
 
-        insertMethods(index: number, structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[] {
-            return insertChildren<MethodSignature, MethodSignatureStructure>({
+        insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodSignatureStructure>>): MethodSignature[] {
+            return insertChildren({
                 thisNode: this,
                 index,
                 structures,
@@ -372,20 +372,20 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 .map(m => this._getNodeFromCompilerNode(m as ts.MethodSignature));
         }
 
-        addProperty(structure: PropertySignatureStructure) {
+        addProperty(structure: OptionalKind<PropertySignatureStructure>) {
             return this.addProperties([structure])[0];
         }
 
-        addProperties(structures: ReadonlyArray<PropertySignatureStructure>) {
+        addProperties(structures: ReadonlyArray<OptionalKind<PropertySignatureStructure>>) {
             return this.insertProperties(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
-        insertProperty(index: number, structure: PropertySignatureStructure) {
+        insertProperty(index: number, structure: OptionalKind<PropertySignatureStructure>) {
             return this.insertProperties(index, [structure])[0];
         }
 
-        insertProperties(index: number, structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[] {
-            return insertChildren<PropertySignature, PropertySignatureStructure>({
+        insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertySignatureStructure>>): PropertySignature[] {
+            return insertChildren({
                 thisNode: this,
                 index,
                 structures,

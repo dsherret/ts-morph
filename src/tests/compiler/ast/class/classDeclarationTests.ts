@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration } from "../../../../compiler";
 import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure,
-    InterfaceDeclarationStructure, TypeParameterDeclarationStructure, OptionalKind } from "../../../../structures";
+    InterfaceDeclarationStructure, TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 
@@ -26,7 +26,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(c => c.set), () => {
-        function doTest(startingCode: string, structure: ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<ClassDeclarationSpecificStructure> & ClassLikeDeclarationBaseSpecificStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -72,7 +72,7 @@ class Identifier extends Other {
     }
 }
 `;
-            const structure: MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
                 extends: "Other",
                 ctors: [{}],
                 properties: [{ name: "p" }],
@@ -97,7 +97,7 @@ class Identifier extends Test {
 class Identifier {
 }
 `;
-            const structure: MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
                 extends: undefined,
                 ctors: [],
                 properties: [],
@@ -128,6 +128,7 @@ class Identifier {
 
         it("should get the structure for an empty class", () => {
             doTest("class Identifier {}", {
+                kind: StructureKind.Class,
                 ctors: [],
                 decorators: [],
                 docs: [],
@@ -158,6 +159,7 @@ class Identifier {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Class,
                 ctors: [{}],
                 decorators: [{ name: "dec" }],
                 docs: [{ description: "Test" }],
@@ -189,6 +191,7 @@ declare class Identifier {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Class,
                 ctors: [{}, {}],
                 decorators: [],
                 docs: [],
@@ -209,7 +212,7 @@ declare class Identifier {
     });
 
     describe(nameof<ClassDeclaration>(d => d.extractInterface), () => {
-        function doTest(code: string, name: string | undefined, expectedStructure: OptionalKind<InterfaceDeclarationStructure>, filePath?: string) {
+        function doTest(code: string, name: string | undefined, expectedStructure: InterfaceDeclarationStructure, filePath?: string) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
             const structure = descendant.extractInterface(name);
 
@@ -226,11 +229,11 @@ declare class Identifier {
         }
 
         it("should use the class name when no name", () => {
-            doTest("class Test { }", undefined, { name: "Test" });
+            doTest("class Test { }", undefined, { kind: StructureKind.Interface, name: "Test" });
         });
 
         it("should use the file's base name when no name and no class name", () => {
-            doTest("export default class { }", undefined, { name: "File_42$" }, "/dir/File^_4#2$.ts");
+            doTest("export default class { }", undefined, { kind: StructureKind.Interface, name: "File_42$" }, "/dir/File^_4#2$.ts");
         });
 
         it("should get when class has everything", () => {
@@ -271,6 +274,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
     private myPrivate() {}
 }`,
                 undefined, {
+                    kind: StructureKind.Interface,
                     name: "Test",
                     docs: [{ description: "Test" }],
                     typeParameters: [
@@ -365,6 +369,7 @@ class Test {
     }
 }`,
                 undefined, {
+                    kind: StructureKind.Interface,
                     name: "Test",
                     properties: [
                         { name: "param", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Test." }] },
@@ -408,7 +413,7 @@ class Test {
     });
 
     describe(nameof<ClassDeclaration>(d => d.extractStaticInterface), () => {
-        function doTest(code: string, name: string, expectedStructure: OptionalKind<InterfaceDeclarationStructure>, filePath?: string) {
+        function doTest(code: string, name: string, expectedStructure: InterfaceDeclarationStructure, filePath?: string) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
             const structure = descendant.extractStaticInterface(name);
 
@@ -424,6 +429,7 @@ class Test {
 
         it("should use the file's base name in the constructor signature return types when no class name", () => {
             doTest("export default class { constructor() {} }", "Test", {
+                kind: StructureKind.Interface,
                 name: "Test",
                 constructSignatures: [{
                     docs: [],
@@ -471,6 +477,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
     static private myPrivate() {}
 }`,
                 "Name", {
+                    kind: StructureKind.Interface,
                     name: "Name",
                     constructSignatures: [{
                         docs: [{ description: "Description." }],
@@ -591,6 +598,7 @@ class Test {
     }
 }`,
                 "Name", {
+                    kind: StructureKind.Interface,
                     name: "Name",
                     constructSignatures: [{
                         docs: [{ description: "Test." }],

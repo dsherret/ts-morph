@@ -6,12 +6,12 @@ import { Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface NamespaceDeclarationStructure
-    extends Structure<StructureKind.NamespaceDeclaration>, NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure,
+    extends NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure,
         StatementedNodeStructure, BodiedNodeStructure, ModuledNodeStructure
 {
 }
 
-export interface NamespaceDeclarationSpecificStructure {
+export interface NamespaceDeclarationSpecificStructure extends Structure<StructureKind.NamespaceDeclaration> {
     /**
      * The namespace declaration kind.
      *

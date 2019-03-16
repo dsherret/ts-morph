@@ -4,12 +4,12 @@ import { Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface TypeAliasDeclarationStructure
-    extends Structure<StructureKind.TypeAlias>, TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure,
+    extends TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure,
         JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
 {
         type: string | WriterFunction; // make required (from base)
 }
 
-export interface TypeAliasDeclarationSpecificStructure {
+export interface TypeAliasDeclarationSpecificStructure extends Structure<StructureKind.TypeAlias> {
     type: string | WriterFunction; // make required (from base)
 }

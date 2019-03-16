@@ -6,13 +6,13 @@ import { StructureKind } from "../StructureKind";
 import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface MethodDeclarationStructure
-    extends Structure<StructureKind.Method>, MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
+    extends MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
         AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure,
         QuestionTokenableNodeStructure
 {
 }
 
-export interface MethodDeclarationSpecificStructure {
+export interface MethodDeclarationSpecificStructure extends Structure<StructureKind.Method> {
     overloads?: MethodDeclarationOverloadStructure[];
 }
 

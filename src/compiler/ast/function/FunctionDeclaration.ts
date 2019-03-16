@@ -1,6 +1,6 @@
 import { removeOverloadableStatementedNodeChild } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure } from "../../../structures";
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode,
     TextInsertableNode, UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
@@ -94,8 +94,24 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
         const isOverload = this.isOverload();
         const hasImplementation = this.getImplementation();
         const basePrototype = isOverload && hasImplementation ? FunctionDeclarationOverloadBase.prototype : FunctionDeclarationBase.prototype;
-        const structure = !hasImplementation || isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
 
-        return callBaseGetStructure<any>(basePrototype, this, structure);
+        return callBaseGetStructure<any>(basePrototype, this, getSpecificStructure(this));
+
+        function getSpecificStructure(thisNode: FunctionDeclaration) {
+            // this is not the best typing... unit tests will catch issues though
+            if (hasImplementation && isOverload)
+                return {};
+            return getSpecificStructure();
+
+            function getSpecificStructure(): FunctionDeclarationSpecificStructure {
+                if (!hasImplementation)
+                    return { kind: StructureKind.Function };
+                else
+                    return {
+                        kind: StructureKind.Function,
+                        overloads: thisNode.getOverloads().map(o => o.getStructure())
+                    };
+            }
+        }
     }
 }

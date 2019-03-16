@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ClassDeclaration, SetAccessorDeclaration, Scope } from "../../../../compiler";
-import { SetAccessorDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { SetAccessorDeclarationStructure, TypeParameterDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
 import { getInfoFromText } from "../../testHelpers";
@@ -84,7 +84,7 @@ describe(nameof(SetAccessorDeclaration), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: MakeRequired<SetAccessorDeclarationStructure> = {
+            const structure: OptionalKind<MakeRequired<SetAccessorDeclarationStructure>> = {
                 bodyText: "console;",
                 classes: [{ name: "C" }],
                 decorators: [{ name: "dec" }],
@@ -154,6 +154,7 @@ class Identifier {
 
         it("should get structure when empty", () => {
             doTest("abstract class T { abstract set test(); }", {
+                kind: StructureKind.SetAccessor,
                 bodyText: undefined,
                 docs: [],
                 parameters: [],
@@ -177,6 +178,7 @@ class T {
 }
 `;
             doTest(code, {
+                kind: StructureKind.SetAccessor,
                 bodyText: "return 5;",
                 docs: [{ description: "test" }],
                 parameters: [{ name: "p" }],

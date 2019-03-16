@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { ExportAssignment } from "../../../../compiler";
-import { ExportAssignmentStructure } from "../../../../structures";
+import { ExportAssignmentStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -87,7 +87,7 @@ describe(nameof(ExportAssignment), () => {
         });
 
         it("should set everything when specified", () => {
-            const structure: MakeRequired<ExportAssignmentStructure> = {
+            const structure: OptionalKind<MakeRequired<ExportAssignmentStructure>> = {
                 expression: "6",
                 isExportEquals: false
             };
@@ -102,11 +102,11 @@ describe(nameof(ExportAssignment), () => {
         }
 
         it("should get structure for an export equals", () => {
-            doTest("export = 5;", { expression: "5", isExportEquals: true });
+            doTest("export = 5;", { kind: StructureKind.ExportAssignment, expression: "5", isExportEquals: true });
         });
 
         it("should get structure for an export default", () => {
-            doTest("export default 5;", { expression: "5", isExportEquals: false });
+            doTest("export default 5;", { kind: StructureKind.ExportAssignment, expression: "5", isExportEquals: false });
         });
     });
 });

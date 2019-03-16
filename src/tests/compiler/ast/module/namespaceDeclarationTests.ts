@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { NamespaceDeclaration, NamespaceDeclarationKind } from "../../../../compiler";
 import * as errors from "../../../../errors";
-import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } from "../../../../structures";
+import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(NamespaceDeclaration), () => {
@@ -220,7 +220,7 @@ describe(nameof(NamespaceDeclaration), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: MakeRequired<NamespaceDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<NamespaceDeclarationSpecificStructure>> = {
                 declarationKind: NamespaceDeclarationKind.Module
             };
             doTest("namespace Identifier {\n}", structure, "module Identifier {\n}");
@@ -249,6 +249,7 @@ describe(nameof(NamespaceDeclaration), () => {
 
         it("should get when has nothing", () => {
             doTest("namespace Identifier {\n}", {
+                kind: StructureKind.NamespaceDeclaration,
                 declarationKind: NamespaceDeclarationKind.Namespace,
                 bodyText: "",
                 docs: [],
@@ -266,6 +267,7 @@ export declare module Identifier {
     const t = 5;
 }`;
             doTest(code, {
+                kind: StructureKind.NamespaceDeclaration,
                 declarationKind: NamespaceDeclarationKind.Module,
                 bodyText: "const t = 5;",
                 docs: [{ description: "Test" }],
@@ -278,6 +280,7 @@ export declare module Identifier {
 
         it("should get for global module", () => {
             doTest("global {\n}", {
+                kind: StructureKind.NamespaceDeclaration,
                 declarationKind: NamespaceDeclarationKind.Global,
                 bodyText: "",
                 docs: [],

@@ -11,3 +11,5 @@ export * from "./module";
 export * from "./statement";
 export * from "./type";
 export * from "./types";
+export * from "./Structure";
+export * from "./StructureKind";

@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
-import { ImportSpecifierStructure, ImportDeclarationStructure } from "../../../structures";
+import { ImportSpecifierStructure, ImportDeclarationStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, ModuleUtils, StringUtils, TypeGuards } from "../../../utils";
@@ -423,6 +423,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         const defaultImport = this.getDefaultImport();
 
         return callBaseGetStructure<ImportDeclarationStructure>(ImportDeclarationBase.prototype, this, {
+            kind: StructureKind.ImportDeclaration,
             defaultImport: defaultImport ? defaultImport.getText() : undefined,
             moduleSpecifier: this.getModuleSpecifier().getLiteralText(),
             namedImports: this.getNamedImports().map(node => node.getStructure()),

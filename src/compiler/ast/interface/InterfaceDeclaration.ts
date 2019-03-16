@@ -1,4 +1,4 @@
-import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure } from "../../../structures";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, ExtendsClauseableNode, HeritageClauseableNode, JSDocableNode, ModifierableNode, NamedNode,
@@ -56,6 +56,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getStructure(): InterfaceDeclarationStructure {
         return callBaseGetStructure<InterfaceDeclarationSpecificStructure>(InterfaceDeclarationBase.prototype, this, {
+            kind: StructureKind.Interface
         });
     }
 }

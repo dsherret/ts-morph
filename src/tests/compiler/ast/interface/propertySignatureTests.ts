@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, PropertySignature } from "../../../../compiler";
-import { PropertySignatureStructure } from "../../../../structures";
+import { PropertySignatureStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(PropertySignature), () => {
@@ -22,6 +22,19 @@ describe(nameof(PropertySignature), () => {
 
         it("should change when setting", () => {
             doTest("interface Identifier { prop: string; }", { type: "number" }, "interface Identifier { prop: number; }");
+        });
+
+        it("should change when setting everything", () => {
+            const structure: OptionalKind<MakeRequired<PropertySignatureStructure>> = {
+                docs: ["test"],
+                hasQuestionToken: true,
+                name: "name",
+                type: "number",
+                initializer: "5",
+                isReadonly: true
+            };
+            doTest("interface Identifier {\n    prop: string;\n}", structure,
+                "interface Identifier {\n    /**\n     * test\n    */\n    readonly name?: number = 5;\n}");
         });
     });
 
@@ -61,6 +74,7 @@ describe(nameof(PropertySignature), () => {
 
         it("should get when not has anything", () => {
             doTest("interface Identifier { prop; }", {
+                kind: StructureKind.PropertySignature,
                 docs: [],
                 hasQuestionToken: false,
                 initializer: undefined,
@@ -77,6 +91,7 @@ interface Identifier {
     readonly prop?: number = 5;
 }`;
             doTest(code, {
+                kind: StructureKind.PropertySignature,
                 docs: [{ description: "Test" }],
                 hasQuestionToken: true,
                 initializer: "5",
