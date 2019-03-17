@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.1"></a>
+## [1.3.1](https://github.com/dsherret/ts-morph/compare/1.3.0...1.3.1) (2019-03-17)
+
+
+### Bug Fixes
+
+* Depend on a specific version of code-block-writer. ([ccfe90e](https://github.com/dsherret/ts-morph/commit/ccfe90e))
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/dsherret/ts-morph/compare/1.2.0...1.3.0) (2019-03-03)
 
