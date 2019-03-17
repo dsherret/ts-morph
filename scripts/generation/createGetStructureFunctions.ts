@@ -67,6 +67,9 @@ function shouldCreateForStructure(name: string) {
 }
 
 function shouldAllowExtends(structure: Structure, baseStructure: Structure) {
+    if (baseStructure.getName() === "Structure")
+        return false;
+
     if (structure.getName() === "FunctionDeclarationOverloadStructure") {
         switch (baseStructure.getName()) {
             case "ParameteredNodeStructure":

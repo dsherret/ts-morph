@@ -143,7 +143,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             isStatic: true,
             name: "hasStructure",
             parameters: [{ name: "node", type: "compiler.Node" }],
-            returnType: `node is compiler.Node & { getStructure(): unknown; }`,
+            returnType: `node is compiler.Node & { getStructure(): Structure; }`,
             bodyText: writer => {
                 writeSyntaxKinds(writer, nodesWithGetStructure.map(n => kindToWrapperMappings.find(m => m.wrapperName === n.getName())!.syntaxKindNames[0]));
             }
