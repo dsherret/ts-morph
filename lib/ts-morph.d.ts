@@ -4416,9 +4416,9 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
     getEnd(): number;
     /**
      * Gets the source file text position where the node starts that does not include the leading trivia (comments and whitespace).
-     * @param includeJsDocComment - Whether to include the JS doc comment.
+     * @param includeJsDocComments - Whether to include the JS doc comments.
      */
-    getStart(includeJsDocComment?: boolean): number;
+    getStart(includeJsDocComments?: boolean): number;
     /**
      * Gets the source file text position of the end of the last significant token or the start of the source file.
      */
@@ -4449,9 +4449,17 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
     getTrailingTriviaEnd(): number;
     /**
      * Gets the text without leading trivia (comments and whitespace).
-     * @param includeJsDocComment
+     * @param includeJsDocComments - Whether to include the js doc comments when getting the text.
      */
-    getText(includeJsDocComment?: boolean): string;
+    getText(includeJsDocComments?: boolean): string;
+    /**
+     * Gets the text without leading trivia (comments and whitespace).
+     * @param options - Options for getting the text.
+     */
+    getText(options: {
+        trimLeadingIndentation?: boolean;
+        includeJsDocComments?: boolean;
+    }): string;
     /**
      * Gets the full text with leading trivia (comments and whitespace).
      */
@@ -4557,14 +4565,14 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
     getChildIndentationText(offset?: number): string;
     /**
      * Gets the position of the start of the line that this node starts on.
-     * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     * @param includeJsDocComments - Whether to include the JS doc comments or not.
      */
-    getStartLinePos(includeJsDocComment?: boolean): number;
+    getStartLinePos(includeJsDocComments?: boolean): number;
     /**
      * Gets the line number at the start of the node.
-     * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     * @param includeJsDocComments - Whether to include the JS doc comments or not.
      */
-    getStartLineNumber(includeJsDocComment?: boolean): number;
+    getStartLineNumber(includeJsDocComments?: boolean): number;
     /**
      * Gets the line number of the end of the node.
      */

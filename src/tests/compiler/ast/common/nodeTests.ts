@@ -137,13 +137,43 @@ describe(nameof(Node), () => {
     describe(nameof<Node>(n => n.getText), () => {
         it("should get without jsdoc text when not specifying to", () => {
             const { firstChild } = getInfoFromText("/**\n * Testing\n */\nclass MyClass {}");
-            expect(firstChild.getText()).to.equal("class MyClass {}");
+            const expectedText = "class MyClass {}";
+            expect(firstChild.getText()).to.equal(expectedText);
+            expect(firstChild.getText({ includeJsDocComments: false })).to.equal(expectedText);
+            expect(firstChild.getText({})).to.equal(expectedText);
         });
 
         it("should get with jsdoc text when specifying to", () => {
             const classCode = "/**\n * Testing\n */\nclass MyClass {}";
             const { firstChild } = getInfoFromText(classCode);
             expect(firstChild.getText(true)).to.equal(classCode);
+            expect(firstChild.getText({ includeJsDocComments: true })).to.equal(classCode);
+        });
+
+        it("should get with jsdoc text when there are multiple", () => {
+            const classCode = "/** Multiple */\n/**\n * Testing\n */\nclass MyClass {}";
+            const { firstChild } = getInfoFromText(classCode);
+            expect(firstChild.getText(true)).to.equal(classCode);
+            expect(firstChild.getText({ includeJsDocComments: true })).to.equal(classCode);
+        });
+
+        it("should get with leading indentation when trimLeadingIndentation not specified or false", () => {
+            const classCode = "class T {\n    /** Test */\n    method() {\n    }\n}";
+            const { firstChild } = getInfoFromText<ClassDeclaration>(classCode);
+            const method = firstChild.getMethodOrThrow("method");
+            const expectedCode = "method() {\n    }";
+            expect(method.getText({})).to.equal(expectedCode);
+            expect(method.getText({ trimLeadingIndentation: false })).to.equal(expectedCode);
+            expect(method.getText({ includeJsDocComments: true })).to.equal("/** Test */\n    " + expectedCode);
+        });
+
+        it("should get without leading indentation when trimLeadingIndentation specified", () => {
+            const classCode = "class T {\n    /** Test */\n    method() {\n    }\n}";
+            const { firstChild } = getInfoFromText<ClassDeclaration>(classCode);
+            const method = firstChild.getMethodOrThrow("method");
+            const expectedCode = "method() {\n}";
+            expect(method.getText({ trimLeadingIndentation: true })).to.equal(expectedCode);
+            expect(method.getText({ trimLeadingIndentation: true, includeJsDocComments: true })).to.equal("/** Test */\n" + expectedCode);
         });
     });
 
