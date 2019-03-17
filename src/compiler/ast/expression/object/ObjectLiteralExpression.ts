@@ -1,6 +1,6 @@
 import * as errors from "../../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../../manipulation";
-import { CommaNewLineSeparatedStructuresPrinter, StructurePrinter } from "../../../../structurePrinters";
+import { CommaNewLineSeparatedStructuresPrinter, Printer } from "../../../../structurePrinters";
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
     ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind } from "../../../../structures";
 import { SyntaxKind, ts } from "../../../../typescript";
@@ -281,7 +281,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
     /**
      * @internal
      */
-    private _insertProperty<T>(index: number, structures: ReadonlyArray<T>, createStructurePrinter: () => StructurePrinter<T>) {
+    private _insertProperty<T>(index: number, structures: ReadonlyArray<T>, createStructurePrinter: () => Printer<T>) {
         index = verifyAndGetIndex(index, this.compilerNode.properties.length);
         const writer = this._getWriterWithChildIndentation();
         const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(createStructurePrinter());

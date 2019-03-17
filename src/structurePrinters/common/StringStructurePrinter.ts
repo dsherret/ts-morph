@@ -1,11 +1,11 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { WriterFunction } from "../../types";
-import { StructurePrinter } from "../StructurePrinter";
+import { Printer } from "../Printer";
 
 export type StringStructureToTextItem = string | WriterFunction;
 
-export class StringStructurePrinter extends StructurePrinter<StringStructureToTextItem> {
-    protected printTextInternal(writer: CodeBlockWriter, textOrWriterFunc: StringStructureToTextItem) {
+export class StringStructurePrinter extends Printer<StringStructureToTextItem> {
+    printText(writer: CodeBlockWriter, textOrWriterFunc: StringStructureToTextItem) {
         if (typeof textOrWriterFunc === "string")
             writer.write(textOrWriterFunc);
         else

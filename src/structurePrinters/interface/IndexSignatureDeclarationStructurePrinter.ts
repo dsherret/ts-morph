@@ -1,9 +1,9 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { IndexSignatureDeclarationStructure, OptionalKind } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 
-export class IndexSignatureDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<IndexSignatureDeclarationStructure>> {
+export class IndexSignatureDeclarationStructurePrinter extends NodePrinter<OptionalKind<IndexSignatureDeclarationStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<IndexSignatureDeclarationStructure>> | undefined) {

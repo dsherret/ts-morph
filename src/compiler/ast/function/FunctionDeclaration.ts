@@ -95,9 +95,9 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
         const hasImplementation = this.getImplementation();
         const basePrototype = isOverload && hasImplementation ? FunctionDeclarationOverloadBase.prototype : FunctionDeclarationBase.prototype;
 
-        return callBaseGetStructure<any>(basePrototype, this, getSpecificStructure(this));
+        return callBaseGetStructure<any>(basePrototype, this, getStructure(this));
 
-        function getSpecificStructure(thisNode: FunctionDeclaration) {
+        function getStructure(thisNode: FunctionDeclaration) {
             // this is not the best typing... unit tests will catch issues though
             if (hasImplementation && isOverload)
                 return {};

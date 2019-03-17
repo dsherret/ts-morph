@@ -88,9 +88,9 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
         const isOverload = this.isOverload();
         const basePrototype = isOverload && hasImplementation ? ConstructorDeclarationOverloadBase.prototype : ConstructorDeclarationBase.prototype;
 
-        return callBaseGetStructure<any>(basePrototype, this, getSpecificStructure(this)) as ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure;
+        return callBaseGetStructure<any>(basePrototype, this, getStructure(this)) as ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure;
 
-        function getSpecificStructure(thisNode: ConstructorDeclaration) {
+        function getStructure(thisNode: ConstructorDeclaration) {
             // this is not the best typing... unit tests will catch issues though
             if (hasImplementation && isOverload)
                 return {};

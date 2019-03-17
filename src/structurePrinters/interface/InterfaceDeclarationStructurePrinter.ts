@@ -1,10 +1,10 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { InterfaceDeclarationStructure, OptionalKind } from "../../structures";
 import { StringUtils } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
-export class InterfaceDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<InterfaceDeclarationStructure>> {
+export class InterfaceDeclarationStructurePrinter extends NodePrinter<OptionalKind<InterfaceDeclarationStructure>> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>> | undefined) {

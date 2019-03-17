@@ -1,9 +1,9 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { SpreadAssignmentStructure, OptionalKind } from "../../../structures";
 import { printTextFromStringOrWriter } from "../../../utils";
-import { FactoryStructurePrinter } from "../../FactoryStructurePrinter";
+import { NodePrinter } from "../../NodePrinter";
 
-export class SpreadAssignmentStructurePrinter extends FactoryStructurePrinter<OptionalKind<SpreadAssignmentStructure>> {
+export class SpreadAssignmentStructurePrinter extends NodePrinter<OptionalKind<SpreadAssignmentStructure>> {
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<SpreadAssignmentStructure>) {
         writer.write("...");
         printTextFromStringOrWriter(writer, structure.expression);

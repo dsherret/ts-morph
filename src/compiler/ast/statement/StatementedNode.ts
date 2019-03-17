@@ -975,14 +975,14 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             if (info.previousMember != null && (opts.previousNewLine == null || !opts.previousNewLine(info.previousMember)))
                 writer.blankLine();
             else if (!info.isStartOfFile)
-                writer.newLine();
+                writer.newLineIfLastNot();
 
             writeStructures();
 
             if (info.nextMember != null && (opts.nextNewLine == null || !opts.nextNewLine(info.nextMember)))
                 writer.blankLine();
             else
-                writer.newLine();
+                writer.newLineIfLastNot();
         }
     };
 }

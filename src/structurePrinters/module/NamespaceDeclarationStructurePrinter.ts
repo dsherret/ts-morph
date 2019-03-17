@@ -4,10 +4,10 @@ import * as errors from "../../errors";
 import { StructurePrinterFactory } from "../../factories";
 import { ArrayUtils, StringUtils, ObjectUtils, setValueIfUndefined } from "../../utils";
 import { NamespaceDeclarationStructure, OptionalKind } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
-export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<NamespaceDeclarationStructure>> {
+export class NamespaceDeclarationStructurePrinter extends NodePrinter<OptionalKind<NamespaceDeclarationStructure>> {
     private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
 
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {

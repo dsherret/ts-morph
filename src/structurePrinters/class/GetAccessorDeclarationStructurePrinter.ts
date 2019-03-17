@@ -1,10 +1,10 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { GetAccessorDeclarationStructure, OptionalKind } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
-export class GetAccessorDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<GetAccessorDeclarationStructure>> {
+export class GetAccessorDeclarationStructurePrinter extends NodePrinter<OptionalKind<GetAccessorDeclarationStructure>> {
     private readonly blankLineWriter = new BlankLineFormattingStructuresPrinter(this);
 
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {

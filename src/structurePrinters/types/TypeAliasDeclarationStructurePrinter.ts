@@ -1,9 +1,9 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { TypeAliasDeclarationStructure, OptionalKind } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 
-export class TypeAliasDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<TypeAliasDeclarationStructure>> {
+export class TypeAliasDeclarationStructurePrinter extends NodePrinter<OptionalKind<TypeAliasDeclarationStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>> | undefined) {

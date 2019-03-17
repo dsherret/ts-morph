@@ -1,14 +1,14 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { TypedNodeStructure } from "../../structures";
 import { StringUtils } from "../../utils";
-import { StructurePrinter } from "../StructurePrinter";
+import { Printer } from "../Printer";
 
-export class TypedNodeStructurePrinter extends StructurePrinter<TypedNodeStructure> {
+export class TypedNodeStructurePrinter extends Printer<TypedNodeStructure> {
     constructor(private readonly separator: string, private readonly alwaysWrite = false) {
         super();
     }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: TypedNodeStructure) {
+    printText(writer: CodeBlockWriter, structure: TypedNodeStructure) {
         let { type } = structure;
         if (type == null && this.alwaysWrite === false)
             return;

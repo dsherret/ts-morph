@@ -1,9 +1,9 @@
 import * as errors from "../../errors";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { JsxAttributeStructure } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class JsxAttributeStructurePrinter extends FactoryStructurePrinter<JsxAttributeStructure> {
+export class JsxAttributeStructurePrinter extends NodePrinter<JsxAttributeStructure> {
     protected printTextInternal(writer: CodeBlockWriter, structure: JsxAttributeStructure) {
         errors.throwIfTrue(structure.isSpreadAttribute, "Should not be a spread attribute when writing an attribute.");
         writer.write(structure.name);

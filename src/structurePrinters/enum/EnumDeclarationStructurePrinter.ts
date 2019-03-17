@@ -1,9 +1,9 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { EnumDeclarationStructure, OptionalKind } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
-export class EnumDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<EnumDeclarationStructure>> {
+export class EnumDeclarationStructurePrinter extends NodePrinter<OptionalKind<EnumDeclarationStructure>> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>> | undefined) {

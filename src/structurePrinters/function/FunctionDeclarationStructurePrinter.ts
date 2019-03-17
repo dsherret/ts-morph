@@ -2,9 +2,9 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, OptionalKind } from "../../structures";
 import { StringUtils, ObjectUtils, setValueIfUndefined } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<FunctionDeclarationStructure>> {
+export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKind<FunctionDeclarationStructure>> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
         super(factory);
     }

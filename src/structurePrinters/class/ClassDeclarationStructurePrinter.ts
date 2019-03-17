@@ -2,10 +2,10 @@
 import { StructurePrinterFactory } from "../../factories";
 import { ClassDeclarationStructure, OptionalKind } from "../../structures";
 import { ArrayUtils, StringUtils } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
-export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<ClassDeclarationStructure>> {
+export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<ClassDeclarationStructure>> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {

@@ -2,12 +2,12 @@
 import { WriterFunction } from "../../types";
 import { StringUtils } from "../../utils";
 import { ExportSpecifierStructure, ImportSpecifierStructure } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
 export type NamedImportExportSpecifierStructureToTextItem = WriterFunction | ImportSpecifierStructure | ExportSpecifierStructure | string;
 
-export class NamedImportExportSpecifierStructurePrinter extends FactoryStructurePrinter<NamedImportExportSpecifierStructureToTextItem> {
+export class NamedImportExportSpecifierStructurePrinter extends NodePrinter<NamedImportExportSpecifierStructureToTextItem> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
     printTextsWithBraces(writer: CodeBlockWriter, structures: ReadonlyArray<NamedImportExportSpecifierStructureToTextItem> | WriterFunction) {

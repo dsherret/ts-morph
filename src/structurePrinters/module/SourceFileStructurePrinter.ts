@@ -2,9 +2,9 @@
 import { StructurePrinterFactory } from "../../factories";
 import { SourceFileStructure } from "../../structures";
 import { ArrayUtils } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class SourceFileStructurePrinter extends FactoryStructurePrinter<SourceFileStructure> {
+export class SourceFileStructurePrinter extends NodePrinter<SourceFileStructure> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
         super(factory);
     }

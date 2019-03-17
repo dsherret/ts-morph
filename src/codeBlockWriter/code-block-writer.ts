@@ -34,9 +34,9 @@ declare class CodeBlockWriter {
     queueIndentationLevel(indentationLevel: number): this;
     /**
      * Queues the indentation level for the next lines written using the provided indentation text.
-     * @param indentationText - Gets the indentation level from the indentation text.
+     * @param whitespaceText - Gets the indentation level from the indentation text.
      */
-    queueIndentationLevel(indentationText: string): this;
+    queueIndentationLevel(whitespaceText: string): this;
     /**
      * Sets the current indentation level.
      * @param indentationLevel - Indentation level to be at.
@@ -44,9 +44,9 @@ declare class CodeBlockWriter {
     setIndentationLevel(indentationLevel: number): this;
     /**
      * Sets the current indentation using the provided indentation text.
-     * @param indentationText - Gets the indentation level from the indentation text.
+     * @param whitespaceText - Gets the indentation level from the indentation text.
      */
-    setIndentationLevel(indentationText: string): this;
+    setIndentationLevel(whitespaceText: string): this;
     /**
      * Gets the current indentation level.
      */
@@ -158,6 +158,10 @@ declare class CodeBlockWriter {
      * @param text - Text to write.
      */
     write(text: string): this;
+    /**
+     * Writes text to exit a comment if in a comment.
+     */
+    closeComment(): this;
     /**
      * Gets the length of the string in the writer.
      */

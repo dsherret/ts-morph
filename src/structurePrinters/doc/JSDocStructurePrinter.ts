@@ -2,9 +2,9 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { JSDocStructure } from "../../structures";
 import { WriterFunction } from "../../types";
 import { getTextFromStringOrWriter } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class JSDocStructurePrinter extends FactoryStructurePrinter<JSDocStructure | string | WriterFunction> {
+export class JSDocStructurePrinter extends NodePrinter<JSDocStructure | string | WriterFunction> {
     printDocs(writer: CodeBlockWriter, structures: ReadonlyArray<JSDocStructure | string | WriterFunction> | undefined) {
         if (structures == null)
             return;

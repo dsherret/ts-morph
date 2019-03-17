@@ -1,10 +1,10 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { NotImplementedError } from "../../errors";
 import { ParameterDeclarationStructure } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
-export class ParameterDeclarationStructurePrinter extends FactoryStructurePrinter<ParameterDeclarationStructure> {
+export class ParameterDeclarationStructurePrinter extends NodePrinter<ParameterDeclarationStructure> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<ParameterDeclarationStructure> | undefined) {

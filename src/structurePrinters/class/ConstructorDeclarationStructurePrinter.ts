@@ -2,9 +2,9 @@
 import { StructurePrinterFactory } from "../../factories";
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, OptionalKind } from "../../structures";
 import { ObjectUtils, setValueIfUndefined } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class ConstructorDeclarationStructurePrinter extends FactoryStructurePrinter<OptionalKind<ConstructorDeclarationStructure>> {
+export class ConstructorDeclarationStructurePrinter extends NodePrinter<OptionalKind<ConstructorDeclarationStructure>> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
         super(factory);
     }

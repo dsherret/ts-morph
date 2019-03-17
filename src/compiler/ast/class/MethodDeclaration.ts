@@ -94,9 +94,9 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
         const basePrototype = isOverload && hasImplementation ? MethodDeclarationOverloadBase.prototype : MethodDeclarationBase.prototype;
 
         return callBaseGetStructure<any>(basePrototype, this,
-            getSpecificStructure(this)) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;
+            getStructure(this)) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;
 
-        function getSpecificStructure(thisNode: MethodDeclaration) {
+        function getStructure(thisNode: MethodDeclaration) {
             // this is not the best typing... unit tests will catch issues though
             if (hasImplementation && isOverload)
                 return {};

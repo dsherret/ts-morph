@@ -1,10 +1,10 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { TypeParameterDeclarationStructure } from "../../structures";
 import { StringUtils } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
-export class TypeParameterDeclarationStructurePrinter extends FactoryStructurePrinter<TypeParameterDeclarationStructure | string> {
+export class TypeParameterDeclarationStructurePrinter extends NodePrinter<TypeParameterDeclarationStructure | string> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
     printTextsWithBrackets(writer: CodeBlockWriter, structures: ReadonlyArray<TypeParameterDeclarationStructure | string> | undefined) {

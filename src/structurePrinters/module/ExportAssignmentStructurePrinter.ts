@@ -1,9 +1,9 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { ExportAssignmentStructure, OptionalKind } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 
-export class ExportAssignmentStructurePrinter extends FactoryStructurePrinter<OptionalKind<ExportAssignmentStructure>> {
+export class ExportAssignmentStructurePrinter extends NodePrinter<OptionalKind<ExportAssignmentStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>> | undefined) {

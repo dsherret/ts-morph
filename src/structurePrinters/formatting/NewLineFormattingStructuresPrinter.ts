@@ -1,8 +1,8 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { StructurePrinter } from "../StructurePrinter";
+import { Printer } from "../Printer";
 
-export class NewLineFormattingStructuresPrinter<T> extends StructurePrinter<ReadonlyArray<T>> {
-    constructor(private readonly printer: StructurePrinter<T>) {
+export class NewLineFormattingStructuresPrinter<T> extends Printer<ReadonlyArray<T>> {
+    constructor(private readonly printer: Printer<T>) {
         super();
     }
 
@@ -10,10 +10,6 @@ export class NewLineFormattingStructuresPrinter<T> extends StructurePrinter<Read
         if (structures == null)
             return;
 
-        super.printText(writer, structures);
-    }
-
-    protected printTextInternal(writer: CodeBlockWriter, structures: ReadonlyArray<T>) {
         for (let i = 0; i < structures.length; i++) {
             writer.conditionalNewLine(i > 0);
             this.printer.printText(writer, structures[i]);

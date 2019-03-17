@@ -1,8 +1,8 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { JsxAttributeStructure, JsxSpreadAttributeStructure, JsxElementStructure } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class JsxElementStructurePrinter extends FactoryStructurePrinter<JsxElementStructure> {
+export class JsxElementStructurePrinter extends NodePrinter<JsxElementStructure> {
     protected printTextInternal(writer: CodeBlockWriter, structure: JsxElementStructure) {
         writer.write(`<${structure.name}`);
         if (structure.attributes)
