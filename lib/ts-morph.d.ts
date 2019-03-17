@@ -2525,24 +2525,24 @@ export interface ModuledNode {
      * Adds an import.
      * @param structure - Structure that represents the import.
      */
-    addImportDeclaration(structure: ImportDeclarationStructure): ImportDeclaration;
+    addImportDeclaration(structure: OptionalKind<ImportDeclarationStructure>): ImportDeclaration;
     /**
      * Adds imports.
      * @param structures - Structures that represent the imports.
      */
-    addImportDeclarations(structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
+    addImportDeclarations(structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>>): ImportDeclaration[];
     /**
      * Insert an import.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the import.
      */
-    insertImportDeclaration(index: number, structure: ImportDeclarationStructure): ImportDeclaration;
+    insertImportDeclaration(index: number, structure: OptionalKind<ImportDeclarationStructure>): ImportDeclaration;
     /**
      * Inserts imports.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the imports to insert.
      */
-    insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
+    insertImportDeclarations(index: number, structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>>): ImportDeclaration[];
     /**
      * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the import declaration by.
@@ -2571,24 +2571,24 @@ export interface ModuledNode {
      * Add export declarations.
      * @param structure - Structure that represents the export.
      */
-    addExportDeclaration(structure: ExportDeclarationStructure): ExportDeclaration;
+    addExportDeclaration(structure: OptionalKind<ExportDeclarationStructure>): ExportDeclaration;
     /**
      * Add export declarations.
      * @param structures - Structures that represent the exports.
      */
-    addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
+    addExportDeclarations(structures: ReadonlyArray<OptionalKind<ExportDeclarationStructure>>): ExportDeclaration[];
     /**
      * Insert an export declaration.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the export.
      */
-    insertExportDeclaration(index: number, structure: ExportDeclarationStructure): ExportDeclaration;
+    insertExportDeclaration(index: number, structure: OptionalKind<ExportDeclarationStructure>): ExportDeclaration;
     /**
      * Insert export declarations.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
+    insertExportDeclarations(index: number, structures: ReadonlyArray<OptionalKind<ExportDeclarationStructure>>): ExportDeclaration[];
     getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined;
     /**
      * Gets the first export declaration that matches a module specifier, or undefined if it doesn't exist.
@@ -2613,24 +2613,24 @@ export interface ModuledNode {
      * Add export assignments.
      * @param structure - Structure that represents the export.
      */
-    addExportAssignment(structure: ExportAssignmentStructure): ExportAssignment;
+    addExportAssignment(structure: OptionalKind<ExportAssignmentStructure>): ExportAssignment;
     /**
      * Add export assignments.
      * @param structures - Structures that represent the exports.
      */
-    addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
+    addExportAssignments(structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>>): ExportAssignment[];
     /**
      * Insert an export assignment.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the export.
      */
-    insertExportAssignment(index: number, structure: ExportAssignmentStructure): ExportAssignment;
+    insertExportAssignment(index: number, structure: OptionalKind<ExportAssignmentStructure>): ExportAssignment;
     /**
      * Insert export assignments into a file.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
+    insertExportAssignments(index: number, structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>>): ExportAssignment[];
     /**
      * Gets the first export assignment that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the export assignment by.
@@ -3100,24 +3100,24 @@ export interface TypeElementMemberedNode {
      * Add construct signature.
      * @param structure - Structure representing the construct signature.
      */
-    addConstructSignature(structure: ConstructSignatureDeclarationStructure): ConstructSignatureDeclaration;
+    addConstructSignature(structure: OptionalKind<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration;
     /**
      * Add construct signatures.
      * @param structures - Structures representing the construct signatures.
      */
-    addConstructSignatures(structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[];
+    addConstructSignatures(structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>): ConstructSignatureDeclaration[];
     /**
      * Insert construct signature.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the construct signature.
      */
-    insertConstructSignature(index: number, structure: ConstructSignatureDeclarationStructure): ConstructSignatureDeclaration;
+    insertConstructSignature(index: number, structure: OptionalKind<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration;
     /**
      * Insert construct signatures.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the construct signatures.
      */
-    insertConstructSignatures(index: number, structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[];
+    insertConstructSignatures(index: number, structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>): ConstructSignatureDeclaration[];
     /**
      * Gets the first construct signature by a find function.
      * @param findFunction - Function to find the construct signature by.
@@ -3136,24 +3136,24 @@ export interface TypeElementMemberedNode {
      * Add call signature.
      * @param structure - Structure representing the call signature.
      */
-    addCallSignature(structure: CallSignatureDeclarationStructure): CallSignatureDeclaration;
+    addCallSignature(structure: OptionalKind<CallSignatureDeclarationStructure>): CallSignatureDeclaration;
     /**
      * Add call signatures.
      * @param structures - Structures representing the call signatures.
      */
-    addCallSignatures(structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[];
+    addCallSignatures(structures: ReadonlyArray<OptionalKind<CallSignatureDeclarationStructure>>): CallSignatureDeclaration[];
     /**
      * Insert call signature.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the call signature.
      */
-    insertCallSignature(index: number, structure: CallSignatureDeclarationStructure): CallSignatureDeclaration;
+    insertCallSignature(index: number, structure: OptionalKind<CallSignatureDeclarationStructure>): CallSignatureDeclaration;
     /**
      * Insert call signatures.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the call signatures.
      */
-    insertCallSignatures(index: number, structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[];
+    insertCallSignatures(index: number, structures: ReadonlyArray<OptionalKind<CallSignatureDeclarationStructure>>): CallSignatureDeclaration[];
     /**
      * Gets the first call signature by a find function.
      * @param findFunction - Function to find the call signature by.
@@ -3172,24 +3172,24 @@ export interface TypeElementMemberedNode {
      * Add index signature.
      * @param structure - Structure representing the index signature.
      */
-    addIndexSignature(structure: IndexSignatureDeclarationStructure): IndexSignatureDeclaration;
+    addIndexSignature(structure: OptionalKind<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration;
     /**
      * Add index signatures.
      * @param structures - Structures representing the index signatures.
      */
-    addIndexSignatures(structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[];
+    addIndexSignatures(structures: ReadonlyArray<OptionalKind<IndexSignatureDeclarationStructure>>): IndexSignatureDeclaration[];
     /**
      * Insert index signature.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the index signature.
      */
-    insertIndexSignature(index: number, structure: IndexSignatureDeclarationStructure): IndexSignatureDeclaration;
+    insertIndexSignature(index: number, structure: OptionalKind<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration;
     /**
      * Insert index signatures.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the index signatures.
      */
-    insertIndexSignatures(index: number, structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[];
+    insertIndexSignatures(index: number, structures: ReadonlyArray<OptionalKind<IndexSignatureDeclarationStructure>>): IndexSignatureDeclaration[];
     /**
      * Gets the first index signature by a find function.
      * @param findFunction - Function to find the index signature by.
@@ -3208,24 +3208,24 @@ export interface TypeElementMemberedNode {
      * Add method.
      * @param structure - Structure representing the method.
      */
-    addMethod(structure: MethodSignatureStructure): MethodSignature;
+    addMethod(structure: OptionalKind<MethodSignatureStructure>): MethodSignature;
     /**
      * Add methods.
      * @param structures - Structures representing the methods.
      */
-    addMethods(structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[];
+    addMethods(structures: ReadonlyArray<OptionalKind<MethodSignatureStructure>>): MethodSignature[];
     /**
      * Insert method.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the method.
      */
-    insertMethod(index: number, structure: MethodSignatureStructure): MethodSignature;
+    insertMethod(index: number, structure: OptionalKind<MethodSignatureStructure>): MethodSignature;
     /**
      * Insert methods.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
-    insertMethods(index: number, structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[];
+    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodSignatureStructure>>): MethodSignature[];
     /**
      * Gets the first method by name.
      * @param name - Name.
@@ -3254,24 +3254,24 @@ export interface TypeElementMemberedNode {
      * Add property.
      * @param structure - Structure representing the property.
      */
-    addProperty(structure: PropertySignatureStructure): PropertySignature;
+    addProperty(structure: OptionalKind<PropertySignatureStructure>): PropertySignature;
     /**
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addProperties(structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[];
+    addProperties(structures: ReadonlyArray<OptionalKind<PropertySignatureStructure>>): PropertySignature[];
     /**
      * Insert property.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the property.
      */
-    insertProperty(index: number, structure: PropertySignatureStructure): PropertySignature;
+    insertProperty(index: number, structure: OptionalKind<PropertySignatureStructure>): PropertySignature;
     /**
      * Insert properties.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertProperties(index: number, structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[];
+    insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertySignatureStructure>>): PropertySignature[];
     /**
      * Gets the first property by name.
      * @param name - Name.
@@ -3464,24 +3464,24 @@ interface ClassLikeDeclarationBaseSpecific {
      * Adds a constructor.
      * @param structure - Structure of the constructor.
      */
-    addConstructor(structure?: ConstructorDeclarationStructure): ConstructorDeclaration;
+    addConstructor(structure?: OptionalKind<ConstructorDeclarationStructure>): ConstructorDeclaration;
     /**
      * Adds constructors.
      * @param structures - Structures of the constructor.
      */
-    addConstructors(structures: ReadonlyArray<ConstructorDeclarationStructure>): ConstructorDeclaration[];
+    addConstructors(structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>): ConstructorDeclaration[];
     /**
      * Inserts a constructor.
      * @param index - Child index to insert at.
      * @param structure - Structure of the constructor.
      */
-    insertConstructor(index: number, structure?: ConstructorDeclarationStructure): ConstructorDeclaration;
+    insertConstructor(index: number, structure?: OptionalKind<ConstructorDeclarationStructure>): ConstructorDeclaration;
     /**
      * Inserts constructors.
      * @param index - Child index to insert at.
      * @param structures - Structures of the constructor.
      */
-    insertConstructors(index: number, structures: ReadonlyArray<ConstructorDeclarationStructure>): ConstructorDeclaration[];
+    insertConstructors(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>): ConstructorDeclaration[];
     /**
      * Gets the constructor declarations.
      */
@@ -3490,68 +3490,68 @@ interface ClassLikeDeclarationBaseSpecific {
      * Add get accessor.
      * @param structure - Structure representing the get accessor.
      */
-    addGetAccessor(structure: GetAccessorDeclarationStructure): GetAccessorDeclaration;
+    addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
     /**
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addGetAccessors(structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
+    addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
     /**
      * Insert get accessor.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the get accessor.
      */
-    insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure): GetAccessorDeclaration;
+    insertGetAccessor(index: number, structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
     /**
      * Insert properties.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertGetAccessors(index: number, structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
+    insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
     /**
      * Add set accessor.
      * @param structure - Structure representing the set accessor.
      */
-    addSetAccessor(structure: SetAccessorDeclarationStructure): SetAccessorDeclaration;
+    addSetAccessor(structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
     /**
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addSetAccessors(structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
+    addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
     /**
      * Insert set accessor.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the set accessor.
      */
-    insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure): SetAccessorDeclaration;
+    insertSetAccessor(index: number, structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
     /**
      * Insert properties.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
+    insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
     /**
      * Add property.
      * @param structure - Structure representing the property.
      */
-    addProperty(structure: PropertyDeclarationStructure): PropertyDeclaration;
+    addProperty(structure: OptionalKind<PropertyDeclarationStructure>): PropertyDeclaration;
     /**
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addProperties(structures: ReadonlyArray<PropertyDeclarationStructure>): PropertyDeclaration[];
+    addProperties(structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>): PropertyDeclaration[];
     /**
      * Insert property.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the property.
      */
-    insertProperty(index: number, structure: PropertyDeclarationStructure): PropertyDeclaration;
+    insertProperty(index: number, structure: OptionalKind<PropertyDeclarationStructure>): PropertyDeclaration;
     /**
      * Insert properties.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertProperties(index: number, structures: ReadonlyArray<PropertyDeclarationStructure>): PropertyDeclaration[];
+    insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>): PropertyDeclaration[];
     /**
      * Gets the first instance property by name.
      * @param name - Name.
@@ -3676,24 +3676,24 @@ interface ClassLikeDeclarationBaseSpecific {
      * Add method.
      * @param structure - Structure representing the method.
      */
-    addMethod(structure: MethodDeclarationStructure): MethodDeclaration;
+    addMethod(structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
     /**
      * Add methods.
      * @param structures - Structures representing the methods.
      */
-    addMethods(structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
+    addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
     /**
      * Insert method.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the method.
      */
-    insertMethod(index: number, structure: MethodDeclarationStructure): MethodDeclaration;
+    insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
     /**
      * Insert methods.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
-    insertMethods(index: number, structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
+    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
     /**
      * Gets the first method declaration by name.
      * @param name - Name.
@@ -5506,134 +5506,134 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Adds a property assignment.
      * @param structure - Structure that represents the property assignment to add.
      */
-    addPropertyAssignment(structure: PropertyAssignmentStructure): PropertyAssignment;
+    addPropertyAssignment(structure: OptionalKind<PropertyAssignmentStructure>): PropertyAssignment;
     /**
      * Adds property assignments.
      * @param structures - Structure that represents the property assignments to add.
      */
-    addPropertyAssignments(structures: ReadonlyArray<PropertyAssignmentStructure>): PropertyAssignment[];
+    addPropertyAssignments(structures: ReadonlyArray<OptionalKind<PropertyAssignmentStructure>>): PropertyAssignment[];
     /**
      * Inserts a property assignment at the specified index.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the property assignment to insert.
      */
-    insertPropertyAssignment(index: number, structure: PropertyAssignmentStructure): PropertyAssignment;
+    insertPropertyAssignment(index: number, structure: OptionalKind<PropertyAssignmentStructure>): PropertyAssignment;
     /**
      * Inserts property assignments at the specified index.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the property assignments to insert.
      */
-    insertPropertyAssignments(index: number, structures: ReadonlyArray<PropertyAssignmentStructure>): PropertyAssignment[];
+    insertPropertyAssignments(index: number, structures: ReadonlyArray<OptionalKind<PropertyAssignmentStructure>>): PropertyAssignment[];
     /**
      * Adds a shorthand property assignment.
      * @param structure - Structure that represents the shorthand property assignment to add.
      */
-    addShorthandPropertyAssignment(structure: ShorthandPropertyAssignmentStructure): ShorthandPropertyAssignment;
+    addShorthandPropertyAssignment(structure: OptionalKind<ShorthandPropertyAssignmentStructure>): ShorthandPropertyAssignment;
     /**
      * Adds shorthand property assignments.
      * @param structures - Structure that represents the shorthand property assignments to add.
      */
-    addShorthandPropertyAssignments(structures: ReadonlyArray<ShorthandPropertyAssignmentStructure>): ShorthandPropertyAssignment[];
+    addShorthandPropertyAssignments(structures: ReadonlyArray<OptionalKind<ShorthandPropertyAssignmentStructure>>): ShorthandPropertyAssignment[];
     /**
      * Inserts a shorthand property assignment at the specified index.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the shorthand property assignment to insert.
      */
-    insertShorthandPropertyAssignment(index: number, structure: ShorthandPropertyAssignmentStructure): ShorthandPropertyAssignment;
+    insertShorthandPropertyAssignment(index: number, structure: OptionalKind<ShorthandPropertyAssignmentStructure>): ShorthandPropertyAssignment;
     /**
      * Inserts shorthand property assignments at the specified index.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the shorthand property assignments to insert.
      */
-    insertShorthandPropertyAssignments(index: number, structures: ReadonlyArray<ShorthandPropertyAssignmentStructure>): ShorthandPropertyAssignment[];
+    insertShorthandPropertyAssignments(index: number, structures: ReadonlyArray<OptionalKind<ShorthandPropertyAssignmentStructure>>): ShorthandPropertyAssignment[];
     /**
      * Adds a spread assignment.
      * @param structure - Structure that represents the spread assignment to add.
      */
-    addSpreadAssignment(structure: SpreadAssignmentStructure): SpreadAssignment;
+    addSpreadAssignment(structure: OptionalKind<SpreadAssignmentStructure>): SpreadAssignment;
     /**
      * Adds spread assignments.
      * @param structures - Structure that represents the spread assignments to add.
      */
-    addSpreadAssignments(structures: ReadonlyArray<SpreadAssignmentStructure>): SpreadAssignment[];
+    addSpreadAssignments(structures: ReadonlyArray<OptionalKind<SpreadAssignmentStructure>>): SpreadAssignment[];
     /**
      * Inserts a spread assignment at the specified index.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the spread assignment to insert.
      */
-    insertSpreadAssignment(index: number, structure: SpreadAssignmentStructure): SpreadAssignment;
+    insertSpreadAssignment(index: number, structure: OptionalKind<SpreadAssignmentStructure>): SpreadAssignment;
     /**
      * Inserts spread assignments at the specified index.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the spread assignments to insert.
      */
-    insertSpreadAssignments(index: number, structures: ReadonlyArray<SpreadAssignmentStructure>): SpreadAssignment[];
+    insertSpreadAssignments(index: number, structures: ReadonlyArray<OptionalKind<SpreadAssignmentStructure>>): SpreadAssignment[];
     /**
      * Adds a method.
      * @param structure - Structure that represents the method to add.
      */
-    addMethod(structure: MethodDeclarationStructure): MethodDeclaration;
+    addMethod(structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
     /**
      * Adds methods.
      * @param structures - Structure that represents the methods to add.
      */
-    addMethods(structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
+    addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
     /**
      * Inserts a method at the specified index.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the method to insert.
      */
-    insertMethod(index: number, structure: MethodDeclarationStructure): MethodDeclaration;
+    insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
     /**
      * Inserts methods at the specified index.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the methods to insert.
      */
-    insertMethods(index: number, structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
+    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
     /**
      * Adds a get accessor.
      * @param structure - Structure that represents the property assignment to add.
      */
-    addGetAccessor(structure: GetAccessorDeclarationStructure): GetAccessorDeclaration;
+    addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
     /**
      * Adds get accessors.
      * @param structures - Structure that represents the get accessors to add.
      */
-    addGetAccessors(structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
+    addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
     /**
      * Inserts a get accessor at the specified index.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the get accessor to insert.
      */
-    insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure): GetAccessorDeclaration;
+    insertGetAccessor(index: number, structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
     /**
      * Inserts get accessors at the specified index.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the get accessors to insert.
      */
-    insertGetAccessors(index: number, structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
+    insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
     /**
      * Adds a set accessor.
      * @param structure - Structure that represents the property assignment to add.
      */
-    addSetAccessor(structure: SetAccessorDeclarationStructure): SetAccessorDeclaration;
+    addSetAccessor(structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
     /**
      * Adds set accessors.
      * @param structures - Structure that represents the set accessors to add.
      */
-    addSetAccessors(structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
+    addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
     /**
      * Inserts a set accessor at the specified index.
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the set accessor to insert.
      */
-    insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure): SetAccessorDeclaration;
+    insertSetAccessor(index: number, structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
     /**
      * Inserts set accessors at the specified index.
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the set accessors to insert.
      */
-    insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
+    insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
 }
 
 declare const PropertyAssignmentBase: Constructor<InitializerExpressionGetableNode> & Constructor<QuestionTokenableNode> & Constructor<PropertyNamedNode> & typeof Node;
@@ -7967,24 +7967,24 @@ export interface StatementedNode {
      * Adds an class declaration as a child.
      * @param structure - Structure of the class declaration to add.
      */
-    addClass(structure: ClassDeclarationStructure): ClassDeclaration;
+    addClass(structure: OptionalKind<ClassDeclarationStructure>): ClassDeclaration;
     /**
      * Adds class declarations as a child.
      * @param structures - Structures of the class declarations to add.
      */
-    addClasses(structures: ReadonlyArray<ClassDeclarationStructure>): ClassDeclaration[];
+    addClasses(structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>>): ClassDeclaration[];
     /**
      * Inserts an class declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the class declaration to insert.
      */
-    insertClass(index: number, structure: ClassDeclarationStructure): ClassDeclaration;
+    insertClass(index: number, structure: OptionalKind<ClassDeclarationStructure>): ClassDeclaration;
     /**
      * Inserts class declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the class declarations to insert.
      */
-    insertClasses(index: number, structures: ReadonlyArray<ClassDeclarationStructure>): ClassDeclaration[];
+    insertClasses(index: number, structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>>): ClassDeclaration[];
     /**
      * Gets the direct class declaration children.
      */
@@ -8013,24 +8013,24 @@ export interface StatementedNode {
      * Adds an enum declaration as a child.
      * @param structure - Structure of the enum declaration to add.
      */
-    addEnum(structure: EnumDeclarationStructure): EnumDeclaration;
+    addEnum(structure: OptionalKind<EnumDeclarationStructure>): EnumDeclaration;
     /**
      * Adds enum declarations as a child.
      * @param structures - Structures of the enum declarations to add.
      */
-    addEnums(structures: ReadonlyArray<EnumDeclarationStructure>): EnumDeclaration[];
+    addEnums(structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>>): EnumDeclaration[];
     /**
      * Inserts an enum declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the enum declaration to insert.
      */
-    insertEnum(index: number, structure: EnumDeclarationStructure): EnumDeclaration;
+    insertEnum(index: number, structure: OptionalKind<EnumDeclarationStructure>): EnumDeclaration;
     /**
      * Inserts enum declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the enum declarations to insert.
      */
-    insertEnums(index: number, structures: ReadonlyArray<EnumDeclarationStructure>): EnumDeclaration[];
+    insertEnums(index: number, structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>>): EnumDeclaration[];
     /**
      * Gets the direct enum declaration children.
      */
@@ -8059,24 +8059,24 @@ export interface StatementedNode {
      * Adds a function declaration as a child.
      * @param structure - Structure of the function declaration to add.
      */
-    addFunction(structure: FunctionDeclarationStructure): FunctionDeclaration;
+    addFunction(structure: OptionalKind<FunctionDeclarationStructure>): FunctionDeclaration;
     /**
      * Adds function declarations as a child.
      * @param structures - Structures of the function declarations to add.
      */
-    addFunctions(structures: ReadonlyArray<FunctionDeclarationStructure>): FunctionDeclaration[];
+    addFunctions(structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>>): FunctionDeclaration[];
     /**
      * Inserts an function declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the function declaration to insert.
      */
-    insertFunction(index: number, structure: FunctionDeclarationStructure): FunctionDeclaration;
+    insertFunction(index: number, structure: OptionalKind<FunctionDeclarationStructure>): FunctionDeclaration;
     /**
      * Inserts function declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the function declarations to insert.
      */
-    insertFunctions(index: number, structures: ReadonlyArray<FunctionDeclarationStructure>): FunctionDeclaration[];
+    insertFunctions(index: number, structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>>): FunctionDeclaration[];
     /**
      * Gets the direct function declaration children.
      */
@@ -8105,24 +8105,24 @@ export interface StatementedNode {
      * Adds a interface declaration as a child.
      * @param structure - Structure of the interface declaration to add.
      */
-    addInterface(structure: InterfaceDeclarationStructure): InterfaceDeclaration;
+    addInterface(structure: OptionalKind<InterfaceDeclarationStructure>): InterfaceDeclaration;
     /**
      * Adds interface declarations as a child.
      * @param structures - Structures of the interface declarations to add.
      */
-    addInterfaces(structures: ReadonlyArray<InterfaceDeclarationStructure>): InterfaceDeclaration[];
+    addInterfaces(structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>>): InterfaceDeclaration[];
     /**
      * Inserts an interface declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the interface declaration to insert.
      */
-    insertInterface(index: number, structure: InterfaceDeclarationStructure): InterfaceDeclaration;
+    insertInterface(index: number, structure: OptionalKind<InterfaceDeclarationStructure>): InterfaceDeclaration;
     /**
      * Inserts interface declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the interface declarations to insert.
      */
-    insertInterfaces(index: number, structures: ReadonlyArray<InterfaceDeclarationStructure>): InterfaceDeclaration[];
+    insertInterfaces(index: number, structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>>): InterfaceDeclaration[];
     /**
      * Gets the direct interface declaration children.
      */
@@ -8151,24 +8151,24 @@ export interface StatementedNode {
      * Adds a namespace declaration as a child.
      * @param structure - Structure of the namespace declaration to add.
      */
-    addNamespace(structure: NamespaceDeclarationStructure): NamespaceDeclaration;
+    addNamespace(structure: OptionalKind<NamespaceDeclarationStructure>): NamespaceDeclaration;
     /**
      * Adds namespace declarations as a child.
      * @param structures - Structures of the namespace declarations to add.
      */
-    addNamespaces(structures: ReadonlyArray<NamespaceDeclarationStructure>): NamespaceDeclaration[];
+    addNamespaces(structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[];
     /**
      * Inserts an namespace declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
-    insertNamespace(index: number, structure: NamespaceDeclarationStructure): NamespaceDeclaration;
+    insertNamespace(index: number, structure: OptionalKind<NamespaceDeclarationStructure>): NamespaceDeclaration;
     /**
      * Inserts namespace declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
-    insertNamespaces(index: number, structures: ReadonlyArray<NamespaceDeclarationStructure>): NamespaceDeclaration[];
+    insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[];
     /**
      * Gets the direct namespace declaration children.
      */
@@ -8197,24 +8197,24 @@ export interface StatementedNode {
      * Adds a type alias declaration as a child.
      * @param structure - Structure of the type alias declaration to add.
      */
-    addTypeAlias(structure: TypeAliasDeclarationStructure): TypeAliasDeclaration;
+    addTypeAlias(structure: OptionalKind<TypeAliasDeclarationStructure>): TypeAliasDeclaration;
     /**
      * Adds type alias declarations as a child.
      * @param structures - Structures of the type alias declarations to add.
      */
-    addTypeAliases(structures: ReadonlyArray<TypeAliasDeclarationStructure>): TypeAliasDeclaration[];
+    addTypeAliases(structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>>): TypeAliasDeclaration[];
     /**
      * Inserts an type alias declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the type alias declaration to insert.
      */
-    insertTypeAlias(index: number, structure: TypeAliasDeclarationStructure): TypeAliasDeclaration;
+    insertTypeAlias(index: number, structure: OptionalKind<TypeAliasDeclarationStructure>): TypeAliasDeclaration;
     /**
      * Inserts type alias declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the type alias declarations to insert.
      */
-    insertTypeAliases(index: number, structures: ReadonlyArray<TypeAliasDeclarationStructure>): TypeAliasDeclaration[];
+    insertTypeAliases(index: number, structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>>): TypeAliasDeclaration[];
     /**
      * Gets the direct type alias declaration children.
      */
@@ -8243,22 +8243,22 @@ export interface StatementedNode {
      * Adds a variable statement.
      * @param structure - Structure of the variable statement.
      */
-    addVariableStatement(structure: VariableStatementStructure): VariableStatement;
+    addVariableStatement(structure: OptionalKind<VariableStatementStructure>): VariableStatement;
     /**
      * Adds variable statements.
      * @param structures - Structures of the variable statements.
      */
-    addVariableStatements(structures: ReadonlyArray<VariableStatementStructure>): VariableStatement[];
+    addVariableStatements(structures: ReadonlyArray<OptionalKind<VariableStatementStructure>>): VariableStatement[];
     /**
      * Inserts a variable statement.
      * @param structure - Structure of the variable statement.
      */
-    insertVariableStatement(index: number, structure: VariableStatementStructure): VariableStatement;
+    insertVariableStatement(index: number, structure: OptionalKind<VariableStatementStructure>): VariableStatement;
     /**
      * Inserts variable statements.
      * @param structures - Structures of the variable statements.
      */
-    insertVariableStatements(index: number, structures: ReadonlyArray<VariableStatementStructure>): VariableStatement[];
+    insertVariableStatements(index: number, structures: ReadonlyArray<OptionalKind<VariableStatementStructure>>): VariableStatement[];
     /**
      * Gets the direct variable statement children.
      */
@@ -8764,7 +8764,7 @@ export declare class Signature {
     /**
      * Gets the signature's declaration.
      */
-    getDeclaration(): MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | ArrowFunction | FunctionDeclaration | JSDocFunctionType;
+    getDeclaration(): ArrowFunction | MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | FunctionDeclaration | JSDocFunctionType;
 }
 
 export declare class Symbol {
@@ -10175,8 +10175,8 @@ export interface JSDocableNodeStructure {
 }
 
 export interface ModuledNodeStructure {
-    imports?: ImportDeclarationStructure[];
-    exports?: ExportDeclarationStructure[];
+    imports?: OptionalKind<ImportDeclarationStructure>[];
+    exports?: OptionalKind<ExportDeclarationStructure>[];
 }
 export interface BindingNamedNodeStructure {
     name: string;
@@ -10227,11 +10227,11 @@ export interface TypedNodeStructure {
 }
 
 export interface TypeElementMemberedNodeStructure {
-    callSignatures?: CallSignatureDeclarationStructure[];
-    constructSignatures?: ConstructSignatureDeclarationStructure[];
-    indexSignatures?: IndexSignatureDeclarationStructure[];
-    methods?: MethodSignatureStructure[];
-    properties?: PropertySignatureStructure[];
+    callSignatures?: OptionalKind<CallSignatureDeclarationStructure>[];
+    constructSignatures?: OptionalKind<ConstructSignatureDeclarationStructure>[];
+    indexSignatures?: OptionalKind<IndexSignatureDeclarationStructure>[];
+    methods?: OptionalKind<MethodSignatureStructure>[];
+    properties?: OptionalKind<PropertySignatureStructure>[];
 }
 
 export interface TypeParameteredNodeStructure {
@@ -10243,14 +10243,14 @@ export interface ClassLikeDeclarationBaseStructure extends NameableNodeStructure
 
 interface ClassLikeDeclarationBaseSpecificStructure {
     extends?: string | WriterFunction;
-    ctors?: ConstructorDeclarationStructure[];
-    properties?: PropertyDeclarationStructure[];
-    getAccessors?: GetAccessorDeclarationStructure[];
-    setAccessors?: SetAccessorDeclarationStructure[];
-    methods?: MethodDeclarationStructure[];
+    ctors?: OptionalKind<ConstructorDeclarationStructure>[];
+    properties?: OptionalKind<PropertyDeclarationStructure>[];
+    getAccessors?: OptionalKind<GetAccessorDeclarationStructure>[];
+    setAccessors?: OptionalKind<SetAccessorDeclarationStructure>[];
+    methods?: OptionalKind<MethodDeclarationStructure>[];
 }
 
-export interface ClassDeclarationStructure extends ClassLikeDeclarationBaseStructure, ClassDeclarationSpecificStructure, AmbientableNodeStructure, ExportableNodeStructure {
+export interface ClassDeclarationStructure extends Structure, ClassLikeDeclarationBaseStructure, ClassDeclarationSpecificStructure, AmbientableNodeStructure, ExportableNodeStructure {
     /**
      * The class name.
      * @remarks Can be undefined. For example: `export default class { ... }`
@@ -10258,48 +10258,51 @@ export interface ClassDeclarationStructure extends ClassLikeDeclarationBaseStruc
     name?: string;
 }
 
-interface ClassDeclarationSpecificStructure {
+interface ClassDeclarationSpecificStructure extends KindedStructure<StructureKind.Class> {
 }
 
-export interface ConstructorDeclarationStructure extends ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
+export interface ConstructorDeclarationStructure extends Structure, ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
 }
 
-interface ConstructorDeclarationSpecificStructure {
+interface ConstructorDeclarationSpecificStructure extends KindedStructure<StructureKind.Constructor> {
     overloads?: ConstructorDeclarationOverloadStructure[];
 }
 
-export interface ConstructorDeclarationOverloadStructure extends ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
+export interface ConstructorDeclarationOverloadStructure extends Structure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
 }
 
-export interface GetAccessorDeclarationStructure extends GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
+export interface GetAccessorDeclarationStructure extends Structure, GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
 }
 
-interface GetAccessorDeclarationSpecificStructure {
+interface GetAccessorDeclarationSpecificStructure extends KindedStructure<StructureKind.GetAccessor> {
 }
 
-export interface MethodDeclarationStructure extends MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure, QuestionTokenableNodeStructure {
+export interface MethodDeclarationStructure extends Structure, MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure, QuestionTokenableNodeStructure {
 }
 
-interface MethodDeclarationSpecificStructure {
+interface MethodDeclarationSpecificStructure extends KindedStructure<StructureKind.Method> {
     overloads?: MethodDeclarationOverloadStructure[];
 }
 
-export interface MethodDeclarationOverloadStructure extends StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, QuestionTokenableNodeStructure {
+export interface MethodDeclarationOverloadStructure extends Structure, StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, QuestionTokenableNodeStructure {
 }
 
-export interface PropertyDeclarationStructure extends PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure {
+export interface PropertyDeclarationStructure extends Structure, PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure {
 }
 
-interface PropertyDeclarationSpecificStructure {
+interface PropertyDeclarationSpecificStructure extends KindedStructure<StructureKind.Property> {
 }
 
-export interface SetAccessorDeclarationStructure extends SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
+export interface SetAccessorDeclarationStructure extends Structure, SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
 }
 
-interface SetAccessorDeclarationSpecificStructure {
+interface SetAccessorDeclarationSpecificStructure extends KindedStructure<StructureKind.SetAccessor> {
 }
 
-export interface DecoratorStructure {
+export interface DecoratorStructure extends Structure, DecoratorSpecificStructure {
+}
+
+interface DecoratorSpecificStructure {
     name: string;
     /**
      * Arguments for a decorator factory.
@@ -10309,7 +10312,10 @@ export interface DecoratorStructure {
     typeArguments?: string[];
 }
 
-export interface JSDocStructure {
+export interface JSDocStructure extends Structure, JSDocSpecificStructure {
+}
+
+interface JSDocSpecificStructure {
     description: string | WriterFunction;
 }
 
@@ -10317,96 +10323,99 @@ export interface ExpressionedNodeStructure {
     expression: string | WriterFunction;
 }
 
-export interface PropertyAssignmentStructure extends PropertyAssignmentSpecificStructure, PropertyNamedNodeStructure {
+export interface PropertyAssignmentStructure extends Structure, PropertyAssignmentSpecificStructure, PropertyNamedNodeStructure {
 }
 
-interface PropertyAssignmentSpecificStructure {
+interface PropertyAssignmentSpecificStructure extends KindedStructure<StructureKind.PropertyAssignment> {
     initializer: string | WriterFunction;
 }
 
-export interface ShorthandPropertyAssignmentStructure extends ShorthandPropertyAssignmentSpecificStructure, NamedNodeStructure {
+export interface ShorthandPropertyAssignmentStructure extends Structure, ShorthandPropertyAssignmentSpecificStructure, NamedNodeStructure {
 }
 
-interface ShorthandPropertyAssignmentSpecificStructure {
+interface ShorthandPropertyAssignmentSpecificStructure extends KindedStructure<StructureKind.ShorthandPropertyAssignment> {
 }
 
-export interface SpreadAssignmentStructure extends ExpressionedNodeStructure {
+export interface SpreadAssignmentStructure extends Structure, SpreadAssignmentSpecificStructure, ExpressionedNodeStructure {
 }
 
-export interface EnumDeclarationStructure extends NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+interface SpreadAssignmentSpecificStructure extends KindedStructure<StructureKind.SpreadAssignment> {
 }
 
-interface EnumDeclarationSpecificStructure {
+export interface EnumDeclarationStructure extends Structure, NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+}
+
+interface EnumDeclarationSpecificStructure extends KindedStructure<StructureKind.Enum> {
     isConst?: boolean;
     members?: EnumMemberStructure[];
 }
 
-export interface EnumMemberStructure extends EnumMemberSpecificStructure, PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure {
+export interface EnumMemberStructure extends Structure, EnumMemberSpecificStructure, PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure {
 }
 
 interface EnumMemberSpecificStructure {
     value?: number | string;
 }
 
-export interface FunctionDeclarationStructure extends FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodyableNodeStructure {
+export interface FunctionDeclarationStructure extends Structure, FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodyableNodeStructure {
 }
 
-interface FunctionDeclarationSpecificStructure {
+interface FunctionDeclarationSpecificStructure extends KindedStructure<StructureKind.Function> {
     overloads?: FunctionDeclarationOverloadStructure[];
 }
 
-export interface FunctionDeclarationOverloadStructure extends SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+export interface FunctionDeclarationOverloadStructure extends Structure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
 }
 
 export interface FunctionLikeDeclarationStructure extends SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, StatementedNodeStructure {
 }
 
-export interface ParameterDeclarationStructure extends BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure {
+export interface ParameterDeclarationStructure extends Structure, BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure {
 }
 
 interface ParameterDeclarationSpecificStructure {
     isRestParameter?: boolean;
 }
 
-export interface CallSignatureDeclarationStructure extends CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+export interface CallSignatureDeclarationStructure extends Structure, CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
 }
 
-interface CallSignatureDeclarationSpecificStructure {
+interface CallSignatureDeclarationSpecificStructure extends KindedStructure<StructureKind.CallSignature> {
 }
 
-export interface ConstructSignatureDeclarationStructure extends ConstructSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+export interface ConstructSignatureDeclarationStructure extends Structure, ConstructSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
 }
 
-interface ConstructSignatureDeclarationSpecificStructure {
+interface ConstructSignatureDeclarationSpecificStructure extends KindedStructure<StructureKind.ConstructSignature> {
 }
 
-export interface IndexSignatureDeclarationStructure extends IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, ReturnTypedNodeStructure {
+export interface IndexSignatureDeclarationStructure extends Structure, IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, ReturnTypedNodeStructure {
 }
 
-interface IndexSignatureDeclarationSpecificStructure {
+interface IndexSignatureDeclarationSpecificStructure extends KindedStructure<StructureKind.IndexSignature> {
     keyName?: string;
     keyType?: string;
 }
 
-export interface InterfaceDeclarationStructure extends NamedNodeStructure, InterfaceDeclarationSpecificStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, TypeElementMemberedNodeStructure {
+export interface InterfaceDeclarationStructure extends Structure, NamedNodeStructure, InterfaceDeclarationSpecificStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, TypeElementMemberedNodeStructure {
 }
 
-interface InterfaceDeclarationSpecificStructure {
+interface InterfaceDeclarationSpecificStructure extends KindedStructure<StructureKind.Interface> {
 }
 
-export interface MethodSignatureStructure extends PropertyNamedNodeStructure, MethodSignatureSpecificStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+export interface MethodSignatureStructure extends Structure, PropertyNamedNodeStructure, MethodSignatureSpecificStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
 }
 
-interface MethodSignatureSpecificStructure {
+interface MethodSignatureSpecificStructure extends KindedStructure<StructureKind.MethodSignature> {
 }
 
-export interface PropertySignatureStructure extends PropertySignatureSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure {
+export interface PropertySignatureStructure extends Structure, PropertySignatureSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure {
 }
 
-interface PropertySignatureSpecificStructure {
+interface PropertySignatureSpecificStructure extends KindedStructure<StructureKind.PropertySignature> {
 }
 
-export interface JsxAttributeStructure extends JsxAttributeSpecificStructure, NamedNodeStructure {
+export interface JsxAttributeStructure extends Structure, JsxAttributeSpecificStructure, NamedNodeStructure {
 }
 
 interface JsxAttributeSpecificStructure {
@@ -10414,47 +10423,71 @@ interface JsxAttributeSpecificStructure {
     initializer?: string;
 }
 
-export interface JsxElementStructure {
+export interface JsxElementStructure extends Structure, JsxElementSpecificStructure {
+}
+
+interface JsxElementSpecificStructure {
     name: string;
     attributes?: (JsxAttributeStructure | JsxSpreadAttributeStructure)[];
     isSelfClosing?: boolean;
     children?: JsxElementStructure[];
     bodyText?: string;
 }
-export interface JsxSpreadAttributeStructure {
+
+export interface JsxSpreadAttributeStructure extends Structure, JsxSpreadAttributeSpecificStructure {
+}
+
+interface JsxSpreadAttributeSpecificStructure {
     isSpreadAttribute: true;
     expression: string;
 }
 
-export interface ExportAssignmentStructure {
+export interface ExportAssignmentStructure extends Structure, ExportAssignmentSpecificStructure {
+}
+
+interface ExportAssignmentSpecificStructure extends KindedStructure<StructureKind.ExportAssignment> {
     isExportEquals?: boolean;
     expression: string | WriterFunction;
 }
 
-export interface ExportDeclarationStructure {
+export interface ExportDeclarationStructure extends Structure, ExportDeclarationSpecificStructure {
+}
+
+interface ExportDeclarationSpecificStructure extends KindedStructure<StructureKind.ExportDeclaration> {
     namedExports?: (string | ExportSpecifierStructure | WriterFunction)[] | WriterFunction;
     moduleSpecifier?: string;
 }
-export interface ExportSpecifierStructure {
+
+export interface ExportSpecifierStructure extends Structure, ExportSpecifierSpecificStructure {
+}
+
+interface ExportSpecifierSpecificStructure {
     name: string;
     alias?: string;
 }
 
-export interface ImportDeclarationStructure {
+export interface ImportDeclarationStructure extends Structure, ImportDeclarationSpecificStructure {
+}
+
+interface ImportDeclarationSpecificStructure extends KindedStructure<StructureKind.ImportDeclaration> {
     defaultImport?: string;
     namespaceImport?: string;
     namedImports?: (ImportSpecifierStructure | string | WriterFunction)[] | WriterFunction;
     moduleSpecifier: string;
 }
-export interface ImportSpecifierStructure {
+
+export interface ImportSpecifierStructure extends Structure, ImportSpecifierSpecificStructure {
+}
+
+interface ImportSpecifierSpecificStructure {
     name: string;
     alias?: string;
 }
 
-export interface NamespaceDeclarationStructure extends NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure, BodiedNodeStructure, ModuledNodeStructure {
+export interface NamespaceDeclarationStructure extends Structure, NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure, BodiedNodeStructure, ModuledNodeStructure {
 }
 
-interface NamespaceDeclarationSpecificStructure {
+interface NamespaceDeclarationSpecificStructure extends KindedStructure<StructureKind.NamespaceDeclaration> {
     /**
      * The namespace declaration kind.
      *
@@ -10463,7 +10496,7 @@ interface NamespaceDeclarationSpecificStructure {
     declarationKind?: NamespaceDeclarationKind;
 }
 
-export interface SourceFileStructure extends SourceFileSpecificStructure, StatementedNodeStructure, ModuledNodeStructure {
+export interface SourceFileStructure extends Structure, SourceFileSpecificStructure, StatementedNodeStructure, ModuledNodeStructure {
     bodyText?: string | WriterFunction;
 }
 
@@ -10471,15 +10504,15 @@ interface SourceFileSpecificStructure {
 }
 
 export interface StatementedNodeStructure {
-    classes?: ClassDeclarationStructure[];
-    enums?: EnumDeclarationStructure[];
-    functions?: FunctionDeclarationStructure[];
-    interfaces?: InterfaceDeclarationStructure[];
-    namespaces?: NamespaceDeclarationStructure[];
-    typeAliases?: TypeAliasDeclarationStructure[];
+    classes?: OptionalKind<ClassDeclarationStructure>[];
+    enums?: OptionalKind<EnumDeclarationStructure>[];
+    functions?: OptionalKind<FunctionDeclarationStructure>[];
+    interfaces?: OptionalKind<InterfaceDeclarationStructure>[];
+    namespaces?: OptionalKind<NamespaceDeclarationStructure>[];
+    typeAliases?: OptionalKind<TypeAliasDeclarationStructure>[];
 }
 
-export interface VariableDeclarationListStructure extends VariableDeclarationListSpecificStructure {
+export interface VariableDeclarationListStructure extends Structure, VariableDeclarationListSpecificStructure {
 }
 
 interface VariableDeclarationListSpecificStructure {
@@ -10487,34 +10520,74 @@ interface VariableDeclarationListSpecificStructure {
     declarations: VariableDeclarationStructure[];
 }
 
-export interface VariableDeclarationStructure extends VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure, ExclamationTokenableNodeStructure {
+export interface VariableDeclarationStructure extends Structure, VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure, ExclamationTokenableNodeStructure {
 }
 
 interface VariableDeclarationSpecificStructure {
 }
 
-export interface VariableStatementStructure extends VariableStatementSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+export interface VariableStatementStructure extends Structure, VariableStatementSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
 }
 
-interface VariableStatementSpecificStructure {
+interface VariableStatementSpecificStructure extends KindedStructure<StructureKind.VariableStatement> {
     declarationKind?: VariableDeclarationKind;
     declarations: VariableDeclarationStructure[];
 }
 
-export interface TypeAliasDeclarationStructure extends TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+export interface TypeAliasDeclarationStructure extends Structure, TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
     type: string | WriterFunction;
 }
 
-interface TypeAliasDeclarationSpecificStructure {
+interface TypeAliasDeclarationSpecificStructure extends KindedStructure<StructureKind.TypeAlias> {
     type: string | WriterFunction;
 }
 
-export interface TypeParameterDeclarationStructure extends TypeParameterDeclarationSpecificStructure, NamedNodeStructure {
+export interface TypeParameterDeclarationStructure extends Structure, TypeParameterDeclarationSpecificStructure, NamedNodeStructure {
 }
 
 interface TypeParameterDeclarationSpecificStructure {
     constraint?: string | WriterFunction;
     default?: string | WriterFunction;
+}
+
+export declare type OptionalKind<TStructure extends {
+    kind?: StructureKind;
+}> = Omit<TStructure, "kind"> & Partial<Pick<TStructure, "kind">>;
+
+export interface Structure {
+    /** Leading comments or whitespace. */
+    leadingTrivia?: string | WriterFunction | (string | WriterFunction)[];
+    /** Trailing comments or whitespace. */
+    trailingTrivia?: string | WriterFunction | (string | WriterFunction)[];
+}
+
+export interface KindedStructure<TKind extends StructureKind> {
+    kind: TKind;
+}
+export declare enum StructureKind {
+    Class = 0,
+    Constructor = 1,
+    GetAccessor = 2,
+    SetAccessor = 3,
+    Property = 4,
+    Enum = 5,
+    Function = 6,
+    CallSignature = 7,
+    ConstructSignature = 8,
+    IndexSignature = 9,
+    Interface = 10,
+    Method = 11,
+    MethodSignature = 12,
+    PropertySignature = 13,
+    ExportAssignment = 14,
+    ExportDeclaration = 15,
+    ImportDeclaration = 16,
+    NamespaceDeclaration = 17,
+    VariableStatement = 18,
+    TypeAlias = 19,
+    PropertyAssignment = 20,
+    ShorthandPropertyAssignment = 21,
+    SpreadAssignment = 22
 }
 
 export { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind };

@@ -690,6 +690,10 @@ code-block-writer@^7.2.2:
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.2.2.tgz#14ec0120de9a65d2cc5d214561d51d1660dddbb1"
 
+code-block-writer@^7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.3.0.tgz#9a70ca48865d3a733347da31c74104eed734929f"
+
 code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
@@ -3836,9 +3840,9 @@ ts-morph@1.0.0:
     tslib "^1.9.0"
     typescript "^3.0.1"
 
-ts-nameof@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/ts-nameof/-/ts-nameof-3.0.0.tgz#83e4af26d3c8dfcbf22071f2e755cb1314c02521"
+ts-nameof@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/ts-nameof/-/ts-nameof-3.0.3.tgz#373d489553b6cdb73f9bdaeda1b6bc91e9af3d7e"
   dependencies:
     glob "^7.1.3"
 

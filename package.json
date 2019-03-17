@@ -69,7 +69,7 @@
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
-    "code-block-writer": "^7.2.2",
+    "code-block-writer": "7.3.0",
     "fs-extra": "^7.0.0",
     "glob-parent": "^3.1.0",
     "globby": "^8.0.1",
@@ -102,7 +102,7 @@
     "shelljs": "^0.8.2",
     "shx": "^0.3.2",
     "source-map-support": "^0.5.5",
-    "ts-nameof": "^3.0.0",
+    "ts-nameof": "^3.0.3",
     "ts-node": "7.0.0",
     "ts-morph": "1.0.0",
     "tslint": "^5.11.0",
