@@ -83,13 +83,14 @@ Create source files based on an object that looks like the AST of a source file:
 
 ```ts
 const sourceFile = project.createSourceFile("path/to/myStructureFile.ts", {
-    enums: [{
+    statements: [{
+        kind: StructureKind.Enum,
         name: "MyEnum",
         members: [{
             name: "member"
         }]
-    }],
-    classes: [{
+    }, {
+        kind: StructureKind.Class,
         name: "MyClass",
         // etc...
     }]

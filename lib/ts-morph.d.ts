@@ -5859,9 +5859,9 @@ export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     getEqualsGreaterThan(): Node<ts.Token<SyntaxKind.EqualsGreaterThanToken>>;
 }
 
-declare const FunctionDeclarationBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<FunctionLikeDeclaration> & Constructor<StatementedNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NameableNode> & typeof Node;
+declare const FunctionDeclarationBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<FunctionLikeDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NameableNode> & typeof Node;
 
-declare const FunctionDeclarationOverloadBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & Constructor<StatementedNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Node;
+declare const FunctionDeclarationOverloadBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Node;
 
 export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
@@ -6195,19 +6195,19 @@ export interface JsxAttributedNode {
     /**
      * Adds an attribute into the element.
      */
-    addAttribute(attribute: JsxAttributeStructure | JsxSpreadAttributeStructure): JsxAttributeLike;
+    addAttribute(attribute: OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>): JsxAttributeLike;
     /**
      * Adds attributes into the element.
      */
-    addAttributes(attributes: ReadonlyArray<JsxAttributeStructure | JsxSpreadAttributeStructure>): JsxAttributeLike[];
+    addAttributes(attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>): JsxAttributeLike[];
     /**
      * Inserts an attribute into the element.
      */
-    insertAttribute(index: number, attribute: JsxAttributeStructure | JsxSpreadAttributeStructure): JsxAttributeLike;
+    insertAttribute(index: number, attribute: OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>): JsxAttributeLike;
     /**
      * Inserts attributes into the element.
      */
-    insertAttributes(index: number, attributes: ReadonlyArray<JsxAttributeStructure | JsxSpreadAttributeStructure>): JsxAttributeLike[];
+    insertAttributes(index: number, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>): JsxAttributeLike[];
 }
 
 declare type JsxAttributedNodeExtensionType = Node<ts.Node & {
@@ -6356,11 +6356,11 @@ export declare class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
      */
-    set(structure: Partial<JsxElementStructure>): this;
+    set(structure: Partial<JsxSelfClosingElementStructure>): this;
     /**
      * Gets the structure equivalent to this node.
      */
-    getStructure(): JsxElementStructure;
+    getStructure(): JsxSelfClosingElementStructure;
 }
 
 declare const JsxSpreadAttributeBase: typeof Node;
@@ -10131,6 +10131,8 @@ export declare abstract class SettingsContainer<T extends object> {
      */
     set(settings: Partial<T>): void;
 }
+
+export declare type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | NamespaceDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
 export interface AbstractableNodeStructure {
     isAbstract?: boolean;
 }
@@ -10142,14 +10144,6 @@ export interface AsyncableNodeStructure {
 }
 export interface AwaitableNodeStructure {
     isAwaited?: boolean;
-}
-
-export interface BodiedNodeStructure {
-    bodyText?: string | WriterFunction;
-}
-
-export interface BodyableNodeStructure {
-    bodyText?: string | WriterFunction;
 }
 
 export interface DecoratableNodeStructure {
@@ -10180,11 +10174,6 @@ export interface InitializerExpressionableNodeStructure {
 
 export interface JSDocableNodeStructure {
     docs?: (JSDocStructure | string)[];
-}
-
-export interface ModuledNodeStructure {
-    imports?: OptionalKind<ImportDeclarationStructure>[];
-    exports?: OptionalKind<ExportDeclarationStructure>[];
 }
 export interface BindingNamedNodeStructure {
     name: string;
@@ -10269,7 +10258,7 @@ export interface ClassDeclarationStructure extends Structure, ClassLikeDeclarati
 interface ClassDeclarationSpecificStructure extends KindedStructure<StructureKind.Class> {
 }
 
-export interface ConstructorDeclarationStructure extends Structure, ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
+export interface ConstructorDeclarationStructure extends Structure, ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure {
 }
 
 interface ConstructorDeclarationSpecificStructure extends KindedStructure<StructureKind.Constructor> {
@@ -10279,13 +10268,13 @@ interface ConstructorDeclarationSpecificStructure extends KindedStructure<Struct
 export interface ConstructorDeclarationOverloadStructure extends Structure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
 }
 
-export interface GetAccessorDeclarationStructure extends Structure, GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
+export interface GetAccessorDeclarationStructure extends Structure, GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure {
 }
 
 interface GetAccessorDeclarationSpecificStructure extends KindedStructure<StructureKind.GetAccessor> {
 }
 
-export interface MethodDeclarationStructure extends Structure, MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure, QuestionTokenableNodeStructure {
+export interface MethodDeclarationStructure extends Structure, MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, QuestionTokenableNodeStructure {
 }
 
 interface MethodDeclarationSpecificStructure extends KindedStructure<StructureKind.Method> {
@@ -10301,7 +10290,7 @@ export interface PropertyDeclarationStructure extends Structure, PropertyDeclara
 interface PropertyDeclarationSpecificStructure extends KindedStructure<StructureKind.Property> {
 }
 
-export interface SetAccessorDeclarationStructure extends Structure, SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
+export interface SetAccessorDeclarationStructure extends Structure, SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure {
 }
 
 interface SetAccessorDeclarationSpecificStructure extends KindedStructure<StructureKind.SetAccessor> {
@@ -10365,7 +10354,7 @@ interface EnumMemberSpecificStructure {
     value?: number | string;
 }
 
-export interface FunctionDeclarationStructure extends Structure, FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodyableNodeStructure {
+export interface FunctionDeclarationStructure extends Structure, FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
 }
 
 interface FunctionDeclarationSpecificStructure extends KindedStructure<StructureKind.Function> {
@@ -10426,27 +10415,32 @@ interface PropertySignatureSpecificStructure extends KindedStructure<StructureKi
 export interface JsxAttributeStructure extends Structure, JsxAttributeSpecificStructure, NamedNodeStructure {
 }
 
-interface JsxAttributeSpecificStructure {
-    isSpreadAttribute?: false;
+interface JsxAttributeSpecificStructure extends KindedStructure<StructureKind.JsxAttribute> {
     initializer?: string;
 }
 
 export interface JsxElementStructure extends Structure, JsxElementSpecificStructure {
 }
 
-interface JsxElementSpecificStructure {
+interface JsxElementSpecificStructure extends KindedStructure<StructureKind.JsxElement> {
     name: string;
-    attributes?: (JsxAttributeStructure | JsxSpreadAttributeStructure)[];
-    isSelfClosing?: boolean;
-    children?: JsxElementStructure[];
+    attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
+    children?: (OptionalKind<JsxElementStructure> | JsxSelfClosingElementStructure)[];
     bodyText?: string;
+}
+
+export interface JsxSelfClosingElementStructure extends Structure, JsxSelfClosingElementSpecificStructure {
+}
+
+interface JsxSelfClosingElementSpecificStructure extends KindedStructure<StructureKind.JsxSelfClosingElement> {
+    name: string;
+    attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
 }
 
 export interface JsxSpreadAttributeStructure extends Structure, JsxSpreadAttributeSpecificStructure {
 }
 
-interface JsxSpreadAttributeSpecificStructure {
-    isSpreadAttribute: true;
+interface JsxSpreadAttributeSpecificStructure extends KindedStructure<StructureKind.JsxSpreadAttribute> {
     expression: string;
 }
 
@@ -10492,10 +10486,10 @@ interface ImportSpecifierSpecificStructure {
     alias?: string;
 }
 
-export interface NamespaceDeclarationStructure extends Structure, NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure, BodiedNodeStructure, ModuledNodeStructure {
+export interface NamespaceDeclarationStructure extends Structure, NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure {
 }
 
-interface NamespaceDeclarationSpecificStructure extends KindedStructure<StructureKind.NamespaceDeclaration> {
+interface NamespaceDeclarationSpecificStructure extends KindedStructure<StructureKind.Namespace> {
     /**
      * The namespace declaration kind.
      *
@@ -10504,20 +10498,14 @@ interface NamespaceDeclarationSpecificStructure extends KindedStructure<Structur
     declarationKind?: NamespaceDeclarationKind;
 }
 
-export interface SourceFileStructure extends Structure, SourceFileSpecificStructure, StatementedNodeStructure, ModuledNodeStructure {
-    bodyText?: string | WriterFunction;
+export interface SourceFileStructure extends Structure, SourceFileSpecificStructure, StatementedNodeStructure {
 }
 
 interface SourceFileSpecificStructure {
 }
 
 export interface StatementedNodeStructure {
-    classes?: OptionalKind<ClassDeclarationStructure>[];
-    enums?: OptionalKind<EnumDeclarationStructure>[];
-    functions?: OptionalKind<FunctionDeclarationStructure>[];
-    interfaces?: OptionalKind<InterfaceDeclarationStructure>[];
-    namespaces?: OptionalKind<NamespaceDeclarationStructure>[];
-    typeAliases?: OptionalKind<TypeAliasDeclarationStructure>[];
+    statements?: (string | WriterFunction | StatementStructures)[];
 }
 
 export interface VariableDeclarationListStructure extends Structure, VariableDeclarationListSpecificStructure {
@@ -10560,7 +10548,7 @@ interface TypeParameterDeclarationSpecificStructure {
 
 export declare type OptionalKind<TStructure extends {
     kind?: StructureKind;
-}> = Omit<TStructure, "kind"> & Partial<Pick<TStructure, "kind">>;
+}> = Pick<TStructure, Exclude<keyof TStructure, "kind">> & Partial<Pick<TStructure, "kind">>;
 
 export interface Structure {
     /** Leading comments or whitespace. */
@@ -10590,12 +10578,16 @@ export declare enum StructureKind {
     ExportAssignment = 14,
     ExportDeclaration = 15,
     ImportDeclaration = 16,
-    NamespaceDeclaration = 17,
+    Namespace = 17,
     VariableStatement = 18,
     TypeAlias = 19,
     PropertyAssignment = 20,
     ShorthandPropertyAssignment = 21,
-    SpreadAssignment = 22
+    SpreadAssignment = 22,
+    JsxAttribute = 23,
+    JsxSpreadAttribute = 24,
+    JsxElement = 25,
+    JsxSelfClosingElement = 26
 }
 
 export { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind };

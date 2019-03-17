@@ -1,6 +1,6 @@
 import { NamespaceDeclarationStructure, VariableStatementStructure, OptionalKind, StructureKind, VariableDeclarationStructure, ImportDeclarationStructure,
     ClassDeclarationStructure, ImportSpecifierStructure, EnumDeclarationStructure, InterfaceDeclarationStructure, FunctionDeclarationStructure,
-    TypeAliasDeclarationStructure, PropertyDeclarationStructure } from "../../../structures";
+    TypeAliasDeclarationStructure, PropertyDeclarationStructure, TypeParameterDeclarationStructure, ParameterDeclarationStructure } from "../../../structures";
 import { NamespaceDeclarationKind, VariableDeclarationKind } from "../../../compiler";
 
 // this file is incomplete... update accordingly as needed
@@ -155,6 +155,31 @@ export namespace fillStructures {
             kind: StructureKind.Property,
             ...structure
         };
+    }
+
+    export function parameter(structure: ParameterDeclarationStructure | string) {
+        if (typeof structure === "string")
+            structure = { name: structure };
+
+        setIfNull(structure, "decorators", []);
+        setIfNull(structure, "hasQuestionToken", false);
+        setIfNull(structure, "initializer", undefined);
+        setIfNull(structure, "isReadonly", false);
+        setIfNull(structure, "isRestParameter", false);
+        setIfNull(structure, "scope", undefined);
+        setIfNull(structure, "type", undefined);
+
+        return structure;
+    }
+
+    export function typeParameter(structure: TypeParameterDeclarationStructure | string) {
+        if (typeof structure === "string")
+            structure = { name: structure };
+
+        setIfNull(structure, "constraint", undefined);
+        setIfNull(structure, "default", undefined);
+
+        return structure;
     }
 }
 

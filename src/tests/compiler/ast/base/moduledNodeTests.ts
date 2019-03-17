@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration, ExportAssignment } from "../../../../compiler";
-import { ImportDeclarationStructure, ExportDeclarationStructure, ModuledNodeStructure, ExportAssignmentStructure, OptionalKind } from "../../../../structures";
+import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../../structures";
 import { Project } from "../../../../Project";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -456,35 +456,6 @@ describe(nameof(ModuledNode), () => {
         it("should throw when not exists", () => {
             const { sourceFile } = getInfoFromText("");
             expect(() => sourceFile.getExportAssignmentOrThrow(e => false)).to.throw();
-        });
-    });
-
-    describe(nameof<SourceFile>(n => n.set), () => {
-        function doTest(startingCode: string, structure: ModuledNodeStructure, expectedCode: string) {
-            const { sourceFile } = getInfoFromText(startingCode);
-            sourceFile.set(structure);
-            expect(sourceFile.getFullText()).to.equal(expectedCode);
-        }
-
-        it("should not modify anything if the structure doesn't change anything", () => {
-            const code = "import t from 'test'; export * from 'test';";
-            doTest(code, {}, code);
-        });
-
-        it("should modify when changed", () => {
-            const structure: MakeRequired<ModuledNodeStructure> = {
-                imports: [{ moduleSpecifier: "module" }],
-                exports: [{ moduleSpecifier: "export-module" }]
-            };
-            doTest("import t from 'test'; export { test };", structure, `import "module";\n\nexport * from "export-module";\n`);
-        });
-
-        it("should remove when specifying empty arrays", () => {
-            const structure: MakeRequired<ModuledNodeStructure> = {
-                imports: [],
-                exports: []
-            };
-            doTest("import t from 'test'; export { test };", structure, "");
         });
     });
 

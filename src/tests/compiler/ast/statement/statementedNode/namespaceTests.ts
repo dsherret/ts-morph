@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { NamespaceDeclaration, StatementedNode, Node, NamespaceDeclarationKind } from "../../../../../compiler";
 import * as errors from "../../../../../errors";
-import { NamespaceDeclarationStructure } from "../../../../../structures";
+import { NamespaceDeclarationStructure, StructureKind } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
@@ -56,33 +56,22 @@ describe(nameof(StatementedNode), () => {
                 declarationKind: NamespaceDeclarationKind.Module,
                 isDefaultExport: false,
                 isExported: true,
-                classes: [{ name: "C" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }],
-                statements: ["console.log('here');"],
-                imports: [{ moduleSpecifier: "./import" }],
-                exports: [{ moduleSpecifier: "./export" }]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
 
             doTest("", 0, [structure],
                 "/**\n * Test\n */\nexport module n {\n" +
-                "    import \"./import\";\n\n" +
-                "    type T = string;\n\n    interface I {\n    }\n\n    enum E {\n    }\n\n" +
-                "    function F() {\n    }\n\n    class C {\n    }\n\n    namespace N {\n    }\n\n" +
-                "    console.log('here');\n\n" +
-                "    export * from \"./export\";\n" +
+                "    class C {\n    }\n\n    console.log('here');\n" +
                 "}\n");
         });
 
-        it("should insert an ambient method on a class class when inserting a namespace with a class into an ambient module", () => {
+        it("should insert an ambient method on a class when inserting a namespace with a class into an ambient module", () => {
             const { sourceFile } = getInfoFromText("declare module Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertNamespaces(0, [{
                 name: "Namespace",
-                classes: [{
+                statements: [{
+                    kind: StructureKind.Class,
                     name: "Identifier",
                     methods: [{ name: "myMethod" }]
                 }]

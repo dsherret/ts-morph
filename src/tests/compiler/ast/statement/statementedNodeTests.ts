@@ -382,86 +382,28 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
-        describe("specific arrays", () => {
-            it("should not modify anything if the structure doesn't change anything", () => {
-                const code = `
-class C {}
-interface I {}
-enum E {}
-function F() {}
-namespace N {}
-type T = string;
-`;
-                doTest(code, {}, code);
-            });
-
-            it("should replace existing when specifying non-empty arrays", () => {
-                const code = `class C {}
-interface I {}
-enum E {}
-function F() {}
-namespace N {}
-type T = string;
-`;
-                const structure: MakeRequired<StatementedNodeStructure> = {
-                    typeAliases: [{ name: "Identifier1", type: "string" }],
-                    interfaces: [{ name: "Identifier2" }],
-                    enums: [{ name: "Identifier3" }],
-                    functions: [{ name: "Identifier4" }],
-                    classes: [{ name: "Identifier5" }],
-                    namespaces: [{ name: "Identifier6" }],
-                    statements: undefined
-                };
-                doTest(code, structure,
-                    "type Identifier1 = string;\n\ninterface Identifier2 {\n}\n\nenum Identifier3 {\n}\n\nfunction Identifier4() {\n}\n\n" +
-                    "class Identifier5 {\n}\n\nnamespace Identifier6 {\n}\n");
-            });
-
-            it("should remove existing when specifying empty arrays", () => {
-                const code = `class C {}
-interface I {}
-enum E {}
-function F() {}
-namespace N {}
-type T = string;
-`;
-                const structure: MakeRequired<StatementedNodeStructure> = {
-                    classes: [],
-                    enums: [],
-                    functions: [],
-                    interfaces: [],
-                    namespaces: [],
-                    typeAliases: [],
-                    statements: undefined
-                };
-                doTest(code, structure, "");
-            });
+        it("should do nothing when undefined for a non-bodyable node (source file)", () => {
+            const code = "function myFunction() {\n}";
+            doTest(code, { statements: undefined }, code);
         });
 
-        describe("statements array", () => {
-            it("should do nothing when undefined for a non-bodyable node (source file)", () => {
-                const code = "function myFunction() {\n}";
-                doTest(code, { statements: undefined }, code);
-            });
+        it("should remove the statements when empty", () => {
+            const code = "function myFunction() {\n}";
+            doTest(code, { statements: [] }, "");
+        });
 
-            it("should remove the statements when empty", () => {
-                const code = "function myFunction() {\n}";
-                doTest(code, { statements: [] }, "");
-            });
-
-            it("should set statements specified", () => {
-                const code = "function myFunction() {\n}";
-                doTest(code, {
-                    statements: [
-                        "var myVar;",
-                        writer => writer.writeLine("console.log;"),
-                        {
-                            kind: StructureKind.Class,
-                            name: "MyClass"
-                        }
-                    ]
-                }, `var myVar;\nconsole.log;\n\nclass MyClass {\n}\n`);
-            });
+        it("should set statements specified", () => {
+            const code = "function myFunction() {\n}";
+            doTest(code, {
+                statements: [
+                    "var myVar;",
+                    writer => writer.writeLine("console.log;"),
+                    {
+                        kind: StructureKind.Class,
+                        name: "MyClass"
+                    }
+                ]
+            }, `var myVar;\nconsole.log;\n\nclass MyClass {\n}\n`);
         });
 
         describe(nameof(BodyableNode), () => {

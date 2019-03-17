@@ -2,7 +2,7 @@
 import { FunctionDeclaration } from "../../../../compiler";
 import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure,
     TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(FunctionDeclaration), () => {
     describe(nameof<FunctionDeclaration>(f => f.getName), () => {
@@ -161,20 +161,19 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(d => d.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "leadingTrivia" | "trailingTrivia";
-        function doTest(text: string, expectedStructure: Omit<MakeRequired<FunctionDeclarationStructure>, PropertyNamesToExclude>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<FunctionDeclarationStructure>>) {
             const { sourceFile } = getInfoFromText<any>(text);
             const functionDec = sourceFile.getFunctions()[0];
-            const structure = functionDec.getStructure() as FunctionDeclarationStructure;
 
-            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
+            expectedStructure.parameters = expectedStructure.parameters!.map(p => fillStructures.parameter(p));
+            expectedStructure.typeParameters = expectedStructure.typeParameters!.map(p => fillStructures.typeParameter(p));
 
-            structure.overloads!.forEach(o => {
-                o.parameters = o.parameters!.map(p => ({ name: p.name }));
-                o.typeParameters = o.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
+            expectedStructure.overloads!.forEach(o => {
+                o.parameters = o.parameters!.map(p => fillStructures.parameter(p));
+                o.typeParameters = o.typeParameters!.map(p => fillStructures.typeParameter(p));
             });
 
+            const structure = functionDec.getStructure() as FunctionDeclarationStructure;
             expect(structure).to.deep.equal(expectedStructure);
         }
 

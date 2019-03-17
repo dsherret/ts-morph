@@ -2,7 +2,8 @@ import { expect } from "chai";
 import { Node, ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
     PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase } from "../../../../../compiler";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure } from "../../../../../structures";
+    SetAccessorDeclarationStructure,
+    StructureKind} from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { SyntaxKind } from "../../../../../typescript";
 import { TypeGuards } from "../../../../../utils";
@@ -138,13 +139,26 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 parameters: [{ name: "param" }],
                 returnType: "number", // won't be written out
                 typeParameters: [{ name: "T" }],
-                classes: [{ name: "C" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }],
-                statements: ["console.log('here');"]
+                statements: [{
+                    kind: StructureKind.TypeAlias,
+                    name: "T",
+                    type: "string"
+                }, {
+                    kind: StructureKind.Interface,
+                    name: "I"
+                }, {
+                    kind: StructureKind.Enum,
+                    name: "E"
+                }, {
+                    kind: StructureKind.Function,
+                    name: "F"
+                }, {
+                    kind: StructureKind.Class,
+                    name: "C"
+                }, {
+                    kind: StructureKind.Namespace,
+                    name: "N"
+                }, "console.log('here');"]
             };
             doTest("class c {\n}", 0, structure,
                 "class c {\n    public constructor();\n    private constructor();\n    /**\n     * Test\n     */\n    public constructor<T>(param) {\n" +
@@ -262,19 +276,11 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 parameters: [{ name: "param" }],
                 returnType: "number",
                 typeParameters: [{ name: "T" }],
-                classes: [{ name: "C" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }],
-                statements: ["console.log('here');"]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
             doTest("class c {\n}", 0, [structure],
                 "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static get prop<T>(param): number {\n" +
-                "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n" +
-                "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
-                "        console.log('here');\n" +
+                "        class C {\n        }\n\n        console.log('here');\n" +
                 "    }\n}");
         });
     });
@@ -518,19 +524,11 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 parameters: [{ name: "param" }],
                 returnType: "number",
                 typeParameters: [{ name: "T" }],
-                classes: [{ name: "C" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }],
-                statements: ["console.log('here');"]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
             doTest("class c {\n}", 0, [structure],
                 "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static set prop<T>(param): number {\n" +
-                "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n" +
-                "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
-                "        console.log('here');\n" +
+                "        class C {\n        }\n\n        console.log('here');\n" +
                 "    }\n}");
         });
     });
@@ -771,20 +769,12 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 parameters: [{ name: "param" }],
                 returnType: "number",
                 typeParameters: [{ name: "T" }],
-                classes: [{ name: "C" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }],
-                statements: ["console.log('here');"]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
             doTest("class c {\n}", 0, [structure],
                 "class c {\n    public static myMethod?();\n    private myMethod();\n" +
                 "    /**\n     * Test\n     */\n    @dec\n    public static async myMethod?<T>(param): number {\n" +
-                "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n" +
-                "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
-                "        console.log('here');\n" +
+                "        class C {\n        }\n\n        console.log('here');\n" +
                 "    }\n}");
         });
 

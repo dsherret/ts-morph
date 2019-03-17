@@ -2,7 +2,7 @@
 import { NamespaceDeclarationKind } from "../../compiler";
 import * as errors from "../../errors";
 import { StructurePrinterFactory } from "../../factories";
-import { ArrayUtils, StringUtils, ObjectUtils, setValueIfUndefined } from "../../utils";
+import { StringUtils, ObjectUtils, setValueIfUndefined } from "../../utils";
 import { NamespaceDeclarationStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
@@ -29,20 +29,10 @@ export class NamespaceDeclarationStructurePrinter extends NodePrinter<OptionalKi
             writer.write("global ");
 
         writer.inlineBlock(() => {
-            this.factory.forImportDeclaration().printTexts(writer, structure.imports);
-
             this.factory.forStatementedNode({
                 isAmbient: structure.hasDeclareKeyword || this.options.isAmbient
             }).printText(writer, structure);
-
-            this.conditionalBlankLine(writer, structure.exports);
-            this.factory.forExportDeclaration().printTexts(writer, structure.exports);
         });
-    }
-
-    private conditionalBlankLine(writer: CodeBlockWriter, structures: ReadonlyArray<unknown> | undefined) {
-        if (!ArrayUtils.isNullOrEmpty(structures))
-            writer.conditionalBlankLine(!writer.isAtStartOfFirstLineOfBlock());
     }
 
     private validateAndGetStructure(structure: OptionalKind<NamespaceDeclarationStructure>) {

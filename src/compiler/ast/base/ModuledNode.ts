@@ -1,15 +1,13 @@
 ﻿import * as errors from "../../../errors";
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
-import { ModuledNodeStructure, ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../structures";
+import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { ts, SyntaxKind } from "../../../typescript";
 import { ArrayUtils, TypeGuards, createHashSet } from "../../../utils";
-import { callBaseSet } from "../callBaseSet";
 import { Symbol } from "../../symbols";
 import { Node } from "../common";
 import { ImportDeclaration, ExportDeclaration, ExportAssignment } from "../module";
 import { StatementedNode } from "../statement";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ModuledNodeExtensionType = Node<ts.SourceFile | ts.NamespaceDeclaration> & StatementedNode;
 
@@ -404,26 +402,6 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             }
 
             return this;
-        }
-
-        set(structure: Partial<ModuledNodeStructure>) {
-            callBaseSet(Base.prototype, this, structure);
-
-            if (structure.imports != null) {
-                this.getImportDeclarations().forEach(d => d.remove());
-                this.addImportDeclarations(structure.imports);
-            }
-            if (structure.exports != null) {
-                this.getExportDeclarations().forEach(d => d.remove());
-                this.addExportDeclarations(structure.exports);
-            }
-
-            return this;
-        }
-
-        getStructure() {
-            // do not get the imports and exports... instead let StatementedNode return the body text
-            return callBaseGetStructure<{}>(Base.prototype, this, {});
         }
     };
 }

@@ -902,35 +902,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             callBaseSet(Base.prototype, this, structure);
 
-            // remove existing set nodes
-            let shouldAdd = structure.statements != null;
-            if (structure.interfaces != null) {
-                this.getInterfaces().forEach(i => i.remove());
-                shouldAdd = true;
-            }
-            if (structure.enums != null) {
-                this.getEnums().forEach(e => e.remove());
-                shouldAdd = true;
-            }
-            if (structure.functions != null) {
-                this.getFunctions().forEach(i => i.remove());
-                shouldAdd = true;
-            }
-            if (structure.classes != null) {
-                this.getClasses().forEach(c => c.remove());
-                shouldAdd = true;
-            }
-            if (structure.namespaces != null) {
-                this.getNamespaces().forEach(n => n.remove());
-                shouldAdd = true;
-            }
-            if (structure.typeAliases != null) {
-                this.getTypeAliases().forEach(t => t.remove());
-                shouldAdd = true;
-            }
-
             // add the text after if necessary (do this in a single print so it's fast)
-            if (shouldAdd) {
+            if (structure.statements != null) {
                 this.addStatements(writer => {
                     const statementsPrinter = this._context.structurePrinterFactory.forStatementedNode({ isAmbient: isNodeAmbientOrInAmbientContext(this) });
                     statementsPrinter.printText(writer, structure);

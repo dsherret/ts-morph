@@ -2,7 +2,7 @@
 import { NamespaceDeclaration, NamespaceDeclarationKind, VariableDeclarationKind } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, fillStructures } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, fillStructures, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(NamespaceDeclaration), () => {
     describe(nameof<NamespaceDeclaration>(d => d.getName), () => {
@@ -240,9 +240,7 @@ describe(nameof(NamespaceDeclaration), () => {
     });
 
     describe(nameof<NamespaceDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "imports" | "exports"
-            | "leadingTrivia" | "trailingTrivia";
-        function doTest(text: string, expectedStructure: Omit<MakeRequired<NamespaceDeclarationStructure>, PropertyNamesToExclude>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<NamespaceDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             const structure = firstChild.getStructure();
             expect(structure).to.deep.equal(expectedStructure);

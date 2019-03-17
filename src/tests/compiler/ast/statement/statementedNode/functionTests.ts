@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration, StatementedNode, Node } from "../../../../../compiler";
-import { FunctionDeclarationStructure } from "../../../../../structures";
+import { FunctionDeclarationStructure, StructureKind } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
@@ -89,20 +89,12 @@ describe(nameof(StatementedNode), () => {
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
                 isExported: true,
-                classes: [{ name: "C" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }],
-                statements: ["console.log('here');"]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
 
             doTest("", 0, [structure],
                 "export function f();\n/**\n * Test\n */\nexport async function* f<T>(param): string {\n" +
-                "    type T = string;\n\n    interface I {\n    }\n\n    enum E {\n    }\n\n" +
-                "    function F() {\n    }\n\n    class C {\n    }\n\n    namespace N {\n    }\n\n" +
-                "    console.log('here');\n" +
+                "    class C {\n    }\n\n    console.log('here');\n" +
                 "}\n");
         });
     });

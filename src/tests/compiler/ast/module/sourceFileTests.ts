@@ -3,7 +3,7 @@ import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, Va
 import * as errors from "../../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
-import { SourceFileStructure } from "../../../../structures";
+import { SourceFileStructure, StructureKind } from "../../../../structures";
 import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget } from "../../../../typescript";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
 import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
@@ -725,18 +725,14 @@ describe(nameof(SourceFile), () => {
 
         it("should modify when changed", () => {
             const structure: OptionalTrivia<MakeRequired<SourceFileStructure>> = {
-                imports: [{ moduleSpecifier: "module" }],
-                exports: [{ moduleSpecifier: "export-module" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                interfaces: [{ name: "I" }],
-                statements: ["console.log()"],
-                classes: [{ name: "C" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }]
+                statements: [
+                    { kind: StructureKind.ImportDeclaration, moduleSpecifier: "module" },
+                    { kind: StructureKind.Class, name: "C" }, "console.log()",
+                    { kind: StructureKind.ExportDeclaration, moduleSpecifier: "export-module" },
+                    { kind: StructureKind.ExportAssignment, expression: "5" }
+                ]
             };
-            doTest("", structure, `import "module";\n\ntype T = string;\n\ninterface I {\n}\n\nenum E {\n}\n\nfunction F() {\n}\n\nclass C {\n}\n\nnamespace N {\n}\n\n` +
-                `console.log()\n\nexport * from "export-module";\n`);
+            doTest("", structure, `import "module";\n\nclass C {\n}\n\nconsole.log()\nexport * from "export-module";\nexport = 5;\n`);
         });
     });
 

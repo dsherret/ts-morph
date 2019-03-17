@@ -3,7 +3,7 @@ import { ClassDeclaration, GetAccessorDeclaration, Scope } from "../../../../com
 import { GetAccessorDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
@@ -85,18 +85,12 @@ describe(nameof(GetAccessorDeclaration), () => {
 
         it("should modify when changed", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<GetAccessorDeclarationStructure>> = {
-                statements: ["console;"],
-                classes: [{ name: "C" }],
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console;"],
                 decorators: [{ name: "dec" }],
                 docs: [{ description: "d" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
                 isAbstract: true,
                 isStatic: true,
                 name: "asdf",
-                namespaces: [{ name: "N" }],
                 parameters: [{ name: "p" }],
                 returnType: "string",
                 scope: Scope.Public,
@@ -110,21 +104,7 @@ class Identifier {
      */
     @dec
     public abstract static get asdf<T>(p): string {
-        type T = string;
-
-        interface I {
-        }
-
-        enum E {
-        }
-
-        function F() {
-        }
-
         class C {
-        }
-
-        namespace N {
         }
 
         console;
@@ -141,8 +121,7 @@ class Identifier {
     });
 
     describe(nameof<GetAccessorDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "leadingTrivia" | "trailingTrivia";
-        function doTest(code: string, expectedStructure: Omit<MakeRequired<GetAccessorDeclarationStructure>, PropertyNamesToExclude>) {
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<GetAccessorDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getGetAccessors()[0].getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));

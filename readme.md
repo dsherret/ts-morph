@@ -40,7 +40,7 @@ Work in progress: https://dsherret.github.io/ts-morph/
 ## Example
 
 ```ts
-import { Project } from "ts-morph";
+import { Project, StructureKind } from "ts-morph";
 
 // initialize
 const project = new Project({
@@ -54,7 +54,8 @@ const project = new Project({
 project.addExistingSourceFiles("src/**/*.ts");
 const myClassFile = project.createSourceFile("src/MyClass.ts", "export class MyClass {}");
 const myEnumFile = project.createSourceFile("src/MyEnum.ts", {
-    enums: [{
+    statements: [{
+        kind: StructureKind.Enum,
         name: "MyEnum",
         isExported: true,
         members: [{ name: "member" }]

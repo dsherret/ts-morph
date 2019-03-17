@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ExportDeclaration, ExportSpecifier } from "../../../../compiler";
 import { Project } from "../../../../Project";
-import { ExportSpecifierStructure } from "../../../../structures";
+import { ExportSpecifierStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
@@ -47,10 +47,10 @@ describe(nameof(ExportSpecifier), () => {
         it("should change what's imported, but not change anything in the other files", () => {
             const project = getProject();
             const myClassFile = project.createSourceFile("MyClass.ts", {
-                classes: [{ name: "MyClass", isExported: true }]
+                statements: [{ kind: StructureKind.Class, name: "MyClass", isExported: true }]
             });
             const exportsFile = project.createSourceFile("Exports.ts", {
-                exports: [{ namedExports: ["MyClass"], moduleSpecifier: "./MyClass" }]
+                statements: [{ kind: StructureKind.ExportDeclaration, namedExports: ["MyClass"], moduleSpecifier: "./MyClass" }]
             });
             const mainFile = project.createSourceFile("Main.ts", `import { MyClass } from "./Exports";\n\nconst t = MyClass;\n`);
             exportsFile.getExportDeclarations()[0].getNamedExports()[0].setName("MyNewName");
@@ -62,7 +62,7 @@ describe(nameof(ExportSpecifier), () => {
         it("should change it when there's an alias", () => {
             const project = getProject();
             const exportsFile = project.createSourceFile("Exports.ts", {
-                exports: [{ namedExports: [{ name: "MyClass", alias: "MyAlias" }], moduleSpecifier: "./MyClass" }]
+                statements: [{ kind: StructureKind.ExportDeclaration, namedExports: [{ name: "MyClass", alias: "MyAlias" }], moduleSpecifier: "./MyClass" }]
             });
             exportsFile.getExportDeclarations()[0].getNamedExports()[0].setName("MyNewName");
             expect(exportsFile.getFullText()).to.equal(`export { MyNewName as MyAlias } from "./MyClass";\n`);
@@ -71,8 +71,7 @@ describe(nameof(ExportSpecifier), () => {
         it("should rename in current file if exporting from current file", () => {
             const project = getProject();
             const myClassFile = project.createSourceFile("MyClass.ts", {
-                classes: [{ name: "MyClass" }],
-                exports: [{ namedExports: ["MyClass"]}]
+                statements: [{ kind: StructureKind.Class, name: "MyClass" }, { kind: StructureKind.ExportDeclaration, namedExports: ["MyClass"] }]
             });
             myClassFile.getExportDeclarations()[0].getNamedExports()[0].setName("Identifier");
             expect(myClassFile.getFullText()).to.equal(`class MyClass {\n}\n\nexport { Identifier };\n`);

@@ -4,7 +4,7 @@ import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure,
     TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
@@ -223,20 +223,19 @@ describe(nameof(MethodDeclaration), () => {
     });
 
     describe(nameof<MethodDeclaration>(d => d.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "leadingTrivia" | "trailingTrivia";
-        function doTest(code: string, expectedStructure: Omit<MakeRequired<MethodDeclarationStructure>, PropertyNamesToExclude>) {
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<MethodDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const method = firstChild.getInstanceMethod("method") || firstChild.getStaticMethodOrThrow("method");
-            const structure = method.getStructure() as MethodDeclarationStructure;
 
-            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
-            structure.overloads = structure.overloads!.map(o => ({
+            expectedStructure.parameters = expectedStructure.parameters!.map(p => fillStructures.parameter(p));
+            expectedStructure.typeParameters = expectedStructure.typeParameters!.map(p => fillStructures.typeParameter(p));
+            expectedStructure.overloads = expectedStructure.overloads!.map(o => ({
                 ...o,
-                parameters: o.parameters!.map(p => ({ name: p.name })),
-                typeParameters: o.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }))
+                parameters: o.parameters!.map(p => fillStructures.parameter(p)),
+                typeParameters: o.typeParameters!.map(p => fillStructures.typeParameter(p))
             }));
 
+            const structure = method.getStructure() as MethodDeclarationStructure;
             expect(structure).to.deep.equal(expectedStructure);
         }
 

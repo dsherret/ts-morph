@@ -6,7 +6,7 @@ import * as errors from "../errors";
 import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
-import { SourceFileStructure } from "../structures";
+import { SourceFileStructure, StructureKind } from "../structures";
 import { CompilerOptions, ScriptTarget, SyntaxKind, ts } from "../typescript";
 import { OptionalTrivia } from "./compiler/testHelpers";
 import * as testHelpers from "./testHelpers";
@@ -660,34 +660,20 @@ describe(nameof(Project), () => {
             // basic test
             const project = new Project({ useVirtualFileSystem: true });
             const sourceFile = project.createSourceFile("MyFile.ts", {
-                enums: [{
+                statements: [{
+                    kind: StructureKind.Enum,
                     name: "MyEnum"
-                }],
-                imports: [{ moduleSpecifier: "./test" }],
-                exports: [{ moduleSpecifier: "./test" }],
-                statements: [writer => writer.write("print('test');")]
+                }]
             });
-            expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nenum MyEnum {\n}\n\nprint('test');\n\nexport * from "./test";\n`);
+            expect(sourceFile.getFullText()).to.equal(`enum MyEnum {\n}\n`);
         });
 
         it("should add for everything in the structure", () => {
             const structure: OptionalTrivia<MakeRequired<SourceFileStructure>> = {
-                imports: [{ moduleSpecifier: "./test" }],
-                exports: [{ moduleSpecifier: "./test2" }],
-                classes: [{ name: "C" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }],
                 statements: ["console.log('here');"]
             };
             const sourceFile = new Project({ useVirtualFileSystem: true }).createSourceFile("MyFile.ts", structure);
-            const expectedText = `import "./test";\n\n` +
-                "type T = string;\n\ninterface I {\n}\n\nenum E {\n}\n\n" +
-                "function F() {\n}\n\nclass C {\n}\n\nnamespace N {\n}\n\n" +
-                "console.log('here');\n\n" +
-                `export * from "./test2";\n`;
+            const expectedText = "console.log('here');\n";
             expect(sourceFile.getFullText()).to.equal(expectedText);
         });
 
