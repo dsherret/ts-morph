@@ -824,11 +824,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
 
     /**
      * Gets the source file text position where the node starts that does not include the leading trivia (comments and whitespace).
-     * @param includeJsDocComment - Whether to include the JS doc comment.
+     * @param includeJsDocComments - Whether to include the JS doc comments.
      */
-    getStart(includeJsDocComment?: boolean) {
+    getStart(includeJsDocComments?: boolean) {
         // rare time a bool parameter will be used... it's because it's done in the ts compiler
-        return this.compilerNode.getStart(this._sourceFile.compilerNode, includeJsDocComment);
+        return this.compilerNode.getStart(this._sourceFile.compilerNode, includeJsDocComments);
     }
 
     /**
@@ -909,16 +909,31 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
 
     /**
      * Gets the text without leading trivia (comments and whitespace).
-     * @param includeJsDocComment
+     * @param includeJsDocComments - Whether to include the js doc comments when getting the text.
      */
-    getText(includeJsDocComment?: boolean): string {
-        if (includeJsDocComment && TypeGuards.isJSDocableNode(this)) {
-            const docs = this.getJsDocs();
-            if (docs.length > 0)
-                return this._sourceFile.getFullText().substring(docs[0].getStart(), this.getEnd());
-        }
+    getText(includeJsDocComments?: boolean): string;
+    /**
+     * Gets the text without leading trivia (comments and whitespace).
+     * @param options - Options for getting the text.
+     */
+    getText(options: { trimLeadingIndentation?: boolean; includeJsDocComments?: boolean; }): string;
+    getText(includeJsDocCommentOrOptions?: boolean | { trimLeadingIndentation?: boolean; includeJsDocComments?: boolean; }): string {
+        const options = typeof includeJsDocCommentOrOptions === "object" ? includeJsDocCommentOrOptions : undefined;
+        const includeJsDocComments = includeJsDocCommentOrOptions === true || (options != null && options.includeJsDocComments);
+        const trimLeadingIndentation = options != null && options.trimLeadingIndentation;
 
-        return this.compilerNode.getText(this._sourceFile.compilerNode);
+        const startPos = this.getStart(includeJsDocComments);
+        const text = this._sourceFile.getFullText().substring(startPos, this.getEnd());
+
+        if (trimLeadingIndentation) {
+            return StringUtils.indent(text,
+                -1 * this.getIndentationLevel(),
+                this._context.manipulationSettings.getIndentationText(),
+                pos => this._sourceFile.isInStringAtPos(pos + startPos));
+        }
+        else {
+            return text;
+        }
     }
 
     /**
@@ -1168,19 +1183,19 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
 
     /**
      * Gets the position of the start of the line that this node starts on.
-     * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     * @param includeJsDocComments - Whether to include the JS doc comments or not.
      */
-    getStartLinePos(includeJsDocComment?: boolean) {
+    getStartLinePos(includeJsDocComments?: boolean) {
         const sourceFileText = this._sourceFile.getFullText();
-        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComment), char => char === "\n" || char === "\r");
+        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComments), char => char === "\n" || char === "\r");
     }
 
     /**
      * Gets the line number at the start of the node.
-     * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     * @param includeJsDocComments - Whether to include the JS doc comments or not.
      */
-    getStartLineNumber(includeJsDocComment?: boolean) {
-        return this._sourceFile.getLineNumberAtPos(this.getStartLinePos(includeJsDocComment));
+    getStartLineNumber(includeJsDocComments?: boolean) {
+        return this._sourceFile.getLineNumberAtPos(this.getStartLinePos(includeJsDocComments));
     }
 
     /**
