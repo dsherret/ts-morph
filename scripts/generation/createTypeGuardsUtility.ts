@@ -44,26 +44,18 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         bodyText: (writer: CodeBlockWriter) => {
             if (method.syntaxKinds.length === 0)
                 throw new Error(`For some reason  ${method.name} had no syntax kinds.`);
-            if (method.syntaxKinds.length === 1) {
-                writer.writeLine(`return node.getKind() === SyntaxKind.${method.syntaxKinds[0]};`);
-                return;
-            }
 
-            writer.write("switch (node.getKind())").block(() => {
-                for (const syntaxKindName of method.syntaxKinds)
-                    writer.writeLine(`case SyntaxKind.${syntaxKindName}:`);
-                writer.indent().write("return true;").newLine();
-                writer.writeLine("default:")
-                    .indent().write("return false;").newLine();
-            });
+            writeSyntaxKinds(writer, method.syntaxKinds);
         }
     })));
+    typeGuardsClass.forgetDescendants();
+    updateHasStructure();
 
     function getMethodInfos() {
         const methodInfos = new KeyValueCache<string, MethodInfo>();
 
         for (const node of inspector.getWrappedNodes().filter(n => isAllowedClass(n.getName()))) {
-            const methodInfo = getMethodInfoForNode(node);
+            getMethodInfoForNode(node); // fill this
             const nodeBase = node.getBase();
             if (nodeBase != null)
                 fillBase(node, nodeBase);
@@ -139,6 +131,39 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             return kindToWrapperVM.syntaxKindNames;
         }
     }
+
+    function updateHasStructure() {
+        const hasStructureMethod = typeGuardsClass.getStaticMethod("hasStructure");
+        if (hasStructureMethod != null)
+            hasStructureMethod.remove();
+
+        const nodesWithGetStructure = inspector.getWrappedNodes().filter(n => n.hasMethod("getStructure"));
+        typeGuardsClass.addMethod({
+            docs: ["@internal"],
+            isStatic: true,
+            name: "hasStructure",
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            returnType: `node is compiler.Node & { getStructure(): unknown; }`,
+            bodyText: writer => {
+                writeSyntaxKinds(writer, nodesWithGetStructure.map(n => kindToWrapperMappings.find(m => m.wrapperName === n.getName())!.syntaxKindNames[0]));
+            }
+        });
+    }
+}
+
+function writeSyntaxKinds(writer: CodeBlockWriter, kinds: string[]) {
+    if (kinds.length === 1) {
+        writer.writeLine(`return node.getKind() === SyntaxKind.${kinds[0]};`);
+        return;
+    }
+
+    writer.write("switch (node.getKind())").block(() => {
+        for (const syntaxKindName of kinds)
+            writer.writeLine(`case SyntaxKind.${syntaxKindName}:`);
+        writer.indent().write("return true;").newLine();
+        writer.writeLine("default:")
+            .indent().write("return false;").newLine();
+    });
 }
 
 function isAllowedName(name: string) {

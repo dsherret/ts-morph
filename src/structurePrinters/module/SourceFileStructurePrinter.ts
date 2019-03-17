@@ -12,7 +12,7 @@ export class SourceFileStructurePrinter extends NodePrinter<SourceFileStructure>
     protected printTextInternal(writer: CodeBlockWriter, structure: SourceFileStructure) {
         this.factory.forImportDeclaration().printTexts(writer, structure.imports);
 
-        this.factory.forBodyText(this.options).printText(writer, structure);
+        this.factory.forStatementedNode(this.options).printText(writer, structure);
 
         this.conditionalBlankLine(writer, structure.exports);
         this.factory.forExportDeclaration().printTexts(writer, structure.exports);

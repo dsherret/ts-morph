@@ -91,7 +91,7 @@
     "barrel-maintainer": "^1.4.0",
     "chai": "^4.1.2",
     "chalk": "^2.4.0",
-    "conditional-type-checks": "^0.5.0",
+    "conditional-type-checks": "^1.0.0",
     "coveralls": "^3.0.1",
     "cross-env": "^5.1.4",
     "diff": "^3.5.0",

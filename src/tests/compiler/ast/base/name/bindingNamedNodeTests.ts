@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { AssertTrue, IsExactType } from "conditional-type-checks";
+import { AssertTrue, IsExact } from "conditional-type-checks";
 import { VariableStatement, BindingNamedNode, BindingName } from "../../../../../compiler";
 import { TypeGuards } from "../../../../../utils";
 import { getInfoFromText } from "../../../testHelpers";
@@ -38,7 +38,7 @@ describe(nameof(BindingNamedNode), () => {
         it("should get the name", () => {
             const { firstDeclaration } = getInfoFromTextWithFirstVariableDeclaration("const { a: b } = { a: 1 }");
             const nameNode = firstDeclaration.getNameNode();
-            type typeTest = AssertTrue<IsExactType<typeof nameNode, BindingName>>;
+            type typeTest = AssertTrue<IsExact<typeof nameNode, BindingName>>;
             expect(nameNode.getText()).to.equal("{ a: b }");
         });
     });

@@ -761,9 +761,9 @@ concat-stream@^1.5.0, concat-stream@^1.5.2:
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-conditional-type-checks@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/conditional-type-checks/-/conditional-type-checks-0.5.0.tgz#f06567a2d416f23a5b6b01830b1855368bc617ff"
+conditional-type-checks@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/conditional-type-checks/-/conditional-type-checks-1.0.0.tgz#1cb40e89254e5173e8e8c02a2410f4206e226b3d"
 
 config-chain@~1.1.11:
   version "1.1.12"

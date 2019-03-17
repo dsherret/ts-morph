@@ -31,7 +31,7 @@ export class NamespaceDeclarationStructurePrinter extends NodePrinter<OptionalKi
         writer.inlineBlock(() => {
             this.factory.forImportDeclaration().printTexts(writer, structure.imports);
 
-            this.factory.forBodyText({
+            this.factory.forStatementedNode({
                 isAmbient: structure.hasDeclareKeyword || this.options.isAmbient
             }).printText(writer, structure);
 

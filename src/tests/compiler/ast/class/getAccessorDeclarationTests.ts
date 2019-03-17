@@ -110,7 +110,9 @@ class Identifier {
      */
     @dec
     public abstract static get asdf<T>(p): string {
-        class C {
+        type T = string;
+
+        interface I {
         }
 
         enum E {
@@ -119,13 +121,11 @@ class Identifier {
         function F() {
         }
 
-        interface I {
+        class C {
         }
 
         namespace N {
         }
-
-        type T = string;
 
         console;
     }

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { assert, IsExactType, IsNullableType } from "conditional-type-checks";
+import { assert, IsExact, IsNullable } from "conditional-type-checks";
 import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, FunctionDeclaration, Identifier, InterfaceDeclaration, Node,
     PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachChildTraversalControl,
@@ -491,13 +491,13 @@ class MyClass {
         it("should have the correct type when it will have a parent", () => {
             const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
             const parent = firstChild.getDeclarationList().getParent();
-            assert<IsExactType<typeof parent, VariableStatement | ForStatement | ForOfStatement | ForInStatement>>(true);
+            assert<IsExact<typeof parent, VariableStatement | ForStatement | ForOfStatement | ForInStatement>>(true);
         });
 
         it("should have the correct type when it might not have a parent", () => {
             const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
             const parent = (firstChild as Node).getParent();
-            assert<IsExactType<typeof parent, Node | undefined>>(true);
+            assert<IsExact<typeof parent, Node | undefined>>(true);
         });
     });
 
@@ -505,13 +505,13 @@ class MyClass {
         it("should have the correct type when it will have a parent", () => {
             const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
             const parent = firstChild.getDeclarationList().getParentOrThrow();
-            assert<IsExactType<typeof parent, VariableStatement | ForStatement | ForOfStatement | ForInStatement>>(true);
+            assert<IsExact<typeof parent, VariableStatement | ForStatement | ForOfStatement | ForInStatement>>(true);
         });
 
         it("should have the correct type when it might not have a parent", () => {
             const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
             const parent = (firstChild as Node).getParentOrThrow();
-            assert<IsExactType<typeof parent, Node>>(true);
+            assert<IsExact<typeof parent, Node>>(true);
         });
     });
 
@@ -559,7 +559,7 @@ class MyClass {
             const { sourceFile } = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const node = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test4");
             const result = node.getParentWhile(TypeGuards.isPropertyAccessExpression);
-            assert<IsExactType<typeof result, PropertyAccessExpression | undefined>>(true);
+            assert<IsExact<typeof result, PropertyAccessExpression | undefined>>(true);
             expect(result).to.be.instanceOf(PropertyAccessExpression);
             expect(result!.getText()).to.equal("Test.Test2.Test3.Test4");
         });
@@ -583,7 +583,7 @@ class MyClass {
             const { sourceFile } = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const node = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test4");
             const result = node.getParentWhileOrThrow(TypeGuards.isPropertyAccessExpression);
-            assert<IsExactType<typeof result, PropertyAccessExpression>>(true);
+            assert<IsExact<typeof result, PropertyAccessExpression>>(true);
             expect(result).to.be.instanceOf(PropertyAccessExpression);
             expect(result.getText()).to.equal("Test.Test2.Test3.Test4");
         });
@@ -629,7 +629,7 @@ class MyClass {
 
         it("should get the first child by a type guard", () => {
             const result = syntaxList.getFirstChild(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration | undefined>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
 
@@ -648,7 +648,7 @@ class MyClass {
 
         it("should get the first child by a type guard", () => {
             const result = syntaxList.getFirstChildOrThrow(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
 
@@ -668,7 +668,7 @@ class MyClass {
 
         it("should get the last child by a type guard", () => {
             const result = syntaxList.getLastChild(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration | undefined>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
 
@@ -688,7 +688,7 @@ class MyClass {
 
         it("should get the last child by a type guard", () => {
             const result = syntaxList.getLastChildOrThrow(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
 
@@ -709,7 +709,7 @@ class MyClass {
 
         it("should get by a type guard", () => {
             const result = propDec.getFirstAncestor(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration | undefined>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
 
@@ -731,7 +731,7 @@ class MyClass {
 
         it("should get by a type guard", () => {
             const result = propDec.getFirstAncestorOrThrow(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
 
@@ -751,7 +751,7 @@ class MyClass {
 
         it("should get by a type guard", () => {
             const result = sourceFile.getFirstDescendant(TypeGuards.isPropertySignature);
-            assert<IsExactType<typeof result, PropertySignature | undefined>>(true);
+            assert<IsExact<typeof result, PropertySignature | undefined>>(true);
             expect(result).to.be.instanceOf(PropertySignature);
         });
 
@@ -772,7 +772,7 @@ class MyClass {
 
         it("should get by a type guard", () => {
             const result = sourceFile.getFirstDescendantOrThrow(TypeGuards.isPropertySignature);
-            assert<IsExactType<typeof result, PropertySignature>>(true);
+            assert<IsExact<typeof result, PropertySignature>>(true);
             expect(result).to.be.instanceOf(PropertySignature);
         });
 
@@ -956,7 +956,7 @@ class MyClass {
 
         it("should get by a type guard", () => {
             const result = sourceFile.getInterfaces()[1].getPreviousSibling(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration | undefined>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
     });
@@ -983,7 +983,7 @@ class MyClass {
 
         it("should get by a type guard", () => {
             const result = sourceFile.getInterfaces()[1].getPreviousSiblingOrThrow(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
     });
@@ -1010,7 +1010,7 @@ class MyClass {
 
         it("should get by a type guard", () => {
             const result = sourceFile.getInterfaces()[1].getNextSibling(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration | undefined>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
     });
@@ -1037,7 +1037,7 @@ class MyClass {
 
         it("should get by a type guard", () => {
             const result = sourceFile.getInterfaces()[1].getNextSiblingOrThrow(TypeGuards.isInterfaceDeclaration);
-            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            assert<IsExact<typeof result, InterfaceDeclaration>>(true);
             expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
     });
@@ -1679,18 +1679,18 @@ class MyClass {
 
         it("should possibly return undefined for a nullable node property", () => {
             const result = classDec.getNodeProperty("name");
-            assert<IsNullableType<typeof result>>(true);
+            assert<IsNullable<typeof result>>(true);
         });
 
         it("should not possibly return undefined for a non-nullable node property", () => {
             const result = interfaceDec.getNodeProperty("name");
-            assert<IsExactType<typeof result, Identifier>>(true);
-            assert<IsNullableType<typeof result>>(false);
+            assert<IsExact<typeof result, Identifier>>(true);
+            assert<IsNullable<typeof result>>(false);
         });
 
         it("should return a wrapped nullable node property of a node", () => {
             const name = classDec.getNodeProperty("name");
-            assert<IsExactType<typeof name, Identifier | undefined>>(true);
+            assert<IsExact<typeof name, Identifier | undefined>>(true);
             expect(name!.getText()).to.equal("MyClass");
         });
 
@@ -1701,14 +1701,14 @@ class MyClass {
 
         it("should return the property value when not a node", () => {
             const kind = classDec.getNodeProperty("kind");
-            assert<IsExactType<typeof kind, SyntaxKind.ClassDeclaration>>(true);
+            assert<IsExact<typeof kind, SyntaxKind.ClassDeclaration>>(true);
             expect(kind).to.equal(SyntaxKind.ClassDeclaration);
         });
 
         it("should return the node array wrapped", () => {
             const typeParameters = classDec.getNodeProperty("typeParameters");
-            assert<IsNullableType<typeof typeParameters>>(true);
-            assert<IsExactType<typeof typeParameters, TypeParameterDeclaration[] | undefined>>(true);
+            assert<IsNullable<typeof typeParameters>>(true);
+            assert<IsExact<typeof typeParameters, TypeParameterDeclaration[] | undefined>>(true);
             expect(typeParameters![0].getDescendants().length).to.equal(1); // try a wrapped node property
         });
     });

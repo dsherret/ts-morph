@@ -42,11 +42,16 @@ export class SyntaxList extends Node<ts.SyntaxList> {
         }
         else {
             if (index === 0 && TypeGuards.isSourceFile(parent)) {
-                if (!StringUtils.endsWith(insertText, newLineKind))
+                if (!StringUtils.endsWith(insertText, "\n"))
                     insertText += newLineKind;
             }
-            else
+            else {
                 insertText = newLineKind + insertText;
+
+                // remove the last newline if inserting to the end of a node that's not a source file
+                if (!TypeGuards.isSourceFile(parent) && index === initialChildCount && StringUtils.endsWith(insertText, "\n"))
+                    insertText = insertText.replace(/\r?\n$/, "");
+            }
         }
 
         // insert

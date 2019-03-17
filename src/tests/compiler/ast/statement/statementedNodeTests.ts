@@ -1,11 +1,10 @@
 import { expect } from "chai";
 import { CaseClause, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile, StatementedNode, Block,
-    BodyableNode,
-    ClassDeclaration} from "../../../../compiler";
+    BodyableNode } from "../../../../compiler";
 import { StatementedNodeStructure, StatementStructures, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { TypeGuards } from "../../../../utils";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, fillStructures } from "../../testHelpers";
 
 function getInfoFromTextWithSyntax<T extends Node>(text: string, kind?: SyntaxKind) {
     const obj = getInfoFromText(text);
@@ -319,7 +318,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should remove statements in a Block", () => {
-            const { sourceFile, firstChild } = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
+            const { firstChild } = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
             expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.not.be.undefined;
             firstChild.removeStatement(0);
             expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.be.undefined;
@@ -352,7 +351,7 @@ describe(nameof(StatementedNode), () => {
                 if (statements == null)
                     expect(structure.hasOwnProperty(nameof<StatementedNodeStructure>(s => s.statements))).to.be.true;
 
-                expect(structure.statements).to.equal(statements);
+                expect(structure.statements).to.deep.equal(statements);
             }
 
             it("should get the body text when there is none", () => {
@@ -364,15 +363,14 @@ describe(nameof(StatementedNode), () => {
             });
 
             it("should get the body text without indentation", () => {
-                doBodyableTest("function test() {\n    export class Test {\n        prop: string;\n    }\n}\n}", [{
-                    kind: StructureKind.Class,
+                doBodyableTest("function test() {\n    export class Test {\n        prop: string;\n    }\n}\n}", [fillStructures.classDeclaration({
                     name: "Test",
-                    properties: [{
-                        kind: StructureKind.Property,
+                    isExported: true,
+                    properties: [fillStructures.property({
                         name: "prop",
                         type: "string"
-                    }]
-                }]);
+                    })]
+                })]);
             });
         });
     });
@@ -406,17 +404,17 @@ namespace N {}
 type T = string;
 `;
                 const structure: MakeRequired<StatementedNodeStructure> = {
-                    classes: [{ name: "Identifier1" }],
-                    enums: [{ name: "Identifier2" }],
-                    functions: [{ name: "Identifier3" }],
-                    interfaces: [{ name: "Identifier4" }],
-                    namespaces: [{ name: "Identifier5" }],
-                    typeAliases: [{ name: "Identifier6", type: "string" }],
+                    typeAliases: [{ name: "Identifier1", type: "string" }],
+                    interfaces: [{ name: "Identifier2" }],
+                    enums: [{ name: "Identifier3" }],
+                    functions: [{ name: "Identifier4" }],
+                    classes: [{ name: "Identifier5" }],
+                    namespaces: [{ name: "Identifier6" }],
                     statements: undefined
                 };
                 doTest(code, structure,
-                    "class Identifier1 {\n}\n\nenum Identifier2 {\n}\n\nfunction Identifier3() {\n}\n\ninterface Identifier4 {\n}\n\nnamespace Identifier5 {\n}\n\n" +
-                    "type Identifier6 = string;\n");
+                    "type Identifier1 = string;\n\ninterface Identifier2 {\n}\n\nenum Identifier3 {\n}\n\nfunction Identifier4() {\n}\n\n" +
+                    "class Identifier5 {\n}\n\nnamespace Identifier6 {\n}\n");
             });
 
             it("should remove existing when specifying empty arrays", () => {
@@ -467,20 +465,26 @@ type T = string;
         });
 
         describe(nameof(BodyableNode), () => {
+            function doBodyableTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
+                const { sourceFile, firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
+                firstChild.set(structure);
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
             it("should set the text of a function when using a string", () => {
-                doTest("function myFunction() {\n}", { statements: ["var myVar;"] }, "function myFunction() {\n    var myVar;\n}");
+                doBodyableTest("function myFunction() {\n}", { statements: ["var myVar;"] }, "function myFunction() {\n    var myVar;\n}");
             });
 
             it("should set the text of a function when using a writer", () => {
-                doTest("function myFunction() {\n}", { statements: [writer => writer.writeLine("var myVar;")] }, "function myFunction() {\n    var myVar;\n}");
+                doBodyableTest("function myFunction() {\n}", { statements: [writer => writer.writeLine("var myVar;")] }, "function myFunction() {\n    var myVar;\n}");
             });
 
             it("should remove the body when it's undefined", () => {
-                doTest("function myFunction() {\n}", { statements: undefined }, "function myFunction();");
+                doBodyableTest("function myFunction() {\n}", { statements: undefined }, "function myFunction();");
             });
 
             it("should not remove the body when the property doesn't exist", () => {
-                doTest("function myFunction() {\n}", { }, "function myFunction() {\n}");
+                doBodyableTest("function myFunction() {\n}", { }, "function myFunction() {\n}");
             });
         });
     });

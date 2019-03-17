@@ -34,7 +34,7 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
             writer.write(";");
         else
             writer.space().inlineBlock(() => {
-                this.factory.forBodyText({ isAmbient: false }).printText(writer, structure);
+                this.factory.forStatementedNode({ isAmbient: false }).printText(writer, structure);
             });
 
         function getOverloadStructures() {

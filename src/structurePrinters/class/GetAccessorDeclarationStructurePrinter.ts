@@ -30,7 +30,7 @@ export class GetAccessorDeclarationStructurePrinter extends NodePrinter<Optional
             writer.write(";");
         else
             writer.spaceIfLastNot().inlineBlock(() => {
-                this.factory.forBodyText(this.options).printText(writer, structure);
+                this.factory.forStatementedNode(this.options).printText(writer, structure);
             });
     }
 }

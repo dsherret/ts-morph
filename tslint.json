@@ -19,6 +19,7 @@
         "ban-types": false,
         "max-classes-per-file": false,
         "no-unused-expression": false,
+        "no-namespace": false,
         "one-line": [
             true,
             "check-catch",

@@ -7,16 +7,15 @@ import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, Expor
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { NamespaceChildableNode } from "../module";
-import { StatementedNode } from "../statement";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
-    FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NameableNode(Node)))))))
+    FunctionLikeDeclaration(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NameableNode(Node))))))
 )))))));
 export const FunctionDeclarationOverloadBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(AsyncableNode(GeneratorableNode(ModifierableNode(
-    SignaturedDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Node))))))))
+    SignaturedDeclaration(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Node)))))))
 ))))));
 
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {

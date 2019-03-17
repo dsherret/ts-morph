@@ -880,9 +880,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structure.statements = undefined;
             else {
                 structure.statements = this.getStatements().map(s => {
-                    if ((s as any).getStructure() != null)
-                        return (s as any).getStructure();
-                    return s.getTextWithoutLeadingIndentation();
+                    if (TypeGuards.hasStructure(s))
+                        return s.getStructure() as any; // todo: resolve this
+                    return s.getText({ trimLeadingIndentation: true });
                 });
             }
 
@@ -904,8 +904,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             // remove existing set nodes
             let shouldAdd = structure.statements != null;
-            if (structure.classes != null) {
-                this.getClasses().forEach(c => c.remove());
+            if (structure.interfaces != null) {
+                this.getInterfaces().forEach(i => i.remove());
                 shouldAdd = true;
             }
             if (structure.enums != null) {
@@ -916,8 +916,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 this.getFunctions().forEach(i => i.remove());
                 shouldAdd = true;
             }
-            if (structure.interfaces != null) {
-                this.getInterfaces().forEach(i => i.remove());
+            if (structure.classes != null) {
+                this.getClasses().forEach(c => c.remove());
                 shouldAdd = true;
             }
             if (structure.namespaces != null) {

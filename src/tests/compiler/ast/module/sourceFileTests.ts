@@ -3,7 +3,7 @@ import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, Va
 import * as errors from "../../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
-import { SourceFileStructure, StructureKind } from "../../../../structures";
+import { SourceFileStructure } from "../../../../structures";
 import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget } from "../../../../typescript";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
 import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
@@ -727,16 +727,16 @@ describe(nameof(SourceFile), () => {
             const structure: OptionalTrivia<MakeRequired<SourceFileStructure>> = {
                 imports: [{ moduleSpecifier: "module" }],
                 exports: [{ moduleSpecifier: "export-module" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                interfaces: [{ name: "I" }],
                 statements: ["console.log()"],
                 classes: [{ name: "C" }],
                 enums: [{ name: "E" }],
                 functions: [{ name: "F" }],
-                interfaces: [{ name: "I" }],
-                namespaces: [{ name: "N" }],
-                typeAliases: [{ name: "T", type: "string" }]
+                namespaces: [{ name: "N" }]
             };
-            doTest("", structure, `import "module";\n\nclass C {\n}\n\nenum E {\n}\n\nfunction F() {\n}\n\ninterface I {\n}\n\nnamespace N {\n}\n\ntype T = string;\n\n` +
-                `export * from "export-module";\n`);
+            doTest("", structure, `import "module";\n\ntype T = string;\n\ninterface I {\n}\n\nenum E {\n}\n\nfunction F() {\n}\n\nclass C {\n}\n\nnamespace N {\n}\n\n` +
+                `console.log()\n\nexport * from "export-module";\n`);
         });
     });
 
@@ -1308,7 +1308,7 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.getImportStringLiterals), () => {
         function doTest(fileText: string, expectedLiterals: string[], importHelpers = false) {
-            const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/main.ts", compilerOptions: { importHelpers } });
+            const { sourceFile } = getInfoFromText(fileText, { filePath: "/main.ts", compilerOptions: { importHelpers } });
             expect(sourceFile.getImportStringLiterals().map(l => l.getText())).to.deep.equal(expectedLiterals);
         }
 
@@ -1351,7 +1351,7 @@ function myFunction(param: MyClass) {
             expect(sourceFile.getStructure()).to.deep.equal(expected);
         }
 
-        it.only("should only get the statements", () => {
+        it("should only get the statements", () => {
             const startText = `import {I} from './I';
 export class A implements I {}
 class B extends A {}
@@ -1385,6 +1385,8 @@ const t = 5;`;
                 }), fillStructures.functionDeclaration({
                     isExported: true,
                     name: "f"
+                }), fillStructures.functionDeclaration({
+                    name: "g"
                 }), fillStructures.typeAlias({
                     isExported: true,
                     name: "T",
@@ -1393,7 +1395,7 @@ const t = 5;`;
                     isExported: true,
                     name: "U"
                 }), fillStructures.namespaceDeclaration({
-                    name: "n",
+                    name: "ns",
                     statements: [fillStructures.interfaceDeclaration({
                         name: "nsi"
                     })]
