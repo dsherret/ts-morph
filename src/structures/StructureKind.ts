@@ -21,5 +21,9 @@ export enum StructureKind {
     TypeAlias,
     PropertyAssignment,
     ShorthandPropertyAssignment,
-    SpreadAssignment
+    SpreadAssignment,
+    JsxAttribute,
+    JsxSpreadAttribute,
+    JsxElement,
+    JsxSelfClosingElement
 }

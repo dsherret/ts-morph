@@ -1,9 +1,9 @@
-﻿import { Structure } from "../Structure";
+﻿import { Structure, KindedStructure } from "../Structure";
+import { StructureKind } from "../StructureKind";
 
 export interface JsxSpreadAttributeStructure extends Structure, JsxSpreadAttributeSpecificStructure {
 }
 
-export interface JsxSpreadAttributeSpecificStructure {
-    isSpreadAttribute: true;
+export interface JsxSpreadAttributeSpecificStructure extends KindedStructure<StructureKind.JsxSpreadAttribute> {
     expression: string;
 }

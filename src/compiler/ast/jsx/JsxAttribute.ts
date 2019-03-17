@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { removeChildren, insertIntoParentTextRange } from "../../../manipulation";
-import { JsxAttributeStructure, JsxAttributeSpecificStructure } from "../../../structures";
+import { JsxAttributeStructure, JsxAttributeSpecificStructure, StructureKind } from "../../../structures";
 import { ts, SyntaxKind } from "../../../typescript";
 import { WriterFunction } from "../../../types";
 import { StringUtils, getTextFromStringOrWriter } from "../../../utils";
@@ -90,9 +90,6 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
     set(structure: Partial<JsxAttributeStructure>) {
         callBaseSet(JsxAttributeBase.prototype, this, structure);
 
-        if (structure.isSpreadAttribute)
-            throw new errors.NotImplementedError("Not implemented ability to set a JsxAttribute as a spread attribute. Please open an issue if you need this.");
-
         if (structure.initializer != null)
             this.setInitializer(structure.initializer);
         else if (structure.hasOwnProperty(nameof(structure.initializer)))
@@ -107,8 +104,8 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
     getStructure(): JsxAttributeStructure {
         const initializer = this.getInitializer();
         return callBaseGetStructure<JsxAttributeSpecificStructure>(JsxAttributeBase.prototype, this, {
-            initializer: initializer == null ? undefined : initializer.getText(),
-            isSpreadAttribute: false
+            kind: StructureKind.JsxAttribute,
+            initializer: initializer == null ? undefined : initializer.getText()
         });
     }
 }

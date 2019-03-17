@@ -12,6 +12,14 @@ For a while now it's been recommended to use the named export instead of the def
 import { Project } from "ts-morph";
 ```
 
+### `JsxAttributeStructure` and `JsxSpreadAttributeStructure` differentiation
+
+These two structures are now differentiated based on their new `.kind` property. Previously it used the `isSpreadAttribute` property.
+
+### `JsxElementStructure` and `JsxSelfClosingElementStructure` differentiation
+
+These two structures are now differentiated based on their new `.kind` property. Previously it used the `isSelfClosing` property.
+
 ## Version 1
 
 Renamed library to `ts-morph` and reset version to 1.0.0.

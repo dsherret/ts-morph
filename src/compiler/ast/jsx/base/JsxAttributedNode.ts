@@ -1,7 +1,7 @@
 ﻿import * as errors from "../../../../errors";
 import { getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../../manipulation";
 import { SpaceFormattingStructuresPrinter } from "../../../../structurePrinters";
-import { JsxAttributeStructure, JsxSpreadAttributeStructure } from "../../../../structures";
+import { JsxAttributeStructure, JsxSpreadAttributeStructure, OptionalKind } from "../../../../structures";
 import { Constructor } from "../../../../types";
 import { SyntaxKind, ts } from "../../../../typescript";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
@@ -39,19 +39,19 @@ export interface JsxAttributedNode {
     /**
      * Adds an attribute into the element.
      */
-    addAttribute(attribute: JsxAttributeStructure | JsxSpreadAttributeStructure): JsxAttributeLike;
+    addAttribute(attribute: OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>): JsxAttributeLike;
     /**
      * Adds attributes into the element.
      */
-    addAttributes(attributes: ReadonlyArray<JsxAttributeStructure | JsxSpreadAttributeStructure>): JsxAttributeLike[];
+    addAttributes(attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>): JsxAttributeLike[];
     /**
      * Inserts an attribute into the element.
      */
-    insertAttribute(index: number, attribute: JsxAttributeStructure | JsxSpreadAttributeStructure): JsxAttributeLike;
+    insertAttribute(index: number, attribute: OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>): JsxAttributeLike;
     /**
      * Inserts attributes into the element.
      */
-    insertAttributes(index: number, attributes: ReadonlyArray<JsxAttributeStructure | JsxSpreadAttributeStructure>): JsxAttributeLike[];
+    insertAttributes(index: number, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>): JsxAttributeLike[];
 }
 
 export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensionType>>(Base: T): Constructor<JsxAttributedNode> & T {
@@ -69,19 +69,19 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
             return getNodeByNameOrFindFunction(this.getAttributes(), nameOrFindFunction);
         }
 
-        addAttribute(structure: JsxAttributeStructure | JsxSpreadAttributeStructure) {
+        addAttribute(structure: OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure) {
             return this.addAttributes([structure])[0];
         }
 
-        addAttributes(structures: ReadonlyArray<JsxAttributeStructure | JsxSpreadAttributeStructure>) {
+        addAttributes(structures: ReadonlyArray<OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure>) {
             return this.insertAttributes(this.compilerNode.attributes.properties.length, structures);
         }
 
-        insertAttribute(index: number, structure: JsxAttributeStructure | JsxSpreadAttributeStructure) {
+        insertAttribute(index: number, structure: OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure) {
             return this.insertAttributes(index, [structure])[0];
         }
 
-        insertAttributes(index: number, structures: ReadonlyArray<JsxAttributeStructure | JsxSpreadAttributeStructure>) {
+        insertAttributes(index: number, structures: ReadonlyArray<OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure>) {
             if (structures.length === 0)
                 return [];
 

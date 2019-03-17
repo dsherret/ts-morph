@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import * as errors from "../../../../errors";
 import { JsxElement } from "../../../../compiler";
-import { JsxElementStructure, JsxAttributeStructure } from "../../../../structures";
+import { JsxElementStructure, JsxAttributeStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromTextWithDescendant, OptionalTrivia, OptionalKindAndTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxElement>(text, SyntaxKind.JsxElement, { isJsx: true });
@@ -104,27 +104,13 @@ describe(nameof(JsxElement), () => {
         });
 
         it("should change when all set", () => {
-            const structure: OptionalTrivia<MakeRequired<JsxElementStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<JsxElementStructure>> = {
                 attributes: [{ name: "attr" }],
                 bodyText: "<newElement />",
                 children: undefined,
-                isSelfClosing: false,
                 name: "newName"
             };
             doTest("const v = <div a1 a2><inner /></div>", structure, "const v = <newName attr>\n    <newElement />\n</newName>");
-        });
-
-        function doNotImplementedTest(text: string, structure: Partial<JsxElementStructure>) {
-            const { descendant } = getInfo(text);
-            expect(() => descendant.set(structure)).to.throw(errors.NotImplementedError);
-        }
-
-        it("should throw when setting as self closing -- not implemented", () => {
-            doNotImplementedTest("const v = <element></element>;", { isSelfClosing: true });
-        });
-
-        it("should throw when setting children -- not implemented", () => {
-            doNotImplementedTest("const v = <element></element>;", { children: [] });
         });
     });
 
@@ -141,20 +127,20 @@ describe(nameof(JsxElement), () => {
 
         it("should get when has nothing", () => {
             doTest("const v = <div></div>", {
+                kind: StructureKind.JsxElement,
                 attributes: [],
                 children: undefined,
                 bodyText: "",
-                isSelfClosing: false,
                 name: "div"
             });
         });
 
         it("should get when has everything", () => {
             doTest("const v = <div a><Inner /></div>", {
+                kind: StructureKind.JsxElement,
                 attributes: [{ name: "a" }],
                 children: undefined,
                 bodyText: "<Inner />",
-                isSelfClosing: false,
                 name: "div"
             });
         });
@@ -166,10 +152,10 @@ const v = <div>
     <div></div>
 </div>`;
             doTest(code, {
+                kind: StructureKind.JsxElement,
                 attributes: [],
                 children: undefined,
                 bodyText: "<Inner />\n<div></div>",
-                isSelfClosing: false,
                 name: "div"
             });
         });

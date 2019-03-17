@@ -1,6 +1,5 @@
 import { ts } from "../../../typescript";
-import * as errors from "../../../errors";
-import { JsxElementStructure, JsxElementSpecificStructure } from "../../../structures";
+import { JsxSelfClosingElementStructure, JsxSelfClosingElementSpecificStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { PrimaryExpression } from "../expression";
@@ -12,22 +11,13 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
      */
-    set(structure: Partial<JsxElementStructure>) {
+    set(structure: Partial<JsxSelfClosingElementStructure>) {
         callBaseSet(JsxSelfClosingElementBase.prototype, this, structure);
 
         if (structure.attributes != null) {
             this.getAttributes().forEach(a => a.remove());
             this.addAttributes(structure.attributes);
         }
-
-        if (structure.isSelfClosing === false)
-            throw new errors.NotImplementedError("Changing a JsxSelfClosingElement to be non-self closing is not implemented. Please open an issue if you need this.");
-
-        if (structure.children != null)
-            throw new errors.NotImplementedError("Changing a JsxSelfClosingElement to be non-self closing is not implemented. Please open an issue if you need this.");
-
-        if (structure.bodyText != null)
-            throw new errors.NotImplementedError("Changing a JsxSelfClosingElement to be non-self closing is not implemented. Please open an issue if you need this.");
 
         if (structure.name != null)
             this.getTagNameNode().replaceWithText(structure.name);
@@ -38,16 +28,13 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
     /**
      * Gets the structure equivalent to this node.
      */
-    getStructure(): JsxElementStructure {
-        const structure = callBaseGetStructure<JsxElementSpecificStructure>(JsxSelfClosingElementBase.prototype, this, {
+    getStructure(): JsxSelfClosingElementStructure {
+        const structure = callBaseGetStructure<JsxSelfClosingElementSpecificStructure>(JsxSelfClosingElementBase.prototype, this, {
+            kind: StructureKind.JsxSelfClosingElement,
             name: this.getTagNameNode().getText(),
-            attributes: this.getAttributes().map(a => a.getStructure()),
-            children: undefined,
-            isSelfClosing: true,
-            bodyText: undefined
+            attributes: this.getAttributes().map(a => a.getStructure())
         });
-        delete structure.children;
-        delete structure.bodyText;
+
         return structure;
     }
 }

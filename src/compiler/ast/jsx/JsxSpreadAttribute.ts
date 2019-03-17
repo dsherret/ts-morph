@@ -1,6 +1,5 @@
 import { removeChildren } from "../../../manipulation";
-import * as errors from "../../../errors";
-import { JsxSpreadAttributeStructure, JsxSpreadAttributeSpecificStructure } from "../../../structures";
+import { JsxSpreadAttributeStructure, JsxSpreadAttributeSpecificStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { ts } from "../../../typescript";
 import { callBaseSet } from "../callBaseSet";
@@ -43,9 +42,6 @@ export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttri
     set(structure: Partial<JsxSpreadAttributeStructure>) {
         callBaseSet(JsxSpreadAttributeBase.prototype, this, structure);
 
-        if ((structure.isSpreadAttribute as boolean) === false)
-            throw new errors.NotImplementedError("Not implemented ability to convert a spread attribute to a regular attribute. Open up an issue if you need this.");
-
         if (structure.expression != null)
             this.setExpression(structure.expression);
 
@@ -57,7 +53,7 @@ export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttri
      */
     getStructure(): JsxSpreadAttributeStructure {
         return callBaseGetStructure<JsxSpreadAttributeSpecificStructure>(JsxSpreadAttributeBase.prototype, this, {
-            isSpreadAttribute: true,
+            kind: StructureKind.JsxSpreadAttribute,
             expression: this.getExpression().getText()
         });
     }

@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { JsxSelfClosingElement, JsxSpreadAttribute } from "../../../../compiler";
 import * as errors from "../../../../errors";
-import { JsxSpreadAttributeStructure } from "../../../../structures";
+import { JsxSpreadAttributeStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromTextWithDescendant, OptionalTrivia, OptionalKindAndTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxSpreadAttribute>(text, SyntaxKind.JsxSpreadAttribute, { isJsx: true });
@@ -78,21 +78,10 @@ describe(nameof(JsxSpreadAttribute), () => {
         });
 
         it("should change when all set", () => {
-            const structure: OptionalTrivia<MakeRequired<JsxSpreadAttributeStructure>> = {
-                isSpreadAttribute: true,
+            const structure: OptionalKindAndTrivia<MakeRequired<JsxSpreadAttributeStructure>> = {
                 expression: "newExpr"
             };
             doTest("const v = <div {...attr} />", structure, "const v = <div {...newExpr} />");
-        });
-
-        function doNotImplementedTest(text: string, structure: Partial<JsxSpreadAttributeStructure>) {
-            const { descendant } = getInfo(text);
-            expect(() => descendant.set(structure)).to.throw(errors.NotImplementedError);
-        }
-
-        it("should throw when setting as non spread attribute -- not implemented", () => {
-            // force setting as false
-            doNotImplementedTest("const v = <element {...attr} />;", { isSpreadAttribute: false as true });
         });
     });
 
@@ -105,7 +94,7 @@ describe(nameof(JsxSpreadAttribute), () => {
 
         it("should get the structure", () => {
             doTest(`var t = (<jsx {...a1} />`, {
-                isSpreadAttribute: true,
+                kind: StructureKind.JsxSpreadAttribute,
                 expression: "a1"
             });
         });
