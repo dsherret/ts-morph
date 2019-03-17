@@ -243,7 +243,7 @@ describe(nameof(MethodDeclaration), () => {
         it("should get structure when abstract", () => {
             doTest("class Test { abstract method?() {} }", {
                 kind: StructureKind.Method,
-                bodyText: "",
+                statements: [],
                 decorators: [],
                 docs: [],
                 isAbstract: true,
@@ -272,7 +272,7 @@ class Test {
 `;
             doTest(code, {
                 kind: StructureKind.Method,
-                bodyText: "",
+                statements: [],
                 decorators: [],
                 docs: [{ description: "implementation" }],
                 isAbstract: false,

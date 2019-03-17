@@ -181,7 +181,7 @@ describe(nameof(FunctionDeclaration), () => {
         it("should get the structure for an empty function", () => {
             doTest("declare function test() {}", {
                 kind: StructureKind.Function,
-                bodyText: "",
+                statements: [],
                 docs: [],
                 hasDeclareKeyword: true,
                 isAsync: false,
@@ -219,7 +219,7 @@ export default async function *test<T>(param): string {
 
             doTest(code, {
                 kind: StructureKind.Function,
-                bodyText: "return '';",
+                statements: ["return '';"],
                 docs: [{ description: "docs" }],
                 hasDeclareKeyword: false,
                 isAsync: true,

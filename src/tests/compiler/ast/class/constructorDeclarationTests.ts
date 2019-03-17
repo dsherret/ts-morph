@@ -169,7 +169,7 @@ describe(nameof(ConstructorDeclaration), () => {
         it("should get structure when empty", () => {
             doTest("class T { constructor() {} }", {
                 kind: StructureKind.Constructor,
-                bodyText: "",
+                statements: [],
                 docs: [],
                 overloads: [],
                 parameters: [],
@@ -192,7 +192,7 @@ class T {
 `;
             doTest(code, {
                 kind: StructureKind.Constructor,
-                bodyText: "test;",
+                statements: ["test;"],
                 docs: [{ description: "implementation" }],
                 overloads: [{
                     scope: Scope.Public,

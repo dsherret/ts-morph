@@ -1,3 +1,4 @@
+export * from "./aliases";
 export * from "./base";
 export * from "./class";
 export * from "./decorator";

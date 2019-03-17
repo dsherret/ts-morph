@@ -85,7 +85,7 @@ describe(nameof(GetAccessorDeclaration), () => {
 
         it("should modify when changed", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<GetAccessorDeclarationStructure>> = {
-                bodyText: "console;",
+                statements: ["console;"],
                 classes: [{ name: "C" }],
                 decorators: [{ name: "dec" }],
                 docs: [{ description: "d" }],
@@ -135,8 +135,8 @@ class Identifier {
             doTest("\nclass Identifier {\n    get prop();\n}\n", structure, expectedCode);
         });
 
-        it("should remove the body when providing undefined", () => {
-            doTest("class Identifier {\n    get prop(){}\n}", { bodyText: undefined }, "class Identifier {\n    get prop();\n}");
+        it("should remove the body when providing undefined to statements", () => {
+            doTest("class Identifier {\n    get prop(){}\n}", { statements: undefined }, "class Identifier {\n    get prop();\n}");
         });
     });
 
@@ -155,7 +155,7 @@ class Identifier {
         it("should get structure when empty", () => {
             doTest("abstract class T { abstract get test(); }", {
                 kind: StructureKind.GetAccessor,
-                bodyText: undefined,
+                statements: undefined,
                 docs: [],
                 parameters: [],
                 returnType: undefined,
@@ -179,7 +179,7 @@ class T {
 `;
             doTest(code, {
                 kind: StructureKind.GetAccessor,
-                bodyText: "return 5;",
+                statements: ["return 5;"],
                 docs: [{ description: "test" }],
                 parameters: [{ name: "p" }],
                 returnType: "number",

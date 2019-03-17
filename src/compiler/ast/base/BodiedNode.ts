@@ -1,11 +1,8 @@
 import * as errors from "../../../errors";
-import { BodiedNodeStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { ts } from "../../../typescript";
-import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { getBodyTextWithoutLeadingIndentation, setBodyTextForNode } from "./helpers";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type BodiedNodeExtensionType = Node<ts.Node & { body: ts.Node; }>;
 
@@ -41,23 +38,8 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
             return this;
         }
 
-        set(structure: Partial<BodiedNodeStructure>) {
-            callBaseSet(Base.prototype, this, structure);
-
-            if (structure.bodyText != null)
-                this.setBodyText(structure.bodyText);
-
-            return this;
-        }
-
         getBodyText() {
             return getBodyTextWithoutLeadingIndentation(this.getBody());
-        }
-
-        getStructure() {
-            return callBaseGetStructure<BodiedNodeStructure>(Base.prototype, this, {
-                bodyText: this.getBodyText()
-            });
         }
     };
 }

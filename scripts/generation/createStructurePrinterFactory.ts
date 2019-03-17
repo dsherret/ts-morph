@@ -92,8 +92,8 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
 
     function isAllowedStructurePrinter(name: string) {
         switch (name) {
-            case "StructurePrinter":
-            case "FactoryStructurePrinter":
+            case "Printer":
+            case "NodePrinter":
             case "BlankLineFormattingStructuresPrinter":
             case "NewLineFormattingStructuresPrinter":
             case "SpaceFormattingStructuresPrinter":

@@ -162,7 +162,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      */
     getStructure(): NamespaceDeclarationStructure {
         return callBaseGetStructure<NamespaceDeclarationSpecificStructure>(NamespaceDeclarationBase.prototype, this, {
-            kind: StructureKind.NamespaceDeclaration,
+            kind: StructureKind.Namespace,
             declarationKind: this.getDeclarationKind()
         });
     }

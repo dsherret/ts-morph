@@ -145,13 +145,13 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forJsxChildDecider(): structurePrinters.JsxChildDeciderStructurePrinter {
-        return new structurePrinters.JsxChildDeciderStructurePrinter(this);
+    forJsxAttribute(): structurePrinters.JsxAttributeStructurePrinter {
+        return new structurePrinters.JsxAttributeStructurePrinter(this);
     }
 
     @Memoize
-    forJsxAttribute(): structurePrinters.JsxAttributeStructurePrinter {
-        return new structurePrinters.JsxAttributeStructurePrinter(this);
+    forJsxChildDecider(): structurePrinters.JsxChildDeciderStructurePrinter {
+        return new structurePrinters.JsxChildDeciderStructurePrinter(this);
     }
 
     @Memoize
@@ -160,13 +160,13 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forJsxSelfClosingElement(): structurePrinters.JsxSelfClosingElementStructurePrinter {
-        return new structurePrinters.JsxSelfClosingElementStructurePrinter(this);
+    forJsxAttributeDecider(): structurePrinters.JsxAttributeDeciderStructurePrinter {
+        return new structurePrinters.JsxAttributeDeciderStructurePrinter(this);
     }
 
     @Memoize
-    forJsxAttributeDecider(): structurePrinters.JsxAttributeDeciderStructurePrinter {
-        return new structurePrinters.JsxAttributeDeciderStructurePrinter(this);
+    forJsxSelfClosingElement(): structurePrinters.JsxSelfClosingElementStructurePrinter {
+        return new structurePrinters.JsxSelfClosingElementStructurePrinter(this);
     }
 
     @Memoize
@@ -205,13 +205,13 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forBodyText(options: { isAmbient: boolean; }): structurePrinters.BodyTextStructurePrinter {
-        return new structurePrinters.BodyTextStructurePrinter(this, options);
+    forStatementedNode(options: { isAmbient: boolean; }): structurePrinters.StatementedNodeStructurePrinter {
+        return new structurePrinters.StatementedNodeStructurePrinter(this, options);
     }
 
     @Memoize
-    forStatementedNode(options: { isAmbient: boolean; }): structurePrinters.StatementedNodeStructurePrinter {
-        return new structurePrinters.StatementedNodeStructurePrinter(this, options);
+    forStatements(options: { isAmbient: boolean; }): structurePrinters.StatementsStructurePrinter {
+        return new structurePrinters.StatementsStructurePrinter(this, options);
     }
 
     @Memoize

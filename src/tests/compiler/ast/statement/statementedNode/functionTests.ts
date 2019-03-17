@@ -63,7 +63,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert with only a body text", () => {
-            doTest("", 0, [{ name: "func", bodyText: "console.log('testing');" }], "function func() {\n    console.log('testing');\n}\n");
+            doTest("", 0, [{ name: "func", statements: ["console.log('testing');"] }], "function func() {\n    console.log('testing');\n}\n");
         });
 
         it("should insert into an ambient context", () => {
@@ -95,7 +95,7 @@ describe(nameof(StatementedNode), () => {
                 enums: [{ name: "E" }],
                 functions: [{ name: "F" }],
                 namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');"
+                statements: ["console.log('here');"]
             };
 
             doTest("", 0, [structure],

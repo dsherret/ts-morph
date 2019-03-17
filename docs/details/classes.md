@@ -194,13 +194,13 @@ const property = classDeclaration.addProperty({ isStatic: true, name: "prop", ty
 Add or insert get accessors by using `insertGetAccessors()`, `insertGetAccessor`, `addGetAccessor`, or `addGetAccessors`:
 
 ```ts
-const getAccessor = classDeclaration.addGetAccessor({ name: "someNumber", returnType: "number", bodyText: "return 5;" });
+const getAccessor = classDeclaration.addGetAccessor({ name: "someNumber", returnType: "number", statements: ["return 5;"] });
 ```
 
 Add or insert set accessors by using `insertSetAccessors()`, `insertSetAccessor`, `addSetAccessor`, or `addSetAccessors`:
 
 ```ts
-const setAccessor = classDeclaration.addSetAccessor({ name: "someNumber", parameters: [{ name: "value", type: "number" }], bodyText: "_someNumber = value;" });
+const setAccessor = classDeclaration.addSetAccessor({ name: "someNumber", parameters: [{ name: "value", type: "number" }], statements: ["_someNumber = value;"] });
 ```
 
 #### Remove

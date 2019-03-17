@@ -665,7 +665,7 @@ describe(nameof(Project), () => {
                 }],
                 imports: [{ moduleSpecifier: "./test" }],
                 exports: [{ moduleSpecifier: "./test" }],
-                bodyText: writer => writer.write("print('test');")
+                statements: [writer => writer.write("print('test');")]
             });
             expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nenum MyEnum {\n}\n\nprint('test');\n\nexport * from "./test";\n`);
         });
@@ -680,7 +680,7 @@ describe(nameof(Project), () => {
                 enums: [{ name: "E" }],
                 functions: [{ name: "F" }],
                 namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');"
+                statements: ["console.log('here');"]
             };
             const sourceFile = new Project({ useVirtualFileSystem: true }).createSourceFile("MyFile.ts", structure);
             const expectedText = `import "./test";\n\n` +

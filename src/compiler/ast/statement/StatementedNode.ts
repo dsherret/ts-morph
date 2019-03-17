@@ -3,12 +3,13 @@ import * as errors from "../../../errors";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../../manipulation";
 import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
-    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, BodiedNodeStructure, OptionalKind } from "../../../structures";
+    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, OptionalKind } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
-    TypeGuards, printTextFromStringOrWriter } from "../../../utils";
+    TypeGuards } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassDeclaration } from "../class";
 import { Node } from "../common";
 import { EnumDeclaration } from "../enum";
@@ -873,56 +874,67 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 () => getNotFoundErrorMessageForNameOrFindFunction("variable declaration", nameOrFindFunction));
         }
 
-        set(structure: Partial<StatementedNodeStructure>) {
-            const structureCopy: BodiedNodeStructure & StatementedNodeStructure = { ...structure };
-
-            // remove the body text first if necessary
-            const bodyText = structureCopy.bodyText;
-            if (TypeGuards.isBodiedNode(this) || TypeGuards.isBodyableNode(this)) {
-                if (structureCopy.bodyText != null) {
-                    const statementCount = this.getCompilerStatements().length;
-                    if (statementCount > 0)
-                        this.removeStatements([0, statementCount - 1]);
-                }
-                else if (TypeGuards.isBodyableNode(this) && structureCopy.hasOwnProperty(nameof(structureCopy.bodyText)))
-                    this.removeBody();
+        getStructure() {
+            const structure: Pick<StatementedNodeStructure, "statements"> = {};
+            if (TypeGuards.isBodyableNode(this) && !this.hasBody())
+                structure.statements = undefined;
+            else {
+                structure.statements = this.getStatements().map(s => {
+                    if ((s as any).getStructure() != null)
+                        return (s as any).getStructure();
+                    return s.getTextWithoutLeadingIndentation();
+                });
             }
 
-            delete structureCopy.bodyText; // do not set this in BodiedNode or BodyableNode, set it below
-            callBaseSet(Base.prototype, this, structureCopy);
+            return callBaseGetStructure<any>(Base.prototype, this, structure);
+        }
 
+        set(structure: Partial<StatementedNodeStructure>) {
+            // remove the body text first if necessary
+            if (TypeGuards.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure.statements))) {
+                this.removeBody();
+            }
+            else if (structure.statements != null) {
+                const statementCount = this.getCompilerStatements().length;
+                if (statementCount > 0)
+                    this.removeStatements([0, statementCount - 1]);
+            }
+
+            callBaseSet(Base.prototype, this, structure);
+
+            // remove existing set nodes
+            let shouldAdd = structure.statements != null;
             if (structure.classes != null) {
                 this.getClasses().forEach(c => c.remove());
-                this.addClasses(structure.classes);
+                shouldAdd = true;
             }
             if (structure.enums != null) {
                 this.getEnums().forEach(e => e.remove());
-                this.addEnums(structure.enums);
+                shouldAdd = true;
             }
             if (structure.functions != null) {
                 this.getFunctions().forEach(i => i.remove());
-                this.addFunctions(structure.functions);
+                shouldAdd = true;
             }
             if (structure.interfaces != null) {
                 this.getInterfaces().forEach(i => i.remove());
-                this.addInterfaces(structure.interfaces);
+                shouldAdd = true;
             }
             if (structure.namespaces != null) {
                 this.getNamespaces().forEach(n => n.remove());
-                this.addNamespaces(structure.namespaces);
+                shouldAdd = true;
             }
             if (structure.typeAliases != null) {
                 this.getTypeAliases().forEach(t => t.remove());
-                this.addTypeAliases(structure.typeAliases);
+                shouldAdd = true;
             }
 
-            // set the body text after adding everything else
-            if (TypeGuards.isBodiedNode(this) || TypeGuards.isBodyableNode(this)) {
-                if (bodyText != null)
-                    this.addStatements(writer => {
-                        writer.conditionalNewLine(this.getCompilerStatements().length > 0);
-                        printTextFromStringOrWriter(writer, bodyText);
-                    });
+            // add the text after if necessary (do this in a single print so it's fast)
+            if (shouldAdd) {
+                this.addStatements(writer => {
+                    const statementsPrinter = this._context.structurePrinterFactory.forStatementedNode({ isAmbient: isNodeAmbientOrInAmbientContext(this) });
+                    statementsPrinter.printText(writer, structure);
+                });
             }
 
             return this;

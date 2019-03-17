@@ -144,7 +144,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 enums: [{ name: "E" }],
                 functions: [{ name: "F" }],
                 namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');"
+                statements: ["console.log('here');"]
             };
             doTest("class c {\n}", 0, structure,
                 "class c {\n    public constructor();\n    private constructor();\n    /**\n     * Test\n     */\n    public constructor<T>(param) {\n" +
@@ -268,7 +268,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 enums: [{ name: "E" }],
                 functions: [{ name: "F" }],
                 namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');"
+                statements: ["console.log('here');"]
             };
             doTest("class c {\n}", 0, [structure],
                 "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static get prop<T>(param): number {\n" +
@@ -524,7 +524,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 enums: [{ name: "E" }],
                 functions: [{ name: "F" }],
                 namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');"
+                statements: ["console.log('here');"]
             };
             doTest("class c {\n}", 0, [structure],
                 "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static set prop<T>(param): number {\n" +
@@ -777,7 +777,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 enums: [{ name: "E" }],
                 functions: [{ name: "F" }],
                 namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');"
+                statements: ["console.log('here');"]
             };
             doTest("class c {\n}", 0, [structure],
                 "class c {\n    public static myMethod?();\n    private myMethod();\n" +

@@ -1,9 +1,11 @@
-﻿import { ClassDeclarationStructure } from "../class";
+﻿import { WriterFunction } from "../../types";
+import { ClassDeclarationStructure } from "../class";
 import { EnumDeclarationStructure } from "../enum";
 import { FunctionDeclarationStructure } from "../function";
 import { InterfaceDeclarationStructure } from "../interface";
 import { NamespaceDeclarationStructure } from "../module";
 import { TypeAliasDeclarationStructure } from "../type";
+import { StatementStructures } from "../aliases";
 import { OptionalKind } from "../types";
 
 export interface StatementedNodeStructure {
@@ -13,4 +15,5 @@ export interface StatementedNodeStructure {
     interfaces?: OptionalKind<InterfaceDeclarationStructure>[];
     namespaces?: OptionalKind<NamespaceDeclarationStructure>[];
     typeAliases?: OptionalKind<TypeAliasDeclarationStructure>[];
+    statements?: (string | WriterFunction | StatementStructures)[];
 }

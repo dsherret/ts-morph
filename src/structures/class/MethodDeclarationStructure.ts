@@ -1,13 +1,13 @@
-﻿import { AbstractableNodeStructure, AsyncableNodeStructure, BodyableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure,
-    JSDocableNodeStructure, PropertyNamedNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure,
-    TypeParameteredNodeStructure, QuestionTokenableNodeStructure } from "../base";
+﻿import { AbstractableNodeStructure, AsyncableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure,
+    PropertyNamedNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure, TypeParameteredNodeStructure,
+    QuestionTokenableNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface MethodDeclarationStructure
     extends Structure, MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
-        AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure,
+        AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure,
         QuestionTokenableNodeStructure
 {
 }

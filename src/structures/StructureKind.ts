@@ -16,7 +16,7 @@ export enum StructureKind {
     ExportAssignment,
     ExportDeclaration,
     ImportDeclaration,
-    NamespaceDeclaration,
+    Namespace,
     VariableStatement,
     TypeAlias,
     PropertyAssignment,

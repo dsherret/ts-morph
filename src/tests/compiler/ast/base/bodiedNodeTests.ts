@@ -1,6 +1,5 @@
 ﻿import { expect } from "chai";
 import { BodiedNode, NamespaceDeclaration } from "../../../../compiler";
-import { BodiedNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -44,41 +43,6 @@ describe(nameof(BodiedNode), () => {
 
         it("should get without indentation", () => {
             doTest("namespace identifier {\n    export class Test {\n        prop: string;\n    }\n}\n}", "export class Test {\n    prop: string;\n}");
-        });
-    });
-
-    describe(nameof<NamespaceDeclaration>(n => n.getStructure), () => {
-        function doTest(startCode: string, bodyText: string | undefined) {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>(startCode);
-            expect(firstChild.getStructure().bodyText).to.equal(bodyText);
-        }
-
-        it("should get the body text when there is none", () => {
-            doTest("namespace identifier {\n}", "");
-        });
-
-        it("should get the body text when there is a lot of whitespace", () => {
-            doTest("namespace identifier {\n   \t\n\r\n   \t}", "");
-        });
-
-        it("should get the body text without indentation", () => {
-            doTest("namespace identifier {\n    export class Test {\n        prop: string;\n    }\n}\n}", "export class Test {\n    prop: string;\n}");
-        });
-    });
-
-    describe(nameof<NamespaceDeclaration>(n => n.set), () => {
-        function doTest(startCode: string, structure: BodiedNodeStructure, expectedCode: string) {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>(startCode);
-            firstChild.set(structure);
-            expect(firstChild.getText()).to.equal(expectedCode);
-        }
-
-        it("should set the text when using a string", () => {
-            doTest("namespace identifier {\n}", { bodyText: "var myVar;" }, "namespace identifier {\n    var myVar;\n}");
-        });
-
-        it("should set the text when using a writer", () => {
-            doTest("namespace identifier {\n}", { bodyText: writer => writer.writeLine("var myVar;") }, "namespace identifier {\n    var myVar;\n}");
         });
     });
 });

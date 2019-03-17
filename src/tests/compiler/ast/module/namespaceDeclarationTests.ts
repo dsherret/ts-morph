@@ -1,8 +1,8 @@
 ﻿import { expect } from "chai";
-import { NamespaceDeclaration, NamespaceDeclarationKind } from "../../../../compiler";
+import { NamespaceDeclaration, NamespaceDeclarationKind, VariableDeclarationKind } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(NamespaceDeclaration), () => {
     describe(nameof<NamespaceDeclaration>(d => d.getName), () => {
@@ -210,7 +210,7 @@ describe(nameof(NamespaceDeclaration), () => {
 
     describe(nameof<NamespaceDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: Partial<NamespaceDeclarationStructure>, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -250,9 +250,9 @@ describe(nameof(NamespaceDeclaration), () => {
 
         it("should get when has nothing", () => {
             doTest("namespace Identifier {\n}", {
-                kind: StructureKind.NamespaceDeclaration,
+                kind: StructureKind.Namespace,
                 declarationKind: NamespaceDeclarationKind.Namespace,
-                bodyText: "",
+                statements: [],
                 docs: [],
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
@@ -268,9 +268,15 @@ export declare module Identifier {
     const t = 5;
 }`;
             doTest(code, {
-                kind: StructureKind.NamespaceDeclaration,
+                kind: StructureKind.Namespace,
                 declarationKind: NamespaceDeclarationKind.Module,
-                bodyText: "const t = 5;",
+                statements: [fillStructures.variableStatement({
+                    declarationKind: VariableDeclarationKind.Const,
+                    declarations: [fillStructures.variableDeclaration({
+                        name: "t",
+                        initializer: "5"
+                    })]
+                })],
                 docs: [{ description: "Test" }],
                 hasDeclareKeyword: true,
                 isDefaultExport: false,
@@ -281,9 +287,9 @@ export declare module Identifier {
 
         it("should get for global module", () => {
             doTest("global {\n}", {
-                kind: StructureKind.NamespaceDeclaration,
+                kind: StructureKind.Namespace,
                 declarationKind: NamespaceDeclarationKind.Global,
-                bodyText: "",
+                statements: [],
                 docs: [],
                 hasDeclareKeyword: false,
                 isDefaultExport: false,

@@ -56,8 +56,6 @@ function isAllowedStructure(structure: Structure) {
         case "NameableNodeStructure":
         case "PropertyNamedNodeStructure":
         case "FunctionLikeDeclarationStructure":
-        case "BodiedNodeStructure":
-        case "BodyableNodeStructure":
         case "StatementedNodeStructure":
         case "DecoratableNodeStructure":
             return false;

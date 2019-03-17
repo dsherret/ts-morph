@@ -1,6 +1,5 @@
 ﻿import { expect } from "chai";
 import { BodyableNode, ClassDeclaration, FunctionDeclaration } from "../../../../compiler";
-import { BodyableNodeStructure, FunctionDeclarationStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -176,49 +175,6 @@ describe(nameof(BodyableNode), () => {
 
         it("should do nothing when it doesn't exist", () => {
             doTest("function myFunction();", "function myFunction();");
-        });
-    });
-
-    describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
-        function doTest(startCode: string, bodyText: string | undefined) {
-            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
-            expect((firstChild.getStructure() as FunctionDeclarationStructure).bodyText).to.equal(bodyText);
-        }
-
-        it("should get the body text when there is none", () => {
-            doTest("function test();", undefined);
-        });
-
-        it("should get the body text when there is a lot of whitespace", () => {
-            doTest("function test() {\n   \t\n\r\n   \t}", "");
-        });
-
-        it("should get the body text without indentation", () => {
-            doTest("function test() {\n    export class Test {\n        prop: string;\n    }\n}\n}", "export class Test {\n    prop: string;\n}");
-        });
-    });
-
-    describe(nameof<FunctionDeclaration>(n => n.set), () => {
-        function doTest(startCode: string, structure: BodyableNodeStructure, expectedCode: string) {
-            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
-            firstChild.set(structure);
-            expect(firstChild.getText()).to.equal(expectedCode);
-        }
-
-        it("should set the text of a function when using a string", () => {
-            doTest("function myFunction() {\n}", { bodyText: "var myVar;" }, "function myFunction() {\n    var myVar;\n}");
-        });
-
-        it("should set the text of a function when using a writer", () => {
-            doTest("function myFunction() {\n}", { bodyText: writer => writer.writeLine("var myVar;") }, "function myFunction() {\n    var myVar;\n}");
-        });
-
-        it("should remove the body when it's undefined", () => {
-            doTest("function myFunction() {\n}", { bodyText: undefined }, "function myFunction();");
-        });
-
-        it("should not remove the body when the property doesn't exist", () => {
-            doTest("function myFunction() {\n}", { }, "function myFunction() {\n}");
         });
     });
 });

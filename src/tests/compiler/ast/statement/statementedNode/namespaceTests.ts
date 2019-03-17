@@ -62,7 +62,7 @@ describe(nameof(StatementedNode), () => {
                 enums: [{ name: "E" }],
                 functions: [{ name: "F" }],
                 namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');",
+                statements: ["console.log('here');"],
                 imports: [{ moduleSpecifier: "./import" }],
                 exports: [{ moduleSpecifier: "./export" }]
             };
