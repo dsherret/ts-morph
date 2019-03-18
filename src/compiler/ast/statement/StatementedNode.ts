@@ -880,7 +880,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structure.statements = undefined;
             else {
                 structure.statements = this.getStatements().map(s => {
-                    if (TypeGuards.hasStructure(s))
+                    if (TypeGuards._hasStructure(s))
                         return s.getStructure() as any; // todo: resolve this
                     return s.getText({ trimLeadingIndentation: true });
                 });

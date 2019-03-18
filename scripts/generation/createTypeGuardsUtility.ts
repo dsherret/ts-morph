@@ -55,6 +55,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         const methodInfos = new KeyValueCache<string, MethodInfo>();
 
         for (const node of inspector.getWrappedNodes().filter(n => isAllowedClass(n.getName()))) {
+            // todo: what is going on here? Why does this need to be filled
             getMethodInfoForNode(node); // fill this
             const nodeBase = node.getBase();
             if (nodeBase != null)
@@ -133,7 +134,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     }
 
     function updateHasStructure() {
-        const hasStructureMethod = typeGuardsClass.getStaticMethod("hasStructure");
+        const hasStructureMethod = typeGuardsClass.getStaticMethod("_hasStructure");
         if (hasStructureMethod != null)
             hasStructureMethod.remove();
 
@@ -141,7 +142,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         typeGuardsClass.addMethod({
             docs: ["@internal"],
             isStatic: true,
-            name: "hasStructure",
+            name: "_hasStructure",
             parameters: [{ name: "node", type: "compiler.Node" }],
             returnType: `node is compiler.Node & { getStructure(): Structure; }`,
             bodyText: writer => {

@@ -2777,7 +2777,7 @@ export class TypeGuards {
     /**
      * @internal
      */
-    static hasStructure(node: compiler.Node): node is compiler.Node & { getStructure(): Structure; } {
+    static _hasStructure(node: compiler.Node): node is compiler.Node & { getStructure(): Structure; } {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.Constructor:

@@ -116,7 +116,7 @@ const descendantSourceFiles = directory.getDescendantSourceFiles();
 directory.createSourceFile("someFile.ts");
 directory.createSourceFile("someFile2.ts", "// some text");
 directory.createSourceFile("someFile3.ts", writer => writer.writeLine("// some text"));
-directory.createSourceFile("someFile4.ts", { enums: [{ name: "MyEnum" }] });
+directory.createSourceFile("someFile4.ts", { statements: [{ kind: StructureKind.Enum, name: "MyEnum" }] });
 ```
 
 ### Saving

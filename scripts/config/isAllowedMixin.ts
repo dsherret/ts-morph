@@ -12,6 +12,9 @@
         case "ChildOrderableNode":
         case "InitializerExpressionGetableNode":
         case "ExpressionedNode":
+        case "BodiedNode":
+        case "BodyableNode":
+        case "ModuledNode":
             return false;
         default:
             return true;

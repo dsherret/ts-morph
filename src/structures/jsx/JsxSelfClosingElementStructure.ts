@@ -1,13 +1,9 @@
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
-import { OptionalKind } from "../types";
-import { JsxAttributeStructure } from "./JsxAttributeStructure";
-import { JsxSpreadAttributeStructure } from "./JsxSpreadAttributeStructure";
+import { JsxTagNamedNodeStructure, JsxAttributedNodeStructure } from "./base";
 
-export interface JsxSelfClosingElementStructure extends Structure, JsxSelfClosingElementSpecificStructure {
+export interface JsxSelfClosingElementStructure extends Structure, JsxTagNamedNodeStructure, JsxSelfClosingElementSpecificStructure, JsxAttributedNodeStructure {
 }
 
 export interface JsxSelfClosingElementSpecificStructure extends KindedStructure<StructureKind.JsxSelfClosingElement> {
-    name: string;
-    attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
 }

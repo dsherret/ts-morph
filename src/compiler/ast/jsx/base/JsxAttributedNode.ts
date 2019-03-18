@@ -5,6 +5,9 @@ import { JsxAttributeStructure, JsxSpreadAttributeStructure, OptionalKind } from
 import { Constructor } from "../../../../types";
 import { SyntaxKind, ts } from "../../../../typescript";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
+import { JsxAttributedNodeStructure } from "../../../../structures";
+import { callBaseSet } from "../../callBaseSet";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { JsxAttributeLike } from "../../aliases";
 import { Node } from "../../common";
 import { JsxTagNamedNode } from "./JsxTagNamedNode";
@@ -99,6 +102,23 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
             });
 
             return getNodesToReturn(this.getAttributes(), index, structures.length);
+        }
+
+        set(structure: Partial<JsxAttributedNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
+
+            if (structure.attributes != null) {
+                this.getAttributes().forEach(a => a.remove());
+                this.addAttributes(structure.attributes);
+            }
+
+            return this;
+        }
+
+        getStructure(): JsxAttributedNodeStructure {
+            return callBaseGetStructure<JsxAttributedNodeStructure>(Base.prototype, this, {
+                attributes: this.getAttributes().map(a => a.getStructure())
+            });
         }
     };
 }

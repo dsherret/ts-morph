@@ -58,6 +58,7 @@ function isAllowedStructure(structure: Structure) {
         case "FunctionLikeDeclarationStructure":
         case "StatementedNodeStructure":
         case "DecoratableNodeStructure":
+        case "KindedStructure":
             return false;
     }
 

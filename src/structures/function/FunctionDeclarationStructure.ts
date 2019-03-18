@@ -2,11 +2,10 @@
     NameableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
-import { StatementedNodeStructure } from "../statement";
 import { FunctionLikeDeclarationStructure } from "./FunctionLikeDeclarationStructure";
 
 export interface FunctionDeclarationStructure
-    extends Structure, FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure,
+    extends Structure, FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, AsyncableNodeStructure,
         GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
 {
 }

@@ -13,15 +13,6 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
      */
     set(structure: Partial<JsxSelfClosingElementStructure>) {
         callBaseSet(JsxSelfClosingElementBase.prototype, this, structure);
-
-        if (structure.attributes != null) {
-            this.getAttributes().forEach(a => a.remove());
-            this.addAttributes(structure.attributes);
-        }
-
-        if (structure.name != null)
-            this.getTagNameNode().replaceWithText(structure.name);
-
         return this;
     }
 
@@ -29,12 +20,8 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
      * Gets the structure equivalent to this node.
      */
     getStructure(): JsxSelfClosingElementStructure {
-        const structure = callBaseGetStructure<JsxSelfClosingElementSpecificStructure>(JsxSelfClosingElementBase.prototype, this, {
-            kind: StructureKind.JsxSelfClosingElement,
-            name: this.getTagNameNode().getText(),
-            attributes: this.getAttributes().map(a => a.getStructure())
+        return callBaseGetStructure<JsxSelfClosingElementSpecificStructure>(JsxSelfClosingElementBase.prototype, this, {
+            kind: StructureKind.JsxSelfClosingElement
         });
-
-        return structure;
     }
 }

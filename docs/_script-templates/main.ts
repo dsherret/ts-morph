@@ -7,7 +7,7 @@
     CallSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, TypeAliasDeclaration,
     NumericLiteral, VariableStatement, VariableDeclarationKind, IndentationText, QuoteKind, ts, createWrappedNode,
     PropertyAccessExpression, LanguageService, Program, TypeChecker, FileSystemHost, TypeParameterDeclaration,
-    NamespaceDeclarationKind, CallLikeExpression } from "../../src/main";
+    NamespaceDeclarationKind, CallLikeExpression, StructureKind } from "../../src/main";
 
 let project: Project, node: Node, classDeclaration: ClassDeclaration, functionDeclaration: FunctionDeclaration,
     sourceFile: SourceFile, method: MethodDeclaration, decorator: Decorator, enumDeclaration: EnumDeclaration,
