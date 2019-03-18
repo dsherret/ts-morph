@@ -10,7 +10,7 @@ export class JsxAttributeDeciderStructurePrinter extends NodePrinter<InferArrayE
         else if (structure.kind === StructureKind.JsxSpreadAttribute)
             this.factory.forJsxSpreadAttribute().printText(writer, structure);
         else
-            throw errors.getNotImplementedForNeverValueError(structure);
+            throw errors.throwNotImplementedForNeverValueError(structure);
 
         // need to help out the typescript compiler with this function for some reason
         function isJsxAttribute(struct: InferArrayElementType<JsxElementStructure["attributes"]>): struct is OptionalKind<JsxAttributeStructure> {

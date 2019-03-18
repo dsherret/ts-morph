@@ -773,7 +773,7 @@ export class Directory {
                     case ModuleResolutionKind.Classic:
                         return sourceFile.getFilePath();
                     default:
-                        throw errors.getNotImplementedForNeverValueError(moduleResolution);
+                        return errors.throwNotImplementedForNeverValueError(moduleResolution);
                 }
             }
 
@@ -786,7 +786,7 @@ export class Directory {
                     case ModuleResolutionKind.Classic:
                         return FileUtils.pathJoin(dir.getPath(), "index.ts");
                     default:
-                        throw errors.getNotImplementedForNeverValueError(moduleResolution);
+                        return errors.throwNotImplementedForNeverValueError(moduleResolution);
                 }
             }
         }

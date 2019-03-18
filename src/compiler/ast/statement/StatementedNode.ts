@@ -890,7 +890,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         set(structure: Partial<StatementedNodeStructure>) {
-            // remove the body text first if necessary
+            // todo: I don't think it's necessary to do this in two steps anymore and this could probably
+            // be changed to set the body text in one go instead (for performance reasons)
             if (TypeGuards.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure.statements))) {
                 this.removeBody();
             }

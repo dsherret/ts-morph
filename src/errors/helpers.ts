@@ -3,7 +3,7 @@ import { FileSystemWrapper } from "../fileSystem";
 import { SyntaxKind } from "../typescript";
 import { getSyntaxKindName } from "../utils/compiler/getSyntaxKindName";
 import { ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, FileNotFoundError, InvalidOperationError,
- NotImplementedError } from "./classes";
+    NotImplementedError } from "./classes";
 
 /**
  * Thows if not a type.
@@ -107,8 +107,8 @@ export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: st
  * Throw if the value should have been the never type.
  * @param value - Value to check.
  */
-export function getNotImplementedForNeverValueError(value: never) {
-    return new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);
+export function throwNotImplementedForNeverValueError(value: never): never {
+    throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);
 }
 
 /**

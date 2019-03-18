@@ -10354,7 +10354,7 @@ interface EnumMemberSpecificStructure {
     value?: number | string;
 }
 
-export interface FunctionDeclarationStructure extends Structure, FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+export interface FunctionDeclarationStructure extends Structure, FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
 }
 
 interface FunctionDeclarationSpecificStructure extends KindedStructure<StructureKind.Function> {
@@ -10412,6 +10412,13 @@ export interface PropertySignatureStructure extends Structure, PropertySignature
 interface PropertySignatureSpecificStructure extends KindedStructure<StructureKind.PropertySignature> {
 }
 
+export interface JsxAttributedNodeStructure {
+    attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
+}
+export interface JsxTagNamedNodeStructure {
+    name: string;
+}
+
 export interface JsxAttributeStructure extends Structure, JsxAttributeSpecificStructure, NamedNodeStructure {
 }
 
@@ -10429,12 +10436,10 @@ interface JsxElementSpecificStructure extends KindedStructure<StructureKind.JsxE
     bodyText?: string;
 }
 
-export interface JsxSelfClosingElementStructure extends Structure, JsxSelfClosingElementSpecificStructure {
+export interface JsxSelfClosingElementStructure extends Structure, JsxTagNamedNodeStructure, JsxSelfClosingElementSpecificStructure, JsxAttributedNodeStructure {
 }
 
 interface JsxSelfClosingElementSpecificStructure extends KindedStructure<StructureKind.JsxSelfClosingElement> {
-    name: string;
-    attributes?: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[];
 }
 
 export interface JsxSpreadAttributeStructure extends Structure, JsxSpreadAttributeSpecificStructure {

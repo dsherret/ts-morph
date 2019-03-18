@@ -10,11 +10,11 @@ export class JsxChildDeciderStructurePrinter extends NodePrinter<InferArrayEleme
         else if (structure.kind === StructureKind.JsxSelfClosingElement)
             this.factory.forJsxSelfClosingElement().printText(writer, structure);
         else
-            throw errors.getNotImplementedForNeverValueError(structure);
+            errors.throwNotImplementedForNeverValueError(structure);
 
         // need to help out the typescript compiler with this function for some reason
         function isJsxElement(struct: InferArrayElementType<JsxElementStructure["children"]>): struct is OptionalKind<JsxElementStructure> {
-            return structure.kind == null || structure.kind === StructureKind.JsxElement;
+            return struct.kind == null || struct.kind === StructureKind.JsxElement;
         }
     }
 }

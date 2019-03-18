@@ -46,7 +46,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
             case VariableDeclarationKind.Var:
                 return this.getFirstChildByKindOrThrow(SyntaxKind.VarKeyword);
             default:
-                throw errors.getNotImplementedForNeverValueError(declarationKind);
+                return errors.throwNotImplementedForNeverValueError(declarationKind);
         }
     }
 

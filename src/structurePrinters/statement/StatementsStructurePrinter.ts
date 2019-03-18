@@ -72,7 +72,7 @@ export class StatementsStructurePrinter extends Printer<StatementStructuresArray
                 this.factory.forExportAssignment().printText(writer, statement);
                 break;
             default:
-                throw errors.getNotImplementedForNeverValueError(statement);
+                errors.throwNotImplementedForNeverValueError(statement);
         }
 
         function ensureBlankLine() {
