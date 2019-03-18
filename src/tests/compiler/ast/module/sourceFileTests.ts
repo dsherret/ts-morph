@@ -1,12 +1,12 @@
 ﻿import { expect } from "chai";
-import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile } from "../../../../compiler";
+import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, VariableDeclarationKind } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
-import { SourceFileStructure } from "../../../../structures";
+import { SourceFileStructure, StructureKind } from "../../../../structures";
 import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget } from "../../../../typescript";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
@@ -724,19 +724,15 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: MakeRequired<SourceFileStructure> = {
-                imports: [{ moduleSpecifier: "module" }],
-                exports: [{ moduleSpecifier: "export-module" }],
-                bodyText: "console.log()",
-                classes: [{ name: "C" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                interfaces: [{ name: "I" }],
-                namespaces: [{ name: "N" }],
-                typeAliases: [{ name: "T", type: "string" }]
+            const structure: OptionalTrivia<MakeRequired<SourceFileStructure>> = {
+                statements: [
+                    { kind: StructureKind.ImportDeclaration, moduleSpecifier: "module" },
+                    { kind: StructureKind.Class, name: "C" }, "console.log()",
+                    { kind: StructureKind.ExportDeclaration, moduleSpecifier: "export-module" },
+                    { kind: StructureKind.ExportAssignment, expression: "5" }
+                ]
             };
-            doTest("", structure, `import "module";\n\nclass C {\n}\n\nenum E {\n}\n\nfunction F() {\n}\n\ninterface I {\n}\n\nnamespace N {\n}\n\ntype T = string;\n\n` +
-                `export * from "export-module";\n`);
+            doTest("", structure, `import "module";\n\nclass C {\n}\n\nconsole.log()\nexport * from "export-module";\nexport = 5;\n`);
         });
     });
 
@@ -1308,7 +1304,7 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.getImportStringLiterals), () => {
         function doTest(fileText: string, expectedLiterals: string[], importHelpers = false) {
-            const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/main.ts", compilerOptions: { importHelpers } });
+            const { sourceFile } = getInfoFromText(fileText, { filePath: "/main.ts", compilerOptions: { importHelpers } });
             expect(sourceFile.getImportStringLiterals().map(l => l.getText())).to.deep.equal(expectedLiterals);
         }
 
@@ -1346,14 +1342,12 @@ function myFunction(param: MyClass) {
     });
 
     describe(nameof<SourceFile>(s => s.getStructure), () => {
-        function doTest(fileText: string, expected: { bodyText: string; }) {
+        function doTest(fileText: string, expected: SourceFileStructure) {
             const { sourceFile } = getInfoFromText(fileText);
             expect(sourceFile.getStructure()).to.deep.equal(expected);
         }
 
-        it("should only get the body text", () => {
-            // order is important in a source file, so getting the structure will always
-            // return the body text
+        it("should only get the statements", () => {
             const startText = `import {I} from './I';
 export class A implements I {}
 class B extends A {}
@@ -1363,10 +1357,51 @@ export function f(){}
 function g(){}
 export type T = any;
 export enum U {}
-namespace ns{interface nsi{}}`;
+namespace ns{interface nsi{}}
+const t = 5;`;
 
             doTest(startText, {
-                bodyText: startText
+                statements: [fillStructures.importDeclaration({
+                    namedImports: [fillStructures.importSpecifier({ name: "I" })],
+                    moduleSpecifier: "./I"
+                }), fillStructures.classDeclaration({
+                    isExported: true,
+                    name: "A",
+                    implements: ["I"]
+                }), fillStructures.classDeclaration({
+                    name: "B",
+                    extends: "A"
+                }), fillStructures.interfaceDeclaration({
+                    isExported: true,
+                    name: "J",
+                    extends: ["I"]
+                }), fillStructures.interfaceDeclaration({
+                    name: "K",
+                    extends: ["J"]
+                }), fillStructures.functionDeclaration({
+                    isExported: true,
+                    name: "f"
+                }), fillStructures.functionDeclaration({
+                    name: "g"
+                }), fillStructures.typeAlias({
+                    isExported: true,
+                    name: "T",
+                    type: "any"
+                }), fillStructures.enumDeclaration({
+                    isExported: true,
+                    name: "U"
+                }), fillStructures.namespaceDeclaration({
+                    name: "ns",
+                    statements: [fillStructures.interfaceDeclaration({
+                        name: "nsi"
+                    })]
+                }), fillStructures.variableStatement({
+                    declarationKind: VariableDeclarationKind.Const,
+                    declarations: [fillStructures.variableDeclaration({
+                        name: "t",
+                        initializer: "5"
+                    })]
+                })]
             });
         });
     });

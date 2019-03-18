@@ -1,15 +1,15 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
-import { MethodDeclarationOverloadStructure, MethodDeclarationStructure } from "../../structures";
+import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, OptionalKind } from "../../structures";
 import { ObjectUtils, setValueIfUndefined } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<MethodDeclarationStructure> {
+export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<MethodDeclarationStructure>> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<MethodDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>> | undefined) {
         if (structures == null)
             return;
 
@@ -24,7 +24,7 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
         }
     }
 
-    printText(writer: CodeBlockWriter, structure: MethodDeclarationStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodDeclarationStructure>) {
         this.printOverloads(writer, structure.name, getOverloadStructures());
         this.printBase(writer, structure.name, structure);
 
@@ -32,7 +32,7 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
             writer.write(";");
         else
             writer.spaceIfLastNot().inlineBlock(() => {
-                this.factory.forBodyText(this.options).printText(writer, structure);
+                this.factory.forStatementedNode(this.options).printText(writer, structure);
             });
 
         function getOverloadStructures() {

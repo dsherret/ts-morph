@@ -1,12 +1,11 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { StructurePrinterFactory } from "../../factories";
 import { ReturnTypedNodeStructure } from "../../structures";
 import { StringUtils } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { Printer } from "../Printer";
 
-export class ReturnTypedNodeStructurePrinter extends FactoryStructurePrinter<ReturnTypedNodeStructure> {
-    constructor(factory: StructurePrinterFactory, private readonly alwaysWrite = false) {
-        super(factory);
+export class ReturnTypedNodeStructurePrinter extends Printer<ReturnTypedNodeStructure> {
+    constructor(private readonly alwaysWrite = false) {
+        super();
     }
 
     printText(writer: CodeBlockWriter, structure: ReturnTypedNodeStructure) {

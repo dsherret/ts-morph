@@ -1,7 +1,9 @@
 ﻿import { BindingNamedNodeStructure, ExclamationTokenableNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure } from "../base";
+import { Structure } from "../Structure";
 
 export interface VariableDeclarationStructure
-    extends VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure, ExclamationTokenableNodeStructure
+    extends Structure, VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure,
+        ExclamationTokenableNodeStructure
 {
 }
 

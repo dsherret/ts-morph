@@ -686,7 +686,11 @@ co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
 
-code-block-writer@7.2.2, code-block-writer@^7.2.2:
+code-block-writer@7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.3.0.tgz#9a70ca48865d3a733347da31c74104eed734929f"
+
+code-block-writer@^7.2.2:
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.2.2.tgz#14ec0120de9a65d2cc5d214561d51d1660dddbb1"
 
@@ -757,9 +761,9 @@ concat-stream@^1.5.0, concat-stream@^1.5.2:
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-conditional-type-checks@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/conditional-type-checks/-/conditional-type-checks-0.5.0.tgz#f06567a2d416f23a5b6b01830b1855368bc617ff"
+conditional-type-checks@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/conditional-type-checks/-/conditional-type-checks-1.0.0.tgz#1cb40e89254e5173e8e8c02a2410f4206e226b3d"
 
 config-chain@~1.1.11:
   version "1.1.12"
@@ -3836,9 +3840,9 @@ ts-morph@1.0.0:
     tslib "^1.9.0"
     typescript "^3.0.1"
 
-ts-nameof@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/ts-nameof/-/ts-nameof-3.0.0.tgz#83e4af26d3c8dfcbf22071f2e755cb1314c02521"
+ts-nameof@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/ts-nameof/-/ts-nameof-3.0.3.tgz#373d489553b6cdb73f9bdaeda1b6bc91e9af3d7e"
   dependencies:
     glob "^7.1.3"
 

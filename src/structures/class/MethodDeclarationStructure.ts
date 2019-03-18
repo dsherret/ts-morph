@@ -1,21 +1,23 @@
-﻿import { AbstractableNodeStructure, AsyncableNodeStructure, BodyableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure,
-    JSDocableNodeStructure, PropertyNamedNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure,
-    TypeParameteredNodeStructure, QuestionTokenableNodeStructure } from "../base";
+﻿import { AbstractableNodeStructure, AsyncableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure,
+    PropertyNamedNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure, TypeParameteredNodeStructure,
+    QuestionTokenableNodeStructure } from "../base";
+import { Structure, KindedStructure } from "../Structure";
+import { StructureKind } from "../StructureKind";
 import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface MethodDeclarationStructure
-    extends MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure,
-        ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure,
+    extends Structure, MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,
+        AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure,
         QuestionTokenableNodeStructure
 {
 }
 
-export interface MethodDeclarationSpecificStructure {
+export interface MethodDeclarationSpecificStructure extends KindedStructure<StructureKind.Method> {
     overloads?: MethodDeclarationOverloadStructure[];
 }
 
 export interface MethodDeclarationOverloadStructure
-    extends StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure,
+    extends Structure, StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure,
         GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure,
         QuestionTokenableNodeStructure
 {

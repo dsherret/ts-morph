@@ -1,16 +1,16 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { PropertySignatureStructure } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { PropertySignatureStructure, OptionalKind } from "../../structures";
+import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 
-export class PropertySignatureStructurePrinter extends FactoryStructurePrinter<PropertySignatureStructure> {
+export class PropertySignatureStructurePrinter extends NodePrinter<OptionalKind<PropertySignatureStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<PropertySignatureStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<PropertySignatureStructure>> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: PropertySignatureStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<PropertySignatureStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(structure.name);

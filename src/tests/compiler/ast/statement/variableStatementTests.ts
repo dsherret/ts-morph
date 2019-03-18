@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../compiler";
-import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../structures";
+import { VariableDeclarationStructure, VariableStatementStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(VariableStatement), () => {
@@ -170,6 +170,7 @@ describe(nameof(VariableStatement), () => {
 
         it("should get for statement with nothing", () => {
             doTest("declare const a;", {
+                kind: StructureKind.VariableStatement,
                 isExported: false,
                 isDefaultExport: false,
                 hasDeclareKeyword: true,
@@ -185,6 +186,7 @@ describe(nameof(VariableStatement), () => {
 export var test;
 `;
             doTest(code, {
+                kind: StructureKind.VariableStatement,
                 isExported: true,
                 isDefaultExport: false,
                 hasDeclareKeyword: false,

@@ -32,7 +32,7 @@ export function ensureStructuresMatchClasses(inspector: TsMorphInspector, addPro
                 });
         }
 
-        for (const baseStructure of structure.getBaseStructures().filter(s => !isStructureToIgnore(s.getName()))) {
+        for (const baseStructure of structure.getBaseStructures().filter(s => isAllowedBaseStructure(s.getName()))) {
             const declarationName = baseStructure.getName().replace(/Structure$/, "");
             const mixin = node.getMixins().find(m => m.getName() === declarationName);
 
@@ -50,12 +50,14 @@ function getStructureName(name: string) {
     return name + "Structure";
 }
 
-function isStructureToIgnore(name: string) {
+function isAllowedBaseStructure(name: string) {
+    if (name === "Structure")
+        return false;
     if (/SpecificStructure$/.test(name))
-        return true;
+        return false;
 
     if (/OverloadStructure$/.test(name))
-        return true;
+        return false;
 
-    return false;
+    return true;
 }

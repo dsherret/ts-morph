@@ -1,9 +1,9 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration } from "../../../../compiler";
 import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure,
-    InterfaceDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+    InterfaceDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getType), () => {
@@ -26,7 +26,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(c => c.set), () => {
-        function doTest(startingCode: string, structure: ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKindAndTrivia<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -72,7 +72,7 @@ class Identifier extends Other {
     }
 }
 `;
-            const structure: MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
                 extends: "Other",
                 ctors: [{}],
                 properties: [{ name: "p" }],
@@ -97,7 +97,7 @@ class Identifier extends Test {
 class Identifier {
 }
 `;
-            const structure: MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>> = {
                 extends: undefined,
                 ctors: [],
                 properties: [],
@@ -110,12 +110,12 @@ class Identifier {
     });
 
     describe(nameof<ClassDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<ClassDeclarationStructure>) {
-            const { descendant, project } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ClassDeclarationStructure>>) {
+            const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
             const structure = descendant.getStructure();
 
             // only bother comparing the basics
-            structure.ctors = structure.ctors!.map(s => ({}));
+            structure.ctors = structure.ctors!.map(_ => ({}));
             structure.decorators = structure.decorators!.map(s => ({ name: s.name }));
             structure.getAccessors = structure.getAccessors!.map(s => ({ name: s.name }));
             structure.methods = structure.methods!.map(s => ({ name: s.name }));
@@ -128,6 +128,7 @@ class Identifier {
 
         it("should get the structure for an empty class", () => {
             doTest("class Identifier {}", {
+                kind: StructureKind.Class,
                 ctors: [],
                 decorators: [],
                 docs: [],
@@ -158,6 +159,7 @@ class Identifier {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Class,
                 ctors: [{}],
                 decorators: [{ name: "dec" }],
                 docs: [{ description: "Test" }],
@@ -189,6 +191,7 @@ declare class Identifier {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Class,
                 ctors: [{}, {}],
                 decorators: [],
                 docs: [],
@@ -226,11 +229,11 @@ declare class Identifier {
         }
 
         it("should use the class name when no name", () => {
-            doTest("class Test { }", undefined, { name: "Test" });
+            doTest("class Test { }", undefined, { kind: StructureKind.Interface, name: "Test" });
         });
 
         it("should use the file's base name when no name and no class name", () => {
-            doTest("export default class { }", undefined, { name: "File_42$" }, "/dir/File^_4#2$.ts");
+            doTest("export default class { }", undefined, { kind: StructureKind.Interface, name: "File_42$" }, "/dir/File^_4#2$.ts");
         });
 
         it("should get when class has everything", () => {
@@ -271,23 +274,72 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
     private myPrivate() {}
 }`,
                 undefined, {
+                    kind: StructureKind.Interface,
                     name: "Test",
                     docs: [{ description: "Test" }],
                     typeParameters: [
                         { name: "T", constraint: "string", default: "number" },
                         { name: "U", constraint: undefined, default: undefined }
                     ],
-                    properties: [
-                        { name: "param1", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Test description." }] },
-                        { name: "param2", type: "number", hasQuestionToken: true, isReadonly: true, docs: [] },
-                        { name: "param3", type: "string", hasQuestionToken: false, isReadonly: true, docs: [] },
-                        { name: "prop1", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Description" }] },
-                        { name: "prop2", type: "number", hasQuestionToken: true, isReadonly: true, docs: [] },
-                        { name: "myGet", type: "number", hasQuestionToken: false, isReadonly: true, docs: [{ description: "MyGet" }] },
-                        { name: "myGetAndSet", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "MyGetAndSet Get" }] },
-                        { name: "mySet", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "MySet" }] }
-                    ],
+                    properties: [{
+                        kind: StructureKind.PropertySignature,
+                        name: "param1",
+                        type: "string",
+                        hasQuestionToken: false,
+                        isReadonly: false,
+                        docs: [{ description: "Test description." }]
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "param2",
+                        type: "number",
+                        hasQuestionToken: true,
+                        isReadonly: true,
+                        docs: []
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "param3",
+                        type: "string",
+                        hasQuestionToken: false,
+                        isReadonly: true,
+                        docs: []
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "prop1",
+                        type: "string",
+                        hasQuestionToken: false,
+                        isReadonly: false,
+                        docs: [{ description: "Description" }]
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "prop2",
+                        type: "number",
+                        hasQuestionToken: true,
+                        isReadonly: true,
+                        docs: []
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "myGet",
+                        type: "number",
+                        hasQuestionToken: false,
+                        isReadonly: true,
+                        docs: [{ description: "MyGet" }]
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "myGetAndSet",
+                        type: "string",
+                        hasQuestionToken: false,
+                        isReadonly: false,
+                        docs: [{ description: "MyGetAndSet Get" }]
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "mySet",
+                        type: "string",
+                        hasQuestionToken: false,
+                        isReadonly: false,
+                        docs: [{ description: "MySet" }]
+                    }],
                     methods: [{
+                        kind: StructureKind.MethodSignature,
                         docs: [{ description: "Method" }],
                         name: "myMethod",
                         returnType: "number",
@@ -307,6 +359,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                             { name: "U", constraint: undefined, default: undefined }
                         ]
                     }, {
+                        kind: StructureKind.MethodSignature,
                         docs: [],
                         name: "overloadMethod",
                         returnType: "void",
@@ -323,6 +376,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                         }],
                         typeParameters: []
                     }, {
+                        kind: StructureKind.MethodSignature,
                         docs: [],
                         name: "overloadMethod",
                         returnType: "string",
@@ -330,6 +384,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                         parameters: [],
                         typeParameters: []
                     }, {
+                        kind: StructureKind.MethodSignature,
                         docs: [],
                         name: "myAbstractMethod",
                         returnType: "number",
@@ -365,12 +420,25 @@ class Test {
     }
 }`,
                 undefined, {
+                    kind: StructureKind.Interface,
                     name: "Test",
-                    properties: [
-                        { name: "param", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Test." }] },
-                        { name: "param2", type: "number", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Test2." }] }
-                    ],
+                    properties: [{
+                        kind: StructureKind.PropertySignature,
+                        name: "param",
+                        type: "string",
+                        hasQuestionToken: false,
+                        isReadonly: false,
+                        docs: [{ description: "Test." }]
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "param2",
+                        type: "number",
+                        hasQuestionToken: false,
+                        isReadonly: false,
+                        docs: [{ description: "Test2." }]
+                    }],
                     methods: [{
+                        kind: StructureKind.MethodSignature,
                         docs: [{ description: "Description1." }],
                         name: "method",
                         returnType: "string",
@@ -387,6 +455,7 @@ class Test {
                         }],
                         typeParameters: []
                     }, {
+                        kind: StructureKind.MethodSignature,
                         docs: [{ description: "Description2." }],
                         name: "method",
                         returnType: "number",
@@ -424,8 +493,10 @@ class Test {
 
         it("should use the file's base name in the constructor signature return types when no class name", () => {
             doTest("export default class { constructor() {} }", "Test", {
+                kind: StructureKind.Interface,
                 name: "Test",
                 constructSignatures: [{
+                    kind: StructureKind.ConstructSignature,
                     docs: [],
                     parameters: [],
                     returnType: "File_42$"
@@ -471,8 +542,10 @@ class Test<T extends string = number, U> extends Base implements IBase {
     static private myPrivate() {}
 }`,
                 "Name", {
+                    kind: StructureKind.Interface,
                     name: "Name",
                     constructSignatures: [{
+                        kind: StructureKind.ConstructSignature,
                         docs: [{ description: "Description." }],
                         parameters: [{
                             decorators: [],
@@ -513,14 +586,44 @@ class Test<T extends string = number, U> extends Base implements IBase {
                         }],
                         returnType: "Test"
                     }],
-                    properties: [
-                        { name: "prop1", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "Description" }] },
-                        { name: "prop2", type: "number", hasQuestionToken: true, isReadonly: true, docs: [] },
-                        { name: "myGet", type: "number", hasQuestionToken: false, isReadonly: true, docs: [{ description: "MyGet" }] },
-                        { name: "myGetAndSet", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "MyGetAndSet Get" }] },
-                        { name: "mySet", type: "string", hasQuestionToken: false, isReadonly: false, docs: [{ description: "MySet" }] }
-                    ],
+                    properties: [{
+                        kind: StructureKind.PropertySignature,
+                        name: "prop1",
+                        type: "string",
+                        hasQuestionToken: false,
+                        isReadonly: false,
+                        docs: [{ description: "Description" }]
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "prop2",
+                        type: "number",
+                        hasQuestionToken: true,
+                        isReadonly: true,
+                        docs: []
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "myGet",
+                        type: "number",
+                        hasQuestionToken: false,
+                        isReadonly: true,
+                        docs: [{ description: "MyGet" }]
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "myGetAndSet",
+                        type: "string",
+                        hasQuestionToken: false,
+                        isReadonly: false,
+                        docs: [{ description: "MyGetAndSet Get" }]
+                    }, {
+                        kind: StructureKind.PropertySignature,
+                        name: "mySet",
+                        type: "string",
+                        hasQuestionToken: false,
+                        isReadonly: false,
+                        docs: [{ description: "MySet" }]
+                    }],
                     methods: [{
+                        kind: StructureKind.MethodSignature,
                         docs: [{ description: "Method" }],
                         name: "myMethod",
                         returnType: "number",
@@ -535,11 +638,17 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             type: "string",
                             scope: undefined
                         }],
-                        typeParameters: [
-                            { name: "T", constraint: "string", default: "number" },
-                            { name: "U", constraint: undefined, default: undefined }
-                        ]
+                        typeParameters: [{
+                            name: "T",
+                            constraint: "string",
+                            default: "number"
+                        }, {
+                            name: "U",
+                            constraint: undefined,
+                            default: undefined
+                        }]
                     }, {
+                        kind: StructureKind.MethodSignature,
                         docs: [],
                         name: "overloadMethod",
                         returnType: "void",
@@ -556,6 +665,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                         }],
                         typeParameters: []
                     }, {
+                        kind: StructureKind.MethodSignature,
                         docs: [],
                         name: "overloadMethod",
                         returnType: "string",
@@ -591,8 +701,10 @@ class Test {
     }
 }`,
                 "Name", {
+                    kind: StructureKind.Interface,
                     name: "Name",
                     constructSignatures: [{
+                        kind: StructureKind.ConstructSignature,
                         docs: [{ description: "Test." }],
                         parameters: [{
                             decorators: [],
@@ -606,6 +718,7 @@ class Test {
                         }],
                         returnType: "Test"
                     }, {
+                        kind: StructureKind.ConstructSignature,
                         docs: [{ description: "Test2." }],
                         parameters: [{
                             decorators: [],
@@ -621,6 +734,7 @@ class Test {
                     }],
                     properties: [],
                     methods: [{
+                        kind: StructureKind.MethodSignature,
                         docs: [{ description: "Description1." }],
                         name: "method",
                         returnType: "string",
@@ -637,6 +751,7 @@ class Test {
                         }],
                         typeParameters: []
                     }, {
+                        kind: StructureKind.MethodSignature,
                         docs: [{ description: "Description2." }],
                         name: "method",
                         returnType: "number",

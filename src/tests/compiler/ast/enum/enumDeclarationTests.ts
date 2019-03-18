@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../../compiler";
-import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
     describe(nameof<EnumDeclaration>(d => d.getMember), () => {
@@ -84,7 +84,7 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should insert for all the structure's properties", () => {
-            const structure: MakeRequired<EnumMemberStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<EnumMemberStructure>> = {
                 docs: [{ description: "testing" }],
                 initializer: "5",
                 value: 5,
@@ -179,7 +179,7 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(n => n.set), () => {
-        function doTest(startingCode: string, structure: EnumDeclarationSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKindAndTrivia<EnumDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -191,7 +191,7 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should replace existing members when changed", () => {
-            const structure: MakeRequired<EnumDeclarationSpecificStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<EnumDeclarationSpecificStructure>> = {
                 isConst: true,
                 members: [{
                     name: "member"
@@ -201,7 +201,7 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should remove existing members when specifying an empty array", () => {
-            const structure: MakeRequired<EnumDeclarationSpecificStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<EnumDeclarationSpecificStructure>> = {
                 isConst: true,
                 members: []
             };
@@ -222,7 +222,7 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expected: MakeRequired<EnumDeclarationStructure>) {
+        function doTest(code: string, expected: OptionalTrivia<MakeRequired<EnumDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<EnumDeclaration>(code);
             const structure = firstChild.getStructure();
             structure.members = structure.members!.map(m => ({ name: m.name }));
@@ -231,6 +231,7 @@ describe(nameof(EnumDeclaration), () => {
 
         it("should get structure of an empty enum", () => {
             doTest("declare enum Identifier {}", {
+                kind: StructureKind.Enum,
                 name: "Identifier",
                 isExported: false,
                 isDefaultExport: false,
@@ -249,6 +250,7 @@ export const enum Enum {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Enum,
                 name: "Enum",
                 isExported: true,
                 isDefaultExport: false, // enums can't have a default keyword

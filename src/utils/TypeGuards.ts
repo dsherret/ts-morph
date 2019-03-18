@@ -7,6 +7,7 @@
 /* tslint:disable */
 import * as compiler from "../compiler";
 import { SyntaxKind } from "../typescript";
+import { Structure } from "../structures";
 
 /**
  * Type guards for checking the type of a node.
@@ -2224,7 +2225,6 @@ export class TypeGuards {
             case SyntaxKind.SetAccessor:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.ModuleBlock:
             case SyntaxKind.ModuleDeclaration:
@@ -2772,5 +2772,53 @@ export class TypeGuards {
      */
     static isYieldExpression(node: compiler.Node): node is compiler.YieldExpression {
         return node.getKind() === SyntaxKind.YieldExpression;
+    }
+
+    /**
+     * @internal
+     */
+    static _hasStructure(node: compiler.Node): node is compiler.Node & { getStructure(): Structure; } {
+        switch (node.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.Constructor:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.Decorator:
+            case SyntaxKind.JSDocComment:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.EnumMember:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.CallSignature:
+            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.IndexSignature:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.JsxElement:
+            case SyntaxKind.JsxSelfClosingElement:
+            case SyntaxKind.JsxSpreadAttribute:
+            case SyntaxKind.ExportAssignment:
+            case SyntaxKind.ExportDeclaration:
+            case SyntaxKind.ExportSpecifier:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ImportSpecifier:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SourceFile:
+            case SyntaxKind.VariableStatement:
+            case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.TypeParameter:
+            case SyntaxKind.VariableDeclaration:
+            case SyntaxKind.VariableDeclarationList:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.ShorthandPropertyAssignment:
+            case SyntaxKind.SpreadAssignment:
+                return true;
+            default:
+                return false;
+        }
     }
 }

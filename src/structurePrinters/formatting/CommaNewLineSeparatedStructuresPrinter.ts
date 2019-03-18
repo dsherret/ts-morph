@@ -1,9 +1,9 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { WriterFunction } from "../../types";
-import { StructurePrinter } from "../StructurePrinter";
+import { Printer } from "../Printer";
 
-export class CommaNewLineSeparatedStructuresPrinter<T> extends StructurePrinter<T[] | WriterFunction> {
-    constructor(private readonly structurePrinter: StructurePrinter<T | WriterFunction>) {
+export class CommaNewLineSeparatedStructuresPrinter<T> extends Printer<ReadonlyArray<T | WriterFunction> | WriterFunction> {
+    constructor(private readonly printer: Printer<T | WriterFunction>) {
         super();
     }
 
@@ -12,12 +12,12 @@ export class CommaNewLineSeparatedStructuresPrinter<T> extends StructurePrinter<
             return;
 
         if (structures instanceof Function)
-            this.structurePrinter.printText(writer, structures);
+            this.printer.printText(writer, structures);
         else
             for (let i = 0; i < structures.length; i++) {
                 if (i > 0)
                     writer.write(",").newLine();
-                this.structurePrinter.printText(writer, structures[i]);
+                this.printer.printText(writer, structures[i]);
             }
     }
 }

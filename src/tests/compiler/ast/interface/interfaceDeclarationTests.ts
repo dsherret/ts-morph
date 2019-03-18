@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration } from "../../../../compiler";
-import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
     describe(nameof<InterfaceDeclaration>(d => d.getType), () => {
@@ -57,8 +57,8 @@ describe(nameof(InterfaceDeclaration), () => {
     });
 
     describe(nameof<InterfaceDeclaration>(d => d.set), () => {
-        function doTest(startingCode: string, structure: InterfaceDeclarationSpecificStructure, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
+        function doTest(startingCode: string, structure: OptionalKindAndTrivia<InterfaceDeclarationSpecificStructure>, expectedCode: string) {
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -85,7 +85,7 @@ describe(nameof(InterfaceDeclaration), () => {
     describe(nameof<InterfaceDeclaration>(n => n.getImplementations), () => {
         it("should get the implementations", () => {
             const sourceFileText = "interface MyInterface {}\nexport class Class1 implements MyInterface {}\nclass Class2 implements MyInterface {}";
-            const { firstChild, sourceFile, project } = getInfoFromText<InterfaceDeclaration>(sourceFileText);
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(sourceFileText);
             const implementations = firstChild.getImplementations();
             expect(implementations.length).to.equal(2);
             expect(implementations[0].getNode().getText()).to.equal("Class1");
@@ -94,8 +94,8 @@ describe(nameof(InterfaceDeclaration), () => {
     });
 
     describe(nameof<InterfaceDeclaration>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<InterfaceDeclarationStructure>) {
-            const { firstChild, project } = getInfoFromText<InterfaceDeclaration>(code);
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<InterfaceDeclarationStructure>>) {
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(code);
             const structure = firstChild.getStructure();
 
             // only bother comparing the basics
@@ -111,6 +111,7 @@ describe(nameof(InterfaceDeclaration), () => {
 
         it("should get for an empty interface", () => {
             doTest(`interface Test {}`, {
+                kind: StructureKind.Interface,
                 callSignatures: [],
                 constructSignatures: [],
                 docs: [],
@@ -138,6 +139,7 @@ export default interface Test<T> extends Test2 {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Interface,
                 callSignatures: [{}],
                 constructSignatures: [{}],
                 docs: [{ description: "Test" }],

@@ -1,9 +1,10 @@
 import { expect } from "chai";
-import { CaseClause, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile, StatementedNode, Block } from "../../../../compiler";
-import { StatementedNodeStructure } from "../../../../structures";
+import { CaseClause, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile, StatementedNode, Block,
+    BodyableNode } from "../../../../compiler";
+import { StatementedNodeStructure, StatementStructures, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { TypeGuards } from "../../../../utils";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, fillStructures } from "../../testHelpers";
 
 function getInfoFromTextWithSyntax<T extends Node>(text: string, kind?: SyntaxKind) {
     const obj = getInfoFromText(text);
@@ -317,7 +318,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should remove statements in a Block", () => {
-            const { sourceFile, firstChild } = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
+            const { firstChild } = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
             expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.not.be.undefined;
             firstChild.removeStatement(0);
             expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.be.undefined;
@@ -341,6 +342,39 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
+    describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
+        describe(nameof(BodyableNode), () => {
+            function doBodyableTest(startCode: string, statements: StatementStructures[] | undefined) {
+                const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
+                const structure = firstChild.getStructure() as StatementedNodeStructure;
+
+                if (statements == null)
+                    expect(structure.hasOwnProperty(nameof<StatementedNodeStructure>(s => s.statements))).to.be.true;
+
+                expect(structure.statements).to.deep.equal(statements);
+            }
+
+            it("should get the body text when there is none", () => {
+                doBodyableTest("function test();", undefined);
+            });
+
+            it("should get the body text when there is a lot of whitespace", () => {
+                doBodyableTest("function test() {\n   \t\n\r\n   \t}", []);
+            });
+
+            it("should get the body text without indentation", () => {
+                doBodyableTest("function test() {\n    export class Test {\n        prop: string;\n    }\n}\n}", [fillStructures.classDeclaration({
+                    name: "Test",
+                    isExported: true,
+                    properties: [fillStructures.property({
+                        name: "prop",
+                        type: "string"
+                    })]
+                })]);
+            });
+        });
+    });
+
     describe(nameof<SourceFile>(s => s.set), () => {
         function doTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
@@ -348,56 +382,52 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
-        it("should not modify anything if the structure doesn't change anything", () => {
-            const code = `
-class C {}
-interface I {}
-enum E {}
-function F() {}
-namespace N {}
-type T = string;
-`;
-            doTest(code, {}, code);
+        it("should do nothing when undefined for a non-bodyable node (source file)", () => {
+            const code = "function myFunction() {\n}";
+            doTest(code, { statements: undefined }, code);
         });
 
-        it("should replace existing when specifying non-empty arrays", () => {
-            const code = `class C {}
-interface I {}
-enum E {}
-function F() {}
-namespace N {}
-type T = string;
-`;
-            const structure: MakeRequired<StatementedNodeStructure> = {
-                classes: [{ name: "Identifier1" }],
-                enums: [{ name: "Identifier2" }],
-                functions: [{ name: "Identifier3" }],
-                interfaces: [{ name: "Identifier4" }],
-                namespaces: [{ name: "Identifier5" }],
-                typeAliases: [{ name: "Identifier6", type: "string" }]
-            };
-            doTest(code, structure,
-                "class Identifier1 {\n}\n\nenum Identifier2 {\n}\n\nfunction Identifier3() {\n}\n\ninterface Identifier4 {\n}\n\nnamespace Identifier5 {\n}\n\n" +
-                "type Identifier6 = string;\n");
+        it("should remove the statements when empty", () => {
+            const code = "function myFunction() {\n}";
+            doTest(code, { statements: [] }, "");
         });
 
-        it("should remove existing when specifying empty arrays", () => {
-            const code = `class C {}
-interface I {}
-enum E {}
-function F() {}
-namespace N {}
-type T = string;
-`;
-            const structure: MakeRequired<StatementedNodeStructure> = {
-                classes: [],
-                enums: [],
-                functions: [],
-                interfaces: [],
-                namespaces: [],
-                typeAliases: []
-            };
-            doTest(code, structure, "");
+        it("should set statements specified", () => {
+            const code = "function myFunction() {\n}";
+            doTest(code, {
+                statements: [
+                    "var myVar;",
+                    writer => writer.writeLine("console.log;"),
+                    {
+                        kind: StructureKind.Class,
+                        name: "MyClass"
+                    }
+                ]
+            }, `var myVar;\nconsole.log;\n\nclass MyClass {\n}\n`);
+        });
+
+        describe(nameof(BodyableNode), () => {
+            function doBodyableTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
+                const { sourceFile, firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
+                firstChild.set(structure);
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
+            it("should set the text of a function when using a string", () => {
+                doBodyableTest("function myFunction() {\n}", { statements: ["var myVar;"] }, "function myFunction() {\n    var myVar;\n}");
+            });
+
+            it("should set the text of a function when using a writer", () => {
+                doBodyableTest("function myFunction() {\n}", { statements: [writer => writer.writeLine("var myVar;")] }, "function myFunction() {\n    var myVar;\n}");
+            });
+
+            it("should remove the body when it's undefined", () => {
+                doBodyableTest("function myFunction() {\n}", { statements: undefined }, "function myFunction();");
+            });
+
+            it("should not remove the body when the property doesn't exist", () => {
+                doBodyableTest("function myFunction() {\n}", { }, "function myFunction() {\n}");
+            });
         });
     });
 });

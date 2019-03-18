@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, MethodSignature } from "../../../../compiler";
-import { MethodSignatureStructure, TypeParameterDeclarationStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { MethodSignatureStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(MethodSignature), () => {
     function getFirstMethodWithInfo(code: string) {
@@ -22,6 +22,19 @@ describe(nameof(MethodSignature), () => {
 
         it("should change when setting", () => {
             doTest("interface Identifier { method(): string; }", { returnType: "number" }, "interface Identifier { method(): number; }");
+        });
+
+        it("should change when setting everything", () => {
+            const structure: OptionalKindAndTrivia<MakeRequired<MethodSignatureStructure>> = {
+                docs: ["test"],
+                hasQuestionToken: true,
+                name: "name",
+                parameters: [{ name: "param" }],
+                typeParameters: ["T"],
+                returnType: "number"
+            };
+            doTest("interface Identifier {\n    method(): string;\n}", structure,
+                "interface Identifier {\n    /**\n     * test\n     */\n    name?<T>(param): number;\n}");
         });
     });
 
@@ -58,8 +71,8 @@ describe(nameof(MethodSignature), () => {
     });
 
     describe(nameof<MethodSignature>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<MethodSignatureStructure>) {
-            const { firstMethod, sourceFile } = getFirstMethodWithInfo(code);
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<MethodSignatureStructure>>) {
+            const { firstMethod } = getFirstMethodWithInfo(code);
             const structure = firstMethod.getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
             structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
@@ -68,6 +81,7 @@ describe(nameof(MethodSignature), () => {
 
         it("should get when not has anything", () => {
             doTest("interface Identifier { method(); }", {
+                kind: StructureKind.MethodSignature,
                 docs: [],
                 hasQuestionToken: false,
                 name: "method",
@@ -84,6 +98,7 @@ interface Identifier {
     method?<T>(p): string;
 }`;
             doTest(code, {
+                kind: StructureKind.MethodSignature,
                 docs: [{ description: "Test" }],
                 hasQuestionToken: true,
                 name: "method",

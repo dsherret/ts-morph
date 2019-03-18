@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { ClassDeclaration, SetAccessorDeclaration, Scope } from "../../../../compiler";
-import { SetAccessorDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { SetAccessorDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getSetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
@@ -84,19 +84,13 @@ describe(nameof(SetAccessorDeclaration), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: MakeRequired<SetAccessorDeclarationStructure> = {
-                bodyText: "console;",
-                classes: [{ name: "C" }],
+            const structure: OptionalKindAndTrivia<MakeRequired<SetAccessorDeclarationStructure>> = {
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console;"],
                 decorators: [{ name: "dec" }],
                 docs: [{ description: "d" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
                 isAbstract: true,
                 isStatic: true,
                 name: "asdf",
-                namespaces: [{ name: "N" }],
                 parameters: [{ name: "p" }],
                 returnType: "string",
                 scope: Scope.Public,
@@ -113,20 +107,6 @@ class Identifier {
         class C {
         }
 
-        enum E {
-        }
-
-        function F() {
-        }
-
-        interface I {
-        }
-
-        namespace N {
-        }
-
-        type T = string;
-
         console;
     }
 }
@@ -136,13 +116,12 @@ class Identifier {
         });
 
         it("should remove the body when providing undefined", () => {
-            doTest("class Identifier {\n    set prop(){}\n}", { bodyText: undefined }, "class Identifier {\n    set prop();\n}");
+            doTest("class Identifier {\n    set prop(){}\n}", { statements: undefined }, "class Identifier {\n    set prop();\n}");
         });
     });
 
     describe(nameof<SetAccessorDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
-        function doTest(code: string, expectedStructure: Omit<MakeRequired<SetAccessorDeclarationStructure>, PropertyNamesToExclude>) {
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<SetAccessorDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getSetAccessors()[0].getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
@@ -154,7 +133,8 @@ class Identifier {
 
         it("should get structure when empty", () => {
             doTest("abstract class T { abstract set test(); }", {
-                bodyText: undefined,
+                kind: StructureKind.SetAccessor,
+                statements: undefined,
                 docs: [],
                 parameters: [],
                 returnType: undefined,
@@ -177,7 +157,8 @@ class T {
 }
 `;
             doTest(code, {
-                bodyText: "return 5;",
+                kind: StructureKind.SetAccessor,
+                statements: ["return 5;"],
                 docs: [{ description: "test" }],
                 parameters: [{ name: "p" }],
                 returnType: "number",

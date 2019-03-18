@@ -5,7 +5,7 @@ import { InitializerExpressionGetableNode, NamedNode, QuestionTokenableNode } fr
 import { Node } from "../../common/Node";
 import { Expression } from "../Expression";
 import { PropertyAssignment } from "./PropertyAssignment";
-import { ShorthandPropertyAssignmentStructure, ShorthandPropertyAssignmentSpecificStructure, QuestionTokenableNodeStructure } from "../../../../structures";
+import { ShorthandPropertyAssignmentStructure, ShorthandPropertyAssignmentSpecificStructure, QuestionTokenableNodeStructure, StructureKind } from "../../../../structures";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { callBaseSet } from "../../callBaseSet";
 
@@ -113,6 +113,7 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
      */
     getStructure(): ShorthandPropertyAssignmentStructure {
         const structure = callBaseGetStructure<ShorthandPropertyAssignmentSpecificStructure>(ShorthandPropertyAssignmentBase.prototype, this, {
+            kind: StructureKind.ShorthandPropertyAssignment
         }) as any as ShorthandPropertyAssignmentStructure;
 
         // remove since this is only used to tell the user about incorrect code

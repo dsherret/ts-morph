@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { ExportAssignmentStructurePrinter } from "../../../structurePrinters";
-import { ExportAssignmentStructure } from "../../../structures";
+import { ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(ExportAssignmentStructurePrinter), () => {
@@ -9,7 +9,7 @@ describe(nameof(ExportAssignmentStructurePrinter), () => {
         formatCodeSettings?: FormatCodeSettings;
     }
 
-    function doTest(structure: ExportAssignmentStructure, expectedOutput: string, options: Options = {}) {
+    function doTest(structure: OptionalKind<ExportAssignmentStructure>, expectedOutput: string, options: Options = {}) {
         const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
         factory.forExportAssignment().printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);

@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { removeClassMember } from "../../../manipulation";
-import { SetAccessorDeclarationStructure, SetAccessorDeclarationSpecificStructure } from "../../../structures";
+import { SetAccessorDeclarationStructure, SetAccessorDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -56,6 +56,7 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
      */
     getStructure(): SetAccessorDeclarationStructure {
         return callBaseGetStructure<SetAccessorDeclarationSpecificStructure>(SetAccessorDeclarationBase.prototype, this, {
+            kind: StructureKind.SetAccessor
         }) as any as SetAccessorDeclarationStructure;
     }
 }

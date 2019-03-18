@@ -1,15 +1,15 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure } from "../../structures";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, OptionalKind } from "../../structures";
 import { ObjectUtils, setValueIfUndefined } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class ConstructorDeclarationStructurePrinter extends FactoryStructurePrinter<ConstructorDeclarationStructure> {
+export class ConstructorDeclarationStructurePrinter extends NodePrinter<OptionalKind<ConstructorDeclarationStructure>> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<ConstructorDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>> | undefined) {
         // todo: move this code to a common printer similar to blank line formatting structure printer
         if (structures == null)
             return;
@@ -25,14 +25,14 @@ export class ConstructorDeclarationStructurePrinter extends FactoryStructurePrin
         }
     }
 
-    printText(writer: CodeBlockWriter, structure: ConstructorDeclarationStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure>) {
         this.printOverloads(writer, getOverloadStructures());
         this.printBase(writer, structure);
         if (this.options.isAmbient)
             writer.write(";");
         else
             writer.space().inlineBlock(() => {
-                this.factory.forBodyText(this.options).printText(writer, structure);
+                this.factory.forStatementedNode(this.options).printText(writer, structure);
             });
 
         function getOverloadStructures() {

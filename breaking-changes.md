@@ -12,6 +12,62 @@ For a while now it's been recommended to use the named export instead of the def
 import { Project } from "ts-morph";
 ```
 
+### New `.statements` property on structures with statements / Removed `.bodyText`, `.classes`, `.enums`, etc. properties
+
+Instead of writing code like the following:
+
+```ts
+const sourceFileStructure: SourceFileStructure = {
+    classes: [{
+        name: "MyClass"
+    }],
+    enums: [{
+        name: "MyEnum",
+        members: [{ name: "value" }]
+    }]
+};
+```
+
+Write the following:
+
+```ts
+const sourceFileStructure: SourceFileStructure = {
+    statements: [{
+        kind: StructureKind.Class,
+        name: "MyClass"
+    }, {
+        kind: StructureKind.Enum,
+        name: "MyEnum",
+        members: [{ name: "value" }]
+    }]
+};
+```
+
+This may not be as nice for simple scenarios, but will make the library more flexible and simpler to maintain in the future.
+
+Note the new `.kind` property. This property is necessary in the statements array to differentiate the different structures, but it is not required
+when using the specific methods:
+
+```ts
+sourceFile.addClass({ name: "MyClass" }); // ok
+```
+
+### Removed Structures
+
+These are now all covered by `StatementedNodeStructure`.
+
+* `BodyableNodeStructure`
+* `BodiedNodeStructure`
+* `ModuledNodeStructure`
+
+### `JsxAttributeStructure` and `JsxSpreadAttributeStructure` differentiation
+
+These two structures are now differentiated based on their new `.kind` property. Previously it used the `isSpreadAttribute` property.
+
+### `JsxElementStructure` and `JsxSelfClosingElementStructure` differentiation
+
+These two structures are now differentiated based on their new `.kind` property. Previously it used the `isSelfClosing` property.
+
 ## Version 1
 
 Renamed library to `ts-morph` and reset version to 1.0.0.

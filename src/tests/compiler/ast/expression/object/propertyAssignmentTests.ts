@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression } from "../../../../../compiler";
-import { PropertyAssignmentStructure } from "../../../../../structures";
+import { PropertyAssignmentStructure, StructureKind } from "../../../../../structures";
 import { SyntaxKind } from "../../../../../typescript";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 
 describe(nameof(PropertyAssignment), () => {
     describe(nameof<PropertyAssignment>(p => p.removeInitializer), () => {
@@ -83,7 +83,7 @@ describe(nameof(PropertyAssignment), () => {
         });
 
         it("should set when everything is specified", () => {
-            const structure: MakeRequired<PropertyAssignmentStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<PropertyAssignmentStructure>> = {
                 name: "NewName",
                 initializer: "5"
             };
@@ -96,13 +96,17 @@ describe(nameof(PropertyAssignment), () => {
     });
 
     describe(nameof<PropertyAssignment>(p => p.getStructure), () => {
-        function test(code: string, expectedStructure: MakeRequired<PropertyAssignmentStructure>) {
+        function test(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertyAssignmentStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<PropertyAssignment>(code, SyntaxKind.PropertyAssignment);
             expect(descendant.getStructure()).to.deep.equals(expectedStructure);
         }
 
         it("should get the structure", () => {
-            test("const t = { prop1: 1};", { name: "prop1", initializer: "1" });
+            test("const t = { prop1: 1};", {
+                kind: StructureKind.PropertyAssignment,
+                name: "prop1",
+                initializer: "1"
+            });
         });
     });
 });

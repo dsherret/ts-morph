@@ -1,7 +1,7 @@
 import * as errors from "../../../errors";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
-import { JsxElementStructure } from "../../../structures";
+import { JsxElementStructure, JsxElementSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { printTextFromStringOrWriter } from "../../../utils";
 import { JsxChild } from "../aliases";
@@ -73,9 +73,6 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
             openingElement.addAttributes(structure.attributes);
         }
 
-        if (structure.isSelfClosing)
-            throw new errors.NotImplementedError("Changing a JsxElement to be self closing is not implemented. Please open an issue if you need this.");
-
         if (structure.children != null)
             throw new errors.NotImplementedError("Setting JSX children is currently not implemented. Please open an issue if you need this.");
 
@@ -97,11 +94,11 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
      */
     getStructure(): JsxElementStructure {
         const openingElement = this.getOpeningElement();
-        const structure = callBaseGetStructure<JsxElementStructure>(JsxElementBase.prototype, this, {
+        const structure = callBaseGetStructure<JsxElementSpecificStructure>(JsxElementBase.prototype, this, {
+            kind: StructureKind.JsxElement,
             name: openingElement.getTagNameNode().getText(),
             attributes: openingElement.getAttributes().map(a => a.getStructure()),
             children: undefined,
-            isSelfClosing: false,
             bodyText: getBodyTextWithoutLeadingIndentation(this)
         });
         delete structure.children;

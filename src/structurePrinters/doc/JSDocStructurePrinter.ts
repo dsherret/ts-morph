@@ -2,10 +2,20 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { JSDocStructure } from "../../structures";
 import { WriterFunction } from "../../types";
 import { getTextFromStringOrWriter } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class JSDocStructurePrinter extends FactoryStructurePrinter<JSDocStructure | string> {
-    printText(writer: CodeBlockWriter, structure: JSDocStructure | string | WriterFunction) {
+export class JSDocStructurePrinter extends NodePrinter<JSDocStructure | string | WriterFunction> {
+    printDocs(writer: CodeBlockWriter, structures: ReadonlyArray<JSDocStructure | string | WriterFunction> | undefined) {
+        if (structures == null)
+            return;
+
+        for (const structure of structures) {
+            this.printText(writer, structure);
+            writer.newLine();
+        }
+    }
+
+    protected printTextInternal(writer: CodeBlockWriter, structure: JSDocStructure | string | WriterFunction) {
         const lines = getText().split(/\r?\n/);
         writer.writeLine("/**");
         for (const line of lines)
@@ -21,16 +31,6 @@ export class JSDocStructurePrinter extends FactoryStructurePrinter<JSDocStructur
                 return tempWriter.toString();
             }
             return getTextFromStringOrWriter(tempWriter, structure.description);
-        }
-    }
-
-    printDocs(writer: CodeBlockWriter, structures: ReadonlyArray<JSDocStructure | string | WriterFunction> | undefined) {
-        if (structures == null)
-            return;
-
-        for (const structure of structures) {
-            this.printText(writer, structure);
-            writer.newLine();
         }
     }
 }

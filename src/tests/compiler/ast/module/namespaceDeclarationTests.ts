@@ -1,8 +1,8 @@
 ﻿import { expect } from "chai";
-import { NamespaceDeclaration, NamespaceDeclarationKind } from "../../../../compiler";
+import { NamespaceDeclaration, NamespaceDeclarationKind, VariableDeclarationKind } from "../../../../compiler";
 import * as errors from "../../../../errors";
-import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, fillStructures, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(NamespaceDeclaration), () => {
     describe(nameof<NamespaceDeclaration>(d => d.getName), () => {
@@ -210,7 +210,7 @@ describe(nameof(NamespaceDeclaration), () => {
 
     describe(nameof<NamespaceDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: Partial<NamespaceDeclarationStructure>, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -220,7 +220,7 @@ describe(nameof(NamespaceDeclaration), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: MakeRequired<NamespaceDeclarationSpecificStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<NamespaceDeclarationSpecificStructure>> = {
                 declarationKind: NamespaceDeclarationKind.Module
             };
             doTest("namespace Identifier {\n}", structure, "module Identifier {\n}");
@@ -240,8 +240,7 @@ describe(nameof(NamespaceDeclaration), () => {
     });
 
     describe(nameof<NamespaceDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases" | "imports" | "exports";
-        function doTest(text: string, expectedStructure: Omit<MakeRequired<NamespaceDeclarationStructure>, PropertyNamesToExclude>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<NamespaceDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             const structure = firstChild.getStructure();
             expect(structure).to.deep.equal(expectedStructure);
@@ -249,8 +248,9 @@ describe(nameof(NamespaceDeclaration), () => {
 
         it("should get when has nothing", () => {
             doTest("namespace Identifier {\n}", {
+                kind: StructureKind.Namespace,
                 declarationKind: NamespaceDeclarationKind.Namespace,
-                bodyText: "",
+                statements: [],
                 docs: [],
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
@@ -266,8 +266,15 @@ export declare module Identifier {
     const t = 5;
 }`;
             doTest(code, {
+                kind: StructureKind.Namespace,
                 declarationKind: NamespaceDeclarationKind.Module,
-                bodyText: "const t = 5;",
+                statements: [fillStructures.variableStatement({
+                    declarationKind: VariableDeclarationKind.Const,
+                    declarations: [fillStructures.variableDeclaration({
+                        name: "t",
+                        initializer: "5"
+                    })]
+                })],
                 docs: [{ description: "Test" }],
                 hasDeclareKeyword: true,
                 isDefaultExport: false,
@@ -278,8 +285,9 @@ export declare module Identifier {
 
         it("should get for global module", () => {
             doTest("global {\n}", {
+                kind: StructureKind.Namespace,
                 declarationKind: NamespaceDeclarationKind.Global,
-                bodyText: "",
+                statements: [],
                 docs: [],
                 hasDeclareKeyword: false,
                 isDefaultExport: false,

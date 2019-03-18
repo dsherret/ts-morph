@@ -1,6 +1,6 @@
 import { ClassDeclarationStructure, ConstructorDeclarationStructure, MethodDeclarationStructure, ClassDeclarationSpecificStructure,
-    ClassLikeDeclarationBaseSpecificStructure, InterfaceDeclarationStructure, PropertyDeclarationStructure,
-    ParameterDeclarationStructure } from "../../../structures";
+    ClassLikeDeclarationBaseSpecificStructure, InterfaceDeclarationStructure, PropertySignatureStructure, MethodSignatureStructure,
+    ParameterDeclarationStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ArrayUtils, StringUtils, TypeGuards, KeyValueCache } from "../../../utils";
 import { ChildOrderableNode, ExportableNode, AmbientableNode } from "../base";
@@ -62,6 +62,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const getExtends = this.getExtends();
         const isAmbient = this.isAmbient();
         return callBaseGetStructure<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>(ClassDeclarationBase.prototype, this, {
+            kind: StructureKind.Class,
             ctors: this.getConstructors().filter(ctor => isAmbient || !ctor.isOverload()).map(ctor => ctor.getStructure() as ConstructorDeclarationStructure),
             methods: this.getMethods().filter(method => isAmbient || !method.isOverload()).map(method => method.getStructure() as MethodDeclarationStructure),
             properties: this.getProperties().map(property => property.getStructure()),
@@ -81,6 +82,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             .filter(p => p.getName() != null && p.getScope() === Scope.Public);
 
         return {
+            kind: StructureKind.Interface,
             name: getDefaultExtractedName(name, this),
             docs: this.getJsDocs().map(d => d.getStructure()),
             typeParameters: this.getTypeParameters().map(p => p.getStructure()),
@@ -91,6 +93,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                                 .filter(t => t.getTagName() === "param" && t.getName() === p.getName() && t.getComment() != null)
                                 .map(t => t.getComment()!.trim())[0];
                     return {
+                        kind: StructureKind.PropertySignature as StructureKind.PropertySignature,
                         docs: jsDocComment == null ? [] : [{ description: jsDocComment }],
                         name: p.getName()!,
                         type: p.getType().getText(p),
@@ -114,6 +117,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const instanceName = getDefaultExtractedName(undefined, this);
 
         return {
+            kind: StructureKind.Interface,
             name,
             properties: [
                 ...properties.map(getExtractedInterfacePropertyStructure),
@@ -121,6 +125,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             ],
             methods: methods.map(getExtractedInterfaceMethodStructure),
             constructSignatures: constructors.map(c => ({
+                kind: StructureKind.ConstructSignature as StructureKind.ConstructSignature,
                 docs: c.getJsDocs().map(d => d.getStructure()),
                 parameters: c.getParameters().map(p => ({
                     ...getExtractedInterfaceParameterStructure(p),
@@ -160,8 +165,9 @@ function getDefaultExtractedName(name: string | undefined, classDec: ClassDeclar
     return name || classDec.getName() || classDec.getSourceFile().getBaseNameWithoutExtension().replace(/[^a-zA-Z0-9_$]/g, "");
 }
 
-function getExtractedInterfacePropertyStructure(prop: PropertyDeclaration): PropertyDeclarationStructure {
+function getExtractedInterfacePropertyStructure(prop: PropertyDeclaration): PropertySignatureStructure {
     return {
+        kind: StructureKind.PropertySignature,
         docs: prop.getJsDocs().map(d => d.getStructure()),
         name: prop.getName()!,
         type: prop.getType().getText(prop),
@@ -170,8 +176,9 @@ function getExtractedInterfacePropertyStructure(prop: PropertyDeclaration): Prop
     };
 }
 
-function getExtractedInterfaceAccessorStructure(getAndSet: (GetAccessorDeclaration | SetAccessorDeclaration)[]): PropertyDeclarationStructure {
+function getExtractedInterfaceAccessorStructure(getAndSet: (GetAccessorDeclaration | SetAccessorDeclaration)[]): PropertySignatureStructure {
     return {
+        kind: StructureKind.PropertySignature,
         docs: getAndSet[0].getJsDocs().map(d => d.getStructure()),
         name: getAndSet[0].getName(),
         type: getAndSet[0].getType().getText(getAndSet[0]),
@@ -180,8 +187,9 @@ function getExtractedInterfaceAccessorStructure(getAndSet: (GetAccessorDeclarati
     };
 }
 
-function getExtractedInterfaceMethodStructure(method: MethodDeclaration): MethodDeclarationStructure {
+function getExtractedInterfaceMethodStructure(method: MethodDeclaration): MethodSignatureStructure {
     return {
+        kind: StructureKind.MethodSignature,
         docs: method.getJsDocs().map(d => d.getStructure()),
         name: method.getName(),
         hasQuestionToken: method.hasQuestionToken(),

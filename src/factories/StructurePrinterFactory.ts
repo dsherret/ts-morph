@@ -16,22 +16,22 @@ export class StructurePrinterFactory {
 
     @Memoize
     forInitializerExpressionableNode(): structurePrinters.InitializerExpressionableNodeStructurePrinter {
-        return new structurePrinters.InitializerExpressionableNodeStructurePrinter(this);
+        return new structurePrinters.InitializerExpressionableNodeStructurePrinter();
     }
 
     @Memoize
     forModifierableNode(): structurePrinters.ModifierableNodeStructurePrinter {
-        return new structurePrinters.ModifierableNodeStructurePrinter(this);
+        return new structurePrinters.ModifierableNodeStructurePrinter();
     }
 
     @Memoize
     forReturnTypedNode(alwaysWrite?: boolean): structurePrinters.ReturnTypedNodeStructurePrinter {
-        return new structurePrinters.ReturnTypedNodeStructurePrinter(this, alwaysWrite);
+        return new structurePrinters.ReturnTypedNodeStructurePrinter(alwaysWrite);
     }
 
     @Memoize
     forTypedNode(separator: string, alwaysWrite?: boolean): structurePrinters.TypedNodeStructurePrinter {
-        return new structurePrinters.TypedNodeStructurePrinter(this, separator, alwaysWrite);
+        return new structurePrinters.TypedNodeStructurePrinter(separator, alwaysWrite);
     }
 
     @Memoize
@@ -150,6 +150,11 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forJsxChildDecider(): structurePrinters.JsxChildDeciderStructurePrinter {
+        return new structurePrinters.JsxChildDeciderStructurePrinter(this);
+    }
+
+    @Memoize
     forJsxElement(): structurePrinters.JsxElementStructurePrinter {
         return new structurePrinters.JsxElementStructurePrinter(this);
     }
@@ -157,6 +162,11 @@ export class StructurePrinterFactory {
     @Memoize
     forJsxAttributeDecider(): structurePrinters.JsxAttributeDeciderStructurePrinter {
         return new structurePrinters.JsxAttributeDeciderStructurePrinter(this);
+    }
+
+    @Memoize
+    forJsxSelfClosingElement(): structurePrinters.JsxSelfClosingElementStructurePrinter {
+        return new structurePrinters.JsxSelfClosingElementStructurePrinter(this);
     }
 
     @Memoize
@@ -195,13 +205,13 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forBodyText(options: { isAmbient: boolean; }): structurePrinters.BodyTextStructurePrinter {
-        return new structurePrinters.BodyTextStructurePrinter(this, options);
+    forStatementedNode(options: { isAmbient: boolean; }): structurePrinters.StatementedNodeStructurePrinter {
+        return new structurePrinters.StatementedNodeStructurePrinter(this, options);
     }
 
     @Memoize
-    forStatementedNode(options: { isAmbient: boolean; }): structurePrinters.StatementedNodeStructurePrinter {
-        return new structurePrinters.StatementedNodeStructurePrinter(this, options);
+    forStatements(options: { isAmbient: boolean; }): structurePrinters.StatementsStructurePrinter {
+        return new structurePrinters.StatementsStructurePrinter(this, options);
     }
 
     @Memoize

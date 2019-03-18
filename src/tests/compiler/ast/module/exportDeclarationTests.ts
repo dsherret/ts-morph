@@ -4,8 +4,8 @@ import * as errors from "../../../../errors";
 import { Project } from "../../../../Project";
 import { WriterFunction } from "../../../../types";
 import { SyntaxKind } from "../../../../typescript";
-import { ExportSpecifierStructure, ExportDeclarationStructure } from "../../../../structures";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { ExportSpecifierStructure, ExportDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {
     describe(nameof<ExportDeclaration>(n => n.isNamespaceExport), () => {
@@ -399,7 +399,7 @@ describe(nameof(ExportDeclaration), () => {
         });
     });
 
-    describe(nameof<ExportDeclaration>(n => n.getStructure), () => {
+    describe(nameof<ExportDeclaration>(n => n.set), () => {
         function doTest(text: string, structure: Partial<ExportDeclarationStructure>, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
             firstChild.set(structure);
@@ -437,7 +437,7 @@ describe(nameof(ExportDeclaration), () => {
         });
 
         it("should set everything when specified", () => {
-            const structure: MakeRequired<ExportDeclarationStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ExportDeclarationStructure>> = {
                 namedExports: [{ name: "test" }, { name: "test2", alias: "alias" }],
                 moduleSpecifier: "asdf"
             };
@@ -445,7 +445,7 @@ describe(nameof(ExportDeclaration), () => {
         });
 
         function doThrowTest(text: string, structure: Partial<ExportDeclarationStructure>) {
-            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(() => firstChild.set(structure)).to.throw(errors.InvalidOperationError);
         }
 
@@ -459,13 +459,14 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<ExportDeclarationStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<ExportDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }
 
         it("should work with named export declarations", () => {
             doTest(`export { name } from "./test";`, {
+                kind: StructureKind.ExportDeclaration,
                 moduleSpecifier: "./test",
                 namedExports: [{ alias: undefined, name: "name" }]
             });
@@ -473,6 +474,7 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should work with namespace export declarations", () => {
             doTest(`export * from "./test";`, {
+                kind: StructureKind.ExportDeclaration,
                 moduleSpecifier: "./test",
                 namedExports: []
             });

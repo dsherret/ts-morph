@@ -1,5 +1,5 @@
 import { removeInterfaceMember } from "../../../manipulation";
-import { ConstructSignatureDeclarationStructure, ConstructSignatureDeclarationSpecificStructure } from "../../../structures";
+import { ConstructSignatureDeclarationStructure, ConstructSignatureDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ChildOrderableNode, JSDocableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -30,6 +30,7 @@ export class ConstructSignatureDeclaration extends ConstructSignatureDeclaration
      */
     getStructure(): ConstructSignatureDeclarationStructure {
         return callBaseGetStructure<ConstructSignatureDeclarationSpecificStructure>(ConstructSignatureDeclarationBase.prototype, this, {
+            kind: StructureKind.ConstructSignature
         }) as ConstructSignatureDeclarationStructure;
     }
 }

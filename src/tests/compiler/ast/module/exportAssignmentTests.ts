@@ -1,8 +1,8 @@
 ﻿import { expect } from "chai";
 import { ExportAssignment } from "../../../../compiler";
-import { ExportAssignmentStructure } from "../../../../structures";
+import { ExportAssignmentStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ExportAssignment), () => {
     describe(nameof<ExportAssignment>(n => n.isExportEquals), () => {
@@ -87,7 +87,7 @@ describe(nameof(ExportAssignment), () => {
         });
 
         it("should set everything when specified", () => {
-            const structure: MakeRequired<ExportAssignmentStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ExportAssignmentStructure>> = {
                 expression: "6",
                 isExportEquals: false
             };
@@ -96,17 +96,25 @@ describe(nameof(ExportAssignment), () => {
     });
 
     describe(nameof<ExportAssignment>(n => n.getStructure), () => {
-        function doTest(text: string, expected: MakeRequired<ExportAssignmentStructure>) {
+        function doTest(text: string, expected: OptionalTrivia<MakeRequired<ExportAssignmentStructure>>) {
             const structure = getInfoFromText<ExportAssignment>(text).firstChild.getStructure();
             expect(structure).to.deep.equals(expected);
         }
 
         it("should get structure for an export equals", () => {
-            doTest("export = 5;", { expression: "5", isExportEquals: true });
+            doTest("export = 5;", {
+                kind: StructureKind.ExportAssignment,
+                expression: "5",
+                isExportEquals: true
+            });
         });
 
         it("should get structure for an export default", () => {
-            doTest("export default 5;", { expression: "5", isExportEquals: false });
+            doTest("export default 5;", {
+                kind: StructureKind.ExportAssignment,
+                expression: "5",
+                isExportEquals: false
+            });
         });
     });
 });

@@ -1,11 +1,11 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration, ClassDeclaration, StatementedNode, Node } from "../../../../../compiler";
 import { ClassDeclarationStructure } from "../../../../../structures";
-import { getInfoFromText } from "../../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertClasses), () => {
-        function doTest(startCode: string, index: number, structures: ClassDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<ClassDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertClasses(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -49,7 +49,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert everything in a structure", () => {
-            const structure: MakeRequired<ClassDeclarationStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ClassDeclarationStructure>> = {
                 name: "C",
                 ctors: [{}, {}],
                 decorators: [{ name: "D" }],
@@ -104,7 +104,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertClass), () => {
-        function doTest(startCode: string, index: number, structure: ClassDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<ClassDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertClass(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -117,7 +117,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addClasses), () => {
-        function doTest(startCode: string, structures: ClassDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<ClassDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addClasses(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -130,7 +130,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addClass), () => {
-        function doTest(startCode: string, structure: ClassDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<ClassDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addClass(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

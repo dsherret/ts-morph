@@ -2,7 +2,7 @@
 import { ImportDeclaration, ImportSpecifier } from "../../../../compiler";
 import { ImportSpecifierStructure } from "../../../../structures";
 import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ImportSpecifier), () => {
     describe(nameof<ImportSpecifier>(n => n.setName), () => {
@@ -250,17 +250,23 @@ describe(nameof(ImportSpecifier), () => {
     });
 
     describe(nameof<ImportSpecifier>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<ImportSpecifierStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<ImportSpecifierStructure>>) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.getNamedImports()[0].getStructure()).to.deep.equal(expectedStructure);
         }
 
         it("should get when has no alias", () => {
-            doTest(`import { a } from 'foo'`, { name: "a", alias: undefined });
+            doTest(`import { a } from 'foo'`, {
+                name: "a",
+                alias: undefined
+            });
         });
 
         it("should get when has an alias", () => {
-            doTest(`import { a as alias } from 'foo'`, { name: "a", alias: "alias" });
+            doTest(`import { a as alias } from 'foo'`, {
+                name: "a",
+                alias: "alias"
+            });
         });
     });
 });

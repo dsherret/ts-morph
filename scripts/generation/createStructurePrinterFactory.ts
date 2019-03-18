@@ -13,18 +13,16 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
     sourceFile.removeText();
 
     // add imports
-    sourceFile.addImportDeclaration({
+    sourceFile.addImportDeclarations([{
         namespaceImport: "structurePrinters",
         moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/structurePrinters/index.ts"))
-    });
-    sourceFile.addImportDeclaration({
+    }, {
         namedImports: ["SupportedFormatCodeSettings"],
         moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/options/index.ts"))
-    });
-    sourceFile.addImportDeclaration({
+    }, {
         namedImports: ["Memoize"],
         moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/utils/index.ts"))
-    });
+    }]);
 
     sourceFile.addClass({
         docs: [{ description: "Cached lazy factory for StructurePrinters." }],
@@ -92,8 +90,8 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
 
     function isAllowedStructurePrinter(name: string) {
         switch (name) {
-            case "StructurePrinter":
-            case "FactoryStructurePrinter":
+            case "Printer":
+            case "NodePrinter":
             case "BlankLineFormattingStructuresPrinter":
             case "NewLineFormattingStructuresPrinter":
             case "SpaceFormattingStructuresPrinter":

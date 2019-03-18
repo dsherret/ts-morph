@@ -1,8 +1,8 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../../compiler";
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure,
-    TypeParameterDeclarationStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+    TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.insertOverloads), () => {
@@ -126,7 +126,7 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(n => n.set), () => {
-        function doTest(startingCode: string, structure: ConstructorDeclarationSpecificStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKindAndTrivia<ConstructorDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const ctor = firstChild.getConstructors()[0];
             ctor.set(structure);
@@ -139,7 +139,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
 
         it("should replace existing overloads when changed", () => {
-            const structure: MakeRequired<ConstructorDeclarationSpecificStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
             doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
@@ -147,7 +147,7 @@ describe(nameof(ConstructorDeclaration), () => {
         });
 
         it("should remove existing overloads when specifying an empty array", () => {
-            const structure: MakeRequired<ConstructorDeclarationSpecificStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
                 overloads: []
             };
             doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
@@ -156,19 +156,20 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
-        function doTest(code: string, expectedStructure: Omit<MakeRequired<ConstructorDeclarationStructure>, PropertyNamesToExclude>) {
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ConstructorDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
-            const structure = firstChild.getConstructors()[0].getStructure();
-            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
 
+            expectedStructure.parameters = expectedStructure.parameters!.map(p => fillStructures.parameter(p));
+            expectedStructure.typeParameters = expectedStructure.typeParameters!.map(p => fillStructures.typeParameter(p));
+
+            const structure = firstChild.getConstructors()[0].getStructure();
             expect(structure).to.deep.equal(expectedStructure);
         }
 
         it("should get structure when empty", () => {
             doTest("class T { constructor() {} }", {
-                bodyText: "",
+                kind: StructureKind.Constructor,
+                statements: [],
                 docs: [],
                 overloads: [],
                 parameters: [],
@@ -190,7 +191,8 @@ class T {
 }
 `;
             doTest(code, {
-                bodyText: "test;",
+                kind: StructureKind.Constructor,
+                statements: ["test;"],
                 docs: [{ description: "implementation" }],
                 overloads: [{
                     scope: Scope.Public,

@@ -1,5 +1,8 @@
 ﻿import { Constructor } from "../../../../types";
 import { ts } from "../../../../typescript";
+import { JsxTagNamedNodeStructure } from "../../../../structures";
+import { callBaseSet } from "../../callBaseSet";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { JsxTagNameExpression } from "../../aliases";
 import { Node } from "../../common";
 
@@ -19,6 +22,21 @@ export function JsxTagNamedNode<T extends Constructor<JsxTagNamedNodeExtensionTy
          */
         getTagNameNode() {
             return this._getNodeFromCompilerNode(this.compilerNode.tagName) as JsxTagNameExpression;
+        }
+
+        set(structure: Partial<JsxTagNamedNodeStructure>) {
+            callBaseSet(Base.prototype, this, structure);
+
+            if (structure.name != null)
+                this.getTagNameNode().replaceWithText(structure.name);
+
+            return this;
+        }
+
+        getStructure(): JsxTagNamedNodeStructure {
+            return callBaseGetStructure<JsxTagNamedNodeStructure>(Base.prototype, this, {
+                name: this.getTagNameNode().getText()
+            });
         }
     };
 }

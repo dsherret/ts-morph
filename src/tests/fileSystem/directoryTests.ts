@@ -3,7 +3,7 @@ import { SourceFile } from "../../compiler";
 import * as errors from "../../errors";
 import { Directory, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions, FileSystemHost } from "../../fileSystem";
 import { Project } from "../../Project";
-import { SourceFileStructure } from "../../structures";
+import { SourceFileStructure, StructureKind } from "../../structures";
 import { WriterFunction } from "../../types";
 import { CompilerOptions, ModuleResolutionKind, ScriptTarget } from "../../typescript";
 import { FileUtils } from "../../utils";
@@ -310,7 +310,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should create a source file in the directory when specifying a structure", () => {
-            doTest({ enums: [{ name: "MyEnum" }] }, "enum MyEnum {\n}\n");
+            doTest({ statements: [{ kind: StructureKind.Enum, name: "MyEnum" }] }, "enum MyEnum {\n}\n");
         });
 
         it("should throw an exception if creating a source file at an existing path on the disk", () => {

@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { ClassDeclaration, GetAccessorDeclaration, Scope } from "../../../../compiler";
-import { GetAccessorDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
+import { GetAccessorDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
@@ -84,19 +84,13 @@ describe(nameof(GetAccessorDeclaration), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: MakeRequired<GetAccessorDeclarationStructure> = {
-                bodyText: "console;",
-                classes: [{ name: "C" }],
+            const structure: OptionalKindAndTrivia<MakeRequired<GetAccessorDeclarationStructure>> = {
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console;"],
                 decorators: [{ name: "dec" }],
                 docs: [{ description: "d" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
                 isAbstract: true,
                 isStatic: true,
                 name: "asdf",
-                namespaces: [{ name: "N" }],
                 parameters: [{ name: "p" }],
                 returnType: "string",
                 scope: Scope.Public,
@@ -113,20 +107,6 @@ class Identifier {
         class C {
         }
 
-        enum E {
-        }
-
-        function F() {
-        }
-
-        interface I {
-        }
-
-        namespace N {
-        }
-
-        type T = string;
-
         console;
     }
 }
@@ -135,14 +115,13 @@ class Identifier {
             doTest("\nclass Identifier {\n    get prop();\n}\n", structure, expectedCode);
         });
 
-        it("should remove the body when providing undefined", () => {
-            doTest("class Identifier {\n    get prop(){}\n}", { bodyText: undefined }, "class Identifier {\n    get prop();\n}");
+        it("should remove the body when providing undefined to statements", () => {
+            doTest("class Identifier {\n    get prop(){}\n}", { statements: undefined }, "class Identifier {\n    get prop();\n}");
         });
     });
 
     describe(nameof<GetAccessorDeclaration>(n => n.getStructure), () => {
-        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
-        function doTest(code: string, expectedStructure: Omit<MakeRequired<GetAccessorDeclarationStructure>, PropertyNamesToExclude>) {
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<GetAccessorDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getGetAccessors()[0].getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
@@ -154,7 +133,8 @@ class Identifier {
 
         it("should get structure when empty", () => {
             doTest("abstract class T { abstract get test(); }", {
-                bodyText: undefined,
+                kind: StructureKind.GetAccessor,
+                statements: undefined,
                 docs: [],
                 parameters: [],
                 returnType: undefined,
@@ -177,7 +157,8 @@ class T {
 }
 `;
             doTest(code, {
-                bodyText: "return 5;",
+                kind: StructureKind.GetAccessor,
+                statements: ["return 5;"],
                 docs: [{ description: "test" }],
                 parameters: [{ name: "p" }],
                 returnType: "number",

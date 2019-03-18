@@ -1,16 +1,16 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { VariableDeclarationStructure } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
-export class VariableDeclarationStructurePrinter extends FactoryStructurePrinter<VariableDeclarationStructure> {
+export class VariableDeclarationStructurePrinter extends NodePrinter<VariableDeclarationStructure> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<VariableDeclarationStructure>) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: VariableDeclarationStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: VariableDeclarationStructure) {
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasExclamationToken, "!");
         this.factory.forTypedNode(":").printText(writer, structure);

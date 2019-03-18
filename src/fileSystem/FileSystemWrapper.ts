@@ -63,7 +63,7 @@ class Directory {
                 case "deleteDir":
                     return thisDir.isDescendantOrEqual(operation.dir);
                 default:
-                    throw errors.getNotImplementedForNeverValueError(operation);
+                    return errors.throwNotImplementedForNeverValueError(operation);
             }
         }
 
@@ -345,7 +345,7 @@ export class FileSystemWrapper {
                 await this.fileSystem.mkdir(operation.dir.path);
                 break;
             default:
-                throw errors.getNotImplementedForNeverValueError(operation);
+                errors.throwNotImplementedForNeverValueError(operation);
         }
     }
 
@@ -367,7 +367,7 @@ export class FileSystemWrapper {
                 this.fileSystem.mkdirSync(operation.dir.path);
                 break;
             default:
-                throw errors.getNotImplementedForNeverValueError(operation);
+                errors.throwNotImplementedForNeverValueError(operation);
         }
     }
 

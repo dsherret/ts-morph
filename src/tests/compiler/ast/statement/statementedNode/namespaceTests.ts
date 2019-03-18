@@ -1,12 +1,12 @@
 ﻿import { expect } from "chai";
 import { NamespaceDeclaration, StatementedNode, Node, NamespaceDeclarationKind } from "../../../../../compiler";
 import * as errors from "../../../../../errors";
-import { NamespaceDeclarationStructure } from "../../../../../structures";
-import { getInfoFromText } from "../../../testHelpers";
+import { NamespaceDeclarationStructure, StructureKind } from "../../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertNamespaces), () => {
-        function doTest(startCode: string, index: number, structures: NamespaceDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<NamespaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespaces(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -49,40 +49,29 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: MakeRequired<NamespaceDeclarationStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<NamespaceDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 name: "n",
                 hasDeclareKeyword: false,
                 declarationKind: NamespaceDeclarationKind.Module,
                 isDefaultExport: false,
                 isExported: true,
-                classes: [{ name: "C" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');",
-                imports: [{ moduleSpecifier: "./import" }],
-                exports: [{ moduleSpecifier: "./export" }]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
 
             doTest("", 0, [structure],
                 "/**\n * Test\n */\nexport module n {\n" +
-                "    import \"./import\";\n\n" +
-                "    type T = string;\n\n    interface I {\n    }\n\n    enum E {\n    }\n\n" +
-                "    function F() {\n    }\n\n    class C {\n    }\n\n    namespace N {\n    }\n\n" +
-                "    console.log('here');\n\n" +
-                "    export * from \"./export\";\n" +
+                "    class C {\n    }\n\n    console.log('here');\n" +
                 "}\n");
         });
 
-        it("should insert an ambient method on a class class when inserting a namespace with a class into an ambient module", () => {
+        it("should insert an ambient method on a class when inserting a namespace with a class into an ambient module", () => {
             const { sourceFile } = getInfoFromText("declare module Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertNamespaces(0, [{
                 name: "Namespace",
-                classes: [{
+                statements: [{
+                    kind: StructureKind.Class,
                     name: "Identifier",
                     methods: [{ name: "myMethod" }]
                 }]
@@ -127,7 +116,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertNamespace), () => {
-        function doTest(startCode: string, index: number, structure: NamespaceDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<NamespaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespace(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -140,7 +129,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespaces), () => {
-        function doTest(startCode: string, structures: NamespaceDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<NamespaceDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespaces(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -154,7 +143,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespace), () => {
-        function doTest(startCode: string, structure: NamespaceDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<NamespaceDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespace(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

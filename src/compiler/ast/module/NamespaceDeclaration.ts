@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { removeChildren, insertIntoParentTextRange } from "../../../manipulation";
-import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } from "../../../structures";
+import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode,
     TextInsertableNode, UnwrappableNode, ModuledNode } from "../base";
@@ -162,6 +162,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      */
     getStructure(): NamespaceDeclarationStructure {
         return callBaseGetStructure<NamespaceDeclarationSpecificStructure>(NamespaceDeclarationBase.prototype, this, {
+            kind: StructureKind.Namespace,
             declarationKind: this.getDeclarationKind()
         });
     }

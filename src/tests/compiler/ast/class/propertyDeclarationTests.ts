@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { Scope, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
-import { PropertyDeclarationStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { PropertyDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(PropertyDeclaration), () => {
     function getFirstPropertyWithInfo(code: string) {
@@ -23,10 +23,29 @@ describe(nameof(PropertyDeclaration), () => {
         it("should change the property when setting", () => {
             doTest("class Identifier { prop: string; }", { type: "number" }, "class Identifier { prop: number; }");
         });
+
+        it("should change everything setting", () => {
+            const structure: OptionalKindAndTrivia<MakeRequired<PropertyDeclarationStructure>> = {
+                name: "newName",
+                type: "string",
+                decorators: [{ name: "dec" }],
+                initializer: "5",
+                docs: ["test"],
+                hasExclamationToken: false,
+                hasQuestionToken: true,
+                isAbstract: true,
+                isReadonly: true,
+                isStatic: true,
+                scope: Scope.Public
+            };
+
+            doTest("class Identifier {\n    prop: string;\n}", structure,
+                "class Identifier {\n    /**\n     * test\n     */\n    @dec\n    public abstract static readonly newName?: string = 5;\n}");
+        });
     });
 
     describe(nameof<PropertyDeclaration>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<PropertyDeclarationStructure>) {
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertyDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getProperties()[0].getStructure();
             structure.decorators = structure.decorators!.map(d => ({ name: d.name }));
@@ -35,6 +54,7 @@ describe(nameof(PropertyDeclaration), () => {
 
         it("should get when empty", () => {
             doTest("class T { prop; }", {
+                kind: StructureKind.Property,
                 decorators: [],
                 docs: [],
                 hasExclamationToken: false,
@@ -57,6 +77,7 @@ class T {
 }
 `;
             doTest(code, {
+                kind: StructureKind.Property,
                 decorators: [{ name: "dec" }],
                 docs: [{ description: "test" }],
                 hasExclamationToken: false,
@@ -73,6 +94,7 @@ class T {
 
         it("should get when has exclamation token", () => {
             doTest("class T { prop!; }", {
+                kind: StructureKind.Property,
                 decorators: [],
                 docs: [],
                 hasExclamationToken: true,

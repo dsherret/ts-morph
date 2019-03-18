@@ -1,11 +1,11 @@
 ﻿import { expect } from "chai";
 import { StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement, Node } from "../../../../../compiler";
 import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../../structures";
-import { getInfoFromText } from "../../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertVariableStatements), () => {
-        function doTest(startCode: string, index: number, structures: VariableStatementStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<VariableStatementStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertVariableStatements(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -61,13 +61,13 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert everything from the structure", () => {
-            const varStructure: MakeRequired<VariableDeclarationStructure> = {
+            const varStructure: OptionalTrivia<MakeRequired<VariableDeclarationStructure>> = {
                 hasExclamationToken: true,
                 name: "v",
                 initializer: "5",
                 type: "number"
             };
-            const structure: MakeRequired<VariableStatementStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<VariableStatementStructure>> = {
                 docs: [{ description: "Testing" }],
                 hasDeclareKeyword: false,
                 declarationKind: VariableDeclarationKind.Var,
@@ -81,7 +81,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertVariableStatement), () => {
-        function doTest(startCode: string, index: number, structure: VariableStatementStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<VariableStatementStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertVariableStatement(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -94,7 +94,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addVariableStatements), () => {
-        function doTest(startCode: string, structures: VariableStatementStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<VariableStatementStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addVariableStatements(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -108,7 +108,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addVariableStatement), () => {
-        function doTest(startCode: string, structure: VariableStatementStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<VariableStatementStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addVariableStatement(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { ClassDeclarationStructurePrinter } from "../../../structurePrinters";
-import { ClassDeclarationStructure } from "../../../structures";
+import { ClassDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(ClassDeclarationStructurePrinter), () => {
@@ -10,7 +10,7 @@ describe(nameof(ClassDeclarationStructurePrinter), () => {
         isAmbient?: boolean;
     }
 
-    function doTest(structure: ClassDeclarationStructure, expectedOutput: string, options: Options = {}) {
+    function doTest(structure: OptionalKind<ClassDeclarationStructure>, expectedOutput: string, options: Options = {}) {
         const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
         factory.forClassDeclaration({ isAmbient: options.isAmbient || false }).printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);

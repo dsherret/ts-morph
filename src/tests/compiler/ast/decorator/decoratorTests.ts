@@ -2,7 +2,7 @@
 import { ClassDeclaration, Decorator } from "../../../../compiler";
 import { DecoratorStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(Decorator), () => {
     function getFirstClassDecorator(code: string) {
@@ -448,7 +448,7 @@ describe(nameof(Decorator), () => {
         });
 
         it("should set everything when specifying", () => {
-            const structure: MakeRequired<DecoratorStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<DecoratorStructure>> = {
                 name: "NewName", arguments: ["1"], typeArguments: ["T"]
             };
             doTest("@dec class T {}", structure, "@NewName<T>(1) class T {}");
@@ -456,8 +456,8 @@ describe(nameof(Decorator), () => {
     });
 
     describe(nameof<Decorator>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<DecoratorStructure>) {
-            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<DecoratorStructure>>) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(text);
             const structure = firstChild.getDecorators()[0].getStructure();
             expect(structure).to.deep.equal(expectedStructure);
         }

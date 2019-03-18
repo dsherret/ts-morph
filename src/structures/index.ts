@@ -1,3 +1,4 @@
+export * from "./aliases";
 export * from "./base";
 export * from "./class";
 export * from "./decorator";
@@ -10,3 +11,6 @@ export * from "./jsx";
 export * from "./module";
 export * from "./statement";
 export * from "./type";
+export * from "./types";
+export * from "./Structure";
+export * from "./StructureKind";

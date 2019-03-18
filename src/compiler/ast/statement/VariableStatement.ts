@@ -1,4 +1,4 @@
-import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure } from "../../../structures";
+import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -99,6 +99,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      */
     getStructure(): VariableStatementStructure {
         return callBaseGetStructure<VariableStatementSpecificStructure>(VariableStatementBase.prototype, this, {
+            kind: StructureKind.VariableStatement,
             declarationKind: this.getDeclarationKind(),
             declarations: this.getDeclarations().map(declaration => declaration.getStructure())
         }) as any as VariableStatementStructure;

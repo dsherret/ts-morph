@@ -1,8 +1,8 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { DecoratorStructure } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 
-export class DecoratorStructurePrinter extends FactoryStructurePrinter<DecoratorStructure> {
+export class DecoratorStructurePrinter extends NodePrinter<DecoratorStructure> {
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<DecoratorStructure> | undefined) {
         this.printMultiple(writer, structures, () => writer.newLine());
     }
@@ -11,7 +11,7 @@ export class DecoratorStructurePrinter extends FactoryStructurePrinter<Decorator
         this.printMultiple(writer, structures, () => writer.space());
     }
 
-    printText(writer: CodeBlockWriter, structure: DecoratorStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: DecoratorStructure) {
         writer.write(`@${structure.name}`);
         this.printArguments(writer, structure);
     }

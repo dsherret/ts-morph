@@ -1,10 +1,10 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
-import { PropertyAssignmentStructure } from "../../../structures";
+import { PropertyAssignmentStructure, OptionalKind } from "../../../structures";
 import { printTextFromStringOrWriter } from "../../../utils";
-import { FactoryStructurePrinter } from "../../FactoryStructurePrinter";
+import { NodePrinter } from "../../NodePrinter";
 
-export class PropertyAssignmentStructurePrinter extends FactoryStructurePrinter<PropertyAssignmentStructure> {
-    printText(writer: CodeBlockWriter, structure: PropertyAssignmentStructure) {
+export class PropertyAssignmentStructurePrinter extends NodePrinter<OptionalKind<PropertyAssignmentStructure>> {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<PropertyAssignmentStructure>) {
         writer.write(`${structure.name}: `);
         printTextFromStringOrWriter(writer, structure.initializer);
     }

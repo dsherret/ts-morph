@@ -1,8 +1,8 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { StructurePrinter } from "../StructurePrinter";
+import { Printer } from "../Printer";
 
-export class BlankLineFormattingStructuresPrinter<T> extends StructurePrinter<T[]> {
-    constructor(private readonly structurePrinter: StructurePrinter<T>) {
+export class BlankLineFormattingStructuresPrinter<T> extends Printer<ReadonlyArray<T>> {
+    constructor(private readonly printer: Printer<T>) {
         super();
     }
 
@@ -12,7 +12,7 @@ export class BlankLineFormattingStructuresPrinter<T> extends StructurePrinter<T[
 
         for (let i = 0; i < structures.length; i++) {
             writer.conditionalBlankLine(i > 0);
-            this.structurePrinter.printText(writer, structures[i]);
+            this.printer.printText(writer, structures[i]);
         }
     }
 }

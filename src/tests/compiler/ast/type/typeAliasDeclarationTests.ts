@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { TypeAliasDeclaration } from "../../../../compiler";
-import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(TypeAliasDeclaration), () => {
     describe(nameof<TypeAliasDeclaration>(n => n.set), () => {
@@ -37,7 +37,7 @@ describe(nameof(TypeAliasDeclaration), () => {
     });
 
     describe(nameof<TypeAliasDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<TypeAliasDeclarationStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<TypeAliasDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<TypeAliasDeclaration>(text);
             const structure = firstChild.getStructure();
             structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
@@ -46,6 +46,7 @@ describe(nameof(TypeAliasDeclaration), () => {
 
         it("should get when has nothing", () => {
             doTest("type Identifier = OtherType; type OtherType = { str: string; }", {
+                kind: StructureKind.TypeAlias,
                 docs: [],
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
@@ -62,6 +63,7 @@ describe(nameof(TypeAliasDeclaration), () => {
 export declare type Identifier<T> = string;
 `;
             doTest(code, {
+                kind: StructureKind.TypeAlias,
                 docs: [{ description: "Test" }],
                 hasDeclareKeyword: true,
                 isDefaultExport: false,

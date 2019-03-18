@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { JsxAttribute, JsxSelfClosingElement } from "../../../../compiler";
 import * as errors from "../../../../errors";
-import { JsxAttributeStructure } from "../../../../structures";
+import { JsxAttributeStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromTextWithDescendant, OptionalTrivia, OptionalKindAndTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxAttribute>(text, SyntaxKind.JsxAttribute, { isJsx: true });
@@ -162,9 +162,8 @@ describe(nameof(JsxAttribute), () => {
         });
 
         it("should set everything when provided", () => {
-            const structure: MakeRequired<JsxAttributeStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<JsxAttributeStructure>> = {
                 initializer: "{6}",
-                isSpreadAttribute: false,
                 name: "newName"
             };
             doTest(`var t = (<jsx a1={5} />);`, structure, `var t = (<jsx newName={6} />);`);
@@ -173,17 +172,10 @@ describe(nameof(JsxAttribute), () => {
         it("should remove the initializer when providing undefined", () => {
             doTest(`var t = (<jsx a1={5} />);`, { initializer: undefined }, `var t = (<jsx a1 />);`);
         });
-
-        it("should throw a not implemented error when providing isSpreadAttribute to true", () => {
-            const code = `var t = (<jsx a1={5} />);`;
-            const { descendant, sourceFile } = getInfo(code);
-            // force providing true
-            expect(() => descendant.set({ isSpreadAttribute: true as false })).to.throw(errors.NotImplementedError);
-        });
     });
 
     describe(nameof<JsxAttribute>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<JsxAttributeStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JsxAttributeStructure>>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();
             expect(structure).to.deep.equal(expectedStructure);
@@ -191,25 +183,25 @@ describe(nameof(JsxAttribute), () => {
 
         it("should get the structure when has no initializer", () => {
             doTest(`var t = (<jsx a1 />`, {
+                kind: StructureKind.JsxAttribute,
                 name: "a1",
-                initializer: undefined,
-                isSpreadAttribute: false
+                initializer: undefined
             });
         });
 
         it("should get the structure when has a string initializer", () => {
             doTest(`var t = (<jsx a1="1" />`, {
+                kind: StructureKind.JsxAttribute,
                 name: "a1",
-                initializer: `"1"`,
-                isSpreadAttribute: false
+                initializer: `"1"`
             });
         });
 
         it("should get the structure when has an expression initializer", () => {
             doTest(`var t = (<jsx a1={1} />`, {
+                kind: StructureKind.JsxAttribute,
                 name: "a1",
-                initializer: `{1}`,
-                isSpreadAttribute: false
+                initializer: `{1}`
             });
         });
     });

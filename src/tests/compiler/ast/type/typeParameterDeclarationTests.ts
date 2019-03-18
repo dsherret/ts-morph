@@ -2,7 +2,7 @@
 import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { TypeParameterDeclarationStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(TypeParameterDeclaration), () => {
     function getTypeParameterFromText(text: string, index = 0) {
@@ -221,18 +221,26 @@ describe(nameof(TypeParameterDeclaration), () => {
     });
 
     describe(nameof<TypeParameterDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<TypeParameterDeclarationStructure>) {
-            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<TypeParameterDeclarationStructure>>) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(text);
             const structure = firstChild.getTypeParameters()[0].getStructure();
             expect(structure).to.deep.equal(expectedStructure);
         }
 
         it("should get when it has nothing", () => {
-            doTest("class C<T> {}", { name: "T", constraint: undefined, default: undefined });
+            doTest("class C<T> {}", {
+                name: "T",
+                constraint: undefined,
+                default: undefined
+            });
         });
 
         it("should get when it has everything", () => {
-            doTest("class C<T extends string = number> {}", { name: "T", constraint: "string", default: "number" });
+            doTest("class C<T extends string = number> {}", {
+                name: "T",
+                constraint: "string",
+                default: "number"
+            });
         });
     });
 });

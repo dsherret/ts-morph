@@ -1,9 +1,9 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
-import { ShorthandPropertyAssignmentStructure } from "../../../structures";
-import { FactoryStructurePrinter } from "../../FactoryStructurePrinter";
+import { ShorthandPropertyAssignmentStructure, OptionalKind } from "../../../structures";
+import { NodePrinter } from "../../NodePrinter";
 
-export class ShorthandPropertyAssignmentStructurePrinter extends FactoryStructurePrinter<ShorthandPropertyAssignmentStructure> {
-    printText(writer: CodeBlockWriter, structure: ShorthandPropertyAssignmentStructure) {
+export class ShorthandPropertyAssignmentStructurePrinter extends NodePrinter<OptionalKind<ShorthandPropertyAssignmentStructure>> {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ShorthandPropertyAssignmentStructure>) {
         writer.write(`${structure.name}`);
     }
 }

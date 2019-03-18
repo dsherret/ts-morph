@@ -2,7 +2,7 @@
 import { TryStatement, VariableDeclaration } from "../../../../compiler";
 import { VariableDeclarationStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(VariableDeclaration), () => {
     describe(nameof<VariableDeclaration>(d => d.remove), () => {
@@ -98,7 +98,7 @@ describe(nameof(VariableDeclaration), () => {
     });
 
     describe(nameof<VariableDeclaration>(d => d.getStructure), () => {
-        function doTest(startCode: string, expectedStructure: MakeRequired<VariableDeclarationStructure>) {
+        function doTest(startCode: string, expectedStructure: OptionalTrivia<MakeRequired<VariableDeclarationStructure>>) {
             const structure = getInfoFromText(startCode).sourceFile.getVariableDeclarations()[0].getStructure();
             expect(structure).to.deep.equal(expectedStructure);
         }

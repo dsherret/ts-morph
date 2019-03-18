@@ -1,11 +1,11 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration, StatementedNode, Node } from "../../../../../compiler";
-import { FunctionDeclarationStructure } from "../../../../../structures";
-import { getInfoFromText } from "../../../testHelpers";
+import { FunctionDeclarationStructure, StructureKind } from "../../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertFunctions), () => {
-        function doTest(startCode: string, index: number, structures: FunctionDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<FunctionDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertFunctions(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -63,7 +63,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert with only a body text", () => {
-            doTest("", 0, [{ name: "func", bodyText: "console.log('testing');" }], "function func() {\n    console.log('testing');\n}\n");
+            doTest("", 0, [{ name: "func", statements: ["console.log('testing');"] }], "function func() {\n    console.log('testing');\n}\n");
         });
 
         it("should insert into an ambient context", () => {
@@ -77,7 +77,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: MakeRequired<FunctionDeclarationStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<FunctionDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 name: "f",
                 parameters: [{ name: "param" }],
@@ -89,26 +89,18 @@ describe(nameof(StatementedNode), () => {
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
                 isExported: true,
-                classes: [{ name: "C" }],
-                interfaces: [{ name: "I" }],
-                typeAliases: [{ name: "T", type: "string" }],
-                enums: [{ name: "E" }],
-                functions: [{ name: "F" }],
-                namespaces: [{ name: "N" }],
-                bodyText: "console.log('here');"
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
 
             doTest("", 0, [structure],
                 "export function f();\n/**\n * Test\n */\nexport async function* f<T>(param): string {\n" +
-                "    type T = string;\n\n    interface I {\n    }\n\n    enum E {\n    }\n\n" +
-                "    function F() {\n    }\n\n    class C {\n    }\n\n    namespace N {\n    }\n\n" +
-                "    console.log('here');\n" +
+                "    class C {\n    }\n\n    console.log('here');\n" +
                 "}\n");
         });
     });
 
     describe(nameof<StatementedNode>(n => n.insertFunction), () => {
-        function doTest(startCode: string, index: number, structure: FunctionDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<FunctionDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertFunction(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -121,7 +113,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addFunctions), () => {
-        function doTest(startCode: string, structures: FunctionDeclarationStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<FunctionDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addFunctions(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -135,7 +127,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addFunction), () => {
-        function doTest(startCode: string, structure: FunctionDeclarationStructure, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<FunctionDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addFunction(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

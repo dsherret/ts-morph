@@ -3,7 +3,7 @@ import { ts, SyntaxKind } from "../../../../typescript";
 import * as errors from "../../../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange } from "../../../../manipulation";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure,
-    PropertyDeclarationStructure, SetAccessorDeclarationStructure } from "../../../../structures";
+    PropertyDeclarationStructure, SetAccessorDeclarationStructure, OptionalKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../../../utils";
 import { Type } from "../../../types";
@@ -64,24 +64,24 @@ export interface ClassLikeDeclarationBaseSpecific {
      * Adds a constructor.
      * @param structure - Structure of the constructor.
      */
-    addConstructor(structure?: ConstructorDeclarationStructure): ConstructorDeclaration;
+    addConstructor(structure?: OptionalKind<ConstructorDeclarationStructure>): ConstructorDeclaration;
     /**
      * Adds constructors.
      * @param structures - Structures of the constructor.
      */
-    addConstructors(structures: ReadonlyArray<ConstructorDeclarationStructure>): ConstructorDeclaration[];
+    addConstructors(structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>): ConstructorDeclaration[];
     /**
      * Inserts a constructor.
      * @param index - Child index to insert at.
      * @param structure - Structure of the constructor.
      */
-    insertConstructor(index: number, structure?: ConstructorDeclarationStructure): ConstructorDeclaration;
+    insertConstructor(index: number, structure?: OptionalKind<ConstructorDeclarationStructure>): ConstructorDeclaration;
     /**
      * Inserts constructors.
      * @param index - Child index to insert at.
      * @param structures - Structures of the constructor.
      */
-    insertConstructors(index: number, structures: ReadonlyArray<ConstructorDeclarationStructure>): ConstructorDeclaration[];
+    insertConstructors(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>): ConstructorDeclaration[];
     /**
      * Gets the constructor declarations.
      */
@@ -90,68 +90,68 @@ export interface ClassLikeDeclarationBaseSpecific {
      * Add get accessor.
      * @param structure - Structure representing the get accessor.
      */
-    addGetAccessor(structure: GetAccessorDeclarationStructure): GetAccessorDeclaration;
+    addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
     /**
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addGetAccessors(structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
+    addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
     /**
      * Insert get accessor.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the get accessor.
      */
-    insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure): GetAccessorDeclaration;
+    insertGetAccessor(index: number, structure: OptionalKind<GetAccessorDeclarationStructure>): GetAccessorDeclaration;
     /**
      * Insert properties.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertGetAccessors(index: number, structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
+    insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[];
     /**
      * Add set accessor.
      * @param structure - Structure representing the set accessor.
      */
-    addSetAccessor(structure: SetAccessorDeclarationStructure): SetAccessorDeclaration;
+    addSetAccessor(structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
     /**
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addSetAccessors(structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
+    addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
     /**
      * Insert set accessor.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the set accessor.
      */
-    insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure): SetAccessorDeclaration;
+    insertSetAccessor(index: number, structure: OptionalKind<SetAccessorDeclarationStructure>): SetAccessorDeclaration;
     /**
      * Insert properties.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
+    insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
     /**
      * Add property.
      * @param structure - Structure representing the property.
      */
-    addProperty(structure: PropertyDeclarationStructure): PropertyDeclaration;
+    addProperty(structure: OptionalKind<PropertyDeclarationStructure>): PropertyDeclaration;
     /**
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addProperties(structures: ReadonlyArray<PropertyDeclarationStructure>): PropertyDeclaration[];
+    addProperties(structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>): PropertyDeclaration[];
     /**
      * Insert property.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the property.
      */
-    insertProperty(index: number, structure: PropertyDeclarationStructure): PropertyDeclaration;
+    insertProperty(index: number, structure: OptionalKind<PropertyDeclarationStructure>): PropertyDeclaration;
     /**
      * Insert properties.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertProperties(index: number, structures: ReadonlyArray<PropertyDeclarationStructure>): PropertyDeclaration[];
+    insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>): PropertyDeclaration[];
     /**
      * Gets the first instance property by name.
      * @param name - Name.
@@ -286,24 +286,24 @@ export interface ClassLikeDeclarationBaseSpecific {
      * Add method.
      * @param structure - Structure representing the method.
      */
-    addMethod(structure: MethodDeclarationStructure): MethodDeclaration;
+    addMethod(structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
     /**
      * Add methods.
      * @param structures - Structures representing the methods.
      */
-    addMethods(structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
+    addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
     /**
      * Insert method.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the method.
      */
-    insertMethod(index: number, structure: MethodDeclarationStructure): MethodDeclaration;
+    insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
     /**
      * Insert methods.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
-    insertMethods(index: number, structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
+    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
     /**
      * Gets the first method declaration by name.
      * @param name - Name.
@@ -555,22 +555,22 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return types.length === 0 ? undefined : types[0];
         }
 
-        addConstructor(structure: ConstructorDeclarationStructure = {}) {
+        addConstructor(structure: OptionalKind<ConstructorDeclarationStructure> = {}) {
             return this.insertConstructor(getEndIndexFromArray(this.getMembers()), structure);
         }
 
-        addConstructors(structures: ReadonlyArray<ConstructorDeclarationStructure>) {
+        addConstructors(structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>) {
             return this.insertConstructors(getEndIndexFromArray(this.getMembers()), structures);
         }
 
-        insertConstructor(index: number, structure: ConstructorDeclarationStructure = {}) {
+        insertConstructor(index: number, structure: OptionalKind<ConstructorDeclarationStructure> = {}) {
             return this.insertConstructors(index, [structure])[0];
         }
 
-        insertConstructors(index: number, structures: ReadonlyArray<ConstructorDeclarationStructure>) {
+        insertConstructors(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>) {
             const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
 
-            return insertIntoBracesOrSourceFileWithGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
+            return insertIntoBracesOrSourceFileWithGetChildren<ConstructorDeclaration, OptionalKind<ConstructorDeclarationStructure>>({
                 getIndexedChildren: () => this.getMembers(),
                 parent: this,
                 index,
@@ -594,20 +594,20 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.getMembers().filter(m => TypeGuards.isConstructorDeclaration(m)) as ConstructorDeclaration[];
         }
 
-        addGetAccessor(structure: GetAccessorDeclarationStructure) {
+        addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>) {
             return this.addGetAccessors([structure])[0];
         }
 
-        addGetAccessors(structures: ReadonlyArray<GetAccessorDeclarationStructure>) {
+        addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
             return this.insertGetAccessors(getEndIndexFromArray(this.getMembers()), structures);
         }
 
-        insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure) {
+        insertGetAccessor(index: number, structure: OptionalKind<GetAccessorDeclarationStructure>) {
             return this.insertGetAccessors(index, [structure])[0];
         }
 
-        insertGetAccessors(index: number, structures: ReadonlyArray<GetAccessorDeclarationStructure>) {
-            return insertIntoBracesOrSourceFileWithGetChildren<GetAccessorDeclaration, GetAccessorDeclarationStructure>({
+        insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
+            return insertIntoBracesOrSourceFileWithGetChildren<GetAccessorDeclaration, OptionalKind<GetAccessorDeclarationStructure>>({
                 getIndexedChildren: () => this.getMembers(),
                 parent: this,
                 index,
@@ -631,20 +631,20 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             });
         }
 
-        addSetAccessor(structure: SetAccessorDeclarationStructure) {
+        addSetAccessor(structure: OptionalKind<SetAccessorDeclarationStructure>) {
             return this.addSetAccessors([structure])[0];
         }
 
-        addSetAccessors(structures: ReadonlyArray<SetAccessorDeclarationStructure>) {
+        addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
             return this.insertSetAccessors(getEndIndexFromArray(this.getMembers()), structures);
         }
 
-        insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure) {
+        insertSetAccessor(index: number, structure: OptionalKind<SetAccessorDeclarationStructure>) {
             return this.insertSetAccessors(index, [structure])[0];
         }
 
-        insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>) {
-            return insertIntoBracesOrSourceFileWithGetChildren<SetAccessorDeclaration, SetAccessorDeclarationStructure>({
+        insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
+            return insertIntoBracesOrSourceFileWithGetChildren<SetAccessorDeclaration, OptionalKind<SetAccessorDeclarationStructure>>({
                 getIndexedChildren: () => this.getMembers(),
                 parent: this,
                 index,
@@ -668,20 +668,20 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             });
         }
 
-        addProperty(structure: PropertyDeclarationStructure) {
+        addProperty(structure: OptionalKind<PropertyDeclarationStructure>) {
             return this.addProperties([structure])[0];
         }
 
-        addProperties(structures: ReadonlyArray<PropertyDeclarationStructure>) {
+        addProperties(structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>) {
             return this.insertProperties(getEndIndexFromArray(this.getMembers()), structures);
         }
 
-        insertProperty(index: number, structure: PropertyDeclarationStructure) {
+        insertProperty(index: number, structure: OptionalKind<PropertyDeclarationStructure>) {
             return this.insertProperties(index, [structure])[0];
         }
 
-        insertProperties(index: number, structures: ReadonlyArray<PropertyDeclarationStructure>) {
-            return insertIntoBracesOrSourceFileWithGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
+        insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>) {
+            return insertIntoBracesOrSourceFileWithGetChildren<PropertyDeclaration, OptionalKind<PropertyDeclarationStructure>>({
                 getIndexedChildren: () => this.getMembers(),
                 parent: this,
                 index,
@@ -796,24 +796,24 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                 .filter(m => TypeGuards.isSetAccessorDeclaration(m)) as SetAccessorDeclaration[];
         }
 
-        addMethod(structure: MethodDeclarationStructure) {
+        addMethod(structure: OptionalKind<MethodDeclarationStructure>) {
             return this.addMethods([structure])[0];
         }
 
-        addMethods(structures: ReadonlyArray<MethodDeclarationStructure>) {
+        addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
             return this.insertMethods(getEndIndexFromArray(this.getMembers()), structures);
         }
 
-        insertMethod(index: number, structure: MethodDeclarationStructure) {
+        insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>) {
             return this.insertMethods(index, [structure])[0];
         }
 
-        insertMethods(index: number, structures: ReadonlyArray<MethodDeclarationStructure>) {
+        insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
             const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
             structures = structures.map(s => ({...s}));
 
             // insert, fill, and get created nodes
-            return insertIntoBracesOrSourceFileWithGetChildren<MethodDeclaration, MethodDeclarationStructure>({
+            return insertIntoBracesOrSourceFileWithGetChildren<MethodDeclaration, OptionalKind<MethodDeclarationStructure>>({
                 parent: this,
                 index,
                 getIndexedChildren: () => this.getMembers(),

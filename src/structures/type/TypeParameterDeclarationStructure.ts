@@ -1,7 +1,8 @@
 ﻿import { WriterFunction } from "../../types";
 import { NamedNodeStructure } from "../base";
+import { Structure } from "../Structure";
 
-export interface TypeParameterDeclarationStructure extends TypeParameterDeclarationSpecificStructure, NamedNodeStructure {
+export interface TypeParameterDeclarationStructure extends Structure, TypeParameterDeclarationSpecificStructure, NamedNodeStructure {
 }
 
 export interface TypeParameterDeclarationSpecificStructure {

@@ -3,9 +3,9 @@ import { ImportDeclaration } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { Project } from "../../../../Project";
 import { WriterFunction } from "../../../../types";
-import { ImportSpecifierStructure, ImportDeclarationStructure } from "../../../../structures";
+import { ImportSpecifierStructure, ImportDeclarationStructure, StructureKind } from "../../../../structures";
 import { ModuleResolutionKind } from "../../../../typescript";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ImportDeclaration), () => {
     describe(nameof<ImportDeclaration>(n => n.setModuleSpecifier), () => {
@@ -648,7 +648,7 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should set everything when specified", () => {
-            const structure: MakeRequired<ImportDeclarationStructure> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ImportDeclarationStructure>> = {
                 defaultImport: "asdf",
                 moduleSpecifier: "new",
                 namedImports: undefined,
@@ -672,22 +672,27 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: MakeRequired<ImportDeclarationStructure>) {
+        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<ImportDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }
 
         it("should work when has named imports", () => {
             doTest(`import { a } from 'foo'`, {
+                kind: StructureKind.ImportDeclaration,
                 defaultImport: undefined,
                 moduleSpecifier: "foo",
-                namedImports: [{ name: "a", alias: undefined }],
+                namedImports: [{
+                    name: "a",
+                    alias: undefined
+                }],
                 namespaceImport: undefined
             });
         });
 
         it("should work when is a namespace import", () => {
             doTest(`import * as ts from 'typescript'`, {
+                kind: StructureKind.ImportDeclaration,
                 defaultImport: undefined,
                 moduleSpecifier: "typescript",
                 namedImports: [],
@@ -697,6 +702,7 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should work for default imports", () => {
             doTest(`import bar from 'foo'`, {
+                kind: StructureKind.ImportDeclaration,
                 defaultImport: "bar",
                 moduleSpecifier: "foo",
                 namedImports: [],
@@ -706,9 +712,13 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should work for default with named imports", () => {
             doTest(`import bar, {test} from 'foo'`, {
+                kind: StructureKind.ImportDeclaration,
                 defaultImport: "bar",
                 moduleSpecifier: "foo",
-                namedImports: [{ name: "test", alias: undefined }],
+                namedImports: [{
+                    name: "test",
+                    alias: undefined
+                }],
                 namespaceImport: undefined
             });
         });

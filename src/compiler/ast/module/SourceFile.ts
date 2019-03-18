@@ -4,11 +4,10 @@ import { ProjectContext } from "../../../ProjectContext";
 import { getTextFromFormattingEdits, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting,
     insertIntoTextRange } from "../../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
-import { SourceFileStructure } from "../../../structures";
+import { SourceFileStructure, SourceFileSpecificStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { LanguageVariant, ScriptTarget, ts } from "../../../typescript";
 import { ArrayUtils, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, Memoize } from "../../../utils";
-import { getBodyTextWithoutLeadingIndentation } from "../base/helpers";
 import { TextInsertableNode, ModuledNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
@@ -827,9 +826,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the structure equivalent to this node.
      */
     getStructure(): SourceFileStructure {
-        return callBaseGetStructure<{ bodyText: string | undefined; }>(SourceFileBase.prototype, this, {
-            bodyText: getBodyTextWithoutLeadingIndentation(this)
-        });
+        return callBaseGetStructure<SourceFileSpecificStructure>(SourceFileBase.prototype, this, {});
     }
 
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {

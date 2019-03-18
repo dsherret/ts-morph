@@ -1,22 +1,21 @@
 import { removeOverloadableStatementedNodeChild } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure } from "../../../structures";
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode,
     TextInsertableNode, UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { NamespaceChildableNode } from "../module";
-import { StatementedNode } from "../statement";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
-    FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NameableNode(Node)))))))
+    FunctionLikeDeclaration(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NameableNode(Node))))))
 )))))));
 export const FunctionDeclarationOverloadBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(AsyncableNode(GeneratorableNode(ModifierableNode(
-    SignaturedDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Node))))))))
+    SignaturedDeclaration(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Node)))))))
 ))))));
 
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
@@ -94,8 +93,24 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
         const isOverload = this.isOverload();
         const hasImplementation = this.getImplementation();
         const basePrototype = isOverload && hasImplementation ? FunctionDeclarationOverloadBase.prototype : FunctionDeclarationBase.prototype;
-        const structure = !hasImplementation || isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
 
-        return callBaseGetStructure<any>(basePrototype, this, structure);
+        return callBaseGetStructure<any>(basePrototype, this, getStructure(this));
+
+        function getStructure(thisNode: FunctionDeclaration) {
+            // this is not the best typing... unit tests will catch issues though
+            if (hasImplementation && isOverload)
+                return {};
+            return getSpecificStructure();
+
+            function getSpecificStructure(): FunctionDeclarationSpecificStructure {
+                if (!hasImplementation)
+                    return { kind: StructureKind.Function };
+                else
+                    return {
+                        kind: StructureKind.Function,
+                        overloads: thisNode.getOverloads().map(o => o.getStructure())
+                    };
+            }
+        }
     }
 }

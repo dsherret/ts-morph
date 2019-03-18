@@ -1,17 +1,17 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
-import { ImportDeclarationStructure } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { ImportDeclarationStructure, OptionalKind } from "../../structures";
+import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 
-export class ImportDeclarationStructurePrinter extends FactoryStructurePrinter<ImportDeclarationStructure> {
+export class ImportDeclarationStructurePrinter extends NodePrinter<OptionalKind<ImportDeclarationStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<ImportDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: ImportDeclarationStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ImportDeclarationStructure>) {
         const hasNamedImport = structure.namedImports != null && structure.namedImports.length > 0;
         // validation
         if (hasNamedImport && structure.namespaceImport != null)

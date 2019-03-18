@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, PropertySignature } from "../../../../compiler";
-import { PropertySignatureStructure } from "../../../../structures";
-import { getInfoFromText } from "../../testHelpers";
+import { PropertySignatureStructure, StructureKind } from "../../../../structures";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(PropertySignature), () => {
     function getFirstPropertyWithInfo(code: string) {
@@ -22,6 +22,19 @@ describe(nameof(PropertySignature), () => {
 
         it("should change when setting", () => {
             doTest("interface Identifier { prop: string; }", { type: "number" }, "interface Identifier { prop: number; }");
+        });
+
+        it("should change when setting everything", () => {
+            const structure: OptionalKindAndTrivia<MakeRequired<PropertySignatureStructure>> = {
+                docs: ["test"],
+                hasQuestionToken: true,
+                name: "name",
+                type: "number",
+                initializer: "5",
+                isReadonly: true
+            };
+            doTest("interface Identifier {\n    prop: string;\n}", structure,
+                "interface Identifier {\n    /**\n     * test\n     */\n    readonly name?: number = 5;\n}");
         });
     });
 
@@ -53,14 +66,15 @@ describe(nameof(PropertySignature), () => {
     });
 
     describe(nameof<PropertySignature>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<PropertySignatureStructure>) {
-            const { firstProperty, sourceFile } = getFirstPropertyWithInfo(code);
+        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertySignatureStructure>>) {
+            const { firstProperty } = getFirstPropertyWithInfo(code);
             const structure = firstProperty.getStructure();
             expect(structure).to.deep.equal(expectedStructure);
         }
 
         it("should get when not has anything", () => {
             doTest("interface Identifier { prop; }", {
+                kind: StructureKind.PropertySignature,
                 docs: [],
                 hasQuestionToken: false,
                 initializer: undefined,
@@ -77,6 +91,7 @@ interface Identifier {
     readonly prop?: number = 5;
 }`;
             doTest(code, {
+                kind: StructureKind.PropertySignature,
                 docs: [{ description: "Test" }],
                 hasQuestionToken: true,
                 initializer: "5",

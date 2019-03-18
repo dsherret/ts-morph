@@ -1,8 +1,8 @@
 import * as errors from "../../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../../manipulation";
-import { CommaNewLineSeparatedStructuresPrinter, StructurePrinter } from "../../../../structurePrinters";
+import { CommaNewLineSeparatedStructuresPrinter, Printer } from "../../../../structurePrinters";
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "../../../../structures";
+    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind } from "../../../../structures";
 import { SyntaxKind, ts } from "../../../../typescript";
 import { ArrayUtils } from "../../../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";
@@ -68,7 +68,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds a property assignment.
      * @param structure - Structure that represents the property assignment to add.
      */
-    addPropertyAssignment(structure: PropertyAssignmentStructure) {
+    addPropertyAssignment(structure: OptionalKind<PropertyAssignmentStructure>) {
         return this.addPropertyAssignments([structure])[0];
     }
 
@@ -76,7 +76,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds property assignments.
      * @param structures - Structure that represents the property assignments to add.
      */
-    addPropertyAssignments(structures: ReadonlyArray<PropertyAssignmentStructure>) {
+    addPropertyAssignments(structures: ReadonlyArray<OptionalKind<PropertyAssignmentStructure>>) {
         return this.insertPropertyAssignments(this.compilerNode.properties.length, structures);
     }
 
@@ -85,7 +85,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the property assignment to insert.
      */
-    insertPropertyAssignment(index: number, structure: PropertyAssignmentStructure) {
+    insertPropertyAssignment(index: number, structure: OptionalKind<PropertyAssignmentStructure>) {
         return this.insertPropertyAssignments(index, [structure])[0];
     }
 
@@ -94,7 +94,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the property assignments to insert.
      */
-    insertPropertyAssignments(index: number, structures: ReadonlyArray<PropertyAssignmentStructure>) {
+    insertPropertyAssignments(index: number, structures: ReadonlyArray<OptionalKind<PropertyAssignmentStructure>>) {
         return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forPropertyAssignment()) as PropertyAssignment[];
     }
 
@@ -104,7 +104,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds a shorthand property assignment.
      * @param structure - Structure that represents the shorthand property assignment to add.
      */
-    addShorthandPropertyAssignment(structure: ShorthandPropertyAssignmentStructure) {
+    addShorthandPropertyAssignment(structure: OptionalKind<ShorthandPropertyAssignmentStructure>) {
         return this.addShorthandPropertyAssignments([structure])[0];
     }
 
@@ -112,7 +112,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds shorthand property assignments.
      * @param structures - Structure that represents the shorthand property assignments to add.
      */
-    addShorthandPropertyAssignments(structures: ReadonlyArray<ShorthandPropertyAssignmentStructure>) {
+    addShorthandPropertyAssignments(structures: ReadonlyArray<OptionalKind<ShorthandPropertyAssignmentStructure>>) {
         return this.insertShorthandPropertyAssignments(this.compilerNode.properties.length, structures);
     }
 
@@ -121,7 +121,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the shorthand property assignment to insert.
      */
-    insertShorthandPropertyAssignment(index: number, structure: ShorthandPropertyAssignmentStructure) {
+    insertShorthandPropertyAssignment(index: number, structure: OptionalKind<ShorthandPropertyAssignmentStructure>) {
         return this.insertShorthandPropertyAssignments(index, [structure])[0];
     }
 
@@ -130,7 +130,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the shorthand property assignments to insert.
      */
-    insertShorthandPropertyAssignments(index: number, structures: ReadonlyArray<ShorthandPropertyAssignmentStructure>) {
+    insertShorthandPropertyAssignments(index: number, structures: ReadonlyArray<OptionalKind<ShorthandPropertyAssignmentStructure>>) {
         return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forShorthandPropertyAssignment()) as ShorthandPropertyAssignment[];
     }
 
@@ -140,7 +140,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds a spread assignment.
      * @param structure - Structure that represents the spread assignment to add.
      */
-    addSpreadAssignment(structure: SpreadAssignmentStructure) {
+    addSpreadAssignment(structure: OptionalKind<SpreadAssignmentStructure>) {
         return this.addSpreadAssignments([structure])[0];
     }
 
@@ -148,7 +148,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds spread assignments.
      * @param structures - Structure that represents the spread assignments to add.
      */
-    addSpreadAssignments(structures: ReadonlyArray<SpreadAssignmentStructure>) {
+    addSpreadAssignments(structures: ReadonlyArray<OptionalKind<SpreadAssignmentStructure>>) {
         return this.insertSpreadAssignments(this.compilerNode.properties.length, structures);
     }
 
@@ -157,7 +157,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the spread assignment to insert.
      */
-    insertSpreadAssignment(index: number, structure: SpreadAssignmentStructure) {
+    insertSpreadAssignment(index: number, structure: OptionalKind<SpreadAssignmentStructure>) {
         return this.insertSpreadAssignments(index, [structure])[0];
     }
 
@@ -166,7 +166,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the spread assignments to insert.
      */
-    insertSpreadAssignments(index: number, structures: ReadonlyArray<SpreadAssignmentStructure>) {
+    insertSpreadAssignments(index: number, structures: ReadonlyArray<OptionalKind<SpreadAssignmentStructure>>) {
         return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forSpreadAssignment()) as SpreadAssignment[];
     }
 
@@ -176,7 +176,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds a method.
      * @param structure - Structure that represents the method to add.
      */
-    addMethod(structure: MethodDeclarationStructure) {
+    addMethod(structure: OptionalKind<MethodDeclarationStructure>) {
         return this.addMethods([structure])[0];
     }
 
@@ -184,7 +184,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds methods.
      * @param structures - Structure that represents the methods to add.
      */
-    addMethods(structures: ReadonlyArray<MethodDeclarationStructure>) {
+    addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
         return this.insertMethods(this.compilerNode.properties.length, structures);
     }
 
@@ -193,7 +193,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the method to insert.
      */
-    insertMethod(index: number, structure: MethodDeclarationStructure) {
+    insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>) {
         return this.insertMethods(index, [structure])[0];
     }
 
@@ -202,7 +202,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the methods to insert.
      */
-    insertMethods(index: number, structures: ReadonlyArray<MethodDeclarationStructure>) {
+    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
         return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient: false })) as MethodDeclaration[];
     }
 
@@ -212,7 +212,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds a get accessor.
      * @param structure - Structure that represents the property assignment to add.
      */
-    addGetAccessor(structure: GetAccessorDeclarationStructure) {
+    addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>) {
         return this.addGetAccessors([structure])[0];
     }
 
@@ -220,7 +220,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds get accessors.
      * @param structures - Structure that represents the get accessors to add.
      */
-    addGetAccessors(structures: ReadonlyArray<GetAccessorDeclarationStructure>) {
+    addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
         return this.insertGetAccessors(this.compilerNode.properties.length, structures);
     }
 
@@ -229,7 +229,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the get accessor to insert.
      */
-    insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure) {
+    insertGetAccessor(index: number, structure: OptionalKind<GetAccessorDeclarationStructure>) {
         return this.insertGetAccessors(index, [structure])[0];
     }
 
@@ -238,7 +238,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the get accessors to insert.
      */
-    insertGetAccessors(index: number, structures: ReadonlyArray<GetAccessorDeclarationStructure>) {
+    insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
         return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: false })) as GetAccessorDeclaration[];
     }
 
@@ -248,7 +248,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds a set accessor.
      * @param structure - Structure that represents the property assignment to add.
      */
-    addSetAccessor(structure: SetAccessorDeclarationStructure) {
+    addSetAccessor(structure: OptionalKind<SetAccessorDeclarationStructure>) {
         return this.addSetAccessors([structure])[0];
     }
 
@@ -256,7 +256,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Adds set accessors.
      * @param structures - Structure that represents the set accessors to add.
      */
-    addSetAccessors(structures: ReadonlyArray<SetAccessorDeclarationStructure>) {
+    addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
         return this.insertSetAccessors(this.compilerNode.properties.length, structures);
     }
 
@@ -265,7 +265,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structure - Structure that represents the set accessor to insert.
      */
-    insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure) {
+    insertSetAccessor(index: number, structure: OptionalKind<SetAccessorDeclarationStructure>) {
         return this.insertSetAccessors(index, [structure])[0];
     }
 
@@ -274,14 +274,14 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the set accessors to insert.
      */
-    insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>) {
+    insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
         return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false })) as SetAccessorDeclaration[];
     }
 
     /**
      * @internal
      */
-    private _insertProperty<T>(index: number, structures: ReadonlyArray<T>, createStructurePrinter: () => StructurePrinter<T>) {
+    private _insertProperty<T>(index: number, structures: ReadonlyArray<T>, createStructurePrinter: () => Printer<T>) {
         index = verifyAndGetIndex(index, this.compilerNode.properties.length);
         const writer = this._getWriterWithChildIndentation();
         const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(createStructurePrinter());

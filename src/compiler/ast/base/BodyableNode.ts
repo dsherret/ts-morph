@@ -1,10 +1,7 @@
 import * as errors from "../../../errors";
 import { insertIntoParentTextRange } from "../../../manipulation";
-import { BodyableNodeStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
-import { callBaseSet } from "../callBaseSet";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common/Node";
 import { getBodyTextWithoutLeadingIndentation, setBodyTextForNode } from "./helpers";
 
@@ -76,7 +73,7 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
             insertIntoParentTextRange({
                 parent: this,
                 insertPos: semiColon == null ? this.getEnd() : semiColon.getStart(),
-                newText: this._getWriterWithQueuedIndentation().block().toString(),
+                newText: this._getWriterWithQueuedIndentation().space().block().toString(),
                 replacing: {
                     textLength: semiColon == null ? 0 : semiColon.getFullWidth()
                 }
@@ -100,23 +97,6 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
             });
 
             return this;
-        }
-
-        set(structure: Partial<BodyableNodeStructure>) {
-            callBaseSet(Base.prototype, this, structure);
-
-            if (structure.bodyText != null)
-                this.setBodyText(structure.bodyText);
-            else if (structure.hasOwnProperty(nameof(structure.bodyText)))
-                this.removeBody();
-
-            return this;
-        }
-
-        getStructure() {
-            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {
-                bodyText: this.getBodyText()
-            });
         }
     };
 }

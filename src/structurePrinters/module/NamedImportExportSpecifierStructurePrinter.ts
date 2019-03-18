@@ -2,12 +2,12 @@
 import { WriterFunction } from "../../types";
 import { StringUtils } from "../../utils";
 import { ExportSpecifierStructure, ImportSpecifierStructure } from "../../structures";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
 export type NamedImportExportSpecifierStructureToTextItem = WriterFunction | ImportSpecifierStructure | ExportSpecifierStructure | string;
 
-export class NamedImportExportSpecifierStructurePrinter extends FactoryStructurePrinter<NamedImportExportSpecifierStructureToTextItem> {
+export class NamedImportExportSpecifierStructurePrinter extends NodePrinter<NamedImportExportSpecifierStructureToTextItem> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
     printTextsWithBraces(writer: CodeBlockWriter, structures: ReadonlyArray<NamedImportExportSpecifierStructureToTextItem> | WriterFunction) {
@@ -31,7 +31,7 @@ export class NamedImportExportSpecifierStructurePrinter extends FactoryStructure
             this.multipleWriter.printText(writer, structures);
     }
 
-    printText(writer: CodeBlockWriter, structure: NamedImportExportSpecifierStructureToTextItem) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: NamedImportExportSpecifierStructureToTextItem) {
         const specifierWriter = this.getNewWriterWithQueuedChildIndentation(writer);
         if (typeof structure === "string")
             specifierWriter.write(structure);
