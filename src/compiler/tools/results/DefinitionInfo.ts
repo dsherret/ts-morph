@@ -51,6 +51,9 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
      */
     @Memoize
     getDeclarationNode(): Node | undefined {
+        if (this.getKind() === "module" && this.getTextSpan().getLength() === this.getSourceFile().getFullWidth())
+            return this.getSourceFile();
+
         const start = this.getTextSpan().getStart();
         const identifier = findIdentifier(this.getSourceFile());
 

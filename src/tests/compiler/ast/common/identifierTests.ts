@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { FunctionDeclaration, Identifier, InterfaceDeclaration, NamespaceDeclaration, PropertyAccessExpression } from "../../../../compiler";
+import { Project } from "../../../../Project";
 import { SyntaxKind, ts } from "../../../../typescript";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -135,10 +136,19 @@ const t = MyNamespace.MyClass;
 
     describe(nameof<Identifier>(n => n.getDefinitionNodes), () => {
         it("should get the definition nodes", () => {
-            const { sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const { sourceFile } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const definitionNodes = sourceFile.getVariableDeclarationOrThrow("reference").getInitializerIfKindOrThrow(SyntaxKind.Identifier).getDefinitionNodes();
             expect(definitionNodes.length).to.equal(1);
             expect(definitionNodes[0].getText()).to.equal("function myFunction() {}");
+        });
+
+        it("should get the namespace import identifier of one that's exported from an imported namespace export that doesn't import a namespace", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", `import * as ts from "./Test"; export { ts };`);
+            project.createSourceFile("Test.ts", `export class Test {}`);
+
+            expect(mainSourceFile.getExportDeclarations()[0].getNamedExports()[0].getNameNode().getDefinitionNodes().map(t => t.getText()))
+                .to.deep.equal([`export class Test {}`].sort());
         });
     });
 
