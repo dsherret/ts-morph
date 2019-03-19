@@ -12,7 +12,7 @@ import { insertOverloads, OverloadableNode } from "./OverloadableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
-    FunctionLikeDeclaration(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NameableNode(Node))))))
+    AmbientableNode(ExportableNode(FunctionLikeDeclaration(NamespaceChildableNode(NameableNode(Node)))))
 )))))));
 export const FunctionDeclarationOverloadBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(AsyncableNode(GeneratorableNode(ModifierableNode(
     SignaturedDeclaration(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Node)))))))
