@@ -78,8 +78,8 @@ export function throwIfRangeOutOfRange(actualRange: [number, number], range: [nu
  * Gets an error saying that a feature is not implemented for a certain syntax kind.
  * @param kind - Syntax kind that isn't implemented.
  */
-export function getNotImplementedForSyntaxKindError(kind: SyntaxKind) {
-    return new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`);
+export function throwNotImplementedForSyntaxKindError(kind: SyntaxKind): never {
+    throw new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`);
 }
 
 /**

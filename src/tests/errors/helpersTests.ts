@@ -113,8 +113,13 @@ describe("helpers", () => {
         });
     });
 
-    describe(nameof(errors.getNotImplementedForSyntaxKindError), () => {
-        const result = errors.getNotImplementedForSyntaxKindError(SyntaxKind.EnumDeclaration);
+    describe(nameof(errors.throwNotImplementedForSyntaxKindError), () => {
+        let result: Error;
+        try {
+            errors.throwNotImplementedForSyntaxKindError(SyntaxKind.EnumDeclaration);
+        } catch (ex) {
+            result = ex;
+        }
 
         it("should return a NotImplementedError", () => {
             expect(result).to.be.instanceOf(errors.NotImplementedError);

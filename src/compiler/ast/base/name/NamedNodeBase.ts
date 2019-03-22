@@ -1,8 +1,6 @@
 ﻿import { NamedNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
 import { ts } from "../../../../typescript";
-import { TypeGuards } from "../../../../utils";
-import * as errors from "../../../../errors";
 import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
 import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
@@ -15,7 +13,6 @@ export interface NamedNodeSpecificBase<TNode extends Node> {
     getNameNode(): TNode;
     /**
      * Gets the name as a string.
-     * @throws If the name node is an array binding pattern, object binding pattern, or computed property.
      */
     getName(): string;
 }
@@ -30,17 +27,7 @@ export function NamedNodeBase<TCompilerNode extends ts.Node, U extends Construct
         }
 
         getName() {
-            const nameNode = this.getNameNode();
-
-            if (TypeGuards.isIdentifier(nameNode) || TypeGuards.isStringLiteral(nameNode) || TypeGuards.isNoSubstitutionTemplateLiteral(nameNode)
-                || TypeGuards.isNumericLiteral(nameNode))
-            {
-                return nameNode.getText();
-            }
-
-            const kindName = nameNode.getKindName();
-            throw new errors.InvalidOperationError(`Cannot get the name as a string for name nodes of kind ${kindName}. `
-                + `Use \`.${nameof(this.getNameNode)}()\` instead and handle when it's an ${kindName}.`);
+            return this.getNameNode().getText();
         }
 
         set(structure: Partial<NamedNodeStructure>) {

@@ -12,25 +12,22 @@ function getInfoFromTextWithFirstVariableDeclaration(text: string) {
 
 describe(nameof(BindingNamedNode), () => {
     describe(nameof<BindingNamedNode>(n => n.getName), () => {
-        function doTest(text: string, expectedName: string | false) {
+        function doTest(text: string, expectedName: string) {
             const { sourceFile } = getInfoFromText(text);
             const node = sourceFile.getDescendants().find(TypeGuards.isBindingNamedNode)!;
-            if (expectedName === false)
-                expect(() => node.getName()).to.throw();
-            else
-                expect(node.getName()).to.equal(expectedName);
+            expect(node.getName()).to.equal(expectedName);
         }
 
         it("should get the name when an identifier", () => {
             doTest(`function test(p) {}`, "p");
         });
 
-        it("should throw when an array binding pattern", () => {
-            doTest(`function test([p]) {}`, false);
+        it("should return the text when when an array binding pattern", () => {
+            doTest(`function test([p]) {}`, "[p]");
         });
 
-        it("should throw when an object binding pattern", () => {
-            doTest(`function test({p}) {}`, false);
+        it("should return the text when an object binding pattern", () => {
+            doTest(`function test({p}) {}`, "{p}");
         });
     });
 
