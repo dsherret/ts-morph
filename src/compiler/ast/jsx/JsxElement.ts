@@ -73,6 +73,7 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
             openingElement.addAttributes(structure.attributes);
         }
 
+        // todo: deprecate bodyText when implementing this
         if (structure.children != null)
             throw new errors.NotImplementedError("Setting JSX children is currently not implemented. Please open an issue if you need this.");
 
