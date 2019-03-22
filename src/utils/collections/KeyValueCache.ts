@@ -1,15 +1,8 @@
 ﻿import { ArrayUtils } from "../ArrayUtils";
-import { Dictionary, Es5Map } from "./Es5Map";
+import { createMap } from "./createMap";
 
 export class KeyValueCache<T, U> {
-    private readonly cacheItems: Dictionary<T, U>;
-
-    constructor() {
-        if (typeof Map !== "undefined")
-            this.cacheItems = new Map<T, U>();
-        else
-            this.cacheItems = new Es5Map<T, U>();
-    }
+    private readonly cacheItems = createMap<T, U>();
 
     getSize() {
         return this.cacheItems.size;

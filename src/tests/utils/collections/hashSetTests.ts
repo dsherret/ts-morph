@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
-import { ArrayUtils, Es5HashSet } from "../../../utils";
+import { ArrayUtils } from "../../../utils";
+import { Es5HashSet } from "../../../utils/collections/Es5HashSet";
 
 describe(nameof(Es5HashSet), () => {
     function runTest<T>(value: T) {

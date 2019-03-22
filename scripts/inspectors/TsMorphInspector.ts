@@ -47,7 +47,7 @@ export class TsMorphInspector {
             }
         }
 
-        return Array.from(nodes.values());
+        return ArrayUtils.from(nodes.values());
 
         function getDependencyNode(node: WrappedNode) {
             if (nodes.has(node))

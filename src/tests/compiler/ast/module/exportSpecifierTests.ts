@@ -242,6 +242,63 @@ describe(nameof(ExportSpecifier), () => {
             const otherClassExportSpecifier = setupLocalTargetSymbolTest()[1];
             expect(otherClassExportSpecifier.getLocalTargetDeclarations()).to.deep.equal([]);
         });
+
+        it("should get when it's a variable declaration", () => {
+            const project = getProject();
+            const mainFile = project.createSourceFile("main.ts", `export { myVar } from "./myVar";`);
+            project.createSourceFile("myVar.ts", `export var myVar = 5;`);
+
+            const namedExport = mainFile.getExportDeclarations()[0].getNamedExports()[0];
+            expect(namedExport.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([SyntaxKind.VariableDeclaration]);
+        });
+
+        it("should get the original declaration when it's re-exported from another file", () => {
+            const project = getProject();
+            const mainFile = project.createSourceFile("main.ts", `export { myVar } from "./other";`);
+            project.createSourceFile("other.ts", `export * from "./myVar";`);
+            project.createSourceFile("myVar.ts", `export var myVar = 5;`);
+
+            const namedExport = mainFile.getExportDeclarations()[0].getNamedExports()[0];
+            expect(namedExport.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([SyntaxKind.VariableDeclaration]);
+        });
+
+        it("should get the original declaration when it's exported from another file as an alias", () => {
+            const project = getProject();
+            const mainFile = project.createSourceFile("main.ts", `export { myNewVar } from "./other";`);
+            project.createSourceFile("other.ts", `export { myVar as myNewVar } from "./myVar";`);
+            project.createSourceFile("myVar.ts", `export var myVar = 5;`);
+
+            const namedExport = mainFile.getExportDeclarations()[0].getNamedExports()[0];
+            expect(namedExport.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([SyntaxKind.VariableDeclaration]);
+        });
+
+        it("should get the source file when it's exported", () => {
+            const project = getProject();
+            const mainFile = project.createSourceFile("main.ts", `export { vars } from "./other";`);
+            project.createSourceFile("other.ts", `import * as vars from "./myVar"; export { vars };`);
+            project.createSourceFile("myVar.ts", `export var myVar = 5;`);
+
+            const namedExport = mainFile.getExportDeclarations()[0].getNamedExports()[0];
+            expect(namedExport.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([SyntaxKind.SourceFile]);
+        });
+
+        it("should get the import specifier that's exported", () => {
+            const project = getProject();
+            const mainFile = project.createSourceFile("main.ts", `import * as vars from "./myVar"; export { vars };`);
+            project.createSourceFile("myVar.ts", `export var myVar = 5;`);
+
+            const namedExport = mainFile.getExportDeclarations()[0].getNamedExports()[0];
+            expect(namedExport.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([SyntaxKind.NamespaceImport]);
+        });
+
+        it("should get an export assignment", () => {
+            const project = getProject();
+            const mainFile = project.createSourceFile("main.ts", `export { default } from "./other";`);
+            project.createSourceFile("other.ts", `export default 5;`);
+
+            const namedExport = mainFile.getExportDeclarations()[0].getNamedExports()[0];
+            expect(namedExport.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([SyntaxKind.ExportAssignment]);
+        });
     });
 
     describe(nameof<ExportSpecifier>(n => n.getExportDeclaration), () => {

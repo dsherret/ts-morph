@@ -72,17 +72,21 @@ Note: This is safe to call even when there is no default export.
 
 ### Getting Exported Declarations
 
-The exported declarations of a file or module can be retrieved via `.getExportedDeclarations()`.
+The exported declarations of a file or module can be retrieved via `.getExportedDeclarations()`. This will return a map keyed on the export name with a value of the exported declarations for that name.
 
 For example, given the following setup:
 
 ```ts
 // main.ts
 export * from "./classes";
-export {Interface1} from "./interfaces";
+export { Interface1 as AliasedInterface } from "./interfaces";
 
-class MainClass {}
-export default MainClass;
+namespace MergedNamespace { let t; }
+namespace MergedNamespace { let u; }
+
+export { MergedNamespace };
+
+export default 5;
 
 // classes.ts
 export * from "./Class1";
@@ -102,27 +106,25 @@ export interface Interface2 {}
 The following code:
 
 ```ts
-import { Project, TypeGuards } from "ts-morph";
+import { Project, TypeGuards, ExportedDeclarations } from "ts-morph";
 
 const project = new Project();
 project.addExistingSourceFiles("**/*.ts");
 const mainFile = project.getSourceFileOrThrow("main.ts");
 
-for (const declaration of mainFile.getExportedDeclarations()) {
-    if (TypeGuards.isClassDeclaration(declaration) || TypeGuards.isInterfaceDeclaration(declaration))
-        console.log(`Name: ${declaration.getName()}`);
-    else
-        throw new Error(`Not expected declaration kind: ${declaration.getKindName()}`);
+for (const [name, declarations] of mainFile.getExportedDeclarations().entries()) {
+    console.log(`${name}: ${declarations.map(d => d.getText()).join(", ")}`)
 }
 ```
 
 Outputs the following:
 
 ```
-Name: MainClass
-Name: Class1
-Name: Class2
-Name: Interface1
+Class1: export class Class1 {}
+Class2: export class Class2 {}
+AliasedInterface: export interface Interface1 {}
+MergedNamespace: namespace MergedNamespace { let t; }, namespace MergedNamespace { let u; }
+default: 5
 ```
 
 ## Export Declarations

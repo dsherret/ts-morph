@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
-import { ArrayUtils, Es5Map } from "../../../utils";
+import { ArrayUtils } from "../../../utils";
+import { Es5Map } from "../../../utils/collections/Es5Map";
 
 describe(nameof(Es5Map), () => {
     // todo: organize these tests...

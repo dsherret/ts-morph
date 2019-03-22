@@ -68,6 +68,10 @@ These two structures are now differentiated based on their new `.kind` property.
 
 These two structures are now differentiated based on their new `.kind` property. Previously it used the `isSelfClosing` property.
 
+### `ModuledNode#getExportedDeclarations()` now returns a map
+
+So instead of just returning an array of nodes, it now returns a map. The key is the name it was exported on and the value is an array of declarations for that value. This will make it much easier to identify the name a node was exported on.
+
 ## Version 1
 
 Renamed library to `ts-morph` and reset version to 1.0.0.

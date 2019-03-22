@@ -1,18 +1,7 @@
 ﻿import { Es5PropSaver } from "../Es5PropSaver";
+import { Map } from "./Map";
 
-export interface Dictionary<K, V> {
-    readonly size: number;
-    get(key: K): V | undefined;
-    set(key: K, value: V): void;
-    has(key: K): boolean;
-    delete(key: K): void;
-    entries(): IterableIterator<[K, V]>;
-    keys(): IterableIterator<K>;
-    values(): IterableIterator<V>;
-    clear(): void;
-}
-
-export class Es5Map<K, V> implements Dictionary<K, V> {
+export class Es5Map<K, V> implements Map<K, V> {
     private propSaver = new Es5PropSaver<K, string>();
     private items: { [identifier: string]: [K, V]; } = {};
     private itemCount = 0;

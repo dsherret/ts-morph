@@ -3,8 +3,9 @@ import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulat
 import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { ts, SyntaxKind } from "../../../typescript";
-import { ArrayUtils, TypeGuards, createHashSet } from "../../../utils";
+import { ArrayUtils, TypeGuards, createMap, ReadonlyMap } from "../../../utils";
 import { Symbol } from "../../symbols";
+import { ExportedDeclarations } from "../aliases";
 import { Node } from "../common";
 import { ImportDeclaration, ExportDeclaration, ExportAssignment } from "../module";
 import { StatementedNode } from "../statement";
@@ -163,10 +164,12 @@ export interface ModuledNode {
     /**
      * Gets all the declarations that are exported from the module.
      *
+     * The key is the name it's exported on and the value is the array of declarations for that name.
+     *
      * This will include declarations that are transitively exported from other modules. If you mean to get the export
      * declarations then use `.getExportDeclarations()`.
      */
-    getExportedDeclarations(): Node[];
+    getExportedDeclarations(): ReadonlyMap<string, ExportedDeclarations[]>;
     /**
      * Removes any "export default".
      */
@@ -332,57 +335,62 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             return symbol == null ? [] : this._context.typeChecker.getExportsOfModule(symbol);
         }
 
-        getExportedDeclarations(): Node[] {
+        getExportedDeclarations(): ReadonlyMap<string, ExportedDeclarations[]> {
+            const result = createMap<string, ExportedDeclarations[]>();
             const exportSymbols = this.getExportSymbols();
-            return ArrayUtils.from(getDeclarationsForSymbols());
 
-            function* getDeclarationsForSymbols() {
-                const handledDeclarations = createHashSet<Node>();
+            for (const symbol of exportSymbols) {
+                for (const declaration of symbol.getDeclarations()) {
+                    const declarations = ArrayUtils.from(getDeclarationHandlingImportsAndExports(declaration));
+                    result.set(symbol.getName(), declarations as ExportedDeclarations[]);
+                }
+            }
 
-                for (const symbol of exportSymbols)
-                    for (const declaration of symbol.getDeclarations())
-                        yield* getDeclarationHandlingImportsAndExports(declaration);
+            return result;
 
-                function* getDeclarationHandlingImportsAndExports(declaration: Node): IterableIterator<Node> {
-                    if (handledDeclarations.has(declaration))
+            function* getDeclarationHandlingImportsAndExports(declaration: Node): IterableIterator<Node> {
+                if (TypeGuards.isExportSpecifier(declaration)) {
+                    for (const d of declaration.getLocalTargetDeclarations())
+                        yield* getDeclarationHandlingImportsAndExports(d);
+                }
+                else if (TypeGuards.isExportAssignment(declaration)) {
+                    const expression = declaration.getExpression();
+                    if (expression == null || expression.getKind() !== SyntaxKind.Identifier) {
+                        yield expression;
                         return;
-                    handledDeclarations.add(declaration);
+                    }
+                    yield* getDeclarationsForSymbol(expression.getSymbol());
+                }
+                else if (TypeGuards.isImportSpecifier(declaration)) {
+                    const identifier = declaration.getNameNode();
+                    const symbol = identifier.getSymbol();
+                    if (symbol == null)
+                        return;
+                    yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
+                }
+                else if (TypeGuards.isImportClause(declaration)) {
+                    const identifier = declaration.getDefaultImport();
+                    if (identifier == null)
+                        return;
+                    const symbol = identifier.getSymbol();
+                    if (symbol == null)
+                        return;
+                    yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
+                }
+                else if (TypeGuards.isNamespaceImport(declaration)) {
+                    const symbol = declaration.getNameNode().getSymbol();
+                    if (symbol == null)
+                        return;
+                    yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
+                }
+                else
+                    yield declaration;
 
-                    if (TypeGuards.isExportSpecifier(declaration)) {
-                        for (const d of declaration.getLocalTargetDeclarations())
-                            yield* getDeclarationHandlingImportsAndExports(d);
-                    }
-                    else if (TypeGuards.isExportAssignment(declaration)) {
-                        const identifier = declaration.getExpression();
-                        if (identifier == null || identifier.getKind() !== SyntaxKind.Identifier)
-                            return;
-                        yield* getDeclarationsForSymbol(identifier.getSymbol());
-                    }
-                    else if (TypeGuards.isImportSpecifier(declaration)) {
-                        const identifier = declaration.getNameNode();
-                        const symbol = identifier.getSymbol();
-                        if (symbol == null)
-                            return;
-                        yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
-                    }
-                    else if (TypeGuards.isImportClause(declaration)) {
-                        const identifier = declaration.getDefaultImport();
-                        if (identifier == null)
-                            return;
-                        const symbol = identifier.getSymbol();
-                        if (symbol == null)
-                            return;
-                        yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
-                    }
-                    else
-                        yield declaration;
-
-                    function* getDeclarationsForSymbol(symbol: Symbol | undefined): IterableIterator<Node> {
-                        if (symbol == null)
-                            return;
-                        for (const d of symbol.getDeclarations())
-                            yield* getDeclarationHandlingImportsAndExports(d);
-                    }
+                function* getDeclarationsForSymbol(symbol: Symbol | undefined): IterableIterator<Node> {
+                    if (symbol == null)
+                        return;
+                    for (const d of symbol.getDeclarations())
+                        yield* getDeclarationHandlingImportsAndExports(d);
                 }
             }
         }

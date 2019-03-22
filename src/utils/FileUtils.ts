@@ -236,7 +236,7 @@ export class FileUtils {
      */
     static getDescendantDirectories(fileSystemWrapper: FileSystemWrapper, dirPath: string) {
         // todo: unit tests...
-        return Array.from(getDescendantDirectories(dirPath));
+        return ArrayUtils.from(getDescendantDirectories(dirPath));
 
         function* getDescendantDirectories(currentDirPath: string): IterableIterator<string> {
             const subDirPaths = fileSystemWrapper.readDirSync(currentDirPath).filter(d => fileSystemWrapper.directoryExistsSync(d));

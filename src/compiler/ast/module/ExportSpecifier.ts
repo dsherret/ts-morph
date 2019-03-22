@@ -2,6 +2,7 @@ import * as errors from "../../../errors";
 import { insertIntoParentTextRange, removeCommaSeparatedChild, removeChildren } from "../../../manipulation";
 import { SyntaxKind, ts } from "../../../typescript";
 import { StringUtils } from "../../../utils";
+import { LocalTargetDeclarations } from "../aliases";
 import { Node } from "../common";
 import { Symbol } from "../../symbols";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -148,9 +149,9 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
     /**
      * Gets all the declarations referenced by the export specifier.
      */
-    getLocalTargetDeclarations(): Node[] {
+    getLocalTargetDeclarations(): LocalTargetDeclarations[] {
         const symbol = this.getLocalTargetSymbol();
-        return symbol == null ? [] : symbol.getDeclarations();
+        return symbol == null ? [] : symbol.getDeclarations() as LocalTargetDeclarations[];
     }
 
     /**

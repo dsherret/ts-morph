@@ -689,6 +689,14 @@ export interface CompilerOptionsFromTsConfigResult {
  * @param options - Options.
  */
 export declare function getCompilerOptionsFromTsConfig(filePath: string, options?: CompilerOptionsFromTsConfigOptions): CompilerOptionsFromTsConfigResult;
+export interface ReadonlyMap<K, V> {
+    readonly size: number;
+    get(key: K): V | undefined;
+    has(key: K): boolean;
+    entries(): IterableIterator<[K, V]>;
+    keys(): IterableIterator<K>;
+    values(): IterableIterator<V>;
+}
 
 /**
  * Type guards for checking the type of a node.
@@ -1912,6 +1920,18 @@ export declare type TypeElementTypes = PropertySignature | MethodSignature | Con
 
 export declare type TemplateLiteral = TemplateExpression | NoSubstitutionTemplateLiteral;
 
+/**
+ * Local target declarations.
+ * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
+ */
+export declare type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | NamespaceDeclaration | ExportAssignment;
+
+/**
+ * Declarations that can be exported from a module.
+ * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
+ */
+export declare type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | NamespaceDeclaration | Expression;
+
 export declare function AmbientableNode<T extends Constructor<AmbientableNodeExtensionType>>(Base: T): Constructor<AmbientableNode> & T;
 
 export interface AmbientableNode {
@@ -2660,10 +2680,12 @@ export interface ModuledNode {
     /**
      * Gets all the declarations that are exported from the module.
      *
+     * The key is the name it's exported on and the value is the array of declarations for that name.
+     *
      * This will include declarations that are transitively exported from other modules. If you mean to get the export
      * declarations then use `.getExportDeclarations()`.
      */
-    getExportedDeclarations(): Node[];
+    getExportedDeclarations(): ReadonlyMap<string, ExportedDeclarations[]>;
     /**
      * Removes any "export default".
      */
@@ -5859,7 +5881,7 @@ export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     getEqualsGreaterThan(): Node<ts.Token<SyntaxKind.EqualsGreaterThanToken>>;
 }
 
-declare const FunctionDeclarationBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<FunctionLikeDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NameableNode> & typeof Node;
+declare const FunctionDeclarationBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<FunctionLikeDeclaration> & Constructor<NamespaceChildableNode> & Constructor<NameableNode> & typeof Node;
 
 declare const FunctionDeclarationOverloadBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Node;
 
@@ -6973,7 +6995,7 @@ export declare class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecif
     /**
      * Gets all the declarations referenced by the export specifier.
      */
-    getLocalTargetDeclarations(): Node[];
+    getLocalTargetDeclarations(): LocalTargetDeclarations[];
     /**
      * Removes the export specifier.
      */

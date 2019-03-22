@@ -133,7 +133,7 @@ export class Project {
         for (const sourceFile of result.unchangedSourceFiles)
             sourceFiles.delete(sourceFile);
 
-        return Array.from(sourceFiles.values());
+        return ArrayUtils.from(sourceFiles.values());
     }
 
     /**
@@ -376,7 +376,7 @@ export class Project {
             return ArrayUtils.from(sourceFiles);
 
         function* getFilteredSourceFiles() {
-            const sourceFilePaths = Array.from(getSourceFilePaths());
+            const sourceFilePaths = ArrayUtils.from(getSourceFilePaths());
             const matchedPaths = matchGlobs(sourceFilePaths, globPatterns!, fileSystemWrapper.getCurrentDirectory());
 
             for (const matchedPath of matchedPaths)

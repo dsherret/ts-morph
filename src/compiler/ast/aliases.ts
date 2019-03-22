@@ -1,16 +1,20 @@
 import { AssertTrue, IsExact } from "conditional-type-checks";
 import { ts } from "../../typescript";
 import { ArrayBindingPattern, ObjectBindingPattern, BindingElement } from "./binding";
-import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "./class";
+import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration, ClassDeclaration } from "./class";
 import { ComputedPropertyName, Identifier, Node, QualifiedName } from "./common";
 import { Decorator } from "./decorator";
-import { PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment,
+import { EnumDeclaration } from "./enum";
+import { Expression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment,
     ThisExpression, OmittedExpression, CallExpression, NewExpression } from "./expression";
-import { ExternalModuleReference } from "./module";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "./interface";
+import { FunctionDeclaration } from "./function";
+import { SourceFile, ExternalModuleReference, ExportAssignment, NamespaceDeclaration } from "./module";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, InterfaceDeclaration } from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText, JsxOpeningElement } from "./jsx";
 import { NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TemplateExpression, TaggedTemplateExpression } from "./literal";
 import { CaseClause, DefaultClause } from "./statement";
+import { VariableDeclaration } from "./variable";
+import { TypeAliasDeclaration } from "./type";
 
 type WrappedToCompilerNodeType<T extends Node> = T["compilerNode"];
 
@@ -75,3 +79,17 @@ function typeElementTypes() {
 
 export type TemplateLiteral = TemplateExpression | NoSubstitutionTemplateLiteral;
 type _TemplateLiteralTest = AssertTrue<IsExact<WrappedToCompilerNodeType<TemplateLiteral>, ts.TemplateLiteral>>;
+
+/**
+ * Local target declarations.
+ * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
+ */
+export type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration
+    | TypeAliasDeclaration | NamespaceDeclaration | ExportAssignment;
+
+/**
+ * Declarations that can be exported from a module.
+ * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
+ */
+export type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration
+    | TypeAliasDeclaration | NamespaceDeclaration | Expression;

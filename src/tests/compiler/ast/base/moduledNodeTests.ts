@@ -1,7 +1,8 @@
 ﻿import { expect } from "chai";
-import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration, ExportAssignment } from "../../../../compiler";
+import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration, ExportAssignment, ExportedDeclarations } from "../../../../compiler";
 import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../../structures";
 import { Project } from "../../../../Project";
+import { ReadonlyMap } from "../../../../utils";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ModuledNode), () => {
@@ -460,6 +461,15 @@ describe(nameof(ModuledNode), () => {
     });
 
     describe(nameof<ModuledNode>(n => n.getExportedDeclarations), () => {
+        function assertMapsEqual(expected: [string, string[]][], actual: ReadonlyMap<string, ExportedDeclarations[]>) {
+            expect(sort(Array.from(actual.entries()).map(entry => [entry[0], entry[1].map(n => n.getText())] as [string, string[]]))).to.deep.equal(sort(expected));
+
+            function sort(values: [string, string[]][]) {
+                values.sort((a, b) => a > b ? 1 : -1);
+                return values;
+            }
+        }
+
         it("should get from a file", () => {
             const project = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n` +
@@ -473,15 +483,16 @@ describe(nameof(ModuledNode), () => {
             project.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
             project.createSourceFile("subFile3.ts", `class SubClass3 {}\nexport default SubClass3;`);
 
-            expect(mainSourceFile.getExportedDeclarations().map(d => d.getText()).sort())
-                .to.deep.equal([
-                    "export class MainFileClass {}",
-                    "export class OtherClass {}",
-                    "export class Class {}",
-                    "export class MyClass {}",
-                    "export class SubClass {}",
-                    "export class SubClass2 {}",
-                    "class SubClass3 {}"].sort());
+            assertMapsEqual([
+                ["MainFileClass", ["export class MainFileClass {}"]],
+                ["default", ["export class MainFileClass {}"]],
+                ["OtherClass", ["export class OtherClass {}"]],
+                ["Class", ["export class Class {}"]],
+                ["MyClass", ["export class MyClass {}"]],
+                ["SubClass", ["export class SubClass {}"]],
+                ["Test", ["export class SubClass2 {}"]],
+                ["SubClass3", ["class SubClass3 {}"]]
+            ], mainSourceFile.getExportedDeclarations());
         });
 
         it("should get the original declaration of one that's imported then exported", () => {
@@ -489,8 +500,9 @@ describe(nameof(ModuledNode), () => {
             const mainSourceFile = project.createSourceFile("main.ts", `import { Test } from "./Test"; export { Test };`);
             project.createSourceFile("Test.ts", `export class Test {}`);
 
-            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
-                .to.deep.equal(["export class Test {}"].sort());
+            assertMapsEqual([
+                ["Test", ["export class Test {}"]]
+            ], mainSourceFile.getExportedDeclarations());
         });
 
         it("should get the original declaration of one that's imported on a different name then exported", () => {
@@ -498,8 +510,9 @@ describe(nameof(ModuledNode), () => {
             const mainSourceFile = project.createSourceFile("main.ts", `import { Test as NewTest } from "./Test"; export { NewTest };`);
             project.createSourceFile("Test.ts", `export class Test {}`);
 
-            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
-                .to.deep.equal(["export class Test {}"].sort());
+            assertMapsEqual([
+                ["NewTest", ["export class Test {}"]]
+            ], mainSourceFile.getExportedDeclarations());
         });
 
         it("should get the namespace import identifier of one that's exported from an imported namespace export that doesn't import a namespace", () => {
@@ -507,8 +520,9 @@ describe(nameof(ModuledNode), () => {
             const mainSourceFile = project.createSourceFile("main.ts", `import * as ts from "./Test"; export { ts };`);
             project.createSourceFile("Test.ts", `export class Test {}`);
 
-            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
-                .to.deep.equal([`* as ts`].sort());
+            assertMapsEqual([
+                ["ts", ["export class Test {}"]]
+            ], mainSourceFile.getExportedDeclarations());
         });
 
         it("should get the namespace import identifier of one that's exported from an imported namespace export that imports a namespace declaration", () => {
@@ -521,8 +535,12 @@ declare namespace ts { const version2: string; }
 export = ts;`);
             const mainSourceFile = project.createSourceFile("main.ts", `import * as ts from "typescript"; export { ts };`);
 
-            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
-                .to.deep.equal([`* as ts`].sort());
+            assertMapsEqual([
+                ["ts", [
+                    "declare namespace ts { const version: string; }",
+                    "declare namespace ts { const version2: string; }"
+                ]]
+            ], mainSourceFile.getExportedDeclarations());
         });
 
         it("should get the original declaration of one that's imported on a default import then exported", () => {
@@ -530,36 +548,64 @@ export = ts;`);
             const mainSourceFile = project.createSourceFile("main.ts", `import Test from "./Test"; export { Test };`);
             project.createSourceFile("Test.ts", `export default class Test {}`);
 
-            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getText()).sort())
-                .to.deep.equal(["export default class Test {}"].sort());
+            assertMapsEqual([
+                ["Test", ["export default class Test {}"]]
+            ], mainSourceFile.getExportedDeclarations());
         });
 
-        function doTest(text: string, expectedDeclarationNames: string[]) {
+        function doTest(text: string, expected: [string, string[]][]) {
             const project = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", text);
 
-            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
-                .to.deep.equal(expectedDeclarationNames.sort());
+            assertMapsEqual(expected, mainSourceFile.getExportedDeclarations());
         }
 
         it("should get when there's only a default export using an export assignment", () => {
-            doTest("class MainFileClass {}\nexport default MainFileClass;", ["MainFileClass"]);
+            doTest("class MainFileClass {}\nexport default MainFileClass;", [
+                ["default", ["class MainFileClass {}"]]
+            ]);
+        });
+
+        it("should get when the same declaration is exported twice as a named export and default export", () => {
+            doTest("export class MainFileClass {}\nexport default MainFileClass;", [
+                ["MainFileClass", ["export class MainFileClass {}"]],
+                ["default", ["export class MainFileClass {}"]]
+            ]);
+        });
+
+        it("should get when exporting a string literal as a default export", () => {
+            doTest("export default 'test';", [
+                ["default", ["'test'"]]
+            ]);
+        });
+
+        it("should get when exporting a numeric literal as a default export", () => {
+            doTest("export default 5;", [
+                ["default", ["5"]]
+            ]);
+        });
+
+        it("should get when exporting an object literal expression", () => {
+            doTest("export default {};", [
+                ["default", ["{}"]]
+            ]);
         });
 
         it("should not error for an empty file", () => {
             doTest("", []);
         });
 
-        function doNamespaceTest(text: string, expectedDeclarationNames: string[]) {
+        function doNamespaceTest(text: string, expected: [string, string[]][]) {
             const project = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = project.createSourceFile("file.d.ts", text);
 
-            expect(mainSourceFile.getNamespaces()[0].getExportedDeclarations().map(d => (d as any).getName()).sort())
-                .to.deep.equal(expectedDeclarationNames.sort());
+            assertMapsEqual(expected, mainSourceFile.getNamespaces()[0].getExportedDeclarations());
         }
 
         it("should get from namespace when there's a default export using an export assignment", () => {
-            doNamespaceTest("declare module 'test' { class Test {} export default Test; }", ["Test"]);
+            doNamespaceTest("declare module 'test' { class Test {} export default Test; }", [
+                ["default", ["class Test {}"]]
+            ]);
         });
 
         it("should not error for an empty namespace", () => {
