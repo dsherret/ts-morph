@@ -7,7 +7,7 @@ import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsCon
 import { SourceFileStructure } from "./structures";
 import { WriterFunction } from "./types";
 import { ts, CompilerOptions } from "./typescript";
-import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver, createHashSet } from "./utils";
+import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
 
 export interface ProjectOptions {
     /** Compiler options */
@@ -115,7 +115,7 @@ export class Project {
      * not specifying to not add the source files.
      */
     resolveSourceFileDependencies() {
-        const sourceFiles = createHashSet<SourceFile>();
+        const sourceFiles = new Set<SourceFile>();
         const onSourceFileAdded = (sourceFile: SourceFile) => sourceFiles.add(sourceFile);
         const { compilerFactory, inProjectCoordinator } = this._context;
 
@@ -133,7 +133,7 @@ export class Project {
         for (const sourceFile of result.unchangedSourceFiles)
             sourceFiles.delete(sourceFile);
 
-        return ArrayUtils.from(sourceFiles.values());
+        return Array.from(sourceFiles.values());
     }
 
     /**
@@ -197,7 +197,7 @@ export class Project {
      * Gets all the directories.
      */
     getDirectories() {
-        return ArrayUtils.from(this._getProjectDirectoriesByDirectoryDepth());
+        return Array.from(this._getProjectDirectoriesByDirectoryDepth());
     }
 
     /**
@@ -371,12 +371,12 @@ export class Project {
         const sourceFiles = this._getProjectSourceFilesByDirectoryDepth();
 
         if (typeof globPatterns === "string" || globPatterns instanceof Array)
-            return ArrayUtils.from(getFilteredSourceFiles());
+            return Array.from(getFilteredSourceFiles());
         else
-            return ArrayUtils.from(sourceFiles);
+            return Array.from(sourceFiles);
 
         function* getFilteredSourceFiles() {
-            const sourceFilePaths = ArrayUtils.from(getSourceFilePaths());
+            const sourceFilePaths = Array.from(getSourceFilePaths());
             const matchedPaths = matchGlobs(sourceFilePaths, globPatterns!, fileSystemWrapper.getCurrentDirectory());
 
             for (const matchedPath of matchedPaths)
@@ -463,7 +463,7 @@ export class Project {
     }
 
     private _getUnsavedSourceFiles() {
-        return ArrayUtils.from(getUnsavedIterator(this._context.compilerFactory.getSourceFilesByDirectoryDepth()));
+        return Array.from(getUnsavedIterator(this._context.compilerFactory.getSourceFilesByDirectoryDepth()));
 
         function* getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {
             for (const sourceFile of sourceFiles) {

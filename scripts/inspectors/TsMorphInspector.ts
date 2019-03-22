@@ -1,6 +1,6 @@
 ﻿import { Project, Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName,
     Directory, TypeGuards } from "ts-morph";
-import { Memoize, ArrayUtils, createHashSet } from "../../src/utils";
+import { Memoize, ArrayUtils } from "../../src/utils";
 import { isNodeClass } from "../common";
 import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsMorph";
 import { WrapperFactory } from "./WrapperFactory";
@@ -47,7 +47,7 @@ export class TsMorphInspector {
             }
         }
 
-        return ArrayUtils.from(nodes.values());
+        return Array.from(nodes.values());
 
         function getDependencyNode(node: WrappedNode) {
             if (nodes.has(node))
@@ -65,12 +65,12 @@ export class TsMorphInspector {
 
     @Memoize
     getMixins(): Mixin[] {
-        const mixins = createHashSet<Mixin>();
+        const mixins = new Set<Mixin>();
         for (const wrappedNode of this.getWrappedNodes()) {
             for (const mixin of wrappedNode.getMixins())
                 mixins.add(mixin);
         }
-        return ArrayUtils.from(mixins.values());
+        return Array.from(mixins.values());
     }
 
     @Memoize

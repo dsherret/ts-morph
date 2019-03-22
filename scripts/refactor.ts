@@ -8,7 +8,6 @@
 
 import { InspectorFactory } from "./inspectors";
 import { SyntaxKind, TypeGuards } from "ts-morph";
-import { ArrayUtils } from "../src/utils";
 
 const factory = new InspectorFactory();
 const tsaInspector = factory.getTsMorphInspector();

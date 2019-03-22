@@ -687,7 +687,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * Gets the node's descendants.
      */
     getDescendants(): Node[] {
-        return ArrayUtils.from(this._getDescendantsIterator());
+        return Array.from(this._getDescendantsIterator());
     }
 
     /**
@@ -991,7 +991,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getAncestors(includeSyntaxLists: boolean): Node[];
     getAncestors(includeSyntaxLists = false) {
-        return ArrayUtils.from(this._getAncestorsIterator(includeSyntaxLists));
+        return Array.from(this._getAncestorsIterator(includeSyntaxLists));
     }
 
     /**

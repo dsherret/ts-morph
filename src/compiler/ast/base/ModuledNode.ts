@@ -3,7 +3,7 @@ import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulat
 import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { ts, SyntaxKind } from "../../../typescript";
-import { ArrayUtils, TypeGuards, createMap, ReadonlyMap } from "../../../utils";
+import { ArrayUtils, TypeGuards } from "../../../utils";
 import { Symbol } from "../../symbols";
 import { ExportedDeclarations } from "../aliases";
 import { Node } from "../common";
@@ -336,12 +336,12 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportedDeclarations(): ReadonlyMap<string, ExportedDeclarations[]> {
-            const result = createMap<string, ExportedDeclarations[]>();
+            const result = new Map<string, ExportedDeclarations[]>();
             const exportSymbols = this.getExportSymbols();
 
             for (const symbol of exportSymbols) {
                 for (const declaration of symbol.getDeclarations()) {
-                    const declarations = ArrayUtils.from(getDeclarationHandlingImportsAndExports(declaration));
+                    const declarations = Array.from(getDeclarationHandlingImportsAndExports(declaration));
                     result.set(symbol.getName(), declarations as ExportedDeclarations[]);
                 }
             }

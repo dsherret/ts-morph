@@ -112,7 +112,7 @@ const project = new Project();
 project.addExistingSourceFiles("**/*.ts");
 const mainFile = project.getSourceFileOrThrow("main.ts");
 
-for (const [name, declarations] of mainFile.getExportedDeclarations().entries()) {
+for (const [name, declarations] of mainFile.getExportedDeclarations()) {
     console.log(`${name}: ${declarations.map(d => d.getText()).join(", ")}`)
 }
 ```

@@ -139,7 +139,7 @@ class Directory {
     }
 
     getAncestors() {
-        return ArrayUtils.from(this.getAncestorsIterator());
+        return Array.from(this.getAncestorsIterator());
     }
 
     *getAncestorsIterator() {

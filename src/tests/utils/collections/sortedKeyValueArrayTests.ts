@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { ArrayUtils, SortedKeyValueArray, Comparer } from "../../../utils";
+import { SortedKeyValueArray, Comparer } from "../../../utils";
 
 describe(nameof(SortedKeyValueArray), () => {
     class NumberComparer implements Comparer<number> {
@@ -90,7 +90,7 @@ describe(nameof(SortedKeyValueArray), () => {
         function doTest(startItems: number[]) {
             const array = new SortedKeyValueArray<number, number>(value => value, new NumberComparer());
             startItems.forEach(item => array.set(item));
-            expect(ArrayUtils.from(array.entries())).to.deep.equal(startItems);
+            expect(Array.from(array.entries())).to.deep.equal(startItems);
         }
 
         it("should return the entries", () => {

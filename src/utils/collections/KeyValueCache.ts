@@ -1,8 +1,5 @@
-﻿import { ArrayUtils } from "../ArrayUtils";
-import { createMap } from "./createMap";
-
-export class KeyValueCache<T, U> {
-    private readonly cacheItems = createMap<T, U>();
+﻿export class KeyValueCache<T, U> {
+    private readonly cacheItems = new Map<T, U>();
 
     getSize() {
         return this.cacheItems.size;
@@ -13,7 +10,7 @@ export class KeyValueCache<T, U> {
     }
 
     getValuesAsArray() {
-        return ArrayUtils.from(this.getValues());
+        return Array.from(this.getValues());
     }
 
     getKeys() {

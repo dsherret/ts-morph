@@ -1,5 +1,5 @@
 ﻿import { FileSystemHost, VirtualFileSystemHost } from "../../fileSystem";
-import { ArrayUtils, KeyValueCache, createHashSet } from "../../utils";
+import { KeyValueCache } from "../../utils";
 
 export interface CustomFileSystemProps {
     getWriteLog(): { filePath: string; fileText: string; }[];
@@ -16,7 +16,7 @@ export function getFileSystemHostWithFiles(initialFiles: { filePath: string; tex
 class VirtualFileSystemForTest extends VirtualFileSystemHost implements CustomFileSystemProps {
     private readonly writeLog: { filePath: string; fileText: string; }[] = [];
     private readonly deleteLog: { path: string; }[] = [];
-    private readonly trackedDirectories = createHashSet<string>();
+    private readonly trackedDirectories = new Set<string>();
     private readonly files = new KeyValueCache<string, string>();
 
     constructor(private readonly initialFiles: { filePath: string; text: string; }[], private readonly initialDirectories: string[] = []) {
@@ -56,7 +56,7 @@ class VirtualFileSystemForTest extends VirtualFileSystemHost implements CustomFi
     }
 
     getFiles() {
-        return ArrayUtils.from(this.files.getEntries());
+        return Array.from(this.files.getEntries());
     }
 
     getCreatedDirectories() {

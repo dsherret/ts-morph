@@ -8,7 +8,7 @@ import { SourceFileStructure } from "../structures";
 import { WriterFunction } from "../types";
 import { SyntaxKind, ts, TypeFlags } from "../typescript";
 import { replaceSourceFileForCacheUpdate } from "../manipulation";
-import { ArrayUtils, EventContainer, FileUtils, KeyValueCache, WeakCache, StringUtils, getTextFromStringOrWriter } from "../utils";
+import { EventContainer, FileUtils, KeyValueCache, WeakCache, StringUtils, getTextFromStringOrWriter } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
 import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
 import { kindToWrapperMappings } from "./kindToWrapperMappings";
@@ -71,7 +71,7 @@ export class CompilerFactory {
      * Gets the source file paths from the internal cache.
      */
     getSourceFilePaths() {
-        return ArrayUtils.from(this.sourceFileCacheByFilePath.getKeys());
+        return Array.from(this.sourceFileCacheByFilePath.getKeys());
     }
 
     /**

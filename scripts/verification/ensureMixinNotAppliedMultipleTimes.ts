@@ -10,7 +10,6 @@
  * -----------------------------------------------------------
  */
 import { TsMorphInspector, WrappedNode, Mixin } from "../inspectors";
-import { createHashSet } from "../../src/utils";
 import { Problem } from "./Problem";
 
 export function ensureMixinNotAppliedMultipleTimes(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
@@ -18,7 +17,7 @@ export function ensureMixinNotAppliedMultipleTimes(inspector: TsMorphInspector, 
         findDuplicateMixins(node);
 
     function findDuplicateMixins(node: WrappedNode) {
-        const foundMixins = createHashSet<string>();
+        const foundMixins = new Set<string>();
         node.getMixins().forEach(inspectMixin);
 
         function inspectMixin(mixin: Mixin) {

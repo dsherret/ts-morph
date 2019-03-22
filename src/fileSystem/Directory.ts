@@ -203,7 +203,7 @@ export class Directory {
      * Gets the source files in the current directory and all the descendant directories.
      */
     getDescendantSourceFiles() {
-        return ArrayUtils.from(this._getDescendantSourceFilesIterator());
+        return Array.from(this._getDescendantSourceFilesIterator());
     }
 
     /**
@@ -221,7 +221,7 @@ export class Directory {
      * Gets the descendant directories.
      */
     getDescendantDirectories() {
-        return ArrayUtils.from(this._getDescendantDirectoriesIterator());
+        return Array.from(this._getDescendantDirectoriesIterator());
     }
 
     /**

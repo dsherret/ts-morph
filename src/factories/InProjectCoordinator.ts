@@ -1,7 +1,7 @@
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem";
 import { CompilerFactory } from "./CompilerFactory";
-import { ArrayUtils, FileUtils, createHashSet } from "../utils";
+import { FileUtils } from "../utils";
 
 /**
  * Holds information about whether source files or directories are in the project.
@@ -9,7 +9,7 @@ import { ArrayUtils, FileUtils, createHashSet } from "../utils";
  * todo: Move this to a different folder.
  */
 export class InProjectCoordinator {
-    private readonly notInProjectFiles = createHashSet<SourceFile>();
+    private readonly notInProjectFiles = new Set<SourceFile>();
 
     constructor(private readonly compilerFactory: CompilerFactory) {
         compilerFactory.onSourceFileRemoved(sourceFile => {
@@ -116,7 +116,7 @@ export class InProjectCoordinator {
         markAncestorDirs(directory);
 
         function markAncestorDirs(dir: Directory) {
-            const ancestorDirs = ArrayUtils.from(getAncestorsUpToOneInProject(dir));
+            const ancestorDirs = Array.from(getAncestorsUpToOneInProject(dir));
 
             // only mark the ancestor directories as being in the project if the top one is in the project
             const topAncestor = ancestorDirs[ancestorDirs.length - 1];

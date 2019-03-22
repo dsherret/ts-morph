@@ -3,7 +3,7 @@ import { DefaultFileSystemHost } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
 import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
-import { ArrayUtils, FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
+import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
 import { Node, TextRange } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
@@ -193,7 +193,7 @@ export class LanguageService {
      */
     findReferencesAsNodes(node: Node) {
         const referencedSymbols = this.findReferences(node);
-        return ArrayUtils.from(getReferencingNodes());
+        return Array.from(getReferencingNodes());
 
         function* getReferencingNodes() {
             for (const referencedSymbol of referencedSymbols) {

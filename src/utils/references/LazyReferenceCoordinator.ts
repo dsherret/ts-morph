@@ -1,12 +1,11 @@
 ﻿import { SourceFile } from "../../compiler";
 import { CompilerFactory } from "../../factories";
-import { createHashSet } from "../collections";
 
 /**
  * Updates all the source file's reference containers.
  */
 export class LazyReferenceCoordinator {
-    private dirtySourceFiles = createHashSet<SourceFile>();
+    private dirtySourceFiles = new Set<SourceFile>();
 
     constructor(factory: CompilerFactory) {
         const onSourceFileModified = (sourceFile: SourceFile) => {

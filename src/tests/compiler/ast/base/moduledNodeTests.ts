@@ -2,7 +2,6 @@
 import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration, ExportAssignment, ExportedDeclarations } from "../../../../compiler";
 import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../../structures";
 import { Project } from "../../../../Project";
-import { ReadonlyMap } from "../../../../utils";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ModuledNode), () => {

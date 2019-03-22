@@ -1,13 +1,13 @@
 import { Node } from "../compiler";
 import * as errors from "../errors";
 import { SyntaxKind, ts } from "../typescript";
-import { createHashSet, HashSet, KeyValueCache } from "../utils";
+import { KeyValueCache } from "../utils";
 
 /**
  * Extension of KeyValueCache that allows for "forget points."
  */
 export class ForgetfulNodeCache extends KeyValueCache<ts.Node, Node> {
-    private readonly forgetStack: HashSet<Node>[] = [];
+    private readonly forgetStack: Set<Node>[] = [];
 
     getOrCreate<TCreate extends Node>(key: ts.Node, createFunc: () => TCreate) {
         return super.getOrCreate(key, () => {
@@ -19,7 +19,7 @@ export class ForgetfulNodeCache extends KeyValueCache<ts.Node, Node> {
     }
 
     setForgetPoint() {
-        this.forgetStack.push(createHashSet());
+        this.forgetStack.push(new Set());
     }
 
     forgetLastPoint() {

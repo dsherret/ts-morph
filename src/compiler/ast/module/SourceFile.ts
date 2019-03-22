@@ -223,7 +223,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /** @internal */
     _getReferencesForCopyInternal(): [StringLiteral, SourceFile][] {
-        return ArrayUtils.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries());
+        return Array.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries());
     }
 
     /** @internal */
@@ -335,8 +335,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     _getReferencesForMoveInternal(): SourceFileReferences {
         return {
-            literalReferences: ArrayUtils.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries()),
-            referencingLiterals: ArrayUtils.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles())
+            literalReferences: Array.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries()),
+            referencingLiterals: Array.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles())
         };
     }
 
@@ -466,21 +466,21 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Get any source files that reference this source file.
      */
     getReferencingSourceFiles() {
-        return ArrayUtils.from(this._referenceContainer.getDependentSourceFiles());
+        return Array.from(this._referenceContainer.getDependentSourceFiles());
     }
 
     /**
      * Gets the import and exports in other source files that reference this source file.
      */
     getReferencingNodesInOtherSourceFiles() {
-        return ArrayUtils.from(this._referenceContainer.getReferencingNodesInOtherSourceFiles());
+        return Array.from(this._referenceContainer.getReferencingNodesInOtherSourceFiles());
     }
 
     /**
      * Gets the string literals in other source files that reference this source file.
      */
     getReferencingLiteralsInOtherSourceFiles() {
-        return ArrayUtils.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles());
+        return Array.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles());
     }
 
     /**

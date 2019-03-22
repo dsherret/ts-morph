@@ -11,6 +11,6 @@ export { createWrappedNode, CreateWrappedNodeOptions } from "./utils/compiler/cr
 export { printNode, PrintNodeOptions } from "./utils/compiler/printNode";
 export { SourceFileReferencingNodes } from "./utils/references/SourceFileReferenceContainer";
 export { CompilerOptionsFromTsConfigOptions, CompilerOptionsFromTsConfigResult, getCompilerOptionsFromTsConfig } from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
-export { ReadonlyMap, TypeGuards } from "./utils";
+export { TypeGuards } from "./utils";
 export { WriterFunctions, WriterFunctionOrValue } from "./structurePrinters/WriterFunctions";
 export * from "./typescript/public";

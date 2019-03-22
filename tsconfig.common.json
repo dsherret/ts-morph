@@ -1,6 +1,6 @@
 ﻿{
     "compilerOptions": {
-        "target": "es5",
+        "target": "es2015",
         "module": "commonjs",
         "strict": true,
         "sourceMap": false,
@@ -13,8 +13,7 @@
         "typeRoots": [ "node_modules/@types" ],
         "types": [ "node", "mocha", "ts-nameof" ],
         "downlevelIteration": true,
-        "importHelpers": true,
-        "lib": [ "es2015" ],
+        "importHelpers": false,
         "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
     },
     "compileOnSave": false

@@ -34,7 +34,7 @@ export class Structure {
 
     @Memoize
     getDescendantBaseStructures() {
-        return ArrayUtils.from(getDescendantBaseStructures(this));
+        return Array.from(getDescendantBaseStructures(this));
 
         function* getDescendantBaseStructures(structure: Structure): IterableIterator<Structure> {
             const baseStructures = structure.getBaseStructures();

@@ -55,9 +55,9 @@ export class ArrayUtils {
         return -1;
     }
 
-    static from<T>(items: Iterable<T> | ts.Iterator<T>) {
+    static from<T>(items: ts.Iterator<T>) {
         const a: T[] = [];
-        for (const item of items)
+        for (const item of items as any) // it will work
             a.push(item);
         return a;
     }

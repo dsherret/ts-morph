@@ -689,14 +689,6 @@ export interface CompilerOptionsFromTsConfigResult {
  * @param options - Options.
  */
 export declare function getCompilerOptionsFromTsConfig(filePath: string, options?: CompilerOptionsFromTsConfigOptions): CompilerOptionsFromTsConfigResult;
-export interface ReadonlyMap<K, V> {
-    readonly size: number;
-    get(key: K): V | undefined;
-    has(key: K): boolean;
-    entries(): IterableIterator<[K, V]>;
-    keys(): IterableIterator<K>;
-    values(): IterableIterator<V>;
-}
 
 /**
  * Type guards for checking the type of a node.

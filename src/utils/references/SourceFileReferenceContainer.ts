@@ -1,5 +1,5 @@
 ﻿import { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, SourceFile, StringLiteral } from "../../compiler";
-import { createHashSet, KeyValueCache } from "../collections";
+import { KeyValueCache } from "../collections";
 import { ModuleUtils } from "../compiler";
 import { TypeGuards } from "../TypeGuards";
 
@@ -15,7 +15,7 @@ export class SourceFileReferenceContainer {
 
     getDependentSourceFiles() {
         this.sourceFile._context.lazyReferenceCoordinator.refreshDirtySourceFiles();
-        const hashSet = createHashSet<SourceFile>();
+        const hashSet = new Set<SourceFile>();
         for (const nodeInOther of this.nodesInOther.getKeys())
             hashSet.add(nodeInOther._sourceFile);
         return hashSet.values();

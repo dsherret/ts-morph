@@ -1,7 +1,7 @@
 ﻿import { Diagnostic } from "../../compiler";
 import { FileSystemWrapper } from "../../fileSystem";
 import { CompilerOptions, ts } from "../../typescript";
-import { ArrayUtils, createHashSet, FileUtils, Memoize } from "../../utils";
+import { FileUtils, Memoize } from "../../utils";
 import { getTsParseConfigHost, TsParseConfigHostResult } from "./getTsParseConfigHost";
 
 export class TsConfigResolver {
@@ -27,9 +27,9 @@ export class TsConfigResolver {
 
     @Memoize
     getPaths(compilerOptions?: CompilerOptions) {
-        const files = createHashSet<string>();
+        const files = new Set<string>();
         const { tsConfigDirPath, fileSystem } = this;
-        const directories = createHashSet<string>();
+        const directories = new Set<string>();
 
         compilerOptions = compilerOptions || this.getCompilerOptions();
 
@@ -55,8 +55,8 @@ export class TsConfigResolver {
             directories.add(rootDir);
 
         return {
-            filePaths: ArrayUtils.from(files.values()),
-            directoryPaths: ArrayUtils.from(directories.values())
+            filePaths: Array.from(files.values()),
+            directoryPaths: Array.from(directories.values())
         };
 
         function dirInProject(dirPath: string) {

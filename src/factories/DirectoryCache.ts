@@ -2,7 +2,7 @@
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem/Directory";
 import { ProjectContext } from "../ProjectContext";
-import { ArrayUtils, FileUtils, KeyValueCache, SortedKeyValueArray, LocaleStringComparer } from "../utils";
+import { FileUtils, KeyValueCache, SortedKeyValueArray, LocaleStringComparer } from "../utils";
 
 /**
  * Cache for the directories.
@@ -44,7 +44,7 @@ export class DirectoryCache {
         const dirLevels = new KeyValueCache<number, Directory[]>();
         let depth = 0;
         this.getOrphans().forEach(addToDirLevels);
-        depth = Math.min(...ArrayUtils.from(dirLevels.getKeys()));
+        depth = Math.min(...Array.from(dirLevels.getKeys()));
 
         while (dirLevels.getSize() > 0) {
             for (const dir of dirLevels.get(depth) || []) {
