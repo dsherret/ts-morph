@@ -758,7 +758,7 @@ export class Directory {
         const moduleResolution = this._context.program.getEmitModuleResolutionKind();
         const thisDirectory = this;
         const moduleSpecifier = FileUtils.getRelativePathTo(this.getPath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
-        return StringUtils.startsWith(moduleSpecifier, "../") ? moduleSpecifier : "./" + moduleSpecifier;
+        return moduleSpecifier.startsWith("../") ? moduleSpecifier : "./" + moduleSpecifier;
 
         function getPath() {
             return sourceFileOrDir instanceof SourceFile ? getPathForSourceFile(sourceFileOrDir) : getPathForDirectory(sourceFileOrDir);

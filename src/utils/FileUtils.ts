@@ -53,7 +53,7 @@ export class FileUtils {
             const isAbsolutePath = path.isAbsolute(fileOrDirPath);
             if (isAbsolutePath)
                 return fileOrDirPath;
-            if (!StringUtils.startsWith(fileOrDirPath, "./") && relativeBase != null)
+            if (!fileOrDirPath.startsWith("./") && relativeBase != null)
                 return path.join(relativeBase, fileOrDirPath);
             return path.join(fileSystem.getCurrentDirectory(), fileOrDirPath);
         }

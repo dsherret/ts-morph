@@ -29,7 +29,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
 
     // remove all the static methods that start with "is"
     typeGuardsClass.getStaticMethods()
-        .filter(m => StringUtils.startsWith(m.getName(), "is"))
+        .filter(m => m.getName().startsWith("is"))
         .forEach(m => m.remove());
 
     typeGuardsClass.addMethods(getMethodInfos().map(method => ({

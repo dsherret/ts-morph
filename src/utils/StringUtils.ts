@@ -35,18 +35,6 @@ export class StringUtils {
         return newStr;
     }
 
-    static startsWith(str: string, startsWithString: string) {
-        if (typeof String.prototype.startsWith === "function")
-            return str.startsWith(startsWithString);
-        return Es5StringUtils.startsWith(str, startsWithString);
-    }
-
-    static endsWith(str: string, endsWithString: string) {
-        if (typeof String.prototype.endsWith === "function")
-            return str.endsWith(endsWithString);
-        return Es5StringUtils.endsWith(str, endsWithString);
-    }
-
     static startsWithNewLine(str: string) {
         return startsWithNewLine.test(str);
     }
@@ -145,17 +133,5 @@ export class StringUtils {
 
             return text;
         }
-    }
-}
-
-export class Es5StringUtils {
-    static startsWith(str: string, startsWithString: string) {
-        // todo: don't allocate a string
-        return str.substr(0, startsWithString.length) === startsWithString;
-    }
-
-    static endsWith(str: string, endsWithString: string) {
-        // todo: don't allocate a string
-        return str.substr(str.length - endsWithString.length, endsWithString.length) === endsWithString;
     }
 }

@@ -37,7 +37,7 @@ export class NamespaceDeclarationStructurePrinter extends NodePrinter<OptionalKi
 
     private validateAndGetStructure(structure: OptionalKind<NamespaceDeclarationStructure>) {
         const name = structure.name.trim();
-        if (!StringUtils.startsWith(name, "'") && !StringUtils.startsWith(name, `"`))
+        if (!name.startsWith("'") && !name.startsWith(`"`))
             return structure;
 
         if (structure.declarationKind === NamespaceDeclarationKind.Namespace)

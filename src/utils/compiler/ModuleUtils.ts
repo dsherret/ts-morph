@@ -7,8 +7,8 @@ export class ModuleUtils {
     }
 
     static isModuleSpecifierRelative(text: string) {
-        return StringUtils.startsWith(text, "./")
-            || StringUtils.startsWith(text, "../");
+        return text.startsWith("./")
+            || text.startsWith("../");
     }
 
     static getReferencedSourceFileFromSymbol(symbol: Symbol) {
