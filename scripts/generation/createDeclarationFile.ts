@@ -27,7 +27,7 @@ export async function createDeclarationFile() {
     await project.save();
 
     function hideBaseDeclarations() {
-        const baseDeclarations = mainFile.getVariableDeclarations().filter(s => StringUtils.endsWith(s.getName(), "Base"));
+        const baseDeclarations = mainFile.getVariableDeclarations().filter(s => s.getName().endsWith("Base"));
 
         for (const declaration of baseDeclarations) {
             const variableStatement = declaration.getParentOrThrow().getParentOrThrow() as Node as VariableStatement;
@@ -40,13 +40,13 @@ export async function createDeclarationFile() {
     }
 
     function hideSpecificStructures() {
-        const specificStructures = mainFile.getInterfaces().filter(s => StringUtils.endsWith(s.getName(), "SpecificStructure"));
+        const specificStructures = mainFile.getInterfaces().filter(s => s.getName().endsWith("SpecificStructure"));
         for (const structure of specificStructures)
             structure.setIsExported(false);
     }
 
     function hideExtensionTypes() {
-        const extensionTypes = mainFile.getTypeAliases().filter(t => StringUtils.endsWith(t.getName(), "ExtensionType"));
+        const extensionTypes = mainFile.getTypeAliases().filter(t => t.getName().endsWith("ExtensionType"));
         for (const extensionType of extensionTypes)
             extensionType.setIsExported(false);
     }

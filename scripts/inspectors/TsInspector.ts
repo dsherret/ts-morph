@@ -26,7 +26,7 @@ export class TsInspector {
         const compilerApiFile = this.getCompilerApiFile();
         const interfaces: InterfaceDeclaration[] = [];
         for (const interfaceDec of ArrayUtils.flatten(compilerApiFile.getNamespaces().map(n => n.getInterfaces()))) {
-            if (interfaceDec.getBaseTypes().some(t => hasDescendantBaseType(t, checkingType => StringUtils.endsWith(checkingType.getText(), "Node"))))
+            if (interfaceDec.getBaseTypes().some(t => hasDescendantBaseType(t, checkingType => checkingType.getText().endsWith("Node"))))
                 interfaces.push(interfaceDec);
         }
         return ArrayUtils.sortByProperty(interfaces.map(i => this.wrapperFactory.getTsNode(i)), item => item.getName());

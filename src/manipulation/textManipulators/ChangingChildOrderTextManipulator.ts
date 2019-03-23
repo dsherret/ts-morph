@@ -119,21 +119,21 @@ export class ChangingChildOrderTextManipulator<TParentNode extends Node> impleme
 
             const twoNewLines = newLineKind + newLineKind;
             if (spacing === twoNewLines) {
-                if (StringUtils.endsWith(finalText, twoNewLines))
+                if (finalText.endsWith(twoNewLines))
                     return;
-                else if (StringUtils.endsWith(finalText, newLineKind))
+                else if (finalText.endsWith(newLineKind))
                     finalText += newLineKind;
                 else
                     finalText += twoNewLines;
             }
             else if (spacing === newLineKind) {
-                if (StringUtils.endsWith(finalText, newLineKind))
+                if (finalText.endsWith(newLineKind))
                     return;
                 else
                     finalText += newLineKind;
             }
             else if (spacing === " ") {
-                if (StringUtils.endsWith(finalText, " "))
+                if (finalText.endsWith(" "))
                     return;
                 else
                     finalText += " ";

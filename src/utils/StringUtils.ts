@@ -2,7 +2,7 @@
 import * as errors from "../errors";
 
 const isSpaces = /^ +$/;
-const isWhitespace = /^\s$/;
+const isWhitespace = /^\s*$/;
 const startsWithNewLine = /^\r?\n/;
 const endsWithNewLine = /\r?\n$/;
 
@@ -21,11 +21,15 @@ export class StringUtils {
     }
 
     static isNullOrWhitespace(str: string | undefined): str is undefined {
-        return typeof str !== "string" || str.trim().length === 0;
+        return typeof str !== "string" || StringUtils.isWhitespace(str);
     }
 
     static isNullOrEmpty(str: string | undefined): str is undefined {
         return typeof str !== "string" || str.length === 0;
+    }
+
+    static isWhitespace(str: string) {
+        return isWhitespace.test(str);
     }
 
     static startsWithNewLine(str: string) {
@@ -58,7 +62,11 @@ export class StringUtils {
 
     static getLengthFromLineStartAtPos(str: string, pos: number) {
         errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
-        const startPos = pos;
+        return pos - StringUtils.getLineStartFromPos(str, pos);
+    }
+
+    static getLineStartFromPos(str: string, pos: number) {
+        errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
 
         while (pos > 0) {
             const previousChar = str[pos - 1];
@@ -67,7 +75,20 @@ export class StringUtils {
             pos--;
         }
 
-        return startPos - pos;
+        return pos;
+    }
+
+    static getLineEndFromPos(str: string, pos: number) {
+        errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
+
+        while (pos < str.length) {
+            const currentChar = str[pos];
+            if (currentChar === "\n" || currentChar === "\r")
+                break;
+            pos++;
+        }
+
+        return pos;
     }
 
     static escapeForWithinString(str: string, quoteKind: QuoteKind) {

@@ -1,8 +1,7 @@
 ﻿import { Type } from "ts-morph";
-import { StringUtils } from "../../src/utils";
 
 export function isNodeType(type: Type) {
-    return StringUtils.endsWith(type.getText(), "Node<NodeType>");
+    return type.getText().endsWith("Node<NodeType>");
 }
 
 export function hasDescendantNodeType(type: Type) {

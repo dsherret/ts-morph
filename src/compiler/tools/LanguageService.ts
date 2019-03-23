@@ -275,7 +275,7 @@ export class LanguageService {
         let newText = getTextFromFormattingEdits(sourceFile, formattingEdits);
         const newLineChar = formatSettings.newLineCharacter!;
 
-        if (formatSettings.ensureNewLineAtEndOfFile && !StringUtils.endsWith(newText, newLineChar))
+        if (formatSettings.ensureNewLineAtEndOfFile && !newText.endsWith(newLineChar))
             newText += newLineChar;
 
         return newText.replace(/\r?\n/g, newLineChar);
