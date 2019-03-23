@@ -1178,7 +1178,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @internal
      */
     private _getIndentationTextForLevel(level: number) {
-        return StringUtils.repeat(this._context.manipulationSettings.getIndentationText(), level);
+        return this._context.manipulationSettings.getIndentationText().repeat(level);
     }
 
     /**

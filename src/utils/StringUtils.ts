@@ -28,13 +28,6 @@ export class StringUtils {
         return typeof str !== "string" || str.length === 0;
     }
 
-    static repeat(str: string, times: number) {
-        let newStr = "";
-        for (let i = 0; i < times; i++)
-            newStr += str;
-        return newStr;
-    }
-
     static startsWithNewLine(str: string) {
         return startsWithNewLine.test(str);
     }
@@ -107,7 +100,7 @@ export class StringUtils {
             if (isInStringAtPos(pos))
                 newLines.push(line);
             else if (times > 0)
-                newLines.push(StringUtils.repeat(indentText, times) + line);
+                newLines.push(indentText.repeat(times) + line);
             else // negative
                 newLines.push(line.replace(unindentRegex!, ""));
 

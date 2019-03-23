@@ -648,7 +648,7 @@ let unknownType: unknown;
     });
 
     describe(nameof<Type>(t => t.getText), () => {
-        const repeatedStr = StringUtils.repeat("o", 160 * 2);
+        const repeatedStr = "o".repeat(160 * 2);
         const longType = `string | number | Date | { reallyReallyLoo${repeatedStr}ong: string; }`;
 
         it("should get the text", () => {
