@@ -51,6 +51,14 @@ describe(nameof(StatementedNode), () => {
         it("should get statements of a default clause", () => {
             doFirstChildTest<DefaultClause>("switch (x) { default: x = 0; break; }", ["x = 0;", "break;"], SyntaxKind.DefaultClause);
         });
+
+        it("should get the statements of a block", () => {
+            doFirstChildTest("function v() {\nvar t; var m;\n}", ["var t;", "var m;"], SyntaxKind.Block);
+        });
+
+        it("should get the statements of a module block", () => {
+            doFirstChildTest("namespace v {\nvar t; var m;\n}", ["var t;", "var m;"], SyntaxKind.ModuleBlock);
+        });
     });
 
     describe(nameof<StatementedNode>(s => s.getStatement), () => {
