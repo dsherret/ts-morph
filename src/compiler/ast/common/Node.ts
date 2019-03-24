@@ -14,7 +14,7 @@ import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { SourceFile } from "../module";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 import { Statement } from "../statement";
-import { CommentRange } from "./CommentRange";
+import { CommentRange } from "../comment";
 import { SyntaxList } from "./SyntaxList";
 import { TextRange } from "./TextRange";
 import { ForEachChildTraversalControl, ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
