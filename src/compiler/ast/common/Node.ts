@@ -16,36 +16,8 @@ import { KindToNodeMappings } from "../kindToNodeMappings";
 import { Statement } from "../statement";
 import { CommentRange } from "./CommentRange";
 import { SyntaxList } from "./SyntaxList";
-
-export interface ForEachChildTraversalControl {
-    /**
-     * Stops traversal.
-     */
-    stop(): void;
-}
-
-export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
-    /**
-     * Skips traversal of the current node's descendants.
-     */
-    skip(): void;
-    /**
-     * Skips traversal of the current node, siblings, and all their descendants.
-     */
-    up(): void;
-}
-
-export interface TransformTraversalControl {
-    /**
-     * The node currently being transformed.
-     * @remarks Use the result of `.visitChildren()` instead before transforming if visiting the children.
-     */
-    currentNode: ts.Node;
-    /**
-     * Visits the children of the current node and returns a new node for the current node.
-     */
-    visitChildren(): ts.Node;
-}
+import { TextRange } from "./TextRange";
+import { ForEachChildTraversalControl, ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
 
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
     NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined :
@@ -58,11 +30,6 @@ export type NodeParentType<NodeType extends ts.Node> =
     NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
     ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
     CompilerNodeToWrappedType<NodeType["parent"]>;
-
-export interface TextRange {
-    getPos(): number;
-    getEnd(): number;
-}
 
 export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     /** @internal */
