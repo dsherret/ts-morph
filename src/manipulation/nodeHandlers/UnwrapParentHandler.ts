@@ -1,4 +1,5 @@
 ﻿import { Node } from "../../compiler";
+import { getCompilerChildren } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
 import { AdvancedIterator, ArrayUtils } from "../../utils";
@@ -19,9 +20,8 @@ export class UnwrapParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const helper = this.helper;
         const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
-        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(newNode.getChildren(newSourceFile)));
+        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(getCompilerChildren(newNode, newSourceFile)));
         let index = 0;
 
         // replace normally until reaching the first child

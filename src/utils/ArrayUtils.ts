@@ -37,6 +37,7 @@ export class ArrayUtils {
         return items.reduce((a, b) => a.concat(b), []);
     }
 
+    // todo: remove and use Array.prototype.find now that es5 support is dropped
     static find<T extends ts.Node>(items: ts.NodeArray<T>, condition: (item: T) => boolean): T | undefined;
     static find<T>(items: T[] | IterableIterator<T>, condition: (item: T) => boolean): T | undefined;
     static find<T>(items: T[] | IterableIterator<T> | ts.NodeArray<any>, condition: (item: T) => boolean) {
@@ -47,6 +48,7 @@ export class ArrayUtils {
         return undefined;
     }
 
+    // todo: remove and use Array.prototype.findIndex
     static findIndex<T>(items: ReadonlyArray<T>, condition: (item: T) => boolean) {
         for (let i = 0; i < items.length; i++) {
             if (condition(items[i]))

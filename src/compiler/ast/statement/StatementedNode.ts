@@ -15,14 +15,21 @@ import { Node } from "../common";
 import { EnumDeclaration } from "../enum";
 import { FunctionDeclaration } from "../function";
 import { InterfaceDeclaration } from "../interface";
-import { KindToNodeMappings } from "../kindToNodeMappings";
+import { ImplementedKindToNodeMappings } from "../kindToNodeMappings";
 import { NamespaceDeclaration } from "../module";
-import { Statement, VariableStatement } from "../statement";
+import { Statement, VariableStatement, CommentRangeStatement } from "../statement";
 import { VariableDeclaration } from "../variable";
 import { TypeAliasDeclaration } from "../type";
+import { ExtendedCommentParser, StatementContainerNodes } from "../utils";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause
     | ts.DefaultClause | ts.ModuleBlock>;
+
+export interface KindToNodeMappingsWithCommentRangeStatements extends ImplementedKindToNodeMappings {
+    [SyntaxKind.SingleLineCommentTrivia]: CommentRangeStatement;
+    [SyntaxKind.MultiLineCommentTrivia]: CommentRangeStatement;
+    [kind: number]: Node;
+}
 
 export interface StatementedNode {
     /**
@@ -33,22 +40,22 @@ export interface StatementedNode {
      * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
      * @param findFunction - Function to find the statement by.
      */
-    getStatement(findFunction: (statement: Node) => boolean): Statement | undefined;
+    getStatement(findFunction: (statement: Statement) => boolean): Statement | undefined;
     /**
      * Gets the first statement that matches the provided condition or throws if it doesn't exist.
      * @param findFunction - Function to find the statement by.
      */
-    getStatementOrThrow(findFunction: (statement: Node) => boolean): Statement;
+    getStatementOrThrow(findFunction: (statement: Statement) => boolean): Statement;
     /**
      * Gets the first statement that matches the provided syntax kind or returns undefined if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
+    getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentRangeStatements[TKind] | undefined;
     /**
      * Gets the first statement that matches the provided syntax kind or throws if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentRangeStatements[TKind];
     /**
      * Add statements.
      * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
@@ -425,7 +432,7 @@ export interface StatementedNode {
     /** @internal */
     _standardWrite(writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void, opts?: StandardWriteOptions): void;
     /** @internal */
-    getCompilerStatements(): ts.NodeArray<ts.Statement>;
+    getCompilerStatements(): (ts.Statement | ts.CommentRange)[];
 }
 
 /** @internal */
@@ -446,20 +453,20 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         /* General */
         getStatements() {
+            // todo: memoize this
             return this.getCompilerStatements().map(s => this._getNodeFromCompilerNode(s));
         }
 
-        getStatement(findFunction: (statement: Node) => boolean) {
-            // explicit type arg necessary in ts 3.0 for some reason
-            return ArrayUtils.find<Statement>(this.getStatements(), findFunction);
+        getStatement(findFunction: (statement: Statement) => boolean) {
+            return this.getStatements().find(findFunction);
         }
 
-        getStatementOrThrow(findFunction: (statement: Node) => boolean) {
+        getStatementOrThrow(findFunction: (statement: Statement) => boolean) {
             return errors.throwIfNullOrUndefined(this.getStatement(findFunction), "Expected to find a statement matching the provided condition.");
         }
 
         getStatementByKind(kind: SyntaxKind) {
-            const statement = ArrayUtils.find(this.getCompilerStatements(), s => s.kind === kind);
+            const statement = this.getCompilerStatements().find(s => s.kind === kind);
             return this._getNodeFromCompilerNodeIfExists(statement);
         }
 
@@ -532,10 +539,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getClasses(): ClassDeclaration[] {
-            const childSyntaxList = this.getChildSyntaxList();
-            if (childSyntaxList == null)
-                return []; // no body
-            return childSyntaxList.getChildrenOfKind(SyntaxKind.ClassDeclaration);
+            return this.getStatements().filter(TypeGuards.isClassDeclaration);
         }
 
         getClass(name: string): ClassDeclaration | undefined;
@@ -579,10 +583,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getEnums(): EnumDeclaration[] {
-            const childSyntaxList = this.getChildSyntaxList();
-            if (childSyntaxList == null)
-                return []; // no body
-            return childSyntaxList.getChildrenOfKind(SyntaxKind.EnumDeclaration);
+            return this.getStatements().filter(TypeGuards.isEnumDeclaration);
         }
 
         getEnum(name: string): EnumDeclaration | undefined;
@@ -633,11 +634,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getFunctions(): FunctionDeclaration[] {
-            const childSyntaxList = this.getChildSyntaxList();
-            if (childSyntaxList == null)
-                return []; // no body
-            return (childSyntaxList.getChildrenOfKind(SyntaxKind.FunctionDeclaration))
-                .filter(f => f.isAmbient() || f.isImplementation());
+            return this.getStatements().filter(TypeGuards.isFunctionDeclaration).filter(f => f.isAmbient() || f.isImplementation());
         }
 
         getFunction(name: string): FunctionDeclaration | undefined;
@@ -681,10 +678,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getInterfaces(): InterfaceDeclaration[] {
-            const childSyntaxList = this.getChildSyntaxList();
-            if (childSyntaxList == null)
-                return []; // no body
-            return childSyntaxList.getChildrenOfKind(SyntaxKind.InterfaceDeclaration);
+            return this.getStatements().filter(TypeGuards.isInterfaceDeclaration);
         }
 
         getInterface(name: string): InterfaceDeclaration | undefined;
@@ -728,10 +722,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getNamespaces(): NamespaceDeclaration[] {
-            const childSyntaxList = this.getChildSyntaxList();
-            if (childSyntaxList == null)
-                return []; // no body
-            return childSyntaxList.getChildrenOfKind(SyntaxKind.ModuleDeclaration);
+            return this.getStatements().filter(TypeGuards.isNamespaceDeclaration);
         }
 
         getNamespace(name: string): NamespaceDeclaration | undefined;
@@ -778,10 +769,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getTypeAliases(): TypeAliasDeclaration[] {
-            const childSyntaxList = this.getChildSyntaxList();
-            if (childSyntaxList == null)
-                return []; // no body
-            return childSyntaxList.getChildrenOfKind(SyntaxKind.TypeAliasDeclaration);
+            return this.getStatements().filter(TypeGuards.isTypeAliasDeclaration);
         }
 
         getTypeAlias(name: string): TypeAliasDeclaration | undefined;
@@ -800,10 +788,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /* Variable statements */
 
         getVariableStatements(): VariableStatement[] {
-            const childSyntaxList = this.getChildSyntaxList();
-            if (childSyntaxList == null)
-                return []; // no body
-            return childSyntaxList.getChildrenOfKind(SyntaxKind.VariableStatement);
+            return this.getStatements().filter(TypeGuards.isVariableStatement);
         }
 
         getVariableStatement(nameOrFindFunction: string | ((statement: VariableStatement) => boolean)): VariableStatement | undefined {
@@ -914,27 +899,34 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this;
         }
 
-        /**
-         * @internal
-         */
-        getCompilerStatements(): ts.NodeArray<ts.Statement> {
+        getCompilerStatements(): ts.Statement[] {
+            const statementsContainer = this._getCompilerStatementsContainer();
+            if (statementsContainer == null)
+                return [] as any as ts.Statement[];
+            else {
+                // will always return an array of statements
+                return ExtendedCommentParser.getOrParseChildren(this._sourceFile.compilerNode, statementsContainer) as any as ts.Statement[];
+            }
+        }
+
+        _getCompilerStatementsContainer(): StatementContainerNodes | undefined {
             if (TypeGuards.isSourceFile(this) || TypeGuards.isCaseClause(this) || TypeGuards.isDefaultClause(this))
-                return this.compilerNode.statements;
+                return this.compilerNode;
             else if (TypeGuards.isNamespaceDeclaration(this)) {
                 // need to get the inner-most body for namespaces
-                return (this._getInnerBody().compilerNode as ts.Block).statements;
+                return (this._getInnerBody().compilerNode as ts.Block);
             }
             else if (TypeGuards.isBodyableNode(this)) {
                 const body = this.getBody();
                 if (body == null)
-                    return [] as any as ts.NodeArray<ts.Statement>;
-                return (body.compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+                    return undefined;
+                return body.compilerNode as any;
             }
             else if (TypeGuards.isBodiedNode(this)) {
-                return (this.getBody().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+                return this.getBody().compilerNode as any;
             }
             else if (TypeGuards.isBlock(this) || TypeGuards.isModuleBlock(this))
-                return this.compilerNode.statements;
+                return this.compilerNode;
             else
                 throw new errors.NotImplementedError(`Could not find the statements for node kind: ${this.getKindName()}, text: ${this.getText()}`);
         }

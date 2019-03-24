@@ -11,10 +11,11 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
         const replacementSourceFile = sourceFile._context.compilerFactory.createCompilerSourceFileFromText(newFilePath || sourceFile.getFilePath(), newFileText);
         nodeHandler.handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
     } catch (err) {
-        throw new errors.InvalidOperationError(err.message + "\n" +
-            `-- Details --\n` +
-            `Path: ${sourceFile.getFilePath()}\n` +
-            `Text: ${JSON.stringify(textManipulator.getTextForError(newFileText))}`
+        throw new errors.InvalidOperationError(err.message + "\n"
+            + `-- Details --\n`
+            + `Path: ${sourceFile.getFilePath()}\n`
+            + `Text: ${JSON.stringify(textManipulator.getTextForError(newFileText))}\n`
+            + `Stack: ${err.stack}`
         );
     }
 }

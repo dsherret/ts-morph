@@ -1,5 +1,7 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
-    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
+    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter,
+    CommentRangeStatement, ExtendedCommentRange, CompilerExtendedCommentRange } from "../compiler";
+import { ExtendedCommentParser } from "../compiler/ast/utils";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
@@ -254,17 +256,35 @@ export class CompilerFactory {
         if (compilerNode.kind === SyntaxKind.SourceFile)
             return this.getSourceFile(compilerNode as any as ts.SourceFile, { markInProject: false }) as Node as CompilerNodeToWrappedType<NodeType>;
 
-        return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode,
-            () => createNode.call(this, kindToWrapperMappings[compilerNode.kind] || Node)
-        ) as Node as CompilerNodeToWrappedType<NodeType>;
+        return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => {
+            const node = createNode.call(this);
+            initializeNode.call(this, node);
+            return node;
+        }) as Node as CompilerNodeToWrappedType<NodeType>;
 
-        function createNode(this: CompilerFactory, ctor: any) {
+        function createNode(this: CompilerFactory): Node<NodeType> {
+            // todo: improve kind to wrapper mappings to handle this scenario
+            if (isExtendedCommentRange(compilerNode)) {
+                if (ExtendedCommentParser.isCommentRangeStatement(compilerNode))
+                    return new CommentRangeStatement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                return new ExtendedCommentRange(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+            }
+            const ctor = kindToWrapperMappings[compilerNode.kind] || Node as any;
+            return new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
+        }
+
+        function isExtendedCommentRange(node: ts.Node): node is CompilerExtendedCommentRange {
+            // assumimg any comment being created with this function is an extended comment range
+            return node.kind === SyntaxKind.SingleLineCommentTrivia
+                || node.kind === SyntaxKind.MultiLineCommentTrivia;
+        }
+
+        function initializeNode(this: CompilerFactory, node: Node<NodeType>) {
             // ensure the parent is created and increment its wrapped child count
             if (compilerNode.parent != null) {
                 const parentNode = this.getNodeFromCompilerNode(compilerNode.parent, sourceFile);
                 parentNode._wrappedChildCount++;
             }
-            const node = new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
             const parentSyntaxList = node._getParentSyntaxListIfWrapped();
             if (parentSyntaxList != null)
                 parentSyntaxList._wrappedChildCount++;
@@ -275,8 +295,6 @@ export class CompilerFactory {
                     count++;
                 node._wrappedChildCount = count;
             }
-
-            return node;
         }
     }
 

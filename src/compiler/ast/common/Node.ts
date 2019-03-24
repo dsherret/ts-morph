@@ -6,7 +6,7 @@ import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePo
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
-    TypeGuards, StoredComparer, getCompilerForEachChildren } from "../../../utils";
+    TypeGuards, StoredComparer } from "../../../utils";
 import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
 import { Type } from "../../types";
@@ -14,7 +14,8 @@ import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { SourceFile } from "../module";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 import { Statement } from "../statement";
-import { CommentRange } from "../comment";
+import { CommentRange } from "../comment/CommentRange";
+import { ExtendedCommentParser, getCompilerChildren, getCompilerForEachChildren } from "../utils";
 import { SyntaxList } from "./SyntaxList";
 import { TextRange } from "./TextRange";
 import { ForEachChildTraversalControl, ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
@@ -710,7 +711,9 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * Gets the number of children the node has.
      */
     getChildCount() {
-        return this.compilerNode.getChildCount(this._sourceFile.compilerNode);
+        // Do not use the compiler's #getChildCount() because it
+        // does not take into account ExtendedCommentRanges.
+        return this._getCompilerChildren().length;
     }
 
     /**
@@ -1096,9 +1099,10 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getChildIndex() {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        const compilerNode = this.compilerNode;
         let i = 0;
         for (const child of parent._getCompilerChildren()) {
-            if (child === this.compilerNode)
+            if (child === compilerNode)
                 return i;
             i++;
         }
@@ -1614,7 +1618,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @internal
      */
     _getCompilerChildren(): ts.Node[] {
-        return this.compilerNode.getChildren(this._sourceFile.compilerNode);
+        return getCompilerChildren(this.compilerNode, this._sourceFile.compilerNode);
     }
 
     /**
@@ -1622,7 +1626,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @internal
      */
     _getCompilerForEachChildren(): ts.Node[] {
-        return getCompilerForEachChildren(this.compilerNode);
+        return getCompilerForEachChildren(this.compilerNode, this._sourceFile.compilerNode);
     }
 
     /**
@@ -1922,7 +1926,7 @@ function* getCompilerForEachDescendantsIterator(node: ts.Node): IterableIterator
 }
 
 function* getCompilerDescendantsIterator(node: ts.Node, sourceFile: ts.SourceFile): IterableIterator<ts.Node> {
-    for (const child of node.getChildren(sourceFile)) {
+    for (const child of getCompilerChildren(node, sourceFile)) {
         yield child;
         yield* getCompilerDescendantsIterator(child, sourceFile);
     }

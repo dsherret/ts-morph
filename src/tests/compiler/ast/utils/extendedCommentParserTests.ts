@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import { getNodesWithStatementedComments, ContainerNodes } from "../../../../compiler/ast/utils";
+import { ExtendedCommentParser, ContainerNodes } from "../../../../compiler/ast/utils";
 import { ts, SyntaxKind } from "../../../../typescript";
 
-describe(nameof(getNodesWithStatementedComments), () => {
+describe(nameof(ExtendedCommentParser), () => {
     function createSourceFile(text: string) {
         return ts.createSourceFile("test.ts", text, ts.ScriptTarget.Latest, false);
     }
@@ -16,7 +16,7 @@ describe(nameof(getNodesWithStatementedComments), () => {
             // source file
             {
                 const sourceFile = createSourceFile(text);
-                const result = getNodesWithStatementedComments(sourceFile, sourceFile);
+                const result = ExtendedCommentParser.getOrParseChildren(sourceFile, sourceFile);
                 assertEqual(expectedNodes, result, "for source files");
             }
             // namespaces
@@ -27,7 +27,7 @@ describe(nameof(getNodesWithStatementedComments), () => {
             function doForLeadingText(leadingText: string, message: string) {
                 const sourceFile = createSourceFile(leadingText + text + "\n}");
                 const block = ts.forEachChild(sourceFile, c => ts.forEachChild(c, g => ts.isModuleBlock(g) || ts.isBlock(g) ? g : undefined))!;
-                const result = getNodesWithStatementedComments(sourceFile, block);
+                const result = ExtendedCommentParser.getOrParseChildren(sourceFile, block);
                 const adjustedExpectedNodes = expectedNodes.map(n => ({
                     kind: n.kind,
                     pos: (n.pos === 0 && !isComment(n.kind) ? leadingText.length - 1 : leadingText.length) + n.pos,
@@ -162,7 +162,7 @@ describe(nameof(getNodesWithStatementedComments), () => {
         function doTest(text: string, expectedNodes: { kind: SyntaxKind; pos: number; end: number; }[]) {
             const sourceFile = createSourceFile(text);
             const container = getContainer(sourceFile)!;
-            const result = getNodesWithStatementedComments(sourceFile, container);
+            const result = ExtendedCommentParser.getOrParseChildren(sourceFile, container);
 
             assertEqual(expectedNodes, result);
 

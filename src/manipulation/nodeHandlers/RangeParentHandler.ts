@@ -1,4 +1,5 @@
 ﻿import { Node } from "../../compiler";
+import { getCompilerChildren } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
 import { AdvancedIterator, ArrayUtils } from "../../utils";
@@ -40,7 +41,7 @@ export class RangeParentHandler implements NodeHandler {
         const currentSourceFile = currentNode._sourceFile.compilerNode;
         // todo: decide whether to use forEachChild or forEachKind here (might be hard with custom mappings)
         const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
-        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(newNode.getChildren(newSourceFile)));
+        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(getCompilerChildren(newNode, newSourceFile)));
 
         // handle any custom mappings
         this.handleCustomMappings(newNode);

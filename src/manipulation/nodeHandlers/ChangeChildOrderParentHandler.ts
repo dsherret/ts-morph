@@ -1,4 +1,5 @@
 import { Node } from "../../compiler";
+import { getCompilerChildren } from "../../compiler/ast/utils";
 import * as errors from "../../errors";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
@@ -29,7 +30,7 @@ export class ChangeChildOrderParentHandler implements NodeHandler {
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         const currentNodeChildren = this.getChildrenInNewOrder(currentNode._getCompilerChildren());
-        const newNodeChildren = newNode.getChildren(newSourceFile);
+        const newNodeChildren = getCompilerChildren(newNode, newSourceFile);
 
         errors.throwIfNotEqual(newNodeChildren.length, currentNodeChildren.length, "New children length should match the old children length.");
 

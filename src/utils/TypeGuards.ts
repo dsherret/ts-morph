@@ -49,6 +49,17 @@ export class TypeGuards {
         return (node as any).getBody() != null;
     }
 
+    /** Gets if the provided value is a node. */
+    static isNode(value: unknown): value is compiler.Node {
+        if (value == null)
+            return false;
+        const kind = (value as any)["kind"];
+        if (typeof kind !== "number")
+            return false;
+        return kind !== SyntaxKind.SingleLineCommentTrivia
+            && kind !== SyntaxKind.MultiLineCommentTrivia;
+    }
+
     /**
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.

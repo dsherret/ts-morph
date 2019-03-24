@@ -32,6 +32,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         .filter(m => m.getName().startsWith("is"))
         .forEach(m => m.remove());
 
+    createIsNode();
     typeGuardsClass.addMethods(getMethodInfos().map(method => ({
         name: `is${method.name}`,
         isStatic: true,
@@ -43,7 +44,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType` : ""),
         bodyText: (writer: CodeBlockWriter) => {
             if (method.syntaxKinds.length === 0)
-                throw new Error(`For some reason  ${method.name} had no syntax kinds.`);
+                throw new Error(`For some reason ${method.name} had no syntax kinds.`);
 
             writeSyntaxKinds(writer, method.syntaxKinds);
         }
@@ -147,6 +148,26 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             returnType: `node is compiler.Node & { getStructure(): Structure; }`,
             bodyText: writer => {
                 writeSyntaxKinds(writer, nodesWithGetStructure.map(n => kindToWrapperMappings.find(m => m.wrapperName === n.getName())!.syntaxKindNames[0]));
+            }
+        });
+    }
+
+    function createIsNode() {
+        typeGuardsClass.addMethod({
+            docs: ["Gets if the provided value is a Node."],
+            isStatic: true,
+            name: "isNode",
+            returnType: `value is compiler.Node`,
+            parameters: [{ name: "value", type: "unknown" }],
+            bodyText: writer => {
+                writer.writeLine("if (value == null)");
+                writer.indent().writeLine("return false;");
+
+                writer.writeLine(`const kind = (value as any)["kind"];`);
+                writer.writeLine(`if (typeof kind !== "number")`);
+                writer.indent().writeLine(`return false;`);
+                writer.writeLine(`return kind !== SyntaxKind.SingleLineCommentTrivia`);
+                writer.indent().writeLine(`&& kind !== SyntaxKind.MultiLineCommentTrivia;`);
             }
         });
     }

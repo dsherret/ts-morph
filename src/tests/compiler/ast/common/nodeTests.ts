@@ -1353,7 +1353,7 @@ class MyClass {
 
     describe(nameof<Node>(n => n.getTrailingTriviaWidth), () => {
         function doTest(text: string, expected: number) {
-            const { firstChild, sourceFile } = getInfoFromText(text);
+            const { firstChild } = getInfoFromText(text);
             expect(firstChild.getTrailingTriviaWidth()).to.equal(expected);
         }
 

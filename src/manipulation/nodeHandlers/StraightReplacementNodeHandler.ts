@@ -2,7 +2,7 @@
 import * as errors from "../../errors";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
-import { ArrayUtils, getSyntaxKindName } from "../../utils";
+import { getSyntaxKindName } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 import { NodeHandlerHelper } from "./NodeHandlerHelper";
 
@@ -29,14 +29,12 @@ export class StraightReplacementNodeHandler implements NodeHandler {
     }
 
     private handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const [currentNodeChildren, newNodeChildrenArray] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
-        const newNodeChildren = ArrayUtils.toIterator(newNodeChildrenArray);
+        const [currentChildren, newChildren] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
 
-        for (const currentNodeChild of currentNodeChildren)
-            this.helper.handleForValues(this, currentNodeChild, newNodeChildren.next().value, newSourceFile);
+        if (currentChildren.length !== newChildren.length)
+            throw new Error(`Error replacing tree: The children of the old and new trees were expected to have the same count (${currentChildren.length}:${newChildren.length}).`);
 
-        /* istanbul ignore if */
-        if (!newNodeChildren.next().done)
-            throw new Error("Error replacing tree: Should not have new children left over.");
+        for (let i = 0; i < currentChildren.length; i++)
+            this.helper.handleForValues(this, currentChildren[i], newChildren[i], newSourceFile);
     }
 }

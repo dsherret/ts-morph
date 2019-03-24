@@ -1,3 +1,3 @@
 /* barrel:ignore */
-export * from "./getNodesWithStatementedComments";
-export * from "./isCommentRange";
+export * from "./ExtendedCommentParser";
+export * from "./getCompilerChildren";

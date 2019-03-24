@@ -1,4 +1,5 @@
 import { Node, SourceFile } from "../../compiler";
+import { getCompilerChildren, getCompilerForEachChildren } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { SyntaxKind, ts } from "../../typescript";
 import { NodeHandler } from "./NodeHandler";
@@ -28,17 +29,9 @@ export class NodeHandlerHelper {
      */
     getChildrenFast(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [ts.Node[], ts.Node[]] {
         if (currentNode._hasParsedTokens())
-            return [currentNode._getCompilerChildren(), newNode.getChildren(newSourceFile)];
+            return [currentNode._getCompilerChildren(), getCompilerChildren(newNode, newSourceFile)];
 
         // great, we don't have to parse the tokens and can instead just use ts.forEachChild (faster)
-        return [getForEachChildren(currentNode.compilerNode), getForEachChildren(newNode)];
-
-        function getForEachChildren(node: ts.Node) {
-            const nodes: ts.Node[] = [];
-            ts.forEachChild(node, childNode => {
-                nodes.push(childNode);
-            });
-            return nodes;
-        }
+        return [currentNode._getCompilerForEachChildren(), getCompilerForEachChildren(newNode, newSourceFile)];
     }
 }

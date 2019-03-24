@@ -1,4 +1,5 @@
 import { Node } from "../../compiler";
+import { getCompilerChildren } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
 import { AdvancedIterator, ArrayUtils } from "../../utils";
@@ -35,7 +36,7 @@ export class DefaultParentHandler implements NodeHandler {
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
-        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(newNode.getChildren(newSourceFile)));
+        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(getCompilerChildren(newNode, newSourceFile)));
         let count = this.childCount;
 
         // handle any custom mappings

@@ -1,7 +1,7 @@
 import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
-import { AdvancedIterator, ArrayUtils, getCompilerForEachChildren } from "../../utils";
+import { AdvancedIterator, ArrayUtils } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 import { NodeHandlerHelper } from "./NodeHandlerHelper";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
@@ -32,9 +32,9 @@ export class RangeHandler implements NodeHandler {
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         const currentSourceFile = currentNode._sourceFile.compilerNode;
-        const hasParsedTokens = currentNode._hasParsedTokens();
-        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(hasParsedTokens ? currentNode._getCompilerChildren() : currentNode._getCompilerForEachChildren()));
-        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(hasParsedTokens ? newNode.getChildren(newSourceFile) : getCompilerForEachChildren(newNode)));
+        const children = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
+        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(children[0]));
+        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(children[1]));
 
         // get the first child
         while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getEnd() <= this.start)
