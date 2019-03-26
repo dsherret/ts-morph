@@ -1,36 +1,56 @@
 import { ts, SyntaxKind } from "../../../typescript";
 import { ExtendedCommentParser } from "./ExtendedCommentParser";
 
+const compilerForEachChildrenSaver = new WeakMap<ts.Node, ts.Node[]>();
 export function getCompilerForEachChildren(node: ts.Node, sourceFile: ts.SourceFile) {
-    const children: ts.Node[] = [];
-    node.forEachChild(child => {
-        children.push(child);
-    });
+    let result = compilerForEachChildrenSaver.get(node);
+    if (result == null) {
+        result = getResult();
+        compilerForEachChildrenSaver.set(node, result);
+    }
+    return result;
 
-    // insert all the comments in the correct place (be as fast as possible here as this is used a lot)
-    if (ExtendedCommentParser.shouldParseChildren(node))
-        mergeInComments(children, ExtendedCommentParser.getOrParseChildren(sourceFile, node));
+    function getResult() {
+        const children: ts.Node[] = [];
+        node.forEachChild(child => {
+            children.push(child);
+        });
 
-    return children;
+        // insert all the comments in the correct place (be as fast as possible here as this is used a lot)
+        if (ExtendedCommentParser.shouldParseChildren(node))
+            mergeInComments(children, ExtendedCommentParser.getOrParseChildren(sourceFile, node));
+
+        return children;
+    }
 }
 
+const compilerChildrenSaver = new WeakMap<ts.Node, ts.Node[]>();
 export function getCompilerChildren(node: ts.Node, sourceFile: ts.SourceFile) {
-    const children = [...node.getChildren(sourceFile)]; // modify a new array (not the cached one returned)
+    let result = compilerChildrenSaver.get(node);
+    if (result == null) {
+        result = getResult();
+        compilerChildrenSaver.set(node, result);
+    }
+    return result;
 
-    if (isStatementMemberOrPropertyHoldingSyntaxList())
-        mergeInComments(children, ExtendedCommentParser.getOrParseChildren(sourceFile, node as ts.SyntaxList));
+    function getResult() {
+        const children = [...node.getChildren(sourceFile)]; // do not modify the compiler api's array
 
-    return children;
+        if (isStatementMemberOrPropertyHoldingSyntaxList())
+            mergeInComments(children, ExtendedCommentParser.getOrParseChildren(sourceFile, node as ts.SyntaxList));
 
-    function isStatementMemberOrPropertyHoldingSyntaxList() {
-        if (node.kind !== ts.SyntaxKind.SyntaxList)
-            return false;
-        const parent = node.parent;
-        if (!ExtendedCommentParser.shouldParseChildren(parent))
-            return false;
+        return children;
 
-        // is this the correct syntax list?
-        return ExtendedCommentParser.getContainerBodyPos(parent, sourceFile) === node.pos;
+        function isStatementMemberOrPropertyHoldingSyntaxList() {
+            if (node.kind !== ts.SyntaxKind.SyntaxList)
+                return false;
+            const parent = node.parent;
+            if (!ExtendedCommentParser.shouldParseChildren(parent))
+                return false;
+
+            // is this the correct syntax list?
+            return ExtendedCommentParser.getContainerBodyPos(parent, sourceFile) === node.pos;
+        }
     }
 }
 

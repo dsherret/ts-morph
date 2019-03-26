@@ -15,7 +15,7 @@ import { SourceFile } from "../module";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 import { Statement } from "../statement";
 import { CommentRange } from "../comment/CommentRange";
-import { ExtendedCommentParser, getCompilerChildren, getCompilerForEachChildren } from "../utils";
+import { getCompilerChildren, getCompilerForEachChildren } from "../utils";
 import { SyntaxList } from "./SyntaxList";
 import { TextRange } from "./TextRange";
 import { ForEachChildTraversalControl, ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";

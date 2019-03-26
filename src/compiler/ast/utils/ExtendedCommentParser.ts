@@ -25,7 +25,6 @@ export type ContainerNodes = StatementContainerNodes
 
 type CommentSyntaxKinds = SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
 const statementsSaver = new WeakMap<ContainerNodes, (ts.Node | CompilerExtendedCommentRange)[]>();
-const containerBodyPosSaver = new WeakMap<ContainerNodes, number>();
 const extendedCommentParserKinds = new Set<SyntaxKind>([
     SyntaxKind.SourceFile,
     SyntaxKind.Block,
@@ -75,42 +74,32 @@ export class ExtendedCommentParser {
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {
-        // cache the result in a weakmap to make it fast
-        let result = containerBodyPosSaver.get(container);
-        if (result == null) {
-            result = getResult();
-            containerBodyPosSaver.set(container, result);
+        if (ts.isSourceFile(container))
+            return 0;
+
+        if (ts.isClassDeclaration(container)
+            || ts.isEnumDeclaration(container)
+            || ts.isInterfaceDeclaration(container)
+            || ts.isTypeLiteralNode(container)
+            || ts.isClassExpression(container)
+            || ts.isBlock(container)
+            || ts.isModuleBlock(container)
+            || ts.isObjectLiteralExpression(container))
+        {
+            // this function is only used when there are no statements or members, so only do this
+            return getTokenEnd(container, SyntaxKind.OpenBraceToken);
         }
-        return result;
 
-        function getResult() {
-            if (ts.isSourceFile(container))
-                return 0;
+        if (ts.isCaseClause(container) || ts.isDefaultClause(container))
+            return getTokenEnd(container, SyntaxKind.ColonToken);
 
-            if (ts.isClassDeclaration(container)
-                || ts.isEnumDeclaration(container)
-                || ts.isInterfaceDeclaration(container)
-                || ts.isTypeLiteralNode(container)
-                || ts.isClassExpression(container)
-                || ts.isBlock(container)
-                || ts.isModuleBlock(container)
-                || ts.isObjectLiteralExpression(container))
-            {
-                // this function is only used when there are no statements or members, so only do this
-                return getTokenEnd(container, SyntaxKind.OpenBraceToken);
-            }
+        return errors.throwNotImplementedForNeverValueError(container);
 
-            if (ts.isCaseClause(container) || ts.isDefaultClause(container))
-                return getTokenEnd(container, SyntaxKind.ColonToken);
-
-            return errors.throwNotImplementedForNeverValueError(container);
-
-            function getTokenEnd(node: ts.Node, kind: SyntaxKind) {
-                const openBraceToken = node.getChildren(sourceFile).find(c => c.kind === kind);
-                if (openBraceToken == null)
-                    throw new errors.NotImplementedError(`Unexpected scenario where a(n) ${getSyntaxKindName(kind)} was not found.`);
-                return openBraceToken.end;
-            }
+        function getTokenEnd(node: ts.Node, kind: SyntaxKind) {
+            const openBraceToken = node.getChildren(sourceFile).find(c => c.kind === kind);
+            if (openBraceToken == null)
+                throw new errors.NotImplementedError(`Unexpected scenario where a(n) ${getSyntaxKindName(kind)} was not found.`);
+            return openBraceToken.end;
         }
     }
 }
