@@ -1152,7 +1152,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Gets the child index of this node relative to its parent, obtaining children using `getForEachChild` method.
+     * Gets the child index of this node relative to its parent, obtaining children using `getForEachChildren` method.
      */
     getForEachChildIndex() {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
