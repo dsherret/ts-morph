@@ -4392,6 +4392,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
      */
     forEachDescendant(cbNode: (node: Node, traversal: ForEachDescendantTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => void): void;
     /**
+     * Gets the child nodes passed to the delegate of `node.forEachChild(child => {})` as an array.
+     */
+    forEachChildAsArray(): Node<ts.Node>[];
+    /**
      * Gets the node's descendants.
      */
     getDescendants(): Node[];

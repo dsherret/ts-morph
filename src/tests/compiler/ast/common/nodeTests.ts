@@ -1671,6 +1671,27 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.forEachChildAsArray), () => {
+        function runTest(startText: string, selectNode: (sourceFile: SourceFile) => Node, expectedKinds: SyntaxKind[]) {
+            const { sourceFile } = getInfoFromText(startText);
+            const node = selectNode(sourceFile);
+            const foundKinds = node.forEachChildAsArray().map(c => c.getKind());
+            expect(foundKinds).to.deep.equal(expectedKinds);
+        }
+
+        it("should iterate over all the children of a source file", () => {
+            runTest("class T {} interface I {}",
+                sourceFile => sourceFile,
+                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]);
+        });
+
+        it("should iterate over all the children of a class declaration", () => {
+            runTest("class T { prop1: string; prop2: number; }",
+                sourceFile => sourceFile.getClassOrThrow("T"),
+                [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration]);
+        });
+    });
+
     describe(nameof<Node>(n => n.getNodeProperty), () => {
         const fileText = "class MyClass<T, U> { prop: string; otherProp: number; } interface MyInterface {} export default class { prop: Date; }";
         const { firstChild: classDec, sourceFile } = getInfoFromText<ClassDeclaration>(fileText);
