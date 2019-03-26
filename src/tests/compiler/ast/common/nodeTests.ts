@@ -220,6 +220,43 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.getChildren), () => {
+        const { sourceFile } = getInfoFromText("var a = 1;");
+        const variable = sourceFile.getVariableDeclarationOrThrow("a");
+
+        it("should get children of tall kinds", () => {
+            expect(variable.getChildren().map(c => c.getKindName())).to.deep.equal(["Identifier", "EqualsToken", "NumericLiteral"]);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getForEachChildren), () => {
+        const { sourceFile } = getInfoFromText("var a = 1");
+        const variable = sourceFile.getVariableDeclarationOrThrow("a");
+
+        it("should get children of the same kind as visited with forEachChild method", () => {
+            expect(variable.getForEachChildren().map(c => c.getKindName())).to.deep.equal(["Identifier", "NumericLiteral"]);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getChildIndex), () => {
+        const { sourceFile } = getInfoFromText("var a = 1;");
+        const value = sourceFile.getVariableDeclarationOrThrow("a").getLastChildByKindOrThrow(SyntaxKind.NumericLiteral);
+
+        it("should get the child index of this node relative to the parent obtaining children using `getChildren` method.", () => {
+
+            expect(value.getChildIndex()).to.equal(2);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getForEachChildIndex), () => {
+        const { sourceFile } = getInfoFromText("var a = 1");
+        const value = sourceFile.getVariableDeclarationOrThrow("a").getLastChildByKindOrThrow(SyntaxKind.NumericLiteral);
+
+        it("should get the child index of this node relative to the parent obtaining children using `getForEachChild` method", () => {
+            expect(value.getForEachChildIndex()).to.equal(1);
+        });
+    });
+
     describe(nameof<Node>(n => n.getParentSyntaxList), () => {
         it("should return undefined for an end of file token", () => {
             const { sourceFile } = getInfoFromText("class C {}");

@@ -498,6 +498,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
+     * Gets all the children of the node using `forEachChild` method to obtain the children.
+     *
+     * Unlike `getChildren`, it will not return all kind of children only high level ones.
+     * For example, `SyntaxKind.SemicolonToken` will be omitted. If you need all kind of
+     * children then use `getChildren` method.
+     */
+    getForEachChildren(): Node[] {
+        return this._getCompilerForEachChildren().map(n => this._getNodeFromCompilerNode(n));
+    }
+
+    /**
      * Gets the child at the specified index.
      * @param index - Index of the child.
      */
@@ -1125,12 +1136,28 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Gets the child index of this node relative to the parent.
+     * Gets the child index of this node relative to its parent, obtaining children using `getChildren` method.
      */
     getChildIndex() {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         let i = 0;
         for (const child of parent._getCompilerChildren()) {
+            if (child === this.compilerNode)
+                return i;
+            i++;
+        }
+
+        /* istanbul ignore next */
+        throw new errors.NotImplementedError("For some reason the child's parent did not contain the child.");
+    }
+
+    /**
+     * Gets the child index of this node relative to its parent, obtaining children using `getForEachChild` method.
+     */
+    getForEachChildIndex() {
+        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        let i = 0;
+        for (const child of parent._getCompilerForEachChildren()) {
             if (child === this.compilerNode)
                 return i;
             i++;
