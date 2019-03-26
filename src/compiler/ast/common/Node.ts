@@ -498,7 +498,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Gets all the children of the node using `forEachChild` method to obtain the children.
+     * Gets the children of the node using `forEachChild` method to obtain the children.
      *
      * Unlike `getChildren`, it will not return all kind of children only high level ones.
      * For example, `SyntaxKind.SemicolonToken` will be omitted. If you need all kind of
