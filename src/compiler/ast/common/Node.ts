@@ -684,6 +684,13 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
+     * Gets the child nodes passed to the delegate of `node.forEachChild(child => {})` as an array.
+     */
+    forEachChildAsArray() {
+        return this._getCompilerForEachChildren().map(c => this._getNodeFromCompilerNode(c));
+    }
+
+    /**
      * Gets the node's descendants.
      */
     getDescendants(): Node[] {

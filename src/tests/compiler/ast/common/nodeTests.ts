@@ -1353,7 +1353,7 @@ class MyClass {
 
     describe(nameof<Node>(n => n.getTrailingTriviaWidth), () => {
         function doTest(text: string, expected: number) {
-            const { firstChild, sourceFile } = getInfoFromText(text);
+            const { firstChild } = getInfoFromText(text);
             expect(firstChild.getTrailingTriviaWidth()).to.equal(expected);
         }
 
@@ -1668,6 +1668,27 @@ class MyClass {
                 "Test2",
                 "" // end of file token
             ]);
+        });
+    });
+
+    describe(nameof<Node>(n => n.forEachChildAsArray), () => {
+        function runTest(startText: string, selectNode: (sourceFile: SourceFile) => Node, expectedKinds: SyntaxKind[]) {
+            const { sourceFile } = getInfoFromText(startText);
+            const node = selectNode(sourceFile);
+            const foundKinds = node.forEachChildAsArray().map(c => c.getKind());
+            expect(foundKinds).to.deep.equal(expectedKinds);
+        }
+
+        it("should iterate over all the children of a source file", () => {
+            runTest("class T {} interface I {}",
+                sourceFile => sourceFile,
+                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]);
+        });
+
+        it("should iterate over all the children of a class declaration", () => {
+            runTest("class T { prop1: string; prop2: number; }",
+                sourceFile => sourceFile.getClassOrThrow("T"),
+                [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration]);
         });
     });
 
