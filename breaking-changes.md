@@ -4,6 +4,14 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 
 ## Version 2
 
+### Removed SourceFile#getLineNumberAtPos()
+
+Removed `SourceFile`'s method `getLineNumberAtPos` in favor of method `getLineAndColumnAtPos` which returns an object with both line number and column number at given position: 
+
+```ts
+const { line, column } = sourceFile.getLineAndColumnAtPos(position);
+```
+
 ### Removed default export
 
 For a while now it's been recommended to use the named export instead of the default export for the project. From now on, only the named export can be used:
