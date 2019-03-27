@@ -5,6 +5,7 @@
             true,
             "statements"
         ],
+        "no-trailing-whitespace": [true, "ignore-template-strings"],
         "interface-name": [ false ],
         "max-line-length": [ true, 185 ],
         "member-access": false,

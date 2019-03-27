@@ -1123,7 +1123,7 @@ function myFunction(param: MyClass) {
 
             const referencing = sourceFile.getReferencingNodesInOtherSourceFiles();
             expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...[...file1.getImportDeclarations(),
-                ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()),
+            ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()),
                 `import test = require("../MyInterface");`, `import("../MyInterface")`].sort());
         });
 
@@ -1134,7 +1134,7 @@ function myFunction(param: MyClass) {
             const file2 = project.createSourceFile("/file2.ts", `import "./sub/index";`);
             const referencing = sourceFile.getReferencingNodesInOtherSourceFiles();
             expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...file1.getExportDeclarations(),
-                ...file2.getImportDeclarations()].map(d => d.getText()).sort());
+            ...file2.getImportDeclarations()].map(d => d.getText()).sort());
         });
 
         it("should keep the references up to date during manipulations", () => {
@@ -1165,7 +1165,7 @@ function myFunction(param: MyClass) {
 
             const referencing = sourceFile.getReferencingLiteralsInOtherSourceFiles();
             expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...[...file1.getImportDeclarations(),
-                ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getModuleSpecifier()!.getText()),
+            ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getModuleSpecifier()!.getText()),
                 `"../MyInterface"`, `"../MyInterface"`].sort());
         });
     });
@@ -1269,8 +1269,8 @@ function myFunction(param: MyClass) {
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
                 { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
             ], expectedText, {
-                newLineCharacter: "\r\n"
-            });
+                    newLineCharacter: "\r\n"
+                });
         });
 
         it("should add missing imports when some exist", () => {
@@ -1403,6 +1403,81 @@ const t = 5;`;
                     })]
                 })]
             });
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getLineAndColumnAtPos), () => {
+        function test(code: string, pos: number, expected: { line: number, column: number } | "throw") {
+            const { sourceFile } = getInfoFromText(code, { filePath: "/File.ts" });
+            if (expected === "throw") {
+                expect(() => sourceFile.getLineAndColumnAtPos(pos)).to.throw();
+            }
+            else {
+                expect(sourceFile.getLineAndColumnAtPos(pos)).to.deep.equal(expected);
+            }
+        }
+        it("should return line and column numbers at given position in single line source files", () => {
+            test(``, 0, { line: 1, column: 0 });
+            const code = `interface I { m1(): void }`;
+            test(code, 3, { line: 1, column: 3 });
+            test(code, 0, { line: 1, column: 0 });
+            test(code, code.length, { line: 1, column: code.length });
+        });
+        it("should return line and column numbers at given position in empty first line source files", () => {
+            const code = `\ninterface I { m1(): void }`;
+            test(code, 0, { line: 1, column: 0 });
+            test(code, 1, { line: 2, column: 0 });
+            test(code, code.length, { line: 2, column: code.length - 1 });
+        });
+        it("should return line and column numbers at given position in multiple lines and comments source file", () => {
+            const code = `
+/**
+ * Lorem
+ * @param ipsum - Gives.
+ */
+   // line starting with spaces
+interface I {
+    /**
+     * jsdoc comment 2.
+     * @returns - Lorem ipsum
+     */
+    m1(): void
+    /* block1 */
+}
+  export class 
+    C implements 
+ I { // line starting with spaces
+/* line ending with spaces */ m1(){             
+
+    }
+ }
+// tail
+`;
+            test(code, 0, { line: 1, column: 0 });
+            test(code, 1, { line: 2, column: 0 });
+            test(code, code.indexOf("@param ipsum") - 3, { line: 4, column: 0 });
+            test(code, code.indexOf("@param ipsum") + "@param ipsum - Gives.".length, { line: 4, column: " * @param ipsum - Gives.".length });
+            test(code, code.indexOf("   // line star"), { line: 6, column: 0});
+            test(code, code.indexOf("   // line star") + 2, { line: 6, column: 2});
+            test(code, code.indexOf("/* block1 */"), { line: 13, column: 4});
+            test(code, code.indexOf("C implements") - 1, { line: 16, column: 3});
+            test(code, code.indexOf("/* line ending with spaces */ m1(){      ") + "/* line ending with spaces */ m1(){      ".length,
+                { line: 18, column: "/* line ending with spaces */ m1(){      ".length});
+            test(code, code.indexOf("// tail") + "// tail".length, { line: 22, column: "// tail".length});
+            test(code, code.indexOf("// tail") + "// tail".length + 1, { line: 23, column: 0});
+        });
+
+        it.skip("should throw when position is length + 1", () => {
+            test(`var a = 1`, `var a = 1`.length + 1, "throw");
+            test(``, 1, "throw");
+            test(`\ninterface I {\n m1(): void }`, `\ninterface I {\n m1(): void }`.length + 1, "throw");
+            test(`var a = 1\n`, `var a = 1\n`.length + 1, "throw");
+
+        });
+
+        it("should throw end invalid position is given", () => {
+            test(`interface I { m1(): void }`, 1000, "throw");
+            test(`\ninterface I {\n m1(): void }`, -1, "throw");
         });
     });
 });

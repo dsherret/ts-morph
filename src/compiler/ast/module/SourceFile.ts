@@ -150,6 +150,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the line number and column number at the provided position.
+     * @param pos - Position
+     */
+    getLineAndColumnAtPos(pos: number) {
+        const fullText = this.getFullText();
+        return {
+            line: StringUtils.getLineNumberAtPos(fullText, pos),
+            column: StringUtils.getLengthFromLineStartAtPos(fullText, pos)
+        };
+    }
+
+    /**
      * Gets the character count from the start of the line to the provided position.
      * @param pos - Position.
      */
