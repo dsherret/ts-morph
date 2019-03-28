@@ -1,8 +1,6 @@
 import { Node } from "../../compiler";
-import { getCompilerChildren } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
-import { AdvancedIterator, ArrayUtils } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 import { NodeHandlerHelper } from "./NodeHandlerHelper";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
@@ -35,41 +33,40 @@ export class DefaultParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
-        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(getCompilerChildren(newNode, newSourceFile)));
+        const [currentChildren, newChildren] = this.helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
         let count = this.childCount;
 
         // handle any custom mappings
         this.handleCustomMappings(newNode);
 
         // get the first child
-        while (!currentNodeChildren.done && !newNodeChildren.done && !this.isFirstChild(currentNodeChildren.peek, newNodeChildren.peek))
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+        while (!currentChildren.done && !newChildren.done && !this.isFirstChild(currentChildren.peek, newChildren.peek))
+            this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
 
         // try replacing any nodes
-        while (!currentNodeChildren.done && this.tryReplaceNode(currentNodeChildren.peek))
-            currentNodeChildren.next();
+        while (!currentChildren.done && this.tryReplaceNode(currentChildren.peek))
+            currentChildren.next();
 
         // add or remove the items
         if (count > 0) {
             while (count > 0) {
-                newNodeChildren.next();
+                newChildren.next();
                 count--;
             }
         }
         else if (count < 0) {
             while (count < 0) {
-                this.helper.forgetNodeIfNecessary(currentNodeChildren.next());
+                this.helper.forgetNodeIfNecessary(currentChildren.next());
                 count++;
             }
         }
 
         // handle the rest
-        while (!currentNodeChildren.done)
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+        while (!currentChildren.done)
+            this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
 
         // ensure the new children iterator is done too
-        if (!newNodeChildren.done)
+        if (!newChildren.done)
             throw new Error("Error replacing tree: Should not have children left over.");
 
         this.compilerFactory.replaceCompilerNode(currentNode, newNode);

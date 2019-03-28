@@ -1,12 +1,12 @@
 import { Node, SyntaxList } from "../../compiler";
-import { SyntaxKind } from "../../typescript";
+import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
 
 /**
  * Gets the insert pos from an index.
  */
-export function getInsertPosFromIndex(index: number, syntaxList: SyntaxList, children: Node[]) {
+export function getInsertPosFromIndex(index: number, syntaxList: SyntaxList, children: ts.Node[]) {
     if (index === 0) {
         const parent = syntaxList.getParentOrThrow();
         if (TypeGuards.isSourceFile(parent))
@@ -25,7 +25,7 @@ export function getInsertPosFromIndex(index: number, syntaxList: SyntaxList, chi
         return openBraceToken.getEnd();
     }
     else
-        return children[index - 1].getEnd();
+        return children[index - 1].end;
 }
 
 export function getEndPosFromIndex(index: number, parent: Node, children: Node[], fullText: string) {

@@ -1,7 +1,8 @@
 import { Node, SourceFile } from "../../compiler";
-import { getCompilerChildren, getCompilerForEachChildren } from "../../compiler/ast/utils";
+import { ExtendedParser, hasParsedTokens } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { SyntaxKind, ts } from "../../typescript";
+import { AdvancedIterator, ArrayUtils } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 
 export class NodeHandlerHelper {
@@ -24,14 +25,41 @@ export class NodeHandlerHelper {
             this.compilerFactory.getExistingCompilerNode(currentNode)!.forget();
     }
 
+    getCompilerChildrenAsIterators(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [AdvancedIterator<ts.Node>, AdvancedIterator<ts.Node>] {
+        const children = this.getCompilerChildren(currentNode, newNode, newSourceFile);
+        return [
+            new AdvancedIterator(ArrayUtils.toIterator(children[0])),
+            new AdvancedIterator(ArrayUtils.toIterator(children[1]))
+        ];
+    }
+
+    getCompilerChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [ts.Node[], ts.Node[]] {
+        const currentCompilerNode = currentNode.compilerNode;
+        const currentSourceFile = currentNode._sourceFile.compilerNode;
+
+        return [
+            ExtendedParser.getCompilerChildren(currentCompilerNode, currentSourceFile),
+            ExtendedParser.getCompilerChildren(newNode, newSourceFile)
+        ];
+    }
+
     /**
      * Gets the children of the node according to whether the tokens have previously been parsed.
      */
     getChildrenFast(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [ts.Node[], ts.Node[]] {
-        if (currentNode._hasParsedTokens())
-            return [currentNode._getCompilerChildren(), getCompilerChildren(newNode, newSourceFile)];
+        const currentCompilerNode = currentNode.compilerNode;
+        const currentSourceFile = currentNode._sourceFile.compilerNode;
+        if (hasParsedTokens(currentCompilerNode)) {
+            return [
+                ExtendedParser.getCompilerChildren(currentCompilerNode, currentSourceFile),
+                ExtendedParser.getCompilerChildren(newNode, newSourceFile)
+            ];
+        }
 
         // great, we don't have to parse the tokens and can instead just use ts.forEachChild (faster)
-        return [currentNode._getCompilerForEachChildren(), getCompilerForEachChildren(newNode, newSourceFile)];
+        return [
+            ExtendedParser.getCompilerForEachChildren(currentCompilerNode, currentSourceFile),
+            ExtendedParser.getCompilerForEachChildren(newNode, newSourceFile)
+        ];
     }
 }

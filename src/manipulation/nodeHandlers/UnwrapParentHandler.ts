@@ -1,8 +1,7 @@
 ﻿import { Node } from "../../compiler";
-import { getCompilerChildren } from "../../compiler/ast/utils";
+import { ExtendedParser } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
-import { AdvancedIterator, ArrayUtils } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 import { NodeHandlerHelper } from "./NodeHandlerHelper";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
@@ -20,19 +19,18 @@ export class UnwrapParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
-        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(getCompilerChildren(newNode, newSourceFile)));
+        const [currentChildren, newChildren] = this.helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
         let index = 0;
 
         // replace normally until reaching the first child
-        while (!currentNodeChildren.done && !newNodeChildren.done && index++ < this.childIndex)
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+        while (!currentChildren.done && !newChildren.done && index++ < this.childIndex)
+            this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
 
         // the child syntax list's children should map to the newNodes next children
-        const currentChild = this.compilerFactory.getExistingCompilerNode(currentNodeChildren.next())!;
+        const currentChild = this.compilerFactory.getExistingCompilerNode(currentChildren.next())!;
         const childSyntaxList = currentChild.getChildSyntaxListOrThrow();
-        for (const child of childSyntaxList._getCompilerChildren())
-            this.helper.handleForValues(this.straightReplacementNodeHandler, child, newNodeChildren.next(), newSourceFile);
+        for (const child of ExtendedParser.getCompilerChildren(childSyntaxList.compilerNode, childSyntaxList._sourceFile.compilerNode))
+            this.helper.handleForValues(this.straightReplacementNodeHandler, child, newChildren.next(), newSourceFile);
 
         // destroy all the current child's children except for the children of its child syntax list
         forgetNodes(currentChild);
@@ -49,11 +47,11 @@ export class UnwrapParentHandler implements NodeHandler {
         }
 
         // handle the rest
-        while (!currentNodeChildren.done)
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
+        while (!currentChildren.done)
+            this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
 
         // ensure the new children iterator is done too
-        if (!newNodeChildren.done)
+        if (!newChildren.done)
             throw new Error("Error replacing tree: Should not have children left over.");
 
         this.compilerFactory.replaceCompilerNode(currentNode, newNode);

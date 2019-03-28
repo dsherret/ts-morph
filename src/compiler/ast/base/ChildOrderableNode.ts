@@ -15,9 +15,10 @@ export interface ChildOrderableNode {
 export function ChildOrderableNode<T extends Constructor<ChildOrderableNodeExtensionType>>(Base: T): Constructor<ChildOrderableNode> & T {
     return class extends Base implements ChildOrderableNode {
         setOrder(order: number) {
-            const childIndex = this.getChildIndex();
             const parent = this.getParentSyntaxList() || this.getParentSyntaxListOrThrow();
-            errors.throwIfOutOfRange(order, [0, parent.getChildCount() - 1], nameof(order));
+            const children = parent._getCompilerExtendedParserChildren();
+            const childIndex = children.indexOf(this.compilerNode);
+            errors.throwIfOutOfRange(order, [0, children.length - 1], nameof(order));
 
             if (childIndex === order)
                 return this;

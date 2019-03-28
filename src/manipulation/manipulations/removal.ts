@@ -39,7 +39,7 @@ export function removeChildrenWithFormattingFromCollapsibleSyntaxList<TNode exte
         return;
 
     const syntaxList = children[0].getParentSyntaxListOrThrow();
-    if (syntaxList.getChildCount() === children.length) {
+    if (syntaxList._getCompilerExtendedParserChildren().length === children.length) {
         removeChildrenWithFormatting({
             children: [syntaxList],
             getSiblingFormatting: () => FormattingKind.None

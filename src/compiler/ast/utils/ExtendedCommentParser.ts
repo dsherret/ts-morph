@@ -48,7 +48,7 @@ export class ExtendedCommentParser {
         if (isSyntaxList(container))
             container = container.parent as ContainerNodes;
 
-        // cache the node similar to how the `_children` property works in the compiler API with `#getChildren()`
+        // cache the result
         let statements = statementsSaver.get(container);
         if (statements == null) {
             statements = Array.from(getNodes(sourceFile, container));

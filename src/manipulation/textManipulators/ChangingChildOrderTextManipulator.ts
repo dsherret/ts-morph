@@ -1,5 +1,5 @@
 ﻿import { Node } from "../../compiler";
-import { StringUtils, TypeGuards } from "../../utils";
+import { TypeGuards } from "../../utils";
 import { FormattingKind } from "../formatting";
 import { getPosAtNextNonBlankLine } from "../textSeek";
 import { getSpacingBetweenNodes } from "./getSpacingBetweenNodes";
@@ -18,7 +18,7 @@ export class ChangingChildOrderTextManipulator<TParentNode extends Node> impleme
 
     getNewText(inputText: string) {
         const { parent, oldIndex, newIndex, getSiblingFormatting } = this.opts;
-        const children = parent.getChildren();
+        const children = parent._getExtendedParserChildren();
         const newLineKind = parent._context.manipulationSettings.getNewLineKindAsString();
         const movingNode = children[oldIndex];
         const fullText = parent._sourceFile.getFullText();

@@ -1,8 +1,6 @@
 ﻿import { Node } from "../../compiler";
-import { getCompilerChildren } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
-import { AdvancedIterator, ArrayUtils } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 import { NodeHandlerHelper } from "./NodeHandlerHelper";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
@@ -38,10 +36,9 @@ export class RangeParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const currentSourceFile = currentNode._sourceFile.compilerNode;
         // todo: decide whether to use forEachChild or forEachKind here (might be hard with custom mappings)
-        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
-        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(getCompilerChildren(newNode, newSourceFile)));
+        const currentSourceFile = currentNode._sourceFile.compilerNode;
+        const [currentNodeChildren, newNodeChildren] = this.helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
 
         // handle any custom mappings
         this.handleCustomMappings(newNode);

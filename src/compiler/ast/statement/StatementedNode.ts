@@ -453,7 +453,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         /* General */
         getStatements() {
-            // todo: memoize this
             return this.getCompilerStatements().map(s => this._getNodeFromCompilerNode(s));
         }
 

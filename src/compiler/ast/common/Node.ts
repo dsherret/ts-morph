@@ -10,12 +10,12 @@ import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOr
 import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
 import { Type } from "../../types";
+import { ExtendedParser, hasParsedTokens } from "../utils";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { SourceFile } from "../module";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 import { Statement } from "../statement";
 import { CommentRange } from "../comment/CommentRange";
-import { getCompilerChildren, getCompilerForEachChildren } from "../utils";
 import { SyntaxList } from "./SyntaxList";
 import { TextRange } from "./TextRange";
 import { ForEachChildTraversalControl, ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
@@ -485,7 +485,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @internal
      */
     *_getChildrenInCacheIterator(): IterableIterator<Node> {
-        const children = this._getCompilerChildrenFast();
+        const children = ExtendedParser.getCompilerChildrenFast(this.compilerNode, this._sourceFile.compilerNode);
         for (const child of children) {
             if (this._context.compilerFactory.hasCompilerNode(child))
                 yield this._context.compilerFactory.getExistingCompilerNode(child)!;
@@ -718,9 +718,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * Gets the number of children the node has.
      */
     getChildCount() {
-        // Do not use the compiler's #getChildCount() because it
-        // does not take into account ExtendedCommentRanges.
-        return this._getCompilerChildren().length;
+        return this.compilerNode.getChildCount();
     }
 
     /**
@@ -1096,7 +1094,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     _getParentSyntaxListIfWrapped(): SyntaxList | undefined {
         const parent = this.getParent();
-        if (parent == null || !parent._hasParsedTokens())
+        if (parent == null || !hasParsedTokens(parent.compilerNode))
             return undefined;
         return this.getParentSyntaxList();
     }
@@ -1104,18 +1102,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     /**
      * Gets the child index of this node relative to the parent.
      */
-    getChildIndex() {
+    getChildIndex(): number {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
-        const compilerNode = this.compilerNode;
-        let i = 0;
-        for (const child of parent._getCompilerChildren()) {
-            if (child === compilerNode)
-                return i;
-            i++;
-        }
+        const index = parent._getCompilerChildren().indexOf(this.compilerNode);
 
-        /* istanbul ignore next */
-        throw new errors.NotImplementedError("For some reason the child's parent did not contain the child.");
+        if (index === -1)
+            throw new errors.NotImplementedError("For some reason the child's parent did not contain the child.");
+
+        return index;
     }
 
     /**
@@ -1621,27 +1615,39 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
+     * Gets the extended parser children (contains "extended comments" in certain scenarios).
+     * @internal
+     */
+    _getExtendedParserChildren(): Node[] {
+        return this._getCompilerExtendedParserChildren().map(n => this._getNodeFromCompilerNode(n));
+    }
+
+    /**
      * Gets the compiler children of the node.
      * @internal
      */
-    _getCompilerChildren(): ts.Node[] {
-        return getCompilerChildren(this.compilerNode, this._sourceFile.compilerNode);
+    private _getCompilerChildren(): ts.Node[] {
+        return this.compilerNode.getChildren(this._sourceFile.compilerNode);
+    }
+
+    /**
+     * Gets the compiler extended parser children (contains "extended comments" in certain scenarios).
+     * @internal
+     */
+    _getCompilerExtendedParserChildren(): ts.Node[] {
+        return ExtendedParser.getCompilerChildren(this.compilerNode, this._sourceFile.compilerNode);
     }
 
     /**
      * Gets the compiler children of the node using .forEachChild
      * @internal
      */
-    _getCompilerForEachChildren(): ts.Node[] {
-        return getCompilerForEachChildren(this.compilerNode, this._sourceFile.compilerNode);
-    }
-
-    /**
-     * Gets children using forEachChildren if it has no parsed tokens, otherwise getChildren.
-     * @internal
-     */
-    _getCompilerChildrenFast() {
-        return this._hasParsedTokens() ? this._getCompilerChildren() : this._getCompilerForEachChildren();
+    private _getCompilerForEachChildren(): ts.Node[] {
+        const children: ts.Node[] = [];
+        this.compilerNode.forEachChild(child => {
+            children.push(child);
+        });
+        return children;
     }
 
     /**
@@ -1880,15 +1886,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Gets if this node has previously parsed tokens.
-     * @internal
-     */
-    _hasParsedTokens() {
-        // if this is true, it means the compiler has previously parsed the tokens
-        return (this.compilerNode as any)._children != null;
-    }
-
-    /**
      * Ensures that the binder has bound the node before.
      * @internal
      */
@@ -1933,7 +1930,7 @@ function* getCompilerForEachDescendantsIterator(node: ts.Node): IterableIterator
 }
 
 function* getCompilerDescendantsIterator(node: ts.Node, sourceFile: ts.SourceFile): IterableIterator<ts.Node> {
-    for (const child of getCompilerChildren(node, sourceFile)) {
+    for (const child of node.getChildren(sourceFile)) {
         yield child;
         yield* getCompilerDescendantsIterator(child, sourceFile);
     }

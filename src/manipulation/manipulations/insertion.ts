@@ -191,7 +191,7 @@ export interface InsertIntoBracesOrSourceFileOptions {
 export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileOptions) {
     const { parent, index, children } = opts;
     const fullText = parent._sourceFile.getFullText();
-    const insertPos = getInsertPosFromIndex(index, parent.getChildSyntaxListOrThrow(), children);
+    const insertPos = getInsertPosFromIndex(index, parent.getChildSyntaxListOrThrow(), children.map(c => c.compilerNode));
     const endPos = getEndPosFromIndex(index, parent, children, fullText);
     const replacingLength = endPos - insertPos;
     const newText = getNewText();

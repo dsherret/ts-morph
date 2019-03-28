@@ -1,3 +1,4 @@
 /* barrel:ignore */
 export * from "./ExtendedCommentParser";
-export * from "./getCompilerChildren";
+export * from "./ExtendedParser";
+export * from "./hasParsedTokens";

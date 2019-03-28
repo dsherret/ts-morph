@@ -5,6 +5,7 @@ import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, 
     PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachChildTraversalControl,
     ForEachDescendantTraversalControl, VariableStatement, ForStatement, ForOfStatement, ForInStatement, NumericLiteral, StringLiteral,
     ExpressionStatement } from "../../../../compiler";
+import { hasParsedTokens } from "../../../../compiler/ast/utils";
 import { Project } from "../../../../Project";
 import * as errors from "../../../../errors";
 import { WriterFunction } from "../../../../types";
@@ -829,15 +830,15 @@ class MyClass {
 
         it("should get descendants using .forEachChild when specifying a parsed kind node while not on a syntax list", () => {
             doTest("class C1 {} class C2 {}", sourceFile => sourceFile, SyntaxKind.ClassDeclaration, ["class C1 {}", "class C2 {}"], sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.false;
-                expect(sourceFile.getClassOrThrow("C1")._hasParsedTokens()).to.be.false;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.false;
+                expect(hasParsedTokens(sourceFile.getClassOrThrow("C1").compilerNode)).to.be.false;
             });
         });
 
         it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
             doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.ClassDeclaration, ["class C {}"], sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.true;
-                expect(sourceFile.getClassOrThrow("C")._hasParsedTokens()).to.be.false;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
             });
         });
 
@@ -847,7 +848,7 @@ class MyClass {
 
         it("should get descendants using .getChildren() when specifying a token kind", () => {
             doTest("class C {} interface I {}", sourceFile => sourceFile, SyntaxKind.OpenBraceToken, ["{", "{"], sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.true;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
             });
         });
     });
@@ -889,16 +890,16 @@ class MyClass {
 
         it("should get descendant using .forEachChild when specifying a parsed kind node while not on a syntax list", () => {
             doTest("class C1 {} class C2 {}", sourceFile => sourceFile, SyntaxKind.ClassDeclaration, "class C1 {}", sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.false;
-                expect(sourceFile.getClassOrThrow("C1")._hasParsedTokens()).to.be.false;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.false;
+                expect(hasParsedTokens(sourceFile.getClassOrThrow("C1").compilerNode)).to.be.false;
             });
         });
 
         it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
             doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.InterfaceDeclaration, "interface I {}", sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.true;
-                expect(sourceFile.getClassOrThrow("C")._hasParsedTokens()).to.be.false;
-                expect(sourceFile.getInterfaceOrThrow("I")._hasParsedTokens()).to.be.false;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
+                expect(hasParsedTokens(sourceFile.getInterfaceOrThrow("I").compilerNode)).to.be.false;
             });
         });
 
@@ -908,14 +909,14 @@ class MyClass {
 
         it("should get descendants using .getChildren() when specifying a token kind", () => {
             doTest("class C {} interface I {}", sourceFile => sourceFile, SyntaxKind.OpenBraceToken, "{", sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.true;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
             });
         });
 
         it("should get js doc descendants", () => {
             doTest("/**\n * @return {string}\n */\nfunction test() {}", sourceFile => sourceFile, SyntaxKind.JSDocReturnTag, "@return {string}", sourceFile => {
                 // todo: in the future it would be better for this to be false and only parse the tokens on JSDoc nodes
-                expect(sourceFile._hasParsedTokens()).to.be.true;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
             });
         });
     });

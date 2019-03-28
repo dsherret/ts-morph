@@ -1,7 +1,7 @@
 import { getInsertPosFromIndex, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { ts } from "../../../typescript";
-import { getTextFromStringOrWriter, StringUtils, TypeGuards } from "../../../utils";
+import { getTextFromStringOrWriter, TypeGuards } from "../../../utils";
 import { Node } from "./Node";
 
 export class SyntaxList extends Node<ts.SyntaxList> {
@@ -11,18 +11,20 @@ export class SyntaxList extends Node<ts.SyntaxList> {
      * @returns The children that were added.
      */
     addChildText(textOrWriterFunction: string | WriterFunction) {
-        return this.insertChildText(this.getChildCount(), textOrWriterFunction);
+        const count = this._getCompilerExtendedParserChildren().length;
+        return this.insertChildText(count, textOrWriterFunction);
     }
 
     /**
      * Inserts text at the specified child index.
-     * @param index - Child index to insert at.
+     * @param index - Index to insert at.
      * @param textOrWriterFunction - Text to insert or function that provides a writer to write with.
      * @returns The children that were inserted.
      */
     insertChildText(index: number, textOrWriterFunction: string | WriterFunction) {
         // get index
-        const initialChildCount = this.getChildCount();
+        const children = this._getCompilerExtendedParserChildren();
+        const initialChildCount = children.length;
         const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();
         const parent = this.getParentOrThrow();
         index = verifyAndGetIndex(index, initialChildCount);
@@ -55,7 +57,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
         }
 
         // insert
-        const insertPos = getInsertPosFromIndex(index, this, this.getChildren());
+        const insertPos = getInsertPosFromIndex(index, this, children);
         insertIntoParentTextRange({
             insertPos,
             newText: insertText,
@@ -63,7 +65,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
         });
 
         // get inserted children
-        const finalChildren = this.getChildren();
+        const finalChildren = this._getExtendedParserChildren();
         return getNodesToReturn(finalChildren, index, finalChildren.length - initialChildCount);
     }
 }
