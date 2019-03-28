@@ -233,7 +233,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
 
         addExportDeclarations(structures: ReadonlyArray<OptionalKind<ExportDeclarationStructure>>) {
             // always insert at end of module because of export {Identifier}; statements
-            return this.insertExportDeclarations(this.getChildSyntaxListOrThrow()._getCompilerExtendedParserChildren().length, structures);
+            return this.insertExportDeclarations(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
         insertExportDeclaration(index: number, structure: OptionalKind<ExportDeclarationStructure>) {
@@ -281,7 +281,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
 
         addExportAssignments(structures: ReadonlyArray<OptionalKind<ExportAssignmentStructure>>) {
             // always insert at end of file because of export {Identifier}; statements
-            return this.insertExportAssignments(this.getChildSyntaxListOrThrow()._getCompilerExtendedParserChildren().length, structures);
+            return this.insertExportAssignments(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
         insertExportAssignment(index: number, structure: OptionalKind<ExportAssignmentStructure>) {
