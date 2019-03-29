@@ -48,7 +48,7 @@ export class StringUtils {
     }
 
     static getLineNumberAtPos(str: string, pos: number) {
-        errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
+        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
         // do not allocate a string in this method
         let count = 0;
 
@@ -61,12 +61,12 @@ export class StringUtils {
     }
 
     static getLengthFromLineStartAtPos(str: string, pos: number) {
-        errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
+        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
         return pos - StringUtils.getLineStartFromPos(str, pos);
     }
 
     static getLineStartFromPos(str: string, pos: number) {
-        errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
+        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
 
         while (pos > 0) {
             const previousChar = str[pos - 1];
@@ -79,7 +79,7 @@ export class StringUtils {
     }
 
     static getLineEndFromPos(str: string, pos: number) {
-        errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
+        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
 
         while (pos < str.length) {
             const currentChar = str[pos];
@@ -96,7 +96,7 @@ export class StringUtils {
     }
 
     /**
-     * Escapes all the occurences of the char in the string.
+     * Escapes all the occurrences of the char in the string.
      */
     static escapeChar(str: string, char: string) {
         if (char.length !== 1)
@@ -113,7 +113,7 @@ export class StringUtils {
 
     static indent(str: string, times: number, indentText: string, isInStringAtPos: (pos: number) => boolean) {
         // todo: unit test this (right now it's somewhat tested indirectly)
-        const unindentRegex = times > 0 ? undefined : new RegExp(getDeindentRegexText());
+        const unIndentRegex = times > 0 ? undefined : new RegExp(getDeIndentRegexText());
         const newLines: string[] = [];
         let pos = 0;
 
@@ -123,14 +123,14 @@ export class StringUtils {
             else if (times > 0)
                 newLines.push(indentText.repeat(times) + line);
             else // negative
-                newLines.push(line.replace(unindentRegex!, ""));
+                newLines.push(line.replace(unIndentRegex!, ""));
 
             pos += line.length + 1; // +1 for \n char
         }
 
         return newLines.join("\n");
 
-        function getDeindentRegexText() {
+        function getDeIndentRegexText() {
             let text = "^";
             for (let i = 0; i < Math.abs(times); i++) {
                 text += "(";

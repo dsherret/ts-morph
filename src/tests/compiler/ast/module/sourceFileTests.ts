@@ -1407,6 +1407,7 @@ const t = 5;`;
     });
 
     describe(nameof<SourceFile>(n => n.getLineAndColumnAtPos), () => {
+
         function test(code: string, pos: number, expected: { line: number, column: number } | "throw") {
             const { sourceFile } = getInfoFromText(code, { filePath: "/File.ts" });
             if (expected === "throw") {
@@ -1416,6 +1417,7 @@ const t = 5;`;
                 expect(sourceFile.getLineAndColumnAtPos(pos)).to.deep.equal(expected);
             }
         }
+
         it("should return line and column numbers at given position in single line source files", () => {
             test(``, 0, { line: 1, column: 0 });
             const code = `interface I { m1(): void }`;
@@ -1423,12 +1425,14 @@ const t = 5;`;
             test(code, 0, { line: 1, column: 0 });
             test(code, code.length, { line: 1, column: code.length });
         });
+
         it("should return line and column numbers at given position in empty first line source files", () => {
             const code = `\ninterface I { m1(): void }`;
             test(code, 0, { line: 1, column: 0 });
             test(code, 1, { line: 2, column: 0 });
             test(code, code.length, { line: 2, column: code.length - 1 });
         });
+
         it("should return line and column numbers at given position in multiple lines and comments source file", () => {
             const code = `
 /**
@@ -1446,14 +1450,12 @@ interface I {
             test(code, code.indexOf("// tail") + "// tail".length + 1, { line: 8, column: 0});
         });
 
-        it.skip("should throw when position is length + 1", () => {
+        it("should throw end invalid position is given", () => {
             test(`var a = 1`, `var a = 1`.length + 1, "throw");
             test(``, 1, "throw");
-        });
-
-        it("should throw end invalid position is given", () => {
             test(`interface I { m1(): void }`, 1000, "throw");
             test(`\ninterface I {\n m1(): void }`, -1, "throw");
         });
+
     });
 });
