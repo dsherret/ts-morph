@@ -4,14 +4,6 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 
 ## Version 2
 
-### Removed SourceFile#getLineNumberAtPos()
-
-Removed `SourceFile`'s method `getLineNumberAtPos` in favor of method `getLineAndColumnAtPos` which returns an object with both line number and column number at given position: 
-
-```ts
-const { line, column } = sourceFile.getLineAndColumnAtPos(position);
-```
-
 ### Removed default export
 
 For a while now it's been recommended to use the named export instead of the default export for the project. From now on, only the named export can be used:
@@ -79,6 +71,14 @@ These two structures are now differentiated based on their new `.kind` property.
 ### `ModuledNode#getExportedDeclarations()` now returns a map
 
 So instead of just returning an array of nodes, it now returns a map. The key is the name it was exported on and the value is an array of declarations for that value. This will make it much easier to identify the name a node was exported on.
+
+### Removed SourceFile#getLineNumberAtPos()
+
+Removed `SourceFile`'s method `getLineNumberAtPos` in favor of method `getLineAndColumnAtPos` which returns an object with both line number and column number at given position: 
+
+```ts
+const { line, column } = sourceFile.getLineAndColumnAtPos(position);
+```
 
 ## Version 1
 
