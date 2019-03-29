@@ -1432,47 +1432,23 @@ const t = 5;`;
         it("should return line and column numbers at given position in multiple lines and comments source file", () => {
             const code = `
 /**
- * Lorem
- * @param ipsum - Gives.
+ * Lorem ipsum
  */
-   // line starting with spaces
 interface I {
-    /**
-     * jsdoc comment 2.
-     * @returns - Lorem ipsum
-     */
-    m1(): void
-    /* block1 */
 }
-  export class 
-    C implements 
- I { // line starting with spaces
-/* line ending with spaces */ m1(){             
-
-    }
- }
 // tail
 `;
             test(code, 0, { line: 1, column: 0 });
             test(code, 1, { line: 2, column: 0 });
-            test(code, code.indexOf("@param ipsum") - 3, { line: 4, column: 0 });
-            test(code, code.indexOf("@param ipsum") + "@param ipsum - Gives.".length, { line: 4, column: " * @param ipsum - Gives.".length });
-            test(code, code.indexOf("   // line star"), { line: 6, column: 0});
-            test(code, code.indexOf("   // line star") + 2, { line: 6, column: 2});
-            test(code, code.indexOf("/* block1 */"), { line: 13, column: 4});
-            test(code, code.indexOf("C implements") - 1, { line: 16, column: 3});
-            test(code, code.indexOf("/* line ending with spaces */ m1(){      ") + "/* line ending with spaces */ m1(){      ".length,
-                { line: 18, column: "/* line ending with spaces */ m1(){      ".length});
-            test(code, code.indexOf("// tail") + "// tail".length, { line: 22, column: "// tail".length});
-            test(code, code.indexOf("// tail") + "// tail".length + 1, { line: 23, column: 0});
+            test(code, code.indexOf("Lorem ipsum") - 3, { line: 3, column: 0 });
+            test(code, code.indexOf("Lorem ipsum") + "Lorem ipsum".length, { line: 3, column: " * Lorem ipsum".length });
+            test(code, code.indexOf("// tail") + "// tail".length, { line: 7, column: 7});
+            test(code, code.indexOf("// tail") + "// tail".length + 1, { line: 8, column: 0});
         });
 
         it.skip("should throw when position is length + 1", () => {
             test(`var a = 1`, `var a = 1`.length + 1, "throw");
             test(``, 1, "throw");
-            test(`\ninterface I {\n m1(): void }`, `\ninterface I {\n m1(): void }`.length + 1, "throw");
-            test(`var a = 1\n`, `var a = 1\n`.length + 1, "throw");
-
         });
 
         it("should throw end invalid position is given", () => {
