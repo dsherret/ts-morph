@@ -1123,7 +1123,7 @@ function myFunction(param: MyClass) {
 
             const referencing = sourceFile.getReferencingNodesInOtherSourceFiles();
             expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...[...file1.getImportDeclarations(),
-            ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()),
+                ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()),
                 `import test = require("../MyInterface");`, `import("../MyInterface")`].sort());
         });
 
@@ -1134,7 +1134,7 @@ function myFunction(param: MyClass) {
             const file2 = project.createSourceFile("/file2.ts", `import "./sub/index";`);
             const referencing = sourceFile.getReferencingNodesInOtherSourceFiles();
             expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...file1.getExportDeclarations(),
-            ...file2.getImportDeclarations()].map(d => d.getText()).sort());
+                ...file2.getImportDeclarations()].map(d => d.getText()).sort());
         });
 
         it("should keep the references up to date during manipulations", () => {
@@ -1269,8 +1269,8 @@ function myFunction(param: MyClass) {
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
                 { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
             ], expectedText, {
-                    newLineCharacter: "\r\n"
-                });
+                newLineCharacter: "\r\n"
+            });
         });
 
         it("should add missing imports when some exist", () => {
