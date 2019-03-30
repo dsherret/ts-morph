@@ -604,6 +604,10 @@ export class FileSystemWrapper {
         return this.readDirSync(dirPath).filter(path => this.directoryExistsSync(path));
     }
 
+    realpathSync(path: string) {
+        return this.getStandardizedAbsolutePath(this.fileSystem.realpathSync(path));
+    }
+
     getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string) {
         fileOrDirPath = FileUtils.getStandardizedAbsolutePath(this.fileSystem, fileOrDirPath, relativeBase);
         return this.pathCasingMaintainer.getPath(fileOrDirPath);

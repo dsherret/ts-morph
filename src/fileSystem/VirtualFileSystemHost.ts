@@ -188,6 +188,10 @@ export class VirtualFileSystemHost implements FileSystemHost {
         return this.directories.has(dirPath);
     }
 
+    realpathSync(path: string) {
+        return path;
+    }
+
     getCurrentDirectory() {
         return "/";
     }

@@ -52,6 +52,14 @@ when using the specific methods:
 sourceFile.addClass({ name: "MyClass" }); // ok
 ```
 
+### FileSystemHost changes
+
+The `FileSystemHost` interface now requires implementing `realpathSync()` and `isCaseSensitive()`.
+
+### `JsxText#containsOnlyWhiteSpaces()` renamed to `#containsOnlyTriviaWhiteSpaces()`
+
+This was done to match the change in TS 3.4.
+
 ### Removed Structures
 
 These are now all covered by `StatementedNodeStructure`.

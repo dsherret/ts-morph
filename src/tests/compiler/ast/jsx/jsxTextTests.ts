@@ -8,10 +8,10 @@ function getInfo(text: string) {
 }
 
 describe(nameof(JsxText), () => {
-    describe(nameof<JsxText>(n => n.containsOnlyWhiteSpaces), () => {
+    describe(nameof<JsxText>(n => n.containsOnlyTriviaWhiteSpaces), () => {
         function doTest(text: string, value: boolean) {
             const { descendant } = getInfo(text);
-            expect(descendant.containsOnlyWhiteSpaces()).to.equal(value);
+            expect(descendant.containsOnlyTriviaWhiteSpaces()).to.equal(value);
         }
 
         it("should get if it contains only whitespace when it doesn't", () => {
