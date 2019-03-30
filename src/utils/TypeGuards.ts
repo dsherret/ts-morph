@@ -1430,6 +1430,7 @@ export class TypeGuards {
      */
     static isLiteralLikeNode(node: compiler.Node): node is compiler.LiteralLikeNode & compiler.LiteralLikeNodeExtensionType {
         switch (node.getKind()) {
+            case SyntaxKind.JsxText:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -1526,7 +1527,6 @@ export class TypeGuards {
             case SyntaxKind.SetAccessor:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.Parameter:

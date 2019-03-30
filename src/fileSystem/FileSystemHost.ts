@@ -18,6 +18,8 @@
     fileExistsSync(filePath: string): boolean;
     directoryExists(dirPath: string): Promise<boolean>;
     directoryExistsSync(dirPath: string): boolean;
+    /** See https://nodejs.org/api/fs.html#fs_fs_realpathsync_path_options */
+    realpathSync(path: string): string;
     getCurrentDirectory(): string;
     glob(patterns: ReadonlyArray<string>): string[];
 }

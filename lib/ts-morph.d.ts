@@ -319,6 +319,8 @@ export interface FileSystemHost {
     fileExistsSync(filePath: string): boolean;
     directoryExists(dirPath: string): Promise<boolean>;
     directoryExistsSync(dirPath: string): boolean;
+    /** See https://nodejs.org/api/fs.html#fs_fs_realpathsync_path_options */
+    realpathSync(path: string): string;
     getCurrentDirectory(): string;
     glob(patterns: ReadonlyArray<string>): string[];
 }
@@ -6443,11 +6445,13 @@ export declare class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpr
     getStructure(): JsxSpreadAttributeStructure;
 }
 
-export declare class JsxText extends Node<ts.JsxText> {
+declare const JsxTextBase: Constructor<LiteralLikeNode> & typeof Node;
+
+export declare class JsxText extends JsxTextBase<ts.JsxText> {
     /**
      * Gets if the JSX text contains only white spaces.
      */
-    containsOnlyWhiteSpaces(): boolean;
+    containsOnlyTriviaWhiteSpaces(): boolean;
 }
 
 export interface ImplementedKindToNodeMappings {

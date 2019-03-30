@@ -23,7 +23,7 @@ export function readDirectory(fileSystemWrapper: FileSystemWrapper, useCaseSensi
                 if (includeDir)
                     directories.push(path);
                 return getFileSystemEntries(path, fileSystemWrapper);
-            }),
+            }, path => fileSystemWrapper.realpathSync(path)),
         directories
     };
 

@@ -3,12 +3,12 @@ import * as path from "path";
 import { Node } from "../../../compiler";
 import { FileSystemHost, VirtualFileSystemHost } from "../../../fileSystem";
 import { Project } from "../../../Project";
-import { CompilerOptions, SyntaxKind } from "../../../typescript";
+import { CompilerOptions, SyntaxKind, ts } from "../../../typescript";
 
 function getTextForLibFile(fileName: string) {
     return {
         filePath: path.join("node_modules/typescript/lib", fileName),
-        text: fs.readFileSync(path.join(__dirname, "../../../../node_modules/typescript/lib", fileName), "utf-8")
+        text: fs.readFileSync(path.join(__dirname, `../../../../node_modules/typescript-${ts.version}/lib`, fileName), "utf-8")
     };
 }
 

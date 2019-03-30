@@ -144,6 +144,10 @@ export class DefaultFileSystemHost implements FileSystemHost {
         }
     }
 
+    realpathSync(path: string) {
+        return this.fs.realpathSync(path);
+    }
+
     getCurrentDirectory(): string {
         return FileUtils.standardizeSlashes(nodePath.resolve());
     }
