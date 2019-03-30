@@ -38,6 +38,8 @@ node.forEachChild(node => {
 });
 ```
 
+#### Traversal Control
+
 One major difference between the `.forEachChild` method in ts-morph and the compiler API, is that returning a truthy value in the callback will not stop iteration. If you wish to stop iteration, then use the `stop` method on the second parameter:
 
 ```ts
