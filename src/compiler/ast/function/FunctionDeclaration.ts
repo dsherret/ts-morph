@@ -2,21 +2,21 @@ import { removeOverloadableStatementedNodeChild } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode,
-    TextInsertableNode, UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
+import { AmbientableNode, AsyncableNode, BodyableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode, TextInsertableNode,
+    UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
-import { Node } from "../common";
+import { Statement } from "../statement";
 import { NamespaceChildableNode } from "../module";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
-    AmbientableNode(ExportableNode(FunctionLikeDeclaration(NamespaceChildableNode(NameableNode(Node)))))
-)))))));
-export const FunctionDeclarationOverloadBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(AsyncableNode(GeneratorableNode(ModifierableNode(
-    SignaturedDeclaration(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Node)))))))
+export const FunctionDeclarationBase = UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
+    AmbientableNode(ExportableNode(FunctionLikeDeclaration(NamespaceChildableNode(NameableNode(Statement)))))
 ))))));
+export const FunctionDeclarationOverloadBase = UnwrappableNode(TextInsertableNode(AsyncableNode(GeneratorableNode(ModifierableNode(
+    SignaturedDeclaration(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Statement)))))))
+)))));
 
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**

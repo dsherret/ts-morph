@@ -1,9 +1,9 @@
 import { Identifier } from "../../../main";
 import { ts } from "../../../typescript";
-import { ChildOrderableNode, JSDocableNode } from "../base";
+import { JSDocableNode } from "../base";
 import { Statement } from "./Statement";
 
-export const LabeledStatementBase = JSDocableNode(ChildOrderableNode(Statement));
+export const LabeledStatementBase = JSDocableNode(Statement);
 export class LabeledStatement extends LabeledStatementBase<ts.LabeledStatement> {
     /**
      * Gets this labeled statement's label

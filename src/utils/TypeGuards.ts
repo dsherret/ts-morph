@@ -341,20 +341,29 @@ export class TypeGuards {
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.MethodSignature:
             case SyntaxKind.PropertySignature:
+            case SyntaxKind.ExportAssignment:
+            case SyntaxKind.ExportDeclaration:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.ModuleBlock:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
-            case SyntaxKind.CaseClause:
             case SyntaxKind.ContinueStatement:
-            case SyntaxKind.DefaultClause:
+            case SyntaxKind.DebuggerStatement:
             case SyntaxKind.DoStatement:
+            case SyntaxKind.EmptyStatement:
             case SyntaxKind.ExpressionStatement:
             case SyntaxKind.ForInStatement:
             case SyntaxKind.ForOfStatement:
             case SyntaxKind.ForStatement:
             case SyntaxKind.IfStatement:
             case SyntaxKind.LabeledStatement:
+            case SyntaxKind.NotEmittedStatement:
             case SyntaxKind.ReturnStatement:
             case SyntaxKind.SwitchStatement:
+            case SyntaxKind.ThrowStatement:
+            case SyntaxKind.TryStatement:
             case SyntaxKind.VariableStatement:
             case SyntaxKind.WhileStatement:
             case SyntaxKind.WithStatement:
@@ -2179,6 +2188,7 @@ export class TypeGuards {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ExportAssignment:
             case SyntaxKind.ExportDeclaration:
