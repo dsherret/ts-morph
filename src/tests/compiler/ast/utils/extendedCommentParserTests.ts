@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ExtendedCommentParser, ContainerNodes } from "../../../../compiler/ast/utils";
+import { ExtendedCommentParser, ContainerNodes, isComment } from "../../../../compiler/ast/utils";
 import { ts, SyntaxKind } from "../../../../typescript";
 
 describe(nameof(ExtendedCommentParser), () => {
@@ -30,15 +30,10 @@ describe(nameof(ExtendedCommentParser), () => {
                 const result = ExtendedCommentParser.getOrParseChildren(sourceFile, block);
                 const adjustedExpectedNodes = expectedNodes.map(n => ({
                     kind: n.kind,
-                    pos: (n.pos === 0 && !isComment(n.kind) ? leadingText.length - 1 : leadingText.length) + n.pos,
+                    pos: (n.pos === 0 && !isComment(n) ? leadingText.length - 1 : leadingText.length) + n.pos,
                     end: n.end + leadingText.length
                 }));
                 assertEqual(adjustedExpectedNodes, result, message);
-
-                function isComment(kind: SyntaxKind) {
-                    return kind === ts.SyntaxKind.SingleLineCommentTrivia
-                        || kind === ts.SyntaxKind.MultiLineCommentTrivia;
-                }
             }
         }
 

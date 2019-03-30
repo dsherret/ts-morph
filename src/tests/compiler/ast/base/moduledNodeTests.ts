@@ -92,7 +92,7 @@ describe(nameof(ModuledNode), () => {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addImportDeclaration(structure);
             expect(result).to.be.instanceOf(ImportDeclaration);
-            expect(sourceFile.getText()).to.equal(expectedCode);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should add at the last import if one exists", () => {
@@ -103,6 +103,14 @@ describe(nameof(ModuledNode), () => {
         it("should add at the start if no imports exists", () => {
             doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" },
                 `import "./file";\n\nexport class MyClass {}\n`);
+        });
+
+        it("should insert after any multi line comments at the start of a file", () => {
+            doTest(`/* test */`, { moduleSpecifier: "./file" }, `/* test */\nimport "./file";\n`);
+        });
+
+        it("should insert before any single line comments at the start of a file", () => {
+            doTest(`// test`, { moduleSpecifier: "./file" }, `import "./file";\n\n// test`);
         });
     });
 

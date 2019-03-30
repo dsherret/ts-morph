@@ -1686,6 +1686,12 @@ class MyClass {
                 [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]);
         });
 
+        it("should not return extended comments", () => {
+            runTest("// testing\nclass T {}",
+                sourceFile => sourceFile,
+                [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken]);
+        });
+
         it("should iterate over all the children of a class declaration", () => {
             runTest("class T { prop1: string; prop2: number; }",
                 sourceFile => sourceFile.getClassOrThrow("T"),
@@ -1797,8 +1803,12 @@ class MyClass {
             doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0].getModifiers()[0], 11);
         });
 
-        it("should include the comment for the node that handles it", () => {
-            doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0], 0);
+        it("should not include an extended comment", () => {
+            doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0], 11);
+        });
+
+        it("should include a comment on the same line", () => {
+            doTest("/* a */ declare function test() {}", sourceFile => sourceFile.getFunctions()[0], 0);
         });
     });
 

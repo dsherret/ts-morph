@@ -10,7 +10,7 @@ import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOr
 import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
 import { Type } from "../../types";
-import { ExtendedParser, hasParsedTokens } from "../utils";
+import { ExtendedParser, hasParsedTokens, isComment } from "../utils";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { SourceFile } from "../module";
 import { KindToNodeMappings } from "../kindToNodeMappings";
@@ -655,7 +655,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * Gets the child nodes passed to the delegate of `node.forEachChild(child => {})` as an array.
      */
     forEachChildAsArray() {
-        return this._getCompilerForEachChildren().map(c => this._getNodeFromCompilerNode(c));
+        const children: Node[] = [];
+        this.compilerNode.forEachChild(child => {
+            children.push(this._getNodeFromCompilerNode(child));
+        });
+        return children;
     }
 
     /**
@@ -816,7 +820,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Gets the first source file text position that is not whitespace.
+     * Gets the first source file text position that is not whitespace taking into account extended comments.
      */
     getNonWhitespaceStart(): number {
         const parent = this.getParent() as Node | undefined;
@@ -824,7 +828,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
             && !TypeGuards.isSourceFile(parent)
             && parent.getPos() === this.getPos();
 
-        return getNextNonWhitespacePos(this._sourceFile.getFullText(), parentTakesPrecedence ? this.getStart(true) : this.getPos());
+        if (parentTakesPrecedence)
+            return this.getStart(true);
+
+        let startSearchPos: number;
+        const previousSibling = this._getCompilerPreviousSibling();
+        if (previousSibling != null && isComment(previousSibling))
+            startSearchPos = previousSibling.getEnd();
+        else
+            startSearchPos = this.getPos();
+
+        return getNextNonWhitespacePos(this._sourceFile.getFullText(), startSearchPos);
     }
 
     /**
@@ -1086,6 +1100,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * Gets the parent if it's a syntax list.
      */
     getParentSyntaxList(): SyntaxList | undefined {
+        // comments need special handling because they might not be within the range of the syntax list
+        const kind = this.getKind();
+        if (kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia)
+            return this.getParentOrThrow().getChildSyntaxList();
+
         const syntaxList = getParentSyntaxList(this.compilerNode);
         return this._getNodeFromCompilerNodeIfExists(syntaxList);
     }
