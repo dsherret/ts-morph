@@ -2,7 +2,8 @@ import { ts } from "../../../typescript";
 import { LiteralLikeNode } from "../base";
 import { Node } from "../common";
 
-export class JsxText extends LiteralLikeNode(Node)<ts.JsxText> {
+export const JsxTextBase = LiteralLikeNode(Node);
+export class JsxText extends JsxTextBase<ts.JsxText> {
     /**
      * Gets if the JSX text contains only white spaces.
      */
