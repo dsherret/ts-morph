@@ -64,7 +64,7 @@ describe(nameof(Diagnostic), () => {
 
     describe(nameof<Diagnostic>(d => d.getSourceFile), () => {
         it("should get the source file", () => {
-            expect(constError.getSourceFile().getFilePath()).to.equal(sourceFile.getFilePath());
+            expect(constError.getSourceFile()!.getFilePath()).to.equal(sourceFile.getFilePath());
         });
     });
 });
