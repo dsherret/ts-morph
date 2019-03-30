@@ -1,11 +1,9 @@
 import * as errors from "../../../errors";
 import { Identifier } from "../../../main";
 import { ts } from "../../../typescript";
-import { ChildOrderableNode } from "../base";
 import { Statement } from "./Statement";
 
-export const BreakStatementBase = ChildOrderableNode(Statement);
-export class BreakStatement extends BreakStatementBase<ts.BreakStatement> {
+export class BreakStatement extends Statement<ts.BreakStatement> {
     /**
      * Gets this break statement's label or undefined if it does not exist.
      */

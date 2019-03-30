@@ -1,11 +1,9 @@
 import * as errors from "../../../errors";
 import { ts } from "../../../typescript";
-import { ChildOrderableNode } from "../base";
 import { Expression } from "../expression";
 import { Statement } from "./Statement";
 
-export const ReturnStatementBase = ChildOrderableNode(Statement);
-export class ReturnStatement extends ReturnStatementBase<ts.ReturnStatement> {
+export class ReturnStatement extends Statement<ts.ReturnStatement> {
     /**
      * Gets this return statement's expression if it exists or throws.
      */

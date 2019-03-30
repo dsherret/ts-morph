@@ -1,13 +1,13 @@
 import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
-import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
+import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";
 import { Statement } from "./Statement";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../variable";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const VariableStatementBase = ChildOrderableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(Statement))))));
+export const VariableStatementBase = NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(Statement)))));
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /**
      * Get variable declaration list.

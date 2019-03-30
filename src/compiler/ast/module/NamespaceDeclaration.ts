@@ -2,8 +2,8 @@ import * as errors from "../../../errors";
 import { removeChildren, insertIntoParentTextRange } from "../../../manipulation";
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode,
-    TextInsertableNode, UnwrappableNode, ModuledNode } from "../base";
+import { AmbientableNode, BodiedNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode,
+    UnwrappableNode, ModuledNode } from "../base";
 import { TypeGuards } from "../../../utils";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
@@ -12,9 +12,9 @@ import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
 import { NamespaceDeclarationKind } from "./NamespaceDeclarationKind";
 
-export const NamespaceDeclarationBase = ModuledNode(ChildOrderableNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(
+export const NamespaceDeclarationBase = ModuledNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(
     StatementedNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))))
-))))));
+)))));
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
      * Gets the full name of the namespace.

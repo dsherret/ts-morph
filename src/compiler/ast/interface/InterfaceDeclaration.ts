@@ -1,7 +1,7 @@
 import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
-import { AmbientableNode, ChildOrderableNode, ExportableNode, ExtendsClauseableNode, HeritageClauseableNode, JSDocableNode, ModifierableNode, NamedNode,
+import { AmbientableNode, ExportableNode, ExtendsClauseableNode, HeritageClauseableNode, JSDocableNode, ModifierableNode, NamedNode,
     TextInsertableNode, TypeElementMemberedNode, TypeParameteredNode } from "../base";
 import { Type } from "../../types";
 import { callBaseSet } from "../callBaseSet";
@@ -12,9 +12,9 @@ import { ImplementationLocation } from "../../tools";
 import { TypeAliasDeclaration } from "../type";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const InterfaceDeclarationBase = TypeElementMemberedNode(ChildOrderableNode(TextInsertableNode(ExtendsClauseableNode(HeritageClauseableNode(
+export const InterfaceDeclarationBase = TypeElementMemberedNode(TextInsertableNode(ExtendsClauseableNode(HeritageClauseableNode(
     TypeParameteredNode(JSDocableNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Statement)))))))
-)))));
+))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**
      * Gets the base types.

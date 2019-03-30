@@ -3895,7 +3895,7 @@ declare type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclaratio
 
 declare type ClassLikeDeclarationBaseSpecificExtensionType = Node<ts.ClassLikeDeclarationBase> & HeritageClauseableNode & ModifierableNode & NameableNode;
 
-declare const ClassDeclarationBase: Constructor<ChildOrderableNode> & Constructor<NamespaceChildableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ClassLikeDeclarationBase> & typeof Statement;
+declare const ClassDeclarationBase: Constructor<NamespaceChildableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ClassLikeDeclarationBase> & typeof Statement;
 
 export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
@@ -4445,7 +4445,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
      */
     getFullStart(): number;
     /**
-     * Gets the first source file text position that is not whitespace.
+     * Gets the first source file text position that is not whitespace taking into account extended comments.
      */
     getNonWhitespaceStart(): number;
     /**
@@ -5161,7 +5161,7 @@ export declare class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression
     getTypeNode(): TypeNode<ts.TypeNode>;
 }
 
-declare const EnumDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
+declare const EnumDeclarationBase: Constructor<TextInsertableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
@@ -5914,9 +5914,9 @@ export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     getEqualsGreaterThan(): Node<ts.Token<SyntaxKind.EqualsGreaterThanToken>>;
 }
 
-declare const FunctionDeclarationBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<FunctionLikeDeclaration> & Constructor<NamespaceChildableNode> & Constructor<NameableNode> & typeof Node;
+declare const FunctionDeclarationBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<FunctionLikeDeclaration> & Constructor<NamespaceChildableNode> & Constructor<NameableNode> & typeof Statement;
 
-declare const FunctionDeclarationOverloadBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Node;
+declare const FunctionDeclarationOverloadBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Statement;
 
 export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
@@ -6153,7 +6153,7 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
     getStructure(): IndexSignatureDeclarationStructure;
 }
 
-declare const InterfaceDeclarationBase: Constructor<TypeElementMemberedNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ExtendsClauseableNode> & Constructor<HeritageClauseableNode> & Constructor<TypeParameteredNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
+declare const InterfaceDeclarationBase: Constructor<TypeElementMemberedNode> & Constructor<TextInsertableNode> & Constructor<ExtendsClauseableNode> & Constructor<HeritageClauseableNode> & Constructor<TypeParameteredNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**
@@ -7359,7 +7359,7 @@ export interface NamespaceChildableNode {
 
 declare type NamespaceChildableNodeExtensionType = Node;
 
-declare const NamespaceDeclarationBase: Constructor<ModuledNode> & Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<NamespaceChildableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
+declare const NamespaceDeclarationBase: Constructor<ModuledNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<NamespaceChildableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
@@ -7747,9 +7747,7 @@ declare const BlockBase: Constructor<TextInsertableNode> & Constructor<Statement
 export declare class Block extends BlockBase<ts.Block> {
 }
 
-declare const BreakStatementBase: Constructor<ChildOrderableNode> & typeof Statement;
-
-export declare class BreakStatement extends BreakStatementBase<ts.BreakStatement> {
+export declare class BreakStatement extends Statement<ts.BreakStatement> {
     /**
      * Gets this break statement's label or undefined if it does not exist.
      */
@@ -7779,7 +7777,7 @@ export declare class CaseBlock extends CaseBlockBase<ts.CaseBlock> {
     removeClauses(indexRange: [number, number]): this;
 }
 
-declare const CaseClauseBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Node;
+declare const CaseClauseBase: Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Node;
 
 export declare class CaseClause extends CaseClauseBase<ts.CaseClause> {
     /**
@@ -7812,9 +7810,7 @@ export declare class CatchClause extends CatchClauseBase<ts.CatchClause> {
 export declare class CommentRangeStatement extends Statement<CompilerCommentRangeStatement> {
 }
 
-declare const ContinueStatementBase: Constructor<ChildOrderableNode> & typeof Statement;
-
-export declare class ContinueStatement extends ContinueStatementBase<ts.ContinueStatement> {
+export declare class ContinueStatement extends Statement<ts.ContinueStatement> {
     /**
      * Gets this continue statement's label or undefined if it does not exist.
      */
@@ -7830,7 +7826,7 @@ declare const DebuggerStatementBase: typeof Statement;
 export declare class DebuggerStatement extends DebuggerStatementBase<ts.DebuggerStatement> {
 }
 
-declare const DefaultClauseBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Node;
+declare const DefaultClauseBase: Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Node;
 
 export declare class DefaultClause extends DefaultClauseBase<ts.DefaultClause> {
     /**
@@ -7853,7 +7849,7 @@ declare const EmptyStatementBase: typeof Statement;
 export declare class EmptyStatement extends EmptyStatementBase<ts.EmptyStatement> {
 }
 
-declare const ExpressionStatementBase: Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & typeof Statement;
+declare const ExpressionStatementBase: Constructor<JSDocableNode> & typeof Statement;
 
 export declare class ExpressionStatement extends ExpressionStatementBase<ts.ExpressionStatement> {
     /**
@@ -7917,9 +7913,7 @@ export declare class ForStatement extends ForStatementBase<ts.ForStatement> {
     getIncrementorOrThrow(): Expression<ts.Expression>;
 }
 
-declare const IfStatementBase: Constructor<ChildOrderableNode> & typeof Statement;
-
-export declare class IfStatement extends IfStatementBase<ts.IfStatement> {
+export declare class IfStatement extends Statement<ts.IfStatement> {
     /**
      * Gets this if statement's expression.
      */
@@ -7934,16 +7928,14 @@ export declare class IfStatement extends IfStatementBase<ts.IfStatement> {
     getElseStatement(): Statement | undefined;
 }
 
-declare const IterationStatementBase: Constructor<ChildOrderableNode> & typeof Statement;
-
-export declare class IterationStatement<T extends ts.IterationStatement = ts.IterationStatement> extends IterationStatementBase<T> {
+export declare class IterationStatement<T extends ts.IterationStatement = ts.IterationStatement> extends Statement<T> {
     /**
      * Gets this iteration statement's statement.
      */
     getStatement(): Statement;
 }
 
-declare const LabeledStatementBase: Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & typeof Statement;
+declare const LabeledStatementBase: Constructor<JSDocableNode> & typeof Statement;
 
 export declare class LabeledStatement extends LabeledStatementBase<ts.LabeledStatement> {
     /**
@@ -7961,9 +7953,7 @@ declare const NotEmittedStatementBase: typeof Statement;
 export declare class NotEmittedStatement extends NotEmittedStatementBase<ts.NotEmittedStatement> {
 }
 
-declare const ReturnStatementBase: Constructor<ChildOrderableNode> & typeof Statement;
-
-export declare class ReturnStatement extends ReturnStatementBase<ts.ReturnStatement> {
+export declare class ReturnStatement extends Statement<ts.ReturnStatement> {
     /**
      * Gets this return statement's expression if it exists or throws.
      */
@@ -7974,7 +7964,9 @@ export declare class ReturnStatement extends ReturnStatementBase<ts.ReturnStatem
     getExpression(): Expression | undefined;
 }
 
-export declare class Statement<T extends ts.Statement = ts.Statement> extends Node<T> {
+declare const StatementBase: Constructor<ChildOrderableNode> & typeof Node;
+
+export declare class Statement<T extends ts.Statement = ts.Statement> extends StatementBase<T> {
     /**
      * Removes the statement.
      */
@@ -8385,9 +8377,7 @@ export interface KindToNodeMappingsWithCommentRangeStatements extends Implemente
     [kind: number]: Node;
 }
 
-declare const SwitchStatementBase: Constructor<ChildOrderableNode> & typeof Statement;
-
-export declare class SwitchStatement extends SwitchStatementBase<ts.SwitchStatement> {
+export declare class SwitchStatement extends Statement<ts.SwitchStatement> {
     /**
      * Gets this switch statement's expression.
      */
@@ -8450,7 +8440,7 @@ export declare class TryStatement extends TryStatementBase<ts.TryStatement> {
     getFinallyBlockOrThrow(): Block;
 }
 
-declare const VariableStatementBase: Constructor<ChildOrderableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
+declare const VariableStatementBase: Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
 
 export declare class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /**
@@ -8516,9 +8506,7 @@ export declare class WhileStatement extends WhileStatementBase<ts.WhileStatement
     getExpression(): Expression;
 }
 
-declare const WithStatementBase: Constructor<ChildOrderableNode> & typeof Statement;
-
-export declare class WithStatement extends WithStatementBase<ts.WithStatement> {
+export declare class WithStatement extends Statement<ts.WithStatement> {
     /**
      * Gets this with statement's expression.
      */
@@ -8633,7 +8621,7 @@ export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {
     getElementTypeNodes(): TypeNode[];
 }
 
-declare const TypeAliasDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TypeParameteredNode> & Constructor<TypedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
+declare const TypeAliasDeclarationBase: Constructor<TypeParameteredNode> & Constructor<TypedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {
     /**

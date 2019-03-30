@@ -3,16 +3,16 @@ import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } fr
 import { EnumDeclarationStructure, EnumMemberStructure, EnumDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
-import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
+import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
 import { EnumMember } from "./EnumMember";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const EnumDeclarationBase = ChildOrderableNode(TextInsertableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(
+export const EnumDeclarationBase = TextInsertableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(
     ModifierableNode(NamedNode(Statement))
-))))));
+)))));
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Sets the node from a structure.

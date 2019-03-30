@@ -1,10 +1,8 @@
 import { ts } from "../../../typescript";
-import { ChildOrderableNode } from "../base";
 import { Expression } from "../expression";
 import { Statement } from "./Statement";
 
-export const IfStatementBase = ChildOrderableNode(Statement);
-export class IfStatement extends IfStatementBase<ts.IfStatement> {
+export class IfStatement extends Statement<ts.IfStatement> {
     /**
      * Gets this if statement's expression.
      */

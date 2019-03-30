@@ -3,7 +3,7 @@ import { ClassDeclarationStructure, ConstructorDeclarationStructure, MethodDecla
     ParameterDeclarationStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ArrayUtils, StringUtils, TypeGuards, KeyValueCache } from "../../../utils";
-import { ChildOrderableNode, ExportableNode, AmbientableNode } from "../base";
+import { ExportableNode, AmbientableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
@@ -17,7 +17,7 @@ import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { MethodDeclaration } from "./MethodDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
-export const ClassDeclarationBase = ChildOrderableNode(NamespaceChildableNode(AmbientableNode(ExportableNode(ClassLikeDeclarationBase(Statement)))));
+export const ClassDeclarationBase = NamespaceChildableNode(AmbientableNode(ExportableNode(ClassLikeDeclarationBase(Statement))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
      * Sets the node from a structure.
