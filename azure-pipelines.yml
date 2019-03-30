@@ -1,0 +1,44 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- master
+- releases/*
+- dev
+pr:
+- master
+- dev
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '8.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    yarn install
+    yarn run build
+  continueOnError: false
+  displayName: 'install and build'
+
+- script: |
+    yarn run lint
+  continueOnError: false
+  displayName: 'lint'
+
+- script: |
+    yarn run test-coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+    yarn run test-ts-versions
+  continueOnError: false
+  displayName: 'test'
+
+- script: |
+    yarn run build-declarations
+    yarn run code-verification
+  continueOnError: false
+  displayName: 'code verification'
