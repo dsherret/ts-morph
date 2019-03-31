@@ -1188,7 +1188,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @param includeJsDocComments - Whether to include the JS doc comments or not.
      */
     getStartLineNumber(includeJsDocComments?: boolean) {
-        return this._sourceFile.getLineNumberAtPos(this.getStartLinePos(includeJsDocComments));
+        return StringUtils.getLineNumberAtPos(this._sourceFile.getFullText(), this.getStartLinePos(includeJsDocComments));
     }
 
     /**
@@ -1197,7 +1197,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     getEndLineNumber() {
         const sourceFileText = this._sourceFile.getFullText();
         const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === "\n" || char === "\r");
-        return this._sourceFile.getLineNumberAtPos(endLinePos);
+        return StringUtils.getLineNumberAtPos(this._sourceFile.getFullText(), endLinePos);
     }
 
     /**

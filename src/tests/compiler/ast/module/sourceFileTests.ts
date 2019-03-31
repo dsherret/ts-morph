@@ -1405,4 +1405,53 @@ const t = 5;`;
             });
         });
     });
+
+    describe(nameof<SourceFile>(n => n.getLineAndColumnAtPos), () => {
+        function doTest(code: string, pos: number, expected: { line: number, column: number } | "throw") {
+            const { sourceFile } = getInfoFromText(code);
+            if (expected === "throw")
+                expect(() => sourceFile.getLineAndColumnAtPos(pos)).to.throw();
+            else
+                expect(sourceFile.getLineAndColumnAtPos(pos)).to.deep.equal(expected);
+        }
+
+        it("should return line and column numbers at given position in single line source files", () => {
+            doTest(``, 0, { line: 1, column: 1 });
+            const code = `interface I { m1(): void }`;
+            doTest(code, 3, { line: 1, column: 4 });
+            doTest(code, 0, { line: 1, column: 1 });
+            doTest(code, code.length, { line: 1, column: code.length + 1 });
+        });
+
+        it("should return line and column numbers at given position in empty first line source files", () => {
+            const code = `\ninterface I { m1(): void }`;
+            doTest(code, 0, { line: 1, column: 1 });
+            doTest(code, 1, { line: 2, column: 1 });
+            doTest(code, code.length, { line: 2, column: code.length });
+        });
+
+        it("should return line and column numbers at given position in multiple lines and comments source file", () => {
+            const code = `
+/**
+ * Lorem ipsum
+ */
+interface I {
+}
+// tail
+`;
+            doTest(code, 0, { line: 1, column: 1 });
+            doTest(code, 1, { line: 2, column: 1 });
+            doTest(code, code.indexOf("Lorem ipsum") - 3, { line: 3, column: 1 });
+            doTest(code, code.indexOf("Lorem ipsum") + "Lorem ipsum".length, { line: 3, column: " * Lorem ipsum".length + 1 });
+            doTest(code, code.indexOf("// tail") + "// tail".length, { line: 7, column: 8 });
+            doTest(code, code.indexOf("// tail") + "// tail".length + 1, { line: 8, column: 1 });
+        });
+
+        it("should throw for invalid positions", () => {
+            doTest(`var a = 1`, `var a = 1`.length + 1, "throw");
+            doTest(``, 1, "throw");
+            doTest(`interface I { m1(): void }`, 1000, "throw");
+            doTest(`\ninterface I {\n m1(): void }`, -1, "throw");
+        });
+    });
 });

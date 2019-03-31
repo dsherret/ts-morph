@@ -1,6 +1,6 @@
 import { ProjectContext } from "../../../ProjectContext";
 import { DiagnosticCategory, ts } from "../../../typescript";
-import { Memoize } from "../../../utils";
+import { Memoize, StringUtils } from "../../../utils";
 import { SourceFile } from "../../ast";
 import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
 
@@ -62,7 +62,7 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
         const start = this.getStart();
         if (sourceFile == null || start == null)
             return undefined;
-        return sourceFile.getLineNumberAtPos(start);
+        return StringUtils.getLineNumberAtPos(sourceFile.getFullText(), start);
     }
 
     /**

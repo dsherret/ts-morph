@@ -6,6 +6,7 @@ import { DirectoryCoordinator, FileSystemWrapper } from "./fileSystem";
 import { CompilerOptionsContainer, IndentationText, ManipulationSettingsContainer } from "./options";
 import { CompilerOptions, ts } from "./typescript";
 import { ConsoleLogger, LazyReferenceCoordinator } from "./utils";
+import { Project } from "./Project";
 import { createWrappedNode } from "./utils/compiler/createWrappedNode";
 
 /**
@@ -24,6 +25,13 @@ export class ProjectContext {
     private readonly _languageService: LanguageService | undefined;
     private readonly _compilerOptions = new CompilerOptionsContainer();
     private readonly _customTypeChecker: TypeChecker | undefined;
+    private readonly _project: Project | undefined;
+
+    get project(): Project {
+        if (this._project == null)
+            throw new errors.InvalidOperationError("This operation is not permitted in this context.");
+        return this._project;
+    }
 
     readonly logger = new ConsoleLogger();
     readonly lazyReferenceCoordinator: LazyReferenceCoordinator;
@@ -34,7 +42,8 @@ export class ProjectContext {
     readonly compilerFactory: CompilerFactory;
     readonly inProjectCoordinator: InProjectCoordinator;
 
-    constructor(fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, opts: ProjectContextOptions) {
+    constructor(project: Project | undefined, fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, opts: ProjectContextOptions) {
+        this._project = project;
         this.fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions.set(compilerOptions);
         this.compilerFactory = new CompilerFactory(this);
