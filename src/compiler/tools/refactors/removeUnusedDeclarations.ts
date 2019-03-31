@@ -10,7 +10,6 @@ import { applyAllSuggestedCodeFixes } from "./suggestionCodeFixes";
  */
 export function removeUnusedDeclarations(containerNode: Node, service: LanguageService) {
     const sourceFile = containerNode.getSourceFile();
-    // code fixes general functions need an object which is able to create/get source files, and provide a LanguageService.
     const context = {
         createSourceFile: (filePath: string, text?: string) => sourceFile,
         getSourceFile: (filePath: string) => sourceFile,

@@ -227,11 +227,21 @@ describe(nameof(LanguageService), () => {
     });
 
     describe(nameof<LanguageService>(l => l.removeUnusedDeclarations), () => {
-        it("should remove unused imports, variables and parameters", () => {
-            const { sourceFile, project } = getInfoFromText(
-                "import {foo} from 'foo'; const a = 1; export function f(a: number, b: string) { return a + 1; }");
+
+        function test(code: string, expected: string) {
+            const { sourceFile, project } = getInfoFromText(code);
             project.getLanguageService().removeUnusedDeclarations(sourceFile);
-            expect(sourceFile.getText()).to.equals("export function f(a: number) { return a + 1; }");
+            expect(sourceFile.getText()).to.equals(expected);
+        }
+
+        it("should remove unused import declarations and import names, variables and parameters", () => {
+            test("import {foo} from 'foo'; import * as a from 'a'; import b from 'b'; import {used, unused} from 'bar'; export const c = used + 1;",
+            "import {used} from 'bar'; export const c = used + 1;");
+        });
+
+        it("should remove unused import declarations and import names, variables and parameters", () => {
+            test("import {foo} from 'foo'; const a = 1; export function f(a: number, b: string) { return a + 1; }",
+            "export function f(a: number) { return a + 1; }");
         });
     });
 
