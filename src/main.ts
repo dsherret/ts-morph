@@ -4,7 +4,7 @@ export * from "./compiler";
 export * from "./errors/classes";
 export { Directory, DirectoryAddOptions, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions, FileSystemHost } from "./fileSystem";
 export * from "./options";
-export { ProjectOptions, Project, SourceFileCreateOptions } from "./Project";
+export { ProjectOptions, Project, SourceFileCreateOptions, ApplyFileTextChangesOptions } from "./Project";
 export * from "./structures";
 export { Constructor, WriterFunction } from "./types";
 export { createWrappedNode, CreateWrappedNodeOptions } from "./utils/compiler/createWrappedNode";
