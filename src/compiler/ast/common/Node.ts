@@ -707,7 +707,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
         function handleStatements(thisNode: Node, node: ts.Node) {
             if ((node as NodeWithStatements).statements == null)
                 return false;
-            const statementedNode = thisNode._getNodeFromCompilerNode(node) as StatementedNode;
+            const statementedNode = thisNode._getNodeFromCompilerNode(node) as Node & StatementedNode;
             for (const statement of statementedNode.getStatements()) {
                 statements.push(statement);
                 handleChildren(thisNode, statement.compilerNode);
