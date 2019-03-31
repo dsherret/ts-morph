@@ -743,6 +743,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         this.applyTextChanges(ArrayUtils.flatten(this._context.languageService.organizeImports(this, formatSettings, userPreferences).map(r => r.getTextChanges())));
         return this;
     }
+
     /**
      * Removes all unused declarations like interfaces, classes, enums, functions, variables, parameters,
      * methods, properties, imports, etc. from this file.
