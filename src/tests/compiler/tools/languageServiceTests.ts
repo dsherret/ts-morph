@@ -225,7 +225,6 @@ describe(nameof(LanguageService), () => {
             expect(() => project.getLanguageService().getSuggestionDiagnostics("someFile.ts")).to.throw(FileNotFoundError);
         });
     });
-
 });
 
 function checkOutput(output: EmitOutput, expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; }) {

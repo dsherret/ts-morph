@@ -3,13 +3,13 @@ import { DefaultFileSystemHost } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
 import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
-import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils } from "../../utils";
+import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
 import { Node, TextRange } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
-import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation,
-    RefactorEditInfo, CodeFixAction, CombinedCodeActions } from "./results";
+import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction,
+    CombinedCodeActions } from "./results";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
