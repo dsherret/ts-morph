@@ -1,17 +1,16 @@
 import * as errors from "../../../errors";
-import { removeClassMember } from "../../../manipulation";
 import { GetAccessorDeclarationStructure, GetAccessorDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
-import { Node } from "../common";
 import { FunctionLikeDeclaration } from "../function";
 import { AbstractableNode } from "./base";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { ClassElement } from "./ClassElement";
 
 export const GetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
-    FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(Node)))
+    FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ClassElement)))
 ))))));
 export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAccessorDeclaration> {
     /**
@@ -42,13 +41,6 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      */
     getSetAccessorOrThrow(): SetAccessorDeclaration {
         return errors.throwIfNullOrUndefined(this.getSetAccessor(), () => `Expected to find a corresponding set accessor for ${this.getName()}.`);
-    }
-
-    /**
-     * Removes the get accessor.
-     */
-    remove() {
-        removeClassMember(this);
     }
 
     /**

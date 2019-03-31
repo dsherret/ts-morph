@@ -1,16 +1,15 @@
-import { removeOverloadableClassMember } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
-import { Node } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { ClassElement } from "./ClassElement";
 
-export const ConstructorDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(Node))))));
+export const ConstructorDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(ClassElement))))));
 export const ConstructorDeclarationOverloadBase = TypeParameteredNode(JSDocableNode(ChildOrderableNode(TextInsertableNode(ScopedNode(ModifierableNode(
-    SignaturedDeclaration(Node)
+    SignaturedDeclaration(ClassElement)
 ))))));
 
 export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
@@ -71,13 +70,6 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
             setNodeFromStructure: (node, structure) => node.set(structure),
             expectedSyntaxKind: SyntaxKind.Constructor
         });
-    }
-
-    /**
-     * Remove the constructor.
-     */
-    remove() {
-        removeOverloadableClassMember(this);
     }
 
     /**
