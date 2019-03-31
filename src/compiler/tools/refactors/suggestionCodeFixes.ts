@@ -4,7 +4,7 @@ import { Node, SourceFile } from "../../ast";
 import { LanguageService } from "../LanguageService";
 import { TextChange } from "../../tools/results";
 
-export interface CodeFixesContext {
+interface CodeFixesContext {
     createSourceFile(filePath: string, text?: string): SourceFile;
     getSourceFile(filePath: string): SourceFile | undefined;
     getLanguageService(): LanguageService;
