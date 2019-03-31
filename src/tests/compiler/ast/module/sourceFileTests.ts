@@ -1414,10 +1414,14 @@ const t = 5;`;
             expect(sourceFile.getText().replace(/\n\s+/g, "\n").trim()).to.equals(expected.replace(/\n\s+/g, "\n").trim());
             return { sourceFile, project };
         }
-        it("should not leave forgotten nodes", () => {
+
+        xit("should not leave forgotten nodes", () => {
             const code = `
+                import foo from 'foo'
                 import {used, unused} from "bar";
+                function f() {}
                 export const c = used + 1;
+                type T = string
             `;
             const expected = `
                 import {used} from "bar";
@@ -1425,14 +1429,24 @@ const t = 5;`;
             `;
             const { sourceFile, project } = getInfoFromText(code);
             const c = sourceFile.getVariableDeclaration("c")!;
-            const i = sourceFile.getImportDeclarations()[0]!;
+            const i = sourceFile.getImportDeclarations()[1]!;
+            const used = i.getNamedImports()[0];
             expect(c.isExported()).to.be.true;
+            expect(i.getNamedImports().map(n => n.getName()).indexOf("used")).to.equals(0);
+            expect(used.getName()).equals("used");
+            expect(used.getParent().getKindName()).equals("NamedImports");
+            expect(used.getParent()!.getParent()!.getNamedImports()[0].getName()).equals("used");
             sourceFile.removeUnusedDeclarations();
-            // project.getLanguageService().removeUnusedDeclarations(sourceFile);
             expect(sourceFile.getText().replace(/\n\s+/g, "\n").trim()).to.equals(expected.replace(/\n\s+/g, "\n").trim());
             expect(() => c.isExported()).not.to.throw();
             expect(() => i.getNonWhitespaceStart()).not.to.throw();
+            expect(c.isExported()).to.be.true;
+            expect(i.getNamedImports().map(n => n.getName()).indexOf("used")).to.equals(0);
+            expect(used.getName()).equals("used");
+            expect(used.getParent().getKindName()).equals("NamedImports");
+            expect(used.getParent()!.getParent()!.getNamedImports()[0].getName()).equals("used");
         });
+
         describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} imports`, () => {
             it("should remove unused import declarations, import names, and default imports", () => {
                 test(`
@@ -1447,6 +1461,47 @@ const t = 5;`;
                 `);
             });
         });
+
+        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} different kinds`, () => {
+            it("should remove unused import declarations, import names, and default imports", () => {
+                test(`
+                    import {foo} from 'foo'
+                    import * as a from 'a'
+                    import b from 'b'
+                    import {used, unused} from 'bar'
+                    export const c = used + 1
+                    export function f() {
+                        var a
+                        const c
+                        const {x, y, z} = {x: 1, y: 1, z: 1}
+                        return y + c
+                    }
+                    export class C {
+                        private constructor(a: number, b: Date) { this.a = a; this.b = b }
+                        private m() { }
+                        private b: Date
+                        private a = 1
+                        protected n() { return this.b }
+                    }
+                    export type T<S, V> = V extends string ? : never : any
+                `, `
+                    import {used} from 'bar'
+                    export const c = used + 1
+                    export function f() {
+                        const c
+                        const {y} = {x: 1, y: 1, z: 1}
+                        return y + c
+                    }
+                    export class C {
+                        private constructor(b: Date) { this.b = b }
+                        private b: Date
+                        protected n() { return this.b }
+                    }
+                    export type T<V> = V extends string ? : never : any
+                `);
+            });
+        });
+
         describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} parameters`, () => {
             it("should remove unused parameters and type parameters", () => {
                 test(`
@@ -1497,138 +1552,100 @@ const t = 5;`;
                     }
                 `);
             });
-    
-            describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} type parameters`, () => {
-                it("should remove unused parameters and type parameters", () => {
-                    test(`
-                        export function f2<T1 extends 1|2, T2=any>(p3: T1) { return p3; }
-                        `, `
-                        export function f2<T1 extends 1|2>(p3: T1) { return p3; }
-                    `);
-                });
-                it("should remove all unused type parameters no matter their order", () => {
-                    test(`
-                        export type Custom<T, S, K> = S extends string ? never : any
-                        `, `
-                        export type Custom<S> = S extends string ? never : any
-                    `);
-                });
-                it("should remove a type parameters that is referenced only in a unused parameter", () => {
-                    test(`
-                        export function f3<T1 extends 1|2, T2=any>(p4: T1, p5: T2) { return p4; }
-                        `, `
-                        export function f3<T1 extends 1|2>(p4: T1) { return p4; }
-                    `);
-                });
+        });
+
+        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} type parameters`, () => {
+            it("should remove unused parameters and type parameters", () => {
+                test(`
+                    export function f2<T1 extends 1|2, T2=any>(p3: T1) { return p3; }
+                    `, `
+                    export function f2<T1 extends 1|2>(p3: T1) { return p3; }
+                `);
             });
-            describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} members`, () => {
-                it("should remove unused private members, parameters and type parameters", () => {
-                    test(`
-                        export class C<T extends number, S> {
-                            prop1 = 1
-                            public prop2 = 2
-                            protected prop3 = 3
-                            private prop4 = 4
-                            private prop5 = 5
-                            private prop6 = 6
-                            private constructor(private a: number, e = false) { }
-                            private m(b: number) { }
-                            protected n(h: T = 2, c = this.prop6) { return h + this.prop5 }
-                            public o(d?: S) { }
-                        }
-                        `, `
-                        export class C<T extends number> {
-                            prop1 = 1
-                            public prop2 = 2
-                            protected prop3 = 3
-                            private prop5 = 5
-                            private constructor() { }
-                            protected n(h: T = 2) { return h + this.prop5 }
-                            public o() { }
-                        }
-                    `);
-                });
+            it("should remove all unused type parameters no matter their order", () => {
+                test(`
+                    export type Custom<T, S, K> = S extends string ? never : any
+                    `, `
+                    export type Custom<S> = S extends string ? never : any
+                `);
             });
-            describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} variables`, () => {
-                it("should remove unused declarations inside a block", () => {
-                    test(`
-                        export function f() {
-                            const c = 1
-                            const d = 1
-                            var i = 1
-                            function g() { return i }
-                            function h() { return 1 }
-                            const { x, y, z } = { x: 1, y: true }
-                            return d + g() + x
-                        }
-                        `, `
-                        export function f() {
-                            const d = 1
-                            var i = 1
-                            function g() { return i }
-                            const { x } = { x: 1, y: true }
-                            return d + g() + x
-                        }
-                    `);
-                });
-                it("should remove unused named variables", () => {
-                    test(`
-                        import { g } from 'g'
-                        export function f() {
-                            var {a, b, c} = g()
-                            return b
-                        }
-                        `, `
-                        import { g } from 'g'
-                        export function f() {
-                            var {b} = g()
-                            return b
-                        }
-                    `);
-                });
-            });
-            // Note: removeUnusedDeclarationsTest have more tests - here there is just one
-            const code = `
-                import {foo} from 'foo'
-                import * as a from 'a'
-                import b from 'b'
-                import {used, unused} from 'bar'
-                export const c = used + 1
-                export function f() {
-                    var a
-                    const c
-                    const {x, y, z} = {x: 1, y: 1, z: 1}
-                    return y + c
-                }
-                export class C {
-                    private constructor(a: number, b: Date) { this.a = a; this.b = b }
-                    private m() { }
-                    private b: Date
-                    private a = 1
-                    protected n() { return this.b }
-                }
-                export type T<S, V> = V extends string ? : never : any
-            `;
-            it("should remove unused import declarations, import names, and default imports", () => {
-                const expected = `
-                    import {used} from 'bar'
-                    export const c = used + 1
-                    export function f() {
-                        const c
-                        const {y} = {x: 1, y: 1, z: 1}
-                        return y + c
-                    }
-                    export class C {
-                        private constructor(b: Date) { this.b = b }
-                        private b: Date
-                        protected n() { return this.b }
-                    }
-                    export type T<V> = V extends string ? : never : any
-                `;
-                const { sourceFile } = getInfoFromText(code);
-                sourceFile.removeUnusedDeclarations();
-                expect(sourceFile.getText().replace(/\n\s+/g, '\n').trim()).to.equals(expected.replace(/\n\s+/g, "\n").trim());
+            it("should remove a type parameters that is referenced only in a unused parameter", () => {
+                test(`
+                    export function f3<T1 extends 1|2, T2=any>(p4: T1, p5: T2) { return p4; }
+                    `, `
+                    export function f3<T1 extends 1|2>(p4: T1) { return p4; }
+                `);
             });
         });
+
+        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} members`, () => {
+            it("should remove unused private members, parameters and type parameters", () => {
+                test(`
+                    export class C<T extends number, S> {
+                        prop1 = 1
+                        public prop2 = 2
+                        protected prop3 = 3
+                        private prop4 = 4
+                        private prop5 = 5
+                        private prop6 = 6
+                        private constructor(private a: number, e = false) { }
+                        private m(b: number) { }
+                        protected n(h: T = 2, c = this.prop6) { return h + this.prop5 }
+                        public o(d?: S) { }
+                    }
+                    `, `
+                    export class C<T extends number> {
+                        prop1 = 1
+                        public prop2 = 2
+                        protected prop3 = 3
+                        private prop5 = 5
+                        private constructor() { }
+                        protected n(h: T = 2) { return h + this.prop5 }
+                        public o() { }
+                    }
+                `);
+            });
+        });
+
+        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} variables`, () => {
+            it("should remove unused declarations inside a block", () => {
+                test(`
+                    export function f() {
+                        const c = 1
+                        const d = 1
+                        var i = 1
+                        function g() { return i }
+                        function h() { return 1 }
+                        const { x, y, z } = { x: 1, y: true }
+                        return d + g() + x
+                    }
+                    `, `
+                    export function f() {
+                        const d = 1
+                        var i = 1
+                        function g() { return i }
+                        const { x } = { x: 1, y: true }
+                        return d + g() + x
+                    }
+                `);
+            });
+            it("should remove unused named variables", () => {
+                test(`
+                    import { g } from 'g'
+                    export function f() {
+                        var {a, b, c} = g()
+                        return b
+                    }
+                    `, `
+                    import { g } from 'g'
+                    export function f() {
+                        var {b} = g()
+                        return b
+                    }
+                `);
+            });
+        });
+
     });
+
 });
