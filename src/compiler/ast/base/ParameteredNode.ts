@@ -145,16 +145,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             const edits = this._context.languageService.getEditsForRefactor(sourceFile.getFilePath(), {}, params[0],
                 "Convert parameters to destructured object", "Convert parameters to destructured object", {});
             if (edits) {
-                edits.getEdits().forEach(edit => {
-                    edit.getTextChanges().forEach(c => {
-                        replaceNodeText({
-                            sourceFile,
-                            newText: c.getNewText(),
-                            replacingLength: c.getSpan().getLength(),
-                            start: Math.max(0, c.getSpan().getStart())
-                        });
-                    });
-                });
+                edits.getEdits().forEach(edit => sourceFile.applyTextChanges(edit.getTextChanges()));
             }
         }
     };
