@@ -4,12 +4,6 @@ import { Node, SourceFile } from "../../ast";
 import { LanguageService } from "../LanguageService";
 import { TextChange } from "../../tools/results";
 
-interface CodeFixesContext {
-    createSourceFile(filePath: string, text?: string): SourceFile;
-    getSourceFile(filePath: string): SourceFile | undefined;
-    getLanguageService(): LanguageService;
-}
-
 /**
  * Apply suggested code fixes like the ones returned by (`LanguageService#getSuggestionDiagnostics()`) to given `containerNode`.
  * Code fixes are given in `codes` or if not provided, all language service suggestions will be applied.
@@ -25,9 +19,11 @@ export function applyAllSuggestedCodeFixes(context: CodeFixesContext, containerN
     const service = context.getLanguageService().compilerObject;
     let fixes = getSuggestedCodeFixesInside(service, containerNode, codes);
     while (fixes && fixes.length) {
+        // TODO: for some reason, we really need to iterate until there are no more fixes in order to obtain an optimal
+        // result (i.e. removeDeclarations). Investigate if there's something like combineCodeFixes or if we are missing
+        // to pass extra code fix codes so we don't iterate.
         applyFileTextChanges(context, fixes[0].changes[0]);
         fixes = getSuggestedCodeFixesInside(service, containerNode, codes);
-        // TODO: performance we only need the first one. Also use combined CodeFix to apply several at once increases performance
     }
 }
 
@@ -54,4 +50,10 @@ function getSuggestedCodeFixesInside(service: ts.LanguageService, containerNode:
         })
         .filter(a => a && a.length);
     return ArrayUtils.flattenReadOnlyArray(diagnostics.filter(ArrayUtils.isNotUndefined));
+}
+
+interface CodeFixesContext {
+    createSourceFile(filePath: string, text?: string): SourceFile;
+    getSourceFile(filePath: string): SourceFile | undefined;
+    getLanguageService(): LanguageService;
 }

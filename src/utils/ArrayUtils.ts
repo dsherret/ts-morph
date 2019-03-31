@@ -13,10 +13,6 @@ export class ArrayUtils {
         return n !== undefined;
     }
 
-    static asArray<T>(t: T | T[]) {
-        return Array.isArray(t) ? t : [t];
-    }
-
     static getUniqueItems<T>(a: ReadonlyArray<T>) {
         return a.filter((item, index) => a.indexOf(item) === index);
     }

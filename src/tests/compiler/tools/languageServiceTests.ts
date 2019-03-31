@@ -227,18 +227,9 @@ describe(nameof(LanguageService), () => {
     });
 
     describe(nameof<LanguageService>(l => l.removeUnusedDeclarations), () => {
-
         // Note: removeUnusedDeclarationsTest have more tests - here there is just one
-
-        function test(code: string, expected: string) {
-            const { sourceFile, project } = getInfoFromText(code);
-            project.getLanguageService().removeUnusedDeclarations(sourceFile);
-            expect(sourceFile.getText().replace(/\s+/g, " ").trim()).to.equals(expected.replace(/\s+/g, " ").trim());
-            return { sourceFile, project }
-        }
-
         it("should remove unused import declarations, import names, and default imports", () => {
-            test(`
+            const code = `
                 import {foo} from 'foo'
                 import * as a from 'a'
                 import b from 'b'
@@ -258,7 +249,8 @@ describe(nameof(LanguageService), () => {
                     protected n() { return this.b }
                 }
                 export type T<S, V> = V extends string ? : never : any
-                `, `
+                `;
+            const expected = `
                 import {used} from 'bar'
                 export const c = used + 1
                 export function f() {
@@ -272,9 +264,11 @@ describe(nameof(LanguageService), () => {
                     protected n() { return this.b }
                 }
                 export type T<V> = V extends string ? : never : any
-            `);
+            `;
+            const { sourceFile, project } = getInfoFromText(code);
+            project.getLanguageService().removeUnusedDeclarations(sourceFile);
+            expect(sourceFile.getText().replace(/\s+/g, " ").trim()).to.equals(expected.replace(/\s+/g, " ").trim());
         });
-
     });
 });
 

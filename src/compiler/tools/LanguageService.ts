@@ -407,18 +407,16 @@ export class LanguageService {
     /**
      * Removes all unused declarations like interfaces, classes, enums, functions, variables, parameters,
      * methods, properties, imports, etc. from given file.
-     * @param containers - Remove declarations only in these nodes.
+     *
+     * @param container - Remove only inside these nodes.
      */
-    removeUnusedDeclarations(filePathOrSourceFile: SourceFile | string, containers?: Node | Node[]): this {
+    removeUnusedDeclarations(filePathOrSourceFile: SourceFile | string): this {
+        // TODO: since actual implementation forgets nodes, we only support one container Node
         const sourceFile = typeof filePathOrSourceFile === "string" ?
             this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSourceFile) : filePathOrSourceFile;
         if (sourceFile == null)
             throw new errors.FileNotFoundError(filePathOrSourceFile as string);
-        if (containers)
-            ArrayUtils.asArray(containers).forEach(node => removeUnusedDeclarations(node, this));
-        else {
-            removeUnusedDeclarations(sourceFile, this);
-        }
+        removeUnusedDeclarations(sourceFile, this);
         return this;
     }
 

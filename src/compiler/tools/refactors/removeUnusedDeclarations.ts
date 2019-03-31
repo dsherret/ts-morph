@@ -11,8 +11,8 @@ import { applyAllSuggestedCodeFixes } from "./suggestionCodeFixes";
 export function removeUnusedDeclarations(containerNode: Node, service: LanguageService) {
     const sourceFile = containerNode.getSourceFile();
     const context = {
-        createSourceFile: (filePath: string, text?: string) => sourceFile,
-        getSourceFile: (filePath: string) => sourceFile,
+        createSourceFile: () => sourceFile,
+        getSourceFile: () => sourceFile,
         getLanguageService: () => service
     };
     return applyAllSuggestedCodeFixes(context, containerNode, [
