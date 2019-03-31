@@ -1,5 +1,5 @@
 import * as errors from "../../../errors";
-import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
+import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, replaceNodeText } from "../../../manipulation";
 import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
@@ -8,6 +8,7 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function/ParameterDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { FormatCodeSettings, UserPreferences } from "../../tools";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration>; }>;
 
@@ -58,6 +59,15 @@ export interface ParameteredNode {
      * @param structures - Parameter to insert.
      */
     insertParameter(index: number, structure: ParameterDeclarationStructure): ParameterDeclaration;
+
+    /**
+     * Convert parameters to destructured object.
+     *
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     * @param formatSettings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
+     */
+    convertParamsToDestructuredObject(formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): void;
 }
 
 export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T {
@@ -124,6 +134,28 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             return callBaseGetStructure<ParameteredNodeStructure>(Base.prototype, this, {
                 parameters: this.getParameters().map(p => p.getStructure())
             });
+        }
+
+        convertParamsToDestructuredObject(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
+            const params = this.getParameters();
+            if (params.length === 0) {
+                return;
+            }
+            const sourceFile = this.getSourceFile();
+            const edits = this._context.languageService.getEditsForRefactor(sourceFile.getFilePath(), {}, params[0],
+                "Convert parameters to destructured object", "Convert parameters to destructured object", {});
+            if (edits) {
+                edits.getEdits().forEach(edit => {
+                    edit.getTextChanges().forEach(c => {
+                        replaceNodeText({
+                            sourceFile,
+                            newText: c.getNewText(),
+                            replacingLength: c.getSpan().getLength(),
+                            start: Math.max(0, c.getSpan().getStart())
+                        });
+                    });
+                });
+            }
         }
     };
 }
