@@ -80,6 +80,14 @@ These two structures are now differentiated based on their new `.kind` property.
 
 So instead of just returning an array of nodes, it now returns a map. The key is the name it was exported on and the value is an array of declarations for that value. This will make it much easier to identify the name a node was exported on.
 
+### Removed SourceFile#getLineNumberAtPos()
+
+Removed `SourceFile`'s method `getLineNumberAtPos` in favor of method `getLineAndColumnAtPos` which returns an object with both line number and column number at given position: 
+
+```ts
+const { line, column } = sourceFile.getLineAndColumnAtPos(position);
+```
+
 ## Version 1
 
 Renamed library to `ts-morph` and reset version to 1.0.0.
