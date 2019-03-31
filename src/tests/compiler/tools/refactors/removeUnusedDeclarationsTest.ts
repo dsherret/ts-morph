@@ -9,7 +9,7 @@ describe(`${nameof<LanguageService>(l => l.removeUnusedDeclarations)}`, () => {
         const { sourceFile, project } = getInfoFromText(code);
         removeUnusedDeclarations(sourceFile, project.getLanguageService());
         expect(sourceFile.getText().replace(/\s+/g, " ").trim()).to.equals(expected.replace(/\s+/g, " ").trim());
-        return { sourceFile, project }
+        return { sourceFile, project };
     }
 
     xit("should not leave forgotten nodes", () => {
