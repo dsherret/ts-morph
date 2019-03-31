@@ -9,6 +9,14 @@ export class ArrayUtils {
         return !(a instanceof Array) || a.length === 0;
     }
 
+    static isNotUndefined<T>(n: T): n is Exclude<T, undefined> {
+        return n !== undefined;
+    }
+
+    static asArray<T>(t: T | T[]) {
+        return Array.isArray(t) ? t : [t];
+    }
+
     static getUniqueItems<T>(a: ReadonlyArray<T>) {
         return a.filter((item, index) => a.indexOf(item) === index);
     }
@@ -35,6 +43,10 @@ export class ArrayUtils {
     // can't use ReadonlyArray here for some reason
     static flatten<T>(items: T[][]): T[] {
         return items.reduce((a, b) => a.concat(b), []);
+    }
+
+    static flattenReadOnlyArray<T>(arr: ReadonlyArray<ReadonlyArray<T>>): ReadonlyArray<T> {
+        return arr && arr.length ? arr.reduce((a, b) => a.concat(b)) : [];
     }
 
     static find<T extends ts.Node>(items: ts.NodeArray<T>, condition: (item: T) => boolean): T | undefined;

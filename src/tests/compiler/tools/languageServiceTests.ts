@@ -225,6 +225,16 @@ describe(nameof(LanguageService), () => {
             expect(() => project.getLanguageService().getSuggestionDiagnostics("someFile.ts")).to.throw(FileNotFoundError);
         });
     });
+
+    describe(nameof<LanguageService>(l => l.removeUnusedDeclarations), () => {
+        it("should remove unused imports, variables and parameters", () => {
+            const { sourceFile, project } = getInfoFromText(
+                "import {foo} from 'foo'; const a = 1; export function f(a: number, b: string) { return a + 1; }");
+            project.getLanguageService().removeUnusedDeclarations(sourceFile);
+            expect(sourceFile.getText()).to.equals("export function f(a: number) { return a + 1; }");
+        });
+    });
+
 });
 
 function checkOutput(output: EmitOutput, expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; }) {

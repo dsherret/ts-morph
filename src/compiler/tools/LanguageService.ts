@@ -3,13 +3,14 @@ import { DefaultFileSystemHost } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
 import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
-import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
+import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, ArrayUtils } from "../../utils";
 import { Node, TextRange } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction,
     CombinedCodeActions } from "./results";
+import { removeUnusedDeclarations } from "./refactors/removeUnusedDeclarations";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -401,6 +402,24 @@ export class LanguageService {
             this._getFilledSettings(formatOptions), this._getFilledUserPreferences(preferences || {}));
 
         return compilerResult.map(compilerObject => new CodeFixAction(this._context, compilerObject));
+    }
+
+    /**
+     * Removes all unused declarations like interfaces, classes, enums, functions, variables, parameters,
+     * methods, properties, imports, etc. from given file.
+     * @param containers - Remove declarations only in these nodes.
+     */
+    removeUnusedDeclarations(filePathOrSourceFile: SourceFile | string, containers?: Node | Node[]): this {
+        const sourceFile = typeof filePathOrSourceFile === "string" ?
+            this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSourceFile) : filePathOrSourceFile;
+        if (sourceFile == null)
+            throw new errors.FileNotFoundError(filePathOrSourceFile as string);
+        if (containers)
+            ArrayUtils.asArray(containers).forEach(node => removeUnusedDeclarations(node, this));
+        else {
+            removeUnusedDeclarations(sourceFile, this);
+        }
+        return this;
     }
 
     private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {
