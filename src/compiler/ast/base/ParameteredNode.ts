@@ -1,14 +1,14 @@
 import * as errors from "../../../errors";
-import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, replaceNodeText } from "../../../manipulation";
+import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
 import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
-import { callBaseSet } from "../callBaseSet";
-import { Node, TextRange } from "../common";
-import { ParameterDeclaration } from "../function/ParameterDeclaration";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 import { FormatCodeSettings, UserPreferences } from "../../tools";
+import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
+import { Node } from "../common";
+import { ParameterDeclaration } from "../function/ParameterDeclaration";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration>; }>;
 
@@ -135,33 +135,18 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 parameters: this.getParameters().map(p => p.getStructure())
             });
         }
-        
+
         convertParamsToDestructuredObject(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
             const params = this.getParameters();
-            if (params.length === 0) {
+            if (params.length === 0)
                 return;
-            }   
-            let range=[Infinity, -Infinity]
-            params.forEach(p=>{ 
-                range = [Math.min(range[0], p.getStart()), Math.max(range[1], p.getEnd())]
-            })
-            const textRange: TextRange = {
-                getPos() {return range[0];},
-                getEnd(){return range[1]}
-            }
-            const target = this.getChildSyntaxList() || params[0];
-            // const sourceFile = this.getSourceFile();
-            const edits = this._context.languageService.getEditsForRefactor(this.getSourceFile(), {}, textRange,
+            const edits = this._context.languageService.getEditsForRefactor(this.getSourceFile(), {}, params[0],
                 "Convert parameters to destructured object", "Convert parameters to destructured object", {});
             if (edits) {
                 edits.getEdits().forEach(edit => {
                     const editFile = edit.getSourceFile();
-                    if (editFile) {
+                    if (editFile)
                         editFile.applyTextChanges(edit.getTextChanges());
-                    }else {
-                        console.log('!!!! file');
-                        
-                    }
                 });
             }
         }

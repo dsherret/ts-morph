@@ -2,7 +2,6 @@
 import { FunctionDeclaration, ParameterDeclaration, ParameteredNode, Scope } from "../../../../compiler";
 import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
-import { Project } from '../../../../Project';
 
 describe(nameof(ParameteredNode), () => {
     describe(nameof<ParameteredNode>(d => d.getParameter), () => {
@@ -198,7 +197,7 @@ class C implements I {
     n(a: Date[], b: boolean, c?: string, d: number[][] | undefined) {
         throw 1
     }
-}`.trim()); 
+}`.trim());
             sourceFile.getClassOrThrow("C").getMethods().forEach(m => m.convertParamsToDestructuredObject());
             expect(sourceFile.getText().trim()).to.equal(`
 interface I {
@@ -213,27 +212,13 @@ class C implements I {
     }
 }`.trim());
 
-        }); 
+        });
         it("should refactor all files", () => {
-            const p = new Project();
-            const files = [
-                {
-                    name: "f.ts", 
-                    content: "function f(a: number, b: string): string { return b; }"
-                },
-                {
-                    name: "g.ts", 
-                    content: `import { f as g } from "./f"; g(4, "b");`
-                } 
-            ].map(f=>p.createSourceFile(f.name, f.content))
-            console.log(p.getPreEmitDiagnostics());
-            
-            files[0].getFunctionOrThrow('f').convertParamsToDestructuredObject()
-            console.log(files.map(f=>f.getText()));
-            
-            expect(files[0].getText()).to.equal(`export function f({ a, b }: { a: number; b: string; }): string { return b; }`);
-            expect(files[1].getText()).to.equal(`import { f as g } from "./f"; g({ a: 4, b: "b" });`);
-
+            const { sourceFile, project } = getInfoFromText<FunctionDeclaration>("export function f(a: number, b: string[]) { }", {filePath: "f.ts"});
+            const sourceFile2 = project.createSourceFile("a.ts", `import {f} = require("./f"); f(1, "b");`);
+            sourceFile.getFunctionOrThrow("f").convertParamsToDestructuredObject();
+            expect(sourceFile.getText()).to.equal(`export function f({ a, b }: { a: number; b: string[]; }) { }`);
+            expect(sourceFile2.getText()).to.equal(`import {f} = require("./f"); f(1, "b");`);
         });
     });
 });
