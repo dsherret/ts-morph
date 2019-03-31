@@ -1419,18 +1419,18 @@ const t = 5;`;
         }
 
         it("should return line and column numbers at given position in single line source files", () => {
-            test(``, 0, { line: 1, column: 0 });
+            test(``, 0, { line: 1, column: 1 });
             const code = `interface I { m1(): void }`;
-            test(code, 3, { line: 1, column: 3 });
-            test(code, 0, { line: 1, column: 0 });
-            test(code, code.length, { line: 1, column: code.length });
+            test(code, 3, { line: 1, column: 4 });
+            test(code, 0, { line: 1, column: 1 });
+            test(code, code.length, { line: 1, column: code.length + 1 });
         });
 
         it("should return line and column numbers at given position in empty first line source files", () => {
             const code = `\ninterface I { m1(): void }`;
-            test(code, 0, { line: 1, column: 0 });
-            test(code, 1, { line: 2, column: 0 });
-            test(code, code.length, { line: 2, column: code.length - 1 });
+            test(code, 0, { line: 1, column: 1 });
+            test(code, 1, { line: 2, column: 1 });
+            test(code, code.length, { line: 2, column: code.length });
         });
 
         it("should return line and column numbers at given position in multiple lines and comments source file", () => {
@@ -1442,12 +1442,12 @@ interface I {
 }
 // tail
 `;
-            test(code, 0, { line: 1, column: 0 });
-            test(code, 1, { line: 2, column: 0 });
-            test(code, code.indexOf("Lorem ipsum") - 3, { line: 3, column: 0 });
-            test(code, code.indexOf("Lorem ipsum") + "Lorem ipsum".length, { line: 3, column: " * Lorem ipsum".length });
-            test(code, code.indexOf("// tail") + "// tail".length, { line: 7, column: 7});
-            test(code, code.indexOf("// tail") + "// tail".length + 1, { line: 8, column: 0});
+            test(code, 0, { line: 1, column: 1 });
+            test(code, 1, { line: 2, column: 1 });
+            test(code, code.indexOf("Lorem ipsum") - 3, { line: 3, column: 1 });
+            test(code, code.indexOf("Lorem ipsum") + "Lorem ipsum".length, { line: 3, column: " * Lorem ipsum".length + 1 });
+            test(code, code.indexOf("// tail") + "// tail".length, { line: 7, column: 8 });
+            test(code, code.indexOf("// tail") + "// tail".length + 1, { line: 8, column: 1 });
         });
 
         it("should throw end invalid position is given", () => {
