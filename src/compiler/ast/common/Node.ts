@@ -11,8 +11,9 @@ import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
 import { Type } from "../../types";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
-import { SourceFile } from "../module";
+import { Expression } from "../expression";
 import { KindToNodeMappings } from "../kindToNodeMappings";
+import { SourceFile } from "../module";
 import { Statement } from "../statement";
 import { CommentRange } from "./CommentRange";
 import { SyntaxList } from "./SyntaxList";
@@ -707,11 +708,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Gets the node's descendant statements.
+     * Gets the node's descendant statements and any arrow function statement-like expressions (ex. Returns the expression `5` in `() => 5`).
      */
-    getDescendantStatements(): Statement[] {
+    getDescendantStatements(): (Statement | Expression)[] {
         type NodeWithStatements = ts.Node & { statements: ts.NodeArray<ts.Statement>; };
-        const statements: Statement[] = [];
+        const statements: (Statement | Expression)[] = [];
 
         handleNode(this, this.compilerNode);
 
@@ -723,7 +724,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
             else if (node.kind === SyntaxKind.ArrowFunction) {
                 const arrowFunction = (node as ts.ArrowFunction);
                 if (arrowFunction.body.kind !== SyntaxKind.Block)
-                    statements.push(thisNode._getNodeFromCompilerNode(arrowFunction.body) as Node as Statement); // todo: bug... it's not a statement
+                    statements.push(thisNode._getNodeFromCompilerNode(arrowFunction.body));
                 else
                     handleNode(thisNode, arrowFunction.body);
             }
