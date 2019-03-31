@@ -142,8 +142,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the line number and column number at the provided position, both as 1-indexed numbers.
-     * @param pos - Position in this source file from which to obtain the line number and column number.
+     * Gets the line and column number at the provided position (1-indexed).
+     * @param pos - Position.
      */
     getLineAndColumnAtPos(pos: number) {
         const fullText = this.getFullText();
