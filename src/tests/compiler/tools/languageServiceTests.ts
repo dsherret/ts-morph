@@ -226,6 +226,56 @@ describe(nameof(LanguageService), () => {
         });
     });
 
+    describe(nameof<LanguageService>(l => l.removeUnusedDeclarations), () => {
+
+        // Note: removeUnusedDeclarationsTest have more tests - here there is just one
+
+        function test(code: string, expected: string) {
+            const { sourceFile, project } = getInfoFromText(code);
+            project.getLanguageService().removeUnusedDeclarations(sourceFile);
+            expect(sourceFile.getText().replace(/\s+/g, " ").trim()).to.equals(expected.replace(/\s+/g, " ").trim());
+            return { sourceFile, project }
+        }
+
+        it("should remove unused import declarations, import names, and default imports", () => {
+            test(`
+                import {foo} from 'foo'
+                import * as a from 'a'
+                import b from 'b'
+                import {used, unused} from 'bar'
+                export const c = used + 1
+                export function f() {
+                    var a
+                    const c
+                    const {x, y, z} = {x: 1, y: 1, z: 1}
+                    return y + c
+                }
+                export class C {
+                    private constructor(a: number, b: Date) { this.a = a; this.b = b }
+                    private m() { }
+                    private b: Date
+                    private a = 1
+                    protected n() { return this.b }
+                }
+                export type T<S, V> = V extends string ? : never : any
+                `, `
+                import {used} from 'bar'
+                export const c = used + 1
+                export function f() {
+                    const c
+                    const {y} = {x: 1, y: 1, z: 1}
+                    return y + c
+                }
+                export class C {
+                    private constructor(b: Date) { this.b = b }
+                    private b: Date
+                    protected n() { return this.b }
+                }
+                export type T<V> = V extends string ? : never : any
+            `);
+        });
+
+    });
 });
 
 function checkOutput(output: EmitOutput, expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; }) {

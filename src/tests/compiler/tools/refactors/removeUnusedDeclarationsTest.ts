@@ -122,7 +122,7 @@ describe(`${nameof<LanguageService>(l => l.removeUnusedDeclarations)}`, () => {
         });
     });
 
-    describe(`${nameof<LanguageService>(l => l.removeUnusedDeclarations)} class members`, () => {
+    describe(`${nameof<LanguageService>(l => l.removeUnusedDeclarations)} members`, () => {
         it("should remove unused private members, parameters and type parameters", () => {
             test(`
                 export class C<T extends number, S> {
@@ -160,14 +160,31 @@ describe(`${nameof<LanguageService>(l => l.removeUnusedDeclarations)}`, () => {
                     var i = 1
                     function g() { return i }
                     function h() { return 1 }
-                    return d + g()
+                    const { x, y, z } = { x: 1, y: true }
+                    return d + g() + x
                 }
                 `, `
                 export function f() {
                     const d = 1
                     var i = 1
                     function g() { return i }
-                    return d + g()
+                    const { x } = { x: 1, y: true }
+                    return d + g() + x
+                }
+            `);
+        });
+        it("should remove unused named variables", () => {
+            test(`
+                import { g } from 'g'
+                export function f() {
+                    var {a, b, c} = g()
+                    return b
+                }
+                `, `
+                import { g } from 'g'
+                export function f() {
+                    var {b} = g()
+                    return b
                 }
             `);
         });
