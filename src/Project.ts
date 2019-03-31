@@ -33,6 +33,11 @@ export interface SourceFileCreateOptions {
     overwrite?: boolean;
 }
 
+export interface ApplyFileTextChangesOptions {
+    /** If a file should be overwritten when the file text change is for a new file, but the file currently exists. */
+    overwrite?: boolean;
+}
+
 /**
  * Project that holds source files.
  */
@@ -60,7 +65,7 @@ export class Project {
         const compilerOptions = getCompilerOptions();
 
         // setup context
-        this._context = new ProjectContext(fileSystemWrapper, compilerOptions, { createLanguageService: true });
+        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true });
 
         // initialize manipulation settings
         if (options.manipulationSettings != null)
@@ -578,7 +583,7 @@ export class Project {
      * @param fileTextChanges - Collections of file changes to apply to this project.
      * @param options - Options for applying the text changes.
      */
-    applyFileTextChanges(fileTextChanges: ReadonlyArray<FileTextChanges>, options: { overwrite?: boolean } = {}) {
+    applyFileTextChanges(fileTextChanges: ReadonlyArray<FileTextChanges>, options: ApplyFileTextChangesOptions = {}) {
         for (const fileTextChange of fileTextChanges) {
             let file = this.getSourceFile(fileTextChange.getFilePath());
 
