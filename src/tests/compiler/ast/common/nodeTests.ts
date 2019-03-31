@@ -382,23 +382,29 @@ describe(nameof(Node), () => {
             expect(sourceFile.getDescendantStatements().map(s => s.getText())).to.deep.equal(expectedStatements);
         }
 
-        it("should get the descendant statements", () => {
+        it("should get the descendant statements including extended comments", () => {
             const expected = [
+                `//1`,
+                `/*2*/`,
                 `const a = () => {\n    const b = "";\n};`,
                 `const b = "";`,
                 `const c = 5;`,
-                `function d() {\n    function e() {\n        const f = "";\n    }\n}`,
-                `function e() {\n        const f = "";\n    }`,
+                `function d() {\n    function e() {\n        //3\n        const f = "";\n    }\n}`,
+                `function e() {\n        //3\n        const f = "";\n    }`,
+                `//3`,
                 `const f = "";`,
                 `class MyClass {\n    prop = () => console.log("here");\n}`,
                 `console.log("here")`
             ];
-            doTest(`const a = () => {
+            doTest(`//1
+/*2*/
+const a = () => {
     const b = "";
 };
 const c = 5;
 function d() {
     function e() {
+        //3
         const f = "";
     }
 }

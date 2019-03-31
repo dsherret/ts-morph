@@ -15,7 +15,7 @@ import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { Expression } from "../expression";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 import { SourceFile } from "../module";
-import { Statement } from "../statement";
+import { Statement, StatementedNode } from "../statement";
 import { CommentRange } from "../comment/CommentRange";
 import { SyntaxList } from "./SyntaxList";
 import { TextRange } from "./TextRange";
@@ -707,9 +707,10 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
         function handleStatements(thisNode: Node, node: ts.Node) {
             if ((node as NodeWithStatements).statements == null)
                 return false;
-            for (const statement of (node as NodeWithStatements).statements) {
-                statements.push(thisNode._getNodeFromCompilerNode(statement));
-                handleChildren(thisNode, statement);
+            const statementedNode = thisNode._getNodeFromCompilerNode(node) as StatementedNode;
+            for (const statement of statementedNode.getStatements()) {
+                statements.push(statement);
+                handleChildren(thisNode, statement.compilerNode);
             }
             return true;
         }
