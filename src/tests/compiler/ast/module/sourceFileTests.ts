@@ -4,7 +4,7 @@ import * as errors from "../../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
 import { SourceFileStructure, StructureKind } from "../../../../structures";
-import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget } from "../../../../typescript";
+import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget, SyntaxKind } from "../../../../typescript";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
 import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
 
@@ -1299,6 +1299,20 @@ function myFunction(param: MyClass) {
                 { path: "/MyClass.ts", text: "export class MyClass {} export class MyClass2 {} export class MyClass3 {}" },
                 { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
             ], expectedText);
+        });
+
+        it("should not forget nodes", () => {
+            const startText = `import { MyClass } from "./MyClass";\n\nconst t = new MyClass();\nconst u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
+            const { sourceFile, project } = getInfoFromText(startText);
+            project.createSourceFile("/MyClass.ts", "export class MyClass {} export class MyClass2 {} export class MyClass3 {}");
+            project.createSourceFile("/MyInterface.ts", "export interface MyInterface {}");
+            const w = sourceFile.getVariableDeclaration("w")!.getFirstDescendantByKindOrThrow(SyntaxKind.Identifier);
+            const i = sourceFile.getImportDeclarations()[0];
+            expect(i.getText()).to.equals("import { MyClass } from \"./MyClass\";");
+            sourceFile.fixMissingImports();
+            expect(() => w.getText()).not.to.throw();
+            expect(() => i.getText()).not.to.throw();
+            expect(i.getText()).to.equals("import { MyClass, MyClass2, MyClass3 } from \"./MyClass\";");
         });
     });
 

@@ -752,6 +752,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     removeUnusedDeclarations(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
         const sourceFile = this;
+        // heads up: calling it twice removes more unused variables, like things referenced in unused things or named variables
         applyCombinedCodeFix(this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences));
         applyCombinedCodeFix(this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences));
         return this;
