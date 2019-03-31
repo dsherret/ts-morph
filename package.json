@@ -14,7 +14,7 @@
     "build-declarations": "rimraf dist-declarations && ts-node --max-old-space-size=8192 --transpileOnly scripts/generation/main create-code-block-writer-file create-declaration-file",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha --opts mocha.opts --grep \"^(?!.*@performance)\"",
     "test-debug": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha --opts mocha.opts --grep \"^(?!.*@performance)\" --inspect-brk",
-    "test-watch": "watch \"npm test\" src",
+    "test-watch": "npm test -- --watch-extensions ts --watch",
     "test-ts-versions": "ts-node --transpileOnly scripts/test/testTypeScriptVersions",
     "test-coverage": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" nyc --reporter=lcov mocha --opts mocha.opts --grep \"^(?!.*performance)\"",
     "test-performance": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha --opts mocha.opts --grep @performance --reporter spec",
@@ -113,8 +113,7 @@
     "typescript-3.1.6": "npm:typescript@3.1.6",
     "typescript-3.2.4": "npm:typescript@3.2.4",
     "typescript-3.3.3": "npm:typescript@3.3.3",
-    "typescript-3.4.1": "npm:typescript@3.4.1",
-    "watch": "^1.0.2"
+    "typescript-3.4.1": "npm:typescript@3.4.1"
   },
   "standard-version": {
     "tagPrefix": ""
