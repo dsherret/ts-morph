@@ -21,8 +21,9 @@ import { SyntaxList } from "./SyntaxList";
 export interface ForEachChildTraversalControl {
     /**
      * Stops traversal.
+     * @param node - Optional node to return.
      */
-    stop(): void;
+    stop(node?: Node): void;
 }
 
 export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
@@ -582,8 +583,12 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     forEachChild(cbNode: (node: Node, traversal: ForEachChildTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachChildTraversalControl) => void) {
         let stop = false;
+        let returnValue: Node | undefined;
         const traversal: ForEachChildTraversalControl = {
-            stop: () => stop = true
+            stop: (node?: Node) => {
+                stop = true;
+                returnValue = node;
+            }
         };
         const snapshots: (Node | Node[])[] = [];
 
@@ -609,6 +614,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
             if (stop)
                 break;
         }
+
+        return returnValue;
     }
 
     /**
@@ -622,8 +629,12 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     forEachDescendant(cbNode: (node: Node, traversal: ForEachDescendantTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => void) {
         let stop = false;
         let up = false;
+        let returnValue: Node | undefined;
         const traversal = {
-            stop: () => stop = true,
+            stop: (node?: Node) => {
+                stop = true;
+                returnValue = node;
+            },
             up: () => up = true
         };
         const nodeCallback = (node: Node) => {
@@ -666,6 +677,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
         };
 
         forEachChildForNode(this);
+        return returnValue;
 
         function forEachChildForNode(node: Node) {
             node.forEachChild((innerNode, innerTraversal) => {
