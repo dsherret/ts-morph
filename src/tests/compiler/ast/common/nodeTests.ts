@@ -1372,14 +1372,15 @@ class MyClass {
     });
 
     describe(nameof<Node>(n => n.forEachChild), () => {
-        function doNodeCbSyntaxKindTest(node: Node, expectedKinds: SyntaxKind[], callback?: (child: Node, traversal: ForEachChildTraversalControl) => void) {
+        function doNodeCbSyntaxKindTest(node: Node, expectedKinds: SyntaxKind[], callback?: (child: Node, traversal: ForEachChildTraversalControl) => void, expectedReturnValue?: Node) {
             const foundKinds: SyntaxKind[] = [];
-            node.forEachChild((child, traversal) => {
+            const returnValue = node.forEachChild((child, traversal) => {
                 foundKinds.push(child.getKind());
                 if (callback)
                     callback(child, traversal);
             });
             expect(foundKinds).to.deep.equal(expectedKinds);
+            expect(returnValue).to.deep.equal(expectedReturnValue);
         }
 
         it("should iterate over all the children of a source file", () => {
@@ -1398,6 +1399,14 @@ class MyClass {
                 if (node.getKind() === SyntaxKind.PropertyDeclaration)
                     traversal.stop();
             });
+        });
+
+        it("should return the node provided in the stop call", () => {
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Test { prop: string; method() {} }");
+            doNodeCbSyntaxKindTest(firstChild, [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration], (node, traversal) => {
+                if (node.getKind() === SyntaxKind.PropertyDeclaration)
+                    traversal.stop(node);
+            }, firstChild.getProperties()[0]);
         });
 
         function doNodeArrayCbSyntaxKindTest(node: Node, expectedNodeKinds: SyntaxKind[], expectedArrayKinds: SyntaxKind[][], forceStop = false) {
@@ -1468,14 +1477,15 @@ class MyClass {
     });
 
     describe(nameof<Node>(n => n.forEachDescendant), () => {
-        function doNodeCbSyntaxKindTest(node: Node, expectedKinds: SyntaxKind[], callback?: (node: Node, stop: ForEachDescendantTraversalControl) => void) {
+        function doNodeCbSyntaxKindTest(node: Node, expectedKinds: SyntaxKind[], callback?: (node: Node, stop: ForEachDescendantTraversalControl) => void, expectedReturnValue?: Node) {
             const foundKinds: SyntaxKind[] = [];
-            node.forEachDescendant((child, traversal) => {
+            const returnValue = node.forEachDescendant((child, traversal) => {
                 foundKinds.push(child.getKind());
                 if (callback)
                     callback(child, traversal);
             });
             expect(foundKinds).to.deep.equal(expectedKinds);
+            expect(returnValue).to.deep.equal(expectedReturnValue);
         }
 
         it("should iterate over all the descendants of a source file", () => {
@@ -1501,15 +1511,15 @@ class MyClass {
             });
         });
 
-        it("should iterate until stop is called when at the grandchild level", () => {
+        it("should iterate until stop is called when at the grandchild level and return the provided node", () => {
             const { sourceFile } = getInfoFromText("class Test {} interface Interface {}");
             doNodeCbSyntaxKindTest(sourceFile, [
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.Identifier
             ], (node, traversal) => {
                 if (node.getKind() === SyntaxKind.Identifier)
-                    traversal.stop();
-            });
+                    traversal.stop(node);
+            }, sourceFile.getClasses()[0].getNameNodeOrThrow());
         });
 
         it("should skip looking at the descendants when calling skip", () => {

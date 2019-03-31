@@ -1,10 +1,12 @@
+import { Node } from "../../../compiler";
 import { ts } from "../../../typescript";
 
 export interface ForEachChildTraversalControl {
     /**
      * Stops traversal.
+     * @param node - Optional node to return.
      */
-    stop(): void;
+    stop(node?: Node): void;
 }
 
 export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
