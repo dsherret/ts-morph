@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 171
+**Total:** 172
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -56,6 +56,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: variableDeclaration
     * :heavy_check_mark: block
 * [ClassDeclaration](src/compiler/ast/class/ClassDeclaration.ts)
+    * :heavy_check_mark: name
+* [ClassElement](src/compiler/ast/class/ClassElement.ts)
     * :heavy_check_mark: name
 * [ClassExpression](src/compiler/ast/class/ClassExpression.ts)
 * [CommaListExpression](src/compiler/ast/expression/CommaListExpression.ts)
@@ -231,7 +233,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JsxSpreadAttribute](src/compiler/ast/jsx/JsxSpreadAttribute.ts)
     * :heavy_check_mark: expression
 * [JsxText](src/compiler/ast/jsx/JsxText.ts)
-    * :heavy_check_mark: containsOnlyWhiteSpaces
+    * :heavy_check_mark: containsOnlyTriviaWhiteSpaces
 * [LabeledStatement](src/compiler/ast/statement/LabeledStatement.ts)
     * :heavy_check_mark: label
     * :heavy_check_mark: statement
@@ -430,11 +432,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 52
+**Total:** 56
 
 * BigIntLiteral
 * Bundle
-* ClassElement
 * ClassLikeDeclarationBase
 * ConditionalTypeNode
 * DeclarationStatement
@@ -483,4 +484,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * TypeOperatorNode
 * TypePredicateNode
 * TypeQueryNode
+* UnparsedPrepend
+* UnparsedPrologue
+* UnparsedSection
 * UnparsedSource
+* UnparsedSyntheticReference
+* UnparsedTextLike

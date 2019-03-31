@@ -1,20 +1,19 @@
-import { removeOverloadableClassMember } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode,
     TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode, QuestionTokenableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
-import { Node } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { ClassElement } from "./ClassElement";
 
 export const MethodDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(
-    QuestionTokenableNode(StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(Node))))))
+    QuestionTokenableNode(StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(ClassElement))))))
 )))))));
 export const MethodDeclarationOverloadBase = JSDocableNode(ChildOrderableNode(TextInsertableNode(ScopedNode(TypeParameteredNode(AbstractableNode(
-    QuestionTokenableNode(StaticableNode(AsyncableNode(ModifierableNode(GeneratorableNode(SignaturedDeclaration(Node))
+    QuestionTokenableNode(StaticableNode(AsyncableNode(ModifierableNode(GeneratorableNode(SignaturedDeclaration(ClassElement))
 ))))))))));
 
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
@@ -65,7 +64,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
      */
     insertOverloads(index: number, structures: ReadonlyArray<MethodDeclarationOverloadStructure>) {
         const thisName = this.getName();
-        const childCodes = structures.map(structure => `${thisName}();`);
+        const childCodes = structures.map(_ => `${thisName}();`);
 
         return insertOverloads<MethodDeclaration, MethodDeclarationOverloadStructure>({
             node: this,
@@ -76,13 +75,6 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
             setNodeFromStructure: (node, structure) => node.set(structure),
             expectedSyntaxKind: SyntaxKind.MethodDeclaration
         });
-    }
-
-    /**
-     * Removes the method.
-     */
-    remove() {
-        removeOverloadableClassMember(this);
     }
 
     /**
