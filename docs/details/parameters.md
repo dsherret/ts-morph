@@ -62,3 +62,7 @@ A parameter can be optional if it is marked so with a question mark, is a rest p
 ```ts
 const isOptional = parameter.isOptional(); // returns: boolean
 ```
+
+### Convert Destructured Object Refactor
+
+See [Function - Convert Destructured Object Refactor](functions#convert-destructured-object-refactor)

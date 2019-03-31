@@ -130,6 +130,24 @@ function innerFunction() {
 const someDeclaration = 5;
 ```
 
+### Convert Destructured Object Refactor
+
+Function's parameters can be converted to a destructure object. Given the following code:
+
+```ts
+function f(a: number, b: string[]) { }
+```
+
+Calling `aFunctionLikeNode.convertParamsToDestructuredObject()` will result in:
+
+```ts
+function f({ a, b }: { a: number; b: string[]; }) { }}
+```
+
+Tip: This is useful when developing an API, the list of options are provided as parameter list because initially they were few, but now there are a lot so it's better to group them in an `Options` object.
+
+Note: This will forget all the previously navigated nodes so it's recommended to make this either the first or last action you do to a source file.
+
 ## Function Expressions
 
 They exist in an expression:
