@@ -2,11 +2,11 @@
 title: Refactors
 ---
 
-Besides `rename()`, `remove()` There are some refactors and code fixes available in `SourceFile`. 
+Besides `rename()`, `remove()` there are other code refactor tools available in `SourceFile`. 
 
-Notice that, in general they will forget all the nodes in the file, so it's best to apply them after you're all done with the file.
+Notice that, in general they **will forget all the nodes** in the file, so it's best to apply them after you're all done with the file.
 
-When adding code, they will use current project [manipulation settings](settings) but custom settings can be given also.
+When adding code, they will use current project [Manipulation Settings](./settings) but custom settings can be given also.
 
 ## Organize Imports
 
