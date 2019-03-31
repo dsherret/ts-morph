@@ -2,7 +2,7 @@
 title: Refactors
 ---
 
-Besides `rename()`, `remove()` there are other code refactor tools available in `SourceFile`. 
+Besides `rename()`, `remove()`, `setOrder()`, etc. there are other code refactor tools available in `SourceFile`. 
 
 Notice that, in general they **will forget all the nodes** in the file, so it's best to apply them after you're all done with the file.
 
