@@ -13,7 +13,7 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { StringLiteral } from "../literal";
 import { StatementedNode } from "../statement";
-import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, UserPreferences, TextChange } from "../../tools";
+import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, UserPreferences, TextChange, CombinedCodeActions } from "../../tools";
 import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
@@ -750,9 +750,31 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      *
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      */
-    removeUnusedDeclarations() {
-        this._context.languageService.removeUnusedDeclarations(this);
+    removeUnusedDeclarations(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
+        const sourceFile = this;
+        applyCombinedCodeFix(this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences));
+        applyCombinedCodeFix(this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences));
         return this;
+
+        function applyCombinedCodeFix(combinedCodeFix: CombinedCodeActions ) {
+            for (const fileTextChanges of combinedCodeFix.getChanges())
+                applyTextChanges(fileTextChanges.getTextChanges());
+        }
+
+        function applyTextChanges(changes: ReadonlyArray<TextChange>) {
+            let removed = 0;
+            Array.from(changes)
+            .sort((a, b) => a.getSpan().getStart() < b.getSpan().getStart() ? -1 : 1)
+            .forEach(c => {
+                replaceNodeText({
+                    sourceFile,
+                    newText: c.getNewText(),
+                    replacingLength: c.getSpan().getLength(),
+                    start: Math.max(0, c.getSpan().getStart() - removed)
+                });
+                removed += c.getSpan().getLength();
+            });
+        }
     }
 
     /**
