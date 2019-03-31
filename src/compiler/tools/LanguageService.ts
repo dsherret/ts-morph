@@ -10,7 +10,7 @@ import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction,
     CombinedCodeActions } from "./results";
-import { removeUnusedDeclarations } from "./refactors/removeUnusedDeclarations";
+import { removeUnusedDeclarations } from "./refactors";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
