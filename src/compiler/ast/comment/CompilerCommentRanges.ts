@@ -5,7 +5,6 @@ export class CompilerExtendedCommentRange implements ts.Node {
     private _sourceFile: ts.SourceFile;
 
     constructor(pos: number, end: number, kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia, sourceFile: ts.SourceFile, parent: ts.Node) {
-        // todo: should this be different?
         this._start = pos; // pos and start are the same for comments
         this._sourceFile = sourceFile;
         this.pos = pos;
