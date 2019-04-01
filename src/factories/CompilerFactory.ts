@@ -1,6 +1,6 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter,
-    CommentRangeStatement, ExtendedCommentRange, CompilerExtendedCommentRange } from "../compiler";
+    CommentStatement, CommentClassElement, ExtendedCommentRange, CompilerExtendedCommentRange } from "../compiler";
 import { ExtendedCommentParser } from "../compiler/ast/utils";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
@@ -265,8 +265,10 @@ export class CompilerFactory {
         function createNode(this: CompilerFactory): Node<NodeType> {
             // todo: improve kind to wrapper mappings to handle this scenario
             if (isExtendedCommentRange(compilerNode)) {
-                if (ExtendedCommentParser.isCommentRangeStatement(compilerNode))
-                    return new CommentRangeStatement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                if (ExtendedCommentParser.isCommentStatement(compilerNode))
+                    return new CommentStatement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                if (ExtendedCommentParser.isCommentClassElement(compilerNode))
+                    return new CommentClassElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
                 return new ExtendedCommentRange(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
             }
             const ctor = kindToWrapperMappings[compilerNode.kind] || Node as any;

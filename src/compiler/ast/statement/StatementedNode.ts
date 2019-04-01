@@ -17,17 +17,17 @@ import { FunctionDeclaration } from "../function";
 import { InterfaceDeclaration } from "../interface";
 import { ImplementedKindToNodeMappings } from "../kindToNodeMappings";
 import { NamespaceDeclaration } from "../module";
-import { Statement, VariableStatement, CommentRangeStatement } from "../statement";
+import { Statement, VariableStatement, CommentStatement } from "../statement";
 import { VariableDeclaration } from "../variable";
 import { TypeAliasDeclaration } from "../type";
-import { ExtendedCommentParser, StatementContainerNodes } from "../utils";
+import { ExtendedParser, StatementContainerNodes } from "../utils";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause
     | ts.DefaultClause | ts.ModuleBlock>;
 
-export interface KindToNodeMappingsWithCommentRangeStatements extends ImplementedKindToNodeMappings {
-    [SyntaxKind.SingleLineCommentTrivia]: CommentRangeStatement;
-    [SyntaxKind.MultiLineCommentTrivia]: CommentRangeStatement;
+export interface KindToNodeMappingsWithCommentStatements extends ImplementedKindToNodeMappings {
+    [SyntaxKind.SingleLineCommentTrivia]: CommentStatement;
+    [SyntaxKind.MultiLineCommentTrivia]: CommentStatement;
     [kind: number]: Node;
 }
 
@@ -50,12 +50,12 @@ export interface StatementedNode {
      * Gets the first statement that matches the provided syntax kind or returns undefined if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentRangeStatements[TKind] | undefined;
+    getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentStatements[TKind] | undefined;
     /**
      * Gets the first statement that matches the provided syntax kind or throws if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentRangeStatements[TKind];
+    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentStatements[TKind];
     /**
      * Add statements.
      * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
@@ -904,7 +904,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 return [] as any as ts.Statement[];
             else {
                 // will always return an array of statements
-                return ExtendedCommentParser.getOrParseChildren(this._sourceFile.compilerNode, statementsContainer) as any as ts.Statement[];
+                return ExtendedParser.getContainerArray(statementsContainer, this._sourceFile.compilerNode) as any as ts.Statement[];
             }
         }
 

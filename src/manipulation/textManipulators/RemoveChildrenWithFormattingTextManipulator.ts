@@ -1,7 +1,7 @@
 ﻿import { Node } from "../../compiler";
 import { FormattingKind } from "../formatting";
 import { isNewLineAtPos } from "../textChecks";
-import { getPosAtEndOfPreviousLine, getPosAtNextNonBlankLine, getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
+import { getPosAtEndOfPreviousLine, getPosAtNextNonBlankLine, getPosAtStartOfLineOrNonWhitespace, getPreviousNonWhitespacePos } from "../textSeek";
 import { getSpacingBetweenNodes } from "./getSpacingBetweenNodes";
 import { getTextForError } from "./getTextForError";
 import { TextManipulator } from "./TextManipulator";
@@ -57,10 +57,11 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
                 return isNewLineAtPos(fullText, trailingEnd) ? trailingEnd : previousSibling.getEnd();
             }
 
-            if (parent.getPos() === children[0].getPos())
+            const firstPos = getPreviousNonWhitespacePos(fullText, children[0].getPos());
+            if (parent.getPos() === firstPos)
                 return children[0].getNonWhitespaceStart(); // do not shift the parent
 
-            return children[0].isFirstNodeOnLine() ? children[0].getPos() : children[0].getNonWhitespaceStart();
+            return children[0].isFirstNodeOnLine() ? firstPos : children[0].getNonWhitespaceStart();
         }
 
         function getRemovalEnd() {

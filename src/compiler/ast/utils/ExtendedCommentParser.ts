@@ -1,7 +1,7 @@
 import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
 import { StringUtils, getSyntaxKindName } from "../../../utils";
-import { CompilerExtendedCommentRange, CompilerCommentRangeStatement } from "../comment/CompilerCommentRanges";
+import { CompilerExtendedCommentRange, CompilerCommentStatement, CompilerCommentClassElement } from "../comment/CompilerCommentRanges";
 
 enum CommentKind {
     SingleLine,
@@ -43,7 +43,7 @@ export class ExtendedCommentParser {
     private constructor() {
     }
 
-    static getOrParseChildren(sourceFile: ts.SourceFile, container: ContainerNodes | ts.SyntaxList) {
+    static getOrParseChildren(container: ContainerNodes | ts.SyntaxList, sourceFile: ts.SourceFile) {
         // always store the syntax list result on the parent so that a second array isn't created
         if (isSyntaxList(container))
             container = container.parent as ContainerNodes;
@@ -51,7 +51,7 @@ export class ExtendedCommentParser {
         // cache the result
         let statements = statementsSaver.get(container);
         if (statements == null) {
-            statements = Array.from(getNodes(sourceFile, container));
+            statements = Array.from(getNodes(container, sourceFile));
             statementsSaver.set(container, statements);
         }
         return statements;
@@ -69,8 +69,12 @@ export class ExtendedCommentParser {
         return statementsSaver.has(container);
     }
 
-    static isCommentRangeStatement(node: ts.Node): node is CompilerCommentRangeStatement {
-        return (node as CompilerCommentRangeStatement)._isCommentRangeStatement === true;
+    static isCommentStatement(node: ts.Node): node is CompilerCommentStatement {
+        return (node as CompilerCommentStatement)._isCommentStatement === true;
+    }
+
+    static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement {
+        return (node as CompilerCommentClassElement)._isCommentClassElement === true;
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {
@@ -104,27 +108,27 @@ export class ExtendedCommentParser {
     }
 }
 
-function* getNodes(sourceFile: ts.SourceFile, container: ContainerNodes): IterableIterator<ts.Node | CompilerExtendedCommentRange> {
+function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): IterableIterator<ts.Node | CompilerExtendedCommentRange> {
     const sourceFileText = sourceFile.text;
     const childNodes = getContainerChildren();
     const createComment = getCreationFunction();
 
     if (childNodes.length === 0) {
         const bodyStartPos = ExtendedCommentParser.getContainerBodyPos(container, sourceFile);
-        yield* getStatementedComments(bodyStartPos, false); // do not skip js docs because they won't have a node to be attached to
+        yield* getExtendedComments(bodyStartPos, false); // do not skip js docs because they won't have a node to be attached to
     }
     else {
         for (const childNode of childNodes) {
-            yield* getStatementedComments(childNode.pos, true);
+            yield* getExtendedComments(childNode.pos, true);
             yield childNode;
         }
 
         // get the comments on a newline after the last node
         const lastChild = childNodes[childNodes.length - 1];
-        yield* getStatementedComments(lastChild.end, false); // parse any jsdocs afterwards
+        yield* getExtendedComments(lastChild.end, false); // parse any jsdocs afterwards
     }
 
-    function* getStatementedComments(pos: number, stopAtJsDoc: boolean) {
+    function* getExtendedComments(pos: number, stopAtJsDoc: boolean) {
         skipTrailingLine();
 
         const leadingComments = Array.from(getLeadingComments());
@@ -246,6 +250,7 @@ function* getNodes(sourceFile: ts.SourceFile, container: ContainerNodes): Iterab
             return container.statements;
 
         if (ts.isClassDeclaration(container)
+            || ts.isClassExpression(container)
             || ts.isEnumDeclaration(container)
             || ts.isInterfaceDeclaration(container)
             || ts.isTypeLiteralNode(container)
@@ -262,7 +267,9 @@ function* getNodes(sourceFile: ts.SourceFile, container: ContainerNodes): Iterab
 
     function getCreationFunction(): (pos: number, end: number, kind: CommentSyntaxKinds) => CompilerExtendedCommentRange {
         if (isStatementContainerNode(container))
-            return (pos: number, end: number, kind: CommentSyntaxKinds) => new CompilerCommentRangeStatement(pos, end, kind, sourceFile, container);
+            return (pos: number, end: number, kind: CommentSyntaxKinds) => new CompilerCommentStatement(pos, end, kind, sourceFile, container);
+        if (ts.isClassLike(container))
+            return (pos: number, end: number, kind: CommentSyntaxKinds) => new CompilerCommentClassElement(pos, end, kind, sourceFile, container);
         return (pos: number, end: number, kind: CommentSyntaxKinds) => new CompilerExtendedCommentRange(pos, end, kind, sourceFile, container);
     }
 }

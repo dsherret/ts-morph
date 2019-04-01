@@ -12,20 +12,22 @@ import { DecoratableNode, JSDocableNode, ModifierableNode, TypeParameteredNode, 
 import { Node } from "../../common";
 import { ParameterDeclaration } from "../../function";
 import { ExpressionWithTypeArguments } from "../../type";
-import { AbstractableNode } from ".";
+import { ExtendedParser } from "../../utils";
 import { ConstructorDeclaration } from "../ConstructorDeclaration";
 import { ClassDeclaration } from "../ClassDeclaration";
 import { GetAccessorDeclaration } from "../GetAccessorDeclaration";
 import { MethodDeclaration } from "../MethodDeclaration";
 import { PropertyDeclaration } from "../PropertyDeclaration";
 import { SetAccessorDeclaration } from "../SetAccessorDeclaration";
+import { CommentClassElement } from "../CommentClassElement";
+import { AbstractableNode } from "./AbstractableNode";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
 export type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
 export type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
-export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
+export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | CommentClassElement;
 
 export type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
 
@@ -903,8 +905,11 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         getInstanceMembers() {
-            return this.getMembersWithParameterProperties()
-                .filter(m => !TypeGuards.isConstructorDeclaration(m) && (TypeGuards.isParameterDeclaration(m) || !m.isStatic())) as ClassInstanceMemberTypes[];
+            return this.getMembersWithParameterProperties().filter(m => {
+                if (TypeGuards.isCommentClassElement(m) || TypeGuards.isConstructorDeclaration(m))
+                    return false;
+                return TypeGuards.isParameterDeclaration(m) || !m.isStatic();
+            }) as ClassInstanceMemberTypes[];
         }
 
         getStaticMember(name: string): ClassStaticMemberTypes | undefined;
@@ -922,7 +927,11 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         getStaticMembers() {
-            return this.getMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && !(m instanceof ParameterDeclaration) && m.isStatic()) as ClassStaticMemberTypes[];
+            return this.getMembers().filter(m => {
+                if (TypeGuards.isCommentClassElement(m) || TypeGuards.isConstructorDeclaration(m))
+                    return false;
+                return !TypeGuards.isParameterDeclaration(m) && m.isStatic();
+            }) as ClassStaticMemberTypes[];
         }
 
         getMembersWithParameterProperties() {
@@ -946,7 +955,9 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return getAllMembers(this).filter(m => isSupportedClassMember(m)) as ClassMemberTypes[];
 
             function getAllMembers(classDec: Node<ts.ClassLikeDeclarationBase>) {
-                const members = classDec.compilerNode.members.map(m => classDec._getNodeFromCompilerNode(m));
+                const compilerNode = classDec.compilerNode as ts.ClassExpression | ts.ClassDeclaration;
+                const members = ExtendedParser.getContainerArray(compilerNode, classDec.getSourceFile().compilerNode)
+                    .map(m => classDec._getNodeFromCompilerNode(m));
                 const isAmbient = TypeGuards.isAmbientableNode(classDec) && classDec.isAmbient();
 
                 // filter out the method declarations or constructor declarations without a body if not ambient
@@ -1046,5 +1057,6 @@ function isSupportedClassMember(m: Node) {
         || TypeGuards.isPropertyDeclaration(m)
         || TypeGuards.isGetAccessorDeclaration(m)
         || TypeGuards.isSetAccessorDeclaration(m)
-        || TypeGuards.isConstructorDeclaration(m);
+        || TypeGuards.isConstructorDeclaration(m)
+        || TypeGuards.isCommentClassElement(m);
 }

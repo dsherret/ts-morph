@@ -83,8 +83,15 @@ export class CompilerExtendedCommentRange implements ts.Node {
     }
 }
 
-export class CompilerCommentRangeStatement extends CompilerExtendedCommentRange implements ts.Statement {
+export class CompilerCommentStatement extends CompilerExtendedCommentRange implements ts.Statement {
     _statementBrand: any;
     /** @internal */
-    _isCommentRangeStatement: true = true;
+    _isCommentStatement: true = true;
+}
+
+export class CompilerCommentClassElement extends CompilerExtendedCommentRange implements ts.ClassElement {
+    _classElementBrand: any;
+    _declarationBrand: any;
+    /** @internal */
+    _isCommentClassElement: true = true;
 }

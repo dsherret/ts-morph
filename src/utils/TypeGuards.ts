@@ -49,7 +49,9 @@ export class TypeGuards {
         return (node as any).getBody() != null;
     }
 
-    /** Gets if the provided value is a node. */
+    /**
+     * Gets if the provided value is a Node.
+     */
     static isNode(value: unknown): value is compiler.Node {
         if (value == null)
             return false;
@@ -58,6 +60,20 @@ export class TypeGuards {
             return false;
         return kind !== SyntaxKind.SingleLineCommentTrivia
             && kind !== SyntaxKind.MultiLineCommentTrivia;
+    }
+
+    /**
+     * Gets if the provided value is a CommentStatement.
+     */
+    static isCommentStatement(node: compiler.Node): node is compiler.CommentStatement {
+        return (node.compilerNode as compiler.CompilerCommentStatement)._isCommentStatement === true;
+    }
+
+    /**
+     * Gets if the provided value is a CommentClassElement.
+     */
+    static isCommentClassElement(node: compiler.Node): node is compiler.CommentClassElement {
+        return (node.compilerNode as compiler.CompilerCommentClassElement)._isCommentClassElement === true;
     }
 
     /**

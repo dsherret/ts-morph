@@ -27,7 +27,7 @@ describe(nameof(ExtendedCommentParser), () => {
             function doForLeadingText(leadingText: string, message: string) {
                 const sourceFile = createSourceFile(leadingText + text + "\n}");
                 const block = ts.forEachChild(sourceFile, c => ts.forEachChild(c, g => ts.isModuleBlock(g) || ts.isBlock(g) ? g : undefined))!;
-                const result = ExtendedCommentParser.getOrParseChildren(sourceFile, block);
+                const result = ExtendedCommentParser.getOrParseChildren(block, sourceFile);
                 const adjustedExpectedNodes = expectedNodes.map(n => ({
                     kind: n.kind,
                     pos: (n.pos === 0 && !isComment(n) ? leadingText.length - 1 : leadingText.length) + n.pos,
@@ -157,7 +157,7 @@ describe(nameof(ExtendedCommentParser), () => {
         function doTest(text: string, expectedNodes: { kind: SyntaxKind; pos: number; end: number; }[]) {
             const sourceFile = createSourceFile(text);
             const container = getContainer(sourceFile)!;
-            const result = ExtendedCommentParser.getOrParseChildren(sourceFile, container);
+            const result = ExtendedCommentParser.getOrParseChildren(container, sourceFile);
 
             assertEqual(expectedNodes, result);
 

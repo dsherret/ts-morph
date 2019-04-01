@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../../typescript";
-import { ExtendedCommentParser } from "./ExtendedCommentParser";
+import { ExtendedCommentParser, ContainerNodes } from "./ExtendedCommentParser";
 import { hasParsedTokens } from "./hasParsedTokens";
 
 const forEachChildSaver = new WeakMap<ts.Node, ts.Node[]>();
@@ -9,6 +9,11 @@ const getChildrenSaver = new WeakMap<ts.Node, ts.Node[]>();
  * Parser that parses around nodes for comments.
  */
 export class ExtendedParser {
+    /** Gets the `#statements`, `#members`, or `#properties` array with extended comments. */
+    static getContainerArray(container: ContainerNodes, sourceFile: ts.SourceFile) {
+        return ExtendedCommentParser.getOrParseChildren(container, sourceFile);
+    }
+
     static getCompilerChildrenFast(node: ts.Node, sourceFile: ts.SourceFile) {
         if (hasParsedTokens(node))
             return ExtendedParser.getCompilerChildren(node, sourceFile);
@@ -21,7 +26,7 @@ export class ExtendedParser {
             let result = forEachChildSaver.get(node);
             if (result == null) {
                 result = getForEachChildren();
-                mergeInComments(result, ExtendedCommentParser.getOrParseChildren(sourceFile, node));
+                mergeInComments(result, ExtendedCommentParser.getOrParseChildren(node, sourceFile));
                 forEachChildSaver.set(node, result);
             }
             return result;
@@ -43,7 +48,7 @@ export class ExtendedParser {
             let result = getChildrenSaver.get(node);
             if (result == null) {
                 result = [...node.getChildren()]; // make a copy; do not modify the compiler api's array
-                mergeInComments(result, ExtendedCommentParser.getOrParseChildren(sourceFile, node as ts.SyntaxList));
+                mergeInComments(result, ExtendedCommentParser.getOrParseChildren(node as ts.SyntaxList, sourceFile));
                 getChildrenSaver.set(node, result);
             }
             return result;

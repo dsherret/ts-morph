@@ -33,6 +33,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         .forEach(m => m.remove());
 
     createIsNode();
+    createIsCommentMethods();
     typeGuardsClass.addMethods(getMethodInfos().map(method => ({
         name: `is${method.name}`,
         isStatic: true,
@@ -161,15 +162,37 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             parameters: [{ name: "value", type: "unknown" }],
             bodyText: writer => {
                 writer.writeLine("if (value == null)");
-                writer.indent().writeLine("return false;");
+                writer.indent().write("return false;").newLine();
 
                 writer.writeLine(`const kind = (value as any)["kind"];`);
                 writer.writeLine(`if (typeof kind !== "number")`);
-                writer.indent().writeLine(`return false;`);
+                writer.indent().write(`return false;`).newLine();
                 writer.writeLine(`return kind !== SyntaxKind.SingleLineCommentTrivia`);
-                writer.indent().writeLine(`&& kind !== SyntaxKind.MultiLineCommentTrivia;`);
+                writer.indent().write(`&& kind !== SyntaxKind.MultiLineCommentTrivia;`);
             }
         });
+    }
+
+    function createIsCommentMethods() {
+        typeGuardsClass.addMethods([{
+            docs: ["Gets if the provided value is a CommentStatement."],
+            isStatic: true,
+            name: "isCommentStatement",
+            returnType: `node is compiler.CommentStatement`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentStatement)._isCommentStatement === true;`);
+            }
+        }, {
+            docs: ["Gets if the provided value is a CommentClassElement."],
+            isStatic: true,
+            name: "isCommentClassElement",
+            returnType: `node is compiler.CommentClassElement`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentClassElement)._isCommentClassElement === true;`);
+            }
+        }]);
     }
 }
 
@@ -204,6 +227,9 @@ function isAllowedClass(name: string) {
         case "AssignmentExpression":
         case "SuperElementAccessExpression":
         case "SuperPropertyAccessExpression":
+        case "ExtendedCommentRange":
+        case "CommentStatement":
+        case "CommentClassElement":
             return false;
         default:
             return true;

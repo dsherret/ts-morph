@@ -1,9 +1,8 @@
 import { expect } from "chai";
 import { Node, ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
-    PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase } from "../../../../../compiler";
+    PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase, CommentClassElement } from "../../../../../compiler";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure,
-    StructureKind} from "../../../../../structures";
+    SetAccessorDeclarationStructure, StructureKind} from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { SyntaxKind } from "../../../../../typescript";
 import { TypeGuards } from "../../../../../utils";
@@ -1115,6 +1114,29 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 "prop: string;\nprop2: number;method1(str);method1();\n}\n";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             expect(firstChild.getMembers().length).to.equal(9);
+        });
+
+        it("should get any class element comments in an empty class", () => {
+            const code = "class C {\n  //a\n  /*b*/\n}";
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const members = firstChild.getMembers();
+            expect(members.map(m => m.getText())).to.deep.equal([
+                "//a",
+                "/*b*/"
+            ]);
+            expect(members[0]).to.be.instanceOf(CommentClassElement);
+            expect(members[1]).to.be.instanceOf(CommentClassElement);
+        });
+
+        it("should get any class element comments in a class with other members", () => {
+            const code = "class C {\n  //a\n  p;\n  /*b*/\n}";
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const members = firstChild.getMembers();
+            expect(members.map(m => m.getText())).to.deep.equal([
+                "//a",
+                "p;",
+                "/*b*/"
+            ]);
         });
     });
 
