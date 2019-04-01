@@ -16,6 +16,8 @@
     fileExistsSync(filePath: string): boolean;
     directoryExists(dirPath: string): Promise<boolean>;
     directoryExistsSync(dirPath: string): boolean;
+    /** @internal */
+    realpathSync?(path: string): string;
     getCurrentDirectory(): string;
     glob(patterns: ReadonlyArray<string>): string[];
     /** Gets if this file system is case sensitive. Defaults to true if not implemented. */

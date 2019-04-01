@@ -310,6 +310,16 @@ export class FileSystemWrapper {
             this.executeOperationSync(operation);
     }
 
+    realpathSync(path: string) {
+        let realpath: string;
+        if (this.fileSystem.realpathSync)
+            realpath = this.fileSystem.realpathSync(path);
+        else
+            realpath = path;
+
+        return this.getStandardizedAbsolutePath(realpath);
+    }
+
     private getAndClearOperationsForDir(dir: Directory) {
         const operations: Operation[] = getAndClearParentMkDirOperations(dir.getParent(), dir);
         for (const currentDir of [dir, ...dir.getDescendants()])

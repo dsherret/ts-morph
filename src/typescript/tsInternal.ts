@@ -10,7 +10,8 @@ export function matchFiles(this: any,
     useCaseSensitiveFileNames: boolean,
     currentDirectory: string,
     depth: number | undefined,
-    getEntries: (path: string) => FileSystemEntries
+    getEntries: (path: string) => FileSystemEntries,
+    realpath: (path: string) => string
 ): string[] {
     return (ts as any).matchFiles.apply(this, arguments);
 }
