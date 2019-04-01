@@ -1,7 +1,7 @@
 import { ts } from "../../../typescript";
 import { ProjectContext } from "../../../ProjectContext";
-import { ApplyFileTextChangesOptions } from "../../../Project";
-import { FileTextChanges } from "./FileTextChanges";
+import { Memoize } from "../../../utils";
+import { FileTextChanges, ApplyFileTextChangesOptions } from "./FileTextChanges";
 
 /**
  * Represents file changes.
@@ -13,8 +13,6 @@ export class CombinedCodeActions {
     private readonly _context: ProjectContext;
     /** @internal */
     private readonly _compilerObject: ts.CombinedCodeActions;
-    /** @internal */
-    private _applied: true | undefined;
 
     /** @private */
     constructor(context: ProjectContext, compilerObject: ts.CombinedCodeActions) {
@@ -28,6 +26,7 @@ export class CombinedCodeActions {
     }
 
     /** Text changes to apply to each file. */
+    @Memoize
     getChanges() {
         return this.compilerObject.changes.map(change => new FileTextChanges(this._context, change));
     }
@@ -39,11 +38,8 @@ export class CombinedCodeActions {
      * @options - Options used when applying the changes.
      */
     applyChanges(options?: ApplyFileTextChangesOptions) {
-        if (this._applied)
-            return this;
-
-        this._context.project.applyFileTextChanges(this.getChanges(), options);
-        this._applied = true;
+        for (const change of this.getChanges())
+            change.applyChanges(options);
 
         return this;
     }
