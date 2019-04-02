@@ -1,21 +1,20 @@
 import * as errors from "../../../errors";
 import { Directory } from "../../../fileSystem";
-import { ProjectContext } from "../../../ProjectContext";
-import { getTextFromFormattingEdits, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting,
-    insertIntoTextRange } from "../../../manipulation";
+import { getTextFromFormattingEdits, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting } from "../../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
-import { SourceFileStructure, SourceFileSpecificStructure } from "../../../structures";
+import { ProjectContext } from "../../../ProjectContext";
+import { SourceFileSpecificStructure, SourceFileStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { LanguageVariant, ScriptTarget, ts } from "../../../typescript";
-import { ArrayUtils, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, Memoize } from "../../../utils";
-import { TextInsertableNode, ModuledNode } from "../base";
+import { ArrayUtils, EventContainer, FileUtils, Memoize, ModuleUtils, SourceFileReferenceContainer, StringUtils } from "../../../utils";
+import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, TextChange, UserPreferences } from "../../tools";
+import { ModuledNode, TextInsertableNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { StringLiteral } from "../literal";
 import { StatementedNode } from "../statement";
-import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, UserPreferences, TextChange, CombinedCodeActions } from "../../tools";
 import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export interface SourceFileCopyOptions {
     overwrite?: boolean;
