@@ -1,7 +1,7 @@
-import { ts } from "../../../typescript";
 import { ProjectContext } from "../../../ProjectContext";
+import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
-import { FileTextChanges } from "./FileTextChanges";
+import { ApplyFileTextChangesOptions, FileTextChanges } from "./FileTextChanges";
 
 /**
  * Set of edits to make in response to a refactor action, plus an optional location where renaming should be invoked from.
@@ -43,6 +43,19 @@ export class RefactorEditInfo {
      */
     getRenameLocation() {
         return this.compilerObject.renameLocation;
+    }
+
+    /**
+     * Executes the combined code actions.
+     *
+     * WARNING: This will cause all nodes to be forgotten in the changed files.
+     * @options - Options used when applying the changes.
+     */
+    applyChanges(options?: ApplyFileTextChangesOptions) {
+        for (const change of this.getEdits())
+            change.applyChanges(options);
+
+        return this;
     }
 
     // TODO: getCommands
