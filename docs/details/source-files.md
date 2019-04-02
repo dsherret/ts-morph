@@ -249,12 +249,14 @@ To add all the missing import declarations to a source file, use the following m
 sourceFile.fixMissingImports();
 ```
 
-### Remove Unused Identifiers
+### Fix Unused Identifiers
 
 To remove all unused declarations from a source file, like variables, classes, members, parameters, type parameters, etc, use the following method:
 
 ```ts
-sourceFile.fixUnusedIdentifiers()
+sourceFile.fixUnusedIdentifiers();
 ```
+
+Tip: For optimal results, sometimes this method needs to be called more than once. There could be nodes that are only referenced in unused declarations and in this case, another call will also remove them.
 
 Note: This will forget all the previously navigated nodes so it's recommended to make this either the first or last action you do to a source file.

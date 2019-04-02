@@ -126,4 +126,4 @@ classDeclaration = sourceFile.getClass("MyClass")!;
 
 ## SourceFile Code Fixes
 
-Source files supports a variety of useful code fixes and refactors such as `organizeImports`, `fixMissingImports`, `removeUnusedDeclarations`. Check more details in [source files details page](../details/source-files).
+Source files also support a variety of useful code fixes and refactors such as `organizeImports`, `fixMissingImports`, `fixUnusedIdentifiers`. Check more details at [source files details page](../details/source-files).
