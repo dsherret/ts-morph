@@ -64,20 +64,21 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
     }));
 }
 
-export function removeOverloadableClassMember(classMember: Node & OverloadableNode) {
-    if (classMember.isOverload()) {
-        const parent = classMember.getParentOrThrow();
-        if (TypeGuards.isAmbientableNode(parent) && parent.isAmbient())
-            removeClassMember(classMember);
-        else
-            removeChildren({ children: [classMember], removeFollowingSpaces: true, removeFollowingNewLines: true });
-    }
-    else
-        removeClassMembers([...classMember.getOverloads(), classMember]);
-}
-
 export function removeClassMember(classMember: Node) {
-    removeClassMembers([classMember]);
+    if (TypeGuards.isOverloadableNode(classMember)) {
+        if (classMember.isOverload()) {
+            const parent = classMember.getParentOrThrow();
+            if (TypeGuards.isAmbientableNode(parent) && parent.isAmbient())
+                removeClassMembers([classMember]);
+            else
+                removeChildren({ children: [classMember], removeFollowingSpaces: true, removeFollowingNewLines: true });
+        }
+        else
+            removeClassMembers([...classMember.getOverloads(), classMember]);
+    }
+    else {
+        removeClassMembers([classMember]);
+    }
 }
 
 export function removeClassMembers(classMembers: Node[]) {

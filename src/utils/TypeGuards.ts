@@ -383,6 +383,23 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ClassElement.
+     * @param node - Node to check.
+     */
+    static isClassElement(node: compiler.Node): node is compiler.ClassElement {
+        switch (node.getKind()) {
+            case SyntaxKind.Constructor:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a ClassExpression.
      * @param node - Node to check.
      */

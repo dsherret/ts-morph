@@ -88,6 +88,20 @@ Removed `SourceFile#getLineNumberAtPos(pos)` in favour of `#getLineAndColumnAtPo
 const { line, column } = sourceFile.getLineAndColumnAtPos(position);
 ```
 
+### Removed `Project#applyFileTextChanges()` / Added `FileTextChanges#applyChanges()`
+
+Instead of calling:
+
+```ts
+project.applyFileTextChanges(fileTextChanges);
+```
+
+Do the following:
+
+```ts
+fileTextChanges.forEach(change => change.applyChanges());
+```
+
 ## Version 1
 
 Renamed library to `ts-morph` and reset version to 1.0.0.

@@ -11,8 +11,9 @@ import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
 import { Type } from "../../types";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
-import { SourceFile } from "../module";
+import { Expression } from "../expression";
 import { KindToNodeMappings } from "../kindToNodeMappings";
+import { SourceFile } from "../module";
 import { Statement } from "../statement";
 import { CommentRange } from "./CommentRange";
 import { SyntaxList } from "./SyntaxList";
@@ -20,8 +21,9 @@ import { SyntaxList } from "./SyntaxList";
 export interface ForEachChildTraversalControl {
     /**
      * Stops traversal.
+     * @param node - Optional node to return.
      */
-    stop(): void;
+    stop(node?: Node): void;
 }
 
 export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
@@ -581,8 +583,12 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     forEachChild(cbNode: (node: Node, traversal: ForEachChildTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachChildTraversalControl) => void) {
         let stop = false;
+        let returnValue: Node | undefined;
         const traversal: ForEachChildTraversalControl = {
-            stop: () => stop = true
+            stop: (node?: Node) => {
+                stop = true;
+                returnValue = node;
+            }
         };
         const snapshots: (Node | Node[])[] = [];
 
@@ -608,6 +614,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
             if (stop)
                 break;
         }
+
+        return returnValue;
     }
 
     /**
@@ -621,8 +629,12 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     forEachDescendant(cbNode: (node: Node, traversal: ForEachDescendantTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => void) {
         let stop = false;
         let up = false;
+        let returnValue: Node | undefined;
         const traversal = {
-            stop: () => stop = true,
+            stop: (node?: Node) => {
+                stop = true;
+                returnValue = node;
+            },
             up: () => up = true
         };
         const nodeCallback = (node: Node) => {
@@ -665,6 +677,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
         };
 
         forEachChildForNode(this);
+        return returnValue;
 
         function forEachChildForNode(node: Node) {
             node.forEachChild((innerNode, innerTraversal) => {
@@ -707,11 +720,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Gets the node's descendant statements.
+     * Gets the node's descendant statements and any arrow function statement-like expressions (ex. Returns the expression `5` in `() => 5`).
      */
-    getDescendantStatements(): Statement[] {
+    getDescendantStatements(): (Statement | Expression)[] {
         type NodeWithStatements = ts.Node & { statements: ts.NodeArray<ts.Statement>; };
-        const statements: Statement[] = [];
+        const statements: (Statement | Expression)[] = [];
 
         handleNode(this, this.compilerNode);
 
@@ -723,7 +736,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
             else if (node.kind === SyntaxKind.ArrowFunction) {
                 const arrowFunction = (node as ts.ArrowFunction);
                 if (arrowFunction.body.kind !== SyntaxKind.Block)
-                    statements.push(thisNode._getNodeFromCompilerNode(arrowFunction.body) as Node as Statement); // todo: bug... it's not a statement
+                    statements.push(thisNode._getNodeFromCompilerNode(arrowFunction.body));
                 else
                     handleNode(thisNode, arrowFunction.body);
             }

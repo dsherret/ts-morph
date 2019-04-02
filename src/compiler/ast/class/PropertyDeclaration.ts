@@ -1,16 +1,15 @@
 import * as errors from "../../../errors";
-import { removeClassMember } from "../../../manipulation";
 import { PropertyDeclarationSpecificStructure, PropertyDeclarationStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ChildOrderableNode, DecoratableNode, ExclamationTokenableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode,
     PropertyNamedNode, QuestionTokenableNode, ReadonlyableNode, ScopedNode, StaticableNode, TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
-import { Node } from "../common";
 import { AbstractableNode } from "./base";
+import { ClassElement } from "./ClassElement";
 
 export const PropertyDeclarationBase = ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(JSDocableNode(
-    ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(Node)))))))
+    ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(ClassElement)))))))
 ))))));
 export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
     /**
@@ -31,7 +30,7 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
 
         switch (parent.getKind()) {
             case SyntaxKind.ClassDeclaration:
-                removeClassMember(this);
+                super.remove();
                 break;
             default:
                 throw new errors.NotImplementedError(`Not implemented parent syntax kind: ${parent.getKindName()}`);
