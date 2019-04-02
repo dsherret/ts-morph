@@ -1468,7 +1468,7 @@ interface I {
     });
 
     describe(nameof<SourceFile>(l => l.fixUnusedIdentifiers), () => {
-        function test(code: string, expected: string) {
+        function doTest(code: string, expected: string) {
             const { sourceFile, project } = getInfoFromText(code);
             sourceFile.fixUnusedIdentifiers();
             sourceFile.fixUnusedIdentifiers();
@@ -1477,7 +1477,7 @@ interface I {
         }
 
         it("should remove unused import declarations, import names, and default imports", () => {
-            test(`
+            doTest(`
 import {foo} from 'foo'
 import * as a from 'a'
 import b from 'b'
