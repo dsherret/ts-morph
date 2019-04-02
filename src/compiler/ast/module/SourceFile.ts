@@ -751,33 +751,17 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Removes all unused declarations like interfaces, classes, enums, functions, variables, parameters,
      * methods, properties, imports, etc. from this file.
-     *
+     * 
+     * Tip: Call this method twice in order to obtain optimal results. Sometimes there nodes that are only referenced 
+     * in unused declarations, so a second call will remove also those. 
+     * 
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     * @param formatSettings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
      */
     fixUnusedIdentifiers(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
-        const sourceFile = this;
-        // this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences).applyChanges();
+        this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences).applyChanges();
         return this;
-
-        function applyCombinedCodeFix(combinedCodeFix: CombinedCodeActions ) {
-            for (const fileTextChanges of combinedCodeFix.getChanges())
-                applyTextChanges(fileTextChanges.getTextChanges());
-        }
-
-        function applyTextChanges(changes: ReadonlyArray<TextChange>) {
-            let removed = 0;
-            Array.from(changes)
-            .sort((a, b) => a.getSpan().getStart() < b.getSpan().getStart() ? -1 : 1)
-            .forEach(c => {
-                replaceNodeText({
-                    sourceFile,
-                    newText: c.getNewText(),
-                    replacingLength: c.getSpan().getLength(),
-                    start: Math.max(0, c.getSpan().getStart() - removed)
-                });
-                removed += c.getSpan().getLength();
-            });
-        }
     }
 
     /**
