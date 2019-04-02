@@ -743,7 +743,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param userPreferences - User preferences for refactoring.
      */
     organizeImports(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
-        this.applyTextChanges(ArrayUtils.flatten(this._context.languageService.organizeImports(this, formatSettings, userPreferences).map(r => r.getTextChanges())));
+        this._context.languageService.organizeImports(this, formatSettings, userPreferences).forEach(fileTextChanges => fileTextChanges.applyChanges());
         return this;
     }
 
