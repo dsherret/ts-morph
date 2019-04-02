@@ -1308,11 +1308,9 @@ function myFunction(param: MyClass) {
             project.createSourceFile("/MyInterface.ts", "export interface MyInterface {}");
             const w = sourceFile.getVariableDeclaration("w")!.getFirstDescendantByKindOrThrow(SyntaxKind.Identifier);
             const i = sourceFile.getImportDeclarations()[0];
-            expect(i.getText()).to.equals("import { MyClass } from \"./MyClass\";");
             sourceFile.fixMissingImports();
-            expect(() => w.getText()).not.to.throw();
-            expect(() => i.getText()).not.to.throw();
-            expect(i.getText()).to.equals("import { MyClass, MyClass2, MyClass3 } from \"./MyClass\";");
+            expect(w.wasForgotten()).to.be.false;
+            expect(i.wasForgotten()).to.be.false;
         });
     });
 
@@ -1474,45 +1472,45 @@ interface I {
             const { sourceFile, project } = getInfoFromText(code);
             sourceFile.fixUnusedIdentifiers();
             sourceFile.fixUnusedIdentifiers();
-            expect(sourceFile.getText().replace(/\n\s+/g, "\n").trim()).to.equals(expected.replace(/\n\s+/g, "\n").trim());
+            expect(sourceFile.getText().trim()).to.equals(expected.trim());
             return { sourceFile, project };
         }
-        
+
         it("should remove unused import declarations, import names, and default imports", () => {
             test(`
-                import {foo} from 'foo'
-                import * as a from 'a'
-                import b from 'b'
-                import {used, unused} from 'bar'
-                export const c = used + 1
-                export function f(...args: any[]) {
-                    var a
-                    const c
-                    const {x, y, z} = {x: 1, y: 1, z: 1}
-                    return y + c
-                }
-                export class C<T> {
-                    private constructor(a: number, b: Date) { this.a = a; this.b = b }
-                    private m() { }
-                    private b: Date
-                    private a = 1
-                    protected n({a, b, c}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
-                }
-                export type T<S, V> = V extends string ? : never : any
+import {foo} from 'foo'
+import * as a from 'a'
+import b from 'b'
+import {used, unused} from 'bar'
+export const c = used + 1
+export function f(...args: any[]) {
+    var a
+    const c
+    const {x, y, z} = {x: 1, y: 1, z: 1}
+    return y + c
+}
+export class C<T> {
+    private constructor(a: number, b: Date) { this.a = a; this.b = b }
+    private m() { }
+    private b: Date
+    private a = 1
+    protected n({a, b, c}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
+}
+export type T<S, V> = V extends string ? : never : any
             `, `
-                import {used} from 'bar'
-                export const c = used + 1
-                export function f() {
-                    const c
-                    const {y} = {x: 1, y: 1, z: 1}
-                    return y + c
-                }
-                export class C {
-                    private constructor(b: Date) { this.b = b }
-                    private b: Date
-                    protected n({a}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
-                }
-                export type T<V> = V extends string ? : never : any
+import {used} from 'bar'
+export const c = used + 1
+export function f() {
+    const c
+    const {y} = {x: 1, y: 1, z: 1}
+    return y + c
+}
+export class C {
+    private constructor(b: Date) { this.b = b }
+    private b: Date
+    protected n({a}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
+}
+export type T<V> = V extends string ? : never : any
             `);
         });
     });
