@@ -1420,6 +1420,55 @@ const t = 5;`;
         });
     });
 
+    describe(nameof<SourceFile>(n => n.getLineAndColumnAtPos), () => {
+        function doTest(code: string, pos: number, expected: { line: number, column: number } | "throw") {
+            const { sourceFile } = getInfoFromText(code);
+            if (expected === "throw")
+                expect(() => sourceFile.getLineAndColumnAtPos(pos)).to.throw();
+            else
+                expect(sourceFile.getLineAndColumnAtPos(pos)).to.deep.equal(expected);
+        }
+
+        it("should return line and column numbers at given position in single line source files", () => {
+            doTest(``, 0, { line: 1, column: 1 });
+            const code = `interface I { m1(): void }`;
+            doTest(code, 3, { line: 1, column: 4 });
+            doTest(code, 0, { line: 1, column: 1 });
+            doTest(code, code.length, { line: 1, column: code.length + 1 });
+        });
+
+        it("should return line and column numbers at given position in empty first line source files", () => {
+            const code = `\ninterface I { m1(): void }`;
+            doTest(code, 0, { line: 1, column: 1 });
+            doTest(code, 1, { line: 2, column: 1 });
+            doTest(code, code.length, { line: 2, column: code.length });
+        });
+
+        it("should return line and column numbers at given position in multiple lines and comments source file", () => {
+            const code = `
+/**
+ * Lorem ipsum
+ */
+interface I {
+}
+// tail
+`;
+            doTest(code, 0, { line: 1, column: 1 });
+            doTest(code, 1, { line: 2, column: 1 });
+            doTest(code, code.indexOf("Lorem ipsum") - 3, { line: 3, column: 1 });
+            doTest(code, code.indexOf("Lorem ipsum") + "Lorem ipsum".length, { line: 3, column: " * Lorem ipsum".length + 1 });
+            doTest(code, code.indexOf("// tail") + "// tail".length, { line: 7, column: 8 });
+            doTest(code, code.indexOf("// tail") + "// tail".length + 1, { line: 8, column: 1 });
+        });
+
+        it("should throw for invalid positions", () => {
+            doTest(`var a = 1`, `var a = 1`.length + 1, "throw");
+            doTest(``, 1, "throw");
+            doTest(`interface I { m1(): void }`, 1000, "throw");
+            doTest(`\ninterface I {\n m1(): void }`, -1, "throw");
+        });
+    });
+
     describe(nameof<SourceFile>(l => l.fixUnusedIdentifiers), () => {
 
         function test(code: string, expected: string) {
@@ -1428,38 +1477,6 @@ const t = 5;`;
             expect(sourceFile.getText().replace(/\n\s+/g, "\n").trim()).to.equals(expected.replace(/\n\s+/g, "\n").trim());
             return { sourceFile, project };
         }
-
-        xit("should not leave forgotten nodes", () => {
-            const code = `
-                import foo from 'foo'
-                import {used, unused} from "bar";
-                function f() {}
-                export const c = used + 1;
-                type T = string
-            `;
-            const expected = `
-                import {used} from "bar";
-                export const c = used + 1;
-            `;
-            const { sourceFile, project } = getInfoFromText(code);
-            const c = sourceFile.getVariableDeclaration("c")!;
-            const i = sourceFile.getImportDeclarations()[1]!;
-            const used = i.getNamedImports()[0];
-            expect(c.isExported()).to.be.true;
-            expect(i.getNamedImports().map(n => n.getName()).indexOf("used")).to.equals(0);
-            expect(used.getName()).equals("used");
-            expect(used.getParent().getKindName()).equals("NamedImports");
-            expect(used.getParent()!.getParent()!.getNamedImports()[0].getName()).equals("used");
-            sourceFile.fixUnusedIdentifiers();
-            expect(sourceFile.getText().replace(/\n\s+/g, "\n").trim()).to.equals(expected.replace(/\n\s+/g, "\n").trim());
-            expect(() => c.isExported()).not.to.throw();
-            expect(() => i.getNonWhitespaceStart()).not.to.throw();
-            expect(c.isExported()).to.be.true;
-            expect(i.getNamedImports().map(n => n.getName()).indexOf("used")).to.equals(0);
-            expect(used.getName()).equals("used");
-            expect(used.getParent().getKindName()).equals("NamedImports");
-            expect(used.getParent()!.getParent()!.getNamedImports()[0].getName()).equals("used");
-        });
 
         describe(`${nameof<SourceFile>(l => l.fixUnusedIdentifiers)} imports`, () => {
             it("should remove unused import declarations, import names, and default imports", () => {
@@ -1661,5 +1678,4 @@ const t = 5;`;
         });
 
     });
-
 });

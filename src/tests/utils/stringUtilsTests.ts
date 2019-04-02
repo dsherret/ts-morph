@@ -10,11 +10,11 @@ describe(nameof(StringUtils), () => {
         });
 
         it("should not throw if providing a pos the length of the string", () => {
-            expect(() => StringUtils.getLineNumberAtPos("", 1)).to.not.throw();
+            expect(() => StringUtils.getLineNumberAtPos("", 0)).to.not.throw();
         });
 
         it("should throw if providing a pos greater than the length + 1", () => {
-            expect(() => StringUtils.getLineNumberAtPos("", 2)).to.throw(errors.ArgumentOutOfRangeError);
+            expect(() => StringUtils.getLineNumberAtPos("", 1)).to.throw(errors.ArgumentOutOfRangeError);
         });
 
         function doTest(newLineType: string) {
@@ -50,11 +50,11 @@ describe(nameof(StringUtils), () => {
         });
 
         it("should not throw if providing a pos the length of the string", () => {
-            expect(() => StringUtils.getLengthFromLineStartAtPos("", 1)).to.not.throw();
+            expect(() => StringUtils.getLengthFromLineStartAtPos("", 0)).to.not.throw();
         });
 
         it("should throw if providing a pos greater than the length + 1", () => {
-            expect(() => StringUtils.getLengthFromLineStartAtPos("", 2)).to.throw(errors.ArgumentOutOfRangeError);
+            expect(() => StringUtils.getLengthFromLineStartAtPos("", 1)).to.throw(errors.ArgumentOutOfRangeError);
         });
 
         function doTest(text: string, pos: number, expected: number) {
@@ -93,11 +93,11 @@ describe(nameof(StringUtils), () => {
         });
 
         it("should not throw if providing a pos the length of the string", () => {
-            expect(() => StringUtils.getLineStartFromPos("", 1)).to.not.throw();
+            expect(() => StringUtils.getLineStartFromPos("", 0)).to.not.throw();
         });
 
         it("should throw if providing a pos greater than the length + 1", () => {
-            expect(() => StringUtils.getLineStartFromPos("", 2)).to.throw(errors.ArgumentOutOfRangeError);
+            expect(() => StringUtils.getLineStartFromPos("", 1)).to.throw(errors.ArgumentOutOfRangeError);
         });
 
         function doTest(text: string, pos: number, expected: number) {
@@ -136,11 +136,11 @@ describe(nameof(StringUtils), () => {
         });
 
         it("should not throw if providing a pos the length of the string", () => {
-            expect(() => StringUtils.getLineEndFromPos("", 1)).to.not.throw();
+            expect(() => StringUtils.getLineEndFromPos("", 0)).to.not.throw();
         });
 
         it("should throw if providing a pos greater than the length + 1", () => {
-            expect(() => StringUtils.getLineEndFromPos("", 2)).to.throw(errors.ArgumentOutOfRangeError);
+            expect(() => StringUtils.getLineEndFromPos("", 1)).to.throw(errors.ArgumentOutOfRangeError);
         });
 
         function doTest(text: string, pos: number, expected: number) {
@@ -228,15 +228,15 @@ describe(nameof(StringUtils), () => {
             expect(StringUtils.insertAtLastNonWhitespace(input, insertText)).to.equal(expected);
         }
 
-        it("should insert into a string that's all whitepsace", () => {
+        it("should insert into a string that's all whitespace", () => {
             doTest(" \t\r\n \t", ",", ", \t\r\n \t");
         });
 
-        it("should insert at the first nonwhitespace char", () => {
+        it("should insert at the first non-whitespace char", () => {
             doTest(" s \t", ",", " s, \t");
         });
 
-        it("should insert at the first nonwhitespace char when that's the first char", () => {
+        it("should insert at the first non-whitespace char when that's the first char", () => {
             doTest("s \t\r\n", ",", "s, \t\r\n");
         });
 

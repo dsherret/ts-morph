@@ -78,7 +78,29 @@ These two structures are now differentiated based on their new `.kind` property.
 
 ### `ModuledNode#getExportedDeclarations()` now returns a map
 
-So instead of just returning an array of nodes, it now returns a map. The key is the name it was exported on and the value is an array of declarations for that value. This will make it much easier to identify the name a node was exported on.
+Instead of just returning an array of nodes, it now returns a map. The key is the name it was exported on and the value is an array of declarations for that value. This will make it much easier to identify the name a node was exported on.
+
+### Removed `SourceFile#getLineNumberAtPos()`
+
+Removed `SourceFile#getLineNumberAtPos(pos)` in favour of `#getLineAndColumnAtPos(pos)` which returns an object with both line and column number at the provided position:
+
+```ts
+const { line, column } = sourceFile.getLineAndColumnAtPos(position);
+```
+
+### Removed `Project#applyFileTextChanges()` / Added `FileTextChanges#applyChanges()`
+
+Instead of calling:
+
+```ts
+project.applyFileTextChanges(fileTextChanges);
+```
+
+Do the following:
+
+```ts
+fileTextChanges.forEach(change => change.applyChanges());
+```
 
 ## Version 1
 

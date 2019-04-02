@@ -1,11 +1,12 @@
 import { ts } from "../../../typescript";
 import { ProjectContext } from "../../../ProjectContext";
-import { FileTextChanges } from "./FileTextChanges";
+import { Memoize } from "../../../utils";
+import { FileTextChanges, ApplyFileTextChangesOptions } from "./FileTextChanges";
 
 /**
  * Represents file changes.
  *
- * Commands are currently not implemented.
+ * @remarks Commands are currently not implemented.
  */
 export class CombinedCodeActions {
     /** @internal */
@@ -25,8 +26,22 @@ export class CombinedCodeActions {
     }
 
     /** Text changes to apply to each file. */
+    @Memoize
     getChanges() {
         return this.compilerObject.changes.map(change => new FileTextChanges(this._context, change));
+    }
+
+    /**
+     * Executes the combined code actions.
+     *
+     * WARNING: This will cause all nodes to be forgotten in the changed files.
+     * @options - Options used when applying the changes.
+     */
+    applyChanges(options?: ApplyFileTextChangesOptions) {
+        for (const change of this.getChanges())
+            change.applyChanges(options);
+
+        return this;
     }
 
     // TODO: commands property
