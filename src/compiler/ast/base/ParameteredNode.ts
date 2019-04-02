@@ -61,7 +61,8 @@ export interface ParameteredNode {
     insertParameter(index: number, structure: ParameterDeclarationStructure): ParameterDeclaration;
 
     /**
-     * Convert parameters to destructured object.
+     * Convert parameters to destructured object. Example: `(a: number, b: boolean) => {}` will be converted to
+     * `({a, b}: {a: number, b: boolean}) => {}`.
      *
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      * @param formatSettings - Format code settings.
@@ -142,13 +143,8 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 return;
             const edits = this._context.languageService.getEditsForRefactor(this.getSourceFile(), {}, params[0],
                 "Convert parameters to destructured object", "Convert parameters to destructured object", {});
-            if (edits) {
-                edits.getEdits().forEach(edit => {
-                    const editFile = edit.getSourceFile();
-                    if (editFile)
-                        editFile.applyTextChanges(edit.getTextChanges());
-                });
-            }
+            if (edits)
+                edits.applyChanges();
         }
     };
 }
