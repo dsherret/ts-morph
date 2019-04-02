@@ -750,11 +750,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      *
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      */
-    removeUnusedDeclarations(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
+    fixUnusedIdentifiers(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
         const sourceFile = this;
-        // heads up: calling it twice removes more unused variables, like things referenced in unused things or named variables
-        applyCombinedCodeFix(this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences));
-        applyCombinedCodeFix(this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences));
+        // this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences).applyChanges();
         return this;
 
         function applyCombinedCodeFix(combinedCodeFix: CombinedCodeActions ) {

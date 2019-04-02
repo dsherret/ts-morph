@@ -1420,11 +1420,11 @@ const t = 5;`;
         });
     });
 
-    describe(nameof<SourceFile>(l => l.removeUnusedDeclarations), () => {
+    describe(nameof<SourceFile>(l => l.fixUnusedIdentifiers), () => {
 
         function test(code: string, expected: string) {
             const { sourceFile, project } = getInfoFromText(code);
-            sourceFile.removeUnusedDeclarations();
+            sourceFile.fixUnusedIdentifiers();
             expect(sourceFile.getText().replace(/\n\s+/g, "\n").trim()).to.equals(expected.replace(/\n\s+/g, "\n").trim());
             return { sourceFile, project };
         }
@@ -1450,7 +1450,7 @@ const t = 5;`;
             expect(used.getName()).equals("used");
             expect(used.getParent().getKindName()).equals("NamedImports");
             expect(used.getParent()!.getParent()!.getNamedImports()[0].getName()).equals("used");
-            sourceFile.removeUnusedDeclarations();
+            sourceFile.fixUnusedIdentifiers();
             expect(sourceFile.getText().replace(/\n\s+/g, "\n").trim()).to.equals(expected.replace(/\n\s+/g, "\n").trim());
             expect(() => c.isExported()).not.to.throw();
             expect(() => i.getNonWhitespaceStart()).not.to.throw();
@@ -1461,7 +1461,7 @@ const t = 5;`;
             expect(used.getParent()!.getParent()!.getNamedImports()[0].getName()).equals("used");
         });
 
-        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} imports`, () => {
+        describe(`${nameof<SourceFile>(l => l.fixUnusedIdentifiers)} imports`, () => {
             it("should remove unused import declarations, import names, and default imports", () => {
                 test(`
                     import {foo} from "foo";
@@ -1476,7 +1476,7 @@ const t = 5;`;
             });
         });
 
-        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} different kinds`, () => {
+        describe(`${nameof<SourceFile>(l => l.fixUnusedIdentifiers)} different kinds`, () => {
             it("should remove unused import declarations, import names, and default imports", () => {
                 test(`
                     import {foo} from 'foo'
@@ -1516,7 +1516,7 @@ const t = 5;`;
             });
         });
 
-        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} parameters`, () => {
+        describe(`${nameof<SourceFile>(l => l.fixUnusedIdentifiers)} parameters`, () => {
             it("should remove unused parameters and type parameters", () => {
                 test(`
                     export function f1(p1: number, p2: string) { return p1 + 1; }
@@ -1568,7 +1568,7 @@ const t = 5;`;
             });
         });
 
-        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} type parameters`, () => {
+        describe(`${nameof<SourceFile>(l => l.fixUnusedIdentifiers)} type parameters`, () => {
             it("should remove unused parameters and type parameters", () => {
                 test(`
                     export function f2<T1 extends 1|2, T2=any>(p3: T1) { return p3; }
@@ -1592,7 +1592,7 @@ const t = 5;`;
             });
         });
 
-        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} members`, () => {
+        describe(`${nameof<SourceFile>(l => l.fixUnusedIdentifiers)} members`, () => {
             it("should remove unused private members, parameters and type parameters", () => {
                 test(`
                     export class C<T extends number, S> {
@@ -1621,7 +1621,7 @@ const t = 5;`;
             });
         });
 
-        describe(`${nameof<SourceFile>(l => l.removeUnusedDeclarations)} variables`, () => {
+        describe(`${nameof<SourceFile>(l => l.fixUnusedIdentifiers)} variables`, () => {
             it("should remove unused declarations inside a block", () => {
                 test(`
                     export function f() {
