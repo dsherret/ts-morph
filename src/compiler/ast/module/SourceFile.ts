@@ -750,10 +750,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Removes all unused declarations like interfaces, classes, enums, functions, variables, parameters,
      * methods, properties, imports, etc. from this file.
-     * 
-     * Tip: Call this method twice in order to obtain optimal results. Sometimes there nodes that are only referenced 
-     * in unused declarations, so a second call will remove also those. 
-     * 
+     *
+     * Tip: Call this method twice in order to obtain optimal results. Sometimes there nodes that are only referenced
+     * in unused declarations, so a second call will remove also those.
+     *
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      * @param formatSettings - Format code settings.
      * @param userPreferences - User preferences for refactoring.
