@@ -59,7 +59,7 @@ export class FileTextChanges {
         if (this._isApplied)
             return;
 
-        let file: SourceFile | undefined;
+        let file = this.getSourceFile();
 
         if (this.isNewFile() && file != null && !options.overwrite) {
             throw new errors.InvalidOperationError(`Cannot apply file text change for creating a new file when the ` +
@@ -68,8 +68,6 @@ export class FileTextChanges {
 
         if (this.isNewFile())
             file = this._context.project.createSourceFile(this.getFilePath(), "", { overwrite: options.overwrite });
-        else
-            file = this.getSourceFile();
 
         if (file == null) {
             throw new errors.InvalidOperationError(`Cannot apply file text change to modify existing file ` +
