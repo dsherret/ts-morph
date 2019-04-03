@@ -6,7 +6,9 @@ import { Memoize } from "../../../utils";
 import { TextChange } from "./TextChange";
 
 export interface ApplyFileTextChangesOptions {
-    /** If a file should be overwritten when the file text change is for a new file, but the file currently exists. */
+    /**
+     * If a file should be overwritten when the file text change is for a new file, but the file currently exists.
+     */
     overwrite?: boolean;
 }
 

@@ -1,14 +1,7 @@
 ﻿import { SourceFile, TextChange } from "../../compiler";
 
 export function getTextFromFormattingEdits(sourceFile: SourceFile, formattingEdits: ReadonlyArray<TextChange>) {
-    // reverse the order
-    formattingEdits = [...formattingEdits].sort((a, b) => {
-        const aStart = a.getSpan().getStart();
-        const bStart = b.getSpan().getStart();
-        const difference = bStart - aStart;
-
-        return difference === 0 ? 1 : difference; // reverse when equal
-    });
+    formattingEdits = [...formattingEdits].reverse();
     let text = sourceFile.getFullText();
 
     for (const textChange of formattingEdits) {
