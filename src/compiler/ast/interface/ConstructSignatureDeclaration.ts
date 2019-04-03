@@ -1,4 +1,3 @@
-import { removeInterfaceMember } from "../../../manipulation";
 import { ConstructSignatureDeclarationStructure, ConstructSignatureDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ChildOrderableNode, JSDocableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
@@ -16,13 +15,6 @@ export class ConstructSignatureDeclaration extends ConstructSignatureDeclaration
         callBaseSet(ConstructSignatureDeclarationBase.prototype, this, structure);
 
         return this;
-    }
-
-    /**
-     * Removes this construct signature.
-     */
-    remove() {
-        removeInterfaceMember(this);
     }
 
     /**

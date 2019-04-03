@@ -77,6 +77,13 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the provided value is a CommentTypeElement.
+     */
+    static isCommentTypeElement(node: compiler.Node): node is compiler.CommentTypeElement {
+        return (node.compilerNode as compiler.CompilerCommentTypeElement)._isCommentTypeElement === true;
+    }
+
+    /**
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */

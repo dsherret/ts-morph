@@ -9,7 +9,8 @@ import { Expression, PropertyAccessExpression, PropertyAssignment, ShorthandProp
     ThisExpression, OmittedExpression, CallExpression, NewExpression } from "./expression";
 import { FunctionDeclaration } from "./function";
 import { SourceFile, ExternalModuleReference, ExportAssignment, NamespaceDeclaration } from "./module";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, InterfaceDeclaration } from "./interface";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, InterfaceDeclaration,
+    CommentTypeElement } from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText, JsxOpeningElement } from "./jsx";
 import { NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TemplateExpression, TaggedTemplateExpression } from "./literal";
 import { CaseClause, DefaultClause } from "./statement";
@@ -70,7 +71,7 @@ type _ModuleReferenceTest = AssertTrue<IsExact<WrappedToCompilerNodeType<ModuleR
 export type StringLiteralLike = StringLiteral | NoSubstitutionTemplateLiteral;
 type _StringLiteralLikeTest = AssertTrue<IsExact<WrappedToCompilerNodeType<StringLiteralLike>, ts.StringLiteralLike>>;
 
-export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
+export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration | CommentTypeElement;
 
 /* istanbul ignore next */
 function typeElementTypes() {

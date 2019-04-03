@@ -691,7 +691,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Gets the node's descendant statements and any arrow function statement-like expressions (ex. Returns the expression `5` in `() => 5`).
+     * Gets the node's descendant statements and any arrow function statement-like expressions (ex. returns the expression `5` in `() => 5`).
      */
     getDescendantStatements(): (Statement | Expression)[] {
         type NodeWithStatements = ts.Node & { statements: ts.NodeArray<ts.Statement>; };

@@ -95,3 +95,10 @@ export class CompilerCommentClassElement extends CompilerExtendedCommentRange im
     /** @internal */
     _isCommentClassElement: true = true;
 }
+
+export class CompilerCommentTypeElement extends CompilerExtendedCommentRange implements ts.TypeElement {
+    _typeElementBrand: any;
+    _declarationBrand: any;
+    /** @internal */
+    _isCommentTypeElement: true = true;
+}

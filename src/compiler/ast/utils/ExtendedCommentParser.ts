@@ -1,7 +1,7 @@
 import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
 import { StringUtils, getSyntaxKindName } from "../../../utils";
-import { CompilerExtendedCommentRange, CompilerCommentStatement, CompilerCommentClassElement } from "../comment/CompilerCommentRanges";
+import { CompilerExtendedCommentRange, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement } from "../comment/CompilerCommentRanges";
 
 enum CommentKind {
     SingleLine,
@@ -75,6 +75,10 @@ export class ExtendedCommentParser {
 
     static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement {
         return (node as CompilerCommentClassElement)._isCommentClassElement === true;
+    }
+
+    static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement {
+        return (node as CompilerCommentTypeElement)._isCommentTypeElement === true;
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {
@@ -266,11 +270,18 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
     }
 
     function getCreationFunction(): (pos: number, end: number, kind: CommentSyntaxKinds) => CompilerExtendedCommentRange {
-        if (isStatementContainerNode(container))
-            return (pos: number, end: number, kind: CommentSyntaxKinds) => new CompilerCommentStatement(pos, end, kind, sourceFile, container);
-        if (ts.isClassLike(container))
-            return (pos: number, end: number, kind: CommentSyntaxKinds) => new CompilerCommentClassElement(pos, end, kind, sourceFile, container);
-        return (pos: number, end: number, kind: CommentSyntaxKinds) => new CompilerExtendedCommentRange(pos, end, kind, sourceFile, container);
+        const ctor = getCtor();
+        return (pos: number, end: number, kind: CommentSyntaxKinds) => new ctor(pos, end, kind, sourceFile, container);
+
+        function getCtor() {
+            if (isStatementContainerNode(container))
+                return CompilerCommentStatement;
+            if (ts.isClassLike(container))
+                return CompilerCommentClassElement;
+            if (ts.isInterfaceDeclaration(container) || ts.isTypeLiteralNode(container))
+                return CompilerCommentTypeElement;
+            return CompilerExtendedCommentRange;
+        }
     }
 }
 

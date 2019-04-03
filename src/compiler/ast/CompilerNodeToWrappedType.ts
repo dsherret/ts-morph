@@ -1,6 +1,6 @@
 import * as compiler from "./index";
 import { ts } from "../../typescript";
-import { CompilerExtendedCommentRange, CompilerCommentStatement, CompilerCommentClassElement } from "./comment";
+import { CompilerExtendedCommentRange, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement } from "./comment";
 import { ImplementedKindToNodeMappings } from "./kindToNodeMappings";
 
 export type CompilerNodeToWrappedType<T extends ts.Node> =
@@ -26,6 +26,7 @@ export type CompilerNodeToWrappedType<T extends ts.Node> =
     T extends ts.IterationStatement ? compiler.IterationStatement :
     T extends CompilerCommentStatement ? compiler.CommentStatement :
     T extends CompilerCommentClassElement ? compiler.CommentClassElement :
+    T extends CompilerCommentTypeElement ? compiler.CommentTypeElement :
     T extends CompilerExtendedCommentRange ? compiler.ExtendedCommentRange :
     T extends ts.Statement ? compiler.Statement :
     compiler.Node<T>;

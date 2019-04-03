@@ -11,8 +11,9 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "../interface";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { ExtendedParser } from "../utils";
 
-export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.TypeElement[]; }>;
+export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.NodeArray<ts.TypeElement>; }>;
 
 export interface TypeElementMemberedNode {
     /**
@@ -409,7 +410,8 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         getMembers() {
-            return this.compilerNode.members.map(m => this._getNodeFromCompilerNode(m)) as TypeElementTypes[];
+            const compilerNode = this.compilerNode as (ts.InterfaceDeclaration | ts.TypeLiteralNode);
+            return ExtendedParser.getContainerArray(compilerNode, this._sourceFile.compilerNode).map(m => this._getNodeFromCompilerNode(m)) as TypeElementTypes[];
         }
 
         set(structure: Partial<TypeElementMemberedNodeStructure>) {

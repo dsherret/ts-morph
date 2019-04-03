@@ -192,6 +192,15 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             bodyText: writer => {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentClassElement)._isCommentClassElement === true;`);
             }
+        }, {
+            docs: ["Gets if the provided value is a CommentTypeElement."],
+            isStatic: true,
+            name: "isCommentTypeElement",
+            returnType: `node is compiler.CommentTypeElement`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentTypeElement)._isCommentTypeElement === true;`);
+            }
         }]);
     }
 }
@@ -221,6 +230,9 @@ function isAllowedClass(name: string) {
     switch (name) {
         case "Node":
         case "FunctionOrConstructorTypeNodeBase":
+        case "CommentStatement":
+        case "CommentClassElement":
+        case "CommentTypeElement":
         // todo: should support these classes eventually (they probably need to be customly implemented)
         case "ObjectDestructuringAssignment":
         case "ArrayDestructuringAssignment":
@@ -228,8 +240,6 @@ function isAllowedClass(name: string) {
         case "SuperElementAccessExpression":
         case "SuperPropertyAccessExpression":
         case "ExtendedCommentRange":
-        case "CommentStatement":
-        case "CommentClassElement":
             return false;
         default:
             return true;
