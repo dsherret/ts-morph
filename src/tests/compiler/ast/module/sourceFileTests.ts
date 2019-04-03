@@ -4,7 +4,7 @@ import * as errors from "../../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
 import { SourceFileStructure, StructureKind } from "../../../../structures";
-import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget } from "../../../../typescript";
+import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget, SyntaxKind } from "../../../../typescript";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
 import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
 
@@ -1300,6 +1300,18 @@ function myFunction(param: MyClass) {
                 { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
             ], expectedText);
         });
+
+        it("should not forget nodes", () => {
+            const startText = `import { MyClass } from "./MyClass";\n\nconst t = new MyClass();\nconst u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
+            const { sourceFile, project } = getInfoFromText(startText);
+            project.createSourceFile("/MyClass.ts", "export class MyClass {} export class MyClass2 {} export class MyClass3 {}");
+            project.createSourceFile("/MyInterface.ts", "export interface MyInterface {}");
+            const w = sourceFile.getVariableDeclaration("w")!.getFirstDescendantByKindOrThrow(SyntaxKind.Identifier);
+            const i = sourceFile.getImportDeclarations()[0];
+            sourceFile.fixMissingImports();
+            expect(w.wasForgotten()).to.be.false;
+            expect(i.wasForgotten()).to.be.false;
+        });
     });
 
     describe(nameof<SourceFile>(s => s.getImportStringLiterals), () => {
@@ -1452,6 +1464,54 @@ interface I {
             doTest(``, 1, "throw");
             doTest(`interface I { m1(): void }`, 1000, "throw");
             doTest(`\ninterface I {\n m1(): void }`, -1, "throw");
+        });
+    });
+
+    describe(nameof<SourceFile>(l => l.fixUnusedIdentifiers), () => {
+        function doTest(code: string, expected: string) {
+            const { sourceFile, project } = getInfoFromText(code);
+            sourceFile.fixUnusedIdentifiers();
+            sourceFile.fixUnusedIdentifiers();
+            expect(sourceFile.getText().trim()).to.equals(expected.trim());
+            return { sourceFile, project };
+        }
+
+        it("should remove unused import declarations, import names, and default imports", () => {
+            doTest(`
+import {foo} from 'foo'
+import * as a from 'a'
+import b from 'b'
+import {used, unused} from 'bar'
+export const c = used + 1
+export function f(...args: any[]) {
+    var a
+    const c
+    const {x, y, z} = {x: 1, y: 1, z: 1}
+    return y + c
+}
+export class C<T> {
+    private constructor(a: number, b: Date) { this.a = a; this.b = b }
+    private m() { }
+    private b: Date
+    private a = 1
+    protected n({a, b, c}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
+}
+export type T<S, V> = V extends string ? : never : any
+            `, `
+import {used} from 'bar'
+export const c = used + 1
+export function f() {
+    const c
+    const {y} = {x: 1, y: 1, z: 1}
+    return y + c
+}
+export class C {
+    private constructor(b: Date) { this.b = b }
+    private b: Date
+    protected n({a}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
+}
+export type T<V> = V extends string ? : never : any
+            `);
         });
     });
 });

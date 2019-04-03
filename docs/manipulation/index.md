@@ -123,3 +123,13 @@ classDeclaration.getInstanceProperties();
 // you'll need to get the reference again:
 classDeclaration = sourceFile.getClass("MyClass")!;
 ```
+
+## Code Fixes
+
+There are a variety of useful code fixes and refactors such as:
+
+* `SourceFile#organizeImports()`
+* `SourceFile#fixMissingImports()`
+* `SourceFile#fixUnusedIdentifiers()`
+
+Check more details on the [source files details page](../details/source-files).

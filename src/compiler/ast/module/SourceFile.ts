@@ -1,21 +1,20 @@
 import * as errors from "../../../errors";
 import { Directory } from "../../../fileSystem";
-import { ProjectContext } from "../../../ProjectContext";
-import { getTextFromFormattingEdits, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting,
-    insertIntoTextRange } from "../../../manipulation";
+import { getTextFromFormattingEdits, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting } from "../../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
-import { SourceFileStructure, SourceFileSpecificStructure } from "../../../structures";
+import { ProjectContext } from "../../../ProjectContext";
+import { SourceFileSpecificStructure, SourceFileStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { LanguageVariant, ScriptTarget, ts } from "../../../typescript";
-import { ArrayUtils, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, Memoize } from "../../../utils";
-import { TextInsertableNode, ModuledNode } from "../base";
+import { ArrayUtils, EventContainer, FileUtils, Memoize, ModuleUtils, SourceFileReferenceContainer, StringUtils } from "../../../utils";
+import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, TextChange, UserPreferences } from "../../tools";
+import { ModuledNode, TextInsertableNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { StringLiteral } from "../literal";
 import { StatementedNode } from "../statement";
-import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, UserPreferences, TextChange } from "../../tools";
 import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export interface SourceFileCopyOptions {
     overwrite?: boolean;
@@ -744,7 +743,23 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param userPreferences - User preferences for refactoring.
      */
     organizeImports(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
-        this.applyTextChanges(ArrayUtils.flatten(this._context.languageService.organizeImports(this, formatSettings, userPreferences).map(r => r.getTextChanges())));
+        this._context.languageService.organizeImports(this, formatSettings, userPreferences).forEach(fileTextChanges => fileTextChanges.applyChanges());
+        return this;
+    }
+
+    /**
+     * Removes all unused declarations like interfaces, classes, enums, functions, variables, parameters,
+     * methods, properties, imports, etc. from this file.
+     *
+     * Tip: For optimal results, sometimes this method needs to be called more than once. There could be nodes
+     * that are only referenced in unused declarations and in this case, another call will also remove them.
+     *
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     * @param formatSettings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
+     */
+    fixUnusedIdentifiers(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
+        this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences).applyChanges();
         return this;
     }
 
