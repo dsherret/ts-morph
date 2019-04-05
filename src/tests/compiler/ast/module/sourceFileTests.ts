@@ -671,18 +671,26 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.emit), () => {
-        it("should emit the source file", () => {
+        async function doTest(emit: (sourceFile: SourceFile) => Promise<EmitResult>) {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ compilerOptions: { noLib: true, outDir: "dist" }, fileSystem });
             const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
             project.createSourceFile("file2.ts", "const num2 = 2;");
-            const result = sourceFile.emit();
+            const result = await emit(sourceFile);
 
             expect(result).to.be.instanceof(EmitResult);
             const writeLog = fileSystem.getWriteLog();
             expect(writeLog[0].filePath).to.equal("/dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
             expect(writeLog.length).to.equal(1);
+        }
+
+        it("should emit the source file asynchronously", async () => {
+            doTest(sourceFile => sourceFile.emit());
+        });
+
+        it("should emit the source file synchronously", async () => {
+            doTest(sourceFile => Promise.resolve(sourceFile.emitSync()));
         });
     });
 

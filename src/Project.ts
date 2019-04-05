@@ -510,11 +510,19 @@ export class Project {
     }
 
     /**
-     * Emits all the source files.
+     * Asynchronously emits all the source files to the file system as JavaScript files.
      * @param emitOptions - Optional emit options.
      */
     emit(emitOptions: EmitOptions = {}): EmitResult {
-        return this._context.program.emit(emitOptions);
+        return this._context.program.emitSync(emitOptions);
+    }
+
+    /**
+     * Synchronously emits all the source files to the file system as JavaScript files.
+     * @param emitOptions - Optional emit options.
+     */
+    emitSync(emitOptions: EmitOptions = {}): EmitResult {
+        return this._context.program.emitSync(emitOptions);
     }
 
     /**

@@ -782,9 +782,9 @@ describe(nameof(Project), () => {
     }
 
     describe(nameof<Project>(project => project.emit), () => {
-        it("should emit multiple files when not specifying any options", () => {
+        it("should emit multiple files when not specifying any options", async () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
-            const result = project.emit();
+            const result = await project.emit();
             expect(result).to.be.instanceof(EmitResult);
 
             const writeLog = fileSystem.getWriteLog();
@@ -795,9 +795,9 @@ describe(nameof(Project), () => {
             expect(writeLog.length).to.equal(2);
         });
 
-        it("should emit the source file when specified", () => {
+        it("should emit the source file when specified", async () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
-            project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
+            await project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
 
             const writeLog = fileSystem.getWriteLog();
             expect(writeLog[0].filePath).to.equal("/dist/file1.js");
@@ -805,9 +805,9 @@ describe(nameof(Project), () => {
             expect(writeLog.length).to.equal(1);
         });
 
-        it("should only emit the declaration file when specified", () => {
+        it("should only emit the declaration file when specified", async () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", declaration: true });
-            project.emit({ emitOnlyDtsFiles: true });
+            await project.emit({ emitOnlyDtsFiles: true });
 
             const writeLog = fileSystem.getWriteLog();
             expect(writeLog[0].filePath).to.equal("/dist/file1.d.ts");
@@ -817,7 +817,7 @@ describe(nameof(Project), () => {
             expect(writeLog.length).to.equal(2);
         });
 
-        it("should emit with custom transformations", () => {
+        it("should emit with custom transformations", async () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
 
             function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext, visitNode: (node: ts.Node) => ts.Node) {
@@ -834,7 +834,7 @@ describe(nameof(Project), () => {
                 return node;
             }
 
-            project.emit({
+            await project.emit({
                 customTransformers: {
                     before: [context => sourceFile => visitSourceFile(sourceFile, context, numericLiteralToStringLiteral)]
                 }
@@ -845,6 +845,21 @@ describe(nameof(Project), () => {
             expect(writeLog[0].fileText).to.equal(`var num1 = "1";\n`);
             expect(writeLog[1].filePath).to.equal("/dist/file2.js");
             expect(writeLog[1].fileText).to.equal(`var num2 = "2";\n`);
+            expect(writeLog.length).to.equal(2);
+        });
+    });
+
+    describe(nameof<Project>(project => project.emitSync), () => {
+        it("should emit synchronously", () => {
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
+            const result = project.emitSync();
+            expect(result).to.be.instanceof(EmitResult);
+
+            const writeLog = fileSystem.getWriteLog();
+            expect(writeLog[0].filePath).to.equal("/dist/file1.js");
+            expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
+            expect(writeLog[1].filePath).to.equal("/dist/file2.js");
+            expect(writeLog[1].fileText).to.equal("var num2 = 2;\n");
             expect(writeLog.length).to.equal(2);
         });
     });

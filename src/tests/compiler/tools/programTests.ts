@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { Program } from "../../../compiler";
+import * as errors from "../../../errors";
 import { getFileSystemHostWithFiles } from "../../testHelpers";
 import { getInfoFromText } from "../testHelpers";
 
@@ -13,6 +14,26 @@ describe(nameof(Program), () => {
         it("should have no global compile errors when including the lib.d.ts files", () => {
             const { project } = getInfoFromText("const t: string;", { includeLibDts: true });
             expect(project.getProgram().getGlobalDiagnostics().length).to.equal(0);
+        });
+    });
+
+    describe(nameof<Program>(p => p.emit), () => {
+        it("should throw if specifying a writeCallback", async () => {
+            let error: any;
+            const { project } = getInfoFromText("const t: string;", { includeLibDts: true });
+            try {
+                await project.getProgram().emit({ writeFile: () => {} });
+            } catch (e) {
+                error = e;
+            }
+            expect(error).to.be.instanceOf(errors.InvalidOperationError);
+        });
+    });
+
+    describe(nameof<Program>(p => p.emitSync), () => {
+        it("should not throw if specifying a writeCallback", () => {
+            const { project } = getInfoFromText("const t: string;", { includeLibDts: true });
+            expect(() => project.getProgram().emitSync({ writeFile: () => {} })).to.not.throw();
         });
     });
 

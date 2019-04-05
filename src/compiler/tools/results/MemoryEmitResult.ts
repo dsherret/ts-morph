@@ -39,7 +39,7 @@ export class MemoryEmitResult extends EmitResult {
     }
 
     /**
-     * Writes the files to the file system asynchronously.
+     * Asynchronously writes the files to the file system.
      */
     saveFiles() {
         const fileSystem = this._context.fileSystemWrapper;
@@ -48,9 +48,8 @@ export class MemoryEmitResult extends EmitResult {
     }
 
     /**
-     * Writes the files to the file system synchronously.
-     *
-     * Note: Use `saveFiles()` as it will be much faster.
+     * Synchronously writes the files to the file system.
+     * @remarks Use `saveFiles()` as the asynchronous version will be much faster.
      */
     saveFilesSync() {
         const fileSystem = this._context.fileSystemWrapper;
