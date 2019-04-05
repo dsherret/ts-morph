@@ -805,6 +805,12 @@ describe(nameof(Project), () => {
             expect(writeLog.length).to.equal(1);
         });
 
+        it("should emit with bom if specified", async () => {
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", emitBOM: true });
+            await project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
+            expect(fileSystem.getWriteLog()[0].fileText).to.equal("\uFEFFvar num1 = 1;\n");
+        });
+
         it("should only emit the declaration file when specified", async () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", declaration: true });
             await project.emit({ emitOnlyDtsFiles: true });
@@ -861,6 +867,12 @@ describe(nameof(Project), () => {
             expect(writeLog[1].filePath).to.equal("/dist/file2.js");
             expect(writeLog[1].fileText).to.equal("var num2 = 2;\n");
             expect(writeLog.length).to.equal(2);
+        });
+
+        it("should emit with bom if specified", () => {
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist", emitBOM: true });
+            project.emitSync({ targetSourceFile: project.getSourceFile("file1.ts") });
+            expect(fileSystem.getWriteLog()[0].fileText).to.equal("\uFEFFvar num1 = 1;\n");
         });
     });
 
