@@ -513,8 +513,8 @@ export class Project {
      * Asynchronously emits all the source files to the file system as JavaScript files.
      * @param emitOptions - Optional emit options.
      */
-    emit(emitOptions: EmitOptions = {}): EmitResult {
-        return this._context.program.emitSync(emitOptions);
+    emit(emitOptions: EmitOptions = {}): Promise<EmitResult> {
+        return this._context.program.emit(emitOptions);
     }
 
     /**
