@@ -7,9 +7,9 @@ import { Memoize } from "../../../utils";
  */
 export class EmitResult {
     /** @internal */
-    private readonly _context: ProjectContext;
+    protected readonly _context: ProjectContext;
     /** @internal */
-    private readonly _compilerObject: ts.EmitResult;
+    protected readonly _compilerObject: ts.EmitResult;
 
     /**
      * @private
@@ -54,41 +54,4 @@ export class EmitResult {
         return this.compilerEmitResult.emittedFiles;
     }
     */
-}
-
-/**
- * The emitted file in memory.
- */
-export interface MemoryEmitResultFile {
-    /**
-     * File path that was emitted to.
-     */
-    filePath: string;
-    /**
-     * The text that was emitted.
-     */
-    text: string;
-    /**
-     * Whether the byte order mark should be written.
-     */
-    writeByteOrderMark: boolean;
-}
-
-/**
- * Result of an emit to memory.
- */
-export class MemoryEmitResult extends EmitResult {
-    /**
-     * @private
-     */
-    constructor(context: ProjectContext, compilerObject: ts.EmitResult, private readonly _files: ReadonlyArray<MemoryEmitResultFile>) {
-        super(context, compilerObject);
-    }
-
-    /**
-     * Gets the files that were emitted to memory.
-     */
-    getFiles() {
-        return this._files as MemoryEmitResultFile[]; // assert mutable array
-    }
 }

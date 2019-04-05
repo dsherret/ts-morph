@@ -10,6 +10,7 @@ export * from "./EmitOutput";
 export * from "./EmitResult";
 export * from "./FileTextChanges";
 export * from "./ImplementationLocation";
+export * from "./MemoryEmitResult";
 export * from "./OutputFile";
 export * from "./RefactorEditInfo";
 export * from "./ReferencedSymbol";

@@ -1,3 +1,4 @@
+import * as errors from "../../errors";
 import { ProjectContext } from "../../ProjectContext";
 import { ModuleResolutionKind, ts } from "../../typescript";
 import * as tsInternal from "../../typescript/tsInternal";
@@ -103,10 +104,33 @@ export class Program {
     }
 
     /**
-     * Emits the TypeScript files to JavaScript files.
+     * Asynchronously emits the TypeScript files as JavaScript files.
      * @param options - Options for emitting.
      */
-    emit(options: ProgramEmitOptions = {}) {
+    async emit(options: ProgramEmitOptions = {}) {
+        if (options.writeFile) {
+            const message = `Cannot specify a ${nameof(options.writeFile)} option when emitting asynchrously. `
+                + `Use ${nameof(this.emitSync)}() instead.`;
+            throw new errors.InvalidOperationError(message);
+        }
+
+        const { fileSystemWrapper } = this._context;
+        const promises: Promise<void>[] = [];
+        const emitResult = this._emit({
+            writeFile: (filePath, text, writeByteOrderMark) => {
+                promises.push(fileSystemWrapper.writeFile(filePath, writeByteOrderMark ? "\uFEFF" + text : text));
+            }, ...options
+        });
+        await Promise.all(promises);
+        return new EmitResult(this._context, emitResult);
+    }
+
+    /**
+     * Synchronously emits the TypeScript files as JavaScript files.
+     * @param options - Options for emitting.
+     * @remarks Use `emit()` as the asynchronous version will be much faster.
+     */
+    emitSync(options: ProgramEmitOptions = {}) {
         return new EmitResult(this._context, this._emit(options));
     }
 
