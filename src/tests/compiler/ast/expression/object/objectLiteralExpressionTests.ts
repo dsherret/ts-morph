@@ -66,6 +66,27 @@ describe(nameof(ObjectLiteralExpression), () => {
         });
     });
 
+    describe("removing elements", () => {
+        function doTest(text: string, index: number, expectedText: string) {
+            const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
+            objectLiteralExpression.getProperties()[index].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove a property assignment when on a newline", () => {
+            doTest("const t = {\n    prop1: 5\n};", 0, "const t = {\n};");
+        });
+
+        it("should remove a property assignment when on the same line", () => {
+            doTest("const t = { prop1: 5 };", 0, "const t = { };");
+        });
+
+        it("should remove a method between properties", () => {
+            doTest("const t = {\n    prop1: 5,\n    myMethod() {},\n    prop2: 6\n};", 1,
+                "const t = {\n    prop1: 5,\n    prop2: 6\n};");
+        });
+    });
+
     /* Property Assignments */
 
     describe(nameof<ObjectLiteralExpression>(e => e.insertPropertyAssignments), () => {

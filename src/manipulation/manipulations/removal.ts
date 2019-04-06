@@ -109,7 +109,7 @@ export function removeCommaSeparatedChild(child: Node) {
 
     removeChildren({
         children: childrenToRemove,
-        removePrecedingSpaces: !isRemovingFirstChild,
+        removePrecedingSpaces: !isRemovingFirstChild || syntaxList.getChildren().length === childrenToRemove.length && childrenToRemove[0].isFirstNodeOnLine(),
         removeFollowingSpaces: isRemovingFirstChild,
         removePrecedingNewLines: !isRemovingFirstChild,
         removeFollowingNewLines: isRemovingFirstChild

@@ -34,7 +34,7 @@ describe(nameof(PropertyAssignment), () => {
 
     describe(nameof<PropertyAssignment>(p => p.remove), () => {
         function doTest(code: string, propertyToRemove: string, expectedCode: string) {
-            const { sourceFile, descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code,
+            const { descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code,
                 SyntaxKind.ObjectLiteralExpression);
 
             descendant.getPropertyOrThrow(propertyToRemove).remove();
