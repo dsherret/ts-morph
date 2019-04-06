@@ -1,5 +1,7 @@
-import { removeClassMember } from "../../../manipulation";
+import * as errors from "../../../errors";
+import { removeClassMember, removeCommaSeparatedChild } from "../../../manipulation";
 import { ts } from "../../../typescript";
+import { TypeGuards } from "../../../utils";
 import { Node } from "../common";
 
 export class ClassElement<T extends ts.ClassElement = ts.ClassElement> extends Node<T> {
@@ -7,6 +9,12 @@ export class ClassElement<T extends ts.ClassElement = ts.ClassElement> extends N
      * Removes the class member.
      */
     remove() {
-        removeClassMember(this);
+        const parent = this.getParent();
+        if (TypeGuards.isClassDeclaration(parent) || TypeGuards.isClassExpression(parent))
+            removeClassMember(this);
+        else if (TypeGuards.isObjectLiteralExpression(parent))
+            removeCommaSeparatedChild(this);
+        else
+            errors.throwNotImplementedForSyntaxKindError(parent.getKind());
     }
 }
