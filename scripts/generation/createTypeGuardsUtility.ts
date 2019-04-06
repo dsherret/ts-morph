@@ -32,7 +32,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         .filter(m => m.getName().startsWith("is"))
         .forEach(m => m.remove());
 
-    typeGuardsClass.addMethods(getMethodInfos().map(method => ({
+    typeGuardsClass.addMethods(getMethodInfos().filter(n => isAllowedClass(n.name.replace(/^is/, ""))).map(method => ({
         name: `is${method.name}`,
         isStatic: true,
         docs: [{
@@ -54,7 +54,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     function getMethodInfos() {
         const methodInfos = new KeyValueCache<string, MethodInfo>();
 
-        for (const node of inspector.getWrappedNodes().filter(n => isAllowedClass(n.getName()))) {
+        for (const node of inspector.getWrappedNodes()) {
             // todo: what is going on here? Why does this need to be filled
             getMethodInfoForNode(node); // fill this
             const nodeBase = node.getBase();
@@ -183,6 +183,10 @@ function isAllowedClass(name: string) {
         case "AssignmentExpression":
         case "SuperElementAccessExpression":
         case "SuperPropertyAccessExpression":
+        case "SuperExpressionedNode":
+        // ignore these for now because they're not implemented properly
+        case "ClassElement":
+        case "ObjectLiteralElement":
             return false;
         default:
             return true;
