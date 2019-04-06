@@ -5546,6 +5546,13 @@ export declare class ObjectDestructuringAssignment extends ObjectDestructuringAs
     getLeft(): ObjectLiteralExpression;
 }
 
+export declare class ObjectLiteralElement<T extends ts.ObjectLiteralElement = ts.ObjectLiteralElement> extends Node<T> {
+    /**
+     * Removes the object literal element from the object literal expression.
+     */
+    remove(): void;
+}
+
 declare const ObjectLiteralExpressionBase: typeof PrimaryExpression;
 
 export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
