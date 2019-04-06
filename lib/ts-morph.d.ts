@@ -542,7 +542,7 @@ export declare class Project {
      * Asynchronously emits all the source files to the file system as JavaScript files.
      * @param emitOptions - Optional emit options.
      */
-    emit(emitOptions?: EmitOptions): EmitResult;
+    emit(emitOptions?: EmitOptions): Promise<EmitResult>;
     /**
      * Synchronously emits all the source files to the file system as JavaScript files.
      * @param emitOptions - Optional emit options.
@@ -9422,7 +9422,9 @@ export declare class EmitResult {
 }
 
 export interface ApplyFileTextChangesOptions {
-    /** If a file should be overwritten when the file text change is for a new file, but the file currently exists. */
+    /**
+     * If a file should be overwritten when the file text change is for a new file, but the file currently exists.
+     */
     overwrite?: boolean;
 }
 
@@ -9546,6 +9548,13 @@ export declare class RefactorEditInfo {
      * Location where renaming should be invoked from.
      */
     getRenameLocation(): number | undefined;
+    /**
+     * Executes the combined code actions.
+     *
+     * WARNING: This will cause all nodes to be forgotten in the changed files.
+     * @options - Options used when applying the changes.
+     */
+    applyChanges(options?: ApplyFileTextChangesOptions): this;
 }
 
 /**

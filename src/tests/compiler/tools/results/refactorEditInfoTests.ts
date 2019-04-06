@@ -13,7 +13,7 @@ describe(nameof(RefactorEditInfo), () => {
             const edits = languageService.getEditsForRefactor(sourceFile, {}, node, "Move to a new file", "Move to a new file", {})!;
             edits.applyChanges();
             expect(sourceFile.getFullText()).to.equal("import { z } from \"./z\";\n\nexport const c = z(1, 'a')");
-            expect(project.getSourceFileOrThrow("z.ts").getFullText()).to.equal("export function z(a: number, b: string) { return `${b} ${a}`; }\n");
+            expect(project.getSourceFileOrThrow("z.ts").getFullText().trim()).to.equal("export function z(a: number, b: string) { return `${b} ${a}`; }");
         });
 
         it("should apply refactor 'Remove braces from arrow function'", () => {

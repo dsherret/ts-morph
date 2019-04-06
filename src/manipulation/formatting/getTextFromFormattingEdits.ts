@@ -6,8 +6,9 @@ export function getTextFromFormattingEdits(sourceFile: SourceFile, formattingEdi
         const aStart = a.getSpan().getStart();
         const bStart = b.getSpan().getStart();
         const difference = bStart - aStart;
-        return difference === 0 ? -1 : difference < 0 ? -1 : 1;
+        return difference === 0 ? 1 : difference;
     });
+
     let text = sourceFile.getFullText();
     for (const textChange of formattingEdits) {
         const span = textChange.getSpan();
