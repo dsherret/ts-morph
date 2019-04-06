@@ -628,10 +628,17 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Emits the source file.
+     * Asynchronously emits the source file as a JavaScript file.
      */
-    emit(options?: SourceFileEmitOptions): EmitResult {
+    emit(options?: SourceFileEmitOptions): Promise<EmitResult> {
         return this._context.program.emit({ targetSourceFile: this, ...options });
+    }
+
+    /**
+     * Synchronously emits the source file as a JavaScript file.
+     */
+    emitSync(options?: SourceFileEmitOptions): EmitResult {
+        return this._context.program.emitSync({ targetSourceFile: this, ...options });
     }
 
     /**

@@ -539,10 +539,15 @@ export declare class Project {
      */
     getFileSystem(): FileSystemHost;
     /**
-     * Emits all the source files.
+     * Asynchronously emits all the source files to the file system as JavaScript files.
      * @param emitOptions - Optional emit options.
      */
-    emit(emitOptions?: EmitOptions): EmitResult;
+    emit(emitOptions?: EmitOptions): Promise<EmitResult>;
+    /**
+     * Synchronously emits all the source files to the file system as JavaScript files.
+     * @param emitOptions - Optional emit options.
+     */
+    emitSync(emitOptions?: EmitOptions): EmitResult;
     /**
      * Emits all the source files to memory.
      * @param emitOptions - Optional emit options.
@@ -7657,9 +7662,13 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     indent(positionRange: [number, number], times?: number): this;
     /**
-     * Emits the source file.
+     * Asynchronously emits the source file as a JavaScript file.
      */
-    emit(options?: SourceFileEmitOptions): EmitResult;
+    emit(options?: SourceFileEmitOptions): Promise<EmitResult>;
+    /**
+     * Synchronously emits the source file as a JavaScript file.
+     */
+    emitSync(options?: SourceFileEmitOptions): EmitResult;
     /**
      * Gets the emit output of this source file.
      * @param options - Emit options.
@@ -7720,6 +7729,18 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param userPreferences - User preferences for refactoring.
      */
     organizeImports(formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
+    /**
+     * Removes all unused declarations like interfaces, classes, enums, functions, variables, parameters,
+     * methods, properties, imports, etc. from this file.
+     *
+     * Tip: For optimal results, sometimes this method needs to be called more than once. There could be nodes
+     * that are only referenced in unused declarations and in this case, another call will also remove them.
+     *
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     * @param formatSettings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
+     */
+    fixUnusedIdentifiers(formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
     /**
      * Code fix to add import declarations for identifiers that are referenced, but not imported in the source file.
      * @param formatSettings - Format code settings.
@@ -9172,10 +9193,16 @@ export declare class Program {
      */
     getTypeChecker(): TypeChecker;
     /**
-     * Emits the TypeScript files to JavaScript files.
+     * Asynchronously emits the TypeScript files as JavaScript files.
      * @param options - Options for emitting.
      */
-    emit(options?: ProgramEmitOptions): EmitResult;
+    emit(options?: ProgramEmitOptions): Promise<EmitResult>;
+    /**
+     * Synchronously emits the TypeScript files as JavaScript files.
+     * @param options - Options for emitting.
+     * @remarks Use `emit()` as the asynchronous version will be much faster.
+     */
+    emitSync(options?: ProgramEmitOptions): EmitResult;
     /**
      * Emits the TypeScript files to JavaScript files to memory.
      * @param options - Options for emitting.
@@ -9453,38 +9480,10 @@ export declare class EmitResult {
     getDiagnostics(): Diagnostic<ts.Diagnostic>[];
 }
 
-/**
- * The emitted file in memory.
- */
-export interface MemoryEmitResultFile {
-    /**
-     * File path that was emitted to.
-     */
-    filePath: string;
-    /**
-     * The text that was emitted.
-     */
-    text: string;
-    /**
-     * Whether the byte order mark should be written.
-     */
-    writeByteOrderMark: boolean;
-}
-
-/**
- * Result of an emit to memory.
- */
-export declare class MemoryEmitResult extends EmitResult {
-    private readonly _files;
-    private constructor();
-    /**
-     * Gets the files that were emitted to memory.
-     */
-    getFiles(): MemoryEmitResultFile[];
-}
-
 export interface ApplyFileTextChangesOptions {
-    /** If a file should be overwritten when the file text change is for a new file, but the file currently exists. */
+    /**
+     * If a file should be overwritten when the file text change is for a new file, but the file currently exists.
+     */
     overwrite?: boolean;
 }
 
@@ -9525,6 +9524,45 @@ export declare class ImplementationLocation extends DocumentSpan<ts.Implementati
      * Gets the display parts.
      */
     getDisplayParts(): SymbolDisplayPart[];
+}
+
+/**
+ * The emitted file in memory.
+ */
+export interface MemoryEmitResultFile {
+    /**
+     * File path that was emitted to.
+     */
+    filePath: string;
+    /**
+     * The text that was emitted.
+     */
+    text: string;
+    /**
+     * Whether the byte order mark should be written.
+     */
+    writeByteOrderMark: boolean;
+}
+
+/**
+ * Result of an emit to memory.
+ */
+export declare class MemoryEmitResult extends EmitResult {
+    private readonly _files;
+    private constructor();
+    /**
+     * Gets the files that were emitted to memory.
+     */
+    getFiles(): MemoryEmitResultFile[];
+    /**
+     * Asynchronously writes the files to the file system.
+     */
+    saveFiles(): Promise<void[]>;
+    /**
+     * Synchronously writes the files to the file system.
+     * @remarks Use `saveFiles()` as the asynchronous version will be much faster.
+     */
+    saveFilesSync(): void;
 }
 
 /**
@@ -9569,6 +9607,13 @@ export declare class RefactorEditInfo {
      * Location where renaming should be invoked from.
      */
     getRenameLocation(): number | undefined;
+    /**
+     * Executes the combined code actions.
+     *
+     * WARNING: This will cause all nodes to be forgotten in the changed files.
+     * @options - Options used when applying the changes.
+     */
+    applyChanges(options?: ApplyFileTextChangesOptions): this;
 }
 
 /**

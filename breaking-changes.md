@@ -52,6 +52,12 @@ when using the specific methods:
 sourceFile.addClass({ name: "MyClass" }); // ok
 ```
 
+### `.emit()` methods are now async
+
+Methods like `project.emit()` are now async. Corresponding `emitSync` methods have also been added.
+
+The new async emit methods should be much faster than the previous synchronous methods.
+
 ### FileSystemHost changes
 
 The `FileSystemHost` interface now requires implementing `realpathSync()` and `isCaseSensitive()`.

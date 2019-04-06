@@ -6,15 +6,13 @@ export function getTextFromFormattingEdits(sourceFile: SourceFile, formattingEdi
         const aStart = a.getSpan().getStart();
         const bStart = b.getSpan().getStart();
         const difference = bStart - aStart;
-
-        return difference === 0 ? 1 : difference; // reverse when equal
+        return difference === 0 ? 1 : difference;
     });
-    let text = sourceFile.getFullText();
 
+    let text = sourceFile.getFullText();
     for (const textChange of formattingEdits) {
         const span = textChange.getSpan();
         text = text.slice(0, span.getStart()) + textChange.getNewText() + text.slice(span.getEnd());
     }
-
     return text;
 }

@@ -1,6 +1,5 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
-import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker, FileTextChanges,
-    ApplyFileTextChangesOptions } from "./compiler";
+import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import * as errors from "./errors";
 import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { ProjectContext } from "./ProjectContext";
@@ -510,11 +509,19 @@ export class Project {
     }
 
     /**
-     * Emits all the source files.
+     * Asynchronously emits all the source files to the file system as JavaScript files.
      * @param emitOptions - Optional emit options.
      */
-    emit(emitOptions: EmitOptions = {}): EmitResult {
+    emit(emitOptions: EmitOptions = {}): Promise<EmitResult> {
         return this._context.program.emit(emitOptions);
+    }
+
+    /**
+     * Synchronously emits all the source files to the file system as JavaScript files.
+     * @param emitOptions - Optional emit options.
+     */
+    emitSync(emitOptions: EmitOptions = {}): EmitResult {
+        return this._context.program.emitSync(emitOptions);
     }
 
     /**

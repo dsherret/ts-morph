@@ -6,7 +6,9 @@ import { Memoize } from "../../../utils";
 import { TextChange } from "./TextChange";
 
 export interface ApplyFileTextChangesOptions {
-    /** If a file should be overwritten when the file text change is for a new file, but the file currently exists. */
+    /**
+     * If a file should be overwritten when the file text change is for a new file, but the file currently exists.
+     */
     overwrite?: boolean;
 }
 
@@ -18,13 +20,19 @@ export class FileTextChanges {
     /** @internal */
     private readonly _sourceFile: SourceFile | undefined;
     /** @internal */
+    private readonly _existingFileExists: boolean;
+    /** @internal */
     private _isApplied: true | undefined;
 
     /** @private */
     constructor(context: ProjectContext, compilerObject: ts.FileTextChanges) {
         this._context = context;
         this._compilerObject = compilerObject;
-        this._sourceFile = context.compilerFactory.getSourceFileFromCacheFromFilePath(compilerObject.fileName);
+
+        const file = context.compilerFactory.getSourceFileFromCacheFromFilePath(compilerObject.fileName);
+        this._existingFileExists = file != null;
+        if (!compilerObject.isNewFile)
+            this._sourceFile = file;
     }
 
     /**
@@ -59,13 +67,12 @@ export class FileTextChanges {
         if (this._isApplied)
             return;
 
-        let file: SourceFile | undefined;
-
-        if (this.isNewFile() && file != null && !options.overwrite) {
+        if (this.isNewFile() && this._existingFileExists && !options.overwrite) {
             throw new errors.InvalidOperationError(`Cannot apply file text change for creating a new file when the ` +
                 `file exists at path ${this.getFilePath()}. Did you mean to provide the overwrite option?`);
         }
 
+        let file: SourceFile | undefined;
         if (this.isNewFile())
             file = this._context.project.createSourceFile(this.getFilePath(), "", { overwrite: options.overwrite });
         else

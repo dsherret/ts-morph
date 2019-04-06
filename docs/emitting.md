@@ -11,7 +11,10 @@ Here's an example:
 ```ts
 const project = new Project({ compilerOptions: { outDir: "dist", declaration: true } });
 project.createSourceFile("MyFile.ts", "const num = 1;");
-project.emit();
+project.emit(); // async
+
+// or
+project.emitSync(); // slow
 ```
 
 This outputs two files in the `dist` folder:
@@ -30,7 +33,10 @@ Call `.emit()` on the source file:
 
 ```ts
 const sourceFile = project.getSourceFileOrThrow("MyFile.ts");
-sourceFile.emit();
+sourceFile.emit(); // async
+
+// or
+sourceFile.emitSync(); // slow
 ```
 
 Or get its emit output:
@@ -58,7 +64,7 @@ project.emit({ emitOnlyDtsFiles: true });
 Diagnostics about the emit can be found on the result:
 
 ```ts
-const emitResult = project.emit();
+const emitResult = await project.emit();
 for (const diagnostic of emitResult.getDiagnostics())
     console.log(diagnostic.getMessageText());
 ```
@@ -115,6 +121,9 @@ for (const file of result.getFiles()) {
     console.log(file.text);
     console.log("\n");
 }
+
+// or finally save this result to the underlying file system (or use `saveFilesSync()`)
+result.saveFiles().then(() => console.log("written"));
 ```
 
 To manipulate after emitting, you may load the result into a new project and manipulate that:

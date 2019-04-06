@@ -72,7 +72,7 @@ export class LanguageService {
             // getDefaultLibLocation: (...) => {},
             getDefaultLibFileName: (options: CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
             writeFile: (filePath, data, writeByteOrderMark, onError, sourceFiles) => {
-                this._context.fileSystemWrapper.writeFileSync(filePath, data);
+                this._context.fileSystemWrapper.writeFileSync(filePath, writeByteOrderMark ? "\uFEFF" + data : data);
             },
             getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),
             getDirectories: (path: string) => this._context.fileSystemWrapper.getDirectories(path),
