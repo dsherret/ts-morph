@@ -8,17 +8,14 @@ function getCaseClause(text: string) {
 }
 
 describe(nameof(CaseClause), () => {
-    const expression = "1";
-    const statement = "let x = 1 + 2;";
-    const clause = `switch (y) { case ${expression}: ${statement} }`;
     describe(nameof<CaseClause>(n => n.getStatements), () => {
-        function doTest(text: string, expectedText: string) {
+        function doTest(text: string, expectedTexts: string[]) {
             const caseClause = getCaseClause(text);
-            expect(caseClause.getStatements()[0].getText()).to.equal(expectedText);
+            expect(caseClause.getStatements().map(s => s.getText())).to.deep.equal(expectedTexts);
         }
 
-        it("should get the correct statements", () => {
-            doTest(clause, statement);
+        it("should get the statements", () => {
+            doTest("switch (y) {\n  case 5:\n    let x = 1;\n    //a\n}", ["let x = 1;", "//a"]);
         });
     });
 
@@ -28,8 +25,8 @@ describe(nameof(CaseClause), () => {
             expect(caseClause.getExpression().getText()).to.equal(expectedText);
         }
 
-        it("should get the correct expression", () => {
-            doTest(clause, expression);
+        it("should get the expression", () => {
+            doTest("switch (y) { case 5: let x = 1; }", "5");
         });
     });
 });
