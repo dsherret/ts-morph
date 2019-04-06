@@ -64,5 +64,17 @@ describe(nameof(FileTextChanges), () => {
             change.applyChanges(); // should do nothing if called twice
             expect(change.getSourceFile()!.getText()).to.equal("text; const t; const u;");
         });
+
+        it("should apply file text change that first inserts and then removes ('move to a new file' refactor edits changes)", () => {
+          const project = setup();
+          const change = new FileTextChanges(project._context, {
+              fileName: "test.ts",
+              isNewFile: false,
+              textChanges: [{ newText: "text; ", span: { start: 0, length: 0 } }, {newText: "", span: {start: 0, length: 9}}]
+          });
+          change.applyChanges();
+          expect(change.getSourceFile()!.getText()).to.equal("text; const u;");
+      });
+
     });
 });
