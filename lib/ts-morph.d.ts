@@ -730,6 +730,10 @@ export declare class TypeGuards {
      */
     static isCommentTypeElement(node: Node): node is CommentTypeElement;
     /**
+     * Gets if the provided value is a CommentObjectLiteralElement.
+     */
+    static isCommentObjectLiteralElement(node: Node): node is CommentObjectLiteralElement;
+    /**
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */
@@ -4156,6 +4160,13 @@ export declare class CompilerCommentTypeElement extends CompilerExtendedCommentR
     _declarationBrand: any;
 }
 
+export declare class CompilerCommentObjectLiteralElement extends CompilerExtendedCommentRange implements ts.ObjectLiteralElement {
+    _declarationBrand: any;
+    _objectLiteralBrandBrand: any;
+    _objectLiteralBrand: any;
+    declarationBrand: any;
+}
+
 export declare class ExtendedCommentRange extends Node<CompilerExtendedCommentRange> {
 }
 
@@ -4862,7 +4873,7 @@ export interface TransformTraversalControl {
     visitChildren(): ts.Node;
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerExtendedCommentRange ? ExtendedCommentRange : T extends ts.Statement ? Statement : Node<T>;
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerExtendedCommentRange ? ExtendedCommentRange : T extends ts.Statement ? Statement : Node<T>;
 
 declare const DecoratorBase: typeof Node;
 
@@ -5537,6 +5548,9 @@ declare const NonNullExpressionBase: Constructor<ExpressionedNode> & typeof Left
 export declare class NonNullExpression extends NonNullExpressionBase<ts.NonNullExpression> {
 }
 
+export declare class CommentObjectLiteralElement extends ObjectLiteralElement<CompilerCommentObjectLiteralElement> {
+}
+
 declare const ObjectDestructuringAssignmentBase: typeof AssignmentExpression;
 
 export declare class ObjectDestructuringAssignment extends ObjectDestructuringAssignmentBase<ts.ObjectDestructuringAssignment> {
@@ -5553,6 +5567,8 @@ export declare class ObjectLiteralElement<T extends ts.ObjectLiteralElement = ts
     remove(): void;
 }
 
+export declare type ObjectLiteralExpressionProperties = ObjectLiteralElementLike | CommentObjectLiteralElement;
+
 declare const ObjectLiteralExpressionBase: typeof PrimaryExpression;
 
 export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
@@ -5560,26 +5576,26 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Gets the first property by the provided name or throws.
      * @param name - Name of the property.
      */
-    getPropertyOrThrow(name: string): ObjectLiteralElementLike;
+    getPropertyOrThrow(name: string): ObjectLiteralExpressionProperties;
     /**
      * Gets the first property that matches the provided find function or throws.
      * @param findFunction - Find function.
      */
-    getPropertyOrThrow(findFunction: (property: ObjectLiteralElementLike) => boolean): ObjectLiteralElementLike;
+    getPropertyOrThrow(findFunction: (property: ObjectLiteralExpressionProperties) => boolean): ObjectLiteralExpressionProperties;
     /**
      * Gets the first property by the provided name or returns undefined.
      * @param name - Name of the property.
      */
-    getProperty(name: string): ObjectLiteralElementLike | undefined;
+    getProperty(name: string): ObjectLiteralExpressionProperties | undefined;
     /**
      * Gets the first property that matches the provided find function or returns undefined.
      * @param findFunction - Find function.
      */
-    getProperty(findFunction: (property: ObjectLiteralElementLike) => boolean): ObjectLiteralElementLike | undefined;
+    getProperty(findFunction: (property: ObjectLiteralExpressionProperties) => boolean): ObjectLiteralExpressionProperties | undefined;
     /**
      * Gets the properties.
      */
-    getProperties(): ObjectLiteralElementLike[];
+    getProperties(): ObjectLiteralExpressionProperties[];
     /**
      * Adds a property assignment.
      * @param structure - Structure that represents the property assignment to add.

@@ -4,13 +4,17 @@ import { CommaNewLineSeparatedStructuresPrinter, Printer } from "../../../../str
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
     ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind } from "../../../../structures";
 import { SyntaxKind, ts } from "../../../../typescript";
-import { ArrayUtils } from "../../../../utils";
+import { ArrayUtils, getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "../../class";
 import { PrimaryExpression } from "../PrimaryExpression";
+import { CommentObjectLiteralElement } from "./CommentObjectLiteralElement";
 import { PropertyAssignment } from "./PropertyAssignment";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 import { SpreadAssignment } from "./SpreadAssignment";
+import { ExtendedParser } from "../../utils";
+
+export type ObjectLiteralExpressionProperties = ObjectLiteralElementLike | CommentObjectLiteralElement;
 
 export const ObjectLiteralExpressionBase = PrimaryExpression;
 export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
@@ -18,30 +22,30 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Gets the first property by the provided name or throws.
      * @param name - Name of the property.
      */
-    getPropertyOrThrow(name: string): ObjectLiteralElementLike;
+    getPropertyOrThrow(name: string): ObjectLiteralExpressionProperties;
     /**
      * Gets the first property that matches the provided find function or throws.
      * @param findFunction - Find function.
      */
-    getPropertyOrThrow(findFunction: (property: ObjectLiteralElementLike) => boolean): ObjectLiteralElementLike;
-    getPropertyOrThrow(nameOrFindFunction: string | ((property: ObjectLiteralElementLike) => boolean)): ObjectLiteralElementLike {
-        return errors.throwIfNullOrUndefined(this.getProperty(nameOrFindFunction), "Expected to find a property.");
+    getPropertyOrThrow(findFunction: (property: ObjectLiteralExpressionProperties) => boolean): ObjectLiteralExpressionProperties;
+    getPropertyOrThrow(nameOrFindFunction: string | ((property: ObjectLiteralExpressionProperties) => boolean)): ObjectLiteralExpressionProperties {
+        return errors.throwIfNullOrUndefined(this.getProperty(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("property", nameOrFindFunction));
     }
 
     /**
      * Gets the first property by the provided name or returns undefined.
      * @param name - Name of the property.
      */
-    getProperty(name: string): ObjectLiteralElementLike | undefined;
+    getProperty(name: string): ObjectLiteralExpressionProperties | undefined;
     /**
      * Gets the first property that matches the provided find function or returns undefined.
      * @param findFunction - Find function.
      */
-    getProperty(findFunction: (property: ObjectLiteralElementLike) => boolean): ObjectLiteralElementLike | undefined;
+    getProperty(findFunction: (property: ObjectLiteralExpressionProperties) => boolean): ObjectLiteralExpressionProperties | undefined;
     /** @internal */
-    getProperty(nameOrFindFunction: string | ((property: ObjectLiteralElementLike) => boolean)): ObjectLiteralElementLike | undefined;
-    getProperty(nameOrFindFunction: string | ((property: ObjectLiteralElementLike) => boolean)): ObjectLiteralElementLike | undefined {
-        let findFunc: (property: ObjectLiteralElementLike) => boolean;
+    getProperty(nameOrFindFunction: string | ((property: ObjectLiteralExpressionProperties) => boolean)): ObjectLiteralExpressionProperties | undefined;
+    getProperty(nameOrFindFunction: string | ((property: ObjectLiteralExpressionProperties) => boolean)): ObjectLiteralExpressionProperties | undefined {
+        let findFunc: (property: ObjectLiteralExpressionProperties) => boolean;
         if (typeof nameOrFindFunction === "string")
             findFunc = prop => {
                 if ((prop as any)[nameof<PropertyAssignment>(o => o.getName)] == null)
@@ -57,9 +61,11 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
     /**
      * Gets the properties.
      */
-    getProperties(): ObjectLiteralElementLike[] {
-        const properties: ts.NodeArray<ts.ObjectLiteralElementLike> = this.compilerNode.properties; // explicit type for validation
-        return properties.map(p => this._getNodeFromCompilerNode(p));
+    getProperties(): ObjectLiteralExpressionProperties[] {
+        const compilerNode = this.compilerNode as ts.ObjectLiteralExpression;
+        const members = ExtendedParser.getContainerArray(compilerNode, this.getSourceFile().compilerNode);
+
+        return members.map(p => this._getNodeFromCompilerNode(p)) as ObjectLiteralExpressionProperties[];
     }
 
     /* Property Assignments */

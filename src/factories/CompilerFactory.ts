@@ -1,6 +1,7 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter,
-    CommentStatement, CommentClassElement, CommentTypeElement, ExtendedCommentRange, CompilerExtendedCommentRange } from "../compiler";
+    CommentStatement, CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, ExtendedCommentRange,
+    CompilerExtendedCommentRange } from "../compiler";
 import { ExtendedCommentParser } from "../compiler/ast/utils";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
@@ -271,6 +272,8 @@ export class CompilerFactory {
                     return new CommentClassElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
                 if (ExtendedCommentParser.isCommentTypeElement(compilerNode))
                     return new CommentTypeElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                if (ExtendedCommentParser.isCommentObjectLiteralElement(compilerNode))
+                    return new CommentObjectLiteralElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
                 return new ExtendedCommentRange(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
             }
             const ctor = kindToWrapperMappings[compilerNode.kind] || Node as any;

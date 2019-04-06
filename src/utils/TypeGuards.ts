@@ -84,6 +84,13 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the provided value is a CommentObjectLiteralElement.
+     */
+    static isCommentObjectLiteralElement(node: compiler.Node): node is compiler.CommentObjectLiteralElement {
+        return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._isCommentObjectLiteralElement === true;
+    }
+
+    /**
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */

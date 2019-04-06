@@ -102,3 +102,12 @@ export class CompilerCommentTypeElement extends CompilerExtendedCommentRange imp
     /** @internal */
     _isCommentTypeElement: true = true;
 }
+
+export class CompilerCommentObjectLiteralElement extends CompilerExtendedCommentRange implements ts.ObjectLiteralElement {
+    _declarationBrand: any;
+    _objectLiteralBrandBrand: any; // ts < 3.4
+    _objectLiteralBrand: any; // ts > 3.5
+    declarationBrand: any;
+    /** @internal */
+    _isCommentObjectLiteralElement: true = true;
+}
