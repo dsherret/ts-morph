@@ -870,11 +870,6 @@ export declare class TypeGuards {
      */
     static isClassDeclaration(node: Node): node is ClassDeclaration;
     /**
-     * Gets if the node is a ClassElement.
-     * @param node - Node to check.
-     */
-    static isClassElement(node: Node): node is ClassElement;
-    /**
      * Gets if the node is a ClassExpression.
      * @param node - Node to check.
      */
@@ -1064,11 +1059,6 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration & FunctionLikeDeclarationExtensionType;
-    /**
-     * Gets if the node is a FunctionOrConstructorTypeNodeBase.
-     * @param node - Node to check.
-     */
-    static isFunctionOrConstructorTypeNodeBase(node: Node): node is FunctionOrConstructorTypeNodeBase;
     /**
      * Gets if the node is a FunctionTypeNode.
      * @param node - Node to check.
@@ -5717,7 +5707,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
     insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[];
 }
 
-declare const PropertyAssignmentBase: Constructor<InitializerExpressionGetableNode> & Constructor<QuestionTokenableNode> & Constructor<PropertyNamedNode> & typeof Node;
+declare const PropertyAssignmentBase: Constructor<InitializerExpressionGetableNode> & Constructor<QuestionTokenableNode> & Constructor<PropertyNamedNode> & typeof ObjectLiteralElement;
 
 export declare class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**
@@ -5732,10 +5722,6 @@ export declare class PropertyAssignment extends PropertyAssignmentBase<ts.Proper
      */
     setInitializer(textOrWriterFunction: string | WriterFunction): this;
     /**
-     * Removes this property.
-     */
-    remove(): void;
-    /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
      */
@@ -5746,7 +5732,7 @@ export declare class PropertyAssignment extends PropertyAssignmentBase<ts.Proper
     getStructure(): PropertyAssignmentStructure;
 }
 
-declare const ShorthandPropertyAssignmentBase: Constructor<InitializerExpressionGetableNode> & Constructor<QuestionTokenableNode> & Constructor<NamedNode> & typeof Node;
+declare const ShorthandPropertyAssignmentBase: Constructor<InitializerExpressionGetableNode> & Constructor<QuestionTokenableNode> & Constructor<NamedNode> & typeof ObjectLiteralElement;
 
 export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase<ts.ShorthandPropertyAssignment> {
     /**
@@ -5783,10 +5769,6 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
      */
     setInitializer(text: string): PropertyAssignment;
     /**
-     * Removes this property.
-     */
-    remove(): void;
-    /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
      */
@@ -5797,13 +5779,9 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
     getStructure(): ShorthandPropertyAssignmentStructure;
 }
 
-declare const SpreadAssignmentBase: Constructor<ExpressionedNode> & typeof Node;
+declare const SpreadAssignmentBase: Constructor<ExpressionedNode> & typeof ObjectLiteralElement;
 
 export declare class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> {
-    /**
-     * Removes this property.
-     */
-    remove(): void;
     /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.

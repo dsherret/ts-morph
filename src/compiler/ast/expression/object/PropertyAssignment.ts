@@ -3,16 +3,16 @@ import { WriterFunction } from "../../../../types";
 import { SyntaxKind, ts } from "../../../../typescript";
 import { getTextFromStringOrWriter } from "../../../../utils";
 import { InitializerExpressionGetableNode, PropertyNamedNode, QuestionTokenableNode } from "../../base";
-import { Node } from "../../common";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 import { PropertyAssignmentStructure, PropertyAssignmentSpecificStructure, StructureKind } from "../../../../structures";
 import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { ObjectLiteralElement } from "./ObjectLiteralElement";
 
 // This node only has a question token in order to tell the user about bad code.
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)
 
-export const PropertyAssignmentBase = InitializerExpressionGetableNode(QuestionTokenableNode(PropertyNamedNode(Node)));
+export const PropertyAssignmentBase = InitializerExpressionGetableNode(QuestionTokenableNode(PropertyNamedNode(ObjectLiteralElement)));
 export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**
      * Removes the initializer and returns the new shorthand property assignment.
@@ -56,13 +56,6 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
             }
         });
         return this;
-    }
-
-    /**
-     * Removes this property.
-     */
-    remove() {
-        removeCommaSeparatedChild(this);
     }
 
     /**
