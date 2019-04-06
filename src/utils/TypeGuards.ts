@@ -91,6 +91,13 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the provided value is a CommentEnumMember.
+     */
+    static isCommentEnumMember(node: compiler.Node): node is compiler.CommentEnumMember {
+        return (node.compilerNode as compiler.CompilerCommentEnumMember)._isCommentEnumMember === true;
+    }
+
+    /**
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */

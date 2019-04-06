@@ -2,7 +2,7 @@ import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
 import { StringUtils, getSyntaxKindName } from "../../../utils";
 import { CompilerExtendedCommentRange, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement,
-    CompilerCommentObjectLiteralElement } from "../comment/CompilerCommentRanges";
+    CompilerCommentObjectLiteralElement, CompilerCommentEnumMember } from "../comment/CompilerCommentRanges";
 
 enum CommentKind {
     SingleLine,
@@ -84,6 +84,10 @@ export class ExtendedCommentParser {
 
     static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement {
         return (node as CompilerCommentObjectLiteralElement)._isCommentObjectLiteralElement === true;
+    }
+
+    static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember {
+        return (node as CompilerCommentEnumMember)._isCommentEnumMember === true;
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {
@@ -287,6 +291,8 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
                 return CompilerCommentTypeElement;
             if (ts.isObjectLiteralExpression(container))
                 return CompilerCommentObjectLiteralElement;
+            if (ts.isEnumDeclaration(container))
+                return CompilerCommentEnumMember;
             return CompilerExtendedCommentRange;
         }
     }

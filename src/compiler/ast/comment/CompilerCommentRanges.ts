@@ -111,3 +111,8 @@ export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment
     /** @internal */
     _isCommentObjectLiteralElement: true = true;
 }
+
+export class CompilerCommentEnumMember extends CompilerExtendedCommentRange implements ts.Node {
+    /** @internal */
+    _isCommentEnumMember: true = true;
+}

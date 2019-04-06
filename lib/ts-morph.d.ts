@@ -734,6 +734,10 @@ export declare class TypeGuards {
      */
     static isCommentObjectLiteralElement(node: Node): node is CommentObjectLiteralElement;
     /**
+     * Gets if the provided value is a CommentEnumMember.
+     */
+    static isCommentEnumMember(node: Node): node is CommentEnumMember;
+    /**
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */
@@ -4167,6 +4171,9 @@ export declare class CompilerCommentObjectLiteralElement extends CompilerExtende
     declarationBrand: any;
 }
 
+export declare class CompilerCommentEnumMember extends CompilerExtendedCommentRange implements ts.Node {
+}
+
 export declare class ExtendedCommentRange extends Node<CompilerExtendedCommentRange> {
 }
 
@@ -4873,7 +4880,7 @@ export interface TransformTraversalControl {
     visitChildren(): ts.Node;
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerExtendedCommentRange ? ExtendedCommentRange : T extends ts.Statement ? Statement : Node<T>;
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends CompilerExtendedCommentRange ? ExtendedCommentRange : T extends ts.Statement ? Statement : Node<T>;
 
 declare const DecoratorBase: typeof Node;
 
@@ -5180,6 +5187,13 @@ export declare class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression
     getTypeNode(): TypeNode<ts.TypeNode>;
 }
 
+export declare class CommentEnumMember extends Node<CompilerCommentEnumMember> {
+    /**
+     * Removes this enum member comment.
+     */
+    remove(): void;
+}
+
 declare const EnumDeclarationBase: Constructor<TextInsertableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
@@ -5234,6 +5248,10 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * Gets the enum's members.
      */
     getMembers(): EnumMember[];
+    /**
+     * Gets the enum's members with comments.
+     */
+    getMembersWithComments(): (EnumMember | CommentEnumMember)[];
     /**
      * Toggle if it's a const enum.
      */

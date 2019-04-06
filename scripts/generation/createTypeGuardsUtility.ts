@@ -210,6 +210,15 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             bodyText: writer => {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._isCommentObjectLiteralElement === true;`);
             }
+        }, {
+            docs: ["Gets if the provided value is a CommentEnumMember."],
+            isStatic: true,
+            name: "isCommentEnumMember",
+            returnType: `node is compiler.CommentEnumMember`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentEnumMember)._isCommentEnumMember === true;`);
+            }
         }]);
     }
 }
@@ -243,6 +252,7 @@ function isAllowedClass(name: string) {
         case "CommentClassElement":
         case "CommentTypeElement":
         case "CommentObjectLiteralElement":
+        case "CommentEnumMember":
         // todo: should support these classes eventually (they probably need to be customly implemented)
         case "ObjectDestructuringAssignment":
         case "ArrayDestructuringAssignment":
