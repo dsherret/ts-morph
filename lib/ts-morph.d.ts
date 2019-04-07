@@ -3557,6 +3557,28 @@ interface ClassLikeDeclarationBaseSpecific {
      */
     insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>): PropertyDeclaration[];
     /**
+     * Add method.
+     * @param structure - Structure representing the method.
+     */
+    addMethod(structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
+    /**
+     * Add methods.
+     * @param structures - Structures representing the methods.
+     */
+    addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
+    /**
+     * Insert method.
+     * @param index - Child index to insert at.
+     * @param structure - Structure representing the method.
+     */
+    insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
+    /**
+     * Insert methods.
+     * @param index - Child index to insert at.
+     * @param structures - Structures representing the methods.
+     */
+    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
+    /**
      * Gets the first instance property by name.
      * @param name - Name.
      */
@@ -3676,28 +3698,6 @@ interface ClassLikeDeclarationBaseSpecific {
      * Sets the class set accessor declarations regardless of whether it's an instance of static setAccessor.
      */
     getSetAccessors(): SetAccessorDeclaration[];
-    /**
-     * Add method.
-     * @param structure - Structure representing the method.
-     */
-    addMethod(structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
-    /**
-     * Add methods.
-     * @param structures - Structures representing the methods.
-     */
-    addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
-    /**
-     * Insert method.
-     * @param index - Child index to insert at.
-     * @param structure - Structure representing the method.
-     */
-    insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
-    /**
-     * Insert methods.
-     * @param index - Child index to insert at.
-     * @param structures - Structures representing the methods.
-     */
-    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
     /**
      * Gets the first method declaration by name.
      * @param name - Name.
@@ -4789,14 +4789,14 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
      * @param textOrWriterFunction - Text to add or function that provides a writer to write with.
      * @returns The children that were added.
      */
-    addChildText(textOrWriterFunction: string | WriterFunction): Node<ts.Node>[];
+    addChildText(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Node<ts.Node>[];
     /**
      * Inserts text at the specified child index.
      * @param index - Child index to insert at.
      * @param textOrWriterFunction - Text to insert or function that provides a writer to write with.
      * @returns The children that were inserted.
      */
-    insertChildText(index: number, textOrWriterFunction: string | WriterFunction): Node<ts.Node>[];
+    insertChildText(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Node<ts.Node>[];
 }
 
 export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends ts.Statement ? Statement : Node<T>;
@@ -7961,14 +7961,14 @@ export interface StatementedNode {
      * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
      * @returns The statements that were added.
      */
-    addStatements(textOrWriterFunction: string | WriterFunction): Statement[];
+    addStatements(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Child index to insert at.
      * @param textOrWriterFunction - Text or writer function to write the statement or statements with.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, textOrWriterFunction: string | WriterFunction): Statement[];
+    insertStatements(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Child index to remove the statement at.
