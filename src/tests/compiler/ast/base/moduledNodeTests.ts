@@ -105,11 +105,11 @@ describe(nameof(ModuledNode), () => {
                 `import "./file";\n\nexport class MyClass {}\n`);
         });
 
-        it("should insert after any multi line comments at the start of a file", () => {
+        it("should insert after any comments at the start of a file", () => {
             doTest(`/* test */`, { moduleSpecifier: "./file" }, `/* test */\nimport "./file";\n`);
         });
 
-        it("should insert before any single line comments at the start of a file", () => {
+        it("should insert before any comments at the start of a file", () => {
             doTest(`// test`, { moduleSpecifier: "./file" }, `import "./file";\n\n// test`);
         });
     });
@@ -197,7 +197,7 @@ describe(nameof(ModuledNode), () => {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
-            expect(sourceFile.getText()).to.equal(expectedCode);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should insert the different kinds of exports", () => {
@@ -232,8 +232,16 @@ describe(nameof(ModuledNode), () => {
                 `export {\n    test,\n    test2\n};\n`);
         });
 
+        it("should insert after any comments at the start of a file", () => {
+            doTest(`/* test */`, 1, [{ moduleSpecifier: "./file" }], `/* test */\nexport * from "./file";\n`);
+        });
+
+        it("should insert before any comments at the start of a file", () => {
+            doTest(`// test`, 0, [{ moduleSpecifier: "./file" }], `export * from "./file";\n\n// test`);
+        });
+
         function doNamespaceTest(startCode: string, index: number, structures: OptionalKind<ExportDeclarationStructure>[], expectedCode: string) {
-            const { sourceFile, project } = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.getNamespaces()[0].insertExportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -350,7 +358,7 @@ describe(nameof(ModuledNode), () => {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertExportAssignments(index, structures);
             expect(result.length).to.equal(structures.length);
-            expect(sourceFile.getText()).to.equal(expectedCode);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should insert the different kinds of exports", () => {
@@ -376,6 +384,14 @@ describe(nameof(ModuledNode), () => {
 
         it("should insert at the end", () => {
             doTest(`export class Class {}\n`, 1, [{ expression: "5" }], `export class Class {}\n\nexport = 5;\n`);
+        });
+
+        it("should insert after any comments at the start of a file", () => {
+            doTest(`/* test */`, 1, [{ expression: "5" }], `/* test */\nexport = 5;\n`);
+        });
+
+        it("should insert before any comments at the start of a file", () => {
+            doTest(`// test`, 0, [{ expression: "5" }], `export = 5;\n\n// test`);
         });
 
         function doNamespaceTest(startCode: string, index: number, structures: OptionalKind<ExportAssignmentStructure>[], expectedCode: string) {

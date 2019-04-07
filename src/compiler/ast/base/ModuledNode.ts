@@ -269,7 +269,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forExportDeclaration().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember),
+                        previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember) || isComment(previousMember.compilerNode),
                         nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
                     });
                 }
@@ -292,7 +292,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportDeclarations(): ExportDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration);
+            return this.getStatements().filter(TypeGuards.isExportDeclaration);
         }
 
         addExportAssignment(structure: OptionalKind<ExportAssignmentStructure>) {
@@ -317,7 +317,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forExportAssignment().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember),
+                        previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember) || isComment(previousMember.compilerNode),
                         nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)
                     });
                 }
@@ -333,7 +333,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportAssignments(): ExportAssignment[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportAssignment);
+            return this.getStatements().filter(TypeGuards.isExportAssignment);
         }
 
         getDefaultExportSymbol(): Symbol | undefined {
