@@ -6,7 +6,7 @@ describe(nameof(CommentClassElement), () => {
     describe(nameof<CommentClassElement>(c => c.remove), () => {
         function doTest(startCode: string, index: number, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
-            firstChild.getMembers()[index].remove();
+            firstChild.getMembersWithComments()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

@@ -1923,7 +1923,7 @@ export declare type ModuleReference = EntityName | ExternalModuleReference;
 
 export declare type StringLiteralLike = StringLiteral | NoSubstitutionTemplateLiteral;
 
-export declare type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration | CommentTypeElement;
+export declare type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
 
 export declare type TemplateLiteral = TemplateExpression | NoSubstitutionTemplateLiteral;
 
@@ -3328,6 +3328,10 @@ export interface TypeElementMemberedNode {
      * Gets all the members.
      */
     getMembers(): TypeElementTypes[];
+    /**
+     * Gets all the members with comments.
+     */
+    getMembersWithComments(): (TypeElementTypes | CommentTypeElement)[];
 }
 
 declare type TypeElementMemberedNodeExtensionType = Node<ts.Node & {
@@ -3847,6 +3851,10 @@ interface ClassLikeDeclarationBaseSpecific {
      */
     getMembers(): ClassMemberTypes[];
     /**
+     * Gets the class' members with comments.
+     */
+    getMembersWithComments(): (ClassMemberTypes | CommentClassElement)[];
+    /**
      * Gets the first member by name.
      * @param name - Name.
      */
@@ -3900,7 +3908,7 @@ export declare type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessor
 
 export declare type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
 
-export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | CommentClassElement;
+export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
 declare type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
 
@@ -5585,8 +5593,6 @@ export declare class ObjectLiteralElement<T extends ts.ObjectLiteralElement = ts
     remove(): void;
 }
 
-export declare type ObjectLiteralExpressionProperties = ObjectLiteralElementLike | CommentObjectLiteralElement;
-
 declare const ObjectLiteralExpressionBase: typeof PrimaryExpression;
 
 export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
@@ -5594,26 +5600,30 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Gets the first property by the provided name or throws.
      * @param name - Name of the property.
      */
-    getPropertyOrThrow(name: string): ObjectLiteralExpressionProperties;
+    getPropertyOrThrow(name: string): ObjectLiteralElementLike;
     /**
      * Gets the first property that matches the provided find function or throws.
      * @param findFunction - Find function.
      */
-    getPropertyOrThrow(findFunction: (property: ObjectLiteralExpressionProperties) => boolean): ObjectLiteralExpressionProperties;
+    getPropertyOrThrow(findFunction: (property: ObjectLiteralElementLike) => boolean): ObjectLiteralElementLike;
     /**
      * Gets the first property by the provided name or returns undefined.
      * @param name - Name of the property.
      */
-    getProperty(name: string): ObjectLiteralExpressionProperties | undefined;
+    getProperty(name: string): ObjectLiteralElementLike | undefined;
     /**
      * Gets the first property that matches the provided find function or returns undefined.
      * @param findFunction - Find function.
      */
-    getProperty(findFunction: (property: ObjectLiteralExpressionProperties) => boolean): ObjectLiteralExpressionProperties | undefined;
+    getProperty(findFunction: (property: ObjectLiteralElementLike) => boolean): ObjectLiteralElementLike | undefined;
     /**
      * Gets the properties.
      */
-    getProperties(): ObjectLiteralExpressionProperties[];
+    getProperties(): ObjectLiteralElementLike[];
+    /**
+     * Gets the properties with comments.
+     */
+    getPropertiesWithComments(): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
     /**
      * Adds a property assignment.
      * @param structure - Structure that represents the property assignment to add.

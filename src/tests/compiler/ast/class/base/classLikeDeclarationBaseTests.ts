@@ -1116,10 +1116,19 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             expect(firstChild.getMembers().length).to.equal(9);
         });
 
+        it("should not get any class element comments in a class with other members", () => {
+            const code = "class C {\n  //a\n  p;\n  /*b*/\n}";
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const members = firstChild.getMembers();
+            expect(members.map(m => m.getText())).to.deep.equal(["p;"]);
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.getMembersWithComments), () => {
         it("should get any class element comments in an empty class", () => {
             const code = "class C {\n  //a\n  /*b*/\n}";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
-            const members = firstChild.getMembers();
+            const members = firstChild.getMembersWithComments();
             expect(members.map(m => m.getText())).to.deep.equal([
                 "//a",
                 "/*b*/"
@@ -1131,7 +1140,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         it("should get any class element comments in a class with other members", () => {
             const code = "class C {\n  //a\n  p;\n  /*b*/\n}";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
-            const members = firstChild.getMembers();
+            const members = firstChild.getMembersWithComments();
             expect(members.map(m => m.getText())).to.deep.equal([
                 "//a",
                 "p;",

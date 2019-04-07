@@ -6,7 +6,7 @@ describe(nameof(CommentTypeElement), () => {
     describe(nameof<CommentTypeElement>(e => e.remove), () => {
         it("should remove the comment", () => {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface I {\n    // test\n}");
-            firstChild.getMembers()[0].remove();
+            firstChild.getMembersWithComments()[0].remove();
             expect(firstChild.getText()).to.equal("interface I {\n}");
         });
     });

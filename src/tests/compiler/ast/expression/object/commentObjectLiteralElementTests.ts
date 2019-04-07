@@ -7,7 +7,7 @@ describe(nameof(CommentObjectLiteralElement), () => {
     describe(nameof<CommentObjectLiteralElement>(c => c.remove), () => {
         function doTest(startCode: string, index: number, expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(startCode, SyntaxKind.ObjectLiteralExpression);
-            descendant.getProperties()[index].remove();
+            descendant.getPropertiesWithComments()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

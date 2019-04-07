@@ -600,6 +600,17 @@ describe(nameof(TypeElementMemberedNode), () => {
             expect(firstChild.getMembers().map(m => m.getText())).to.deep.equal(members);
         }
 
+        it("should get the members not including extended comments", () => {
+            doTest("interface T {\n  //a\n  /*b*/\n  prop;\n  //c\n}", ["prop;"]);
+        });
+    });
+
+    describe(nameof<TypeElementMemberedNode>(d => d.getMembersWithComments), () => {
+        function doTest(text: string, members: string[]) {
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(text);
+            expect(firstChild.getMembersWithComments().map(m => m.getText())).to.deep.equal(members);
+        }
+
         it("should get the members including extended comments", () => {
             doTest("interface T {\n  //a\n  /*b*/\n  prop;\n  //c\n}", [
                 "//a",
@@ -611,7 +622,7 @@ describe(nameof(TypeElementMemberedNode), () => {
 
         it(`should parse comments as ${nameof(CommentTypeElement)}`, () => {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface T {\n  //a\n  /*b*/\n}");
-            const members = firstChild.getMembers();
+            const members = firstChild.getMembersWithComments();
             expect(members.length).to.equal(2);
             expect(members[0]).to.be.instanceOf(CommentTypeElement);
             expect(members[1]).to.be.instanceOf(CommentTypeElement);

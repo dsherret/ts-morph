@@ -9,7 +9,7 @@ import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForName
 import { TypeElementTypes } from "../aliases";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "../interface";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, CommentTypeElement } from "../interface";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ExtendedParser } from "../utils";
 
@@ -228,6 +228,10 @@ export interface TypeElementMemberedNode {
      * Gets all the members.
      */
     getMembers(): TypeElementTypes[];
+    /**
+     * Gets all the members with comments.
+     */
+    getMembersWithComments(): (TypeElementTypes | CommentTypeElement)[];
 }
 
 export function TypeElementMemberedNode<T extends Constructor<TypeElementMemberedNodeExtensionType>>(Base: T): Constructor<TypeElementMemberedNode> & T {
@@ -410,8 +414,13 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         getMembers() {
+            return this.compilerNode.members.map(m => this._getNodeFromCompilerNode(m)) as TypeElementTypes[];
+        }
+
+        getMembersWithComments() {
             const compilerNode = this.compilerNode as (ts.InterfaceDeclaration | ts.TypeLiteralNode);
-            return ExtendedParser.getContainerArray(compilerNode, this._sourceFile.compilerNode).map(m => this._getNodeFromCompilerNode(m)) as TypeElementTypes[];
+            return ExtendedParser.getContainerArray(compilerNode, this._sourceFile.compilerNode)
+                .map(m => this._getNodeFromCompilerNode(m)) as (TypeElementTypes | CommentTypeElement)[];
         }
 
         set(structure: Partial<TypeElementMemberedNodeStructure>) {
@@ -461,7 +470,7 @@ function insertChildren<TNode extends Node & { set(structure: TStructure): void;
     createStructurePrinter: () => ({ printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TStructure>): void; });
 }): TNode[] {
     return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
-        getIndexedChildren: () => opts.thisNode.getMembers(),
+        getIndexedChildren: () => opts.thisNode.getMembersWithComments(),
         parent: opts.thisNode,
         index: opts.index,
         structures: opts.structures,

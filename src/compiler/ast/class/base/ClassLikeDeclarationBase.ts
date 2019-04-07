@@ -27,7 +27,7 @@ export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclarati
 export type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
 export type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
-export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | CommentClassElement;
+export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
 export type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
 
@@ -445,6 +445,10 @@ export interface ClassLikeDeclarationBaseSpecific {
      * Gets the class' members regardless of whether it's an instance of static member.
      */
     getMembers(): ClassMemberTypes[];
+    /**
+     * Gets the class' members with comments.
+     */
+    getMembersWithComments(): (ClassMemberTypes | CommentClassElement)[];
     /**
      * Gets the first member by name.
      * @param name - Name.
@@ -952,23 +956,13 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         getMembers() {
-            return getAllMembers(this).filter(m => isSupportedClassMember(m)) as ClassMemberTypes[];
+            return getAllMembers(this, this.compilerNode.members).filter(m => isSupportedClassMember(m)) as ClassMemberTypes[];
+        }
 
-            function getAllMembers(classDec: Node<ts.ClassLikeDeclarationBase>) {
-                const compilerNode = classDec.compilerNode as ts.ClassExpression | ts.ClassDeclaration;
-                const members = ExtendedParser.getContainerArray(compilerNode, classDec.getSourceFile().compilerNode)
-                    .map(m => classDec._getNodeFromCompilerNode(m));
-                const isAmbient = TypeGuards.isAmbientableNode(classDec) && classDec.isAmbient();
-
-                // filter out the method declarations or constructor declarations without a body if not ambient
-                return isAmbient ? members : members.filter(m => {
-                    if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
-                        return true;
-                    if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
-                        return true;
-                    return m.isImplementation();
-                });
-            }
+        getMembersWithComments() {
+            const compilerNode = this.compilerNode as ts.ClassExpression | ts.ClassDeclaration;
+            const members = ExtendedParser.getContainerArray(compilerNode, this.getSourceFile().compilerNode);
+            return getAllMembers(this, members).filter(m => isSupportedClassMember(m)) as (ClassMemberTypes | CommentClassElement)[];
         }
 
         getMember(name: string): ClassMemberTypes | undefined;
@@ -1020,6 +1014,21 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return classes;
         }
     };
+}
+
+function getAllMembers(classDec: Node<ts.ClassLikeDeclarationBase>, compilerMembers: ts.Node[] | ts.NodeArray<ts.Node>) {
+    const isAmbient = TypeGuards.isAmbientableNode(classDec) && classDec.isAmbient();
+    // not sure why this cast is necessary, but localized it to here...
+    const members = (compilerMembers as any as ts.Node[]).map(m => classDec._getNodeFromCompilerNode(m));
+
+    // filter out the method declarations or constructor declarations without a body if not ambient
+    return isAmbient ? members : members.filter(m => {
+        if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
+            return true;
+        if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
+            return true;
+        return m.isImplementation();
+    });
 }
 
 function getImmediateDerivedClasses(classDec: ClassLikeDeclarationBaseSpecific & NameableNode) {

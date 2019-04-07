@@ -25,7 +25,7 @@ export type ContainerNodes = StatementContainerNodes
     | ts.ObjectLiteralExpression;
 
 type CommentSyntaxKinds = SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
-const statementsSaver = new WeakMap<ContainerNodes, (ts.Node | CompilerExtendedCommentRange)[]>();
+const childrenSave = new WeakMap<ContainerNodes, (ts.Node | CompilerExtendedCommentRange)[]>();
 const extendedCommentParserKinds = new Set<SyntaxKind>([
     SyntaxKind.SourceFile,
     SyntaxKind.Block,
@@ -50,12 +50,13 @@ export class ExtendedCommentParser {
             container = container.parent as ContainerNodes;
 
         // cache the result
-        let statements = statementsSaver.get(container);
-        if (statements == null) {
-            statements = Array.from(getNodes(container, sourceFile));
-            statementsSaver.set(container, statements);
+        let children = childrenSave.get(container);
+        if (children == null) {
+            children = Array.from(getNodes(container, sourceFile));
+            childrenSave.set(container, children);
         }
-        return statements;
+
+        return children;
     }
 
     static shouldParseChildren(container: ts.Node): container is ContainerNodes {
@@ -67,7 +68,7 @@ export class ExtendedCommentParser {
         if (isSyntaxList(container))
             container = container.parent as ContainerNodes;
 
-        return statementsSaver.has(container);
+        return childrenSave.has(container);
     }
 
     static isCommentStatement(node: ts.Node): node is CompilerCommentStatement {

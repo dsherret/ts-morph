@@ -71,7 +71,7 @@ type _ModuleReferenceTest = AssertTrue<IsExact<WrappedToCompilerNodeType<ModuleR
 export type StringLiteralLike = StringLiteral | NoSubstitutionTemplateLiteral;
 type _StringLiteralLikeTest = AssertTrue<IsExact<WrappedToCompilerNodeType<StringLiteralLike>, ts.StringLiteralLike>>;
 
-export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration | CommentTypeElement;
+export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
 
 /* istanbul ignore next */
 function typeElementTypes() {
