@@ -57,15 +57,15 @@ export class CompilerExtendedComment implements ts.Node {
     }
 
     getFullWidth(): number {
-        return this.end - this.pos;
+        return this.end - this._fullStart;
     }
 
     getLeadingTriviaWidth(sourceFile?: ts.SourceFile | undefined) {
-        return this._start - this.pos;
+        return this._start - this._fullStart;
     }
 
     getFullText(sourceFile?: ts.SourceFile | undefined) {
-        return this._sourceFile.text.substring(this.pos, this.end);
+        return this._sourceFile.text.substring(this._fullStart, this.end);
     }
 
     getText(sourceFile?: ts.SourceFile | undefined) {
@@ -108,7 +108,7 @@ export class CompilerCommentTypeElement extends CompilerExtendedComment implemen
 export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment implements ts.ObjectLiteralElement {
     _declarationBrand: any;
     _objectLiteralBrandBrand: any; // ts < 3.4
-    _objectLiteralBrand: any; // ts > 3.5
+    _objectLiteralBrand: any; // ts >= 3.5
     declarationBrand: any;
     /** @internal */
     _isCommentObjectLiteralElement: true = true;

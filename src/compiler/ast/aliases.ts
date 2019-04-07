@@ -9,8 +9,7 @@ import { Expression, PropertyAccessExpression, PropertyAssignment, ShorthandProp
     ThisExpression, OmittedExpression, CallExpression, NewExpression } from "./expression";
 import { FunctionDeclaration } from "./function";
 import { SourceFile, ExternalModuleReference, ExportAssignment, NamespaceDeclaration } from "./module";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, InterfaceDeclaration,
-    CommentTypeElement } from "./interface";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, InterfaceDeclaration } from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText, JsxOpeningElement } from "./jsx";
 import { NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TemplateExpression, TaggedTemplateExpression } from "./literal";
 import { CaseClause, DefaultClause } from "./statement";

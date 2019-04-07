@@ -3329,7 +3329,7 @@ export interface TypeElementMemberedNode {
      */
     getMembers(): TypeElementTypes[];
     /**
-     * Gets all the members with comments.
+     * Gets all the members with comment type elements.
      */
     getMembersWithComments(): (TypeElementTypes | CommentTypeElement)[];
 }
@@ -3851,7 +3851,7 @@ interface ClassLikeDeclarationBaseSpecific {
      */
     getMembers(): ClassMemberTypes[];
     /**
-     * Gets the class' members with comments.
+     * Gets the class' members with comment class elements.
      */
     getMembersWithComments(): (ClassMemberTypes | CommentClassElement)[];
     /**
@@ -4131,9 +4131,10 @@ export declare class CommentRange {
 }
 
 export declare class CompilerExtendedComment implements ts.Node {
+    private _fullStart;
     private _start;
     private _sourceFile;
-    constructor(pos: number, end: number, kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia, sourceFile: ts.SourceFile, parent: ts.Node);
+    constructor(fullStart: number, pos: number, end: number, kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia, sourceFile: ts.SourceFile, parent: ts.Node);
     pos: number;
     end: number;
     kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
@@ -5257,7 +5258,7 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      */
     getMembers(): EnumMember[];
     /**
-     * Gets the enum's members with comments.
+     * Gets the enum's members with comment enum members.
      */
     getMembersWithComments(): (EnumMember | CommentEnumMember)[];
     /**
@@ -5621,9 +5622,9 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      */
     getProperties(): ObjectLiteralElementLike[];
     /**
-     * Gets the properties with comments.
+     * Gets the properties with comment object literal elements.
      */
-    getPropertiesWithComments(): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
+    getPropertiesWithComments(): (ObjectLiteralElementLike | CommentObjectLiteralElement)[];
     /**
      * Adds a property assignment.
      * @param structure - Structure that represents the property assignment to add.

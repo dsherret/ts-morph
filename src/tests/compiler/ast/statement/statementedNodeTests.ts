@@ -99,8 +99,12 @@ describe(nameof(StatementedNode), () => {
             doTest("var t; class T {}", SyntaxKind.ClassDeclaration, "class T {}");
         });
 
-        it("should get comments", () => {
+        it("should get single line comment trivia", () => {
             doTest("// test", SyntaxKind.SingleLineCommentTrivia, "// test");
+        });
+
+        it("should get multi-line comment trivia", () => {
+            doTest("/*a*/", SyntaxKind.MultiLineCommentTrivia, "/*a*/");
         });
 
         it("should return undefined when it doesn't exist", () => {

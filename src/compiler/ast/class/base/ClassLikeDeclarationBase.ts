@@ -447,7 +447,7 @@ export interface ClassLikeDeclarationBaseSpecific {
      */
     getMembers(): ClassMemberTypes[];
     /**
-     * Gets the class' members with comments.
+     * Gets the class' members with comment class elements.
      */
     getMembersWithComments(): (ClassMemberTypes | CommentClassElement)[];
     /**
@@ -901,7 +901,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
         getInstanceMembers() {
             return this.getMembersWithParameterProperties().filter(m => {
-                if (TypeGuards.isCommentClassElement(m) || TypeGuards.isConstructorDeclaration(m))
+                if (TypeGuards.isConstructorDeclaration(m))
                     return false;
                 return TypeGuards.isParameterDeclaration(m) || !m.isStatic();
             }) as ClassInstanceMemberTypes[];
@@ -923,7 +923,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
         getStaticMembers() {
             return this.getMembers().filter(m => {
-                if (TypeGuards.isCommentClassElement(m) || TypeGuards.isConstructorDeclaration(m))
+                if (TypeGuards.isConstructorDeclaration(m))
                     return false;
                 return !TypeGuards.isParameterDeclaration(m) && m.isStatic();
             }) as ClassStaticMemberTypes[];
@@ -953,7 +953,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         getMembersWithComments() {
             const compilerNode = this.compilerNode as ts.ClassExpression | ts.ClassDeclaration;
             const members = ExtendedParser.getContainerArray(compilerNode, this.getSourceFile().compilerNode);
-            return getAllMembers(this, members).filter(m => isSupportedClassMember(m)) as (ClassMemberTypes | CommentClassElement)[];
+            return getAllMembers(this, members).filter(m => isSupportedClassMember(m) || TypeGuards.isCommentClassElement(m)) as (ClassMemberTypes | CommentClassElement)[];
         }
 
         getMember(name: string): ClassMemberTypes | undefined;
@@ -1057,8 +1057,7 @@ function isSupportedClassMember(m: Node) {
         || TypeGuards.isPropertyDeclaration(m)
         || TypeGuards.isGetAccessorDeclaration(m)
         || TypeGuards.isSetAccessorDeclaration(m)
-        || TypeGuards.isConstructorDeclaration(m)
-        || TypeGuards.isCommentClassElement(m);
+        || TypeGuards.isConstructorDeclaration(m);
 }
 
 interface InsertChildrenOptions {

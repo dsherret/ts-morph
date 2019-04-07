@@ -38,6 +38,7 @@ describe(nameof(Statement), () => {
             const statement = sourceFile.getStatementsWithComments().find(s => s.getKind() === SyntaxKind.SingleLineCommentTrivia || s.getKind() === SyntaxKind.MultiLineCommentTrivia)!;
             statement.remove();
             expect(sourceFile.getFullText()).to.equals(expectedText);
+            expect(statement.wasForgotten()).to.be.true;
         }
 
         it("should remove the single line comment", () => {

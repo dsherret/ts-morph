@@ -64,12 +64,10 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
     }
 
     /**
-     * Gets the properties with comments.
+     * Gets the properties with comment object literal elements.
      */
-    getPropertiesWithComments() {
-        const compilerNode = this.compilerNode as ts.ObjectLiteralExpression;
-        const members = ExtendedParser.getContainerArray(compilerNode, this.getSourceFile().compilerNode);
-
+    getPropertiesWithComments(): (ObjectLiteralElementLike | CommentObjectLiteralElement)[] {
+        const members = ExtendedParser.getContainerArray(this.compilerNode, this.getSourceFile().compilerNode);
         return members.map(p => this._getNodeFromCompilerNode(p)) as (ObjectLiteralElementLike | CommentObjectLiteralElement)[];
     }
 

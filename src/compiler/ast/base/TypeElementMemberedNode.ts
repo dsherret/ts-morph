@@ -229,7 +229,7 @@ export interface TypeElementMemberedNode {
      */
     getMembers(): TypeElementTypes[];
     /**
-     * Gets all the members with comments.
+     * Gets all the members with comment type elements.
      */
     getMembersWithComments(): (TypeElementTypes | CommentTypeElement)[];
 }

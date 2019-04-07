@@ -128,7 +128,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     }
 
     /**
-     * Gets the enum's members with comments.
+     * Gets the enum's members with comment enum members.
      */
     getMembersWithComments(): (EnumMember | CommentEnumMember)[] {
         const compilerNode = this.compilerNode;

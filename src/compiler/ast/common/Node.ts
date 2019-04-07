@@ -1113,7 +1113,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * Gets the parent if it's a syntax list.
      */
     getParentSyntaxList(): SyntaxList | undefined {
-        // comments need special handling because they might not be within the range of the syntax list
+        // extended comments need special handling because they might not be within the range of the syntax list
         const kind = this.getKind();
         if (kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia)
             return this.getParentOrThrow().getChildSyntaxList();
