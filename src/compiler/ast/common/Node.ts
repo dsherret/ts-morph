@@ -1404,7 +1404,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * Gets the leading comment ranges of the current node.
      */
     getLeadingCommentRanges(): CommentRange[] {
-        return this._leadingCommentRanges || (this._leadingCommentRanges = this._getCommentsAtPos(this.getFullStart(), ts.getLeadingCommentRanges));
+        return this._leadingCommentRanges || (this._leadingCommentRanges = this._getCommentsAtPos(this.getFullStart(), (text: string, pos: number) => {
+            const comments = ts.getLeadingCommentRanges(text, pos) || [];
+            // if this is a comment, then only include leading comment ranges before this one
+            if (this.getKind() === SyntaxKind.SingleLineCommentTrivia || this.getKind() === SyntaxKind.MultiLineCommentTrivia) {
+                const thisPos = this.getPos();
+                return comments.filter(r => r.pos < thisPos);
+            }
+            else {
+                return comments;
+            }
+        }));
     }
 
     /**

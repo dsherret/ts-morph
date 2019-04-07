@@ -143,6 +143,7 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
     }
 
     function* getExtendedComments(pos: number, stopAtJsDoc: boolean) {
+        const fullStart = pos;
         skipTrailingLine();
 
         const leadingComments = Array.from(getLeadingComments());
@@ -227,8 +228,9 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
         function parseSingleLineComment() {
             const start = pos;
             skipSingleLineComment();
+            const end = pos;
 
-            return createComment(start, pos, SyntaxKind.SingleLineCommentTrivia);
+            return createComment(fullStart, start, end, SyntaxKind.SingleLineCommentTrivia);
         }
 
         function skipSingleLineComment() {
@@ -240,10 +242,10 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
 
         function parseMultiLineComment(isJsDoc: boolean) {
             const start = pos;
-
             skipSlashStarComment(isJsDoc);
+            const end = pos;
 
-            return createComment(start, pos, SyntaxKind.MultiLineCommentTrivia);
+            return createComment(fullStart, start, end, SyntaxKind.MultiLineCommentTrivia);
         }
 
         function skipSlashStarComment(isJsDoc: boolean) {
@@ -279,9 +281,9 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
         return errors.throwNotImplementedForNeverValueError(container);
     }
 
-    function getCreationFunction(): (pos: number, end: number, kind: CommentSyntaxKinds) => CompilerExtendedComment {
+    function getCreationFunction(): (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => CompilerExtendedComment {
         const ctor = getCtor();
-        return (pos: number, end: number, kind: CommentSyntaxKinds) => new ctor(pos, end, kind, sourceFile, container);
+        return (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => new ctor(fullStart, pos, end, kind, sourceFile, container);
 
         function getCtor() {
             if (isStatementContainerNode(container))
