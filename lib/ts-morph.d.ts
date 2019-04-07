@@ -8034,6 +8034,10 @@ export interface StatementedNode {
      */
     getStatements(): Statement[];
     /**
+     * Gets the node's statements with comment statements.
+     */
+    getStatementsWithComments(): Statement[];
+    /**
      * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
      * @param findFunction - Function to find the statement by.
      */

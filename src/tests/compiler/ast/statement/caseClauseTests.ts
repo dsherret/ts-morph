@@ -8,10 +8,10 @@ function getCaseClause(text: string) {
 }
 
 describe(nameof(CaseClause), () => {
-    describe(nameof<CaseClause>(n => n.getStatements), () => {
+    describe(nameof<CaseClause>(n => n.getStatementsWithComments), () => {
         function doTest(text: string, expectedTexts: string[]) {
             const caseClause = getCaseClause(text);
-            expect(caseClause.getStatements().map(s => s.getText())).to.deep.equal(expectedTexts);
+            expect(caseClause.getStatementsWithComments().map(s => s.getText())).to.deep.equal(expectedTexts);
         }
 
         it("should get the statements", () => {

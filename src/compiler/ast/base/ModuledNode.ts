@@ -184,7 +184,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         addImportDeclarations(structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>>) {
-            const compilerChildren = this._getCompilerStatements();
+            const compilerChildren = this._getCompilerStatementsWithComments();
 
             return this.insertImportDeclarations(getInsertIndex(), structures);
 

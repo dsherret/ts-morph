@@ -8,10 +8,10 @@ function getDefaultClause(text: string) {
 }
 
 describe(nameof(DefaultClause), () => {
-    describe(nameof<DefaultClause>(n => n.getStatements), () => {
+    describe(nameof<DefaultClause>(n => n.getStatementsWithComments), () => {
         function doTest(text: string, expectedTexts: string[]) {
             const defaultClause = getDefaultClause(text);
-            expect(defaultClause.getStatements().map(s => s.getText())).to.deep.equal(expectedTexts);
+            expect(defaultClause.getStatementsWithComments().map(s => s.getText())).to.deep.equal(expectedTexts);
         }
 
         it("should get the correct statements", () => {

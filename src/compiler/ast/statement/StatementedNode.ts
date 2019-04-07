@@ -37,6 +37,10 @@ export interface StatementedNode {
      */
     getStatements(): Statement[];
     /**
+     * Gets the node's statements with comment statements.
+     */
+    getStatementsWithComments(): Statement[];
+    /**
      * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
      * @param findFunction - Function to find the statement by.
      */
@@ -432,7 +436,7 @@ export interface StatementedNode {
     /** @internal */
     _standardWrite(writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void, opts?: StandardWriteOptions): void;
     /** @internal */
-    _getCompilerStatements(): ts.Statement[];
+    _getCompilerStatementsWithComments(): ts.Statement[];
 }
 
 /** @internal */
@@ -453,7 +457,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         /* General */
         getStatements() {
-            return this._getCompilerStatements().map(s => this._getNodeFromCompilerNode(s));
+            const statementsContainer = this._getCompilerStatementsContainer();
+            const statements = statementsContainer == null
+                ? [] as any as ts.Statement[]
+                : statementsContainer.statements as any as ts.Statement[];
+            return statements.map(s => this._getNodeFromCompilerNode(s));
+        }
+
+        getStatementsWithComments() {
+            return this._getCompilerStatementsWithComments().map(s => this._getNodeFromCompilerNode(s));
         }
 
         getStatement(findFunction: (statement: Statement) => boolean) {
@@ -465,7 +477,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getStatementByKind(kind: SyntaxKind) {
-            const statement = this._getCompilerStatements().find(s => s.kind === kind);
+            const statement = this._getCompilerStatementsWithComments().find(s => s.kind === kind);
             return this._getNodeFromCompilerNodeIfExists(statement);
         }
 
@@ -474,7 +486,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addStatements(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]) {
-            return this.insertStatements(this._getCompilerStatements().length, textOrWriterFunction);
+            return this.insertStatements(this._getCompilerStatementsWithComments().length, textOrWriterFunction);
         }
 
         insertStatements(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]) {
@@ -497,7 +509,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         removeStatement(index: number) {
-            index = verifyAndGetIndex(index, this._getCompilerStatements().length - 1);
+            index = verifyAndGetIndex(index, this._getCompilerStatementsWithComments().length - 1);
             return this.removeStatements([index, index]);
         }
 
@@ -517,7 +529,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addClasses(structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>>) {
-            return this.insertClasses(this._getCompilerStatements().length, structures);
+            return this.insertClasses(this._getCompilerStatementsWithComments().length, structures);
         }
 
         insertClass(index: number, structure: OptionalKind<ClassDeclarationStructure>) {
@@ -561,7 +573,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addEnums(structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>>) {
-            return this.insertEnums(this._getCompilerStatements().length, structures);
+            return this.insertEnums(this._getCompilerStatementsWithComments().length, structures);
         }
 
         insertEnum(index: number, structure: OptionalKind<EnumDeclarationStructure>) {
@@ -605,7 +617,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addFunctions(structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>>) {
-            return this.insertFunctions(this._getCompilerStatements().length, structures);
+            return this.insertFunctions(this._getCompilerStatementsWithComments().length, structures);
         }
 
         insertFunction(index: number, structure: OptionalKind<FunctionDeclarationStructure>) {
@@ -656,7 +668,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addInterfaces(structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>>) {
-            return this.insertInterfaces(this._getCompilerStatements().length, structures);
+            return this.insertInterfaces(this._getCompilerStatementsWithComments().length, structures);
         }
 
         insertInterface(index: number, structure: OptionalKind<InterfaceDeclarationStructure>) {
@@ -700,7 +712,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addNamespaces(structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>) {
-            return this.insertNamespaces(this._getCompilerStatements().length, structures);
+            return this.insertNamespaces(this._getCompilerStatementsWithComments().length, structures);
         }
 
         insertNamespace(index: number, structure: OptionalKind<NamespaceDeclarationStructure>) {
@@ -744,7 +756,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addTypeAliases(structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>>) {
-            return this.insertTypeAliases(this._getCompilerStatements().length, structures);
+            return this.insertTypeAliases(this._getCompilerStatementsWithComments().length, structures);
         }
 
         insertTypeAlias(index: number, structure: OptionalKind<TypeAliasDeclarationStructure>) {
@@ -809,7 +821,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addVariableStatements(structures: ReadonlyArray<OptionalKind<VariableStatementStructure>>) {
-            return this.insertVariableStatements(this._getCompilerStatements().length, structures);
+            return this.insertVariableStatements(this._getCompilerStatementsWithComments().length, structures);
         }
 
         insertVariableStatement(index: number, structure: OptionalKind<VariableStatementStructure>) {
@@ -880,7 +892,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 this.removeBody();
             }
             else if (structure.statements != null) {
-                const statementCount = this._getCompilerStatements().length;
+                const statementCount = this._getCompilerStatementsWithComments().length;
                 if (statementCount > 0)
                     this.removeStatements([0, statementCount - 1]);
             }
@@ -898,7 +910,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this;
         }
 
-        _getCompilerStatements(): ts.Statement[] {
+        _getCompilerStatementsWithComments(): ts.Statement[] {
             const statementsContainer = this._getCompilerStatementsContainer();
             if (statementsContainer == null)
                 return [] as any as ts.Statement[];
@@ -935,7 +947,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             return insertIntoBracesOrSourceFileWithGetChildren<TNode>({
                 expectedKind: opts.expectedKind,
-                getIndexedChildren: () => this.getStatements(),
+                getIndexedChildren: () => this.getStatementsWithComments(),
                 index: opts.index,
                 parent: this,
                 structures: opts.structures,

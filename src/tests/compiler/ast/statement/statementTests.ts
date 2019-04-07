@@ -35,7 +35,7 @@ describe(nameof(Statement), () => {
 
         function doCommentTest(text: string, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
-            const statement = sourceFile.getStatements().find(s => s.getKind() === SyntaxKind.SingleLineCommentTrivia || s.getKind() === SyntaxKind.MultiLineCommentTrivia)!;
+            const statement = sourceFile.getStatementsWithComments().find(s => s.getKind() === SyntaxKind.SingleLineCommentTrivia || s.getKind() === SyntaxKind.MultiLineCommentTrivia)!;
             statement.remove();
             expect(sourceFile.getFullText()).to.equals(expectedText);
         }
