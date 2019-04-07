@@ -155,6 +155,28 @@ export interface ClassLikeDeclarationBaseSpecific {
      */
     insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>): PropertyDeclaration[];
     /**
+     * Add method.
+     * @param structure - Structure representing the method.
+     */
+    addMethod(structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
+    /**
+     * Add methods.
+     * @param structures - Structures representing the methods.
+     */
+    addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
+    /**
+     * Insert method.
+     * @param index - Child index to insert at.
+     * @param structure - Structure representing the method.
+     */
+    insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
+    /**
+     * Insert methods.
+     * @param index - Child index to insert at.
+     * @param structures - Structures representing the methods.
+     */
+    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
+    /**
      * Gets the first instance property by name.
      * @param name - Name.
      */
@@ -284,28 +306,6 @@ export interface ClassLikeDeclarationBaseSpecific {
      * Sets the class set accessor declarations regardless of whether it's an instance of static setAccessor.
      */
     getSetAccessors(): SetAccessorDeclaration[];
-    /**
-     * Add method.
-     * @param structure - Structure representing the method.
-     */
-    addMethod(structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
-    /**
-     * Add methods.
-     * @param structures - Structures representing the methods.
-     */
-    addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
-    /**
-     * Insert method.
-     * @param index - Child index to insert at.
-     * @param structure - Structure representing the method.
-     */
-    insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>): MethodDeclaration;
-    /**
-     * Insert methods.
-     * @param index - Child index to insert at.
-     * @param structures - Structures representing the methods.
-     */
-    insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[];
     /**
      * Gets the first method declaration by name.
      * @param name - Name.
@@ -707,6 +707,43 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             });
         }
 
+        addMethod(structure: OptionalKind<MethodDeclarationStructure>) {
+            return this.addMethods([structure])[0];
+        }
+
+        addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
+            return this.insertMethods(getEndIndexFromArray(this.getMembers()), structures);
+        }
+
+        insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>) {
+            return this.insertMethods(index, [structure])[0];
+        }
+
+        insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
+            const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
+            structures = structures.map(s => ({...s}));
+
+            // insert, fill, and get created nodes
+            return insertIntoBracesOrSourceFileWithGetChildren<MethodDeclaration, OptionalKind<MethodDeclarationStructure>>({
+                parent: this,
+                index,
+                getIndexedChildren: () => this.getMembers(),
+                write: (writer, info) => {
+                    if (!isAmbient && info.previousMember != null)
+                        writer.blankLineIfLastNot();
+                    else
+                        writer.newLineIfLastNot();
+                    this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient }).printTexts(writer, structures);
+                    if (!isAmbient && info.nextMember != null)
+                        writer.blankLineIfLastNot();
+                    else
+                        writer.newLineIfLastNot();
+                },
+                structures,
+                expectedKind: SyntaxKind.MethodDeclaration
+            });
+        }
+
         getInstanceProperty(name: string): ClassInstancePropertyTypes | undefined;
         getInstanceProperty(findFunction: (prop: ClassInstancePropertyTypes) => boolean): ClassInstancePropertyTypes | undefined;
         getInstanceProperty(nameOrFindFunction: string | ((prop: ClassInstancePropertyTypes) => boolean)): ClassInstancePropertyTypes | undefined;
@@ -800,43 +837,6 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         getSetAccessors() {
             return this.getMembers()
                 .filter(m => TypeGuards.isSetAccessorDeclaration(m)) as SetAccessorDeclaration[];
-        }
-
-        addMethod(structure: OptionalKind<MethodDeclarationStructure>) {
-            return this.addMethods([structure])[0];
-        }
-
-        addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
-            return this.insertMethods(getEndIndexFromArray(this.getMembers()), structures);
-        }
-
-        insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>) {
-            return this.insertMethods(index, [structure])[0];
-        }
-
-        insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
-            const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
-            structures = structures.map(s => ({...s}));
-
-            // insert, fill, and get created nodes
-            return insertIntoBracesOrSourceFileWithGetChildren<MethodDeclaration, OptionalKind<MethodDeclarationStructure>>({
-                parent: this,
-                index,
-                getIndexedChildren: () => this.getMembers(),
-                write: (writer, info) => {
-                    if (!isAmbient && info.previousMember != null)
-                        writer.blankLineIfLastNot();
-                    else
-                        writer.newLineIfLastNot();
-                    this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient }).printTexts(writer, structures);
-                    if (!isAmbient && info.nextMember != null)
-                        writer.blankLineIfLastNot();
-                    else
-                        writer.newLineIfLastNot();
-                },
-                structures,
-                expectedKind: SyntaxKind.MethodDeclaration
-            });
         }
 
         getMethod(name: string): MethodDeclaration | undefined;

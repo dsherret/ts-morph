@@ -147,6 +147,16 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getFullText()).to.equal("statements;\n");
         });
 
+        it("should support passing an array of strings or writer functions and write with newlines", () => {
+            const { sourceFile } = getInfoFromText("");
+            sourceFile.insertStatements(0, [
+                writer => writer.writeLine("statements;"),
+                "// other",
+                writer => writer.writeLine("test;")
+            ]);
+            expect(sourceFile.getFullText()).to.equal("statements;\n// other\ntest;\n");
+        });
+
         it("should insert statements at the beginning of a source file", () => {
             doSourceFileTest("function i() {}", 0, "newText;\nsecondText;", 2,
                 "newText;\nsecondText;\nfunction i() {}");
@@ -243,7 +253,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert statements in a Block", () => {
-            const { sourceFile, firstChild } = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
+            const { firstChild } = getInfoFromTextWithSyntax<Block>("function():number{const a = 1, b = true;}", SyntaxKind.Block);
             expect(firstChild.getStatementByKind(SyntaxKind.IfStatement)).equals(undefined);
             firstChild.insertStatements(1, "if(b){return 1;}else {return 2;}");
             expect(firstChild.getStatementByKindOrThrow(SyntaxKind.IfStatement).getText()).equals("if(b){return 1;}else {return 2;}");
