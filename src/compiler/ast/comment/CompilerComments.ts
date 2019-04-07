@@ -1,6 +1,6 @@
 import { ts, SyntaxKind } from "../../../typescript";
 
-export class CompilerExtendedCommentRange implements ts.Node {
+export class CompilerExtendedComment implements ts.Node {
     private _start: number;
     private _sourceFile: ts.SourceFile;
 
@@ -83,27 +83,27 @@ export class CompilerExtendedCommentRange implements ts.Node {
     }
 }
 
-export class CompilerCommentStatement extends CompilerExtendedCommentRange implements ts.Statement {
+export class CompilerCommentStatement extends CompilerExtendedComment implements ts.Statement {
     _statementBrand: any;
     /** @internal */
     _isCommentStatement: true = true;
 }
 
-export class CompilerCommentClassElement extends CompilerExtendedCommentRange implements ts.ClassElement {
+export class CompilerCommentClassElement extends CompilerExtendedComment implements ts.ClassElement {
     _classElementBrand: any;
     _declarationBrand: any;
     /** @internal */
     _isCommentClassElement: true = true;
 }
 
-export class CompilerCommentTypeElement extends CompilerExtendedCommentRange implements ts.TypeElement {
+export class CompilerCommentTypeElement extends CompilerExtendedComment implements ts.TypeElement {
     _typeElementBrand: any;
     _declarationBrand: any;
     /** @internal */
     _isCommentTypeElement: true = true;
 }
 
-export class CompilerCommentObjectLiteralElement extends CompilerExtendedCommentRange implements ts.ObjectLiteralElement {
+export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment implements ts.ObjectLiteralElement {
     _declarationBrand: any;
     _objectLiteralBrandBrand: any; // ts < 3.4
     _objectLiteralBrand: any; // ts > 3.5
@@ -112,7 +112,7 @@ export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment
     _isCommentObjectLiteralElement: true = true;
 }
 
-export class CompilerCommentEnumMember extends CompilerExtendedCommentRange implements ts.Node {
+export class CompilerCommentEnumMember extends CompilerExtendedComment implements ts.Node {
     /** @internal */
     _isCommentEnumMember: true = true;
 }

@@ -259,7 +259,7 @@ function isAllowedClass(name: string) {
         case "AssignmentExpression":
         case "SuperElementAccessExpression":
         case "SuperPropertyAccessExpression":
-        case "ExtendedCommentRange":
+        case "ExtendedComment":
         case "SuperExpressionedNode":
         // ignore these for now because they're not implemented properly
         case "ClassElement":

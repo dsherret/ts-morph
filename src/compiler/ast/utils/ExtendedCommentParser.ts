@@ -1,8 +1,8 @@
 import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
 import { StringUtils, getSyntaxKindName } from "../../../utils";
-import { CompilerExtendedCommentRange, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement,
-    CompilerCommentObjectLiteralElement, CompilerCommentEnumMember } from "../comment/CompilerCommentRanges";
+import { CompilerExtendedComment, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement,
+    CompilerCommentObjectLiteralElement, CompilerCommentEnumMember } from "../comment/CompilerComments";
 
 enum CommentKind {
     SingleLine,
@@ -25,7 +25,7 @@ export type ContainerNodes = StatementContainerNodes
     | ts.ObjectLiteralExpression;
 
 type CommentSyntaxKinds = SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
-const childrenSave = new WeakMap<ContainerNodes, (ts.Node | CompilerExtendedCommentRange)[]>();
+const childrenSave = new WeakMap<ContainerNodes, (ts.Node | CompilerExtendedComment)[]>();
 const extendedCommentParserKinds = new Set<SyntaxKind>([
     SyntaxKind.SourceFile,
     SyntaxKind.Block,
@@ -122,7 +122,7 @@ export class ExtendedCommentParser {
     }
 }
 
-function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): IterableIterator<ts.Node | CompilerExtendedCommentRange> {
+function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): IterableIterator<ts.Node | CompilerExtendedComment> {
     const sourceFileText = sourceFile.text;
     const childNodes = getContainerChildren();
     const createComment = getCreationFunction();
@@ -279,7 +279,7 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
         return errors.throwNotImplementedForNeverValueError(container);
     }
 
-    function getCreationFunction(): (pos: number, end: number, kind: CommentSyntaxKinds) => CompilerExtendedCommentRange {
+    function getCreationFunction(): (pos: number, end: number, kind: CommentSyntaxKinds) => CompilerExtendedComment {
         const ctor = getCtor();
         return (pos: number, end: number, kind: CommentSyntaxKinds) => new ctor(pos, end, kind, sourceFile, container);
 
@@ -294,7 +294,7 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
                 return CompilerCommentObjectLiteralElement;
             if (ts.isEnumDeclaration(container))
                 return CompilerCommentEnumMember;
-            return CompilerExtendedCommentRange;
+            return CompilerExtendedComment;
         }
     }
 }

@@ -4130,7 +4130,7 @@ export declare class CommentRange {
     private _throwIfForgotten;
 }
 
-export declare class CompilerExtendedCommentRange implements ts.Node {
+export declare class CompilerExtendedComment implements ts.Node {
     private _start;
     private _sourceFile;
     constructor(pos: number, end: number, kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia, sourceFile: ts.SourceFile, parent: ts.Node);
@@ -4158,31 +4158,31 @@ export declare class CompilerExtendedCommentRange implements ts.Node {
     forEachChild<T>(cbNode: (node: ts.Node) => T | undefined, cbNodeArray?: ((nodes: ts.NodeArray<ts.Node>) => T | undefined) | undefined): T | undefined;
 }
 
-export declare class CompilerCommentStatement extends CompilerExtendedCommentRange implements ts.Statement {
+export declare class CompilerCommentStatement extends CompilerExtendedComment implements ts.Statement {
     _statementBrand: any;
 }
 
-export declare class CompilerCommentClassElement extends CompilerExtendedCommentRange implements ts.ClassElement {
+export declare class CompilerCommentClassElement extends CompilerExtendedComment implements ts.ClassElement {
     _classElementBrand: any;
     _declarationBrand: any;
 }
 
-export declare class CompilerCommentTypeElement extends CompilerExtendedCommentRange implements ts.TypeElement {
+export declare class CompilerCommentTypeElement extends CompilerExtendedComment implements ts.TypeElement {
     _typeElementBrand: any;
     _declarationBrand: any;
 }
 
-export declare class CompilerCommentObjectLiteralElement extends CompilerExtendedCommentRange implements ts.ObjectLiteralElement {
+export declare class CompilerCommentObjectLiteralElement extends CompilerExtendedComment implements ts.ObjectLiteralElement {
     _declarationBrand: any;
     _objectLiteralBrandBrand: any;
     _objectLiteralBrand: any;
     declarationBrand: any;
 }
 
-export declare class CompilerCommentEnumMember extends CompilerExtendedCommentRange implements ts.Node {
+export declare class CompilerCommentEnumMember extends CompilerExtendedComment implements ts.Node {
 }
 
-export declare class ExtendedCommentRange extends Node<CompilerExtendedCommentRange> {
+export declare class ExtendedComment extends Node<CompilerExtendedComment> {
 }
 
 export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
@@ -4888,7 +4888,7 @@ export interface TransformTraversalControl {
     visitChildren(): ts.Node;
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends CompilerExtendedCommentRange ? ExtendedCommentRange : T extends ts.Statement ? Statement : Node<T>;
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends CompilerExtendedComment ? ExtendedComment : T extends ts.Statement ? Statement : Node<T>;
 
 declare const DecoratorBase: typeof Node;
 

@@ -1,3 +1,3 @@
 export * from "./CommentRange";
-export * from "./CompilerCommentRanges";
-export * from "./ExtendedCommentRange";
+export * from "./CompilerComments";
+export * from "./ExtendedComment";
