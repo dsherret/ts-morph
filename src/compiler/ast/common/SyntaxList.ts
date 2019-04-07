@@ -10,7 +10,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
      * @param textOrWriterFunction - Text to add or function that provides a writer to write with.
      * @returns The children that were added.
      */
-    addChildText(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]) {
+    addChildText(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>) {
         return this.insertChildText(this.getChildCount(), textOrWriterFunction);
     }
 
@@ -20,7 +20,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
      * @param textOrWriterFunction - Text to insert or function that provides a writer to write with.
      * @returns The children that were inserted.
      */
-    insertChildText(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]) {
+    insertChildText(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>) {
         // get index
         const initialChildCount = this.getChildCount();
         const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();

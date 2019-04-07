@@ -65,14 +65,14 @@ export interface StatementedNode {
      * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
      * @returns The statements that were added.
      */
-    addStatements(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Statement[];
+    addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Child index to insert at.
      * @param textOrWriterFunction - Text or writer function to write the statement or statements with.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Statement[];
+    insertStatements(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Child index to remove the statement at.
@@ -485,11 +485,11 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`);
         }
 
-        addStatements(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]) {
+        addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>) {
             return this.insertStatements(this._getCompilerStatementsWithComments().length, textOrWriterFunction);
         }
 
-        insertStatements(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]) {
+        insertStatements(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>) {
             addBodyIfNotExists(this);
 
             return getChildSyntaxList.call(this).insertChildText(index, textOrWriterFunction) as Statement[];

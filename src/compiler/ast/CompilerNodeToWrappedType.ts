@@ -15,7 +15,6 @@ export type CompilerNodeToWrappedType<T extends ts.Node> =
     T extends ts.JSDocTypeExpression ? compiler.JSDocTypeExpression :
     T extends ts.JSDocType ? compiler.JSDocType :
     T extends ts.TypeNode ? compiler.TypeNode :
-    T extends ts.TypeElement ? compiler.TypeElement :
     T extends ts.JSDocTag ? compiler.JSDocTag :
     T extends ts.LiteralExpression ? compiler.LiteralExpression :
     T extends ts.PrimaryExpression ? compiler.PrimaryExpression :
@@ -31,5 +30,8 @@ export type CompilerNodeToWrappedType<T extends ts.Node> =
     T extends CompilerCommentObjectLiteralElement ? compiler.CommentObjectLiteralElement :
     T extends CompilerCommentEnumMember ? compiler.CommentEnumMember :
     T extends CompilerExtendedComment ? compiler.ExtendedComment :
+    T extends ts.TypeElement ? compiler.TypeElement :
     T extends ts.Statement ? compiler.Statement :
+    T extends ts.ClassElement ? compiler.ClassElement :
+    T extends ts.ObjectLiteralElement ? compiler.ObjectLiteralElement :
     compiler.Node<T>;
