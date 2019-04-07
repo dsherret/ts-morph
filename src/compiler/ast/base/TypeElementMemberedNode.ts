@@ -2,7 +2,7 @@
 import * as errors from "../../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren } from "../../../manipulation";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind } from "../../../structures";
+    PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind, Structure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
@@ -462,14 +462,14 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
     };
 }
 
-function insertChildren<TNode extends Node & { set(structure: TStructure): void; }, TStructure>(opts: {
+function insertChildren<TNode extends Node, TStructure extends Structure>(opts: {
     thisNode: Node & TypeElementMemberedNode,
     index: number;
     structures: ReadonlyArray<TStructure>;
     expectedKind: SyntaxKind;
     createStructurePrinter: () => ({ printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TStructure>): void; });
 }): TNode[] {
-    return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
+    return insertIntoBracesOrSourceFileWithGetChildren<TNode>({
         getIndexedChildren: () => opts.thisNode.getMembersWithComments(),
         parent: opts.thisNode,
         index: opts.index,

@@ -1,9 +1,10 @@
+import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { Constructor } from "../../../../types";
 import { ts, SyntaxKind } from "../../../../typescript";
 import * as errors from "../../../../errors";
-import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange } from "../../../../manipulation";
+import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange, InsertIntoBracesOrSourceFileOptionsWriteInfo } from "../../../../manipulation";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure,
-    PropertyDeclarationStructure, SetAccessorDeclarationStructure, OptionalKind } from "../../../../structures";
+    PropertyDeclarationStructure, SetAccessorDeclarationStructure, OptionalKind, Structure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../../../utils";
 import { Type } from "../../../types";
@@ -573,12 +574,10 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertConstructors(index, [structure])[0];
         }
 
-        insertConstructors(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>) {
+        insertConstructors(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>): ConstructorDeclaration[] {
             const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
 
-            return insertIntoBracesOrSourceFileWithGetChildren<ConstructorDeclaration, OptionalKind<ConstructorDeclarationStructure>>({
-                getIndexedChildren: () => this.getMembers(),
-                parent: this,
+            return insertChildren<ConstructorDeclaration>(this, {
                 index,
                 structures,
                 expectedKind: SyntaxKind.Constructor,
@@ -612,10 +611,8 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertGetAccessors(index, [structure])[0];
         }
 
-        insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
-            return insertIntoBracesOrSourceFileWithGetChildren<GetAccessorDeclaration, OptionalKind<GetAccessorDeclarationStructure>>({
-                getIndexedChildren: () => this.getMembers(),
-                parent: this,
+        insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[] {
+            return insertChildren<GetAccessorDeclaration>(this, {
                 index,
                 structures,
                 expectedKind: SyntaxKind.GetAccessor,
@@ -649,10 +646,8 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertSetAccessors(index, [structure])[0];
         }
 
-        insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
-            return insertIntoBracesOrSourceFileWithGetChildren<SetAccessorDeclaration, OptionalKind<SetAccessorDeclarationStructure>>({
-                getIndexedChildren: () => this.getMembers(),
-                parent: this,
+        insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[] {
+            return insertChildren<SetAccessorDeclaration>(this, {
                 index,
                 structures,
                 expectedKind: SyntaxKind.SetAccessor,
@@ -686,10 +681,8 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertProperties(index, [structure])[0];
         }
 
-        insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>) {
-            return insertIntoBracesOrSourceFileWithGetChildren<PropertyDeclaration, OptionalKind<PropertyDeclarationStructure>>({
-                getIndexedChildren: () => this.getMembers(),
-                parent: this,
+        insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>): PropertyDeclaration[] {
+            return insertChildren<PropertyDeclaration>(this, {
                 index,
                 structures,
                 expectedKind: SyntaxKind.PropertyDeclaration,
@@ -719,15 +712,13 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertMethods(index, [structure])[0];
         }
 
-        insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
+        insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[] {
             const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
             structures = structures.map(s => ({...s}));
 
             // insert, fill, and get created nodes
-            return insertIntoBracesOrSourceFileWithGetChildren<MethodDeclaration, OptionalKind<MethodDeclarationStructure>>({
-                parent: this,
+            return insertChildren<MethodDeclaration>(this, {
                 index,
-                getIndexedChildren: () => this.getMembers(),
                 write: (writer, info) => {
                     if (!isAmbient && info.previousMember != null)
                         writer.blankLineIfLastNot();
@@ -1068,4 +1059,19 @@ function isSupportedClassMember(m: Node) {
         || TypeGuards.isSetAccessorDeclaration(m)
         || TypeGuards.isConstructorDeclaration(m)
         || TypeGuards.isCommentClassElement(m);
+}
+
+interface InsertChildrenOptions {
+    write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
+    expectedKind: SyntaxKind;
+    structures: ReadonlyArray<Structure>;
+    index: number;
+}
+
+function insertChildren<TNode extends Node>(classDeclaration: ClassLikeDeclarationBaseSpecific & Node, opts: InsertChildrenOptions) {
+    return insertIntoBracesOrSourceFileWithGetChildren<TNode>({
+        getIndexedChildren: () => classDeclaration.getMembersWithComments(),
+        parent: classDeclaration,
+        ...opts
+    });
 }

@@ -126,8 +126,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other members", () => {
-            doTest("class c {\n    prop1;\n    prop2;\n}", 1, {},
-                "class c {\n    prop1;\n\n    constructor() {\n    }\n\n    prop2;\n}");
+            doTest("class c {\n//1\n    prop1;\n    prop2;\n}", 2, {},
+                "class c {\n//1\n    prop1;\n\n    constructor() {\n    }\n\n    prop2;\n}");
         });
 
         it("should insert all the properties of the structure", () => {
@@ -255,8 +255,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other methods", () => {
-            doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
-                "class c {\n    m1() {\n    }\n\n    static get m2(): string {\n    }\n\n    get m3() {\n    }\n\n    m4() {\n    }\n}");
+            doTest("class c {\n//1\n    m1() {\n    }\n\n    m4() {\n    }\n}", 2, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
+                "class c {\n//1\n    m1() {\n    }\n\n    static get m2(): string {\n    }\n\n    get m3() {\n    }\n\n    m4() {\n    }\n}");
         });
 
         it("should insert into ambient class", () => {
@@ -339,8 +339,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other properties", () => {
-            doTest("class c {\n    prop1;\n    prop4;\n}", 1, [{ name: "prop2", hasQuestionToken: true, type: "string" }, { name: "prop3" }],
-                "class c {\n    prop1;\n    prop2?: string;\n    prop3;\n    prop4;\n}");
+            doTest("class c {\n//1\n    prop1;\n    prop4;\n}", 2, [{ name: "prop2", hasQuestionToken: true, type: "string" }, { name: "prop3" }],
+                "class c {\n//1\n    prop1;\n    prop2?: string;\n    prop3;\n    prop4;\n}");
         });
 
         it("should add an extra newline if inserting before non-property", () => {
@@ -503,8 +503,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other methods", () => {
-            doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
-                "class c {\n    m1() {\n    }\n\n    static set m2(): string {\n    }\n\n    set m3() {\n    }\n\n    m4() {\n    }\n}");
+            doTest("class c {\n//1\n    m1() {\n    }\n\n    m4() {\n    }\n}", 2, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
+                "class c {\n//1\n    m1() {\n    }\n\n    static set m2(): string {\n    }\n\n    set m3() {\n    }\n\n    m4() {\n    }\n}");
         });
 
         it("should insert into ambient class", () => {
@@ -749,8 +749,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other methods", () => {
-            doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
-                "class c {\n    m1() {\n    }\n\n    static m2(): string {\n    }\n\n    m3() {\n    }\n\n    m4() {\n    }\n}");
+            doTest("class c {\n//1\n    m1() {\n    }\n\n    m4() {\n    }\n}", 2, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
+                "class c {\n//1\n    m1() {\n    }\n\n    static m2(): string {\n    }\n\n    m3() {\n    }\n\n    m4() {\n    }\n}");
         });
 
         it("should insert all the properties of the structure", () => {

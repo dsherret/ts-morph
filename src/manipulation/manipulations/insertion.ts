@@ -6,6 +6,7 @@ import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromA
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { InsertionTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
+import { Structure } from "../../structures";
 
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;
@@ -225,12 +226,12 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
     }
 }
 
-export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extends Node, TStructure> {
+export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions {
     getIndexedChildren: () => Node[];
     write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
     // for child functions
     expectedKind: SyntaxKind;
-    structures: ReadonlyArray<TStructure>;
+    structures: ReadonlyArray<Structure>;
     parent: Node;
     index: number;
 }
@@ -239,8 +240,8 @@ export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extend
  * Glues together insertIntoBracesOrSourceFile and getRangeFromArray.
  * @param opts - Options to do this operation.
  */
-export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node, TStructure>(
-    opts: InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode, TStructure>
+export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node>(
+    opts: InsertIntoBracesOrSourceFileWithGetChildrenOptions
 ) {
     if (opts.structures.length === 0)
         return [];

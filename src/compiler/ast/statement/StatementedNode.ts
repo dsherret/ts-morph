@@ -3,7 +3,7 @@ import * as errors from "../../../errors";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../../manipulation";
 import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
-    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, OptionalKind } from "../../../structures";
+    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, OptionalKind, Structure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
@@ -428,7 +428,7 @@ export interface StatementedNode {
      */
     getVariableDeclarationOrThrow(findFunction: (declaration: VariableDeclaration) => boolean): VariableDeclaration;
     /** @internal */
-    _insertChildren<TNode extends Node, TStructure>(opts: InsertChildrenOptions<TStructure>): TNode[];
+    _insertChildren<TNode extends Node>(opts: InsertChildrenOptions): TNode[];
     /** @internal */
     _standardWrite(writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void, opts?: StandardWriteOptions): void;
     /** @internal */
@@ -436,10 +436,10 @@ export interface StatementedNode {
 }
 
 /** @internal */
-export interface InsertChildrenOptions<TStructure> {
+export interface InsertChildrenOptions {
     expectedKind: SyntaxKind;
     index: number;
-    structures: ReadonlyArray<TStructure>;
+    structures: ReadonlyArray<Structure>;
     write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
 }
 
@@ -525,7 +525,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertClasses(index: number, structures: ReadonlyArray<OptionalKind<ClassDeclarationStructure>>): ClassDeclaration[] {
-            return this._insertChildren<ClassDeclaration, OptionalKind<ClassDeclarationStructure>>({
+            return this._insertChildren<ClassDeclaration>({
                 expectedKind: SyntaxKind.ClassDeclaration,
                 index,
                 structures,
@@ -569,7 +569,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertEnums(index: number, structures: ReadonlyArray<OptionalKind<EnumDeclarationStructure>>): EnumDeclaration[] {
-            return this._insertChildren<EnumDeclaration, OptionalKind<EnumDeclarationStructure>>({
+            return this._insertChildren<EnumDeclaration>({
                 expectedKind: SyntaxKind.EnumDeclaration,
                 index,
                 structures,
@@ -613,7 +613,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertFunctions(index: number, structures: ReadonlyArray<OptionalKind<FunctionDeclarationStructure>>): FunctionDeclaration[] {
-            return this._insertChildren<FunctionDeclaration, OptionalKind<FunctionDeclarationStructure>>({
+            return this._insertChildren<FunctionDeclaration>({
                 expectedKind: SyntaxKind.FunctionDeclaration,
                 index,
                 structures,
@@ -664,7 +664,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertInterfaces(index: number, structures: ReadonlyArray<OptionalKind<InterfaceDeclarationStructure>>): InterfaceDeclaration[] {
-            return this._insertChildren<InterfaceDeclaration, OptionalKind<InterfaceDeclarationStructure>>({
+            return this._insertChildren<InterfaceDeclaration>({
                 expectedKind: SyntaxKind.InterfaceDeclaration,
                 index,
                 structures,
@@ -708,7 +708,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[] {
-            return this._insertChildren<NamespaceDeclaration, OptionalKind<NamespaceDeclarationStructure>>({
+            return this._insertChildren<NamespaceDeclaration>({
                 expectedKind: SyntaxKind.ModuleDeclaration,
                 index,
                 structures,
@@ -752,7 +752,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertTypeAliases(index: number, structures: ReadonlyArray<OptionalKind<TypeAliasDeclarationStructure>>): TypeAliasDeclaration[] {
-            return this._insertChildren<TypeAliasDeclaration, OptionalKind<TypeAliasDeclarationStructure>>({
+            return this._insertChildren<TypeAliasDeclaration>({
                 expectedKind: SyntaxKind.TypeAliasDeclaration,
                 index,
                 structures,
@@ -817,7 +817,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertVariableStatements(index: number, structures: ReadonlyArray<OptionalKind<VariableStatementStructure>>): VariableStatement[] {
-            return this._insertChildren<VariableStatement, OptionalKind<VariableStatementStructure>>({
+            return this._insertChildren<VariableStatement>({
                 expectedKind: SyntaxKind.VariableStatement,
                 index,
                 structures,
@@ -930,10 +930,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 throw new errors.NotImplementedError(`Could not find the statements for node kind: ${this.getKindName()}, text: ${this.getText()}`);
         }
 
-        _insertChildren<TNode extends Node, TStructure>(opts: InsertChildrenOptions<TStructure>) {
+        _insertChildren<TNode extends Node>(opts: InsertChildrenOptions) {
             addBodyIfNotExists(this);
 
-            return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
+            return insertIntoBracesOrSourceFileWithGetChildren<TNode>({
                 expectedKind: opts.expectedKind,
                 getIndexedChildren: () => this.getStatements(),
                 index: opts.index,
