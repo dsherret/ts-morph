@@ -16,7 +16,7 @@ export interface InsertIntoParentTextRangeOptions {
         textLength: number;
         nodes?: Node[];
     };
-    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
+    customMappings?: (newParentNode: ts.Node, newSourceFile: ts.SourceFile) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 /**

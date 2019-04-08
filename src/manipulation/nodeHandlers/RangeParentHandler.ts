@@ -10,7 +10,7 @@ export interface RangeParentHandlerOptions {
     end: number;
     replacingLength?: number;
     replacingNodes?: Node[];
-    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
+    customMappings?: (newParentNode: ts.Node, newSourceFile: ts.SourceFile) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 /**
@@ -23,7 +23,7 @@ export class RangeParentHandler implements NodeHandler {
     private readonly end: number;
     private readonly replacingLength: number | undefined;
     private readonly replacingNodes: ts.Node[] | undefined;
-    private readonly customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
+    private readonly customMappings?: (newParentNode: ts.Node, newSourceFile: ts.SourceFile) => { currentNode: Node; newNode: ts.Node; }[];
 
     constructor(private readonly compilerFactory: CompilerFactory, opts: RangeParentHandlerOptions) {
         this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
@@ -41,7 +41,7 @@ export class RangeParentHandler implements NodeHandler {
         const [currentNodeChildren, newNodeChildren] = this.helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
 
         // handle any custom mappings
-        this.handleCustomMappings(newNode);
+        this.handleCustomMappings(newNode, newSourceFile);
 
         // get the first child
         while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) < this.start)
@@ -69,10 +69,10 @@ export class RangeParentHandler implements NodeHandler {
         this.compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
 
-    private handleCustomMappings(newParentNode: ts.Node) {
+    private handleCustomMappings(newParentNode: ts.Node, newSourceFile: ts.SourceFile) {
         if (this.customMappings == null)
             return;
-        const customMappings = this.customMappings(newParentNode);
+        const customMappings = this.customMappings(newParentNode, newSourceFile);
 
         for (const mapping of customMappings)
             mapping.currentNode._context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
