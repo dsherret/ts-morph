@@ -804,6 +804,10 @@ class MyClass {
         it("should get children using .getChildren() when specifying a token kind", () => {
             doTest("class C {}", sourceFile => sourceFile.getClassOrThrow("C"), SyntaxKind.OpenBraceToken, ["{"]);
         });
+
+        it("should get comments", () => {
+            doTest("//1", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.SingleLineCommentTrivia, ["//1"]);
+        });
     });
 
     describe(nameof<Node>(n => n.getDescendantsOfKind), () => {
@@ -853,6 +857,10 @@ class MyClass {
             doTest("class C {} interface I {}", sourceFile => sourceFile, SyntaxKind.OpenBraceToken, ["{", "{"], sourceFile => {
                 expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
             });
+        });
+
+        it("should get comments", () => {
+            doTest("//1", sourceFile => sourceFile, SyntaxKind.SingleLineCommentTrivia, ["//1"]);
         });
     });
 
@@ -1330,7 +1338,7 @@ class MyClass {
 
     describe(nameof<Node>(n => n.getTrailingTriviaEnd), () => {
         function doTest(text: string, expected: number) {
-            const { firstChild, sourceFile } = getInfoFromText(text);
+            const { firstChild } = getInfoFromText(text);
             expect(firstChild.getTrailingTriviaEnd()).to.equal(expected);
         }
 

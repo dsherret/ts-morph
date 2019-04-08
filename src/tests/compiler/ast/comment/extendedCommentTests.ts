@@ -3,6 +3,14 @@ import { ExtendedComment } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ExtendedComment), () => {
+    it("should not forget comments between manipulations", () => {
+        const { sourceFile } = getInfoFromText("//1\nlet t;\n/*2*/");
+        const statements = sourceFile.getStatementsWithComments();
+        expect(statements.length).to.equal(3);
+        sourceFile.addClass({ name: "test" });
+        expect(statements.some(s => s.wasForgotten())).to.be.false;
+    });
+
     describe(nameof<ExtendedComment>(c => c.getLeadingCommentRanges), () => {
         function doTest(text: string, index: number, expectedComments: string[]) {
             const { sourceFile } = getInfoFromText(text);
