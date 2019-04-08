@@ -11,7 +11,7 @@ export class TsInspector {
         return this.project.getSourceFileOrThrow("node_modules/typescript/lib/typescript.d.ts");
     }
 
-    getDeclarationSymbol() {
+    getTsSymbol() {
         return this.getDeclarationFile()
             .getSymbolOrThrow()
             .getExportByNameOrThrow("export=")
