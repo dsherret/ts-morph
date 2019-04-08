@@ -9,6 +9,7 @@ export function getParentSyntaxList(node: ts.Node) {
         return undefined;
 
     const { pos, end } = node;
+    // @code-fence-allow(getChildren): The extended comments are not needed here.
     for (const child of parent.getChildren()) {
         if (child.pos > end || child === node)
             return undefined;

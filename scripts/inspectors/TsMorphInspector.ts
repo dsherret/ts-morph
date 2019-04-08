@@ -25,6 +25,11 @@ export class TsMorphInspector {
     }
 
     @Memoize
+    getTestDirectory(): Directory {
+        return this.project.getDirectoryOrThrow("./src/tests");
+    }
+
+    @Memoize
     getWrappedNodes(): WrappedNode[] {
         const compilerSourceFiles = this.project.getSourceFiles("src/compiler/**/*.ts");
         const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));

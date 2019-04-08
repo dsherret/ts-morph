@@ -1,7 +1,6 @@
 ﻿import { Project, InterfaceDeclaration, SourceFile, SyntaxKind } from "ts-morph";
-import { Memoize, ArrayUtils, StringUtils } from "../../src/utils";
+import { Memoize, ArrayUtils } from "../../src/utils";
 import { hasDescendantBaseType } from "../common";
-import { TsNode } from "./ts";
 import { WrapperFactory } from "./WrapperFactory";
 
 export class TsInspector {
@@ -10,6 +9,13 @@ export class TsInspector {
 
     getDeclarationFile(): SourceFile {
         return this.project.getSourceFileOrThrow("node_modules/typescript/lib/typescript.d.ts");
+    }
+
+    getDeclarationSymbol() {
+        return this.getDeclarationFile()
+            .getSymbolOrThrow()
+            .getExportByNameOrThrow("export=")
+            .getAliasedSymbolOrThrow();
     }
 
     getApiLayerFile(): SourceFile {

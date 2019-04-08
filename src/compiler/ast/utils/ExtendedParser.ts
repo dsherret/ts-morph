@@ -44,17 +44,20 @@ export class ExtendedParser {
     }
 
     static getCompilerChildren(node: ts.Node, sourceFile: ts.SourceFile) {
+        // @code-fence-allow(getChildren): This merges in extended comments.
+        const nodeChildren = node.getChildren(sourceFile);
+
         if (isStatementMemberOrPropertyHoldingSyntaxList()) {
             let result = getChildrenSaver.get(node);
             if (result == null) {
-                result = [...node.getChildren()]; // make a copy; do not modify the compiler api's array
+                result = [...nodeChildren]; // make a copy; do not modify the compiler api's array
                 mergeInComments(result, ExtendedCommentParser.getOrParseChildren(node as ts.SyntaxList, sourceFile));
                 getChildrenSaver.set(node, result);
             }
             return result;
         }
 
-        return node.getChildren(sourceFile);
+        return nodeChildren;
 
         function isStatementMemberOrPropertyHoldingSyntaxList() {
             if (node.kind !== ts.SyntaxKind.SyntaxList)

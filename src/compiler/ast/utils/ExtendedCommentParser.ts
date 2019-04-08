@@ -113,11 +113,12 @@ export class ExtendedCommentParser {
 
         return errors.throwNotImplementedForNeverValueError(container);
 
-        function getTokenEnd(node: ts.Node, kind: SyntaxKind) {
-            const openBraceToken = node.getChildren(sourceFile).find(c => c.kind === kind);
-            if (openBraceToken == null)
+        function getTokenEnd(node: ts.Node, kind: SyntaxKind.OpenBraceToken | SyntaxKind.ColonToken) {
+            // @code-fence-allow(getChildren): Ok, not searching for comments.
+            const token = node.getChildren(sourceFile).find(c => c.kind === kind);
+            if (token == null)
                 throw new errors.NotImplementedError(`Unexpected scenario where a(n) ${getSyntaxKindName(kind)} was not found.`);
-            return openBraceToken.end;
+            return token.end;
         }
     }
 }

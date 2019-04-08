@@ -24,7 +24,7 @@
     "output-wrapped-nodes": "ts-node --transpileOnly scripts/generation/outputWrappedNodesInfo",
     "package": "yarn run build && yarn run build-declarations",
     "publish-code-verification": "yarn run code-verification && yarn run ensure-no-declaration-file-errors && yarn run ensure-declaration-files-not-changed",
-    "code-verification": "ts-node --transpileOnly scripts/verification/main ensure-structures-match-classes ensure-overload-structures-match ensure-array-inputs-readonly ensure-classes-implement-structure-methods ensure-mixin-not-applied-multiple-times validate-public-api-class-member-names validate-compiler-node-to-wrapped-type",
+    "code-verification": "ts-node --transpileOnly scripts/verification/main ensure-structures-match-classes ensure-overload-structures-match ensure-array-inputs-readonly ensure-classes-implement-structure-methods ensure-mixin-not-applied-multiple-times validate-public-api-class-member-names validate-compiler-node-to-wrapped-type validate-code-fences",
     "ensure-structures-match-classes": "ts-node --transpileOnly scripts/verification/main ensure-structures-match-classes",
     "ensure-overload-structures-match": "ts-node --transpileOnly scripts/verification/main ensure-overload-structures-match",
     "ensure-no-project-compile-errors": "ts-node --transpileOnly scripts/verification/ensureNoProjectCompileErrors",

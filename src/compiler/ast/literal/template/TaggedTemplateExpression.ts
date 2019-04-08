@@ -27,7 +27,8 @@ export class TaggedTemplateExpression extends MemberExpression<ts.TaggedTemplate
         const index = this.getChildIndex();
         const template = this.getTemplate();
         insertIntoParentTextRange({
-            customMappings: newParent => [{ currentNode: template, newNode: newParent.getChildren()[index] }],
+            // @code-fence-allow(getChildren): This seems a little suspect, but shouldn't cause any issues...
+            customMappings: (newParent, newSourceFile) => [{ currentNode: template, newNode: newParent.getChildren(newSourceFile)[index] }],
             parent,
             insertPos: this.getStart(),
             newText: this.getTemplate().getText(),
