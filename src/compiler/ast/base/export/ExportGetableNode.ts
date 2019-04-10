@@ -124,7 +124,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
             return !isDefaultExport() && sourceFileSymbol.getExports().some(e => e === thisSymbol || e.getAliasedSymbol() === thisSymbol);
 
             function isDefaultExport() {
-                const defaultExportSymbol = sourceFileSymbol!.getExportByName("default");
+                const defaultExportSymbol = sourceFileSymbol!.getExport("default");
                 if (defaultExportSymbol == null)
                     return false;
                 return thisSymbol === defaultExportSymbol || thisSymbol === defaultExportSymbol.getAliasedSymbol();

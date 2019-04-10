@@ -58,6 +58,17 @@ Methods like `project.emit()` are now async. Corresponding `emitSync` methods ha
 
 The new async emit methods should be much faster than the previous synchronous methods.
 
+### Renamed `Symbol#getXByName`-like methods to `#getX`
+
+The `ByName` suffix was overly verbose, so I removed it. The following methods have been renamed:
+
+* `Symbol#getExportByName(name: string)` -> `getExport`
+* `Symbol#getExportByNameOrThrow(name: string)` -> `getExportOrThrow`
+* `Symbol#getGlobalExportByName(name: string)` -> `getGlobalExport`
+* `Symbol#getGlobalExportByNameOrThrow(name: string)` -> `getGlobalExportOrThrow`
+* `Symbol#getMemberByName(name: string)` -> `getMember`
+* `Symbol#getMemberByNameOrThrow(name: string)` -> `getMemberOrThrow`
+
 ### FileSystemHost changes
 
 The `FileSystemHost` interface now requires implementing `realpathSync()` and `isCaseSensitive()`.
