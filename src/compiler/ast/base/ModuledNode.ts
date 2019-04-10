@@ -343,7 +343,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             if (sourceFileSymbol == null)
                 return undefined;
 
-            return sourceFileSymbol.getExportByName("default");
+            return sourceFileSymbol.getExport("default");
         }
 
         getDefaultExportSymbolOrThrow(): Symbol {

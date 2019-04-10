@@ -112,15 +112,15 @@ export class Symbol {
      * Gets the export of the symbol by the specified name or throws if not exists.
      * @param name - Name of the export.
      */
-    getExportByNameOrThrow(name: string): Symbol {
-        return errors.throwIfNullOrUndefined(this.getExportByName(name), `Expected to find export with name: ${name}`);
+    getExportOrThrow(name: string): Symbol {
+        return errors.throwIfNullOrUndefined(this.getExport(name), `Expected to find export with name: ${name}`);
     }
 
     /**
      * Gets the export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the export.
      */
-    getExportByName(name: string): Symbol | undefined {
+    getExport(name: string): Symbol | undefined {
         if (this.compilerSymbol.exports == null)
             return undefined;
 
@@ -141,15 +141,15 @@ export class Symbol {
      * Gets the global export of the symbol by the specified name or throws if not exists.
      * @param name - Name of the global export.
      */
-    getGlobalExportByNameOrThrow(name: string): Symbol {
-        return errors.throwIfNullOrUndefined(this.getGlobalExportByName(name), `Expected to find global export with name: ${name}`);
+    getGlobalExportOrThrow(name: string): Symbol {
+        return errors.throwIfNullOrUndefined(this.getGlobalExport(name), `Expected to find global export with name: ${name}`);
     }
 
     /**
      * Gets the global export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the global export.
      */
-    getGlobalExportByName(name: string): Symbol | undefined {
+    getGlobalExport(name: string): Symbol | undefined {
         if (this.compilerSymbol.globalExports == null)
             return undefined;
 
@@ -170,15 +170,15 @@ export class Symbol {
      * Gets the member of the symbol by the specified name or throws if not exists.
      * @param name - Name of the export.
      */
-    getMemberByNameOrThrow(name: string): Symbol {
-        return errors.throwIfNullOrUndefined(this.getMemberByName(name), `Expected to find member with name: ${name}`);
+    getMemberOrThrow(name: string): Symbol {
+        return errors.throwIfNullOrUndefined(this.getMember(name), `Expected to find member with name: ${name}`);
     }
 
     /**
      * Gets the member of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the member.
      */
-    getMemberByName(name: string): Symbol | undefined {
+    getMember(name: string): Symbol | undefined {
         if (this.compilerSymbol.members == null)
             return undefined;
 

@@ -8938,12 +8938,12 @@ export declare class Symbol {
      * Gets the export of the symbol by the specified name or throws if not exists.
      * @param name - Name of the export.
      */
-    getExportByNameOrThrow(name: string): Symbol;
+    getExportOrThrow(name: string): Symbol;
     /**
      * Gets the export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the export.
      */
-    getExportByName(name: string): Symbol | undefined;
+    getExport(name: string): Symbol | undefined;
     /**
      * Gets the exports from the symbol.
      */
@@ -8952,12 +8952,12 @@ export declare class Symbol {
      * Gets the global export of the symbol by the specified name or throws if not exists.
      * @param name - Name of the global export.
      */
-    getGlobalExportByNameOrThrow(name: string): Symbol;
+    getGlobalExportOrThrow(name: string): Symbol;
     /**
      * Gets the global export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the global export.
      */
-    getGlobalExportByName(name: string): Symbol | undefined;
+    getGlobalExport(name: string): Symbol | undefined;
     /**
      * Gets the global exports from the symbol.
      */
@@ -8966,12 +8966,12 @@ export declare class Symbol {
      * Gets the member of the symbol by the specified name or throws if not exists.
      * @param name - Name of the export.
      */
-    getMemberByNameOrThrow(name: string): Symbol;
+    getMemberOrThrow(name: string): Symbol;
     /**
      * Gets the member of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the member.
      */
-    getMemberByName(name: string): Symbol | undefined;
+    getMember(name: string): Symbol | undefined;
     /**
      * Gets the members of the symbol
      */
