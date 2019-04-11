@@ -4134,7 +4134,7 @@ export declare abstract class CompilerExtendedComment implements ts.Node {
     private _fullStart;
     private _start;
     private _sourceFile;
-    constructor(fullStart: number, pos: number, end: number, kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia, sourceFile: ts.SourceFile, parent: ts.Node);
+    protected constructor();
     pos: number;
     end: number;
     kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;

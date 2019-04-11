@@ -194,7 +194,8 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
 
                 for (let i = 0; i < compilerChildren.length; i++) {
                     const child = compilerChildren[i];
-                    // insert after any multiline comments at the beginning of the file
+                    // Insert after any multiline comments at the beginning of the file.
+                    // A multi-line comment is likely a file header.
                     if (wasLastComment && child.kind === SyntaxKind.MultiLineCommentTrivia)
                         insertIndex = i + 1;
                     else {
