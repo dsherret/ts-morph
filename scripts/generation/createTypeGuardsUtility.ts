@@ -128,7 +128,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         }
 
         function getSyntaxKindsForName(name: string) {
-            const kindToWrapperVM = ArrayUtils.find(kindToWrapperMappings, n => n.wrapperName === name);
+            const kindToWrapperVM = kindToWrapperMappings.find(n => n.wrapperName === name);
             if (kindToWrapperVM == null)
                 return [] as string[];
             return kindToWrapperVM.syntaxKindNames;

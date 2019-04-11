@@ -230,7 +230,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getImportDeclaration(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)) {
-            return ArrayUtils.find(this.getImportDeclarations(), getCondition());
+            return this.getImportDeclarations().find(getCondition());
 
             function getCondition() {
                 if (typeof conditionOrModuleSpecifier === "string")
@@ -278,7 +278,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportDeclaration(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
-            return ArrayUtils.find(this.getExportDeclarations(), getCondition());
+            return this.getExportDeclarations().find(getCondition());
 
             function getCondition() {
                 if (typeof conditionOrModuleSpecifier === "string")
@@ -326,7 +326,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportAssignment(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment | undefined {
-            return ArrayUtils.find(this.getExportAssignments(), condition);
+            return this.getExportAssignments().find(condition);
         }
 
         getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment {

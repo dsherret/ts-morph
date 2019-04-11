@@ -43,7 +43,7 @@ export function OverloadableNode<T extends Constructor<OverloadableNodeExtension
         getImplementation(): this | undefined {
             if (this.isImplementation())
                 return this;
-            return ArrayUtils.find(getOverloadsAndImplementation(this), n => n.isImplementation()) as this | undefined;
+            return getOverloadsAndImplementation(this).find(n => n.isImplementation()) as this | undefined;
         }
 
         getImplementationOrThrow(): this {

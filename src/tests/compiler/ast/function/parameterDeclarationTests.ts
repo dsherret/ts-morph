@@ -117,7 +117,7 @@ describe(nameof(ParameterDeclaration), () => {
     describe(nameof<ParameterDeclaration>(d => d.remove), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(code);
-            ArrayUtils.find(firstChild.getParameters(), p => p.getName() === nameToRemove)!.remove();
+            firstChild.getParameters().find(p => p.getName() === nameToRemove)!.remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

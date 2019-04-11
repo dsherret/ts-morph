@@ -7,7 +7,7 @@ import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsCon
 import { SourceFileStructure } from "./structures";
 import { WriterFunction } from "./types";
 import { ts, CompilerOptions } from "./typescript";
-import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
+import { IterableUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
 
 export interface ProjectOptions {
     /** Compiler options */
@@ -337,7 +337,7 @@ export class Project {
             return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
         }
 
-        return ArrayUtils.find(this._getProjectSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
+        return IterableUtils.find(this._getProjectSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
 
         function getFilePathOrSearchFunction(fileSystemWrapper: FileSystemWrapper): string | ((file: SourceFile) => boolean) {
             if (fileNameOrSearchFunction instanceof Function)
@@ -413,7 +413,7 @@ export class Project {
      */
     getAmbientModule(moduleName: string) {
         moduleName = normalizeAmbientModuleName(moduleName);
-        return ArrayUtils.find(this.getAmbientModules(), s => s.getName() === moduleName);
+        return this.getAmbientModules().find(s => s.getName() === moduleName);
     }
 
     /**

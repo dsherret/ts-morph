@@ -7,7 +7,7 @@ import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../te
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
-    const getAccessor = ArrayUtils.find(result.firstChild.getInstanceProperties(), f => f.getKind() === SyntaxKind.GetAccessor) as GetAccessorDeclaration;
+    const getAccessor = result.firstChild.getInstanceProperties().find(f => f.getKind() === SyntaxKind.GetAccessor) as GetAccessorDeclaration;
     return {...result, getAccessor};
 }
 

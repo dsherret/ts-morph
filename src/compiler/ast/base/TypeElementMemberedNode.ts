@@ -259,7 +259,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         getConstructSignature(findFunction: (member: ConstructSignatureDeclaration) => boolean) {
-            return ArrayUtils.find(this.getConstructSignatures(), findFunction);
+            return this.getConstructSignatures().find(findFunction);
         }
 
         getConstructSignatureOrThrow(findFunction: (member: ConstructSignatureDeclaration) => boolean) {
@@ -294,7 +294,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         getCallSignature(findFunction: (member: CallSignatureDeclaration) => boolean) {
-            return ArrayUtils.find(this.getCallSignatures(), findFunction);
+            return this.getCallSignatures().find(findFunction);
         }
 
         getCallSignatureOrThrow(findFunction: (member: CallSignatureDeclaration) => boolean) {
@@ -329,7 +329,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         getIndexSignature(findFunction: (member: IndexSignatureDeclaration) => boolean) {
-            return ArrayUtils.find(this.getIndexSignatures(), findFunction);
+            return this.getIndexSignatures().find(findFunction);
         }
 
         getIndexSignatureOrThrow(findFunction: (member: IndexSignatureDeclaration) => boolean) {

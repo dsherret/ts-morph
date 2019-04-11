@@ -9,6 +9,7 @@ export * from "./FileUtils";
 export * from "./fillDefaultEditorSettings";
 export * from "./fillDefaultFormatCodeSettings";
 export * from "./getTextFromStringOrWriter";
+export * from "./IterableUtils";
 export * from "./logging";
 export * from "./matchGlobs";
 export * from "./newLineKindToString";

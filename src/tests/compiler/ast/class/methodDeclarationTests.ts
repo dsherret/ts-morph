@@ -96,7 +96,7 @@ describe(nameof(MethodDeclaration), () => {
         describe("no overload", () => {
             function doTest(code: string, nameToRemove: string, expectedCode: string) {
                 const { sourceFile } = getInfoFromText<ClassDeclaration>(code);
-                const method = ArrayUtils.find(sourceFile.getDescendantsOfKind(SyntaxKind.MethodDeclaration), m => m.getName() === nameToRemove)!;
+                const method = sourceFile.getDescendantsOfKind(SyntaxKind.MethodDeclaration).find(m => m.getName() === nameToRemove)!;
                 method.remove();
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }

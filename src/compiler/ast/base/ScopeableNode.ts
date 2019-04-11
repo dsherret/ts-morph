@@ -45,7 +45,7 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
 
         // todo: make public
         private getScopeKeyword() {
-            return ArrayUtils.find(this.getModifiers(), m => {
+            return this.getModifiers().find(m => {
                 const text = m.getText();
                 return text === "public" || text === "protected" || text === "private";
             });

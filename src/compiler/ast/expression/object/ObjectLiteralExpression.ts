@@ -53,7 +53,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         else
             findFunc = nameOrFindFunction;
 
-        return ArrayUtils.find(this.getProperties(), findFunc);
+        return this.getProperties().find(findFunc);
     }
 
     /**

@@ -1,5 +1,4 @@
 ﻿import { Symbol } from "../../compiler/symbols/Symbol";
-import { ArrayUtils } from "../ArrayUtils";
 
 // todo: merge with getNamedNodeByNameOrFindFunction
 export function getSymbolByNameOrFindFunction(items: Symbol[], nameOrFindFunc: ((declaration: Symbol) => boolean) | string) {
@@ -10,5 +9,5 @@ export function getSymbolByNameOrFindFunction(items: Symbol[], nameOrFindFunc: (
     else
         findFunc = nameOrFindFunc;
 
-    return ArrayUtils.find(items, findFunc);
+    return items.find(findFunc);
 }

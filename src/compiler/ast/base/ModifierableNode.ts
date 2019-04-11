@@ -98,7 +98,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
 
         addModifier(text: ModifierTexts): Node<ts.Modifier> {
             const modifiers = this.getModifiers();
-            const existingModifier = ArrayUtils.find(modifiers, m => m.getText() === text);
+            const existingModifier = modifiers.find(m => m.getText() === text);
             if (existingModifier != null)
                 return existingModifier;
 
@@ -125,7 +125,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
                 newText
             });
 
-            return ArrayUtils.find(this.getModifiers(), m => m.getStart() === startPos) as Node<ts.Modifier>;
+            return this.getModifiers().find(m => m.getStart() === startPos) as Node<ts.Modifier>;
 
             function getInsertInfo(node: ModifierableNode & Node) {
                 let pos = getInitialInsertPos();
@@ -160,7 +160,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
 
         removeModifier(text: ModifierTexts) {
             const modifiers = this.getModifiers();
-            const modifier = ArrayUtils.find(modifiers, m => m.getText() === text);
+            const modifier = modifiers.find(m => m.getText() === text);
             if (modifier == null)
                 return false;
 

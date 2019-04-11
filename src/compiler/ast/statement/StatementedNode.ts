@@ -803,7 +803,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getVariableStatement(nameOrFindFunction: string | ((statement: VariableStatement) => boolean)): VariableStatement | undefined {
-            return ArrayUtils.find(this.getVariableStatements(), getFindFunction());
+            return this.getVariableStatements().find(getFindFunction());
 
             function getFindFunction() {
                 if (typeof nameOrFindFunction === "string")

@@ -76,7 +76,7 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
             getAccessorWriter.printText(writer, getAccessor);
 
             // write the corresponding set accessor beside the get accessor
-            const setAccessorIndex = ArrayUtils.findIndex(setAccessors, item => item.name === getAccessor.name);
+            const setAccessorIndex = setAccessors.findIndex(item => item.name === getAccessor.name);
             if (setAccessorIndex >= 0) {
                 this.conditionalSeparator(writer, isAmbient);
                 setAccessorWriter.printText(writer, setAccessors[setAccessorIndex]);

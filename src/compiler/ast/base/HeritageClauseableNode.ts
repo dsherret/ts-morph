@@ -38,7 +38,7 @@ export function HeritageClauseableNode<T extends Constructor<HeritageClauseableN
         }
 
         getHeritageClauseByKind(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword) {
-            return ArrayUtils.find(this.getHeritageClauses(), c => c.compilerNode.token === kind);
+            return this.getHeritageClauses().find(c => c.compilerNode.token === kind);
         }
     };
 }

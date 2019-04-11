@@ -312,7 +312,7 @@ describe(nameof(ExportSpecifier), () => {
     describe(nameof<ExportSpecifier>(n => n.remove), () => {
         function doTest(text: string, nameToRemove: string, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ExportDeclaration>(text);
-            const namedExport = ArrayUtils.find(firstChild.getNamedExports(), e => e.getNameNode().getText() === nameToRemove);
+            const namedExport = firstChild.getNamedExports().find(e => e.getNameNode().getText() === nameToRemove);
             namedExport!.remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

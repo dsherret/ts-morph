@@ -119,7 +119,7 @@ export class TsMorphInspector {
             const nameNode = (assignment.getInitializerOrThrow() as PropertyAccessExpression).getNameNode();
             const wrapperName = nameNode.getText();
             if (result[wrapperName] == null) {
-                const wrappedNode = ArrayUtils.find(wrappedNodes, n => n.getName() === wrapperName);
+                const wrappedNode = wrappedNodes.find(n => n.getName() === wrapperName);
                 if (wrappedNode == null)
                     throw new Error(`Could not find the wrapped node for ${wrapperName}.`);
                 result[wrapperName] = { wrapperName, wrappedNode, syntaxKindNames: [] };

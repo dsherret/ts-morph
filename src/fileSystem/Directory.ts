@@ -141,7 +141,7 @@ export class Directory {
             return this._context.compilerFactory.getDirectoryFromCache(path);
         }
 
-        return ArrayUtils.find(this.getDirectories(), pathOrCondition);
+        return this.getDirectories().find(pathOrCondition);
     }
 
     /**
@@ -182,7 +182,7 @@ export class Directory {
             return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(path);
         }
 
-        return ArrayUtils.find(this.getSourceFiles(), pathOrCondition);
+        return this.getSourceFiles().find(pathOrCondition);
     }
 
     /**

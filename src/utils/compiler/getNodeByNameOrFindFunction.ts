@@ -1,6 +1,5 @@
 ﻿import { Node } from "../../compiler";
 import { TypeGuards } from "../../utils";
-import { ArrayUtils } from "../ArrayUtils";
 
 export function getNodeByNameOrFindFunction<T extends Node>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
     let findFunc: (declaration: T) => boolean;
@@ -10,7 +9,7 @@ export function getNodeByNameOrFindFunction<T extends Node>(items: T[], nameOrFi
     else
         findFunc = nameOrFindFunc;
 
-    return ArrayUtils.find(items, findFunc);
+    return items.find(findFunc);
 }
 
 export function nodeHasName(node: Node, name: string): boolean {
