@@ -3433,7 +3433,7 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
      *
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNode(): NumericLiteral | StringLiteral | Identifier | ComputedPropertyName | undefined;
+    getPropertyNameNode(): Identifier | NumericLiteral | StringLiteral | ComputedPropertyName | undefined;
 }
 
 export declare class ObjectBindingPattern extends Node<ts.ObjectBindingPattern> {
@@ -4130,7 +4130,7 @@ export declare class CommentRange {
     private _throwIfForgotten;
 }
 
-export declare class CompilerExtendedComment implements ts.Node {
+export declare abstract class CompilerExtendedComment implements ts.Node {
     private _fullStart;
     private _start;
     private _sourceFile;
@@ -4181,9 +4181,6 @@ export declare class CompilerCommentObjectLiteralElement extends CompilerExtende
 }
 
 export declare class CompilerCommentEnumMember extends CompilerExtendedComment implements ts.Node {
-}
-
-export declare class ExtendedComment extends Node<CompilerExtendedComment> {
 }
 
 export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
@@ -4844,14 +4841,14 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
      * @param textOrWriterFunction - Text to add or function that provides a writer to write with.
      * @returns The children that were added.
      */
-    addChildText(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Node<ts.Node>[];
+    addChildText(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
     /**
      * Inserts text at the specified child index.
      * @param index - Child index to insert at.
      * @param textOrWriterFunction - Text to insert or function that provides a writer to write with.
      * @returns The children that were inserted.
      */
-    insertChildText(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Node<ts.Node>[];
+    insertChildText(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
 }
 export interface TextRange {
     getPos(): number;
@@ -4889,7 +4886,7 @@ export interface TransformTraversalControl {
     visitChildren(): ts.Node;
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends CompilerExtendedComment ? ExtendedComment : T extends ts.Statement ? Statement : Node<T>;
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends ts.TypeElement ? TypeElement : T extends ts.Statement ? Statement : T extends ts.ClassElement ? ClassElement : T extends ts.ObjectLiteralElement ? ObjectLiteralElement : Node<T>;
 
 declare const DecoratorBase: typeof Node;
 
@@ -8063,14 +8060,14 @@ export interface StatementedNode {
      * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
      * @returns The statements that were added.
      */
-    addStatements(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Statement[];
+    addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Child index to insert at.
      * @param textOrWriterFunction - Text or writer function to write the statement or statements with.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Statement[];
+    insertStatements(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Child index to remove the statement at.
@@ -8884,7 +8881,7 @@ export declare class Signature {
     /**
      * Gets the signature's declaration.
      */
-    getDeclaration(): MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | ArrowFunction | FunctionDeclaration | JSDocFunctionType;
+    getDeclaration(): ArrowFunction | MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | FunctionDeclaration | JSDocFunctionType;
 }
 
 export declare class Symbol {

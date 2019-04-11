@@ -29,7 +29,6 @@ export type CompilerNodeToWrappedType<T extends ts.Node> =
     T extends CompilerCommentTypeElement ? compiler.CommentTypeElement :
     T extends CompilerCommentObjectLiteralElement ? compiler.CommentObjectLiteralElement :
     T extends CompilerCommentEnumMember ? compiler.CommentEnumMember :
-    T extends CompilerExtendedComment ? compiler.ExtendedComment :
     T extends ts.TypeElement ? compiler.TypeElement :
     T extends ts.Statement ? compiler.Statement :
     T extends ts.ClassElement ? compiler.ClassElement :

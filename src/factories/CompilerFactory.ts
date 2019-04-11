@@ -1,7 +1,6 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter,
-    CommentStatement, CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, ExtendedComment,
-    CompilerExtendedComment } from "../compiler";
+    CommentStatement, CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerExtendedComment, CommentEnumMember } from "../compiler";
 import { ExtendedCommentParser } from "../compiler/ast/utils";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
@@ -274,16 +273,17 @@ export class CompilerFactory {
                     return new CommentTypeElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
                 if (ExtendedCommentParser.isCommentObjectLiteralElement(compilerNode))
                     return new CommentObjectLiteralElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
-                return new ExtendedComment(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                if (ExtendedCommentParser.isCommentEnumMember(compilerNode))
+                    return new CommentEnumMember(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                return errors.throwNotImplementedForNeverValueError(compilerNode);
             }
+
             const ctor = kindToWrapperMappings[compilerNode.kind] || Node as any;
             return new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
         }
 
         function isExtendedCommentRange(node: ts.Node): node is CompilerExtendedComment {
-            // assumimg any comment being created with this function is an extended comment range
-            return node.kind === SyntaxKind.SingleLineCommentTrivia
-                || node.kind === SyntaxKind.MultiLineCommentTrivia;
+            return (node as CompilerExtendedComment)._commentKind != null;
         }
 
         function initializeNode(this: CompilerFactory, node: Node<NodeType>) {

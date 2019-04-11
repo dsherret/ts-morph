@@ -44,4 +44,16 @@ describe(nameof(TypeGuards), () => {
             expect(TypeGuards.hasName(firstChild)).to.be.false;
         });
     });
+
+    describe(nameof(TypeGuards.isNode), () => {
+        const { firstChild, project } = getInfoFromText("class MyClass {}");
+
+        it("should get when it is", () => {
+            expect(TypeGuards.isNode(firstChild)).to.be.true;
+        });
+
+        it("should get when it's not", () => {
+            expect(TypeGuards.isNode(project)).to.be.false;
+        });
+    });
 });

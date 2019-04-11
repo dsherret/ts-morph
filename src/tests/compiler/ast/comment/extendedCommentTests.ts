@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import { ExtendedComment } from "../../../../compiler";
+import { CommentStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ExtendedComment), () => {
+describe("general extended comment tests", () => {
     it("should not forget comments between manipulations", () => {
         const { sourceFile } = getInfoFromText("//1\nlet t;\n/*2*/");
         const statements = sourceFile.getStatementsWithComments();
@@ -11,7 +11,7 @@ describe(nameof(ExtendedComment), () => {
         expect(statements.some(s => s.wasForgotten())).to.be.false;
     });
 
-    describe(nameof<ExtendedComment>(c => c.getLeadingCommentRanges), () => {
+    describe(nameof<CommentStatement>(c => c.getLeadingCommentRanges), () => {
         function doTest(text: string, index: number, expectedComments: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const secondComment = sourceFile.getStatementsWithComments()[index];
@@ -28,7 +28,7 @@ describe(nameof(ExtendedComment), () => {
         });
     });
 
-    describe(nameof<ExtendedComment>(c => c.getTrailingCommentRanges), () => {
+    describe(nameof<CommentStatement>(c => c.getTrailingCommentRanges), () => {
         function doTest(text: string, index: number, expectedComments: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const secondComment = sourceFile.getStatementsWithComments()[index];

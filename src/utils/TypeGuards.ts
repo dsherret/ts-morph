@@ -53,48 +53,42 @@ export class TypeGuards {
      * Gets if the provided value is a Node.
      */
     static isNode(value: unknown): value is compiler.Node {
-        if (value == null)
-            return false;
-        const kind = (value as any)["kind"];
-        if (typeof kind !== "number")
-            return false;
-        return kind !== SyntaxKind.SingleLineCommentTrivia
-            && kind !== SyntaxKind.MultiLineCommentTrivia;
+        return value != null && (value as any).compilerNode != null
     }
 
     /**
      * Gets if the provided value is a CommentStatement.
      */
     static isCommentStatement(node: compiler.Node): node is compiler.CommentStatement {
-        return (node.compilerNode as compiler.CompilerCommentStatement)._isCommentStatement === true;
+        return (node.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.ExtendedCommentKind.Statement;
     }
 
     /**
      * Gets if the provided value is a CommentClassElement.
      */
     static isCommentClassElement(node: compiler.Node): node is compiler.CommentClassElement {
-        return (node.compilerNode as compiler.CompilerCommentClassElement)._isCommentClassElement === true;
+        return (node.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.ExtendedCommentKind.ClassElement;
     }
 
     /**
      * Gets if the provided value is a CommentTypeElement.
      */
     static isCommentTypeElement(node: compiler.Node): node is compiler.CommentTypeElement {
-        return (node.compilerNode as compiler.CompilerCommentTypeElement)._isCommentTypeElement === true;
+        return (node.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.ExtendedCommentKind.TypeElement;
     }
 
     /**
      * Gets if the provided value is a CommentObjectLiteralElement.
      */
     static isCommentObjectLiteralElement(node: compiler.Node): node is compiler.CommentObjectLiteralElement {
-        return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._isCommentObjectLiteralElement === true;
+        return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.ExtendedCommentKind.ObjectLiteralElement;
     }
 
     /**
      * Gets if the provided value is a CommentEnumMember.
      */
     static isCommentEnumMember(node: compiler.Node): node is compiler.CommentEnumMember {
-        return (node.compilerNode as compiler.CompilerCommentEnumMember)._isCommentEnumMember === true;
+        return (node.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.ExtendedCommentKind.EnumMember;
     }
 
     /**

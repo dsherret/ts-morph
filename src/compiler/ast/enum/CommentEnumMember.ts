@@ -1,4 +1,3 @@
-import { SyntaxKind } from "../../../typescript";
 import { removeChildrenWithFormatting, FormattingKind } from "../../../manipulation";
 import { CompilerCommentEnumMember } from "../comment";
 import { Node } from "../common";

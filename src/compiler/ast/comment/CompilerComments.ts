@@ -1,6 +1,15 @@
 import { ts, SyntaxKind } from "../../../typescript";
 
-export class CompilerExtendedComment implements ts.Node {
+/** @internal */
+export enum ExtendedCommentKind {
+    Statement,
+    ClassElement,
+    TypeElement,
+    ObjectLiteralElement,
+    EnumMember
+}
+
+export abstract class CompilerExtendedComment implements ts.Node {
     private _fullStart: number;
     private _start: number;
     private _sourceFile: ts.SourceFile;
@@ -15,6 +24,9 @@ export class CompilerExtendedComment implements ts.Node {
         this.flags = ts.NodeFlags.None;
         this.parent = parent;
     }
+
+    /** @internal */
+    abstract _commentKind: ExtendedCommentKind;
 
     pos: number;
     end: number;
@@ -88,21 +100,21 @@ export class CompilerExtendedComment implements ts.Node {
 export class CompilerCommentStatement extends CompilerExtendedComment implements ts.Statement {
     _statementBrand: any;
     /** @internal */
-    _isCommentStatement: true = true;
+    _commentKind = ExtendedCommentKind.Statement;
 }
 
 export class CompilerCommentClassElement extends CompilerExtendedComment implements ts.ClassElement {
     _classElementBrand: any;
     _declarationBrand: any;
     /** @internal */
-    _isCommentClassElement: true = true;
+    _commentKind = ExtendedCommentKind.ClassElement;
 }
 
 export class CompilerCommentTypeElement extends CompilerExtendedComment implements ts.TypeElement {
     _typeElementBrand: any;
     _declarationBrand: any;
     /** @internal */
-    _isCommentTypeElement: true = true;
+    _commentKind = ExtendedCommentKind.TypeElement;
 }
 
 export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment implements ts.ObjectLiteralElement {
@@ -111,10 +123,10 @@ export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment
     _objectLiteralBrand: any; // ts >= 3.5
     declarationBrand: any;
     /** @internal */
-    _isCommentObjectLiteralElement: true = true;
+    _commentKind = ExtendedCommentKind.ObjectLiteralElement;
 }
 
 export class CompilerCommentEnumMember extends CompilerExtendedComment implements ts.Node {
     /** @internal */
-    _isCommentEnumMember: true = true;
+    _commentKind = ExtendedCommentKind.EnumMember;
 }

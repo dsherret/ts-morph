@@ -2,7 +2,7 @@ import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
 import { StringUtils, getSyntaxKindName } from "../../../utils";
 import { CompilerExtendedComment, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement,
-    CompilerCommentObjectLiteralElement, CompilerCommentEnumMember } from "../comment/CompilerComments";
+    CompilerCommentObjectLiteralElement, CompilerCommentEnumMember, ExtendedCommentKind } from "../comment/CompilerComments";
 
 enum CommentKind {
     SingleLine,
@@ -72,23 +72,23 @@ export class ExtendedCommentParser {
     }
 
     static isCommentStatement(node: ts.Node): node is CompilerCommentStatement {
-        return (node as CompilerCommentStatement)._isCommentStatement === true;
+        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.Statement;
     }
 
     static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement {
-        return (node as CompilerCommentClassElement)._isCommentClassElement === true;
+        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.ClassElement;
     }
 
     static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement {
-        return (node as CompilerCommentTypeElement)._isCommentTypeElement === true;
+        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.TypeElement;
     }
 
     static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement {
-        return (node as CompilerCommentObjectLiteralElement)._isCommentObjectLiteralElement === true;
+        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.ObjectLiteralElement;
     }
 
     static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember {
-        return (node as CompilerCommentEnumMember)._isCommentEnumMember === true;
+        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.EnumMember;
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {
@@ -297,7 +297,8 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
                 return CompilerCommentObjectLiteralElement;
             if (ts.isEnumDeclaration(container))
                 return CompilerCommentEnumMember;
-            return CompilerExtendedComment;
+
+            throw new errors.NotImplementedError(`Not implemented extended comment container type: ${getSyntaxKindName(container.kind)}`);
         }
     }
 }
