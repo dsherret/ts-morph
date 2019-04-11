@@ -1,5 +1,7 @@
 import * as compiler from "./index";
 import { ts } from "../../typescript";
+import { CompilerExtendedComment, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentObjectLiteralElement,
+    CompilerCommentTypeElement, CompilerCommentEnumMember } from "./comment";
 import { ImplementedKindToNodeMappings } from "./kindToNodeMappings";
 
 export type CompilerNodeToWrappedType<T extends ts.Node> =
@@ -13,7 +15,6 @@ export type CompilerNodeToWrappedType<T extends ts.Node> =
     T extends ts.JSDocTypeExpression ? compiler.JSDocTypeExpression :
     T extends ts.JSDocType ? compiler.JSDocType :
     T extends ts.TypeNode ? compiler.TypeNode :
-    T extends ts.TypeElement ? compiler.TypeElement :
     T extends ts.JSDocTag ? compiler.JSDocTag :
     T extends ts.LiteralExpression ? compiler.LiteralExpression :
     T extends ts.PrimaryExpression ? compiler.PrimaryExpression :
@@ -23,5 +24,13 @@ export type CompilerNodeToWrappedType<T extends ts.Node> =
     T extends ts.UnaryExpression ? compiler.UnaryExpression :
     T extends ts.Expression ? compiler.Expression :
     T extends ts.IterationStatement ? compiler.IterationStatement :
+    T extends CompilerCommentStatement ? compiler.CommentStatement :
+    T extends CompilerCommentClassElement ? compiler.CommentClassElement :
+    T extends CompilerCommentTypeElement ? compiler.CommentTypeElement :
+    T extends CompilerCommentObjectLiteralElement ? compiler.CommentObjectLiteralElement :
+    T extends CompilerCommentEnumMember ? compiler.CommentEnumMember :
+    T extends ts.TypeElement ? compiler.TypeElement :
     T extends ts.Statement ? compiler.Statement :
+    T extends ts.ClassElement ? compiler.ClassElement :
+    T extends ts.ObjectLiteralElement ? compiler.ObjectLiteralElement :
     compiler.Node<T>;

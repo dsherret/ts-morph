@@ -1,4 +1,4 @@
-﻿import { InterfaceDeclaration, PropertyAccessExpression, ts, SyntaxKind, TypeGuards } from "ts-morph";
+﻿import { InterfaceDeclaration, SyntaxKind, TypeGuards } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 
@@ -28,7 +28,7 @@ export class Mixin {
                 continue;
             const parent = expr.getParentIfKind(SyntaxKind.PropertyAccessExpression);
             if (parent == null)
-                throw new Error(`Could not find property access expression parent for: ${expr.getText()} in ${sourceFile.getFilePath()}[${expr.getStartLineNumber()}]`);
+                continue;
             names.push(parent.getName());
         }
 

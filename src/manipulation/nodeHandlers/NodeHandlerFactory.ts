@@ -32,7 +32,7 @@ export interface ReplaceTreeWithParentRangeOptions {
     end: number;
     replacingLength?: number;
     replacingNodes?: Node[];
-    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
+    customMappings?: (newParentNode: ts.Node, newSourceFile: ts.SourceFile) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 export interface ReplaceTreeWithRangeOptions {

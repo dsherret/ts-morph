@@ -1,4 +1,3 @@
-import { removeInterfaceMember } from "../../../manipulation";
 import { PropertySignatureStructure, PropertySignatureSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ChildOrderableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
@@ -11,13 +10,6 @@ export const PropertySignatureBase = ChildOrderableNode(JSDocableNode(Readonlyab
     PropertyNamedNode(ModifierableNode(TypeElement))
 ))))));
 export class PropertySignature extends PropertySignatureBase<ts.PropertySignature> {
-    /**
-     * Removes this property signature.
-     */
-    remove() {
-        removeInterfaceMember(this);
-    }
-
     /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.

@@ -25,6 +25,21 @@ describe(nameof(ObjectLiteralExpression), () => {
         it("should get the properties from the object literal expression", () => {
             doTest("const t = { prop: 5, prop2: 8, prop3 };", ["prop: 5", "prop2: 8", "prop3"]);
         });
+
+        it("should not get comments", () => {
+            doTest("const t = {\n  //a\n  /*b*/\n};", []);
+        });
+    });
+
+    describe(nameof<ObjectLiteralExpression>(e => e.getPropertiesWithComments), () => {
+        function doTest(text: string, props: string[]) {
+            const { objectLiteralExpression } = getObjectLiteralExpression(text);
+            expect(objectLiteralExpression.getPropertiesWithComments().map(p => p.getText())).to.deep.equal(props);
+        }
+
+        it("should get comments", () => {
+            doTest("const t = {\n  //a\n  /*b*/\n};", ["//a", "/*b*/"]);
+        });
     });
 
     describe(nameof<ObjectLiteralExpression>(e => e.getProperty), () => {

@@ -2,17 +2,18 @@
 import * as errors from "../../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren } from "../../../manipulation";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind } from "../../../structures";
+    PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind, Structure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { TypeElementTypes } from "../aliases";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "../interface";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, CommentTypeElement } from "../interface";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { ExtendedParser } from "../utils";
 
-export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.TypeElement[]; }>;
+export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.NodeArray<ts.TypeElement>; }>;
 
 export interface TypeElementMemberedNode {
     /**
@@ -227,6 +228,10 @@ export interface TypeElementMemberedNode {
      * Gets all the members.
      */
     getMembers(): TypeElementTypes[];
+    /**
+     * Gets all the members with comment type elements.
+     */
+    getMembersWithComments(): (TypeElementTypes | CommentTypeElement)[];
 }
 
 export function TypeElementMemberedNode<T extends Constructor<TypeElementMemberedNodeExtensionType>>(Base: T): Constructor<TypeElementMemberedNode> & T {
@@ -412,6 +417,12 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.compilerNode.members.map(m => this._getNodeFromCompilerNode(m)) as TypeElementTypes[];
         }
 
+        getMembersWithComments() {
+            const compilerNode = this.compilerNode as (ts.InterfaceDeclaration | ts.TypeLiteralNode);
+            return ExtendedParser.getContainerArray(compilerNode, this._sourceFile.compilerNode)
+                .map(m => this._getNodeFromCompilerNode(m)) as (TypeElementTypes | CommentTypeElement)[];
+        }
+
         set(structure: Partial<TypeElementMemberedNodeStructure>) {
             callBaseSet(Base.prototype, this, structure);
 
@@ -451,15 +462,15 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
     };
 }
 
-function insertChildren<TNode extends Node & { set(structure: TStructure): void; }, TStructure>(opts: {
+function insertChildren<TNode extends Node, TStructure extends Structure>(opts: {
     thisNode: Node & TypeElementMemberedNode,
     index: number;
     structures: ReadonlyArray<TStructure>;
     expectedKind: SyntaxKind;
     createStructurePrinter: () => ({ printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TStructure>): void; });
 }): TNode[] {
-    return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
-        getIndexedChildren: () => opts.thisNode.getMembers(),
+    return insertIntoBracesOrSourceFileWithGetChildren<TNode>({
+        getIndexedChildren: () => opts.thisNode.getMembersWithComments(),
         parent: opts.thisNode,
         index: opts.index,
         structures: opts.structures,

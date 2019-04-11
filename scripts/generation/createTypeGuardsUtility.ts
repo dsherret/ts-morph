@@ -32,6 +32,8 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         .filter(m => m.getName().startsWith("is"))
         .forEach(m => m.remove());
 
+    createIsNode();
+    createIsCommentMethods();
     typeGuardsClass.addMethods(getMethodInfos().filter(n => isAllowedClass(n.name.replace(/^is/, ""))).map(method => ({
         name: `is${method.name}`,
         isStatic: true,
@@ -43,7 +45,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType` : ""),
         bodyText: (writer: CodeBlockWriter) => {
             if (method.syntaxKinds.length === 0)
-                throw new Error(`For some reason  ${method.name} had no syntax kinds.`);
+                throw new Error(`For some reason ${method.name} had no syntax kinds.`);
 
             writeSyntaxKinds(writer, method.syntaxKinds);
         }
@@ -150,6 +152,71 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             }
         });
     }
+
+    // todo: remove these from the code generation and instead add some kind of tag to them
+    // so they aren't deleted (maybe in the function body as a comment)
+
+    function createIsNode() {
+        typeGuardsClass.addMethod({
+            docs: ["Gets if the provided value is a Node."],
+            isStatic: true,
+            name: "isNode",
+            returnType: `value is compiler.Node`,
+            parameters: [{ name: "value", type: "unknown" }],
+            bodyText: writer => {
+                writer.writeLine("return value != null && (value as any).compilerNode != null");
+            }
+        });
+    }
+
+    function createIsCommentMethods() {
+        typeGuardsClass.addMethods([{
+            docs: ["Gets if the provided value is a CommentStatement."],
+            isStatic: true,
+            name: "isCommentStatement",
+            returnType: `node is compiler.CommentStatement`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.ExtendedCommentKind.Statement;`);
+            }
+        }, {
+            docs: ["Gets if the provided value is a CommentClassElement."],
+            isStatic: true,
+            name: "isCommentClassElement",
+            returnType: `node is compiler.CommentClassElement`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.ExtendedCommentKind.ClassElement;`);
+            }
+        }, {
+            docs: ["Gets if the provided value is a CommentTypeElement."],
+            isStatic: true,
+            name: "isCommentTypeElement",
+            returnType: `node is compiler.CommentTypeElement`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.ExtendedCommentKind.TypeElement;`);
+            }
+        }, {
+            docs: ["Gets if the provided value is a CommentObjectLiteralElement."],
+            isStatic: true,
+            name: "isCommentObjectLiteralElement",
+            returnType: `node is compiler.CommentObjectLiteralElement`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.ExtendedCommentKind.ObjectLiteralElement;`);
+            }
+        }, {
+            docs: ["Gets if the provided value is a CommentEnumMember."],
+            isStatic: true,
+            name: "isCommentEnumMember",
+            returnType: `node is compiler.CommentEnumMember`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.ExtendedCommentKind.EnumMember;`);
+            }
+        }]);
+    }
 }
 
 function writeSyntaxKinds(writer: CodeBlockWriter, kinds: string[]) {
@@ -177,6 +244,11 @@ function isAllowedClass(name: string) {
     switch (name) {
         case "Node":
         case "FunctionOrConstructorTypeNodeBase":
+        case "CommentStatement":
+        case "CommentClassElement":
+        case "CommentTypeElement":
+        case "CommentObjectLiteralElement":
+        case "CommentEnumMember":
         // todo: should support these classes eventually (they probably need to be customly implemented)
         case "ObjectDestructuringAssignment":
         case "ArrayDestructuringAssignment":

@@ -34,10 +34,22 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(d => d.getMembers), () => {
-        it("should get all the members", () => {
-            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member1 = 1, member2 }");
+        it("should get all the members not including comments", () => {
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {\nmember1 = 1,\nmember2\n//a\n}");
             const members = firstChild.getMembers();
             expect(members.length).to.equal(2);
+        });
+    });
+
+    describe(nameof<EnumDeclaration>(d => d.getMembersWithComments), () => {
+        it("should get all the members including comments", () => {
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {\nmember1 = 1,\nmember2\n//a\n}");
+            const members = firstChild.getMembersWithComments().map(m => m.getText());
+            expect(members).to.deep.equal([
+                "member1 = 1",
+                "member2",
+                "//a"
+            ]);
         });
     });
 

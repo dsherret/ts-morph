@@ -3,6 +3,7 @@ export * from "./BreakStatement";
 export * from "./CaseBlock";
 export * from "./CaseClause";
 export * from "./CatchClause";
+export * from "./CommentStatement";
 export * from "./ContinueStatement";
 export * from "./DebuggerStatement";
 export * from "./DefaultClause";

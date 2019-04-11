@@ -1,3 +1,4 @@
+export * from "./CommentObjectLiteralElement";
 export * from "./ObjectDestructuringAssignment";
 export * from "./ObjectLiteralElement";
 export * from "./ObjectLiteralExpression";

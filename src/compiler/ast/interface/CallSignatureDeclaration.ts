@@ -1,4 +1,3 @@
-import { removeInterfaceMember } from "../../../manipulation";
 import { CallSignatureDeclarationStructure, CallSignatureDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ChildOrderableNode, JSDocableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
@@ -16,13 +15,6 @@ export class CallSignatureDeclaration extends CallSignatureDeclarationBase<ts.Ca
         callBaseSet(CallSignatureDeclarationBase.prototype, this, structure);
 
         return this;
-    }
-
-    /**
-     * Removes this call signature.
-     */
-    remove() {
-        removeInterfaceMember(this);
     }
 
     /**

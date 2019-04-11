@@ -4,13 +4,15 @@ import { CommaNewLineSeparatedStructuresPrinter, Printer } from "../../../../str
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
     ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind } from "../../../../structures";
 import { SyntaxKind, ts } from "../../../../typescript";
-import { ArrayUtils } from "../../../../utils";
+import { ArrayUtils, getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "../../class";
 import { PrimaryExpression } from "../PrimaryExpression";
+import { CommentObjectLiteralElement } from "./CommentObjectLiteralElement";
 import { PropertyAssignment } from "./PropertyAssignment";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 import { SpreadAssignment } from "./SpreadAssignment";
+import { ExtendedParser } from "../../utils";
 
 export const ObjectLiteralExpressionBase = PrimaryExpression;
 export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
@@ -25,7 +27,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      */
     getPropertyOrThrow(findFunction: (property: ObjectLiteralElementLike) => boolean): ObjectLiteralElementLike;
     getPropertyOrThrow(nameOrFindFunction: string | ((property: ObjectLiteralElementLike) => boolean)): ObjectLiteralElementLike {
-        return errors.throwIfNullOrUndefined(this.getProperty(nameOrFindFunction), "Expected to find a property.");
+        return errors.throwIfNullOrUndefined(this.getProperty(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("property", nameOrFindFunction));
     }
 
     /**
@@ -57,9 +59,16 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
     /**
      * Gets the properties.
      */
-    getProperties(): ObjectLiteralElementLike[] {
-        const properties: ts.NodeArray<ts.ObjectLiteralElementLike> = this.compilerNode.properties; // explicit type for validation
-        return properties.map(p => this._getNodeFromCompilerNode(p));
+    getProperties() {
+        return this.compilerNode.properties.map(p => this._getNodeFromCompilerNode(p)) as ObjectLiteralElementLike[];
+    }
+
+    /**
+     * Gets the properties with comment object literal elements.
+     */
+    getPropertiesWithComments(): (ObjectLiteralElementLike | CommentObjectLiteralElement)[] {
+        const members = ExtendedParser.getContainerArray(this.compilerNode, this.getSourceFile().compilerNode);
+        return members.map(p => this._getNodeFromCompilerNode(p)) as (ObjectLiteralElementLike | CommentObjectLiteralElement)[];
     }
 
     /* Property Assignments */

@@ -6,6 +6,7 @@ import { ensureStructuresMatchClasses } from "./ensureStructuresMatchClasses";
 import { ensureClassesImplementStructureMethods } from "./ensureClassesImplementStructureMethods";
 import { ensureMixinNotAppliedMultipleTimes } from "./ensureMixinNotAppliedMultipleTimes";
 import { ensurePublicApiHasTests } from "./ensurePublicApiHasTests";
+import { validateCodeFences } from "./validateCodeFences";
 import { validatePublicApiClassMemberNames } from "./validatePublicApiClassMemberNames";
 import { validateCompilerNodeToWrappedType } from "./validateCompilerNodeToWrappedType";
 import { Problem } from "./Problem";
@@ -33,6 +34,8 @@ if (checkHasArg("ensure-mixin-not-applied-multiple-times"))
     ensureMixinNotAppliedMultipleTimes(factory.getTsMorphInspector(), addProblem);
 if (checkHasArg("ensure-public-api-has-tests"))
     ensurePublicApiHasTests(factory.getTsMorphInspector(), addProblem);
+if (checkHasArg("validate-code-fences"))
+    validateCodeFences(factory.getTsMorphInspector(), factory.getTsInspector(), addProblem);
 if (checkHasArg("validate-public-api-class-member-names"))
     validatePublicApiClassMemberNames(factory.getTsMorphInspector(), addProblem);
 if (checkHasArg("validate-compiler-node-to-wrapped-type"))

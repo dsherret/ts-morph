@@ -86,26 +86,48 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(s => s.getStatementByKind), () => {
+        function doTest(text: string, kind: SyntaxKind, expectedNodeText: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const node = sourceFile.getStatementByKind(kind);
+            if (expectedNodeText == null)
+                expect(node).to.be.undefined;
+            else
+                expect(node!.getText()).to.equal(expectedNodeText);
+        }
+
         it("should get the statement when it exists", () => {
-            const { sourceFile } = getInfoFromText("var t; class T {}");
-            expect(sourceFile.getStatementByKind(SyntaxKind.ClassDeclaration)!.getText()).to.equal("class T {}");
+            doTest("var t; class T {}", SyntaxKind.ClassDeclaration, "class T {}");
+        });
+
+        it("should get single line comment trivia", () => {
+            doTest("// test", SyntaxKind.SingleLineCommentTrivia, "// test");
+        });
+
+        it("should get multi-line comment trivia", () => {
+            doTest("/*a*/", SyntaxKind.MultiLineCommentTrivia, "/*a*/");
         });
 
         it("should return undefined when it doesn't exist", () => {
-            const { sourceFile } = getInfoFromText("var t; class T {}");
-            expect(sourceFile.getStatementByKind(SyntaxKind.InterfaceDeclaration)).to.be.undefined;
+            doTest("var t; class T {}", SyntaxKind.InterfaceDeclaration, undefined);
         });
     });
 
     describe(nameof<StatementedNode>(s => s.getStatementByKindOrThrow), () => {
+        function doTest(text: string, kind: SyntaxKind, expectedNodeText: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const func = () => sourceFile.getStatementByKindOrThrow(kind);
+            if (expectedNodeText == null)
+                expect(func).to.throw();
+            else
+                expect(func()!.getText()).to.equal(expectedNodeText);
+        }
+
         it("should get the statement when it exists", () => {
-            const { sourceFile } = getInfoFromText("var t; class T {}");
-            expect(sourceFile.getStatementByKindOrThrow(SyntaxKind.ClassDeclaration).getText()).to.equal("class T {}");
+            doTest("var t; class T {}", SyntaxKind.ClassDeclaration, "class T {}");
         });
 
-        it("should throw when it doesn't exist", () => {
-            const { sourceFile } = getInfoFromText("var t; class T {}");
-            expect(() => sourceFile.getStatementByKindOrThrow(SyntaxKind.InterfaceDeclaration)).to.throw();
+        it("should return undefined when it doesn't exist", () => {
+            doTest("var t; class T {}", SyntaxKind.InterfaceDeclaration, undefined);
         });
     });
 

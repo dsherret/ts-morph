@@ -9,6 +9,8 @@ import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
 import { EnumMember } from "./EnumMember";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { CommentEnumMember } from "./CommentEnumMember";
+import { ExtendedParser } from "../utils";
 
 export const EnumDeclarationBase = TextInsertableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(
     ModifierableNode(NamedNode(Statement))
@@ -123,6 +125,15 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      */
     getMembers(): EnumMember[] {
         return this.compilerNode.members.map(m => this._getNodeFromCompilerNode(m));
+    }
+
+    /**
+     * Gets the enum's members with comment enum members.
+     */
+    getMembersWithComments(): (EnumMember | CommentEnumMember)[] {
+        const compilerNode = this.compilerNode;
+        return ExtendedParser.getContainerArray(compilerNode, this.getSourceFile().compilerNode)
+            .map(m => this._getNodeFromCompilerNode(m)) as (EnumMember | CommentEnumMember)[];
     }
 
     /**

@@ -1,4 +1,5 @@
 export * from "./base";
+export * from "./CommentClassElement";
 export * from "./ClassDeclaration";
 export * from "./ClassElement";
 export * from "./ClassExpression";

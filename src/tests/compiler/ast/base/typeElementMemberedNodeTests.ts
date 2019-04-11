@@ -1,9 +1,10 @@
 ﻿import { expect } from "chai";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature, PropertySignature,
-    TypeElementMemberedNode } from "../../../../compiler";
+    TypeElementMemberedNode, CommentTypeElement, TypeLiteralNode } from "../../../../compiler";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure, StructureKind, Structure } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
+    PropertySignatureStructure, TypeElementMemberedNodeStructure, StructureKind } from "../../../../structures";
+import { SyntaxKind } from "../../../../typescript";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(TypeElementMemberedNode), () => {
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignatures), () => {
@@ -593,9 +594,58 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
     });
 
+    describe(nameof<TypeElementMemberedNode>(d => d.getMembers), () => {
+        function doTest(text: string, members: string[]) {
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(text);
+            expect(firstChild.getMembers().map(m => m.getText())).to.deep.equal(members);
+        }
+
+        it("should get the members not including extended comments", () => {
+            doTest("interface T {\n  //a\n  /*b*/\n  prop;\n  //c\n}", ["prop;"]);
+        });
+    });
+
+    describe(nameof<TypeElementMemberedNode>(d => d.getMembersWithComments), () => {
+        function doTest(text: string, members: string[]) {
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(text);
+            expect(firstChild.getMembersWithComments().map(m => m.getText())).to.deep.equal(members);
+        }
+
+        it("should get the members including extended comments", () => {
+            doTest("interface T {\n  //a\n  /*b*/\n  prop;\n  //c\n}", [
+                "//a",
+                "/*b*/",
+                "prop;",
+                "//c"
+            ]);
+        });
+
+        it(`should parse comments as ${nameof(CommentTypeElement)}`, () => {
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface T {\n  //a\n  /*b*/\n}");
+            const members = firstChild.getMembersWithComments();
+            expect(members.length).to.equal(2);
+            expect(members[0]).to.be.instanceOf(CommentTypeElement);
+            expect(members[1]).to.be.instanceOf(CommentTypeElement);
+        });
+    });
+
+    describe("extended comments", () => {
+        it("should insert taking into account comments in an interface", () => {
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface T {\n  //a\n  /*b*/\n}");
+            firstChild.insertProperty(1, { name: "p" });
+            expect(firstChild.getText()).to.equal("interface T {\n  //a\n    p;\n  /*b*/\n}");
+        });
+
+        it("should insert taking into account comments in a type literal", () => {
+            const { descendant } = getInfoFromTextWithDescendant<TypeLiteralNode>("type t = {\n  //a\n  /*b*/\n}", SyntaxKind.TypeLiteral);
+            descendant.insertProperty(1, { name: "p" });
+            expect(descendant.getText()).to.equal("{\n  //a\n    p;\n  /*b*/\n}");
+        });
+    });
+
     describe(nameof<InterfaceDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: TypeElementMemberedNodeStructure, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }

@@ -1,9 +1,10 @@
+import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { Constructor } from "../../../../types";
 import { ts, SyntaxKind } from "../../../../typescript";
 import * as errors from "../../../../errors";
-import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange } from "../../../../manipulation";
+import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange, InsertIntoBracesOrSourceFileOptionsWriteInfo } from "../../../../manipulation";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure,
-    PropertyDeclarationStructure, SetAccessorDeclarationStructure, OptionalKind } from "../../../../structures";
+    PropertyDeclarationStructure, SetAccessorDeclarationStructure, OptionalKind, Structure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../../../utils";
 import { Type } from "../../../types";
@@ -12,13 +13,15 @@ import { DecoratableNode, JSDocableNode, ModifierableNode, TypeParameteredNode, 
 import { Node } from "../../common";
 import { ParameterDeclaration } from "../../function";
 import { ExpressionWithTypeArguments } from "../../type";
-import { AbstractableNode } from ".";
+import { ExtendedParser } from "../../utils";
 import { ConstructorDeclaration } from "../ConstructorDeclaration";
 import { ClassDeclaration } from "../ClassDeclaration";
 import { GetAccessorDeclaration } from "../GetAccessorDeclaration";
 import { MethodDeclaration } from "../MethodDeclaration";
 import { PropertyDeclaration } from "../PropertyDeclaration";
 import { SetAccessorDeclaration } from "../SetAccessorDeclaration";
+import { CommentClassElement } from "../CommentClassElement";
+import { AbstractableNode } from "./AbstractableNode";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
@@ -444,6 +447,10 @@ export interface ClassLikeDeclarationBaseSpecific {
      */
     getMembers(): ClassMemberTypes[];
     /**
+     * Gets the class' members with comment class elements.
+     */
+    getMembersWithComments(): (ClassMemberTypes | CommentClassElement)[];
+    /**
      * Gets the first member by name.
      * @param name - Name.
      */
@@ -567,12 +574,10 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertConstructors(index, [structure])[0];
         }
 
-        insertConstructors(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>) {
+        insertConstructors(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>): ConstructorDeclaration[] {
             const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
 
-            return insertIntoBracesOrSourceFileWithGetChildren<ConstructorDeclaration, OptionalKind<ConstructorDeclarationStructure>>({
-                getIndexedChildren: () => this.getMembers(),
-                parent: this,
+            return insertChildren<ConstructorDeclaration>(this, {
                 index,
                 structures,
                 expectedKind: SyntaxKind.Constructor,
@@ -606,10 +611,8 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertGetAccessors(index, [structure])[0];
         }
 
-        insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
-            return insertIntoBracesOrSourceFileWithGetChildren<GetAccessorDeclaration, OptionalKind<GetAccessorDeclarationStructure>>({
-                getIndexedChildren: () => this.getMembers(),
-                parent: this,
+        insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>): GetAccessorDeclaration[] {
+            return insertChildren<GetAccessorDeclaration>(this, {
                 index,
                 structures,
                 expectedKind: SyntaxKind.GetAccessor,
@@ -643,10 +646,8 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertSetAccessors(index, [structure])[0];
         }
 
-        insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
-            return insertIntoBracesOrSourceFileWithGetChildren<SetAccessorDeclaration, OptionalKind<SetAccessorDeclarationStructure>>({
-                getIndexedChildren: () => this.getMembers(),
-                parent: this,
+        insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>): SetAccessorDeclaration[] {
+            return insertChildren<SetAccessorDeclaration>(this, {
                 index,
                 structures,
                 expectedKind: SyntaxKind.SetAccessor,
@@ -680,10 +681,8 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertProperties(index, [structure])[0];
         }
 
-        insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>) {
-            return insertIntoBracesOrSourceFileWithGetChildren<PropertyDeclaration, OptionalKind<PropertyDeclarationStructure>>({
-                getIndexedChildren: () => this.getMembers(),
-                parent: this,
+        insertProperties(index: number, structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>): PropertyDeclaration[] {
+            return insertChildren<PropertyDeclaration>(this, {
                 index,
                 structures,
                 expectedKind: SyntaxKind.PropertyDeclaration,
@@ -713,15 +712,13 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertMethods(index, [structure])[0];
         }
 
-        insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
+        insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[] {
             const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
             structures = structures.map(s => ({...s}));
 
             // insert, fill, and get created nodes
-            return insertIntoBracesOrSourceFileWithGetChildren<MethodDeclaration, OptionalKind<MethodDeclarationStructure>>({
-                parent: this,
+            return insertChildren<MethodDeclaration>(this, {
                 index,
-                getIndexedChildren: () => this.getMembers(),
                 write: (writer, info) => {
                     if (!isAmbient && info.previousMember != null)
                         writer.blankLineIfLastNot();
@@ -903,8 +900,11 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         getInstanceMembers() {
-            return this.getMembersWithParameterProperties()
-                .filter(m => !TypeGuards.isConstructorDeclaration(m) && (TypeGuards.isParameterDeclaration(m) || !m.isStatic())) as ClassInstanceMemberTypes[];
+            return this.getMembersWithParameterProperties().filter(m => {
+                if (TypeGuards.isConstructorDeclaration(m))
+                    return false;
+                return TypeGuards.isParameterDeclaration(m) || !m.isStatic();
+            }) as ClassInstanceMemberTypes[];
         }
 
         getStaticMember(name: string): ClassStaticMemberTypes | undefined;
@@ -922,7 +922,11 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         getStaticMembers() {
-            return this.getMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && !(m instanceof ParameterDeclaration) && m.isStatic()) as ClassStaticMemberTypes[];
+            return this.getMembers().filter(m => {
+                if (TypeGuards.isConstructorDeclaration(m))
+                    return false;
+                return !TypeGuards.isParameterDeclaration(m) && m.isStatic();
+            }) as ClassStaticMemberTypes[];
         }
 
         getMembersWithParameterProperties() {
@@ -943,21 +947,13 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         getMembers() {
-            return getAllMembers(this).filter(m => isSupportedClassMember(m)) as ClassMemberTypes[];
+            return getAllMembers(this, this.compilerNode.members).filter(m => isSupportedClassMember(m)) as ClassMemberTypes[];
+        }
 
-            function getAllMembers(classDec: Node<ts.ClassLikeDeclarationBase>) {
-                const members = classDec.compilerNode.members.map(m => classDec._getNodeFromCompilerNode(m));
-                const isAmbient = TypeGuards.isAmbientableNode(classDec) && classDec.isAmbient();
-
-                // filter out the method declarations or constructor declarations without a body if not ambient
-                return isAmbient ? members : members.filter(m => {
-                    if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
-                        return true;
-                    if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
-                        return true;
-                    return m.isImplementation();
-                });
-            }
+        getMembersWithComments() {
+            const compilerNode = this.compilerNode as ts.ClassExpression | ts.ClassDeclaration;
+            const members = ExtendedParser.getContainerArray(compilerNode, this.getSourceFile().compilerNode);
+            return getAllMembers(this, members).filter(m => isSupportedClassMember(m) || TypeGuards.isCommentClassElement(m)) as (ClassMemberTypes | CommentClassElement)[];
         }
 
         getMember(name: string): ClassMemberTypes | undefined;
@@ -1011,6 +1007,21 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
     };
 }
 
+function getAllMembers(classDec: Node<ts.ClassLikeDeclarationBase>, compilerMembers: ts.Node[] | ts.NodeArray<ts.Node>) {
+    const isAmbient = TypeGuards.isAmbientableNode(classDec) && classDec.isAmbient();
+    // not sure why this cast is necessary, but localized it to here...
+    const members = (compilerMembers as any as ts.Node[]).map(m => classDec._getNodeFromCompilerNode(m));
+
+    // filter out the method declarations or constructor declarations without a body if not ambient
+    return isAmbient ? members : members.filter(m => {
+        if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
+            return true;
+        if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
+            return true;
+        return m.isImplementation();
+    });
+}
+
 function getImmediateDerivedClasses(classDec: ClassLikeDeclarationBaseSpecific & NameableNode) {
     const classes: ClassDeclaration[] = [];
     const nameNode = classDec.getNameNode();
@@ -1047,4 +1058,19 @@ function isSupportedClassMember(m: Node) {
         || TypeGuards.isGetAccessorDeclaration(m)
         || TypeGuards.isSetAccessorDeclaration(m)
         || TypeGuards.isConstructorDeclaration(m);
+}
+
+interface InsertChildrenOptions {
+    write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
+    expectedKind: SyntaxKind;
+    structures: ReadonlyArray<Structure>;
+    index: number;
+}
+
+function insertChildren<TNode extends Node>(classDeclaration: ClassLikeDeclarationBaseSpecific & Node, opts: InsertChildrenOptions) {
+    return insertIntoBracesOrSourceFileWithGetChildren<TNode>({
+        getIndexedChildren: () => classDeclaration.getMembersWithComments(),
+        parent: classDeclaration,
+        ...opts
+    });
 }

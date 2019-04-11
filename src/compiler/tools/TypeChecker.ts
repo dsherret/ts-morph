@@ -1,4 +1,5 @@
 import { ProjectContext } from "../../ProjectContext";
+import * as errors from "../../errors";
 import { SymbolFlags, SyntaxKind, ts, TypeFormatFlags } from "../../typescript";
 import { Signature, Symbol } from "../symbols";
 import { Type } from "../types";
@@ -7,7 +8,6 @@ import { EnumMember } from "../ast/enum";
 import { Expression } from "../ast/expression";
 import { ExportSpecifier } from "../ast/module";
 import { CallLikeExpression } from "../ast/aliases";
-import * as errors from "../../errors";
 
 /**
  * Wrapper around the TypeChecker.

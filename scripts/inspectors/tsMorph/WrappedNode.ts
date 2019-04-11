@@ -65,8 +65,8 @@ export class WrappedNode {
         const node = this.node;
 
         return getFromExtends().map(n => {
-            if (!TypeGuards.isInterfaceDeclaration(n))
-                throw new Error(`Unexpected node kind: ${n.getKindName()}`);
+            if (!TypeGuards.isInterfaceDeclaration(n) && !TypeGuards.isClassDeclaration(n))
+                throw new Error(`(${node.getName()}): Unexpected node kind: ${n.getKindName()}`);
             return this.wrapperFactory.getTsNode(n);
         });
 

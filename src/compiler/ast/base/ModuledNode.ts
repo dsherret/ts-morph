@@ -5,6 +5,7 @@ import { Constructor } from "../../../types";
 import { ts, SyntaxKind } from "../../../typescript";
 import { ArrayUtils, TypeGuards } from "../../../utils";
 import { Symbol } from "../../symbols";
+import { isComment } from "../utils";
 import { ExportedDeclarations } from "../aliases";
 import { Node } from "../common";
 import { ImportDeclaration, ExportDeclaration, ExportAssignment } from "../module";
@@ -183,9 +184,29 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         addImportDeclarations(structures: ReadonlyArray<OptionalKind<ImportDeclarationStructure>>) {
-            const imports = this.getImportDeclarations();
-            const insertIndex = imports.length === 0 ? 0 : imports[imports.length - 1].getChildIndex() + 1;
-            return this.insertImportDeclarations(insertIndex, structures);
+            const compilerChildren = this._getCompilerStatementsWithComments();
+
+            return this.insertImportDeclarations(getInsertIndex(), structures);
+
+            function getInsertIndex() {
+                let insertIndex = 0;
+                let wasLastComment = true;
+
+                for (let i = 0; i < compilerChildren.length; i++) {
+                    const child = compilerChildren[i];
+                    // Insert after any multiline comments at the beginning of the file.
+                    // A multi-line comment is likely a file header.
+                    if (wasLastComment && child.kind === SyntaxKind.MultiLineCommentTrivia)
+                        insertIndex = i + 1;
+                    else {
+                        wasLastComment = false;
+                        if (child.kind === SyntaxKind.ImportDeclaration)
+                            insertIndex = i + 1;
+                    }
+                }
+
+                return insertIndex;
+            }
         }
 
         insertImportDeclaration(index: number, structure: OptionalKind<ImportDeclarationStructure>) {
@@ -201,7 +222,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forImportDeclaration().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isImportDeclaration(previousMember),
+                        previousNewLine: previousMember => TypeGuards.isImportDeclaration(previousMember) || isComment(previousMember.compilerNode),
                         nextNewLine: nextMember => TypeGuards.isImportDeclaration(nextMember)
                     });
                 }
@@ -224,7 +245,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getImportDeclarations(): ImportDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ImportDeclaration);
+            return this.getStatements().filter(TypeGuards.isImportDeclaration);
         }
 
         addExportDeclaration(structure: OptionalKind<ExportDeclarationStructure>) {
@@ -249,7 +270,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forExportDeclaration().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember),
+                        previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember) || isComment(previousMember.compilerNode),
                         nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
                     });
                 }
@@ -272,7 +293,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportDeclarations(): ExportDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration);
+            return this.getStatements().filter(TypeGuards.isExportDeclaration);
         }
 
         addExportAssignment(structure: OptionalKind<ExportAssignmentStructure>) {
@@ -297,7 +318,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forExportAssignment().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember),
+                        previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember) || isComment(previousMember.compilerNode),
                         nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)
                     });
                 }
@@ -313,7 +334,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportAssignments(): ExportAssignment[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportAssignment);
+            return this.getStatements().filter(TypeGuards.isExportAssignment);
         }
 
         getDefaultExportSymbol(): Symbol | undefined {

@@ -108,6 +108,10 @@ export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: st
  * @param value - Value to check.
  */
 export function throwNotImplementedForNeverValueError(value: never): never {
+    const node = value as any as { kind: number; };
+    if (node != null && typeof node.kind === "string")
+        return throwNotImplementedForSyntaxKindError(node.kind);
+
     throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);
 }
 

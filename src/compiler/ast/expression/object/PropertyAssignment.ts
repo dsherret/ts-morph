@@ -1,4 +1,4 @@
-import { insertIntoParentTextRange, removeCommaSeparatedChild } from "../../../../manipulation";
+import { insertIntoParentTextRange } from "../../../../manipulation";
 import { WriterFunction } from "../../../../types";
 import { SyntaxKind, ts } from "../../../../typescript";
 import { getTextFromStringOrWriter } from "../../../../utils";

@@ -5,6 +5,7 @@ import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, 
     PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachChildTraversalControl,
     ForEachDescendantTraversalControl, VariableStatement, ForStatement, ForOfStatement, ForInStatement, NumericLiteral, StringLiteral,
     ExpressionStatement } from "../../../../compiler";
+import { hasParsedTokens } from "../../../../compiler/ast/utils";
 import { Project } from "../../../../Project";
 import * as errors from "../../../../errors";
 import { WriterFunction } from "../../../../types";
@@ -381,23 +382,26 @@ describe(nameof(Node), () => {
             expect(sourceFile.getDescendantStatements().map(s => s.getText())).to.deep.equal(expectedStatements);
         }
 
-        it("should get the descendant statements", () => {
+        it("should get the descendant statements not including extended comments", () => {
             const expected = [
                 `const a = () => {\n    const b = "";\n};`,
                 `const b = "";`,
                 `const c = 5;`,
-                `function d() {\n    function e() {\n        const f = "";\n    }\n}`,
-                `function e() {\n        const f = "";\n    }`,
+                `function d() {\n    function e() {\n        //3\n        const f = "";\n    }\n}`,
+                `function e() {\n        //3\n        const f = "";\n    }`,
                 `const f = "";`,
                 `class MyClass {\n    prop = () => console.log("here");\n}`,
                 `console.log("here")`
             ];
-            doTest(`const a = () => {
+            doTest(`//1
+/*2*/
+const a = () => {
     const b = "";
 };
 const c = 5;
 function d() {
     function e() {
+        //3
         const f = "";
     }
 }
@@ -800,6 +804,10 @@ class MyClass {
         it("should get children using .getChildren() when specifying a token kind", () => {
             doTest("class C {}", sourceFile => sourceFile.getClassOrThrow("C"), SyntaxKind.OpenBraceToken, ["{"]);
         });
+
+        it("should get comments", () => {
+            doTest("//1", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.SingleLineCommentTrivia, ["//1"]);
+        });
     });
 
     describe(nameof<Node>(n => n.getDescendantsOfKind), () => {
@@ -829,15 +837,15 @@ class MyClass {
 
         it("should get descendants using .forEachChild when specifying a parsed kind node while not on a syntax list", () => {
             doTest("class C1 {} class C2 {}", sourceFile => sourceFile, SyntaxKind.ClassDeclaration, ["class C1 {}", "class C2 {}"], sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.false;
-                expect(sourceFile.getClassOrThrow("C1")._hasParsedTokens()).to.be.false;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.false;
+                expect(hasParsedTokens(sourceFile.getClassOrThrow("C1").compilerNode)).to.be.false;
             });
         });
 
         it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
             doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.ClassDeclaration, ["class C {}"], sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.true;
-                expect(sourceFile.getClassOrThrow("C")._hasParsedTokens()).to.be.false;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
             });
         });
 
@@ -847,8 +855,12 @@ class MyClass {
 
         it("should get descendants using .getChildren() when specifying a token kind", () => {
             doTest("class C {} interface I {}", sourceFile => sourceFile, SyntaxKind.OpenBraceToken, ["{", "{"], sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.true;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
             });
+        });
+
+        it("should get comments", () => {
+            doTest("//1", sourceFile => sourceFile, SyntaxKind.SingleLineCommentTrivia, ["//1"]);
         });
     });
 
@@ -889,16 +901,16 @@ class MyClass {
 
         it("should get descendant using .forEachChild when specifying a parsed kind node while not on a syntax list", () => {
             doTest("class C1 {} class C2 {}", sourceFile => sourceFile, SyntaxKind.ClassDeclaration, "class C1 {}", sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.false;
-                expect(sourceFile.getClassOrThrow("C1")._hasParsedTokens()).to.be.false;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.false;
+                expect(hasParsedTokens(sourceFile.getClassOrThrow("C1").compilerNode)).to.be.false;
             });
         });
 
         it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
             doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.InterfaceDeclaration, "interface I {}", sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.true;
-                expect(sourceFile.getClassOrThrow("C")._hasParsedTokens()).to.be.false;
-                expect(sourceFile.getInterfaceOrThrow("I")._hasParsedTokens()).to.be.false;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
+                expect(hasParsedTokens(sourceFile.getInterfaceOrThrow("I").compilerNode)).to.be.false;
             });
         });
 
@@ -908,14 +920,14 @@ class MyClass {
 
         it("should get descendants using .getChildren() when specifying a token kind", () => {
             doTest("class C {} interface I {}", sourceFile => sourceFile, SyntaxKind.OpenBraceToken, "{", sourceFile => {
-                expect(sourceFile._hasParsedTokens()).to.be.true;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
             });
         });
 
         it("should get js doc descendants", () => {
             doTest("/**\n * @return {string}\n */\nfunction test() {}", sourceFile => sourceFile, SyntaxKind.JSDocReturnTag, "@return {string}", sourceFile => {
                 // todo: in the future it would be better for this to be false and only parse the tokens on JSDoc nodes
-                expect(sourceFile._hasParsedTokens()).to.be.true;
+                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
             });
         });
     });
@@ -1326,7 +1338,7 @@ class MyClass {
 
     describe(nameof<Node>(n => n.getTrailingTriviaEnd), () => {
         function doTest(text: string, expected: number) {
-            const { firstChild, sourceFile } = getInfoFromText(text);
+            const { firstChild } = getInfoFromText(text);
             expect(firstChild.getTrailingTriviaEnd()).to.equal(expected);
         }
 
@@ -1695,6 +1707,12 @@ class MyClass {
                 [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]);
         });
 
+        it("should not return extended comments", () => {
+            runTest("// testing\nclass T {}",
+                sourceFile => sourceFile,
+                [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken]);
+        });
+
         it("should iterate over all the children of a class declaration", () => {
             runTest("class T { prop1: string; prop2: number; }",
                 sourceFile => sourceFile.getClassOrThrow("T"),
@@ -1806,8 +1824,12 @@ class MyClass {
             doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0].getModifiers()[0], 11);
         });
 
-        it("should include the comment for the node that handles it", () => {
-            doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0], 0);
+        it("should not include an extended comment", () => {
+            doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0], 11);
+        });
+
+        it("should include a comment on the same line", () => {
+            doTest("/* a */ declare function test() {}", sourceFile => sourceFile.getFunctions()[0], 0);
         });
     });
 

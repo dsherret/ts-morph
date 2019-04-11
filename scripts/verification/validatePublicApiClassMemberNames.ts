@@ -5,7 +5,7 @@
  * and internal members of a class have a underscore prefix.
  * ----------------------------------------------------------
  */
-import { TypeGuards, ClassMemberTypes, ParameterDeclaration, Scope } from "ts-morph";
+import { TypeGuards, ClassMemberTypes, ParameterDeclaration, Scope, ClassDeclaration } from "ts-morph";
 import { TsMorphInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
@@ -13,7 +13,7 @@ import { Problem } from "./Problem";
 export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
     const codeBlockWriterClass = inspector.getCodeBlockWriterClass();
 
-    for (const classDec of inspector.getPublicClasses().filter(c => c !== codeBlockWriterClass)) {
+    for (const classDec of inspector.getPublicClasses().filter(c => isClassToAllow(c))) {
         for (const member of classDec.getMembers())
             validateNode(member);
     }
@@ -39,6 +39,22 @@ export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, a
                 lineNumber: node.getStartLineNumber(),
                 message: `Class member "${node.getName()}" should NOT have an underscore prefix because it is public.`
             });
+        }
+    }
+
+    function isClassToAllow(classDec: ClassDeclaration) {
+        if (classDec === codeBlockWriterClass)
+            return false;
+
+        switch (classDec.getName()) {
+            case "CompilerCommentStatement":
+            case "CompilerCommentClassElement":
+            case "CompilerCommentTypeElement":
+            case "CompilerCommentObjectLiteralElement":
+            case "CompilerCommentEnumMember":
+                return false;
+            default:
+                return true;
         }
     }
 }

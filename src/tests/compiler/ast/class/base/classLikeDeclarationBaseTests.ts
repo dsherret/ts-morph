@@ -1,9 +1,8 @@
 import { expect } from "chai";
 import { Node, ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
-    PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase } from "../../../../../compiler";
+    PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase, CommentClassElement } from "../../../../../compiler";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure,
-    StructureKind} from "../../../../../structures";
+    SetAccessorDeclarationStructure, StructureKind} from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { SyntaxKind } from "../../../../../typescript";
 import { TypeGuards } from "../../../../../utils";
@@ -127,8 +126,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other members", () => {
-            doTest("class c {\n    prop1;\n    prop2;\n}", 1, {},
-                "class c {\n    prop1;\n\n    constructor() {\n    }\n\n    prop2;\n}");
+            doTest("class c {\n//1\n    prop1;\n    prop2;\n}", 2, {},
+                "class c {\n//1\n    prop1;\n\n    constructor() {\n    }\n\n    prop2;\n}");
         });
 
         it("should insert all the properties of the structure", () => {
@@ -256,8 +255,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other methods", () => {
-            doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
-                "class c {\n    m1() {\n    }\n\n    static get m2(): string {\n    }\n\n    get m3() {\n    }\n\n    m4() {\n    }\n}");
+            doTest("class c {\n//1\n    m1() {\n    }\n\n    m4() {\n    }\n}", 2, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
+                "class c {\n//1\n    m1() {\n    }\n\n    static get m2(): string {\n    }\n\n    get m3() {\n    }\n\n    m4() {\n    }\n}");
         });
 
         it("should insert into ambient class", () => {
@@ -340,8 +339,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other properties", () => {
-            doTest("class c {\n    prop1;\n    prop4;\n}", 1, [{ name: "prop2", hasQuestionToken: true, type: "string" }, { name: "prop3" }],
-                "class c {\n    prop1;\n    prop2?: string;\n    prop3;\n    prop4;\n}");
+            doTest("class c {\n//1\n    prop1;\n    prop4;\n}", 2, [{ name: "prop2", hasQuestionToken: true, type: "string" }, { name: "prop3" }],
+                "class c {\n//1\n    prop1;\n    prop2?: string;\n    prop3;\n    prop4;\n}");
         });
 
         it("should add an extra newline if inserting before non-property", () => {
@@ -504,8 +503,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other methods", () => {
-            doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
-                "class c {\n    m1() {\n    }\n\n    static set m2(): string {\n    }\n\n    set m3() {\n    }\n\n    m4() {\n    }\n}");
+            doTest("class c {\n//1\n    m1() {\n    }\n\n    m4() {\n    }\n}", 2, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
+                "class c {\n//1\n    m1() {\n    }\n\n    static set m2(): string {\n    }\n\n    set m3() {\n    }\n\n    m4() {\n    }\n}");
         });
 
         it("should insert into ambient class", () => {
@@ -750,8 +749,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other methods", () => {
-            doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
-                "class c {\n    m1() {\n    }\n\n    static m2(): string {\n    }\n\n    m3() {\n    }\n\n    m4() {\n    }\n}");
+            doTest("class c {\n//1\n    m1() {\n    }\n\n    m4() {\n    }\n}", 2, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
+                "class c {\n//1\n    m1() {\n    }\n\n    static m2(): string {\n    }\n\n    m3() {\n    }\n\n    m4() {\n    }\n}");
         });
 
         it("should insert all the properties of the structure", () => {
@@ -1115,6 +1114,38 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 "prop: string;\nprop2: number;method1(str);method1();\n}\n";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             expect(firstChild.getMembers().length).to.equal(9);
+        });
+
+        it("should not get any class element comments in a class with other members", () => {
+            const code = "class C {\n  //a\n  p;\n  /*b*/\n}";
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const members = firstChild.getMembers();
+            expect(members.map(m => m.getText())).to.deep.equal(["p;"]);
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.getMembersWithComments), () => {
+        it("should get any class element comments in an empty class", () => {
+            const code = "class C {\n  //a\n  /*b*/\n}";
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const members = firstChild.getMembersWithComments();
+            expect(members.map(m => m.getText())).to.deep.equal([
+                "//a",
+                "/*b*/"
+            ]);
+            expect(members[0]).to.be.instanceOf(CommentClassElement);
+            expect(members[1]).to.be.instanceOf(CommentClassElement);
+        });
+
+        it("should get any class element comments in a class with other members", () => {
+            const code = "class C {\n  //a\n  p;\n  /*b*/\n}";
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const members = firstChild.getMembersWithComments();
+            expect(members.map(m => m.getText())).to.deep.equal([
+                "//a",
+                "p;",
+                "/*b*/"
+            ]);
         });
     });
 

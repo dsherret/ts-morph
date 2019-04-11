@@ -1,7 +1,6 @@
 ﻿import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
-import { AdvancedIterator, ArrayUtils } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 import { NodeHandlerHelper } from "./NodeHandlerHelper";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
@@ -11,7 +10,7 @@ export interface RangeParentHandlerOptions {
     end: number;
     replacingLength?: number;
     replacingNodes?: Node[];
-    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
+    customMappings?: (newParentNode: ts.Node, newSourceFile: ts.SourceFile) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 /**
@@ -24,7 +23,7 @@ export class RangeParentHandler implements NodeHandler {
     private readonly end: number;
     private readonly replacingLength: number | undefined;
     private readonly replacingNodes: ts.Node[] | undefined;
-    private readonly customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
+    private readonly customMappings?: (newParentNode: ts.Node, newSourceFile: ts.SourceFile) => { currentNode: Node; newNode: ts.Node; }[];
 
     constructor(private readonly compilerFactory: CompilerFactory, opts: RangeParentHandlerOptions) {
         this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
@@ -37,13 +36,12 @@ export class RangeParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
-        const currentSourceFile = currentNode._sourceFile.compilerNode;
         // todo: decide whether to use forEachChild or forEachKind here (might be hard with custom mappings)
-        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode._getCompilerChildren()));
-        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(newNode.getChildren(newSourceFile)));
+        const currentSourceFile = currentNode._sourceFile.compilerNode;
+        const [currentNodeChildren, newNodeChildren] = this.helper.getCompilerChildrenAsIterators(currentNode, newNode, newSourceFile);
 
         // handle any custom mappings
-        this.handleCustomMappings(newNode);
+        this.handleCustomMappings(newNode, newSourceFile);
 
         // get the first child
         while (!currentNodeChildren.done && !newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) < this.start)
@@ -71,10 +69,10 @@ export class RangeParentHandler implements NodeHandler {
         this.compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
 
-    private handleCustomMappings(newParentNode: ts.Node) {
+    private handleCustomMappings(newParentNode: ts.Node, newSourceFile: ts.SourceFile) {
         if (this.customMappings == null)
             return;
-        const customMappings = this.customMappings(newParentNode);
+        const customMappings = this.customMappings(newParentNode, newSourceFile);
 
         for (const mapping of customMappings)
             mapping.currentNode._context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);

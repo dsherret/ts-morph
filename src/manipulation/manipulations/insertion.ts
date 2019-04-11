@@ -2,10 +2,11 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Node, SourceFile } from "../../compiler";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards, StringUtils } from "../../utils";
-import { getEndPosFromIndex, getInsertPosFromIndex, getRangeFromArray, verifyAndGetIndex } from "../helpers";
+import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromArray, verifyAndGetIndex } from "../helpers";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { InsertionTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
+import { Structure } from "../../structures";
 
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;
@@ -15,7 +16,7 @@ export interface InsertIntoParentTextRangeOptions {
         textLength: number;
         nodes?: Node[];
     };
-    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
+    customMappings?: (newParentNode: ts.Node, newSourceFile: ts.SourceFile) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 /**
@@ -225,12 +226,12 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
     }
 }
 
-export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extends Node, TStructure> {
+export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions {
     getIndexedChildren: () => Node[];
     write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
     // for child functions
     expectedKind: SyntaxKind;
-    structures: ReadonlyArray<TStructure>;
+    structures: ReadonlyArray<Structure>;
     parent: Node;
     index: number;
 }
@@ -239,8 +240,8 @@ export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extend
  * Glues together insertIntoBracesOrSourceFile and getRangeFromArray.
  * @param opts - Options to do this operation.
  */
-export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node, TStructure>(
-    opts: InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode, TStructure>
+export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node>(
+    opts: InsertIntoBracesOrSourceFileWithGetChildrenOptions
 ) {
     if (opts.structures.length === 0)
         return [];
@@ -256,7 +257,7 @@ export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node, 
         write: opts.write
     });
 
-    return getRangeFromArray<TNode>(opts.getIndexedChildren(), opts.index, opts.structures.length, opts.expectedKind);
+    return getRangeWithoutCommentsFromArray<TNode>(opts.getIndexedChildren(), opts.index, opts.structures.length, opts.expectedKind);
 
     function getChildIndex() {
         if (index === 0)

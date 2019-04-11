@@ -1,5 +1,5 @@
 import * as errors from "../../../errors";
-import { getRangeFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
+import { getRangeWithoutCommentsFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { Constructor } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
 import { ArrayUtils, TypeGuards, ObjectUtils } from "../../../utils";
@@ -124,7 +124,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
         newText: opts.childCodes.map((c, i) => (i > 0 ? indentationText : "") + c).join(newLineKind) + newLineKind + indentationText
     });
 
-    const children = getRangeFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);
+    const children = getRangeWithoutCommentsFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);
     // todo: Do not set here... this should be printed
     children.forEach((child, i) => {
         opts.setNodeFromStructure(child, structures[i]);

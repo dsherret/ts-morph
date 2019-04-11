@@ -8,16 +8,14 @@ function getDefaultClause(text: string) {
 }
 
 describe(nameof(DefaultClause), () => {
-    const statement = "let x = 1 + 2;";
-    const clause = `switch (x) { default: ${statement} }`;
-    describe(nameof<DefaultClause>(n => n.getStatements), () => {
-        function doTest(text: string, expectedText: string) {
+    describe(nameof<DefaultClause>(n => n.getStatementsWithComments), () => {
+        function doTest(text: string, expectedTexts: string[]) {
             const defaultClause = getDefaultClause(text);
-            expect(defaultClause.getStatements()[0].getText()).to.equal(expectedText);
+            expect(defaultClause.getStatementsWithComments().map(s => s.getText())).to.deep.equal(expectedTexts);
         }
 
         it("should get the correct statements", () => {
-            doTest(clause, statement);
+            doTest("switch (x) {\n  default:\n    let x = 1;\n    //a\n}", ["let x = 1;", "//a"]);
         });
     });
 });

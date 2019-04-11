@@ -17,7 +17,7 @@ const inspectorFactory = new InspectorFactory();
 const tsInspector = inspectorFactory.getTsInspector();
 
 // get info
-const tsNodes = tsInspector.getTsNodes();
+const tsNodes = tsInspector.getTsNodes().filter(n => !n.isTsMorphTsNode());
 
 // figure out ts nodes that are wrapped and not wrapped
 const wrappedTsNodes = tsNodes.filter(i => i.getAssociatedWrappedNode() != null || isImplementedViaMixins(i));

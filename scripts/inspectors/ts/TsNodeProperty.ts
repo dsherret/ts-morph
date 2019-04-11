@@ -1,10 +1,10 @@
-﻿import { Node, PropertySignature, Identifier, InterfaceDeclaration, ts, SyntaxKind } from "ts-morph";
+﻿import { Node, PropertySignature, PropertyDeclaration, Identifier, InterfaceDeclaration, ts, SyntaxKind } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 import { TsNode } from "./TsNode";
 
 export class TsNodeProperty {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: PropertySignature) {
+    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: PropertySignature | PropertyDeclaration) {
     }
 
     getName() {

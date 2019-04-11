@@ -1,5 +1,5 @@
 ﻿import { Node } from "../../compiler";
-import { StringUtils, TypeGuards } from "../../utils";
+import { TypeGuards } from "../../utils";
 import { FormattingKind } from "../formatting";
 import { getPosAtNextNonBlankLine } from "../textSeek";
 import { getSpacingBetweenNodes } from "./getSpacingBetweenNodes";

@@ -25,7 +25,7 @@ export function validateCompilerNodeToWrappedType(inspector: TsMorphInspector, a
 
             structures.push({
                 name: `${wrapper.getName()}_test`,
-                type: `CompilerNodeToWrappedType<ts.${nodes[0].getNameForType()}>`
+                type: `CompilerNodeToWrappedType<${nodes[0].isTsMorphTsNode() ? "" : "ts."}${nodes[0].getNameForType()}>`
             });
         }
 

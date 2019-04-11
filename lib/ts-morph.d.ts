@@ -714,6 +714,30 @@ export declare class TypeGuards {
         getBody(): Node;
     };
     /**
+     * Gets if the provided value is a Node.
+     */
+    static isNode(value: unknown): value is Node;
+    /**
+     * Gets if the provided value is a CommentStatement.
+     */
+    static isCommentStatement(node: Node): node is CommentStatement;
+    /**
+     * Gets if the provided value is a CommentClassElement.
+     */
+    static isCommentClassElement(node: Node): node is CommentClassElement;
+    /**
+     * Gets if the provided value is a CommentTypeElement.
+     */
+    static isCommentTypeElement(node: Node): node is CommentTypeElement;
+    /**
+     * Gets if the provided value is a CommentObjectLiteralElement.
+     */
+    static isCommentObjectLiteralElement(node: Node): node is CommentObjectLiteralElement;
+    /**
+     * Gets if the provided value is a CommentEnumMember.
+     */
+    static isCommentEnumMember(node: Node): node is CommentEnumMember;
+    /**
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */
@@ -3304,10 +3328,14 @@ export interface TypeElementMemberedNode {
      * Gets all the members.
      */
     getMembers(): TypeElementTypes[];
+    /**
+     * Gets all the members with comment type elements.
+     */
+    getMembersWithComments(): (TypeElementTypes | CommentTypeElement)[];
 }
 
 declare type TypeElementMemberedNodeExtensionType = Node<ts.Node & {
-    members: ts.TypeElement[];
+    members: ts.NodeArray<ts.TypeElement>;
 }>;
 
 export declare function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExtensionType>>(Base: T): Constructor<TypeParameteredNode> & T;
@@ -3405,7 +3433,7 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
      *
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNode(): NumericLiteral | StringLiteral | Identifier | ComputedPropertyName | undefined;
+    getPropertyNameNode(): Identifier | NumericLiteral | StringLiteral | ComputedPropertyName | undefined;
 }
 
 export declare class ObjectBindingPattern extends Node<ts.ObjectBindingPattern> {
@@ -3823,6 +3851,10 @@ interface ClassLikeDeclarationBaseSpecific {
      */
     getMembers(): ClassMemberTypes[];
     /**
+     * Gets the class' members with comment class elements.
+     */
+    getMembersWithComments(): (ClassMemberTypes | CommentClassElement)[];
+    /**
      * Gets the first member by name.
      * @param name - Name.
      */
@@ -3881,6 +3913,9 @@ export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration |
 declare type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
 
 declare type ClassLikeDeclarationBaseSpecificExtensionType = Node<ts.ClassLikeDeclarationBase> & HeritageClauseableNode & ModifierableNode & NameableNode;
+
+export declare class CommentClassElement extends ClassElement<CompilerCommentClassElement> {
+}
 
 declare const ClassDeclarationBase: Constructor<NamespaceChildableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ClassLikeDeclarationBase> & typeof Statement;
 
@@ -4095,6 +4130,59 @@ export declare class CommentRange {
     private _throwIfForgotten;
 }
 
+export declare abstract class CompilerExtendedComment implements ts.Node {
+    private _fullStart;
+    private _start;
+    private _sourceFile;
+    protected constructor();
+    pos: number;
+    end: number;
+    kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
+    flags: ts.NodeFlags;
+    decorators?: ts.NodeArray<ts.Decorator> | undefined;
+    modifiers?: ts.NodeArray<ts.Modifier> | undefined;
+    parent: ts.Node;
+    getSourceFile(): ts.SourceFile;
+    getChildCount(sourceFile?: ts.SourceFile | undefined): number;
+    getChildAt(index: number, sourceFile?: ts.SourceFile | undefined): ts.Node;
+    getChildren(sourceFile?: ts.SourceFile | undefined): ts.Node[];
+    getStart(sourceFile?: ts.SourceFile | undefined, includeJsDocComment?: boolean | undefined): number;
+    getFullStart(): number;
+    getEnd(): number;
+    getWidth(sourceFile?: ts.SourceFileLike | undefined): number;
+    getFullWidth(): number;
+    getLeadingTriviaWidth(sourceFile?: ts.SourceFile | undefined): number;
+    getFullText(sourceFile?: ts.SourceFile | undefined): string;
+    getText(sourceFile?: ts.SourceFile | undefined): string;
+    getFirstToken(sourceFile?: ts.SourceFile | undefined): ts.Node | undefined;
+    getLastToken(sourceFile?: ts.SourceFile | undefined): ts.Node | undefined;
+    forEachChild<T>(cbNode: (node: ts.Node) => T | undefined, cbNodeArray?: ((nodes: ts.NodeArray<ts.Node>) => T | undefined) | undefined): T | undefined;
+}
+
+export declare class CompilerCommentStatement extends CompilerExtendedComment implements ts.Statement {
+    _statementBrand: any;
+}
+
+export declare class CompilerCommentClassElement extends CompilerExtendedComment implements ts.ClassElement {
+    _classElementBrand: any;
+    _declarationBrand: any;
+}
+
+export declare class CompilerCommentTypeElement extends CompilerExtendedComment implements ts.TypeElement {
+    _typeElementBrand: any;
+    _declarationBrand: any;
+}
+
+export declare class CompilerCommentObjectLiteralElement extends CompilerExtendedComment implements ts.ObjectLiteralElement {
+    _declarationBrand: any;
+    _objectLiteralBrandBrand: any;
+    _objectLiteralBrand: any;
+    declarationBrand: any;
+}
+
+export declare class CompilerCommentEnumMember extends CompilerExtendedComment implements ts.Node {
+}
+
 export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
     /**
      * Gets the expression.
@@ -4127,45 +4215,9 @@ export declare class Identifier extends IdentifierBase<ts.Identifier> {
     getImplementations(): ImplementationLocation[];
 }
 
-export interface ForEachChildTraversalControl {
-    /**
-     * Stops traversal.
-     * @param node - Optional node to return.
-     */
-    stop(node?: Node): void;
-}
-
-export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
-    /**
-     * Skips traversal of the current node's descendants.
-     */
-    skip(): void;
-    /**
-     * Skips traversal of the current node, siblings, and all their descendants.
-     */
-    up(): void;
-}
-
-export interface TransformTraversalControl {
-    /**
-     * The node currently being transformed.
-     * @remarks Use the result of `.visitChildren()` instead before transforming if visiting the children.
-     */
-    currentNode: ts.Node;
-    /**
-     * Visits the children of the current node and returns a new node for the current node.
-     */
-    visitChildren(): ts.Node;
-}
-
 export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined : NodeType[KeyName];
 
 export declare type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
-
-export interface TextRange {
-    getPos(): number;
-    getEnd(): number;
-}
 
 export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     /**
@@ -4381,7 +4433,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
      */
     getDescendants(): Node[];
     /**
-     * Gets the node's descendant statements and any arrow function statement-like expressions (ex. Returns the expression `5` in `() => 5`).
+     * Gets the node's descendant statements and any arrow function statement-like expressions (ex. returns the expression `5` in `() => 5`).
      */
     getDescendantStatements(): (Statement | Expression)[];
     /**
@@ -4424,7 +4476,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
      */
     getFullStart(): number;
     /**
-     * Gets the first source file text position that is not whitespace.
+     * Gets the first source file text position that is not whitespace taking into account extended comments.
      */
     getNonWhitespaceStart(): number;
     /**
@@ -4789,17 +4841,52 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
      * @param textOrWriterFunction - Text to add or function that provides a writer to write with.
      * @returns The children that were added.
      */
-    addChildText(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Node<ts.Node>[];
+    addChildText(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
     /**
      * Inserts text at the specified child index.
      * @param index - Child index to insert at.
      * @param textOrWriterFunction - Text to insert or function that provides a writer to write with.
      * @returns The children that were inserted.
      */
-    insertChildText(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Node<ts.Node>[];
+    insertChildText(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
+}
+export interface TextRange {
+    getPos(): number;
+    getEnd(): number;
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.TypeElement ? TypeElement : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends ts.Statement ? Statement : Node<T>;
+export interface ForEachChildTraversalControl {
+    /**
+     * Stops traversal.
+     * @param node - Optional node to return.
+     */
+    stop(node?: Node): void;
+}
+
+export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
+    /**
+     * Skips traversal of the current node's descendants.
+     */
+    skip(): void;
+    /**
+     * Skips traversal of the current node, siblings, and all their descendants.
+     */
+    up(): void;
+}
+
+export interface TransformTraversalControl {
+    /**
+     * The node currently being transformed.
+     * @remarks Use the result of `.visitChildren()` instead before transforming if visiting the children.
+     */
+    currentNode: ts.Node;
+    /**
+     * Visits the children of the current node and returns a new node for the current node.
+     */
+    visitChildren(): ts.Node;
+}
+
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends ts.TypeElement ? TypeElement : T extends ts.Statement ? Statement : T extends ts.ClassElement ? ClassElement : T extends ts.ObjectLiteralElement ? ObjectLiteralElement : Node<T>;
 
 declare const DecoratorBase: typeof Node;
 
@@ -5106,6 +5193,13 @@ export declare class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression
     getTypeNode(): TypeNode<ts.TypeNode>;
 }
 
+export declare class CommentEnumMember extends Node<CompilerCommentEnumMember> {
+    /**
+     * Removes this enum member comment.
+     */
+    remove(): void;
+}
+
 declare const EnumDeclarationBase: Constructor<TextInsertableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
@@ -5160,6 +5254,10 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * Gets the enum's members.
      */
     getMembers(): EnumMember[];
+    /**
+     * Gets the enum's members with comment enum members.
+     */
+    getMembersWithComments(): (EnumMember | CommentEnumMember)[];
     /**
      * Toggle if it's a const enum.
      */
@@ -5474,6 +5572,9 @@ declare const NonNullExpressionBase: Constructor<ExpressionedNode> & typeof Left
 export declare class NonNullExpression extends NonNullExpressionBase<ts.NonNullExpression> {
 }
 
+export declare class CommentObjectLiteralElement extends ObjectLiteralElement<CompilerCommentObjectLiteralElement> {
+}
+
 declare const ObjectDestructuringAssignmentBase: typeof AssignmentExpression;
 
 export declare class ObjectDestructuringAssignment extends ObjectDestructuringAssignmentBase<ts.ObjectDestructuringAssignment> {
@@ -5517,6 +5618,10 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Gets the properties.
      */
     getProperties(): ObjectLiteralElementLike[];
+    /**
+     * Gets the properties with comment object literal elements.
+     */
+    getPropertiesWithComments(): (ObjectLiteralElementLike | CommentObjectLiteralElement)[];
     /**
      * Adds a property assignment.
      * @param structure - Structure that represents the property assignment to add.
@@ -6022,13 +6127,12 @@ export declare class CallSignatureDeclaration extends CallSignatureDeclarationBa
      */
     set(structure: Partial<CallSignatureDeclarationStructure>): this;
     /**
-     * Removes this call signature.
-     */
-    remove(): void;
-    /**
      * Gets the structure equivalent to this node.
      */
     getStructure(): CallSignatureDeclarationStructure;
+}
+
+export declare class CommentTypeElement extends TypeElement<CompilerCommentTypeElement> {
 }
 
 declare const ConstructSignatureDeclarationBase: Constructor<TypeParameteredNode> & Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<SignaturedDeclaration> & typeof TypeElement;
@@ -6039,10 +6143,6 @@ export declare class ConstructSignatureDeclaration extends ConstructSignatureDec
      * @param structure - Structure to set the node with.
      */
     set(structure: Partial<ConstructSignatureDeclarationStructure>): this;
-    /**
-     * Removes this construct signature.
-     */
-    remove(): void;
     /**
      * Gets the structure equivalent to this node.
      */
@@ -6078,10 +6178,6 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
      * Gets the key type node.
      */
     getKeyTypeNode(): TypeNode;
-    /**
-     * Removes this index signature.
-     */
-    remove(): void;
     /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
@@ -6125,10 +6221,6 @@ declare const MethodSignatureBase: Constructor<ChildOrderableNode> & Constructor
 
 export declare class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
     /**
-     * Removes this method signature.
-     */
-    remove(): void;
-    /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
      */
@@ -6143,10 +6235,6 @@ declare const PropertySignatureBase: Constructor<ChildOrderableNode> & Construct
 
 export declare class PropertySignature extends PropertySignatureBase<ts.PropertySignature> {
     /**
-     * Removes this property signature.
-     */
-    remove(): void;
-    /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
      */
@@ -6158,6 +6246,10 @@ export declare class PropertySignature extends PropertySignatureBase<ts.Property
 }
 
 export declare class TypeElement<TNode extends ts.TypeElement = ts.TypeElement> extends Node<TNode> {
+    /**
+     * Removes the member.
+     */
+    remove(): void;
 }
 
 export declare function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensionType>>(Base: T): Constructor<JsxAttributedNode> & T;
@@ -7766,6 +7858,9 @@ export declare class CatchClause extends CatchClauseBase<ts.CatchClause> {
     getVariableDeclarationOrThrow(): VariableDeclaration;
 }
 
+export declare class CommentStatement extends Statement<CompilerCommentStatement> {
+}
+
 export declare class ContinueStatement extends Statement<ts.ContinueStatement> {
     /**
      * Gets this continue statement's label or undefined if it does not exist.
@@ -7937,38 +8032,42 @@ export interface StatementedNode {
      */
     getStatements(): Statement[];
     /**
+     * Gets the node's statements with comment statements.
+     */
+    getStatementsWithComments(): Statement[];
+    /**
      * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
      * @param findFunction - Function to find the statement by.
      */
-    getStatement(findFunction: (statement: Node) => boolean): Statement | undefined;
+    getStatement(findFunction: (statement: Statement) => boolean): Statement | undefined;
     /**
      * Gets the first statement that matches the provided condition or throws if it doesn't exist.
      * @param findFunction - Function to find the statement by.
      */
-    getStatementOrThrow(findFunction: (statement: Node) => boolean): Statement;
+    getStatementOrThrow(findFunction: (statement: Statement) => boolean): Statement;
     /**
      * Gets the first statement that matches the provided syntax kind or returns undefined if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
+    getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentStatements[TKind] | undefined;
     /**
      * Gets the first statement that matches the provided syntax kind or throws if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentStatements[TKind];
     /**
      * Add statements.
      * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
      * @returns The statements that were added.
      */
-    addStatements(textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Statement[];
+    addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Child index to insert at.
      * @param textOrWriterFunction - Text or writer function to write the statement or statements with.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, textOrWriterFunction: string | WriterFunction | (string | WriterFunction)[]): Statement[];
+    insertStatements(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Child index to remove the statement at.
@@ -8326,6 +8425,12 @@ export interface StatementedNode {
 }
 
 declare type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause | ts.ModuleBlock>;
+
+export interface KindToNodeMappingsWithCommentStatements extends ImplementedKindToNodeMappings {
+    [SyntaxKind.SingleLineCommentTrivia]: CommentStatement;
+    [SyntaxKind.MultiLineCommentTrivia]: CommentStatement;
+    [kind: number]: Node;
+}
 
 export declare class SwitchStatement extends Statement<ts.SwitchStatement> {
     /**
@@ -8776,7 +8881,7 @@ export declare class Signature {
     /**
      * Gets the signature's declaration.
      */
-    getDeclaration(): MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | ArrowFunction | FunctionDeclaration | JSDocFunctionType;
+    getDeclaration(): ArrowFunction | MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | FunctionDeclaration | JSDocFunctionType;
 }
 
 export declare class Symbol {

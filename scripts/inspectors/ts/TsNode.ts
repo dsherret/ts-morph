@@ -1,15 +1,19 @@
-﻿import { InterfaceDeclaration, SyntaxKind } from "ts-morph";
+﻿import { InterfaceDeclaration, SyntaxKind, ClassDeclaration, TypeGuards } from "ts-morph";
 import { Memoize } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 import { WrappedNode } from "../tsMorph";
 import { TsNodeProperty } from "./TsNodeProperty";
 
 export class TsNode {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: InterfaceDeclaration) {
+    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: InterfaceDeclaration | ClassDeclaration) {
     }
 
     getName() {
         return this.node.getName();
+    }
+
+    isTsMorphTsNode() {
+        return this.node.getSourceFile().getFilePath().indexOf("/src/compiler/ast") >= 0;
     }
 
     getNameForType() {
@@ -39,6 +43,14 @@ export class TsNode {
     }
 
     getProperties(): TsNodeProperty[] {
-        return this.node.getProperties().map(p => this.wrapperFactory.getTsNodeProperty(p));
+        const node = this.node;
+        return getProperties().map(p => this.wrapperFactory.getTsNodeProperty(p));
+
+        function getProperties() {
+            if (TypeGuards.isClassDeclaration(node))
+                return node.getInstanceProperties();
+            else
+                return node.getProperties();
+        }
     }
 }

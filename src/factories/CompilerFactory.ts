@@ -1,5 +1,7 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
-    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
+    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter,
+    CommentStatement, CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerExtendedComment, CommentEnumMember } from "../compiler";
+import { ExtendedCommentParser } from "../compiler/ast/utils";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
@@ -254,17 +256,42 @@ export class CompilerFactory {
         if (compilerNode.kind === SyntaxKind.SourceFile)
             return this.getSourceFile(compilerNode as any as ts.SourceFile, { markInProject: false }) as Node as CompilerNodeToWrappedType<NodeType>;
 
-        return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode,
-            () => createNode.call(this, kindToWrapperMappings[compilerNode.kind] || Node)
-        ) as Node as CompilerNodeToWrappedType<NodeType>;
+        return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => {
+            const node = createNode.call(this);
+            initializeNode.call(this, node);
+            return node;
+        }) as Node as CompilerNodeToWrappedType<NodeType>;
 
-        function createNode(this: CompilerFactory, ctor: any) {
+        function createNode(this: CompilerFactory): Node<NodeType> {
+            // todo: improve kind to wrapper mappings to handle this scenario
+            if (isExtendedCommentRange(compilerNode)) {
+                if (ExtendedCommentParser.isCommentStatement(compilerNode))
+                    return new CommentStatement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                if (ExtendedCommentParser.isCommentClassElement(compilerNode))
+                    return new CommentClassElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                if (ExtendedCommentParser.isCommentTypeElement(compilerNode))
+                    return new CommentTypeElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                if (ExtendedCommentParser.isCommentObjectLiteralElement(compilerNode))
+                    return new CommentObjectLiteralElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                if (ExtendedCommentParser.isCommentEnumMember(compilerNode))
+                    return new CommentEnumMember(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
+                return errors.throwNotImplementedForNeverValueError(compilerNode);
+            }
+
+            const ctor = kindToWrapperMappings[compilerNode.kind] || Node as any;
+            return new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
+        }
+
+        function isExtendedCommentRange(node: ts.Node): node is CompilerExtendedComment {
+            return (node as CompilerExtendedComment)._commentKind != null;
+        }
+
+        function initializeNode(this: CompilerFactory, node: Node<NodeType>) {
             // ensure the parent is created and increment its wrapped child count
             if (compilerNode.parent != null) {
                 const parentNode = this.getNodeFromCompilerNode(compilerNode.parent, sourceFile);
                 parentNode._wrappedChildCount++;
             }
-            const node = new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
             const parentSyntaxList = node._getParentSyntaxListIfWrapped();
             if (parentSyntaxList != null)
                 parentSyntaxList._wrappedChildCount++;
@@ -275,8 +302,6 @@ export class CompilerFactory {
                     count++;
                 node._wrappedChildCount = count;
             }
-
-            return node;
         }
     }
 

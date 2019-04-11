@@ -88,14 +88,14 @@ export function removeClassMembers(classMembers: Node[]) {
     });
 }
 
-export function removeInterfaceMember(classMember: Node) {
-    removeInterfaceMembers([classMember]);
+export function removeInterfaceMember(interfaceMember: Node) {
+    removeInterfaceMembers([interfaceMember]);
 }
 
-export function removeInterfaceMembers(classMembers: Node[]) {
+export function removeInterfaceMembers(interfaceMembers: Node[]) {
     removeChildrenWithFormatting({
         getSiblingFormatting: getInterfaceMemberFormatting,
-        children: classMembers
+        children: interfaceMembers
     });
 }
 

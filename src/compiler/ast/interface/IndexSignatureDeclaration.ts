@@ -1,4 +1,3 @@
-import { removeInterfaceMember } from "../../../manipulation";
 import { IndexSignatureDeclarationStructure, IndexSignatureDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import * as errors from "../../../errors";
 import { ts } from "../../../typescript";
@@ -67,13 +66,6 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
         // this node must exist for it to be an index signature (otherwise it's a property signature)
         const param = this.compilerNode.parameters[0];
         return this._getNodeFromCompilerNode(param.type!);
-    }
-
-    /**
-     * Removes this index signature.
-     */
-    remove() {
-        removeInterfaceMember(this);
     }
 
     /**
