@@ -11,6 +11,10 @@ describe(nameof(ExtendedCommentParser), () => {
         expect(actualNodes.map(n => ({ kind: n.kind, pos: n.pos, end: n.end }))).to.deep.equal(expectedNodes, message);
     }
 
+    function getBlock(sourceFile: ts.SourceFile) {
+        return ts.forEachChild(sourceFile, c => ts.forEachChild(c, g => ts.isModuleBlock(g) || ts.isBlock(g) ? g : undefined))!;
+    }
+
     describe("statemented tests", () => {
         function doStatementedTests(text: string, expectedNodes: { kind: SyntaxKind; pos: number; end: number; }[]) {
             // source file
@@ -26,7 +30,7 @@ describe(nameof(ExtendedCommentParser), () => {
 
             function doForLeadingText(leadingText: string, message: string) {
                 const sourceFile = createSourceFile(leadingText + text + "\n}");
-                const block = ts.forEachChild(sourceFile, c => ts.forEachChild(c, g => ts.isModuleBlock(g) || ts.isBlock(g) ? g : undefined))!;
+                const block = getBlock(sourceFile);
                 const result = ExtendedCommentParser.getOrParseChildren(block, sourceFile);
                 const adjustedExpectedNodes = expectedNodes.map(n => ({
                     kind: n.kind,
@@ -120,6 +124,36 @@ describe(nameof(ExtendedCommentParser), () => {
                 pos: 10,
                 end: 15
             }]);
+        });
+
+        it("should not get a multi-line comment on the last line that has a preceeding token", () => {
+            const sourceFile = createSourceFile("t; /*1*/");
+            const result = ExtendedCommentParser.getOrParseChildren(sourceFile, sourceFile);
+            assertEqual([{
+                kind: ts.SyntaxKind.ExpressionStatement,
+                pos: 0,
+                end: 2
+            }], result);
+        });
+
+        it("should get a multi-line comment on the same line as the last close brace", () => {
+            const sourceFile = createSourceFile("function f() {\n/*1*/}");
+            const result = ExtendedCommentParser.getOrParseChildren(getBlock(sourceFile), sourceFile);
+            assertEqual([{
+                kind: ts.SyntaxKind.MultiLineCommentTrivia,
+                pos: 15,
+                end: 20
+            }], result);
+        });
+
+        it("should not get a multi-line comment on the same line as the last close brace that has a preceeding token", () => {
+            const sourceFile = createSourceFile("function f() {\nt;/*1*/}");
+            const result = ExtendedCommentParser.getOrParseChildren(getBlock(sourceFile), sourceFile);
+            assertEqual([{
+                kind: ts.SyntaxKind.ExpressionStatement,
+                pos: 14,
+                end: 17
+            }], result);
         });
 
         describe("js docs", () => {

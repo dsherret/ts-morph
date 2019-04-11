@@ -148,11 +148,12 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
         skipTrailingLine();
 
         const leadingComments = Array.from(getLeadingComments());
-        // pos will be at the first significant token of the next node or at the source file length
-        const lineStartPos = StringUtils.getLineStartFromPos(sourceFileText, pos);
+        // `pos` will be at the first significant token of the next node or at the source file length.
+        // At this point, allow comments that end at the end of the source file or on the same line as the close brace token
+        const maxEnd = sourceFileText.length === pos || sourceFileText[pos] === "}" ? pos : StringUtils.getLineStartFromPos(sourceFileText, pos);
 
         for (const leadingComment of leadingComments) {
-            if (sourceFileText.length === pos || leadingComment.end < lineStartPos)
+            if (leadingComment.end <= maxEnd)
                 yield leadingComment;
         }
 
