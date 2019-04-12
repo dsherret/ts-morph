@@ -4,13 +4,16 @@
  * This flattens the declaration file output of the TypeScript compiler into one main.d.ts file.
  * ----------------------------------------------
  */
-import { Project, SourceFile, TypeGuards, SyntaxKind } from "ts-morph";
+import { Project, SourceFile, TypeGuards, SyntaxKind, Node } from "ts-morph";
+import { ArrayUtils } from "../../src/utils";
 
 export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) {
     const declarationFiles = project.getSourceFiles(["dist-declarations/**/*.d.ts", "!dist-declarations/codeBlockWriter/code-block-writer.d.ts"]);
     const codeBlockWriterFile = project.getSourceFileOrThrow("dist-declarations/codeBlockWriter/code-block-writer.d.ts");
-    const exportedDeclarations = mainFile.getExportedDeclarations()
-        .filter(d => d.getKind() !== SyntaxKind.NamespaceImport); // ignore ts namespace export (todo: make this more specific)
+    const exportedDeclarations = ArrayUtils.flatten(Array.from(mainFile.getExportedDeclarations()
+        .entries())
+        .filter(entry => entry[0] !== "ts") // ignore ts namespace export
+        .map(entry => entry[1])) as Node[];
     const flattenedCompilerApiExports = [
         "SyntaxKind", "CompilerOptions", "EmitHint", "ScriptKind", "NewLineKind", "LanguageVariant", "ScriptTarget",
         "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory", "EditorSettings",

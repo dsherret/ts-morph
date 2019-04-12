@@ -40,8 +40,8 @@ export function validateCodeFences(
         function forGetChildren() {
             const getChildrenSymbol = tsInspector
                 .getTsSymbol()
-                .getExportByNameOrThrow("Node")
-                .getMemberByNameOrThrow("getChildren");
+                .getExportOrThrow("Node")
+                .getMemberOrThrow("getChildren");
 
             // wish it were possible to get the references from a symbol
             const methodSignature = getChildrenSymbol.getValueDeclarationOrThrow() as MethodSignature;
@@ -54,7 +54,7 @@ export function validateCodeFences(
 
         function getTopMostNodeOnSameLine() {
             const referenceLineNumber = node.getStartLineNumber();
-            return node.getParentWhile(p => p.getStartLineNumber() === referenceLineNumber);
+            return node.getParentWhile(p => p.getStartLineNumber() === referenceLineNumber) || node;
         }
     }
 }

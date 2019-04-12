@@ -24,7 +24,8 @@ const sourceFileStructure: SourceFileStructure = {
     enums: [{
         name: "MyEnum",
         members: [{ name: "value" }]
-    }]
+    }],
+    bodyText: "console.log(5);"
 };
 ```
 
@@ -39,7 +40,7 @@ const sourceFileStructure: SourceFileStructure = {
         kind: StructureKind.Enum,
         name: "MyEnum",
         members: [{ name: "value" }]
-    }]
+    }, "console.log(5);"]
 };
 ```
 

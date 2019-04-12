@@ -5,7 +5,7 @@
  * the getDescendantsOfKind, getChildrenOfKind, etc... methods.
  * ----------------------------------------------
  */
-import { ClassDeclaration, InterfaceDeclaration, PropertySignatureStructure, SyntaxKind } from "ts-morph";
+import { ClassDeclaration, InterfaceDeclaration, PropertySignatureStructure, SyntaxKind, StructureKind } from "ts-morph";
 import { hasDescendantBaseType } from "../common";
 import { TsMorphInspector, TsInspector } from "../inspectors";
 
@@ -52,6 +52,7 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
             for (const kindName of mapping.syntaxKindNames) {
                 for (const possibleKindName of tsInspector.getNamesFromKind((SyntaxKind as any)[kindName])) {
                     addingProperties.push({
+                        kind: StructureKind.PropertySignature,
                         name: `[SyntaxKind.${possibleKindName}]`,
                         type: `compiler.${mapping.wrapperName}`
                     });

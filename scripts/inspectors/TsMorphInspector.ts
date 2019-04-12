@@ -1,5 +1,5 @@
-﻿import { Project, Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName,
-    Directory, TypeGuards } from "ts-morph";
+﻿import { Project, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName,
+    Directory, TypeGuards, ExportedDeclarations } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../src/utils";
 import { isNodeClass } from "../common";
 import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsMorph";
@@ -46,7 +46,7 @@ export class TsMorphInspector {
             const baseNode = node.getBase();
 
             if (baseNode != null) {
-                const base = getDependencyNode(node.getBase());
+                const base = getDependencyNode(baseNode);
                 dependencyNode.parentNodes.push(base);
                 base.childNodes.push(dependencyNode);
             }
@@ -56,7 +56,7 @@ export class TsMorphInspector {
 
         function getDependencyNode(node: WrappedNode) {
             if (nodes.has(node))
-                return nodes.get(node);
+                return nodes.get(node)!;
 
             const dependencyNode: DependencyNode = {
                 node,
@@ -79,8 +79,9 @@ export class TsMorphInspector {
     }
 
     @Memoize
-    getPublicDeclarations(): Node[] {
-        return this.project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations();
+    getPublicDeclarations(): ExportedDeclarations[] {
+        const entries = Array.from(this.project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations().entries());
+        return ArrayUtils.flatten(entries.filter(([name]) => name !== "ts").map(([_, value]) => value));
     }
 
     @Memoize

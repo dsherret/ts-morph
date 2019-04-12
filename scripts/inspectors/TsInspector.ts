@@ -14,7 +14,7 @@ export class TsInspector {
     getTsSymbol() {
         return this.getDeclarationFile()
             .getSymbolOrThrow()
-            .getExportByNameOrThrow("export=")
+            .getExportOrThrow("export=")
             .getAliasedSymbolOrThrow();
     }
 

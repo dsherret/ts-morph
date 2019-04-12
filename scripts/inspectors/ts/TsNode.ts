@@ -1,4 +1,4 @@
-﻿import { InterfaceDeclaration, SyntaxKind, ClassDeclaration, TypeGuards } from "ts-morph";
+﻿import { InterfaceDeclaration, SyntaxKind, ClassDeclaration, TypeGuards, PropertyDeclaration, PropertySignature } from "ts-morph";
 import { Memoize } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 import { WrappedNode } from "../tsMorph";
@@ -9,7 +9,7 @@ export class TsNode {
     }
 
     getName() {
-        return this.node.getName();
+        return this.node.getName()!;
     }
 
     isTsMorphTsNode() {
@@ -29,7 +29,7 @@ export class TsNode {
 
     @Memoize
     getAssociatedWrappedNode(): WrappedNode | undefined {
-        const references = this.node.getNameNode().findReferencesAsNodes();
+        const references = this.node.getNameNode()!.findReferencesAsNodes();
         for (const node of references) {
             const sourceFile = node.getSourceFile();
             if (sourceFile.getFilePath().indexOf("compiler") === -1)
@@ -46,9 +46,17 @@ export class TsNode {
         const node = this.node;
         return getProperties().map(p => this.wrapperFactory.getTsNodeProperty(p));
 
-        function getProperties() {
-            if (TypeGuards.isClassDeclaration(node))
-                return node.getInstanceProperties();
+        function getProperties(): (PropertyDeclaration | PropertySignature)[] {
+            if (TypeGuards.isClassDeclaration(node)) {
+                const result: (PropertyDeclaration | PropertySignature)[] = [];
+                for (const prop of node.getInstanceProperties()) {
+                    if (TypeGuards.isPropertyDeclaration(prop))
+                        result.push(prop);
+                    else
+                        throw new Error("Unhandled scenario where node was: " + prop.getKindName());
+                }
+                return result;
+            }
             else
                 return node.getProperties();
         }

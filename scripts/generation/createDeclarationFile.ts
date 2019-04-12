@@ -5,24 +5,38 @@
  * and hides any declarations that should be internal.
  * -------------------------------------------
  */
+import * as os from "os";
 import { Node, VariableStatement, TypeGuards, Scope, ClassDeclaration } from "ts-morph";
-import { StringUtils } from "../../src/utils";
 import { createDeclarationProject, removeImportTypes } from "../common";
 import { flattenDeclarationFiles } from "./flattenDeclarationFiles";
 
 export async function createDeclarationFile() {
+    let lastDateTime: Date | undefined;
+    log("Emitting declaration files...");
     const project = createDeclarationProject();
     const mainFile = project.getSourceFileOrThrow("main.d.ts");
 
+    // todo: will work on drastically speeding this up later...
+
+    log("Flattening...");
     flattenDeclarationFiles(project, mainFile);
+    log("Removing import types...");
     removeImportTypes(mainFile);
+    log("Making constructors private...");
     makeConstructorsPrivate();
+    log("Hiding base declarations...");
     hideBaseDeclarations();
+    log("Hiding specific structures...");
     hideSpecificStructures();
+    log("Hiding extension types...");
     hideExtensionTypes();
+    log("Hiding specific declarations...");
     hideSpecificDeclarations();
+    log("Removing @skipOrThrowCheck...");
     removeSkipOrThrowCheck();
+    log("Moving file...");
     mainFile.move("ts-morph.d.ts");
+    finishLog(lastDateTime!);
 
     await project.save();
 
@@ -84,5 +98,18 @@ export async function createDeclarationFile() {
                 }
             }
         }
+    }
+
+    function log(message: string) {
+        if (lastDateTime != null)
+            finishLog(lastDateTime);
+        process.stdout.write(`  * ${message}`);
+        lastDateTime = new Date();
+    }
+
+    function finishLog(dateTime: Date) {
+        const differenceMs = new Date().getTime() - dateTime.getTime();
+        const differenceSeconds = Math.round(differenceMs / 100) / 10;
+        process.stdout.write(` [${differenceSeconds}s] ${os.EOL}`);
     }
 }

@@ -43,12 +43,12 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         }],
         parameters: [{ name: "node", type: "compiler.Node" }],
         returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType` : ""),
-        bodyText: (writer: CodeBlockWriter) => {
+        statements: [(writer: CodeBlockWriter) => {
             if (method.syntaxKinds.length === 0)
                 throw new Error(`For some reason ${method.name} had no syntax kinds.`);
 
             writeSyntaxKinds(writer, method.syntaxKinds);
-        }
+        }]
     })));
     typeGuardsClass.forgetDescendants();
     updateHasStructure();
@@ -147,9 +147,9 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             name: "_hasStructure",
             parameters: [{ name: "node", type: "compiler.Node" }],
             returnType: `node is compiler.Node & { getStructure(): Structure; }`,
-            bodyText: writer => {
+            statements: [writer => {
                 writeSyntaxKinds(writer, nodesWithGetStructure.map(n => kindToWrapperMappings.find(m => m.wrapperName === n.getName())!.syntaxKindNames[0]));
-            }
+            }]
         });
     }
 
@@ -163,9 +163,9 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             name: "isNode",
             returnType: `value is compiler.Node`,
             parameters: [{ name: "value", type: "unknown" }],
-            bodyText: writer => {
+            statements: [writer => {
                 writer.writeLine("return value != null && (value as any).compilerNode != null");
-            }
+            }]
         });
     }
 
@@ -176,45 +176,45 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             name: "isCommentStatement",
             returnType: `node is compiler.CommentStatement`,
             parameters: [{ name: "node", type: "compiler.Node" }],
-            bodyText: writer => {
+            statements: [writer => {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.ExtendedCommentKind.Statement;`);
-            }
+            }]
         }, {
             docs: ["Gets if the provided value is a CommentClassElement."],
             isStatic: true,
             name: "isCommentClassElement",
             returnType: `node is compiler.CommentClassElement`,
             parameters: [{ name: "node", type: "compiler.Node" }],
-            bodyText: writer => {
+            statements: [writer => {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.ExtendedCommentKind.ClassElement;`);
-            }
+            }]
         }, {
             docs: ["Gets if the provided value is a CommentTypeElement."],
             isStatic: true,
             name: "isCommentTypeElement",
             returnType: `node is compiler.CommentTypeElement`,
             parameters: [{ name: "node", type: "compiler.Node" }],
-            bodyText: writer => {
+            statements: [writer => {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.ExtendedCommentKind.TypeElement;`);
-            }
+            }]
         }, {
             docs: ["Gets if the provided value is a CommentObjectLiteralElement."],
             isStatic: true,
             name: "isCommentObjectLiteralElement",
             returnType: `node is compiler.CommentObjectLiteralElement`,
             parameters: [{ name: "node", type: "compiler.Node" }],
-            bodyText: writer => {
+            statements: [writer => {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.ExtendedCommentKind.ObjectLiteralElement;`);
-            }
+            }]
         }, {
             docs: ["Gets if the provided value is a CommentEnumMember."],
             isStatic: true,
             name: "isCommentEnumMember",
             returnType: `node is compiler.CommentEnumMember`,
             parameters: [{ name: "node", type: "compiler.Node" }],
-            bodyText: writer => {
+            statements: [writer => {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.ExtendedCommentKind.EnumMember;`);
-            }
+            }]
         }]);
     }
 }
