@@ -614,6 +614,12 @@ export = ts;`);
             ]);
         });
 
+        it("should get when there's an interface and function with the same name", () => {
+            doTest("export interface MyItem {}\nexport function MyItem() {}", [
+                ["MyItem", ["export function MyItem() {}", "export interface MyItem {}"]]
+            ]);
+        });
+
         it("should not error for an empty file", () => {
             doTest("", []);
         });

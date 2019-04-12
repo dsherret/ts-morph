@@ -362,8 +362,13 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
 
             for (const symbol of exportSymbols) {
                 for (const declaration of symbol.getDeclarations()) {
-                    const declarations = Array.from(getDeclarationHandlingImportsAndExports(declaration));
-                    result.set(symbol.getName(), declarations as ExportedDeclarations[]);
+                    const declarations = Array.from(getDeclarationHandlingImportsAndExports(declaration)) as ExportedDeclarations[];
+                    const name = symbol.getName();
+                    const existingArray = result.get(name);
+                    if (existingArray != null)
+                        existingArray.push(...declarations);
+                    else
+                        result.set(symbol.getName(), declarations);
                 }
             }
 
