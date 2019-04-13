@@ -1,3 +1,4 @@
+import { EOL } from "os";
 export class PercentageLogger {
     private lastPercentage: string | undefined;
 
@@ -8,9 +9,14 @@ export class PercentageLogger {
 
         const percentangeChar = "%";
         if (this.lastPercentage != null)
-            (process.stdout as any).moveCursor((this.lastPercentage.length + percentangeChar.length) * -1, 0);
-        process.stdout.write(percentage + percentangeChar);
+            (process.stdout as any).moveCursor((this.lastPercentage.length + percentangeChar.length + 2) * -1, 0);
+        process.stdout.write("[" + percentage + percentangeChar + "]");
 
         this.lastPercentage = percentage;
+    }
+
+    finish() {
+        this.logAsPercentage(1, 1); // 100%
+        process.stdout.write(EOL);
     }
 }

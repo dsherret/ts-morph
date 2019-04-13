@@ -3,4 +3,4 @@
 --recursive
 --reporter progress
 --timeout 10000
-src/tests/**/*.ts
+src/tests/{,!(performance)/**/}*.ts
