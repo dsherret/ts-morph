@@ -85,6 +85,10 @@ describe(nameof(JSDocableNode), () => {
             doTest("function identifier() {}", 0, [], "function identifier() {}");
         });
 
+        it("should not have trailing whitespace when a line is blank", () => {
+            doTest("function identifier() {}", 0, [{ description: "t\n\nu" }], "/**\n * t\n *\n * u\n */\nfunction identifier() {}");
+        });
+
         describe("PropertyDeclaration", () => {
             it("should add a js doc to a property declaration", () => {
                 doTest("class C {\n    prop;\n}", 0, [{ description: "Testing" }],

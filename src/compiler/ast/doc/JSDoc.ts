@@ -57,7 +57,8 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
         const indentationText = this.getIndentationText();
         const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();
         const text = getTextFromStringOrWriter(this._getWriter(), textOrWriterFunction);
-        const newText = newLineKind + text.split(/\r?\n/).map(l => `${indentationText} * ${l}`).join(newLineKind) + newLineKind + indentationText + " ";
+        const lines = text.split(/\r?\n/).map(l => l.length === 0 ? `${indentationText} *` : `${indentationText} * ${l}`).join(newLineKind);
+        const newText = newLineKind + lines  + newLineKind + indentationText + " ";
 
         replaceTextPossiblyCreatingChildNodes({
             parent: this,

@@ -18,8 +18,12 @@ export class JSDocStructurePrinter extends NodePrinter<JSDocStructure | string |
     protected printTextInternal(writer: CodeBlockWriter, structure: JSDocStructure | string | WriterFunction) {
         const lines = getText().split(/\r?\n/);
         writer.writeLine("/**");
-        for (const line of lines)
-            writer.writeLine(` * ${line}`);
+        for (const line of lines) {
+            writer.write(` *`);
+            if (line.length > 0)
+                writer.write(` ${line}`);
+            writer.newLine();
+        }
         writer.write(" */");
 
         function getText() {

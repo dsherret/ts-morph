@@ -59,6 +59,10 @@ describe(nameof(JSDoc), () => {
             doTest("/**\n * Description\n */function identifier() {}", "One\nTwo\r\nThree", "/**\n * One\n * Two\n * Three\n */function identifier() {}");
         });
 
+        it("should not add trailing whitespace when the line has no text", () => {
+            doTest("/**\n * Description\n */\nfunction f() {}", "t\n\nu", "/**\n * t\n *\n * u\n */\nfunction f() {}");
+        });
+
         it("should set a new comment when originally all on the same line", () => {
             doTest("/** Description */function identifier() {}", "New", "/**\n * New\n */function identifier() {}");
         });
