@@ -47,6 +47,7 @@ export class ExtendedParser {
         if (isStatementMemberOrPropertyHoldingSyntaxList()) {
             let result = getChildrenSaver.get(node);
             if (result == null) {
+                // @code-fence-allow(getChildren): This merges in extended comments.
                 result = [...node.getChildren(sourceFile)]; // make a copy; do not modify the compiler api's array
                 mergeInComments(result, ExtendedCommentParser.getOrParseChildren(node as ts.SyntaxList, sourceFile));
                 getChildrenSaver.set(node, result);
@@ -54,7 +55,7 @@ export class ExtendedParser {
             return result;
         }
 
-        // @code-fence-allow(getChildren): This merges in extended comments.
+        // @code-fence-allow(getChildren): No need to merge in extended comments.
         return node.getChildren(sourceFile);
 
         function isStatementMemberOrPropertyHoldingSyntaxList() {
