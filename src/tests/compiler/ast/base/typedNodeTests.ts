@@ -140,7 +140,7 @@ describe(nameof(TypedNode), () => {
 
         describe("variable declaration", () => {
             function doTest(startText: string, type: string, expectedText: string) {
-                const { firstChild } = getInfoFromText<VariableStatement>(expectedText);
+                const { firstChild } = getInfoFromText<VariableStatement>(startText);
                 const declaration = firstChild.getDeclarations()[0];
                 declaration.setType(type);
                 expect(firstChild.getText()).to.equal(expectedText);
@@ -225,7 +225,7 @@ describe(nameof(TypedNode), () => {
 
     describe(nameof<FunctionDeclaration>(t => t.getStructure), () => {
         function doTest(startingCode: string, typeText: string | undefined) {
-            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             expect(firstChild.getParameters()[0].getStructure().type).to.deep.equal(typeText);
         }
 
@@ -235,6 +235,13 @@ describe(nameof(TypedNode), () => {
 
         it("should return the type text when it exists", () => {
             doTest("function test(param: string) {}", "string");
+        });
+
+        it("should get the type text without leading indentation", () => {
+            const text = "function f() {\n    let a: {\n        b: string;\n    }}";
+            const expected = "{\n    b: string;\n}";
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(text);
+            expect(firstChild.getStatements().find(TypeGuards.isVariableStatement)!.getDeclarations()[0].getStructure().type).to.deep.equal(expected);
         });
     });
 });

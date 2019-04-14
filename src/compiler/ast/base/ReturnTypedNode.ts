@@ -114,7 +114,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
         getStructure() {
             const returnTypeNode = this.getReturnTypeNode();
             return callBaseGetStructure<ReturnTypedNodeStructure>(Base.prototype, this, {
-                returnType: returnTypeNode ? returnTypeNode.getText() : undefined
+                returnType: returnTypeNode ? returnTypeNode.getText({ trimLeadingIndentation: true }) : undefined
             });
         }
     };
