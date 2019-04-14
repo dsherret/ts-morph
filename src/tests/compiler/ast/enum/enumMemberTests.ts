@@ -115,9 +115,16 @@ describe(nameof(EnumMember), () => {
         it("should get structure from an empty enum member", () => {
             doTest("enum a { member }", {
                 name: "member",
-                initializer: undefined,
                 docs: [],
                 value: undefined
+            });
+        });
+
+        it("should not use the type checker to get the enum member value", () => {
+            doTest("enum a { member = '\\t' }", {
+                name: "member",
+                docs: [],
+                value: "\t"
             });
         });
 
@@ -130,7 +137,6 @@ enum b {
             doTest(code,
                 {
                     name: "\'str\'",
-                    initializer: "3.14",
                     docs: [{ description: "Test" }],
                     value: 3.14
                 });

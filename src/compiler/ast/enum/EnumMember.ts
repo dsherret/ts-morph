@@ -1,7 +1,7 @@
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
-import { EnumMemberStructure, EnumMemberSpecificStructure } from "../../../structures";
+import { EnumMemberStructure, EnumMemberSpecificStructure, InitializerExpressionableNodeStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { StringUtils } from "../../../utils";
+import { StringUtils, TypeGuards } from "../../../utils";
 import { InitializerExpressionableNode, JSDocableNode, PropertyNamedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
@@ -67,8 +67,27 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
      * Gets the structure equivalent to this node.
      */
     getStructure() {
-        return callBaseGetStructure<EnumMemberSpecificStructure>(EnumMemberBase.prototype, this, {
-            value: this.hasInitializer() ? this.getValue() : undefined
+        const initializer = this.getInitializer();
+        const structure = callBaseGetStructure<EnumMemberSpecificStructure>(EnumMemberBase.prototype, this, {
+            value: getValue()
         }) as EnumMemberStructure;
+
+        // remove this from the base structure
+        delete (structure as any as InitializerExpressionableNodeStructure).initializer;
+
+        return structure;
+
+        function getValue() {
+            if (initializer == null)
+                return undefined;
+
+            // Don't use `#getValue()` because that will use the type checker.
+            // We have the initializer, so might as well get its value.
+            if (TypeGuards.isStringLiteral(initializer) || TypeGuards.isNumericLiteral(initializer))
+                return initializer.getLiteralValue();
+
+            // this shouldn't happen...
+            return initializer.getText({ trimLeadingIndentation: true });
+        }
     }
 }
