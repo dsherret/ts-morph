@@ -4,20 +4,24 @@ import { isNewLineAtPos } from "../textChecks";
 import { getPosAtEndOfPreviousLine, getPosAtNextNonBlankLine, getPosAtStartOfLineOrNonWhitespace, getPreviousNonWhitespacePos } from "../textSeek";
 import { getSpacingBetweenNodes } from "./getSpacingBetweenNodes";
 import { getTextForError } from "./getTextForError";
-import { TextManipulator } from "./TextManipulator";
+import { TextManipulator, AstTextManipulator } from "./TextManipulator";
 
 export interface RemoveChildrenWithFormattingTextManipulatorOptions<TNode extends Node> {
     children: Node[];
     getSiblingFormatting: (parent: TNode, sibling: Node) => FormattingKind;
 }
 
-export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> implements TextManipulator {
+export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> implements TextManipulator, AstTextManipulator {
     private removalPos: number | undefined;
 
     constructor(private readonly opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>) {
     }
 
     getNewText(inputText: string) {
+        return this.getNewTextForAst(inputText).newText;
+    }
+
+    getNewTextForAst(inputText: string) {
         const { children, getSiblingFormatting } = this.opts;
         const parent = children[0].getParentOrThrow() as TNode;
         const sourceFile = parent.getSourceFile();
@@ -31,7 +35,12 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
         // console.log(JSON.stringify(fullText.substring(0, removalPos)));
         // console.log(JSON.stringify(fullText.substring(getRemovalEnd())));
 
-        return getPrefix() + getSpacing() + getSuffix();
+        const removalEnd = getRemovalEnd();
+        return {
+            pos: removalPos,
+            newText: getPrefix() + getSpacing() + getSuffix(),
+            end: removalEnd
+        };
 
         function getPrefix() {
             return fullText.substring(0, removalPos);
@@ -48,7 +57,7 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
         }
 
         function getSuffix() {
-            return fullText.substring(getRemovalEnd());
+            return fullText.substring(removalEnd);
         }
 
         function getRemovalPos() {

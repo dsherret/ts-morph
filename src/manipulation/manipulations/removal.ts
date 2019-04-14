@@ -1,10 +1,11 @@
-import { Node, OverloadableNode } from "../../compiler";
+import { Node, OverloadableNode, Statement } from "../../compiler";
 import { SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { FormattingKind, getClassMemberFormatting, getClausedNodeChildFormatting, getInterfaceMemberFormatting, getStatementedNodeChildFormatting } from "../formatting";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { RemoveChildrenTextManipulator, RemoveChildrenWithFormattingTextManipulator, UnwrapTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
+import { doAstManipulation, RemoveStatementAstNodeHandler } from "./doAstManipulation";
 
 export interface RemoveChildrenOptions {
     children: Node[];
@@ -139,8 +140,13 @@ export function removeOverloadableStatementedNodeChild(node: Node & Overloadable
         removeStatementedNodeChildren([...node.getOverloads(), node]);
 }
 
-export function removeStatementedNodeChild(node: Node) {
-    removeStatementedNodeChildren([node]);
+export function removeStatementedNodeChild(node: Statement) {
+    // removeStatementedNodeChildren([node]);
+    const sourceFile = node.getSourceFile();
+    doAstManipulation(sourceFile, new RemoveChildrenWithFormattingTextManipulator<Node>({
+        children: [node],
+        getSiblingFormatting: getStatementedNodeChildFormatting
+    }), new RemoveStatementAstNodeHandler(sourceFile, node));
 }
 
 export function removeStatementedNodeChildren(nodes: Node[]) {
