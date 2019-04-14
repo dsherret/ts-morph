@@ -84,7 +84,7 @@ describe(nameof(EnumMember), () => {
     });
 
     describe(nameof<EnumMember>(d => d.set), () => {
-        function doTest(code: string, structure: Partial<EnumMemberSpecificStructure>, expectedCode: string) {
+        function doTest(code: string, structure: Partial<EnumMemberStructure>, expectedCode: string) {
             const { firstEnumMember, sourceFile } = getInfoFromTextWithFirstMember(code);
             firstEnumMember.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -96,6 +96,10 @@ describe(nameof(EnumMember), () => {
 
         it("should remove the value when providing undefined for that property", () => {
             doTest("enum Identifier { member = 5 }", { value: undefined }, "enum Identifier { member }");
+        });
+
+        it("should not remove the initializer when providing an initializer and undefined value", () => {
+            doTest("enum Identifier { member = 5 }", { initializer: "6", value: undefined }, "enum Identifier { member = 6 }");
         });
 
         it("should change when specifying", () => {
@@ -112,6 +116,8 @@ describe(nameof(EnumMember), () => {
             expect(firstEnumMember.getStructure()).to.deep.equal(expected);
         }
 
+        // Note: Ensure `initializer` always exists, because people may assign identifiers
+        // to enum members (ex. `enum Enum { member = myValue }`).
         it("should get structure from an empty enum member", () => {
             doTest("enum a { member }", {
                 name: "member",
@@ -132,7 +138,7 @@ enum b {
                     name: "\'str\'",
                     initializer: "3.14",
                     docs: [{ description: "Test" }],
-                    value: 3.14
+                    value: undefined
                 });
         });
     });

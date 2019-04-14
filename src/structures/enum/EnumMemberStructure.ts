@@ -7,5 +7,6 @@ export interface EnumMemberStructure
 }
 
 export interface EnumMemberSpecificStructure {
+    /** Convenience property for setting the initializer. */
     value?: number | string;
 }

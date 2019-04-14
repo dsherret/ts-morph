@@ -120,6 +120,10 @@ Do the following:
 fileTextChanges.forEach(change => change.applyChanges());
 ```
 
+## `EnumMember#getStructure()` only returns the `initializer`
+
+Previously it would return both the `initializer` and `value`. `value` should be seen as more of a convenience property for setting the initializer.
+
 ## Version 1
 
 Renamed library to `ts-morph` and reset version to 1.0.0.

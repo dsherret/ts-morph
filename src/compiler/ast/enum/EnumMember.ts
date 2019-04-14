@@ -57,7 +57,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
 
         if (structure.value != null)
             this.setValue(structure.value);
-        else if (structure.hasOwnProperty(nameof(structure.value)))
+        else if (structure.hasOwnProperty(nameof(structure.value)) && structure.initializer == null)
             this.removeInitializer();
 
         return this;
@@ -68,7 +68,8 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
      */
     getStructure() {
         return callBaseGetStructure<EnumMemberSpecificStructure>(EnumMemberBase.prototype, this, {
-            value: this.hasInitializer() ? this.getValue() : undefined
+            // never return the value, only return the initializer
+            value: undefined
         }) as EnumMemberStructure;
     }
 }
