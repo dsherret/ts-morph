@@ -10503,6 +10503,7 @@ export interface EnumMemberStructure extends Structure, EnumMemberSpecificStruct
 }
 
 interface EnumMemberSpecificStructure {
+    /** Convenience property for setting the initializer. */
     value?: number | string;
 }
 
