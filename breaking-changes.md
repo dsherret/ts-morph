@@ -120,27 +120,6 @@ Do the following:
 fileTextChanges.forEach(change => change.applyChanges());
 ```
 
-### Removed `EnumMemberStructure#initializer`
-
-It was kind of confusing that both `value` and `initializer` properties existed:
-
-```ts
-myEnum.addMember({
-    name: "member",
-    value: 1,
-    initializer: "2" // huh? which one will get set?
-});
-```
-
-So `initializer` was removed because it was less convenient to use. Instead, use `value` from now on:
-
-```ts
-myEnum.addMember({
-    name: "member",
-    value: 1
-});
-```
-
 ## Version 1
 
 Renamed library to `ts-morph` and reset version to 1.0.0.

@@ -10499,7 +10499,7 @@ interface EnumDeclarationSpecificStructure extends KindedStructure<StructureKind
     members?: EnumMemberStructure[];
 }
 
-export interface EnumMemberStructure extends Structure, EnumMemberSpecificStructure, PropertyNamedNodeStructure, JSDocableNodeStructure {
+export interface EnumMemberStructure extends Structure, EnumMemberSpecificStructure, PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure {
 }
 
 interface EnumMemberSpecificStructure {
