@@ -14,17 +14,21 @@ export class StatementsStructurePrinter extends Printer<StatementStructuresArray
         super();
     }
 
-    printTexts(writer: CodeBlockWriter, statements: StatementStructuresArrayItem[] | undefined) {
+    printTexts(writer: CodeBlockWriter, statements: StatementStructuresArrayItem[] | string | WriterFunction | undefined) {
         if (statements == null)
             return;
 
-        for (const statement of statements) {
-            if (isLastNonWhitespaceCharCloseBrace.test(writer.toString()))
-                writer.blankLineIfLastNot();
-            else if (!writer.isAtStartOfFirstLineOfBlock())
-                writer.newLineIfLastNot();
+        if (typeof statements === "string" || statements instanceof Function)
+            this.printText(writer, statements)
+        else {
+            for (const statement of statements) {
+                if (isLastNonWhitespaceCharCloseBrace.test(writer.toString()))
+                    writer.blankLineIfLastNot();
+                else if (!writer.isAtStartOfFirstLineOfBlock())
+                    writer.newLineIfLastNot();
 
-            this.printText(writer, statement);
+                this.printText(writer, statement);
+            }
         }
     }
 

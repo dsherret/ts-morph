@@ -10662,7 +10662,7 @@ interface SourceFileSpecificStructure {
 }
 
 export interface StatementedNodeStructure {
-    statements?: (string | WriterFunction | StatementStructures)[];
+    statements?: (string | WriterFunction | StatementStructures)[] | string | WriterFunction;
 }
 
 export interface VariableDeclarationListStructure extends Structure, VariableDeclarationListSpecificStructure {

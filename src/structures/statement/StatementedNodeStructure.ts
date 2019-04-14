@@ -2,5 +2,5 @@
 import { StatementStructures } from "../aliases";
 
 export interface StatementedNodeStructure {
-    statements?: (string | WriterFunction | StatementStructures)[];
+    statements?: (string | WriterFunction | StatementStructures)[] | string | WriterFunction;
 }

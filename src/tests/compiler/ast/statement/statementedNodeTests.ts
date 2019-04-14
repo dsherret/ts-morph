@@ -446,6 +446,14 @@ describe(nameof(StatementedNode), () => {
             }, `var myVar;\nconsole.log;\n\nclass MyClass {\n}\n`);
         });
 
+        it("should support providing just a string", () => {
+            doTest("", { statements: "1;" }, "1;\n");
+        });
+
+        it("should support providing just a writer function", () => {
+            doTest("", { statements: writer => writer.write("1;") }, "1;\n");
+        });
+
         describe(nameof(BodyableNode), () => {
             function doBodyableTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
                 const { sourceFile, firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
