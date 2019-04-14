@@ -1,6 +1,6 @@
 ﻿import { SyntaxKind, ts } from "../../typescript";
 
-export function getParentSyntaxList(node: ts.Node) {
+export function getParentSyntaxList(node: ts.Node, sourceFile: ts.SourceFile) {
     if (node.kind === SyntaxKind.EndOfFileToken)
         return undefined;
 
@@ -10,7 +10,7 @@ export function getParentSyntaxList(node: ts.Node) {
 
     const { pos, end } = node;
     // @code-fence-allow(getChildren): The extended comments are not needed here.
-    for (const child of parent.getChildren()) {
+    for (const child of parent.getChildren(sourceFile)) {
         if (child.pos > end || child === node)
             return undefined;
 

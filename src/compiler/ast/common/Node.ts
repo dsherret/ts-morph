@@ -1118,7 +1118,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
         if (kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia)
             return this.getParentOrThrow().getChildSyntaxList();
 
-        const syntaxList = getParentSyntaxList(this.compilerNode);
+        const syntaxList = getParentSyntaxList(this.compilerNode, this._sourceFile.compilerNode);
         return this._getNodeFromCompilerNodeIfExists(syntaxList);
     }
 
