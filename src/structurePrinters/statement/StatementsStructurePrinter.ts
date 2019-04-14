@@ -14,12 +14,12 @@ export class StatementsStructurePrinter extends Printer<StatementStructuresArray
         super();
     }
 
-    printTexts(writer: CodeBlockWriter, statements: StatementStructuresArrayItem[] | string | WriterFunction | undefined) {
+    printTexts(writer: CodeBlockWriter, statements: ReadonlyArray<StatementStructuresArrayItem> | string | WriterFunction | undefined) {
         if (statements == null)
             return;
 
         if (typeof statements === "string" || statements instanceof Function)
-            this.printText(writer, statements)
+            this.printText(writer, statements);
         else {
             for (const statement of statements) {
                 if (isLastNonWhitespaceCharCloseBrace.test(writer.toString()))

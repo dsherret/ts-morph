@@ -8057,17 +8057,17 @@ export interface StatementedNode {
     getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentStatements[TKind];
     /**
      * Add statements.
-     * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
+     * @param statements - statements to add.
      * @returns The statements that were added.
      */
-    addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
+    addStatements(statements: string | WriterFunction | ReadonlyArray<string | WriterFunction | StatementStructures>): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Child index to insert at.
-     * @param textOrWriterFunction - Text or writer function to write the statement or statements with.
+     * @param statements - Statements to insert.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
+    insertStatements(index: number, statements: string | WriterFunction | ReadonlyArray<string | WriterFunction | StatementStructures>): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Child index to remove the statement at.

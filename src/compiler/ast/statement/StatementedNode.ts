@@ -3,10 +3,10 @@ import * as errors from "../../../errors";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../../manipulation";
 import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
-    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, OptionalKind, Structure } from "../../../structures";
+    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, StatementStructures, OptionalKind, Structure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
-import { ArrayUtils, getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
+import { getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
     TypeGuards } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -62,17 +62,17 @@ export interface StatementedNode {
     getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentStatements[TKind];
     /**
      * Add statements.
-     * @param textOrWriterFunction - Text or writer function to add the statement or statements with.
+     * @param statements - statements to add.
      * @returns The statements that were added.
      */
-    addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
+    addStatements(statements: string | WriterFunction | ReadonlyArray<string | WriterFunction | StatementStructures>): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Child index to insert at.
-     * @param textOrWriterFunction - Text or writer function to write the statement or statements with.
+     * @param statements - Statements to insert.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Statement[];
+    insertStatements(index: number, statements: string | WriterFunction | ReadonlyArray<string | WriterFunction | StatementStructures>): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Child index to remove the statement at.
@@ -485,14 +485,18 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`);
         }
 
-        addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>) {
+        addStatements(textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction | StatementStructures>) {
             return this.insertStatements(this._getCompilerStatementsWithComments().length, textOrWriterFunction);
         }
 
-        insertStatements(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>) {
+        insertStatements(index: number, statements: string | WriterFunction | ReadonlyArray<string | WriterFunction | StatementStructures>) {
             addBodyIfNotExists(this);
+            const writerFunction = (writer: CodeBlockWriter) => {
+                const statementsPrinter = this._context.structurePrinterFactory.forStatements({ isAmbient: isNodeAmbientOrInAmbientContext(this) });
+                statementsPrinter.printTexts(writer, statements);
+            };
 
-            return getChildSyntaxList.call(this).insertChildText(index, textOrWriterFunction) as Statement[];
+            return getChildSyntaxList.call(this).insertChildText(index, writerFunction) as Statement[];
 
             function getChildSyntaxList(this: Node) {
                 const childSyntaxList = this.getChildSyntaxListOrThrow();
@@ -899,13 +903,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             callBaseSet(Base.prototype, this, structure);
 
-            // add the text after if necessary (do this in a single print so it's fast)
-            if (structure.statements != null) {
-                this.addStatements(writer => {
-                    const statementsPrinter = this._context.structurePrinterFactory.forStatementedNode({ isAmbient: isNodeAmbientOrInAmbientContext(this) });
-                    statementsPrinter.printText(writer, structure);
-                });
-            }
+            // add the text after if necessary
+            if (structure.statements != null)
+                this.addStatements(structure.statements);
 
             return this;
         }

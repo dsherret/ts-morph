@@ -5,6 +5,7 @@ import { StatementedNodeStructure, StatementStructures, StructureKind } from "..
 import { SyntaxKind } from "../../../../typescript";
 import { TypeGuards } from "../../../../utils";
 import { getInfoFromText, fillStructures } from "../../testHelpers";
+import { WriterFunction } from "../../../../types";
 
 function getInfoFromTextWithSyntax<T extends Node>(text: string, kind?: SyntaxKind) {
     const obj = getInfoFromText(text);
@@ -132,7 +133,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(s => s.insertStatements), () => {
-        function doSourceFileTest(code: string, index: number, statements: string, expectedLength: number, expectedCode: string) {
+        function doSourceFileTest(code: string, index: number, statements: string | WriterFunction | StatementStructures[], expectedLength: number, expectedCode: string) {
             const { sourceFile } = getInfoFromText(code);
             const nodes = sourceFile.insertStatements(index, statements);
             expect(nodes.length).to.equal(expectedLength);
@@ -192,6 +193,11 @@ describe(nameof(StatementedNode), () => {
         it("should insert statements at the end of a source file", () => {
             doSourceFileTest("function a() {}\nfunction b() {}", 2, "newText;\nsecondText;", 2,
                 "function a() {}\nfunction b() {}\nnewText;\nsecondText;");
+        });
+
+        it("should insert structures", () => {
+            doSourceFileTest("", 0, [{ kind: StructureKind.Function, name: "f" }], 1,
+                "function f() {\n}\n");
         });
 
         function doFirstChildTest<T extends Node>(code: string, index: number, statements: string, expectedLength: number, expectedCode: string, kind?: SyntaxKind) {
