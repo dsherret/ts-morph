@@ -57,6 +57,14 @@ describe(nameof(ExtendedCommentParser), () => {
             }]);
         });
 
+        it("should get triple slash comments", () => {
+            doStatementedTests("/// a\n", [{
+                kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                pos: 0,
+                end: 5
+            }]);
+        });
+
         it("should get multi-line comments that are before and after on a separate line", () => {
             doStatementedTests("/*a*/\nlet a;\n/*b*/", [{
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,

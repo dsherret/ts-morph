@@ -518,7 +518,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         removeStatements(indexRange: [number, number]) {
-            const statements = this.getStatements();
+            const statements = this.getStatementsWithComments();
             errors.throwIfRangeOutOfRange(indexRange, [0, statements.length], nameof(indexRange));
 
             removeStatementedNodeChildren(statements.slice(indexRange[0], indexRange[1] + 1));

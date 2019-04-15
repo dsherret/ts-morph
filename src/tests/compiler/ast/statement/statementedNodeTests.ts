@@ -319,6 +319,10 @@ describe(nameof(StatementedNode), () => {
             doSourceFileTest("function a() {}\nfunction b() {}\nfunction c() {}\n", [0, 1], "function c() {}\n");
         });
 
+        it("should remove when there are comment statements", () => {
+            doSourceFileTest("/// <reference path='test.ts' />\n//test", [0, 1], "");
+        });
+
         it("should remove statements in the middle of a source file", () => {
             doSourceFileTest("function a() {}\nfunction b() {}\nfunction c() {}\n", [1, 1], "function a() {}\n\nfunction c() {}\n");
         });
