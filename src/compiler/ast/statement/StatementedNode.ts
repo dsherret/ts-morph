@@ -26,9 +26,9 @@ export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDecla
     | ts.DefaultClause | ts.ModuleBlock>;
 
 export interface KindToNodeMappingsWithCommentStatements extends ImplementedKindToNodeMappings {
+    [kind: number]: Node;
     [SyntaxKind.SingleLineCommentTrivia]: CommentStatement;
     [SyntaxKind.MultiLineCommentTrivia]: CommentStatement;
-    [kind: number]: Node;
 }
 
 export interface StatementedNode {

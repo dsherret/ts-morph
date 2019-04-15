@@ -6,68 +6,92 @@
  * -------------------------------------------
  */
 import * as os from "os";
-import { Node, VariableStatement, TypeGuards, Scope, ClassDeclaration } from "ts-morph";
+import { Node, TypeGuards, Scope, ClassDeclaration, StructureKind, InterfaceDeclarationStructure, TypeAliasDeclarationStructure,
+    FunctionDeclarationStructure, VariableStatementStructure} from "ts-morph";
 import { createDeclarationProject, removeImportTypes } from "../common";
-import { flattenDeclarationFiles } from "./flattenDeclarationFiles";
+import { getDeclarationFileStatements } from "./declarationFile";
+
+// todo: remove this once this code's performance is improved.
+// Basic idea here is to change this code to modify the structures rather than the source file
+
+// Original times:
+// Emitting declaration files [43s]
+// Flattening... [46.5s]
+// Removing import types... [73.7s]
+// Making constructors private... [28.9s]
+// Hiding base declarations... [18.9s]
+// Hiding specific structures... [5.5s]
+// Hiding extension types... [8.7s]
+// Hiding specific declarations... [0.3s]
+// Removing @skipOrThrowCheck... [11.6s]
+// Moving file... [0.1ss]
+// Total time: 337.33s
 
 export async function createDeclarationFile() {
     let lastDateTime: Date | undefined;
     log("Emitting declaration files...");
     const project = createDeclarationProject();
     const mainFile = project.getSourceFileOrThrow("main.d.ts");
+    const codeBlockWriterFile = project.getSourceFileOrThrow("dist-declarations/codeBlockWriter/code-block-writer.d.ts");
+    codeBlockWriterFile.moveToDirectory(project.getDirectoryOrThrow("dist-declarations"));
 
-    // todo: will work on drastically speeding this up later...
-
-    log("Flattening...");
-    flattenDeclarationFiles(project, mainFile);
-    log("Removing import types...");
-    removeImportTypes(mainFile);
-    log("Making constructors private...");
-    makeConstructorsPrivate();
-    log("Hiding base declarations...");
-    hideBaseDeclarations();
+    log("Getting statements...");
+    const statements = getDeclarationFileStatements(mainFile, codeBlockWriterFile);
     log("Hiding specific structures...");
     hideSpecificStructures();
     log("Hiding extension types...");
     hideExtensionTypes();
     log("Hiding specific declarations...");
     hideSpecificDeclarations();
+    log("Hiding base declarations...");
+    hideBaseDeclarations();
+
+    log("Printing...");
+    mainFile.set({
+        statements
+    });
+
+    // todo: will work on improving the rest of this later
+    mainFile.replaceWithText(mainFile.getFullText().replace(/compiler\.([A-Za-z]+)/g, "$1").replace(/ts\.(SyntaxKind)/g, "$1"));
+    log("Removing import types...");
+    removeImportTypes(mainFile);
+    log("Making constructors private...");
+    makeConstructorsPrivate();
     log("Removing @skipOrThrowCheck...");
     removeSkipOrThrowCheck();
     log("Moving file...");
     mainFile.move("ts-morph.d.ts");
     finishLog(lastDateTime!);
 
-    await project.save();
-
-    function hideBaseDeclarations() {
-        const baseDeclarations = mainFile.getVariableDeclarations().filter(s => s.getName().endsWith("Base"));
-
-        for (const declaration of baseDeclarations) {
-            const variableStatement = declaration.getParentOrThrow().getParentOrThrow() as Node as VariableStatement;
-            if (variableStatement.getDeclarations().length > 1)
-                throw new Error(`Unexpected. Found more than one declaration for ${declaration.getName()}.`);
-
-            // the trick is to mark these as not exported in the declaration file
-            variableStatement.setIsExported(false);
-        }
-    }
+    await Promise.all([codeBlockWriterFile.save(), mainFile.save()]);
 
     function hideSpecificStructures() {
-        const specificStructures = mainFile.getInterfaces().filter(s => s.getName().endsWith("SpecificStructure"));
+        const specificStructures = statements.filter(s => s.kind === StructureKind.Interface && s.name.endsWith("SpecificStructure")) as InterfaceDeclarationStructure[];
         for (const structure of specificStructures)
-            structure.setIsExported(false);
+            structure.isExported = false;
     }
 
     function hideExtensionTypes() {
-        const extensionTypes = mainFile.getTypeAliases().filter(t => t.getName().endsWith("ExtensionType"));
+        const extensionTypes = statements.filter(s => s.kind === StructureKind.TypeAlias && s.name.endsWith("ExtensionType")) as TypeAliasDeclarationStructure[];
         for (const extensionType of extensionTypes)
-            extensionType.setIsExported(false);
+            extensionType.isExported = false;
     }
 
     function hideSpecificDeclarations() {
-        mainFile.getFunctionOrThrow("ClassLikeDeclarationBaseSpecific").setIsExported(false);
-        mainFile.getInterfaceOrThrow("ClassLikeDeclarationBaseSpecific").setIsExported(false);
+        (statements.find(s => s.kind === StructureKind.Function && s.name === "ClassLikeDeclarationBaseSpecific") as FunctionDeclarationStructure).isExported = false;
+        (statements.find(s => s.kind === StructureKind.Interface && s.name === "ClassLikeDeclarationBaseSpecific") as InterfaceDeclarationStructure).isExported = false;
+    }
+
+    function hideBaseDeclarations() {
+        const baseStatements = statements.filter(s => s.kind === StructureKind.VariableStatement && s.declarations.some(d => d.name.endsWith("Base"))) as VariableStatementStructure[];
+
+        for (const statement of baseStatements) {
+            if (statement.declarations.length > 1)
+                throw new Error(`Unexpected. Found more than one declaration for ${JSON.stringify(statement)}.`);
+
+            // the trick is to mark these as not exported in the declaration file
+            statement.isExported = false;
+        }
     }
 
     function removeSkipOrThrowCheck() {
