@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../../compiler";
-import { EnumMemberSpecificStructure, EnumMemberStructure } from "../../../../structures";
+import { EnumMemberSpecificStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 function getInfoFromTextWithFirstMember(text: string) {
@@ -103,7 +103,7 @@ describe(nameof(EnumMember), () => {
         });
 
         it("should change when specifying", () => {
-            const structure: MakeRequired<EnumMemberSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<EnumMemberSpecificStructure>> = {
                 value: 5
             };
             doTest("enum Identifier { member }", structure, "enum Identifier { member = 5 }");
@@ -120,6 +120,7 @@ describe(nameof(EnumMember), () => {
         // to enum members (ex. `enum Enum { member = myValue }`).
         it("should get structure from an empty enum member", () => {
             doTest("enum a { member }", {
+                kind: StructureKind.EnumMember,
                 name: "member",
                 initializer: undefined,
                 docs: [],
@@ -133,13 +134,13 @@ enum b {
     /** Test */
     'str' = 3.14
 }`;
-            doTest(code,
-                {
-                    name: "\'str\'",
-                    initializer: "3.14",
-                    docs: [{ description: "Test" }],
-                    value: undefined
-                });
+            doTest(code, {
+                kind: StructureKind.EnumMember,
+                name: "\'str\'",
+                initializer: "3.14",
+                docs: [{ description: "Test" }],
+                value: undefined
+            });
         });
     });
 });

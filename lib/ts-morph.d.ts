@@ -5172,24 +5172,24 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * Adds a member to the enum.
      * @param structure - Structure of the enum.
      */
-    addMember(structure: EnumMemberStructure): EnumMember;
+    addMember(structure: OptionalKind<EnumMemberStructure>): EnumMember;
     /**
      * Adds members to the enum.
      * @param structures - Structures of the enums.
      */
-    addMembers(structures: ReadonlyArray<EnumMemberStructure>): EnumMember[];
+    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>): EnumMember[];
     /**
      * Inserts a member to the enum.
      * @param index - Child index to insert at.
      * @param structure - Structure of the enum.
      */
-    insertMember(index: number, structure: EnumMemberStructure): EnumMember;
+    insertMember(index: number, structure: OptionalKind<EnumMemberStructure>): EnumMember;
     /**
      * Inserts members to an enum.
      * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
-    insertMembers(index: number, structures: ReadonlyArray<EnumMemberStructure>): EnumMember[];
+    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>): EnumMember[];
     /**
      * Gets an enum member.
      * @param name - Name of the member.
@@ -10291,6 +10291,9 @@ export declare abstract class SettingsContainer<T extends object> {
 }
 
 export declare type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | NamespaceDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
+export declare type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure | PropertyDeclarationStructure;
+export declare type InterfaceMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
+export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures;
 
 export interface AbstractableNodeStructure {
     isAbstract?: boolean;
@@ -10517,13 +10520,13 @@ export interface EnumDeclarationStructure extends Structure, NamedNodeStructure,
 
 interface EnumDeclarationSpecificStructure extends KindedStructure<StructureKind.Enum> {
     isConst?: boolean;
-    members?: EnumMemberStructure[];
+    members?: OptionalKind<EnumMemberStructure>[];
 }
 
 export interface EnumMemberStructure extends Structure, EnumMemberSpecificStructure, PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure {
 }
 
-interface EnumMemberSpecificStructure {
+interface EnumMemberSpecificStructure extends KindedStructure<StructureKind.EnumMember> {
     /**
      * Convenience property for setting the initializer.
      */
@@ -10754,27 +10757,28 @@ export declare enum StructureKind {
     SetAccessor = 3,
     Property = 4,
     Enum = 5,
-    Function = 6,
-    CallSignature = 7,
-    ConstructSignature = 8,
-    IndexSignature = 9,
-    Interface = 10,
-    Method = 11,
-    MethodSignature = 12,
-    PropertySignature = 13,
-    ExportAssignment = 14,
-    ExportDeclaration = 15,
-    ImportDeclaration = 16,
-    Namespace = 17,
-    VariableStatement = 18,
-    TypeAlias = 19,
-    PropertyAssignment = 20,
-    ShorthandPropertyAssignment = 21,
-    SpreadAssignment = 22,
-    JsxAttribute = 23,
-    JsxSpreadAttribute = 24,
-    JsxElement = 25,
-    JsxSelfClosingElement = 26
+    EnumMember = 6,
+    Function = 7,
+    CallSignature = 8,
+    ConstructSignature = 9,
+    IndexSignature = 10,
+    Interface = 11,
+    Method = 12,
+    MethodSignature = 13,
+    PropertySignature = 14,
+    ExportAssignment = 15,
+    ExportDeclaration = 16,
+    ImportDeclaration = 17,
+    Namespace = 18,
+    VariableStatement = 19,
+    TypeAlias = 20,
+    PropertyAssignment = 21,
+    ShorthandPropertyAssignment = 22,
+    SpreadAssignment = 23,
+    JsxAttribute = 24,
+    JsxSpreadAttribute = 25,
+    JsxElement = 26,
+    JsxSelfClosingElement = 27
 }
 
 export { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind };

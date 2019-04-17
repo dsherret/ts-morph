@@ -8,6 +8,7 @@ export enum StructureKind {
     SetAccessor,
     Property,
     Enum,
+    EnumMember,
     Function,
     CallSignature,
     ConstructSignature,
@@ -44,6 +45,7 @@ export interface StructureKindToSyntaxKind {
     [StructureKind.SetAccessor]: SyntaxKind.SetAccessor;
     [StructureKind.Property]: SyntaxKind.PropertyDeclaration;
     [StructureKind.Enum]: SyntaxKind.EnumDeclaration;
+    [StructureKind.EnumMember]: SyntaxKind.EnumMember;
     [StructureKind.Function]: SyntaxKind.FunctionDeclaration;
     [StructureKind.CallSignature]: SyntaxKind.CallSignature;
     [StructureKind.ConstructSignature]: SyntaxKind.ConstructSignature;

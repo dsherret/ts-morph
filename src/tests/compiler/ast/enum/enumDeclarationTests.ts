@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../../compiler";
-import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure, StructureKind } from "../../../../structures";
+import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
@@ -54,7 +54,7 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(d => d.insertMembers), () => {
-        function doTest(startCode: string, index: number, structures: EnumMemberStructure[], expectedCode: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<EnumMemberStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.insertMembers(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -108,7 +108,7 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(d => d.insertMember), () => {
-        function doTest(startCode: string, index: number, structure: EnumMemberStructure, expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<EnumMemberStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.insertMember(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -121,7 +121,7 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(d => d.addMember), () => {
-        function doTest(startCode: string, structure: EnumMemberStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<EnumMemberStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.addMember(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -134,7 +134,7 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(d => d.addMembers), () => {
-        function doTest(startCode: string, structures: EnumMemberStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKind<EnumMemberStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.addMembers(structures);
             expect(sourceFile.getFullText()).to.equal(expectedCode);

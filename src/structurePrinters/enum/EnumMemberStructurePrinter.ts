@@ -1,16 +1,16 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { EnumMemberStructure } from "../../structures";
+import { EnumMemberStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 
-export class EnumMemberStructurePrinter extends NodePrinter<EnumMemberStructure> {
+export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMemberStructure>> {
     private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<EnumMemberStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<EnumMemberStructure>> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: EnumMemberStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<EnumMemberStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         writer.write(structure.name);
         if (typeof structure.value === "string")

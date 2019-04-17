@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
-import { EnumDeclarationStructure, EnumMemberStructure, EnumDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { EnumDeclarationStructure, EnumMemberStructure, EnumDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
@@ -37,7 +37,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Adds a member to the enum.
      * @param structure - Structure of the enum.
      */
-    addMember(structure: EnumMemberStructure) {
+    addMember(structure: OptionalKind<EnumMemberStructure>) {
         return this.addMembers([structure])[0];
     }
 
@@ -45,7 +45,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Adds members to the enum.
      * @param structures - Structures of the enums.
      */
-    addMembers(structures: ReadonlyArray<EnumMemberStructure>) {
+    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>) {
         return this.insertMembers(this.getMembers().length, structures);
     }
 
@@ -54,7 +54,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param index - Child index to insert at.
      * @param structure - Structure of the enum.
      */
-    insertMember(index: number, structure: EnumMemberStructure) {
+    insertMember(index: number, structure: OptionalKind<EnumMemberStructure>) {
         return this.insertMembers(index, [structure])[0];
     }
 
@@ -63,7 +63,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
-    insertMembers(index: number, structures: ReadonlyArray<EnumMemberStructure>) {
+    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>) {
         const members = this.getMembers();
         index = verifyAndGetIndex(index, members.length);
 
