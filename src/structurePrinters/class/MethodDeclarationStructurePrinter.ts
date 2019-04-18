@@ -52,7 +52,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
         }
     }
 
-    private printOverloads(writer: CodeBlockWriter, name: string, structures: ReadonlyArray<MethodDeclarationOverloadStructure> | undefined) {
+    private printOverloads(writer: CodeBlockWriter, name: string, structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>> | undefined) {
         if (structures == null || structures.length === 0)
             return;
 
@@ -62,12 +62,12 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
         }
     }
 
-    printOverload(writer: CodeBlockWriter, name: string, structure: MethodDeclarationOverloadStructure) {
+    printOverload(writer: CodeBlockWriter, name: string, structure: OptionalKind<MethodDeclarationOverloadStructure>) {
         this.printBase(writer, name, structure);
         writer.write(";");
     }
 
-    private printBase(writer: CodeBlockWriter, name: string, structure: MethodDeclarationOverloadStructure | MethodDeclarationStructure) {
+    private printBase(writer: CodeBlockWriter, name: string, structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         if ((structure as MethodDeclarationStructure).decorators != null)
             this.factory.forDecorator().printTexts(writer, (structure as MethodDeclarationStructure).decorators);
