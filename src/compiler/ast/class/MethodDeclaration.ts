@@ -90,7 +90,6 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
             getStructure(this)) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;
 
         function getStructure(thisNode: MethodDeclaration) {
-            // this is not the best typing... unit tests will catch issues though
             if (hasImplementation && isOverload)
                 return getOverloadSpecificStructure();
             return getSpecificStructure();

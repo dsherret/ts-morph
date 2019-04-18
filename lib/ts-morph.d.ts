@@ -3978,24 +3978,24 @@ export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDe
      * Add a method overload.
      * @param structure - Structure to add.
      */
-    addOverload(structure: MethodDeclarationOverloadStructure): MethodDeclaration;
+    addOverload(structure: OptionalKind<MethodDeclarationOverloadStructure>): MethodDeclaration;
     /**
      * Add method overloads.
      * @param structures - Structures to add.
      */
-    addOverloads(structures: ReadonlyArray<MethodDeclarationOverloadStructure>): MethodDeclaration[];
+    addOverloads(structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>>): MethodDeclaration[];
     /**
      * Inserts a method overload.
      * @param index - Child index to insert at.
      * @param structure - Structures to insert.
      */
-    insertOverload(index: number, structure: MethodDeclarationOverloadStructure): MethodDeclaration;
+    insertOverload(index: number, structure: OptionalKind<MethodDeclarationOverloadStructure>): MethodDeclaration;
     /**
      * Inserts method overloads.
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertOverloads(index: number, structures: ReadonlyArray<MethodDeclarationOverloadStructure>): MethodDeclaration[];
+    insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>>): MethodDeclaration[];
     /**
      * Gets the structure equivalent to this node.
      */
@@ -5922,24 +5922,24 @@ export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.Func
      * Adds a function overload.
      * @param structure - Structure of the overload.
      */
-    addOverload(structure: FunctionDeclarationOverloadStructure): FunctionDeclaration;
+    addOverload(structure: OptionalKind<FunctionDeclarationOverloadStructure>): FunctionDeclaration;
     /**
      * Adds function overloads.
      * @param structures - Structures of the overloads.
      */
-    addOverloads(structures: ReadonlyArray<FunctionDeclarationOverloadStructure>): FunctionDeclaration[];
+    addOverloads(structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>>): FunctionDeclaration[];
     /**
      * Inserts a function overload.
      * @param index - Child index to insert at.
      * @param structure - Structure of the overload.
      */
-    insertOverload(index: number, structure: FunctionDeclarationOverloadStructure): FunctionDeclaration;
+    insertOverload(index: number, structure: OptionalKind<FunctionDeclarationOverloadStructure>): FunctionDeclaration;
     /**
      * Inserts function overloads.
      * @param index - Child index to insert at.
      * @param structure - Structures of the overloads.
      */
-    insertOverloads(index: number, structures: ReadonlyArray<FunctionDeclarationOverloadStructure>): FunctionDeclaration[];
+    insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>>): FunctionDeclaration[];
     /**
      * Removes this function declaration.
      */
@@ -5985,7 +5985,7 @@ export interface OverloadableNode {
      */
     getImplementationOrThrow(): this;
     /**
-     * Gets if this is an overload.
+     * Gets if this is not the implementation.
      */
     isOverload(): boolean;
     /**
@@ -10293,7 +10293,7 @@ export declare abstract class SettingsContainer<T extends object> {
 export declare type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | NamespaceDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
 export declare type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure | PropertyDeclarationStructure;
 export declare type InterfaceMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
-export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures;
+export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | FunctionDeclarationOverloadStructure;
 
 export interface AbstractableNodeStructure {
     isAbstract?: boolean;
@@ -10454,10 +10454,13 @@ export interface MethodDeclarationStructure extends Structure, MethodDeclaration
 }
 
 interface MethodDeclarationSpecificStructure extends KindedStructure<StructureKind.Method> {
-    overloads?: MethodDeclarationOverloadStructure[];
+    overloads?: OptionalKind<MethodDeclarationOverloadStructure>[];
 }
 
-export interface MethodDeclarationOverloadStructure extends Structure, StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, QuestionTokenableNodeStructure {
+export interface MethodDeclarationOverloadStructure extends Structure, MethodDeclarationOverloadSpecificStructure, StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, QuestionTokenableNodeStructure {
+}
+
+interface MethodDeclarationOverloadSpecificStructure extends KindedStructure<StructureKind.MethodOverload> {
 }
 
 export interface PropertyDeclarationStructure extends Structure, PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure {
@@ -10537,10 +10540,13 @@ export interface FunctionDeclarationStructure extends Structure, FunctionDeclara
 }
 
 interface FunctionDeclarationSpecificStructure extends KindedStructure<StructureKind.Function> {
-    overloads?: FunctionDeclarationOverloadStructure[];
+    overloads?: OptionalKind<FunctionDeclarationOverloadStructure>[];
 }
 
-export interface FunctionDeclarationOverloadStructure extends Structure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+export interface FunctionDeclarationOverloadStructure extends Structure, FunctionDeclarationOverloadSpecificStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+}
+
+interface FunctionDeclarationOverloadSpecificStructure extends KindedStructure<StructureKind.FunctionOverload> {
 }
 
 export interface FunctionLikeDeclarationStructure extends SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, StatementedNodeStructure {
@@ -10759,26 +10765,28 @@ export declare enum StructureKind {
     Enum = 5,
     EnumMember = 6,
     Function = 7,
-    CallSignature = 8,
-    ConstructSignature = 9,
-    IndexSignature = 10,
-    Interface = 11,
-    Method = 12,
-    MethodSignature = 13,
-    PropertySignature = 14,
-    ExportAssignment = 15,
-    ExportDeclaration = 16,
-    ImportDeclaration = 17,
-    Namespace = 18,
-    VariableStatement = 19,
-    TypeAlias = 20,
-    PropertyAssignment = 21,
-    ShorthandPropertyAssignment = 22,
-    SpreadAssignment = 23,
-    JsxAttribute = 24,
-    JsxSpreadAttribute = 25,
-    JsxElement = 26,
-    JsxSelfClosingElement = 27
+    FunctionOverload = 8,
+    CallSignature = 9,
+    ConstructSignature = 10,
+    IndexSignature = 11,
+    Interface = 12,
+    Method = 13,
+    MethodOverload = 14,
+    MethodSignature = 15,
+    PropertySignature = 16,
+    ExportAssignment = 17,
+    ExportDeclaration = 18,
+    ImportDeclaration = 19,
+    Namespace = 20,
+    VariableStatement = 21,
+    TypeAlias = 22,
+    PropertyAssignment = 23,
+    ShorthandPropertyAssignment = 24,
+    SpreadAssignment = 25,
+    JsxAttribute = 26,
+    JsxSpreadAttribute = 27,
+    JsxElement = 28,
+    JsxSelfClosingElement = 29
 }
 
 export { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind };

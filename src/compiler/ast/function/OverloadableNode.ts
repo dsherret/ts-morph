@@ -25,7 +25,7 @@ export interface OverloadableNode {
      */
     getImplementationOrThrow(): this;
     /**
-     * Gets if this is an overload.
+     * Gets if this is not the implementation.
      */
     isOverload(): boolean;
     /**
@@ -51,8 +51,6 @@ export function OverloadableNode<T extends Constructor<OverloadableNodeExtension
         }
 
         isOverload() {
-            if (TypeGuards.isMethodDeclaration(this) && this.isAbstract())
-                return false;
             return !this.isImplementation();
         }
 
@@ -63,10 +61,10 @@ export function OverloadableNode<T extends Constructor<OverloadableNodeExtension
 }
 
 function getOverloadsAndImplementation(node: OverloadableNodeExtensionType & OverloadableNode) {
-    const parentSyntaxList = node.getParentSyntaxListOrThrow();
+    const parent = node.getParentOrThrow();
     const name = getNameIfNamedNode(node);
     const kind = node.getKind();
-    return parentSyntaxList.getChildren().filter(n => {
+    return parent.forEachChildAsArray().filter(n => {
         const hasSameName = getNameIfNamedNode(n) === name;
         const hasSameKind = n.getKind() === kind;
         return hasSameName && hasSameKind;

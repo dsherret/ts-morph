@@ -66,15 +66,16 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
 
 export function removeClassMember(classMember: Node) {
     if (TypeGuards.isOverloadableNode(classMember)) {
-        if (classMember.isOverload()) {
+        if (classMember.isImplementation()) {
+            removeClassMembers([...classMember.getOverloads(), classMember]);
+        }
+        else {
             const parent = classMember.getParentOrThrow();
             if (TypeGuards.isAmbientableNode(parent) && parent.isAmbient())
                 removeClassMembers([classMember]);
             else
                 removeChildren({ children: [classMember], removeFollowingSpaces: true, removeFollowingNewLines: true });
         }
-        else
-            removeClassMembers([...classMember.getOverloads(), classMember]);
     }
     else {
         removeClassMembers([classMember]);

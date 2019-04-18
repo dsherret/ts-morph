@@ -113,6 +113,10 @@ describe(nameof(FunctionDeclaration), () => {
             doTest("function I() {}\n\nfunction J() {}\n\nfunction K() {}", 1, "function I() {}\n\nfunction K() {}");
         });
 
+        it("should remove only the specified function in ambient contexts (not all overloads)", () => {
+            doTest("declare function test(): void;\ndeclare function test(): void;", 1, "declare function test(): void;\n");
+        });
+
         it("should remove the function declaration and its overloads", () => {
             doTest("function I() {}\n\nfunction J(): void;\nfunction J() {}\n\nfunction K() {}", 1, "function I() {}\n\nfunction K() {}");
         });

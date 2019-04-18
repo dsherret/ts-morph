@@ -11,6 +11,10 @@ describe(nameof(OverloadableNode), () => {
     const { firstChild: classChild } = getInfoFromText<ClassDeclaration>(constructorCode);
     const constructors = classChild.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof ConstructorDeclaration) as ConstructorDeclaration[];
 
+    const ambientCode = `declare function func();declare function func();`;
+    const { sourceFile: ambientSourceFile } = getInfoFromText<FunctionDeclaration>(ambientCode);
+    const ambientFunctions = ambientSourceFile.getChildSyntaxListOrThrow().getChildren() as FunctionDeclaration[];
+
     describe(nameof<OverloadableNode>(d => d.isImplementation), () => {
         it("should not be an implementation when not one", () => {
             expect(functions[0].isImplementation()).to.be.false;
@@ -31,7 +35,11 @@ describe(nameof(OverloadableNode), () => {
         });
 
         it("should not be for abstract methods", () => {
-            expect(classChild.getMethodOrThrow(m => m.isAbstract()).isOverload()).to.be.false;
+            expect(classChild.getMethodOrThrow(m => m.isAbstract()).isOverload()).to.be.true;
+        });
+
+        it("should be in ambient contexts", () => {
+            expect(ambientFunctions.map(f => f.isOverload())).to.deep.equal([true, true]);
         });
     });
 
