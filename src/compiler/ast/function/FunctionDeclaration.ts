@@ -1,6 +1,7 @@
 import { removeOverloadableStatementedNodeChild } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationOverloadSpecificStructure, FunctionDeclarationStructure,
+    FunctionDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { AmbientableNode, AsyncableNode, BodyableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode, TextInsertableNode,
     UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
@@ -23,7 +24,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      * Adds a function overload.
      * @param structure - Structure of the overload.
      */
-    addOverload(structure: FunctionDeclarationOverloadStructure) {
+    addOverload(structure: OptionalKind<FunctionDeclarationOverloadStructure>) {
         return this.addOverloads([structure])[0];
     }
 
@@ -31,7 +32,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      * Adds function overloads.
      * @param structures - Structures of the overloads.
      */
-    addOverloads(structures: ReadonlyArray<FunctionDeclarationOverloadStructure>) {
+    addOverloads(structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>>) {
         return this.insertOverloads(this.getOverloads().length, structures);
     }
 
@@ -40,7 +41,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      * @param index - Child index to insert at.
      * @param structure - Structure of the overload.
      */
-    insertOverload(index: number, structure: FunctionDeclarationOverloadStructure) {
+    insertOverload(index: number, structure: OptionalKind<FunctionDeclarationOverloadStructure>) {
         return this.insertOverloads(index, [structure])[0];
     }
 
@@ -49,11 +50,11 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      * @param index - Child index to insert at.
      * @param structure - Structures of the overloads.
      */
-    insertOverloads(index: number, structures: ReadonlyArray<FunctionDeclarationOverloadStructure>) {
+    insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>>) {
         const thisName = this.getName();
         const childCodes = structures.map(structure => `function ${thisName}();`);
 
-        return insertOverloads<FunctionDeclaration, FunctionDeclarationOverloadStructure>({
+        return insertOverloads<FunctionDeclaration, OptionalKind<FunctionDeclarationOverloadStructure>>({
             node: this,
             index,
             structures,
@@ -97,10 +98,13 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
         return callBaseGetStructure<any>(basePrototype, this, getStructure(this));
 
         function getStructure(thisNode: FunctionDeclaration) {
-            // this is not the best typing... unit tests will catch issues though
             if (hasImplementation && isOverload)
-                return {};
+                return getOverloadSpecificStructure();
             return getSpecificStructure();
+
+            function getOverloadSpecificStructure(): FunctionDeclarationOverloadSpecificStructure {
+                return { kind: StructureKind.FunctionOverload };
+            }
 
             function getSpecificStructure(): FunctionDeclarationSpecificStructure {
                 if (!hasImplementation)
@@ -108,7 +112,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
                 else
                     return {
                         kind: StructureKind.Function,
-                        overloads: thisNode.getOverloads().map(o => o.getStructure())
+                        overloads: thisNode.getOverloads().map(o => o.getStructure() as FunctionDeclarationOverloadStructure)
                     };
             }
         }

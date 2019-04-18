@@ -1,14 +1,13 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Scope } from "../../../../compiler";
-import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure,
-    TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure, StructureKind,
+    OptionalKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { ArrayUtils } from "../../../../utils";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
-        function doTest(startCode: string, index: number, structures: MethodDeclarationOverloadStructure[], expectedCode: string, methodIndex = 0) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<MethodDeclarationOverloadStructure>[], expectedCode: string, methodIndex = 0) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[methodIndex] as MethodDeclaration;
             const result = methodDeclaration.insertOverloads(index, structures);
@@ -48,7 +47,7 @@ describe(nameof(MethodDeclaration), () => {
     });
 
     describe(nameof<MethodDeclaration>(f => f.insertOverload), () => {
-        function doTest(startCode: string, index: number, structure: MethodDeclarationOverloadStructure, expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<MethodDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as MethodDeclaration;
             const result = methodDeclaration.insertOverload(index, structure);
@@ -63,7 +62,7 @@ describe(nameof(MethodDeclaration), () => {
     });
 
     describe(nameof<MethodDeclaration>(f => f.addOverloads), () => {
-        function doTest(startCode: string, structures: MethodDeclarationOverloadStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKind<MethodDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as MethodDeclaration;
             const result = methodDeclaration.addOverloads(structures);
@@ -78,7 +77,7 @@ describe(nameof(MethodDeclaration), () => {
     });
 
     describe(nameof<MethodDeclaration>(f => f.addOverload), () => {
-        function doTest(startCode: string, structure: MethodDeclarationOverloadStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<MethodDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as MethodDeclaration;
             const result = methodDeclaration.addOverload(structure);
@@ -223,26 +222,35 @@ describe(nameof(MethodDeclaration), () => {
     });
 
     describe(nameof<MethodDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<MethodDeclarationStructure>>) {
+        function doTest(code: string, expectedStructures: OptionalProperties<OptionalTrivia<MakeRequired<MethodDeclarationStructure>>, "overloads">[]) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
-            const method = firstChild.getInstanceMethod("method") || firstChild.getStaticMethodOrThrow("method");
+            const methods = firstChild.getMethods();
 
-            expectedStructure.parameters = expectedStructure.parameters!.map(p => fillStructures.parameter(p));
-            expectedStructure.typeParameters = expectedStructure.typeParameters!.map(p => fillStructures.typeParameter(p));
-            expectedStructure.overloads = expectedStructure.overloads!.map(o => ({
-                ...o,
-                parameters: o.parameters!.map(p => fillStructures.parameter(p)),
-                typeParameters: o.typeParameters!.map(p => fillStructures.typeParameter(p))
-            }));
+            expect(methods.length).to.equal(expectedStructures.length);
 
-            const structure = method.getStructure() as MethodDeclarationStructure;
-            expect(structure).to.deep.equal(expectedStructure);
+            for (let i = 0; i < expectedStructures.length; i++) {
+                const expectedStructure = expectedStructures[i];
+                const method = methods[i];
+
+                expectedStructure.parameters = expectedStructure.parameters!.map(p => fillStructures.parameter(p));
+                expectedStructure.typeParameters = expectedStructure.typeParameters!.map(p => fillStructures.typeParameter(p));
+                if (expectedStructure.overloads != null) {
+                    expectedStructure.overloads = expectedStructure.overloads!.map(o => ({
+                        ...o,
+                        parameters: o.parameters!.map(p => fillStructures.parameter(p)),
+                        typeParameters: o.typeParameters!.map(p => fillStructures.typeParameter(p))
+                    }));
+                }
+
+                const structure = method.getStructure() as MethodDeclarationStructure;
+                expect(structure).to.deep.equal(expectedStructure);
+            }
         }
 
         it("should get structure when abstract", () => {
-            doTest("class Test { abstract method?() {} }", {
+            doTest("class Test { abstract method?(); }", [{
                 kind: StructureKind.Method,
-                statements: [],
+                statements: undefined,
                 decorators: [],
                 docs: [],
                 isAbstract: true,
@@ -251,12 +259,32 @@ describe(nameof(MethodDeclaration), () => {
                 isStatic: false,
                 hasQuestionToken: true,
                 name: "method",
-                overloads: [],
                 parameters: [],
                 returnType: undefined,
                 scope: undefined,
                 typeParameters: []
-            });
+            }]);
+        });
+
+        it("should return method overloads as separate methods in an ambient context", () => {
+            const structure: Omit<OptionalTrivia<MakeRequired<MethodDeclarationStructure>>, "overloads"> = {
+                kind: StructureKind.Method,
+                statements: undefined,
+                decorators: [],
+                docs: [],
+                isAbstract: false,
+                isAsync: false,
+                isGenerator: false,
+                isStatic: false,
+                hasQuestionToken: false,
+                name: "method",
+                parameters: [],
+                returnType: undefined,
+                scope: undefined,
+                typeParameters: []
+            };
+
+            doTest("declare class Test { method();\nmethod(); }", [structure, structure]);
         });
 
         it("should get structure when it has everything", () => {
@@ -269,7 +297,7 @@ class Test {
     }
 }
 `;
-            doTest(code, {
+            doTest(code, [{
                 kind: StructureKind.Method,
                 statements: [],
                 decorators: [],
@@ -281,6 +309,7 @@ class Test {
                 hasQuestionToken: false,
                 name: "method",
                 overloads: [{
+                    kind: StructureKind.MethodOverload,
                     docs: [{ description: "overload" }],
                     isAsync: true,
                     isGenerator: true,
@@ -296,7 +325,7 @@ class Test {
                 returnType: "string",
                 scope: Scope.Protected,
                 typeParameters: [{ name: "T" }]
-            });
+            }]);
         });
     });
 });

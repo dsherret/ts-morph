@@ -2,7 +2,7 @@ import * as errors from "../../../errors";
 import { getRangeWithoutCommentsFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { Constructor } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
-import { ArrayUtils, TypeGuards, ObjectUtils } from "../../../utils";
+import { TypeGuards, ObjectUtils } from "../../../utils";
 import { BodyableNode, NamedNode } from "../base";
 import { Node } from "../common";
 

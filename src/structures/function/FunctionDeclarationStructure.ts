@@ -2,6 +2,7 @@
     NameableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
+import { OptionalKind } from "../types";
 import { FunctionLikeDeclarationStructure } from "./FunctionLikeDeclarationStructure";
 
 export interface FunctionDeclarationStructure
@@ -11,11 +12,14 @@ export interface FunctionDeclarationStructure
 }
 
 export interface FunctionDeclarationSpecificStructure extends KindedStructure<StructureKind.Function> {
-    overloads?: FunctionDeclarationOverloadStructure[];
+    overloads?: OptionalKind<FunctionDeclarationOverloadStructure>[];
 }
 
 export interface FunctionDeclarationOverloadStructure
-    extends Structure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure,
-        AmbientableNodeStructure, ExportableNodeStructure
+    extends Structure, FunctionDeclarationOverloadSpecificStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure,
+        AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
 {
+}
+
+export interface FunctionDeclarationOverloadSpecificStructure extends KindedStructure<StructureKind.FunctionOverload> {
 }

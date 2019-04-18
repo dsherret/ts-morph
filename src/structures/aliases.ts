@@ -1,7 +1,7 @@
 import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, SetAccessorDeclarationStructure, MethodDeclarationStructure,
     PropertyDeclarationStructure } from "./class";
 import { EnumDeclarationStructure, EnumMemberStructure } from "./enum";
-import { FunctionDeclarationStructure } from "./function";
+import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure } from "./function";
 import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure,
     MethodSignatureStructure, PropertySignatureStructure } from "./interface";
 import { NamespaceDeclarationStructure } from "./module";
@@ -19,4 +19,4 @@ export type ClassMemberStructures = ConstructorDeclarationStructure | GetAccesso
 export type InterfaceMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure
     | MethodSignatureStructure | PropertySignatureStructure;
 
-export type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures;
+export type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | FunctionDeclarationOverloadStructure;

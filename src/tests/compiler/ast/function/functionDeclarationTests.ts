@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration } from "../../../../compiler";
-import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure,
-    TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure, StructureKind,
+    OptionalKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(FunctionDeclaration), () => {
@@ -21,7 +21,7 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(f => f.insertOverloads), () => {
-        function doTest(startCode: string, index: number, structures: FunctionDeclarationOverloadStructure[], expectedCode: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<FunctionDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertOverloads(index, structures);
             expect(result.length).to.equal(structures.length);
@@ -55,7 +55,7 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(f => f.insertOverload), () => {
-        function doTest(startCode: string, index: number, structure: FunctionDeclarationOverloadStructure, expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<FunctionDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertOverload(index, structure);
             expect(result).to.be.instanceOf(FunctionDeclaration);
@@ -69,7 +69,7 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(f => f.addOverloads), () => {
-        function doTest(startCode: string, structures: FunctionDeclarationOverloadStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKind<FunctionDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addOverloads(structures);
             expect(result.length).to.equal(structures.length);
@@ -83,7 +83,7 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(f => f.addOverload), () => {
-        function doTest(startCode: string, structure: FunctionDeclarationOverloadStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<FunctionDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addOverload(structure);
             expect(result).to.be.instanceOf(FunctionDeclaration);
@@ -161,24 +161,32 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(d => d.getStructure), () => {
-        function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<FunctionDeclarationStructure>>) {
+        function doTest(text: string, expectedStructures: OptionalProperties<OptionalTrivia<MakeRequired<FunctionDeclarationStructure>>, "overloads">[]) {
             const { sourceFile } = getInfoFromText<any>(text);
-            const functionDec = sourceFile.getFunctions()[0];
+            const functionDecs = sourceFile.getFunctions();
+            expect(functionDecs.length).to.equal(expectedStructures.length);
 
-            expectedStructure.parameters = expectedStructure.parameters!.map(p => fillStructures.parameter(p));
-            expectedStructure.typeParameters = expectedStructure.typeParameters!.map(p => fillStructures.typeParameter(p));
+            for (let i = 0; i < expectedStructures.length; i++) {
+                const expectedStructure = expectedStructures[i];
+                const functionDec = functionDecs[i];
 
-            expectedStructure.overloads!.forEach(o => {
-                o.parameters = o.parameters!.map(p => fillStructures.parameter(p));
-                o.typeParameters = o.typeParameters!.map(p => fillStructures.typeParameter(p));
-            });
+                expectedStructure.parameters = expectedStructure.parameters!.map(p => fillStructures.parameter(p));
+                expectedStructure.typeParameters = expectedStructure.typeParameters!.map(p => fillStructures.typeParameter(p));
 
-            const structure = functionDec.getStructure() as FunctionDeclarationStructure;
-            expect(structure).to.deep.equal(expectedStructure);
+                if (expectedStructure.overloads != null) {
+                    expectedStructure.overloads.forEach(o => {
+                        o.parameters = o.parameters!.map(p => fillStructures.parameter(p));
+                        o.typeParameters = o.typeParameters!.map(p => fillStructures.typeParameter(p));
+                    });
+                }
+
+                const structure = functionDec.getStructure() as FunctionDeclarationStructure;
+                expect(structure).to.deep.equal(expectedStructure);
+            }
         }
 
         it("should get the structure for an empty function", () => {
-            doTest("declare function test() {}", {
+            doTest("declare function test() {}", [{
                 kind: StructureKind.Function,
                 statements: [],
                 docs: [],
@@ -192,7 +200,27 @@ describe(nameof(FunctionDeclaration), () => {
                 parameters: [],
                 returnType: undefined,
                 typeParameters: []
-            });
+            }]);
+        });
+
+        it("should return two function structures for the same name when there is no implementation", () => {
+            const structure: OptionalProperties<OptionalTrivia<MakeRequired<FunctionDeclarationStructure>>, "overloads"> = {
+                kind: StructureKind.Function,
+                statements: undefined,
+                docs: [],
+                hasDeclareKeyword: true,
+                isAsync: false,
+                isDefaultExport: false,
+                isExported: false,
+                isGenerator: false,
+                name: "test",
+                parameters: [],
+                returnType: "void",
+                typeParameters: []
+            };
+
+            const structures = [structure, structure];
+            doTest("declare function test(): void;\ndeclare function test(): void;", structures);
         });
 
         it("should get the structure for a function that has everything", () => {
@@ -205,6 +233,7 @@ export default async function *test<T>(param): string {
 }
 `;
             const overloadStructure: OptionalTrivia<MakeRequired<FunctionDeclarationOverloadStructure>> = {
+                kind: StructureKind.FunctionOverload,
                 docs: [{ description: "docs2" }],
                 hasDeclareKeyword: false,
                 isAsync: true,
@@ -216,7 +245,7 @@ export default async function *test<T>(param): string {
                 typeParameters: [{ name: "U" }]
             };
 
-            doTest(code, {
+            doTest(code, [{
                 kind: StructureKind.Function,
                 statements: ["return '';"],
                 docs: [{ description: "docs" }],
@@ -230,7 +259,7 @@ export default async function *test<T>(param): string {
                 parameters: [{ name: "param" }],
                 returnType: "string",
                 typeParameters: [{ name: "T" }]
-            });
+            }]);
         });
     });
 });
