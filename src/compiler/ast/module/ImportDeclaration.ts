@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
-import { ImportSpecifierStructure, ImportDeclarationStructure, ImportDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { ImportSpecifierStructure, ImportDeclarationStructure, ImportDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, ModuleUtils, StringUtils, TypeGuards } from "../../../utils";
@@ -252,7 +252,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * Adds a named import.
      * @param namedImport - Name, structure, or writer to write the named import with.
      */
-    addNamedImport(namedImport: ImportSpecifierStructure | string | WriterFunction) {
+    addNamedImport(namedImport: OptionalKind<ImportSpecifierStructure> | string | WriterFunction) {
         return this.addNamedImports([namedImport])[0];
     }
 
@@ -260,7 +260,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * Adds named imports.
      * @param namedImport - Structures, names, or writer function to write the named import with.
      */
-    addNamedImports(namedImports: ReadonlyArray<ImportSpecifierStructure | string | WriterFunction> | WriterFunction) {
+    addNamedImports(namedImports: ReadonlyArray<OptionalKind<ImportSpecifierStructure> | string | WriterFunction> | WriterFunction) {
         return this.insertNamedImports(this.getNamedImports().length, namedImports);
     }
 
@@ -269,7 +269,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * @param index - Child index to insert at.
      * @param namedImport - Structure, name, or writer function to write the named import with.
      */
-    insertNamedImport(index: number, namedImport: ImportSpecifierStructure | string | WriterFunction) {
+    insertNamedImport(index: number, namedImport: OptionalKind<ImportSpecifierStructure> | string | WriterFunction) {
         return this.insertNamedImports(index, [namedImport])[0];
     }
 
@@ -278,7 +278,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * @param index - Child index to insert at.
      * @param namedImports - Structures, names, or writer function to write the named import with.
      */
-    insertNamedImports(index: number, namedImports: ReadonlyArray<ImportSpecifierStructure | string | WriterFunction> | WriterFunction) {
+    insertNamedImports(index: number, namedImports: ReadonlyArray<OptionalKind<ImportSpecifierStructure> | string | WriterFunction> | WriterFunction) {
         if (!(namedImports instanceof Function) && ArrayUtils.isNullOrEmpty(namedImports))
                 return [];
 

@@ -6,7 +6,7 @@ import { Project } from "../../../../Project";
 import { SourceFileStructure, StructureKind } from "../../../../structures";
 import { CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget, SyntaxKind } from "../../../../typescript";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
-import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { getInfoFromText, fillStructures, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
@@ -732,7 +732,7 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: OptionalTrivia<MakeRequired<SourceFileStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<SourceFileStructure>> = {
                 statements: [
                     { kind: StructureKind.ImportDeclaration, moduleSpecifier: "module" },
                     { kind: StructureKind.Class, name: "C" }, "console.log()",
@@ -1381,6 +1381,7 @@ namespace ns{interface nsi{}}
 const t = 5;`;
 
             doTest(startText, {
+                kind: StructureKind.SourceFile,
                 statements: [fillStructures.importDeclaration({
                     namedImports: [fillStructures.importSpecifier({ name: "I" })],
                     moduleSpecifier: "./I"
@@ -1400,9 +1401,13 @@ const t = 5;`;
                     extends: ["J"]
                 }), fillStructures.functionDeclaration({
                     isExported: true,
-                    name: "f"
+                    name: "f",
+                    overloads: [],
+                    statements: []
                 }), fillStructures.functionDeclaration({
-                    name: "g"
+                    name: "g",
+                    overloads: [],
+                    statements: []
                 }), fillStructures.typeAlias({
                     isExported: true,
                     name: "T",

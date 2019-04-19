@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
-import { JSDocStructure } from "../../../../structures";
+import { JSDocStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(JSDoc), () => {
@@ -160,12 +160,14 @@ describe(nameof(JSDoc), () => {
 
         it("should get when has nothing", () => {
             doTest("/** */function t() {}", {
+                kind: StructureKind.JSDoc,
                 description: ""
             });
         });
 
         it("should get when has everything", () => {
             doTest("/** Test @param p - Testing */function t() {}", {
+                kind: StructureKind.JSDoc,
                 description: "Test @param p - Testing" // for now...
             });
         });

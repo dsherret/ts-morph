@@ -1,4 +1,4 @@
-import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure, StructureKind } from "../../../structures";
+import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -49,7 +49,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * Add a variable declaration to the statement.
      * @param structure - Structure representing the variable declaration to add.
      */
-    addDeclaration(structure: VariableDeclarationStructure) {
+    addDeclaration(structure: OptionalKind<VariableDeclarationStructure>) {
         return this.getDeclarationList().addDeclaration(structure);
     }
 
@@ -57,7 +57,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * Adds variable declarations to the statement.
      * @param structures - Structures representing the variable declarations to add.
      */
-    addDeclarations(structures: ReadonlyArray<VariableDeclarationStructure>) {
+    addDeclarations(structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>) {
         return this.getDeclarationList().addDeclarations(structures);
     }
 
@@ -66,7 +66,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * @param index - Child index to insert at.
      * @param structure - Structure representing the variable declaration to insert.
      */
-    insertDeclaration(index: number, structure: VariableDeclarationStructure) {
+    insertDeclaration(index: number, structure: OptionalKind<VariableDeclarationStructure>) {
         return this.getDeclarationList().insertDeclaration(index, structure);
     }
 
@@ -75,7 +75,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * @param index - Child index to insert at.
      * @param structures - Structures representing the variable declarations to insert.
      */
-    insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>) {
+    insertDeclarations(index: number, structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>) {
         return this.getDeclarationList().insertDeclarations(index, structures);
     }
 

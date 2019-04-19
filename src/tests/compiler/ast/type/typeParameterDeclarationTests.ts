@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
-import { TypeParameterDeclarationStructure } from "../../../../structures";
+import { TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(TypeParameterDeclaration), () => {
@@ -229,6 +229,7 @@ describe(nameof(TypeParameterDeclaration), () => {
 
         it("should get when it has nothing", () => {
             doTest("class C<T> {}", {
+                kind: StructureKind.TypeParameter,
                 name: "T",
                 constraint: undefined,
                 default: undefined
@@ -237,6 +238,7 @@ describe(nameof(TypeParameterDeclaration), () => {
 
         it("should get when it has everything", () => {
             doTest("class C<T extends string = number> {}", {
+                kind: StructureKind.TypeParameter,
                 name: "T",
                 constraint: "string",
                 default: "number"

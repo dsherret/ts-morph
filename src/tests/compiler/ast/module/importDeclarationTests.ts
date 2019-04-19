@@ -3,7 +3,7 @@ import { ImportDeclaration } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { Project } from "../../../../Project";
 import { WriterFunction } from "../../../../types";
-import { ImportSpecifierStructure, ImportDeclarationStructure, StructureKind } from "../../../../structures";
+import { ImportSpecifierStructure, ImportDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { ModuleResolutionKind } from "../../../../typescript";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
@@ -419,7 +419,7 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.insertNamedImports), () => {
-        function doTest(text: string, index: number, structuresOrNames: (ImportSpecifierStructure | string | WriterFunction)[] | WriterFunction, expected: string,
+        function doTest(text: string, index: number, structuresOrNames: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction, expected: string,
             surroundWithSpaces = true)
         {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
@@ -466,7 +466,7 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.insertNamedImport), () => {
-        function doTest(text: string, index: number, structureOrName: ImportSpecifierStructure | string, expected: string) {
+        function doTest(text: string, index: number, structureOrName: OptionalKind<ImportSpecifierStructure> | string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.insertNamedImport(index, structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
@@ -482,7 +482,7 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.addNamedImport), () => {
-        function doTest(text: string, structureOrName: ImportSpecifierStructure | string, expected: string) {
+        function doTest(text: string, structureOrName: OptionalKind<ImportSpecifierStructure> | string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.addNamedImport(structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
@@ -498,7 +498,7 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.addNamedImports), () => {
-        function doTest(text: string, structures: (ImportSpecifierStructure | string)[], expected: string) {
+        function doTest(text: string, structures: (OptionalKind<ImportSpecifierStructure> | string)[], expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.addNamedImports(structures);
             expect(sourceFile.getText()).to.equal(expected);
@@ -683,6 +683,7 @@ describe(nameof(ImportDeclaration), () => {
                 defaultImport: undefined,
                 moduleSpecifier: "foo",
                 namedImports: [{
+                    kind: StructureKind.ImportSpecifier,
                     name: "a",
                     alias: undefined
                 }],
@@ -716,6 +717,7 @@ describe(nameof(ImportDeclaration), () => {
                 defaultImport: "bar",
                 moduleSpecifier: "foo",
                 namedImports: [{
+                    kind: StructureKind.ImportSpecifier,
                     name: "test",
                     alias: undefined
                 }],

@@ -1,12 +1,11 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../../compiler";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure,
-    TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.insertOverloads), () => {
-        function doTest(startCode: string, index: number, structures: ConstructorDeclarationOverloadStructure[], expectedCode: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKind<ConstructorDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getConstructors()[0];
             const result = methodDeclaration.insertOverloads(index, structures);
@@ -41,7 +40,7 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(f => f.insertOverload), () => {
-        function doTest(startCode: string, index: number, structure: ConstructorDeclarationOverloadStructure, expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<ConstructorDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.insertOverload(index, structure);
@@ -56,7 +55,7 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(f => f.addOverloads), () => {
-        function doTest(startCode: string, structures: ConstructorDeclarationOverloadStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: OptionalKind<ConstructorDeclarationOverloadStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.addOverloads(structures);
@@ -71,7 +70,7 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(f => f.addOverload), () => {
-        function doTest(startCode: string, structure: ConstructorDeclarationOverloadStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<ConstructorDeclarationOverloadStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.addOverload(structure);
@@ -158,12 +157,8 @@ describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(n => n.getStructure), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ConstructorDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
-
-            expectedStructure.parameters = expectedStructure.parameters!.map(p => fillStructures.parameter(p));
-            expectedStructure.typeParameters = expectedStructure.typeParameters!.map(p => fillStructures.typeParameter(p));
-
             const structure = firstChild.getConstructors()[0].getStructure();
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.constructorDeclaration(expectedStructure));
         }
 
         it("should get structure when empty", () => {
@@ -195,12 +190,13 @@ class T {
                 statements: ["test;"],
                 docs: [{ description: "implementation" }],
                 overloads: [{
+                    kind: StructureKind.ConstructorOverload,
                     scope: Scope.Public,
                     docs: [{ description: "overload" }],
                     parameters: [],
                     returnType: undefined,
                     typeParameters: [{
-                        name: "T", constraint: undefined, default: undefined
+                        kind: StructureKind.TypeParameter, name: "T", constraint: undefined, default: undefined
                     }]
                 }],
                 parameters: [{ name: "p" }],

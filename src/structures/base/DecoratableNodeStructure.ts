@@ -1,5 +1,6 @@
 ﻿import { DecoratorStructure } from "../decorator";
+import { OptionalKind } from "../types";
 
 export interface DecoratableNodeStructure {
-    decorators?: DecoratorStructure[];
+    decorators?: OptionalKind<DecoratorStructure>[];
 }

@@ -4,7 +4,7 @@ import { StringUtils } from "../../../utils";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
-import { ImportSpecifierStructure, ImportSpecifierSpecificStructure } from "../../../structures";
+import { ImportSpecifierStructure, ImportSpecifierSpecificStructure, StructureKind } from "../../../structures";
 
 // todo: There's a lot of common code that could be shared with ExportSpecifier. It could be moved to a mixin.
 
@@ -167,6 +167,7 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
     getStructure() {
         const alias = this.getAliasNode();
         return callBaseGetStructure<ImportSpecifierSpecificStructure>(ImportSpecifierBase.prototype, this, {
+            kind: StructureKind.ImportSpecifier,
             name: this.getName(),
             alias: alias ? alias.getText() : undefined
         }) as ImportSpecifierStructure;

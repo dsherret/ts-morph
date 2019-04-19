@@ -1,5 +1,5 @@
 import { getEndIndexFromArray, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
-import { JSDocableNodeStructure, JSDocStructure } from "../../../structures";
+import { JSDocableNodeStructure, JSDocStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { ts } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
@@ -20,24 +20,24 @@ export interface JSDocableNode {
      * Adds a JS doc.
      * @param structure - Structure to add.
      */
-    addJsDoc(structure: JSDocStructure | string | WriterFunction): JSDoc;
+    addJsDoc(structure: OptionalKind<JSDocStructure> | string | WriterFunction): JSDoc;
     /**
      * Adds JS docs.
      * @param structures - Structures to add.
      */
-    addJsDocs(structures: ReadonlyArray<JSDocStructure | string | WriterFunction>): JSDoc[];
+    addJsDocs(structures: ReadonlyArray<OptionalKind<JSDocStructure> | string | WriterFunction>): JSDoc[];
     /**
      * Inserts a JS doc.
      * @param index - Child index to insert at.
      * @param structure - Structure to insert.
      */
-    insertJsDoc(index: number, structure: JSDocStructure | string | WriterFunction): JSDoc;
+    insertJsDoc(index: number, structure: OptionalKind<JSDocStructure> | string | WriterFunction): JSDoc;
     /**
      * Inserts JS docs.
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertJsDocs(index: number, structures: ReadonlyArray<JSDocStructure | string | WriterFunction>): JSDoc[];
+    insertJsDocs(index: number, structures: ReadonlyArray<OptionalKind<JSDocStructure> | string | WriterFunction>): JSDoc[];
 }
 
 export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T {
@@ -49,19 +49,19 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             return nodes.map(n => this._getNodeFromCompilerNode(n));
         }
 
-        addJsDoc(structure: JSDocStructure | string | WriterFunction) {
+        addJsDoc(structure: OptionalKind<JSDocStructure> | string | WriterFunction) {
             return this.addJsDocs([structure])[0];
         }
 
-        addJsDocs(structures: ReadonlyArray<JSDocStructure | string | WriterFunction>) {
+        addJsDocs(structures: ReadonlyArray<OptionalKind<JSDocStructure> | string | WriterFunction>) {
             return this.insertJsDocs(getEndIndexFromArray(this.compilerNode.jsDoc), structures);
         }
 
-        insertJsDoc(index: number, structure: JSDocStructure | string | WriterFunction) {
+        insertJsDoc(index: number, structure: OptionalKind<JSDocStructure> | string | WriterFunction) {
             return this.insertJsDocs(index, [structure])[0];
         }
 
-        insertJsDocs(index: number, structures: ReadonlyArray<JSDocStructure | string | WriterFunction>) {
+        insertJsDocs(index: number, structures: ReadonlyArray<OptionalKind<JSDocStructure> | string | WriterFunction>) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

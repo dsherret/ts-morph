@@ -3,7 +3,7 @@ import { Directory } from "../../../fileSystem";
 import { getTextFromFormattingEdits, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting } from "../../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { ProjectContext } from "../../../ProjectContext";
-import { SourceFileSpecificStructure, SourceFileStructure } from "../../../structures";
+import { SourceFileSpecificStructure, SourceFileStructure, StructureKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { LanguageVariant, ScriptTarget, ts } from "../../../typescript";
 import { ArrayUtils, EventContainer, FileUtils, Memoize, ModuleUtils, SourceFileReferenceContainer, StringUtils } from "../../../utils";
@@ -852,7 +852,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the structure equivalent to this node.
      */
     getStructure(): SourceFileStructure {
-        return callBaseGetStructure<SourceFileSpecificStructure>(SourceFileBase.prototype, this, {});
+        return callBaseGetStructure<SourceFileSpecificStructure>(SourceFileBase.prototype, this, {
+            kind: StructureKind.SourceFile
+        });
     }
 
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {

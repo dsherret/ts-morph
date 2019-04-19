@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../../../../compiler";
-import { VariableDeclarationListStructure, VariableDeclarationStructure } from "../../../../structures";
+import { VariableDeclarationListStructure, VariableDeclarationStructure, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(VariableDeclarationList), () => {
@@ -67,7 +67,7 @@ describe(nameof(VariableDeclarationList), () => {
     });
 
     describe(nameof<VariableDeclarationList>(d => d.insertDeclarations), () => {
-        function doTest(startText: string, index: number, structures: VariableDeclarationStructure[], expectedText: string) {
+        function doTest(startText: string, index: number, structures: OptionalKind<VariableDeclarationStructure>[], expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableDeclarationList>(startText);
             const result = firstChild.insertDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
@@ -91,7 +91,7 @@ describe(nameof(VariableDeclarationList), () => {
     });
 
     describe(nameof<VariableDeclarationList>(d => d.insertDeclaration), () => {
-        function doTest(startText: string, index: number, structure: VariableDeclarationStructure, expectedText: string) {
+        function doTest(startText: string, index: number, structure: OptionalKind<VariableDeclarationStructure>, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableDeclarationList>(startText);
             const result = firstChild.insertDeclaration(index, structure);
             expect(result).to.be.instanceOf(VariableDeclaration);
@@ -104,7 +104,7 @@ describe(nameof(VariableDeclarationList), () => {
     });
 
     describe(nameof<VariableDeclarationList>(d => d.addDeclarations), () => {
-        function doTest(startText: string, structures: VariableDeclarationStructure[], expectedText: string) {
+        function doTest(startText: string, structures: OptionalKind<VariableDeclarationStructure>[], expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableDeclarationList>(startText);
             const result = firstChild.addDeclarations(structures);
             expect(result.length).to.equal(structures.length);
@@ -117,7 +117,7 @@ describe(nameof(VariableDeclarationList), () => {
     });
 
     describe(nameof<VariableDeclarationList>(d => d.addDeclaration), () => {
-        function doTest(startText: string, structure: VariableDeclarationStructure, expectedText: string) {
+        function doTest(startText: string, structure: OptionalKind<VariableDeclarationStructure>, expectedText: string) {
             const { firstChild, sourceFile } = getInfoFromText<VariableDeclarationList>(startText);
             const result = firstChild.addDeclaration(structure);
             expect(result).to.be.instanceOf(VariableDeclaration);

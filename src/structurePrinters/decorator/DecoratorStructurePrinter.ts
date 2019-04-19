@@ -1,22 +1,22 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { DecoratorStructure } from "../../structures";
+import { DecoratorStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 
-export class DecoratorStructurePrinter extends NodePrinter<DecoratorStructure> {
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<DecoratorStructure> | undefined) {
+export class DecoratorStructurePrinter extends NodePrinter<OptionalKind<DecoratorStructure>> {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<DecoratorStructure>> | undefined) {
         this.printMultiple(writer, structures, () => writer.newLine());
     }
 
-    printTextsInline(writer: CodeBlockWriter, structures: ReadonlyArray<DecoratorStructure> | undefined) {
+    printTextsInline(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<DecoratorStructure>> | undefined) {
         this.printMultiple(writer, structures, () => writer.space());
     }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: DecoratorStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
         writer.write(`@${structure.name}`);
         this.printArguments(writer, structure);
     }
 
-    printArguments(writer: CodeBlockWriter, structure: DecoratorStructure) {
+    printArguments(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
         if (structure.arguments == null)
             return;
 
@@ -32,7 +32,7 @@ export class DecoratorStructurePrinter extends NodePrinter<DecoratorStructure> {
         writer.write(")");
     }
 
-    private printMultiple(writer: CodeBlockWriter, structures: ReadonlyArray<DecoratorStructure> | undefined, separator: () => void) {
+    private printMultiple(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<DecoratorStructure>> | undefined, separator: () => void) {
         if (structures == null || structures.length === 0)
             return;
         for (const structure of structures) {

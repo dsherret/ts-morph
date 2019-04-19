@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../../compiler";
 import { EnumMemberSpecificStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 function getInfoFromTextWithFirstMember(text: string) {
     const obj = getInfoFromText<EnumDeclaration>(text);
@@ -113,7 +113,7 @@ describe(nameof(EnumMember), () => {
     describe(nameof<EnumMember>(d => d.getStructure), () => {
         function doTest(code: string, expected: OptionalTrivia<MakeRequired<EnumMemberStructure>>) {
             const { firstEnumMember } = getInfoFromTextWithFirstMember(code);
-            expect(firstEnumMember.getStructure()).to.deep.equal(expected);
+            expect(firstEnumMember.getStructure()).to.deep.equal(fillStructures.enumMember(expected));
         }
 
         // Note: Ensure `initializer` always exists, because people may assign identifiers

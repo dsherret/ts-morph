@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { DecoratorStructurePrinter } from "../../../structurePrinters";
-import { DecoratorStructure } from "../../../structures";
+import { DecoratorStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(DecoratorStructurePrinter), () => {
@@ -9,7 +9,7 @@ describe(nameof(DecoratorStructurePrinter), () => {
         formatCodeSettings?: FormatCodeSettings;
     }
 
-    function doTest(structure: DecoratorStructure, expectedOutput: string, options: Options = {}) {
+    function doTest(structure: OptionalKind<DecoratorStructure>, expectedOutput: string, options: Options = {}) {
         const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
         factory.forDecorator().printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);

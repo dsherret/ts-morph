@@ -2,7 +2,7 @@
 import * as errors from "../errors";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
-import { SourceFileStructure } from "../structures";
+import { SourceFileStructure, OptionalKind } from "../structures";
 import { WriterFunction } from "../types";
 import { ModuleResolutionKind } from "../typescript";
 import { ArrayUtils, FileUtils, ObjectUtils, setValueIfUndefined, StringUtils } from "../utils";
@@ -298,7 +298,7 @@ export class Directory {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, sourceFileText?: string | SourceFileStructure | WriterFunction, options?: SourceFileCreateOptions) {
+    createSourceFile(relativeFilePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions) {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
         return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "",
             { ...(options || {}), markInProject: this._isInProject() });

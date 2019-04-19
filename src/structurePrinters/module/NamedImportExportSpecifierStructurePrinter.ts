@@ -1,11 +1,11 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { WriterFunction } from "../../types";
 import { StringUtils } from "../../utils";
-import { ExportSpecifierStructure, ImportSpecifierStructure } from "../../structures";
+import { ExportSpecifierStructure, ImportSpecifierStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
-export type NamedImportExportSpecifierStructureToTextItem = WriterFunction | ImportSpecifierStructure | ExportSpecifierStructure | string;
+export type NamedImportExportSpecifierStructureToTextItem = WriterFunction | OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure> | string;
 
 export class NamedImportExportSpecifierStructurePrinter extends NodePrinter<NamedImportExportSpecifierStructureToTextItem> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);

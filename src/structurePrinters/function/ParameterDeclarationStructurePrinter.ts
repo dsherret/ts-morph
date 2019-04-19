@@ -1,19 +1,19 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { NotImplementedError } from "../../errors";
-import { ParameterDeclarationStructure } from "../../structures";
+import { ParameterDeclarationStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
-export class ParameterDeclarationStructurePrinter extends NodePrinter<ParameterDeclarationStructure> {
+export class ParameterDeclarationStructurePrinter extends NodePrinter<OptionalKind<ParameterDeclarationStructure>> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<ParameterDeclarationStructure> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>> | undefined) {
         if (structures == null || structures.length === 0)
             return;
         this.multipleWriter.printText(writer, structures);
     }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: ParameterDeclarationStructure) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ParameterDeclarationStructure>) {
         if (structure.name == null)
             throw new NotImplementedError("Not implemented scenario where parameter declaration structure doesn't have a name. Please open an issue if you need this.");
 

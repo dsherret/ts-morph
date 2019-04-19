@@ -1,11 +1,11 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { JSDocStructure } from "../../structures";
+import { JSDocStructure, OptionalKind } from "../../structures";
 import { WriterFunction } from "../../types";
 import { getTextFromStringOrWriter } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
-export class JSDocStructurePrinter extends NodePrinter<JSDocStructure | string | WriterFunction> {
-    printDocs(writer: CodeBlockWriter, structures: ReadonlyArray<JSDocStructure | string | WriterFunction> | undefined) {
+export class JSDocStructurePrinter extends NodePrinter<OptionalKind<JSDocStructure> | string | WriterFunction> {
+    printDocs(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<JSDocStructure> | string | WriterFunction> | undefined) {
         if (structures == null)
             return;
 
@@ -15,7 +15,7 @@ export class JSDocStructurePrinter extends NodePrinter<JSDocStructure | string |
         }
     }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: JSDocStructure | string | WriterFunction) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<JSDocStructure> | string | WriterFunction) {
         const lines = getText().split(/\r?\n/);
         writer.writeLine("/**");
         for (const line of lines) {

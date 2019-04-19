@@ -3,7 +3,7 @@ import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../../com
 import * as errors from "../../../../errors";
 import { IndexSignatureDeclarationStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(IndexSignatureDeclaration), () => {
     function getFirstIndexSignatureWithInfo(code: string) {
@@ -236,7 +236,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<IndexSignatureDeclarationStructure>>) {
             const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             const structure = firstIndexSignature.getStructure();
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.indexSignature(expectedStructure));
         }
 
         it("should get when not has anything", () => {

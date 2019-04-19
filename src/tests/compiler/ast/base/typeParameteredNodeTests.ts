@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { CallSignatureDeclaration, FunctionDeclaration, TypeAliasDeclaration, TypeParameterDeclaration, TypeParameteredNode } from "../../../../compiler";
-import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../../structures";
+import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure, OptionalKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
@@ -60,7 +60,7 @@ describe(nameof(TypeParameteredNode), () => {
     });
 
     describe(nameof<TypeParameteredNode>(n => n.addTypeParameter), () => {
-        function doTest(startCode: string, structure: TypeParameterDeclarationStructure | string, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<TypeParameterDeclarationStructure> | string, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addTypeParameter(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -81,7 +81,7 @@ describe(nameof(TypeParameteredNode), () => {
     });
 
     describe(nameof<TypeParameteredNode>(n => n.addTypeParameters), () => {
-        function doTest(startCode: string, structures: (TypeParameterDeclarationStructure | string)[], expectedCode: string) {
+        function doTest(startCode: string, structures: (OptionalKind<TypeParameterDeclarationStructure> | string)[], expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addTypeParameters(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -101,7 +101,7 @@ describe(nameof(TypeParameteredNode), () => {
             expect(sourceFile.getFullText()).to.equal("interface Identifier {\n    <T>(): void;\n}\n");
         });
 
-        function doTest(startCode: string, insertIndex: number, structure: TypeParameterDeclarationStructure | string, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKind<TypeParameterDeclarationStructure> | string, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertTypeParameter(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -147,7 +147,7 @@ describe(nameof(TypeParameteredNode), () => {
     });
 
     describe(nameof<TypeParameteredNode>(n => n.insertTypeParameters), () => {
-        function doTest(startCode: string, insertIndex: number, structures: (TypeParameterDeclarationStructure | string)[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: (OptionalKind<TypeParameterDeclarationStructure> | string)[], expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertTypeParameters(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);

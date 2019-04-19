@@ -243,7 +243,7 @@ describe(nameof(NamespaceDeclaration), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<NamespaceDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             const structure = firstChild.getStructure();
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.namespaceDeclaration(expectedStructure));
         }
 
         it("should get when has nothing", () => {
@@ -270,10 +270,10 @@ export declare module Identifier {
                 declarationKind: NamespaceDeclarationKind.Module,
                 statements: [fillStructures.variableStatement({
                     declarationKind: VariableDeclarationKind.Const,
-                    declarations: [fillStructures.variableDeclaration({
+                    declarations: [{
                         name: "t",
                         initializer: "5"
-                    })]
+                    }]
                 })],
                 docs: [{ description: "Test" }],
                 hasDeclareKeyword: true,

@@ -1,13 +1,13 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { TypeParameterDeclarationStructure } from "../../structures";
+import { TypeParameterDeclarationStructure, OptionalKind } from "../../structures";
 import { StringUtils } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 
-export class TypeParameterDeclarationStructurePrinter extends NodePrinter<TypeParameterDeclarationStructure | string> {
+export class TypeParameterDeclarationStructurePrinter extends NodePrinter<OptionalKind<TypeParameterDeclarationStructure> | string> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
-    printTextsWithBrackets(writer: CodeBlockWriter, structures: ReadonlyArray<TypeParameterDeclarationStructure | string> | undefined) {
+    printTextsWithBrackets(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string> | undefined) {
         if (structures == null || structures.length === 0)
             return;
         writer.write("<");
@@ -15,11 +15,11 @@ export class TypeParameterDeclarationStructurePrinter extends NodePrinter<TypePa
         writer.write(">");
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TypeParameterDeclarationStructure | string> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: TypeParameterDeclarationStructure | string) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<TypeParameterDeclarationStructure> | string) {
         if (typeof structure === "string") {
             writer.write(structure);
             return;

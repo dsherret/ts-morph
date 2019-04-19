@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
-import { VariableDeclarationStructure, VariableDeclarationSpecificStructure } from "../../../structures";
+import { VariableDeclarationStructure, VariableDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { TypeGuards } from "../../../utils";
 import { SyntaxKind, ts } from "../../../typescript";
 import { BindingNamedNode, ExclamationTokenableNode, InitializerExpressionableNode, TypedNode, ExportGetableNode } from "../base";
@@ -77,6 +77,7 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
      */
     getStructure(): VariableDeclarationStructure {
         return callBaseGetStructure<VariableDeclarationSpecificStructure>(VariableDeclarationBase.prototype, this, {
+            kind: StructureKind.VariableDeclaration
         }) as any as VariableDeclarationStructure;
     }
 }

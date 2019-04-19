@@ -4,7 +4,7 @@ import * as errors from "./errors";
 import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { ProjectContext } from "./ProjectContext";
 import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsContainer } from "./options";
-import { SourceFileStructure } from "./structures";
+import { SourceFileStructure, OptionalKind } from "./structures";
 import { WriterFunction } from "./types";
 import { ts, CompilerOptions } from "./typescript";
 import { IterableUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
@@ -270,7 +270,7 @@ export class Project {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, sourceFileText?: string | SourceFileStructure | WriterFunction, options?: SourceFileCreateOptions): SourceFile {
+    createSourceFile(filePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions): SourceFile {
         return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "",
             { ...(options || {}), markInProject: true });
     }

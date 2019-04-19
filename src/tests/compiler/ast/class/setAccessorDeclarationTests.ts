@@ -2,8 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, SetAccessorDeclaration, Scope } from "../../../../compiler";
 import { SetAccessorDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { ArrayUtils } from "../../../../utils";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 function getSetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
@@ -124,11 +123,7 @@ class Identifier {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<SetAccessorDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getSetAccessors()[0].getStructure();
-            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
-            structure.decorators = structure.decorators!.map(p => ({ name: p.name }));
-
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.setAccessor(expectedStructure));
         }
 
         it("should get structure when empty", () => {

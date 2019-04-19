@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, Decorator } from "../../../../compiler";
-import { DecoratorStructure } from "../../../../structures";
+import { DecoratorStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
@@ -464,6 +464,7 @@ describe(nameof(Decorator), () => {
 
         it("should get when has nothing", () => {
             doTest("@dec class T {}", {
+                kind: StructureKind.Decorator,
                 name: "dec",
                 arguments: undefined,
                 typeArguments: undefined
@@ -472,6 +473,7 @@ describe(nameof(Decorator), () => {
 
         it("should get when has everything", () => {
             doTest("@dec<T>(test) class T {}", {
+                kind: StructureKind.Decorator,
                 name: "dec",
                 arguments: ["test"],
                 typeArguments: ["T"]

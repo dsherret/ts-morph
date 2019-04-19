@@ -1,5 +1,6 @@
 ﻿import { TypeParameterDeclarationStructure } from "../type";
+import { OptionalKind } from "../types";
 
 export interface TypeParameteredNodeStructure {
-    typeParameters?: (TypeParameterDeclarationStructure | string)[];
+    typeParameters?: (OptionalKind<TypeParameterDeclarationStructure> | string)[];
 }

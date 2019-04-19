@@ -1,7 +1,7 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange } from "../../../manipulation";
 import { CommaSeparatedStructuresPrinter } from "../../../structurePrinters";
-import { VariableDeclarationListStructure, VariableDeclarationStructure, VariableDeclarationListSpecificStructure } from "../../../structures";
+import { VariableDeclarationListStructure, VariableDeclarationStructure, VariableDeclarationListSpecificStructure, OptionalKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ModifierableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -75,7 +75,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      * Add a variable declaration to the statement.
      * @param structure - Structure representing the variable declaration to add.
      */
-    addDeclaration(structure: VariableDeclarationStructure) {
+    addDeclaration(structure: OptionalKind<VariableDeclarationStructure>) {
         return this.addDeclarations([structure])[0];
     }
 
@@ -83,7 +83,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      * Adds variable declarations to the statement.
      * @param structures - Structures representing the variable declarations to add.
      */
-    addDeclarations(structures: ReadonlyArray<VariableDeclarationStructure>) {
+    addDeclarations(structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>) {
         return this.insertDeclarations(this.getDeclarations().length, structures);
     }
 
@@ -92,7 +92,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      * @param index - Child index to insert at.
      * @param structure - Structure representing the variable declaration to insert.
      */
-    insertDeclaration(index: number, structure: VariableDeclarationStructure) {
+    insertDeclaration(index: number, structure: OptionalKind<VariableDeclarationStructure>) {
         return this.insertDeclarations(index, [structure])[0];
     }
 
@@ -101,7 +101,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      * @param index - Child index to insert at.
      * @param structures - Structures representing the variable declarations to insert.
      */
-    insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>) {
+    insertDeclarations(index: number, structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>) {
         const writer = this._getWriterWithQueuedChildIndentation();
         const structurePrinter = new CommaSeparatedStructuresPrinter(this._context.structurePrinterFactory.forVariableDeclaration());
 

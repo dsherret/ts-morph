@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, JSDocableNode, Node, VariableStatement } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
-import { JSDocableNodeStructure, JSDocStructure } from "../../../../structures";
+import { JSDocableNodeStructure, JSDocStructure, OptionalKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 
@@ -53,7 +53,7 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof<JSDocableNode>(n => n.insertJsDocs), () => {
-        function doTest(startCode: string, insertIndex: number, structures: (JSDocStructure | string | WriterFunction)[],
+        function doTest(startCode: string, insertIndex: number, structures: (OptionalKind<JSDocStructure> | string | WriterFunction)[],
             expectedCode: string, syntaxKind = SyntaxKind.FunctionDeclaration)
         {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant(startCode, syntaxKind);
@@ -98,7 +98,7 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof<JSDocableNode>(n => n.insertJsDoc), () => {
-        function doTest(startCode: string, index: number, structure: JSDocStructure, expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKind<JSDocStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertJsDoc(index, structure);
             expect(result).to.be.instanceOf(Node);
@@ -112,7 +112,7 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof<JSDocableNode>(n => n.addJsDocs), () => {
-        function doTest(startCode: string, structures: (JSDocStructure | string)[], expectedCode: string) {
+        function doTest(startCode: string, structures: (OptionalKind<JSDocStructure> | string)[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addJsDocs(structures);
             expect(result.length).to.equal(structures.length);
@@ -126,7 +126,7 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof<JSDocableNode>(n => n.addJsDoc), () => {
-        function doTest(startCode: string, structure: JSDocStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: OptionalKind<JSDocStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addJsDoc(structure);
             expect(result).to.be.instanceOf(Node);
@@ -166,7 +166,7 @@ describe(nameof(JSDocableNode), () => {
 
     describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
         function doTest(startingCode: string, docTexts: string[]) {
-            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             expect((firstChild.getStructure().docs! as JSDocStructure[]).map(d => d.description)).to.deep.equal(docTexts);
         }
 

@@ -5,7 +5,7 @@ import { ts } from "../../../typescript";
 import { getTextFromStringOrWriter } from "../../../utils";
 import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
-import { JSDocStructure, JSDocSpecificStructure } from "../../../structures";
+import { JSDocStructure, JSDocSpecificStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 
@@ -99,6 +99,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
      */
     getStructure(): JSDocStructure {
         return callBaseGetStructure<JSDocSpecificStructure>(JSDocBase.prototype, this, {
+            kind: StructureKind.JSDoc,
             description: this.getInnerText() // good enough for now
         });
     }

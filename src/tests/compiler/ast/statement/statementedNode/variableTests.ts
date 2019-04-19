@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement, Node } from "../../../../../compiler";
 import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertVariableStatements), () => {
@@ -61,7 +61,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert everything from the structure", () => {
-            const varStructure: OptionalTrivia<MakeRequired<VariableDeclarationStructure>> = {
+            const varStructure: OptionalKindAndTrivia<MakeRequired<VariableDeclarationStructure>> = {
                 hasExclamationToken: true,
                 name: "v",
                 initializer: "5",

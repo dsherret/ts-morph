@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { TryStatement, VariableDeclaration } from "../../../../compiler";
-import { VariableDeclarationStructure } from "../../../../structures";
+import { VariableDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
@@ -105,6 +105,7 @@ describe(nameof(VariableDeclaration), () => {
 
         it("should get from declaration with nothing", () => {
             doTest("var t;", {
+                kind: StructureKind.VariableDeclaration,
                 name: "t",
                 initializer: undefined,
                 type: undefined,
@@ -114,6 +115,7 @@ describe(nameof(VariableDeclaration), () => {
 
         it("should get from declaration with everything", () => {
             doTest("var t!: number = 5;", {
+                kind: StructureKind.VariableDeclaration,
                 name: "t",
                 initializer: "5",
                 type: "number",

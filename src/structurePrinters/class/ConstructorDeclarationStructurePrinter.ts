@@ -48,7 +48,7 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
         }
     }
 
-    private printOverloads(writer: CodeBlockWriter, structures: ReadonlyArray<ConstructorDeclarationOverloadStructure> | undefined) {
+    private printOverloads(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationOverloadStructure>> | undefined) {
         if (structures == null || structures.length === 0)
             return;
 
@@ -58,12 +58,12 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
         }
     }
 
-    printOverload(writer: CodeBlockWriter, structure: ConstructorDeclarationOverloadStructure) {
+    printOverload(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationOverloadStructure>) {
         this.printBase(writer, structure);
         writer.write(";");
     }
 
-    private printBase(writer: CodeBlockWriter, structure: ConstructorDeclarationOverloadStructure) {
+    private printBase(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write("constructor");

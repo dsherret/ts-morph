@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../../compiler";
 import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
     describe(nameof<EnumDeclaration>(d => d.getMember), () => {
@@ -237,8 +237,7 @@ describe(nameof(EnumDeclaration), () => {
         function doTest(code: string, expected: OptionalTrivia<MakeRequired<EnumDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<EnumDeclaration>(code);
             const structure = firstChild.getStructure();
-            structure.members = structure.members!.map(m => ({ name: m.name }));
-            expect(structure).to.deep.equal(expected);
+            expect(structure).to.deep.equal(fillStructures.enumDeclaration(expected));
         }
 
         it("should get structure of an empty enum", () => {

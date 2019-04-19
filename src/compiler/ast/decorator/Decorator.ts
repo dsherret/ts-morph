@@ -6,7 +6,7 @@ import { WriterFunction } from "../../../types";
 import { Node } from "../common/Node";
 import { CallExpression, Expression } from "../expression";
 import { TypeNode } from "../type";
-import { DecoratorStructure, DecoratorSpecificStructure } from "../../../structures";
+import { DecoratorStructure, DecoratorSpecificStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 
@@ -306,6 +306,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     getStructure(): DecoratorStructure {
         const isDecoratorFactory = this.isDecoratorFactory();
         return callBaseGetStructure<DecoratorSpecificStructure>(DecoratorBase.prototype, this, {
+            kind: StructureKind.Decorator,
             name: this.getName(),
             arguments: isDecoratorFactory ? this.getArguments().map(arg => arg.getText()) : undefined,
             typeArguments: isDecoratorFactory ? this.getTypeArguments().map(arg => arg.getText()) : undefined

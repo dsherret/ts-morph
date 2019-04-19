@@ -1,5 +1,6 @@
 ﻿import { JSDocStructure } from "../doc";
+import { OptionalKind } from "../types";
 
 export interface JSDocableNodeStructure {
-    docs?: (JSDocStructure | string)[];
+    docs?: (OptionalKind<JSDocStructure> | string)[];
 }

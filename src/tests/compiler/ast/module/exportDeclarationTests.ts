@@ -4,7 +4,7 @@ import * as errors from "../../../../errors";
 import { Project } from "../../../../Project";
 import { WriterFunction } from "../../../../types";
 import { SyntaxKind } from "../../../../typescript";
-import { ExportSpecifierStructure, ExportDeclarationStructure, StructureKind } from "../../../../structures";
+import { ExportSpecifierStructure, ExportDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {
@@ -261,7 +261,7 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExports), () => {
-        function doTest(text: string, index: number, structures: (ExportSpecifierStructure | string | WriterFunction)[] | WriterFunction, expected: string,
+        function doTest(text: string, index: number, structures: (OptionalKind<ExportSpecifierStructure> | string | WriterFunction)[] | WriterFunction, expected: string,
             surroundWithSpaces = true)
         {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ExportDeclaration>(text, SyntaxKind.ExportDeclaration);
@@ -323,7 +323,7 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExport), () => {
-        function doTest(text: string, index: number, structureOrName: (ExportSpecifierStructure | string), expected: string) {
+        function doTest(text: string, index: number, structureOrName: (OptionalKind<ExportSpecifierStructure> | string), expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
             firstChild.insertNamedExport(index, structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
@@ -339,7 +339,7 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.addNamedExport), () => {
-        function doTest(text: string, structureOrName: (ExportSpecifierStructure | string), expected: string) {
+        function doTest(text: string, structureOrName: (OptionalKind<ExportSpecifierStructure> | string), expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
             firstChild.addNamedExport(structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
@@ -355,7 +355,7 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.addNamedExports), () => {
-        function doTest(text: string, structures: (ExportSpecifierStructure | string)[], expected: string) {
+        function doTest(text: string, structures: (OptionalKind<ExportSpecifierStructure> | string)[], expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
             firstChild.addNamedExports(structures);
             expect(sourceFile.getText()).to.equal(expected);
@@ -468,7 +468,7 @@ describe(nameof(ExportDeclaration), () => {
             doTest(`export { name } from "./test";`, {
                 kind: StructureKind.ExportDeclaration,
                 moduleSpecifier: "./test",
-                namedExports: [{ alias: undefined, name: "name" }]
+                namedExports: [{ kind: StructureKind.ExportSpecifier, alias: undefined, name: "name" }]
             });
         });
 

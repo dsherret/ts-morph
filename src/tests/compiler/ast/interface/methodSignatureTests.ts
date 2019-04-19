@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, MethodSignature } from "../../../../compiler";
 import { MethodSignatureStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(MethodSignature), () => {
     function getFirstMethodWithInfo(code: string) {
@@ -74,9 +74,7 @@ describe(nameof(MethodSignature), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<MethodSignatureStructure>>) {
             const { firstMethod } = getFirstMethodWithInfo(code);
             const structure = firstMethod.getStructure();
-            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
-            structure.typeParameters = structure.typeParameters!.map(p => ({ name: (p as TypeParameterDeclarationStructure).name }));
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.methodSignature(expectedStructure));
         }
 
         it("should get when not has anything", () => {

@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration } from "../../../../compiler";
 import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
     describe(nameof<InterfaceDeclaration>(d => d.getType), () => {
@@ -97,16 +97,7 @@ describe(nameof(InterfaceDeclaration), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<InterfaceDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(code);
             const structure = firstChild.getStructure();
-
-            // only bother comparing the basics
-            structure.methods = structure.methods!.map(s => ({ name: s.name }));
-            structure.properties = structure.properties!.map(s => ({ name: s.name }));
-            structure.indexSignatures = structure.indexSignatures!.map(s => ({ keyName: s.keyName, returnType: s.returnType }));
-            structure.callSignatures = structure.callSignatures!.map(s => ({ }));
-            structure.constructSignatures = structure.constructSignatures!.map(s => ({ }));
-            structure.typeParameters = structure.typeParameters!.map(s => ({ name: (s as TypeParameterDeclarationStructure).name }));
-
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.interfaceDeclaration(expectedStructure));
         }
 
         it("should get for an empty interface", () => {
@@ -140,17 +131,17 @@ export default interface Test<T> extends Test2 {
 `;
             doTest(code, {
                 kind: StructureKind.Interface,
-                callSignatures: [{}],
-                constructSignatures: [{}],
+                callSignatures: [{ returnType: "void" }],
+                constructSignatures: [{ returnType: "Test" }],
                 docs: [{ description: "Test" }],
                 extends: ["Test2"],
                 hasDeclareKeyword: false,
                 indexSignatures: [{ keyName: "key", returnType: "string" }],
                 isDefaultExport: true,
                 isExported: true,
-                methods: [{ name: "method" }],
+                methods: [{ name: "method", returnType: "void" }],
                 name: "Test",
-                properties: [{ name: "property" }],
+                properties: [{ name: "property", type: "string" }],
                 typeParameters: [{ name: "T" }]
             });
         });

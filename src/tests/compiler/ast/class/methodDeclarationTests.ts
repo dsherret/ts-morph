@@ -231,19 +231,8 @@ describe(nameof(MethodDeclaration), () => {
             for (let i = 0; i < expectedStructures.length; i++) {
                 const expectedStructure = expectedStructures[i];
                 const method = methods[i];
-
-                expectedStructure.parameters = expectedStructure.parameters!.map(p => fillStructures.parameter(p));
-                expectedStructure.typeParameters = expectedStructure.typeParameters!.map(p => fillStructures.typeParameter(p));
-                if (expectedStructure.overloads != null) {
-                    expectedStructure.overloads = expectedStructure.overloads!.map(o => ({
-                        ...o,
-                        parameters: o.parameters!.map(p => fillStructures.parameter(p)),
-                        typeParameters: o.typeParameters!.map(p => fillStructures.typeParameter(p))
-                    }));
-                }
-
                 const structure = method.getStructure() as MethodDeclarationStructure;
-                expect(structure).to.deep.equal(expectedStructure);
+                expect(structure).to.deep.equal(fillStructures.method(expectedStructure));
             }
         }
 

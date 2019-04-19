@@ -6,7 +6,7 @@ import { StringUtils } from "../../../utils";
 import { NamedNode } from "../base";
 import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
-import { TypeParameterDeclarationStructure, TypeParameterDeclarationSpecificStructure } from "../../../structures";
+import { TypeParameterDeclarationStructure, TypeParameterDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 
@@ -161,6 +161,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
         const defaultNode = this.getDefault();
 
         return callBaseGetStructure<TypeParameterDeclarationSpecificStructure>(TypeParameterDeclarationBase.prototype, this, {
+            kind: StructureKind.TypeParameter,
             constraint: constraintNode != null ? constraintNode.getText() : undefined,
             default: defaultNode ? defaultNode.getText() : undefined
         });

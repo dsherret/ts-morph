@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { TypeParameterDeclarationStructurePrinter } from "../../../structurePrinters";
-import { TypeParameterDeclarationStructure } from "../../../structures";
+import { TypeParameterDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
@@ -9,7 +9,7 @@ describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
         formatCodeSettings?: FormatCodeSettings;
     }
 
-    function doTest(structure: TypeParameterDeclarationStructure | string, expectedOutput: string, options: Options = {}) {
+    function doTest(structure: OptionalKind<TypeParameterDeclarationStructure> | string, expectedOutput: string, options: Options = {}) {
         const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
         factory.forTypeParameterDeclaration().printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);

@@ -1,6 +1,6 @@
 import { ClassDeclarationStructure, ConstructorDeclarationStructure, MethodDeclarationStructure, ClassDeclarationSpecificStructure,
     ClassLikeDeclarationBaseSpecificStructure, InterfaceDeclarationStructure, PropertySignatureStructure, MethodSignatureStructure,
-    ParameterDeclarationStructure, StructureKind } from "../../../structures";
+    ParameterDeclarationStructure, StructureKind, JSDocStructure } from "../../../structures";
 import { ts } from "../../../typescript";
 import { ArrayUtils, StringUtils, TypeGuards, KeyValueCache } from "../../../utils";
 import { ExportableNode, AmbientableNode } from "../base";
@@ -94,7 +94,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                                 .map(t => t.getComment()!.trim())[0];
                     return {
                         kind: StructureKind.PropertySignature as StructureKind.PropertySignature,
-                        docs: jsDocComment == null ? [] : [{ description: jsDocComment }],
+                        docs: jsDocComment == null ? [] : [{ kind: StructureKind.JSDoc, description: jsDocComment }] as JSDocStructure[],
                         name: p.getName()!,
                         type: p.getType().getText(p),
                         hasQuestionToken: p.hasQuestionToken(),

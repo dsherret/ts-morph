@@ -1,5 +1,5 @@
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
-import { ParameterDeclarationStructure, ParameterDeclarationSpecificStructure } from "../../../structures";
+import { ParameterDeclarationStructure, ParameterDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { ts, SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
@@ -87,6 +87,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
      */
     getStructure(): ParameterDeclarationStructure {
         return callBaseGetStructure<ParameterDeclarationSpecificStructure>(ParameterDeclarationBase.prototype, this, {
+            kind: StructureKind.Parameter,
             isRestParameter: this.isRestParameter()
         }) as any as ParameterDeclarationStructure;
     }

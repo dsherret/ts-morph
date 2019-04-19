@@ -6,7 +6,7 @@ import * as errors from "../errors";
 import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
-import { SourceFileStructure } from "../structures";
+import { SourceFileStructure, OptionalKind } from "../structures";
 import { WriterFunction } from "../types";
 import { SyntaxKind, ts, TypeFlags } from "../typescript";
 import { replaceSourceFileForCacheUpdate } from "../manipulation";
@@ -118,7 +118,7 @@ export class CompilerFactory {
      * @param structureOrText - Structure or text.
      * @param options - Options.
      */
-    createSourceFile(filePath: string, sourceFileText: string | SourceFileStructure | WriterFunction, options: SourceFileCreateOptions & { markInProject: boolean; }) {
+    createSourceFile(filePath: string, sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction, options: SourceFileCreateOptions & { markInProject: boolean; }) {
         sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.context.createWriter(), sourceFileText) : sourceFileText || "";
         if (typeof sourceFileText === "string")
             return this.createSourceFileFromText(filePath, sourceFileText, options);

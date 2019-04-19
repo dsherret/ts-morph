@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
-import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../structures";
+import { ParameterDeclarationStructure, ParameteredNodeStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
@@ -40,24 +40,24 @@ export interface ParameteredNode {
      * Adds a parameter.
      * @param structure - Structure of the parameter.
      */
-    addParameter(structure: ParameterDeclarationStructure): ParameterDeclaration;
+    addParameter(structure: OptionalKind<ParameterDeclarationStructure>): ParameterDeclaration;
     /**
      * Adds parameters.
      * @param structures - Structures of the parameters.
      */
-    addParameters(structures: ReadonlyArray<ParameterDeclarationStructure>): ParameterDeclaration[];
+    addParameters(structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>>): ParameterDeclaration[];
     /**
      * Inserts parameters.
      * @param index - Child index to insert at.
      * @param structures - Parameters to insert.
      */
-    insertParameters(index: number, structures: ReadonlyArray<ParameterDeclarationStructure>): ParameterDeclaration[];
+    insertParameters(index: number, structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>>): ParameterDeclaration[];
     /**
      * Inserts a parameter.
      * @param index - Child index to insert at.
      * @param structures - Parameter to insert.
      */
-    insertParameter(index: number, structure: ParameterDeclarationStructure): ParameterDeclaration;
+    insertParameter(index: number, structure: OptionalKind<ParameterDeclarationStructure>): ParameterDeclaration;
 }
 
 export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T {
@@ -74,19 +74,19 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             return this.compilerNode.parameters.map(p => this._getNodeFromCompilerNode(p));
         }
 
-        addParameter(structure: ParameterDeclarationStructure) {
+        addParameter(structure: OptionalKind<ParameterDeclarationStructure>) {
             return this.addParameters([structure])[0];
         }
 
-        addParameters(structures: ReadonlyArray<ParameterDeclarationStructure>) {
+        addParameters(structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>>) {
             return this.insertParameters(getEndIndexFromArray(this.compilerNode.parameters), structures);
         }
 
-        insertParameter(index: number, structure: ParameterDeclarationStructure) {
+        insertParameter(index: number, structure: OptionalKind<ParameterDeclarationStructure>) {
             return this.insertParameters(index, [structure])[0];
         }
 
-        insertParameters(index: number, structures: ReadonlyArray<ParameterDeclarationStructure>) {
+        insertParameters(index: number, structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>>) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

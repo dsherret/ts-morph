@@ -1,7 +1,6 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, Scope } from "../../../../compiler";
-import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure } from "../../../../structures";
-import { ArrayUtils } from "../../../../utils";
+import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 import { SyntaxKind } from "../../../../typescript";
 
@@ -107,7 +106,7 @@ describe(nameof(ParameterDeclaration), () => {
         });
 
         it("should modify when setting", () => {
-            const structure: MakeRequired<ParameterDeclarationSpecificStructure> = {
+            const structure: OptionalKind<MakeRequired<ParameterDeclarationSpecificStructure>> = {
                 isRestParameter: true
             };
             doTest("function func(param: string) {}", structure, "function func(...param: string) {}");
@@ -148,6 +147,7 @@ describe(nameof(ParameterDeclaration), () => {
 
         it("should get for parameter that doesn't have anything", () => {
             doTest("function f(param) {}", {
+                kind: StructureKind.Parameter,
                 name: "param",
                 type: undefined,
                 hasQuestionToken: false,
@@ -162,6 +162,7 @@ describe(nameof(ParameterDeclaration), () => {
         it("should get for parameter that has everything", () => {
             // not semantically correct, but good enough for testing
             doTest("function g(@dec public readonly ...matrix?: boolean = true) {}", {
+                kind: StructureKind.Parameter,
                 hasQuestionToken: true,
                 name: "matrix",
                 type: "boolean",

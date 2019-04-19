@@ -3,7 +3,7 @@ import { ClassDeclaration } from "../../../../compiler";
 import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure,
     InterfaceDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getType), () => {
@@ -113,17 +113,7 @@ class Identifier {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<ClassDeclarationStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
             const structure = descendant.getStructure();
-
-            // only bother comparing the basics
-            structure.ctors = structure.ctors!.map(_ => ({}));
-            structure.decorators = structure.decorators!.map(s => ({ name: s.name }));
-            structure.getAccessors = structure.getAccessors!.map(s => ({ name: s.name }));
-            structure.methods = structure.methods!.map(s => ({ name: s.name }));
-            structure.properties = structure.properties!.map(s => ({ name: s.name }));
-            structure.setAccessors = structure.setAccessors!.map(s => ({ name: s.name }));
-            structure.typeParameters = structure.typeParameters!.map(s => ({ name: (s as TypeParameterDeclarationStructure).name }));
-
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.classDeclaration(expectedStructure));
         }
 
         it("should get the structure for an empty class", () => {
@@ -160,20 +150,20 @@ class Identifier {
 `;
             doTest(code, {
                 kind: StructureKind.Class,
-                ctors: [{}],
+                ctors: [{ statements: [], overloads: [] }],
                 decorators: [{ name: "dec" }],
                 docs: [{ description: "Test" }],
                 extends: "Base",
                 implements: ["IBase"],
-                getAccessors: [{ name: "getAccessor" }],
+                getAccessors: [{ name: "getAccessor", statements: [] }],
                 hasDeclareKeyword: false,
                 isAbstract: true,
                 isDefaultExport: true,
                 isExported: true,
-                methods: [{ name: "method" }],
+                methods: [{ name: "method", statements: [], overloads: [] }],
                 name: "Identifier",
-                properties: [{ name: "prop" }],
-                setAccessors: [{ name: "setAccessor" }],
+                properties: [{ name: "prop", type: "string" }],
+                setAccessors: [{ name: "setAccessor", parameters: [{ name: "value", type: "string" }], statements: [] }],
                 typeParameters: [{ name: "T" }]
             });
         });
@@ -192,7 +182,7 @@ declare class Identifier {
 `;
             doTest(code, {
                 kind: StructureKind.Class,
-                ctors: [{}, {}],
+                ctors: [{ returnType: "string" }, { returnType: "number" }],
                 decorators: [],
                 docs: [],
                 extends: undefined,
@@ -202,10 +192,10 @@ declare class Identifier {
                 isAbstract: false,
                 isDefaultExport: false,
                 isExported: false,
-                methods: [{ name: "method" }, { name: "method" }],
+                methods: [{ name: "method" }, { name: "method", parameters: [{ name: "p" }] }],
                 name: "Identifier",
-                properties: [{ name: "prop" }],
-                setAccessors: [{ name: "setAccessor" }],
+                properties: [{ name: "prop", type: "string" }],
+                setAccessors: [{ name: "setAccessor", parameters: [{ name: "value", type: "string" }] }],
                 typeParameters: []
             });
         });
@@ -276,10 +266,10 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                 undefined, {
                     kind: StructureKind.Interface,
                     name: "Test",
-                    docs: [{ description: "Test" }],
+                    docs: [{ kind: StructureKind.JSDoc, description: "Test" }],
                     typeParameters: [
-                        { name: "T", constraint: "string", default: "number" },
-                        { name: "U", constraint: undefined, default: undefined }
+                        { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
+                        { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined }
                     ],
                     properties: [{
                         kind: StructureKind.PropertySignature,
@@ -287,7 +277,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ description: "Test description." }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "Test description." }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "param2",
@@ -308,7 +298,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ description: "Description" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description" }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "prop2",
@@ -322,29 +312,30 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                         type: "number",
                         hasQuestionToken: false,
                         isReadonly: true,
-                        docs: [{ description: "MyGet" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MyGet" }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "myGetAndSet",
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ description: "MyGetAndSet Get" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get" }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "mySet",
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ description: "MySet" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MySet" }]
                     }],
                     methods: [{
                         kind: StructureKind.MethodSignature,
-                        docs: [{ description: "Method" }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Method" }],
                         name: "myMethod",
                         returnType: "number",
                         hasQuestionToken: false,
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -355,8 +346,8 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                             scope: undefined
                         }],
                         typeParameters: [
-                            { name: "T", constraint: "string", default: "number" },
-                            { name: "U", constraint: undefined, default: undefined }
+                            { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
+                            { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined }
                         ]
                     }, {
                         kind: StructureKind.MethodSignature,
@@ -365,6 +356,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                         returnType: "void",
                         hasQuestionToken: false,
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -428,22 +420,23 @@ class Test {
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ description: "Test." }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "Test." }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "param2",
                         type: "number",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ description: "Test2." }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "Test2." }]
                     }],
                     methods: [{
                         kind: StructureKind.MethodSignature,
-                        docs: [{ description: "Description1." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description1." }],
                         name: "method",
                         returnType: "string",
                         hasQuestionToken: false,
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -456,11 +449,12 @@ class Test {
                         typeParameters: []
                     }, {
                         kind: StructureKind.MethodSignature,
-                        docs: [{ description: "Description2." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description2." }],
                         name: "method",
                         returnType: "number",
                         hasQuestionToken: false,
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -546,8 +540,9 @@ class Test<T extends string = number, U> extends Base implements IBase {
                     name: "Name",
                     constructSignatures: [{
                         kind: StructureKind.ConstructSignature,
-                        docs: [{ description: "Description." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description." }],
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -557,6 +552,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             type: "string",
                             scope: undefined
                         }, {
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: true,
                             initializer: undefined,
@@ -566,6 +562,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             type: "number",
                             scope: undefined
                         }, {
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -575,6 +572,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             type: "string",
                             scope: undefined
                         }, {
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -592,7 +590,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ description: "Description" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description" }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "prop2",
@@ -606,29 +604,30 @@ class Test<T extends string = number, U> extends Base implements IBase {
                         type: "number",
                         hasQuestionToken: false,
                         isReadonly: true,
-                        docs: [{ description: "MyGet" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MyGet" }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "myGetAndSet",
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ description: "MyGetAndSet Get" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get" }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "mySet",
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ description: "MySet" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MySet" }]
                     }],
                     methods: [{
                         kind: StructureKind.MethodSignature,
-                        docs: [{ description: "Method" }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Method" }],
                         name: "myMethod",
                         returnType: "number",
                         hasQuestionToken: false,
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -639,10 +638,12 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             scope: undefined
                         }],
                         typeParameters: [{
+                            kind: StructureKind.TypeParameter,
                             name: "T",
                             constraint: "string",
                             default: "number"
                         }, {
+                            kind: StructureKind.TypeParameter,
                             name: "U",
                             constraint: undefined,
                             default: undefined
@@ -654,6 +655,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                         returnType: "void",
                         hasQuestionToken: false,
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -705,8 +707,9 @@ class Test {
                     name: "Name",
                     constructSignatures: [{
                         kind: StructureKind.ConstructSignature,
-                        docs: [{ description: "Test." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Test." }],
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -719,8 +722,9 @@ class Test {
                         returnType: "Test"
                     }, {
                         kind: StructureKind.ConstructSignature,
-                        docs: [{ description: "Test2." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Test2." }],
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -735,11 +739,12 @@ class Test {
                     properties: [],
                     methods: [{
                         kind: StructureKind.MethodSignature,
-                        docs: [{ description: "Description1." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description1." }],
                         name: "method",
                         returnType: "string",
                         hasQuestionToken: false,
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,
@@ -752,11 +757,12 @@ class Test {
                         typeParameters: []
                     }, {
                         kind: StructureKind.MethodSignature,
-                        docs: [{ description: "Description2." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description2." }],
                         name: "method",
                         returnType: "number",
                         hasQuestionToken: false,
                         parameters: [{
+                            kind: StructureKind.Parameter,
                             decorators: [],
                             hasQuestionToken: false,
                             initializer: undefined,

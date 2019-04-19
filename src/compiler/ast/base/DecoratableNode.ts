@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { FormattingKind, getEndIndexFromArray, getNewInsertCode, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
-import { DecoratableNodeStructure, DecoratorStructure } from "../../../structures";
+import { DecoratableNodeStructure, DecoratorStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
@@ -40,24 +40,24 @@ export interface DecoratableNode {
      * Adds a decorator.
      * @param structure - Structure of the decorator.
      */
-    addDecorator(structure: DecoratorStructure): Decorator;
+    addDecorator(structure: OptionalKind<DecoratorStructure>): Decorator;
     /**
      * Adds decorators.
      * @param structures - Structures of the decorators.
      */
-    addDecorators(structures: ReadonlyArray<DecoratorStructure>): Decorator[];
+    addDecorators(structures: ReadonlyArray<OptionalKind<DecoratorStructure>>): Decorator[];
     /**
      * Inserts a decorator.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the decorator.
      */
-    insertDecorator(index: number, structure: DecoratorStructure): Decorator;
+    insertDecorator(index: number, structure: OptionalKind<DecoratorStructure>): Decorator;
     /**
      * Insert decorators.
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertDecorators(index: number, structures: ReadonlyArray<DecoratorStructure>): Decorator[];
+    insertDecorators(index: number, structures: ReadonlyArray<OptionalKind<DecoratorStructure>>): Decorator[];
 }
 
 export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionType>>(Base: T): Constructor<DecoratableNode> & T {
@@ -76,19 +76,19 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             return this.compilerNode.decorators.map(d => this._getNodeFromCompilerNode(d));
         }
 
-        addDecorator(structure: DecoratorStructure) {
+        addDecorator(structure: OptionalKind<DecoratorStructure>) {
             return this.insertDecorator(getEndIndexFromArray(this.compilerNode.decorators), structure);
         }
 
-        addDecorators(structures: ReadonlyArray<DecoratorStructure>) {
+        addDecorators(structures: ReadonlyArray<OptionalKind<DecoratorStructure>>) {
             return this.insertDecorators(getEndIndexFromArray(this.compilerNode.decorators), structures);
         }
 
-        insertDecorator(index: number, structure: DecoratorStructure) {
+        insertDecorator(index: number, structure: OptionalKind<DecoratorStructure>) {
             return this.insertDecorators(index, [structure])[0];
         }
 
-        insertDecorators(index: number, structures: ReadonlyArray<DecoratorStructure>) {
+        insertDecorators(index: number, structures: ReadonlyArray<OptionalKind<DecoratorStructure>>) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
@@ -135,7 +135,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
     };
 }
 
-function getDecoratorLines(node: Node, structures: ReadonlyArray<DecoratorStructure>) {
+function getDecoratorLines(node: Node, structures: ReadonlyArray<OptionalKind<DecoratorStructure>>) {
     const lines: string[] = [];
     for (const structure of structures) {
         // todo: temporary code... refactor this later

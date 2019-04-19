@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { ImportDeclaration, ImportSpecifier } from "../../../../compiler";
-import { ImportSpecifierStructure } from "../../../../structures";
+import { ImportSpecifierStructure, StructureKind } from "../../../../structures";
 import { ArrayUtils } from "../../../../utils";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
@@ -257,6 +257,7 @@ describe(nameof(ImportSpecifier), () => {
 
         it("should get when has no alias", () => {
             doTest(`import { a } from 'foo'`, {
+                kind: StructureKind.ImportSpecifier,
                 name: "a",
                 alias: undefined
             });
@@ -264,6 +265,7 @@ describe(nameof(ImportSpecifier), () => {
 
         it("should get when has an alias", () => {
             doTest(`import { a as alias } from 'foo'`, {
+                kind: StructureKind.ImportSpecifier,
                 name: "a",
                 alias: "alias"
             });

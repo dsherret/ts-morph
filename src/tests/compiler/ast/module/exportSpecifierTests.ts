@@ -388,6 +388,7 @@ describe(nameof(ExportSpecifier), () => {
 
         it("should get structure when no alias", () => {
             doTest(`export { name } from "./test";`, {
+                kind: StructureKind.ExportSpecifier,
                 alias: undefined,
                 name: "name"
             });
@@ -395,6 +396,7 @@ describe(nameof(ExportSpecifier), () => {
 
         it("should get structure when has alias", () => {
             doTest(`export { name as alias } from "./test";`, {
+                kind: StructureKind.ExportSpecifier,
                 alias: "alias",
                 name: "name"
             });

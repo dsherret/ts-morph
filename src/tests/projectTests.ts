@@ -8,7 +8,7 @@ import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure, StructureKind } from "../structures";
 import { CompilerOptions, ScriptTarget, SyntaxKind, ts } from "../typescript";
-import { OptionalTrivia } from "./compiler/testHelpers";
+import { OptionalKindAndTrivia } from "./compiler/testHelpers";
 import * as testHelpers from "./testHelpers";
 
 console.log("");
@@ -669,7 +669,7 @@ describe(nameof(Project), () => {
         });
 
         it("should add for everything in the structure", () => {
-            const structure: OptionalTrivia<MakeRequired<SourceFileStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<SourceFileStructure>> = {
                 statements: ["console.log('here');"]
             };
             const sourceFile = new Project({ useVirtualFileSystem: true }).createSourceFile("MyFile.ts", structure);

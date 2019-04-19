@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, PropertySignature } from "../../../../compiler";
 import { PropertySignatureStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(PropertySignature), () => {
     function getFirstPropertyWithInfo(code: string) {
@@ -69,7 +69,7 @@ describe(nameof(PropertySignature), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertySignatureStructure>>) {
             const { firstProperty } = getFirstPropertyWithInfo(code);
             const structure = firstProperty.getStructure();
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.propertySignature(expectedStructure));
         }
 
         it("should get when not has anything", () => {

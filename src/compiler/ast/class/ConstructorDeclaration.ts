@@ -1,5 +1,6 @@
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationOverloadSpecificStructure, ConstructorDeclarationStructure,
+    ConstructorDeclarationSpecificStructure, StructureKind, OptionalKind} from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -32,7 +33,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * Add a constructor overload.
      * @param structure - Structure to add.
      */
-    addOverload(structure: ConstructorDeclarationOverloadStructure) {
+    addOverload(structure: OptionalKind<ConstructorDeclarationOverloadStructure>) {
         return this.addOverloads([structure])[0];
     }
 
@@ -40,7 +41,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * Add constructor overloads.
      * @param structures - Structures to add.
      */
-    addOverloads(structures: ReadonlyArray<ConstructorDeclarationOverloadStructure>) {
+    addOverloads(structures: ReadonlyArray<OptionalKind<ConstructorDeclarationOverloadStructure>>) {
         return this.insertOverloads(this.getOverloads().length, structures);
     }
 
@@ -49,7 +50,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * @param index - Child index to insert at.
      * @param structure - Structures to insert.
      */
-    insertOverload(index: number, structure: ConstructorDeclarationOverloadStructure) {
+    insertOverload(index: number, structure: OptionalKind<ConstructorDeclarationOverloadStructure>) {
         return this.insertOverloads(index, [structure])[0];
     }
 
@@ -58,10 +59,10 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertOverloads(index: number, structures: ReadonlyArray<ConstructorDeclarationOverloadStructure>) {
+    insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationOverloadStructure>>) {
         const childCodes = structures.map(structure => `constructor();`);
 
-        return insertOverloads<ConstructorDeclaration, ConstructorDeclarationOverloadStructure>({
+        return insertOverloads<ConstructorDeclaration, OptionalKind<ConstructorDeclarationOverloadStructure>>({
             node: this,
             index,
             structures,
@@ -85,8 +86,12 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
         function getStructure(thisNode: ConstructorDeclaration) {
             // this is not the best typing... unit tests will catch issues though
             if (hasImplementation && isOverload)
-                return {};
+                return getSpecificOverloadStructure();
             return getSpecificStructure();
+
+            function getSpecificOverloadStructure(): ConstructorDeclarationOverloadSpecificStructure {
+                return { kind: StructureKind.ConstructorOverload };
+            }
 
             function getSpecificStructure(): ConstructorDeclarationSpecificStructure {
                 if (!hasImplementation)
@@ -94,7 +99,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
                 else
                     return {
                         kind: StructureKind.Constructor,
-                        overloads: thisNode.getOverloads().map(o => o.getStructure())
+                        overloads: thisNode.getOverloads().map(o => o.getStructure() as ConstructorDeclarationOverloadStructure)
                     };
             }
         }

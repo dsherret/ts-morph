@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex, removeChildren } from "../../../manipulation";
-import { ExportSpecifierStructure, ExportDeclarationSpecificStructure, ExportDeclarationStructure, StructureKind } from "../../../structures";
+import { ExportSpecifierStructure, ExportDeclarationSpecificStructure, ExportDeclarationStructure, StructureKind, OptionalKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, ModuleUtils, TypeGuards, StringUtils } from "../../../utils";
@@ -143,7 +143,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      * Adds a named export.
      * @param namedExport - Structure, name, or writer function to write the named export.
      */
-    addNamedExport(namedExport: ExportSpecifierStructure | string | WriterFunction) {
+    addNamedExport(namedExport: OptionalKind<ExportSpecifierStructure> | string | WriterFunction) {
         return this.addNamedExports([namedExport])[0];
     }
 
@@ -151,7 +151,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      * Adds named exports.
      * @param namedExports - Structures, names, or writer function to write the named exports.
      */
-    addNamedExports(namedExports: ReadonlyArray<ExportSpecifierStructure | string | WriterFunction> | WriterFunction) {
+    addNamedExports(namedExports: ReadonlyArray<OptionalKind<ExportSpecifierStructure> | string | WriterFunction> | WriterFunction) {
         return this.insertNamedExports(this.getNamedExports().length, namedExports);
     }
 
@@ -160,7 +160,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      * @param index - Child index to insert at.
      * @param namedExport - Structure, name, or writer function to write the named export.
      */
-    insertNamedExport(index: number, namedExport: ExportSpecifierStructure | string | WriterFunction) {
+    insertNamedExport(index: number, namedExport: OptionalKind<ExportSpecifierStructure> | string | WriterFunction) {
         return this.insertNamedExports(index, [namedExport])[0];
     }
 
@@ -169,7 +169,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      * @param index - Child index to insert at.
      * @param namedExports - Structures, names, or writer funciton to write the named exports.
      */
-    insertNamedExports(index: number, namedExports: ReadonlyArray<ExportSpecifierStructure | string | WriterFunction> | WriterFunction) {
+    insertNamedExports(index: number, namedExports: ReadonlyArray<OptionalKind<ExportSpecifierStructure> | string | WriterFunction> | WriterFunction) {
         if (!(namedExports instanceof Function) && ArrayUtils.isNullOrEmpty(namedExports))
                 return [];
 

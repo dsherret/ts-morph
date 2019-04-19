@@ -1,6 +1,6 @@
 import * as errors from "../../../errors";
 import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
-import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../structures";
+import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards } from "../../../utils";
@@ -41,24 +41,24 @@ export interface TypeParameteredNode {
      * Adds a type parameter.
      * @param structure - Structure of the type parameter.
      */
-    addTypeParameter(structure: TypeParameterDeclarationStructure | string): TypeParameterDeclaration;
+    addTypeParameter(structure: OptionalKind<TypeParameterDeclarationStructure> | string): TypeParameterDeclaration;
     /**
      * Adds type parameters.
      * @param structures - Structures of the type parameters.
      */
-    addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure | string>): TypeParameterDeclaration[];
+    addTypeParameters(structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string>): TypeParameterDeclaration[];
     /**
      * Inserts a type parameter.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the type parameter.
      */
-    insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure | string): TypeParameterDeclaration;
+    insertTypeParameter(index: number, structure: OptionalKind<TypeParameterDeclarationStructure> | string): TypeParameterDeclaration;
     /**
      * Inserts type parameters.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structures - Structures of the type parameters.
      */
-    insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure | string>): TypeParameterDeclaration[];
+    insertTypeParameters(index: number, structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string>): TypeParameterDeclaration[];
 }
 
 export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExtensionType>>(Base: T): Constructor<TypeParameteredNode> & T {
@@ -78,19 +78,19 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             return typeParameters.map(t => this._getNodeFromCompilerNode(t));
         }
 
-        addTypeParameter(structure: TypeParameterDeclarationStructure | string) {
+        addTypeParameter(structure: OptionalKind<TypeParameterDeclarationStructure> | string) {
             return this.addTypeParameters([structure])[0];
         }
 
-        addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure | string>) {
+        addTypeParameters(structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string>) {
             return this.insertTypeParameters(getEndIndexFromArray(this.compilerNode.typeParameters), structures);
         }
 
-        insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure | string) {
+        insertTypeParameter(index: number, structure: OptionalKind<TypeParameterDeclarationStructure> | string) {
             return this.insertTypeParameters(index, [structure])[0];
         }
 
-        insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure | string>) {
+        insertTypeParameters(index: number, structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string>) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

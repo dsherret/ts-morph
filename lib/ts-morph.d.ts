@@ -126,7 +126,7 @@ export declare class Directory {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, sourceFileText?: string | SourceFileStructure | WriterFunction, options?: SourceFileCreateOptions): SourceFile;
+    createSourceFile(relativeFilePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions): SourceFile;
     /**
      * Adds an existing source file, relative to this directory, or returns undefined.
      *
@@ -469,7 +469,7 @@ export declare class Project {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, sourceFileText?: string | SourceFileStructure | WriterFunction, options?: SourceFileCreateOptions): SourceFile;
+    createSourceFile(filePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions): SourceFile;
     /**
      * Removes a source file from the AST.
      * @param sourceFile - Source file to remove.
@@ -2162,24 +2162,24 @@ export interface DecoratableNode {
      * Adds a decorator.
      * @param structure - Structure of the decorator.
      */
-    addDecorator(structure: DecoratorStructure): Decorator;
+    addDecorator(structure: OptionalKind<DecoratorStructure>): Decorator;
     /**
      * Adds decorators.
      * @param structures - Structures of the decorators.
      */
-    addDecorators(structures: ReadonlyArray<DecoratorStructure>): Decorator[];
+    addDecorators(structures: ReadonlyArray<OptionalKind<DecoratorStructure>>): Decorator[];
     /**
      * Inserts a decorator.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the decorator.
      */
-    insertDecorator(index: number, structure: DecoratorStructure): Decorator;
+    insertDecorator(index: number, structure: OptionalKind<DecoratorStructure>): Decorator;
     /**
      * Insert decorators.
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertDecorators(index: number, structures: ReadonlyArray<DecoratorStructure>): Decorator[];
+    insertDecorators(index: number, structures: ReadonlyArray<OptionalKind<DecoratorStructure>>): Decorator[];
 }
 
 declare type DecoratableNodeExtensionType = Node<ts.Node>;
@@ -2451,24 +2451,24 @@ export interface JSDocableNode {
      * Adds a JS doc.
      * @param structure - Structure to add.
      */
-    addJsDoc(structure: JSDocStructure | string | WriterFunction): JSDoc;
+    addJsDoc(structure: OptionalKind<JSDocStructure> | string | WriterFunction): JSDoc;
     /**
      * Adds JS docs.
      * @param structures - Structures to add.
      */
-    addJsDocs(structures: ReadonlyArray<JSDocStructure | string | WriterFunction>): JSDoc[];
+    addJsDocs(structures: ReadonlyArray<OptionalKind<JSDocStructure> | string | WriterFunction>): JSDoc[];
     /**
      * Inserts a JS doc.
      * @param index - Child index to insert at.
      * @param structure - Structure to insert.
      */
-    insertJsDoc(index: number, structure: JSDocStructure | string | WriterFunction): JSDoc;
+    insertJsDoc(index: number, structure: OptionalKind<JSDocStructure> | string | WriterFunction): JSDoc;
     /**
      * Inserts JS docs.
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertJsDocs(index: number, structures: ReadonlyArray<JSDocStructure | string | WriterFunction>): JSDoc[];
+    insertJsDocs(index: number, structures: ReadonlyArray<OptionalKind<JSDocStructure> | string | WriterFunction>): JSDoc[];
 }
 
 declare type JSDocableNodeExtensionType = Node<ts.Node & {
@@ -2812,24 +2812,24 @@ export interface ParameteredNode {
      * Adds a parameter.
      * @param structure - Structure of the parameter.
      */
-    addParameter(structure: ParameterDeclarationStructure): ParameterDeclaration;
+    addParameter(structure: OptionalKind<ParameterDeclarationStructure>): ParameterDeclaration;
     /**
      * Adds parameters.
      * @param structures - Structures of the parameters.
      */
-    addParameters(structures: ReadonlyArray<ParameterDeclarationStructure>): ParameterDeclaration[];
+    addParameters(structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>>): ParameterDeclaration[];
     /**
      * Inserts parameters.
      * @param index - Child index to insert at.
      * @param structures - Parameters to insert.
      */
-    insertParameters(index: number, structures: ReadonlyArray<ParameterDeclarationStructure>): ParameterDeclaration[];
+    insertParameters(index: number, structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>>): ParameterDeclaration[];
     /**
      * Inserts a parameter.
      * @param index - Child index to insert at.
      * @param structures - Parameter to insert.
      */
-    insertParameter(index: number, structure: ParameterDeclarationStructure): ParameterDeclaration;
+    insertParameter(index: number, structure: OptionalKind<ParameterDeclarationStructure>): ParameterDeclaration;
 }
 
 declare type ParameteredNodeExtensionType = Node<ts.Node & {
@@ -3331,24 +3331,24 @@ export interface TypeParameteredNode {
      * Adds a type parameter.
      * @param structure - Structure of the type parameter.
      */
-    addTypeParameter(structure: TypeParameterDeclarationStructure | string): TypeParameterDeclaration;
+    addTypeParameter(structure: OptionalKind<TypeParameterDeclarationStructure> | string): TypeParameterDeclaration;
     /**
      * Adds type parameters.
      * @param structures - Structures of the type parameters.
      */
-    addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure | string>): TypeParameterDeclaration[];
+    addTypeParameters(structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string>): TypeParameterDeclaration[];
     /**
      * Inserts a type parameter.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the type parameter.
      */
-    insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure | string): TypeParameterDeclaration;
+    insertTypeParameter(index: number, structure: OptionalKind<TypeParameterDeclarationStructure> | string): TypeParameterDeclaration;
     /**
      * Inserts type parameters.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structures - Structures of the type parameters.
      */
-    insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure | string>): TypeParameterDeclaration[];
+    insertTypeParameters(index: number, structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string>): TypeParameterDeclaration[];
 }
 
 declare type TypeParameteredNodeExtensionType = Node<ts.Node & {
@@ -3919,24 +3919,24 @@ export declare class ConstructorDeclaration extends ConstructorDeclarationBase<t
      * Add a constructor overload.
      * @param structure - Structure to add.
      */
-    addOverload(structure: ConstructorDeclarationOverloadStructure): ConstructorDeclaration;
+    addOverload(structure: OptionalKind<ConstructorDeclarationOverloadStructure>): ConstructorDeclaration;
     /**
      * Add constructor overloads.
      * @param structures - Structures to add.
      */
-    addOverloads(structures: ReadonlyArray<ConstructorDeclarationOverloadStructure>): ConstructorDeclaration[];
+    addOverloads(structures: ReadonlyArray<OptionalKind<ConstructorDeclarationOverloadStructure>>): ConstructorDeclaration[];
     /**
      * Inserts a constructor overload.
      * @param index - Child index to insert at.
      * @param structure - Structures to insert.
      */
-    insertOverload(index: number, structure: ConstructorDeclarationOverloadStructure): ConstructorDeclaration;
+    insertOverload(index: number, structure: OptionalKind<ConstructorDeclarationOverloadStructure>): ConstructorDeclaration;
     /**
      * Inserts constructor overloads.
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertOverloads(index: number, structures: ReadonlyArray<ConstructorDeclarationOverloadStructure>): ConstructorDeclaration[];
+    insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationOverloadStructure>>): ConstructorDeclaration[];
     /**
      * Gets the structure equivalent to this node.
      */
@@ -6929,24 +6929,24 @@ export declare class ExportDeclaration extends ExportDeclarationBase<ts.ExportDe
      * Adds a named export.
      * @param namedExport - Structure, name, or writer function to write the named export.
      */
-    addNamedExport(namedExport: ExportSpecifierStructure | string | WriterFunction): ExportSpecifier;
+    addNamedExport(namedExport: OptionalKind<ExportSpecifierStructure> | string | WriterFunction): ExportSpecifier;
     /**
      * Adds named exports.
      * @param namedExports - Structures, names, or writer function to write the named exports.
      */
-    addNamedExports(namedExports: ReadonlyArray<ExportSpecifierStructure | string | WriterFunction> | WriterFunction): ExportSpecifier[];
+    addNamedExports(namedExports: ReadonlyArray<OptionalKind<ExportSpecifierStructure> | string | WriterFunction> | WriterFunction): ExportSpecifier[];
     /**
      * Inserts a named export.
      * @param index - Child index to insert at.
      * @param namedExport - Structure, name, or writer function to write the named export.
      */
-    insertNamedExport(index: number, namedExport: ExportSpecifierStructure | string | WriterFunction): ExportSpecifier;
+    insertNamedExport(index: number, namedExport: OptionalKind<ExportSpecifierStructure> | string | WriterFunction): ExportSpecifier;
     /**
      * Inserts named exports into the export declaration.
      * @param index - Child index to insert at.
      * @param namedExports - Structures, names, or writer funciton to write the named exports.
      */
-    insertNamedExports(index: number, namedExports: ReadonlyArray<ExportSpecifierStructure | string | WriterFunction> | WriterFunction): ExportSpecifier[];
+    insertNamedExports(index: number, namedExports: ReadonlyArray<OptionalKind<ExportSpecifierStructure> | string | WriterFunction> | WriterFunction): ExportSpecifier[];
     /**
      * Gets the named exports.
      */
@@ -7187,24 +7187,24 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
      * Adds a named import.
      * @param namedImport - Name, structure, or writer to write the named import with.
      */
-    addNamedImport(namedImport: ImportSpecifierStructure | string | WriterFunction): ImportSpecifier;
+    addNamedImport(namedImport: OptionalKind<ImportSpecifierStructure> | string | WriterFunction): ImportSpecifier;
     /**
      * Adds named imports.
      * @param namedImport - Structures, names, or writer function to write the named import with.
      */
-    addNamedImports(namedImports: ReadonlyArray<ImportSpecifierStructure | string | WriterFunction> | WriterFunction): ImportSpecifier[];
+    addNamedImports(namedImports: ReadonlyArray<OptionalKind<ImportSpecifierStructure> | string | WriterFunction> | WriterFunction): ImportSpecifier[];
     /**
      * Inserts a named import.
      * @param index - Child index to insert at.
      * @param namedImport - Structure, name, or writer function to write the named import with.
      */
-    insertNamedImport(index: number, namedImport: ImportSpecifierStructure | string | WriterFunction): ImportSpecifier;
+    insertNamedImport(index: number, namedImport: OptionalKind<ImportSpecifierStructure> | string | WriterFunction): ImportSpecifier;
     /**
      * Inserts named imports into the import declaration.
      * @param index - Child index to insert at.
      * @param namedImports - Structures, names, or writer function to write the named import with.
      */
-    insertNamedImports(index: number, namedImports: ReadonlyArray<ImportSpecifierStructure | string | WriterFunction> | WriterFunction): ImportSpecifier[];
+    insertNamedImports(index: number, namedImports: ReadonlyArray<OptionalKind<ImportSpecifierStructure> | string | WriterFunction> | WriterFunction): ImportSpecifier[];
     /**
      * Gets the named imports.
      */
@@ -8491,24 +8491,24 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
      * Add a variable declaration to the statement.
      * @param structure - Structure representing the variable declaration to add.
      */
-    addDeclaration(structure: VariableDeclarationStructure): VariableDeclaration;
+    addDeclaration(structure: OptionalKind<VariableDeclarationStructure>): VariableDeclaration;
     /**
      * Adds variable declarations to the statement.
      * @param structures - Structures representing the variable declarations to add.
      */
-    addDeclarations(structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
+    addDeclarations(structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>): VariableDeclaration[];
     /**
      * Inserts a variable declaration at the specified index within the statement.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the variable declaration to insert.
      */
-    insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
+    insertDeclaration(index: number, structure: OptionalKind<VariableDeclarationStructure>): VariableDeclaration;
     /**
      * Inserts variable declarations at the specified index within the statement.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the variable declarations to insert.
      */
-    insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
+    insertDeclarations(index: number, structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>): VariableDeclaration[];
     /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
@@ -8792,24 +8792,24 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
      * Add a variable declaration to the statement.
      * @param structure - Structure representing the variable declaration to add.
      */
-    addDeclaration(structure: VariableDeclarationStructure): VariableDeclaration;
+    addDeclaration(structure: OptionalKind<VariableDeclarationStructure>): VariableDeclaration;
     /**
      * Adds variable declarations to the statement.
      * @param structures - Structures representing the variable declarations to add.
      */
-    addDeclarations(structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
+    addDeclarations(structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>): VariableDeclaration[];
     /**
      * Inserts a variable declaration at the specified index within the statement.
      * @param index - Child index to insert at.
      * @param structure - Structure representing the variable declaration to insert.
      */
-    insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
+    insertDeclaration(index: number, structure: OptionalKind<VariableDeclarationStructure>): VariableDeclaration;
     /**
      * Inserts variable declarations at the specified index within the statement.
      * @param index - Child index to insert at.
      * @param structures - Structures representing the variable declarations to insert.
      */
-    insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
+    insertDeclarations(index: number, structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>): VariableDeclaration[];
     /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
@@ -10293,7 +10293,9 @@ export declare abstract class SettingsContainer<T extends object> {
 export declare type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | NamespaceDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
 export declare type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure | PropertyDeclarationStructure;
 export declare type InterfaceMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
-export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | FunctionDeclarationOverloadStructure;
+export declare type ObjectLiteralElementMemberStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure;
+export declare type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure | JsxElementStructure | JsxSelfClosingElementStructure;
+export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralElementMemberStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure;
 
 export interface AbstractableNodeStructure {
     isAbstract?: boolean;
@@ -10312,7 +10314,7 @@ export interface AwaitableNodeStructure {
 }
 
 export interface DecoratableNodeStructure {
-    decorators?: DecoratorStructure[];
+    decorators?: OptionalKind<DecoratorStructure>[];
 }
 
 export interface ExclamationTokenableNodeStructure {
@@ -10341,7 +10343,7 @@ export interface InitializerExpressionableNodeStructure {
 }
 
 export interface JSDocableNodeStructure {
-    docs?: (JSDocStructure | string)[];
+    docs?: (OptionalKind<JSDocStructure> | string)[];
 }
 
 export interface BindingNamedNodeStructure {
@@ -10365,7 +10367,7 @@ export interface PropertyNamedNodeStructure {
 }
 
 export interface ParameteredNodeStructure {
-    parameters?: ParameterDeclarationStructure[];
+    parameters?: OptionalKind<ParameterDeclarationStructure>[];
 }
 
 export interface QuestionTokenableNodeStructure {
@@ -10408,7 +10410,7 @@ export interface TypeElementMemberedNodeStructure {
 }
 
 export interface TypeParameteredNodeStructure {
-    typeParameters?: (TypeParameterDeclarationStructure | string)[];
+    typeParameters?: (OptionalKind<TypeParameterDeclarationStructure> | string)[];
 }
 
 export interface ClassLikeDeclarationBaseStructure extends NameableNodeStructure, ClassLikeDeclarationBaseSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AbstractableNodeStructure {
@@ -10438,10 +10440,13 @@ export interface ConstructorDeclarationStructure extends Structure, ConstructorD
 }
 
 interface ConstructorDeclarationSpecificStructure extends KindedStructure<StructureKind.Constructor> {
-    overloads?: ConstructorDeclarationOverloadStructure[];
+    overloads?: OptionalKind<ConstructorDeclarationOverloadStructure>[];
 }
 
-export interface ConstructorDeclarationOverloadStructure extends Structure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
+export interface ConstructorDeclarationOverloadStructure extends Structure, ConstructorDeclarationOverloadSpecificStructure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
+}
+
+interface ConstructorDeclarationOverloadSpecificStructure extends KindedStructure<StructureKind.ConstructorOverload> {
 }
 
 export interface GetAccessorDeclarationStructure extends Structure, GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure {
@@ -10478,7 +10483,7 @@ interface SetAccessorDeclarationSpecificStructure extends KindedStructure<Struct
 export interface DecoratorStructure extends Structure, DecoratorSpecificStructure {
 }
 
-interface DecoratorSpecificStructure {
+interface DecoratorSpecificStructure extends KindedStructure<StructureKind.Decorator> {
     name: string;
     /**
      * Arguments for a decorator factory.
@@ -10491,7 +10496,7 @@ interface DecoratorSpecificStructure {
 export interface JSDocStructure extends Structure, JSDocSpecificStructure {
 }
 
-interface JSDocSpecificStructure {
+interface JSDocSpecificStructure extends KindedStructure<StructureKind.JSDoc> {
     description: string | WriterFunction;
 }
 
@@ -10555,7 +10560,7 @@ export interface FunctionLikeDeclarationStructure extends SignaturedDeclarationS
 export interface ParameterDeclarationStructure extends Structure, BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure {
 }
 
-interface ParameterDeclarationSpecificStructure {
+interface ParameterDeclarationSpecificStructure extends KindedStructure<StructureKind.Parameter> {
     isRestParameter?: boolean;
 }
 
@@ -10647,14 +10652,14 @@ export interface ExportDeclarationStructure extends Structure, ExportDeclaration
 }
 
 interface ExportDeclarationSpecificStructure extends KindedStructure<StructureKind.ExportDeclaration> {
-    namedExports?: (string | ExportSpecifierStructure | WriterFunction)[] | WriterFunction;
+    namedExports?: (string | OptionalKind<ExportSpecifierStructure> | WriterFunction)[] | WriterFunction;
     moduleSpecifier?: string;
 }
 
 export interface ExportSpecifierStructure extends Structure, ExportSpecifierSpecificStructure {
 }
 
-interface ExportSpecifierSpecificStructure {
+interface ExportSpecifierSpecificStructure extends KindedStructure<StructureKind.ExportSpecifier> {
     name: string;
     alias?: string;
 }
@@ -10665,14 +10670,14 @@ export interface ImportDeclarationStructure extends Structure, ImportDeclaration
 interface ImportDeclarationSpecificStructure extends KindedStructure<StructureKind.ImportDeclaration> {
     defaultImport?: string;
     namespaceImport?: string;
-    namedImports?: (ImportSpecifierStructure | string | WriterFunction)[] | WriterFunction;
+    namedImports?: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction;
     moduleSpecifier: string;
 }
 
 export interface ImportSpecifierStructure extends Structure, ImportSpecifierSpecificStructure {
 }
 
-interface ImportSpecifierSpecificStructure {
+interface ImportSpecifierSpecificStructure extends KindedStructure<StructureKind.ImportSpecifier> {
     name: string;
     alias?: string;
 }
@@ -10693,6 +10698,7 @@ export interface SourceFileStructure extends Structure, SourceFileSpecificStruct
 }
 
 interface SourceFileSpecificStructure {
+    kind: StructureKind.SourceFile;
 }
 
 export interface StatementedNodeStructure {
@@ -10704,13 +10710,13 @@ export interface VariableDeclarationListStructure extends Structure, VariableDec
 
 interface VariableDeclarationListSpecificStructure {
     declarationKind?: VariableDeclarationKind;
-    declarations: VariableDeclarationStructure[];
+    declarations: OptionalKind<VariableDeclarationStructure>[];
 }
 
 export interface VariableDeclarationStructure extends Structure, VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure, ExclamationTokenableNodeStructure {
 }
 
-interface VariableDeclarationSpecificStructure {
+interface VariableDeclarationSpecificStructure extends KindedStructure<StructureKind.VariableDeclaration> {
 }
 
 export interface VariableStatementStructure extends Structure, VariableStatementSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
@@ -10718,7 +10724,7 @@ export interface VariableStatementStructure extends Structure, VariableStatement
 
 interface VariableStatementSpecificStructure extends KindedStructure<StructureKind.VariableStatement> {
     declarationKind?: VariableDeclarationKind;
-    declarations: VariableDeclarationStructure[];
+    declarations: OptionalKind<VariableDeclarationStructure>[];
 }
 
 export interface TypeAliasDeclarationStructure extends Structure, TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
@@ -10732,7 +10738,7 @@ interface TypeAliasDeclarationSpecificStructure extends KindedStructure<Structur
 export interface TypeParameterDeclarationStructure extends Structure, TypeParameterDeclarationSpecificStructure, NamedNodeStructure {
 }
 
-interface TypeParameterDeclarationSpecificStructure {
+interface TypeParameterDeclarationSpecificStructure extends KindedStructure<StructureKind.TypeParameter> {
     constraint?: string | WriterFunction;
     default?: string | WriterFunction;
 }
@@ -10757,36 +10763,45 @@ export interface KindedStructure<TKind extends StructureKind> {
 }
 
 export declare enum StructureKind {
-    Class = 0,
-    Constructor = 1,
-    GetAccessor = 2,
-    SetAccessor = 3,
-    Property = 4,
-    Enum = 5,
-    EnumMember = 6,
-    Function = 7,
-    FunctionOverload = 8,
-    CallSignature = 9,
-    ConstructSignature = 10,
-    IndexSignature = 11,
-    Interface = 12,
-    Method = 13,
-    MethodOverload = 14,
-    MethodSignature = 15,
-    PropertySignature = 16,
-    ExportAssignment = 17,
-    ExportDeclaration = 18,
-    ImportDeclaration = 19,
-    Namespace = 20,
-    VariableStatement = 21,
-    TypeAlias = 22,
-    PropertyAssignment = 23,
-    ShorthandPropertyAssignment = 24,
-    SpreadAssignment = 25,
-    JsxAttribute = 26,
-    JsxSpreadAttribute = 27,
-    JsxElement = 28,
-    JsxSelfClosingElement = 29
+    CallSignature = 0,
+    Class = 1,
+    ConstructSignature = 2,
+    Constructor = 3,
+    ConstructorOverload = 4,
+    Decorator = 5,
+    Enum = 6,
+    EnumMember = 7,
+    ExportAssignment = 8,
+    ExportDeclaration = 9,
+    ExportSpecifier = 10,
+    Function = 11,
+    FunctionOverload = 12,
+    GetAccessor = 13,
+    ImportDeclaration = 14,
+    ImportSpecifier = 15,
+    IndexSignature = 16,
+    Interface = 17,
+    JsxAttribute = 18,
+    JsxSpreadAttribute = 19,
+    JsxElement = 20,
+    JsxSelfClosingElement = 21,
+    JSDoc = 22,
+    Method = 23,
+    MethodOverload = 24,
+    MethodSignature = 25,
+    Namespace = 26,
+    Parameter = 27,
+    Property = 28,
+    PropertyAssignment = 29,
+    PropertySignature = 30,
+    SetAccessor = 31,
+    ShorthandPropertyAssignment = 32,
+    SourceFile = 33,
+    SpreadAssignment = 34,
+    TypeAlias = 35,
+    TypeParameter = 36,
+    VariableDeclaration = 37,
+    VariableStatement = 38
 }
 
 export { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind };

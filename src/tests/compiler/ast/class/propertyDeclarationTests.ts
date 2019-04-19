@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { Scope, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
 import { PropertyDeclarationStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(PropertyDeclaration), () => {
     function getFirstPropertyWithInfo(code: string) {
@@ -48,8 +48,7 @@ describe(nameof(PropertyDeclaration), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertyDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getProperties()[0].getStructure();
-            structure.decorators = structure.decorators!.map(d => ({ name: d.name }));
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.property(expectedStructure));
         }
 
         it("should get when empty", () => {
