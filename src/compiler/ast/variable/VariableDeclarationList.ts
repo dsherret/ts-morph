@@ -1,14 +1,12 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange } from "../../../manipulation";
 import { CommaSeparatedStructuresPrinter } from "../../../structurePrinters";
-import { VariableDeclarationListStructure, VariableDeclarationStructure, VariableDeclarationListSpecificStructure, OptionalKind } from "../../../structures";
+import { VariableDeclarationStructure, OptionalKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ModifierableNode } from "../base";
-import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { VariableDeclaration } from "./VariableDeclaration";
 import { VariableDeclarationKind } from "./VariableDeclarationKind";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const VariableDeclarationListBase = ModifierableNode(Node);
 export class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
@@ -115,33 +113,5 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
         });
 
         return getNodesToReturn(this.getDeclarations(), index, structures.length);
-    }
-
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<VariableDeclarationListStructure>) {
-        callBaseSet(VariableDeclarationListBase.prototype, this, structure);
-
-        if (structure.declarationKind != null)
-            this.setDeclarationKind(structure.declarationKind);
-        if (structure.declarations != null) {
-            const existingDeclarations = this.getDeclarations();
-            this.addDeclarations(structure.declarations);
-            existingDeclarations.forEach(d => d.remove());
-        }
-
-        return this;
-    }
-
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): VariableDeclarationListStructure {
-        return callBaseGetStructure<VariableDeclarationListSpecificStructure>(VariableDeclarationListBase.prototype, this, {
-            declarationKind: this.getDeclarationKind(),
-            declarations: this.getDeclarations().map(declaration => declaration.getStructure())
-        }) as any as VariableDeclarationListStructure;
     }
 }

@@ -86,10 +86,13 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
     set(structure: Partial<VariableStatementStructure>) {
         callBaseSet(VariableStatementBase.prototype, this, structure);
 
-        this.getDeclarationList().set({
-            declarationKind: structure.declarationKind,
-            declarations: structure.declarations
-        });
+        if (structure.declarationKind != null)
+            this.setDeclarationKind(structure.declarationKind);
+        if (structure.declarations != null) {
+            const existingDeclarations = this.getDeclarations();
+            this.addDeclarations(structure.declarations);
+            existingDeclarations.forEach(d => d.remove());
+        }
 
         return this;
     }

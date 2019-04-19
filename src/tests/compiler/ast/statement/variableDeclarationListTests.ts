@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../../../../compiler";
-import { VariableDeclarationListStructure, VariableDeclarationStructure, OptionalKind } from "../../../../structures";
+import { VariableDeclarationStructure, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(VariableDeclarationList), () => {
@@ -126,41 +126,6 @@ describe(nameof(VariableDeclarationList), () => {
 
         it("should add a declaration", () => {
             doTest("var v1;", { name: "v2" }, "var v1, v2;");
-        });
-    });
-
-    describe(nameof<VariableDeclarationList>(d => d.set), () => {
-        function doTest(text: string, fillStructure: Partial<VariableDeclarationListStructure>, expectedText: string) {
-            const { sourceFile } = getInfoFromText(text);
-            sourceFile.getVariableStatements()[0].getDeclarationList().set(fillStructure);
-            expect(sourceFile.getFullText()).to.equal(expectedText);
-        }
-
-        it("should set the variable declaration kind", () => {
-            doTest("const t = '';", { declarationKind: VariableDeclarationKind.Let }, "let t = '';");
-        });
-
-        it("should set declarations", () => {
-            doTest("const t = '';", { declarations: [{ name: "v2" }, { name: "v3" }] }, "const v2, v3;");
-        });
-
-        it("should remove the statement when specifying an empty declarations array", () => {
-            doTest("const t = '';", { declarations: [] }, "");
-        });
-    });
-
-    describe(nameof<VariableDeclarationList>(d => d.getStructure), () => {
-        function doTest(text: string, expected: VariableDeclarationListStructure) {
-            const structure = getInfoFromText(text).sourceFile.getVariableStatements()[0].getDeclarationList().getStructure();
-            structure.declarations = structure.declarations.map(d => ({ name: d.name }));
-            expect(structure).to.deep.equal(expected);
-        }
-
-        it("should get structure of the variable declaration list", () => {
-            doTest("let t, u;", {
-                declarationKind: VariableDeclarationKind.Let,
-                declarations: [{ name: "t" }, { name: "u" }]
-            });
         });
     });
 });
