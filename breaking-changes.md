@@ -120,6 +120,18 @@ Do the following:
 fileTextChanges.forEach(change => change.applyChanges());
 ```
 
+### Renamed `Type#getArrayType()` to `Type#getArrayElementType()`
+
+This new method name makes more sense:
+
+```ts
+const arrayType = ...;
+const arrayElementType = arrayType.getArrayType(); // confusing
+
+// better
+const arrayElementType = arrayType.getArrayElementType();
+```
+
 ## `EnumMember#getStructure()` only returns the `initializer`
 
 Previously it would return both the `initializer` and `value`. `value` should be seen as more of a convenience property for setting the initializer.

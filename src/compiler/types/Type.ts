@@ -69,9 +69,9 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
-     * Gets the array type
+     * Gets the array element type (ex. in `T[]` it would be `T`).
      */
-    getArrayType() {
+    getArrayElementType() {
         if (!this.isArray())
             return undefined;
         return this.getTypeArguments()[0];
