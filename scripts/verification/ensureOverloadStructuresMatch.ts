@@ -23,8 +23,8 @@ export function ensureOverloadStructuresMatch(inspector: TsMorphInspector, addPr
         if (structure == null)
             throw new Error(`Could not find structure for overload: ${overloadStructure.getName()}`);
 
-        const overloadBaseStructures = overloadStructure.getDescendantBaseStructures();
-        const structureBaseStructures = structure.getDescendantBaseStructures().filter(s => isAllowedStructure(s));
+        const overloadBaseStructures = overloadStructure.getDescendantBaseStructures().filter(isAllowedBaseStructure);
+        const structureBaseStructures = structure.getDescendantBaseStructures().filter(isAllowedStructure);
 
         for (let i = overloadBaseStructures.length - 1; i >= 0; i--) {
             const findIndex = structureBaseStructures.map(s => s.getName()).indexOf(overloadBaseStructures[i].getName());
@@ -58,6 +58,19 @@ function isAllowedStructure(structure: Structure) {
         case "FunctionLikeDeclarationStructure":
         case "StatementedNodeStructure":
         case "DecoratableNodeStructure":
+        case "KindedStructure":
+            return false;
+    }
+
+    if (structure.getName().indexOf("SpecificStructure") > 0)
+        return false;
+
+    return true;
+}
+
+function isAllowedBaseStructure(structure: Structure) {
+    // ignore these on the base structures
+    switch (structure.getName()) {
         case "KindedStructure":
             return false;
     }
