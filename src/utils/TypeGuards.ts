@@ -2850,7 +2850,6 @@ export class TypeGuards {
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:
-            case SyntaxKind.VariableDeclarationList:
             case SyntaxKind.PropertyAssignment:
             case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.SpreadAssignment:

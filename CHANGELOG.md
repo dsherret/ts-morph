@@ -8,14 +8,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* `isOverload()` should return `true` for abstract methods. ([558cdd1](https://github.com/dsherret/ts-morph/commit/558cdd1))
+* The code writer did not handle escaping string chars in strings. ([a87850e](https://github.com/dsherret/ts-morph/commit/a87850e))
 * `Node#getDescendantStatements()` is now properly typed as possibly returning an `Expression`. ([9d26400](https://github.com/dsherret/ts-morph/commit/9d26400))
 * `ReturnTypedNode` and `TypedNode`'s `#getStructure()` should return the type and return type text without leading indentation. ([4d95e64](https://github.com/dsherret/ts-morph/commit/4d95e64))
 * DefinitionInfo.getDeclarationNode() should return a source file when the kind is "module" and width equal to the source file. ([967206f](https://github.com/dsherret/ts-morph/commit/967206f))
 * Do not add trailing whitespace when a jsdoc's description includes a blank line. ([cf314da](https://github.com/dsherret/ts-morph/commit/cf314da))
 * Fix removing class elements on object literal expressions. ([4e1464e](https://github.com/dsherret/ts-morph/commit/4e1464e))
 * Getting/inserting statements on a ModuleBlock was throwing an error. ([2b8adad](https://github.com/dsherret/ts-morph/commit/2b8adad))
-* The code writer did not handle escaping string chars in strings. ([a87850e](https://github.com/dsherret/ts-morph/commit/a87850e))
+* `isOverload()` should return `true` for abstract methods. ([558cdd1](https://github.com/dsherret/ts-morph/commit/558cdd1))
 
 
 ### Chores
