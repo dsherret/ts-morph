@@ -1,15 +1,33 @@
-import * as fs from "fs";
 import * as path from "path";
 import { Node } from "../../../compiler";
-import { FileSystemHost, VirtualFileSystemHost } from "../../../fileSystem";
+import { DefaultFileSystemHost, FileSystemHost, VirtualFileSystemHost } from "../../../fileSystem";
 import { Project } from "../../../Project";
 import { CompilerOptions, SyntaxKind, ts } from "../../../typescript";
+
+const fileSystem = new DefaultFileSystemHost();
 
 function getTextForLibFile(fileName: string) {
     return {
         filePath: path.join("node_modules/typescript/lib", fileName),
-        text: fs.readFileSync(path.join(__dirname, `../../../../node_modules/typescript-${ts.version}/lib`, fileName), "utf-8")
+        text: fileSystem.readFileSync(path.join(getCompilerLibFolder(ts.version), fileName))
     };
+}
+
+const versionLibFolder = new Map<string, string>();
+function getCompilerLibFolder(version: string) {
+    if (!versionLibFolder.has(version))
+        versionLibFolder.set(version, getFolder());
+
+    return versionLibFolder.get(version)!;
+
+    function getFolder() {
+        const basePath = path.join(__dirname, `../../../../node_modules/`);
+        const versionPath = path.join(basePath, `typescript-${version}/lib`);
+        if (fileSystem.fileExistsSync(versionPath))
+            return versionPath;
+        else
+            return path.join(basePath, `typescript/lib`);
+    }
 }
 
 const libFileNames = [
