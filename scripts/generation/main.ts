@@ -5,6 +5,7 @@ import { createCodeBlockWriterFile } from "./createCodeBlockWriterFile";
 import { createKindToNodeMappings } from "./createKindToNodeMappings";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
 import { createDeclarationFile } from "./createDeclarationFile";
+import { createForEachStructureChild } from "./createForEachStructureChild";
 import { InspectorFactory } from "../inspectors";
 
 const args = process.argv.slice(2);
@@ -39,6 +40,10 @@ const tsInspector = factory.getTsInspector();
     if (checkHasExplicitArg("create-declaration-file")) {
         console.log("Creating declaration file...");
         await createDeclarationFile();
+    }
+    if (checkHasArg("create-for-each-structure-child")) {
+        console.log("Creating for each structure child...");
+        createForEachStructureChild(inspector);
     }
 
     if (args.length > 0)

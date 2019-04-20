@@ -1,10 +1,10 @@
 ﻿import { InterfaceDeclaration, TypeGuards } from "ts-morph";
-import { Memoize, ArrayUtils } from "../../../src/utils";
+import { Memoize } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 import { isOverloadStructure } from "../../config";
 
 export class Structure {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: InterfaceDeclaration) {
+    constructor(private readonly wrapperFactory: WrapperFactory, readonly node: InterfaceDeclaration) {
     }
 
     getName() {
@@ -15,12 +15,24 @@ export class Structure {
         return this.node.getSourceFile().getFilePath();
     }
 
+    getSymbol() {
+        return this.node.getSymbolOrThrow();
+    }
+
+    getType() {
+        return this.node.getType();
+    }
+
     getStartLineNumber() {
         return this.node.getStartLineNumber();
     }
 
     isOverloadStructure() {
         return isOverloadStructure(this.getName());
+    }
+
+    getProperties() {
+        return this.node.getProperties();
     }
 
     @Memoize
