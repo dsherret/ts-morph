@@ -9843,7 +9843,6 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      */
     readonly compilerType: TType;
     private _hasTypeFlag;
-    private _hasAnyTypeFlag;
     private _hasObjectFlag;
     protected constructor();
     /**
@@ -9869,11 +9868,11 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      */
     getApparentType(): Type;
     /**
-     * Gets the array element type or throws if it doesn't exist (ex. in `T[]` it would be `T`).
+     * Gets the array element type or throws if it doesn't exist (ex. for `T[]` it would be `T`).
      */
     getArrayElementTypeOrThrow(): Type<ts.Type>;
     /**
-     * Gets the array element type or returns undefined if it doesn't exist (ex. in `T[]` it would be `T`).
+     * Gets the array element type or returns undefined if it doesn't exist (ex. for `T[]` it would be `T`).
      */
     getArrayElementType(): Type<ts.Type> | undefined;
     /**
@@ -9965,11 +9964,11 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      */
     getTupleElements(): Type[];
     /**
-     * Gets the union types.
+     * Gets the union types (ex. for `T | U` it returns the array `[T, U]`).
      */
     getUnionTypes(): Type[];
     /**
-     * Gets the intersection types.
+     * Gets the intersection types (ex. for `T & U` it returns the array `[T, U]`).
      */
     getIntersectionTypes(): Type[];
     /**
