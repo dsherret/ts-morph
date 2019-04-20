@@ -69,7 +69,14 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
-     * Gets the array element type (ex. in `T[]` it would be `T`).
+     * Gets the array element type or throws if it doesn't exist (ex. in `T[]` it would be `T`).
+     */
+    getArrayElementTypeOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getArrayElementType(), "Expected to find an array element type.");
+    }
+
+    /**
+     * Gets the array element type or returns undefined if it doesn't exist (ex. in `T[]` it would be `T`).
      */
     getArrayElementType() {
         if (!this.isArray())

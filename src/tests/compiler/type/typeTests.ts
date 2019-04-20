@@ -645,6 +645,23 @@ let unknownType: unknown;
             });
         });
 
+        describe(nameof<Type>(t => t.getArrayElementTypeOrThrow), () => {
+            function doTest(typeName: string, expected: string | undefined) {
+                if (expected == null)
+                    expect(() => typesByName[typeName].getArrayElementTypeOrThrow()).to.throw();
+                else
+                    expect(typesByName[typeName].getArrayElementTypeOrThrow().getText()).to.equal(expected);
+            }
+
+            it("should get when exists", () => {
+                doTest("arrayType", "string");
+            });
+
+            it("should be undefined when not exists", () => {
+                doTest("stringType", undefined);
+            });
+        });
+
         describe(nameof<Type>(t => t.getArrayElementType), () => {
             function doTest(typeName: string, expected: string | undefined) {
                 const type = typesByName[typeName].getArrayElementType();

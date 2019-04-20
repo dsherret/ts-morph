@@ -9869,7 +9869,11 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      */
     getApparentType(): Type;
     /**
-     * Gets the array element type (ex. in `T[]` it would be `T`).
+     * Gets the array element type or throws if it doesn't exist (ex. in `T[]` it would be `T`).
+     */
+    getArrayElementTypeOrThrow(): Type<ts.Type>;
+    /**
+     * Gets the array element type or returns undefined if it doesn't exist (ex. in `T[]` it would be `T`).
      */
     getArrayElementType(): Type<ts.Type> | undefined;
     /**
