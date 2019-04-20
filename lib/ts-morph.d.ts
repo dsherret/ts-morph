@@ -8810,15 +8810,6 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
      * @param structures - Structures representing the variable declarations to insert.
      */
     insertDeclarations(index: number, structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>): VariableDeclaration[];
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<VariableDeclarationListStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): VariableDeclarationListStructure;
 }
 
 export declare class Signature {
@@ -10295,7 +10286,7 @@ export declare type ClassMemberStructures = ConstructorDeclarationStructure | Ge
 export declare type InterfaceMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
 export declare type ObjectLiteralElementMemberStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure;
 export declare type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure | JsxElementStructure | JsxSelfClosingElementStructure;
-export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralElementMemberStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure;
+export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralElementMemberStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | DecoratorStructure;
 
 export interface AbstractableNodeStructure {
     isAbstract?: boolean;
@@ -10703,14 +10694,6 @@ interface SourceFileSpecificStructure {
 
 export interface StatementedNodeStructure {
     statements?: (string | WriterFunction | StatementStructures)[] | string | WriterFunction;
-}
-
-export interface VariableDeclarationListStructure extends Structure, VariableDeclarationListSpecificStructure {
-}
-
-interface VariableDeclarationListSpecificStructure {
-    declarationKind?: VariableDeclarationKind;
-    declarations: OptionalKind<VariableDeclarationStructure>[];
 }
 
 export interface VariableDeclarationStructure extends Structure, VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure, ExclamationTokenableNodeStructure {

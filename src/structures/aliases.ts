@@ -1,5 +1,6 @@
 import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, SetAccessorDeclarationStructure, MethodDeclarationStructure,
     PropertyDeclarationStructure, MethodDeclarationOverloadStructure, ConstructorDeclarationOverloadStructure } from "./class";
+import { DecoratorStructure } from "./decorator";
 import { EnumDeclarationStructure, EnumMemberStructure } from "./enum";
 import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, ParameterDeclarationStructure } from "./function";
 import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure,
@@ -29,4 +30,5 @@ export type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure 
 
 export type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralElementMemberStructures
     | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure
-    | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure;
+    | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure
+    | DecoratorStructure;
