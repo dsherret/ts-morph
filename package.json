@@ -114,8 +114,7 @@
     "typescript-3.0.3": "npm:typescript@3.0.3",
     "typescript-3.1.6": "npm:typescript@3.1.6",
     "typescript-3.2.4": "npm:typescript@3.2.4",
-    "typescript-3.3.3": "npm:typescript@3.3.3",
-    "typescript-3.4.3": "npm:typescript@3.4.3"
+    "typescript-3.3.3": "npm:typescript@3.3.3"
   },
   "standard-version": {
     "tagPrefix": ""
