@@ -10,11 +10,9 @@
 
 Formerly `ts-simple-ast`.
 
-## Library Development - Progress Update (02 February 2019)
+## Library Development - Progress Update (20 April 2019)
 
-The library has been renamed from `ts-simple-ast` to `ts-morph`. The version was also reset back to 1.0.0 with this change.
-
-View information on breaking changes in [breaking-changes.md](breaking-changes.md).
+There were a lot of breaking changes in v2.0. Please review [breaking-changes.md](breaking-changes.md) and see the [changelog](CHANGELOG.md) for information on new features.
 
 This library is still under early active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
