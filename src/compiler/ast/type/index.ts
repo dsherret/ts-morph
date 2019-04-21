@@ -8,6 +8,7 @@ export * from "./IndexedAccessTypeNode";
 export * from "./IntersectionTypeNode";
 export * from "./LiteralTypeNode";
 export * from "./ParenthesizedTypeNode";
+export * from "./ThisTypeNode";
 export * from "./TupleTypeNode";
 export * from "./TypeAliasDeclaration";
 export * from "./TypeLiteralNode";

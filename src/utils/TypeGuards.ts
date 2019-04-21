@@ -2426,6 +2426,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ThisTypeNode.
+     * @param node - Node to check.
+     */
+    static isThisTypeNode(node: compiler.Node): node is compiler.ThisTypeNode {
+        return node.getKind() === SyntaxKind.ThisType;
+    }
+
+    /**
      * Gets if the node is a ThrowStatement.
      * @param node - Node to check.
      */
@@ -2546,6 +2554,7 @@ export class TypeGuards {
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
             case SyntaxKind.ParenthesizedType:
+            case SyntaxKind.ThisType:
             case SyntaxKind.TupleType:
             case SyntaxKind.TypeLiteral:
             case SyntaxKind.TypeReference:

@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 173
+**Total:** 174
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -378,6 +378,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: literal
 * [TemplateTail](src/compiler/ast/literal/template/TemplateTail.ts)
 * [ThisExpression](src/compiler/ast/expression/ThisExpression.ts)
+* [ThisTypeNode](src/compiler/ast/type/ThisTypeNode.ts)
 * [ThrowStatement](src/compiler/ast/statement/ThrowStatement.ts)
     * :heavy_check_mark: expression
 * [TryStatement](src/compiler/ast/statement/TryStatement.ts)
@@ -434,7 +435,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 55
+**Total:** 54
 
 * BigIntLiteral
 * Bundle
@@ -478,7 +479,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * SemicolonClassElement
 * SuperCall
 * SyntheticExpression
-* ThisTypeNode
 * Token
 * TransientIdentifier
 * TsConfigSourceFile

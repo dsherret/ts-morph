@@ -1737,6 +1737,11 @@ export declare class TypeGuards {
      */
     static isThisExpression(node: Node): node is ThisExpression;
     /**
+     * Gets if the node is a ThisTypeNode.
+     * @param node - Node to check.
+     */
+    static isThisTypeNode(node: Node): node is ThisTypeNode;
+    /**
      * Gets if the node is a ThrowStatement.
      * @param node - Node to check.
      */
@@ -6572,6 +6577,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TemplateSpan]: TemplateSpan;
     [SyntaxKind.TemplateTail]: TemplateTail;
     [SyntaxKind.LastTemplateToken]: TemplateTail;
+    [SyntaxKind.ThisType]: ThisTypeNode;
     [SyntaxKind.ThrowStatement]: ThrowStatement;
     [SyntaxKind.TryStatement]: TryStatement;
     [SyntaxKind.TupleType]: TupleTypeNode;
@@ -8645,6 +8651,9 @@ export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedType
      * @param textOrWriterFunction - Text or writer function to set the type with.
      */
     setType(textOrWriterFunction: string | WriterFunction): this;
+}
+
+export declare class ThisTypeNode extends TypeNode<ts.ThisTypeNode> {
 }
 
 export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {

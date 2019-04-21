@@ -131,6 +131,7 @@ export const kindToWrapperMappings: { [key: number]: unknown } = {
     [SyntaxKind.TemplateMiddle]: compiler.TemplateMiddle,
     [SyntaxKind.TemplateSpan]: compiler.TemplateSpan,
     [SyntaxKind.TemplateTail]: compiler.TemplateTail,
+    [SyntaxKind.ThisType]: compiler.ThisTypeNode,
     [SyntaxKind.ThrowStatement]: compiler.ThrowStatement,
     [SyntaxKind.TryStatement]: compiler.TryStatement,
     [SyntaxKind.TupleType]: compiler.TupleTypeNode,

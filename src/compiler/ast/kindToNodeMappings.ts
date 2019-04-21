@@ -138,6 +138,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TemplateSpan]: compiler.TemplateSpan;
     [SyntaxKind.TemplateTail]: compiler.TemplateTail;
     [SyntaxKind.LastTemplateToken]: compiler.TemplateTail;
+    [SyntaxKind.ThisType]: compiler.ThisTypeNode;
     [SyntaxKind.ThrowStatement]: compiler.ThrowStatement;
     [SyntaxKind.TryStatement]: compiler.TryStatement;
     [SyntaxKind.TupleType]: compiler.TupleTypeNode;
