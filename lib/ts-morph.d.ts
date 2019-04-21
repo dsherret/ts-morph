@@ -1167,6 +1167,16 @@ export declare class TypeGuards {
      */
     static isIndexedAccessTypeNode(node: Node): node is IndexedAccessTypeNode;
     /**
+     * Gets if the node is a InferKeyword.
+     * @param node - Node to check.
+     */
+    static isInferKeyword(node: Node): node is Node;
+    /**
+     * Gets if the node is a InferTypeNode.
+     * @param node - Node to check.
+     */
+    static isInferTypeNode(node: Node): node is InferTypeNode;
+    /**
      * Gets if the node is a InitializerExpressionGetableNode.
      * @param node - Node to check.
      */
@@ -6502,6 +6512,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.LastTypeNode]: ImportTypeNode;
     [SyntaxKind.IndexedAccessType]: IndexedAccessTypeNode;
     [SyntaxKind.IndexSignature]: IndexSignatureDeclaration;
+    [SyntaxKind.InferType]: InferTypeNode;
     [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: IntersectionTypeNode;
     [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
@@ -6594,6 +6605,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypePredicate]: TypeNode;
     [SyntaxKind.FirstTypeNode]: TypeNode;
     [SyntaxKind.SemicolonToken]: Node;
+    [SyntaxKind.InferKeyword]: Node;
     [SyntaxKind.TypeOfExpression]: TypeOfExpression;
     [SyntaxKind.WhileStatement]: WhileStatement;
     [SyntaxKind.WithStatement]: WithStatement;
@@ -8625,6 +8637,15 @@ export declare class IndexedAccessTypeNode extends TypeNode<ts.IndexedAccessType
      * This is `"myIndex"` in `MyObjectType["myIndex"]`.
      */
     getIndexTypeNode(): TypeNode;
+}
+
+export declare class InferTypeNode extends TypeNode<ts.InferTypeNode> {
+    /**
+     * Gets the infer type node's type parameter.
+     *
+     * Ex. In `infer R` returns `R`.
+     */
+    getTypeParameter(): TypeParameterDeclaration;
 }
 
 export declare class IntersectionTypeNode extends TypeNode<ts.IntersectionTypeNode> {

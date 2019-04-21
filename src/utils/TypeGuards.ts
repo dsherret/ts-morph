@@ -1004,6 +1004,22 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a InferKeyword.
+     * @param node - Node to check.
+     */
+    static isInferKeyword(node: compiler.Node): node is compiler.Node {
+        return node.getKind() === SyntaxKind.InferKeyword;
+    }
+
+    /**
+     * Gets if the node is a InferTypeNode.
+     * @param node - Node to check.
+     */
+    static isInferTypeNode(node: compiler.Node): node is compiler.InferTypeNode {
+        return node.getKind() === SyntaxKind.InferType;
+    }
+
+    /**
      * Gets if the node is a InitializerExpressionGetableNode.
      * @param node - Node to check.
      */
@@ -2551,6 +2567,7 @@ export class TypeGuards {
             case SyntaxKind.FunctionType:
             case SyntaxKind.ImportType:
             case SyntaxKind.IndexedAccessType:
+            case SyntaxKind.InferType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
             case SyntaxKind.ParenthesizedType:

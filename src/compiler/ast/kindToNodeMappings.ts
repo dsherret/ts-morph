@@ -63,6 +63,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.LastTypeNode]: compiler.ImportTypeNode;
     [SyntaxKind.IndexedAccessType]: compiler.IndexedAccessTypeNode;
     [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration;
+    [SyntaxKind.InferType]: compiler.InferTypeNode;
     [SyntaxKind.InterfaceDeclaration]: compiler.InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode;
     [SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag;
@@ -155,6 +156,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypePredicate]: compiler.TypeNode;
     [SyntaxKind.FirstTypeNode]: compiler.TypeNode;
     [SyntaxKind.SemicolonToken]: compiler.Node;
+    [SyntaxKind.InferKeyword]: compiler.Node;
     [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression;
     [SyntaxKind.WhileStatement]: compiler.WhileStatement;
     [SyntaxKind.WithStatement]: compiler.WithStatement;

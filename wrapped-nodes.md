@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 174
+**Total:** 175
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -167,6 +167,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [IndexedAccessTypeNode](src/compiler/ast/type/IndexedAccessTypeNode.ts)
     * :heavy_check_mark: objectType
     * :heavy_check_mark: indexType
+* [InferTypeNode](src/compiler/ast/type/InferTypeNode.ts)
+    * :heavy_check_mark: typeParameter
 * [InterfaceDeclaration](src/compiler/ast/interface/InterfaceDeclaration.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: typeParameters
@@ -435,7 +437,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 54
+**Total:** 53
 
 * BigIntLiteral
 * Bundle
@@ -444,7 +446,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * DeclarationStatement
 * FunctionOrConstructorTypeNodeBase
 * ImportCall
-* InferTypeNode
 * InputFiles
 * JSDocAllType
 * JSDocCallbackTag
