@@ -471,6 +471,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ConditionalTypeNode.
+     * @param node - Node to check.
+     */
+    static isConditionalTypeNode(node: compiler.Node): node is compiler.ConditionalTypeNode {
+        return node.getKind() === SyntaxKind.ConditionalType;
+    }
+
+    /**
      * Gets if the node is a ConstructSignatureDeclaration.
      * @param node - Node to check.
      */
@@ -2562,6 +2570,7 @@ export class TypeGuards {
             case SyntaxKind.JSDocSignature:
             case SyntaxKind.JSDocTypeExpression:
             case SyntaxKind.ArrayType:
+            case SyntaxKind.ConditionalType:
             case SyntaxKind.ConstructorType:
             case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.FunctionType:

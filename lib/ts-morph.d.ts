@@ -922,6 +922,11 @@ export declare class TypeGuards {
      */
     static isConditionalExpression(node: Node): node is ConditionalExpression;
     /**
+     * Gets if the node is a ConditionalTypeNode.
+     * @param node - Node to check.
+     */
+    static isConditionalTypeNode(node: Node): node is ConditionalTypeNode;
+    /**
      * Gets if the node is a ConstructSignatureDeclaration.
      * @param node - Node to check.
      */
@@ -6470,6 +6475,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.CatchClause]: CatchClause;
     [SyntaxKind.ClassDeclaration]: ClassDeclaration;
     [SyntaxKind.ClassExpression]: ClassExpression;
+    [SyntaxKind.ConditionalType]: ConditionalTypeNode;
     [SyntaxKind.Constructor]: ConstructorDeclaration;
     [SyntaxKind.ConstructorType]: ConstructorTypeNode;
     [SyntaxKind.ConstructSignature]: ConstructSignatureDeclaration;
@@ -8573,6 +8579,33 @@ export declare class ArrayTypeNode extends TypeNode<ts.ArrayTypeNode> {
      * Gets the array type node's element type node.
      */
     getElementTypeNode(): TypeNode;
+}
+
+export declare class ConditionalTypeNode extends TypeNode<ts.ConditionalTypeNode> {
+    /**
+     * Gets the conditional type node's check type.
+     *
+     * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `CheckType`.
+     */
+    getCheckType(): TypeNode<ts.TypeNode>;
+    /**
+     * Gets the conditional type node's extends type.
+     *
+     * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `ExtendsType`.
+     */
+    getExtendsType(): TypeNode<ts.TypeNode>;
+    /**
+     * Gets the conditional type node's true type.
+     *
+     * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `TrueType`.
+     */
+    getTrueType(): TypeNode<ts.TypeNode>;
+    /**
+     * Gets the conditional type node's false type.
+     *
+     * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `FalseType`.
+     */
+    getFalseType(): TypeNode<ts.TypeNode>;
 }
 
 export declare class ConstructorTypeNode extends FunctionOrConstructorTypeNodeBase<ts.ConstructorTypeNode> {

@@ -1,4 +1,5 @@
 export * from "./ArrayTypeNode";
+export * from "./ConditionalTypeNode";
 export * from "./ConstructorTypeNode";
 export * from "./ExpressionWithTypeArguments";
 export * from "./FunctionTypeNode";

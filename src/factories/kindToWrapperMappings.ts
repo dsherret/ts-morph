@@ -24,6 +24,7 @@ export const kindToWrapperMappings: { [key: number]: unknown } = {
     [SyntaxKind.CatchClause]: compiler.CatchClause,
     [SyntaxKind.ClassDeclaration]: compiler.ClassDeclaration,
     [SyntaxKind.ClassExpression]: compiler.ClassExpression,
+    [SyntaxKind.ConditionalType]: compiler.ConditionalTypeNode,
     [SyntaxKind.Constructor]: compiler.ConstructorDeclaration,
     [SyntaxKind.ConstructorType]: compiler.ConstructorTypeNode,
     [SyntaxKind.ConstructSignature]: compiler.ConstructSignatureDeclaration,
