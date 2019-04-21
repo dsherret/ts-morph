@@ -23,7 +23,7 @@ function getCompilerLibFolder(version: string) {
     function getFolder() {
         const basePath = path.join(__dirname, `../../../../node_modules/`);
         const versionPath = path.join(basePath, `typescript-${version}/lib`);
-        if (fileSystem.fileExistsSync(versionPath))
+        if (fileSystem.directoryExistsSync(versionPath))
             return versionPath;
         else
             return path.join(basePath, `typescript/lib`);
