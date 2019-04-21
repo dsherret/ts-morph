@@ -8007,7 +8007,17 @@ export interface StatementedNode {
      * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
      * @param findFunction - Function to find the statement by.
      */
+    getStatement<T extends Statement>(findFunction: (statement: Statement) => statement is T): T | undefined;
+    /**
+     * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
+     * @param findFunction - Function to find the statement by.
+     */
     getStatement(findFunction: (statement: Statement) => boolean): Statement | undefined;
+    /**
+     * Gets the first statement that matches the provided condition or throws if it doesn't exist.
+     * @param findFunction - Function to find the statement by.
+     */
+    getStatementOrThrow<T extends Statement>(findFunction: (statement: Statement) => statement is T): T;
     /**
      * Gets the first statement that matches the provided condition or throws if it doesn't exist.
      * @param findFunction - Function to find the statement by.
