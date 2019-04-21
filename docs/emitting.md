@@ -33,7 +33,7 @@ Call `.emit()` on the source file:
 
 ```ts
 const sourceFile = project.getSourceFileOrThrow("MyFile.ts");
-sourceFile.emit(); // async
+sourceFile.emit(); // async, fast
 
 // or
 sourceFile.emitSync(); // slow

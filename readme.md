@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/dsherret/ts-morph/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-morph?branch=master)
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
-[TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
+[TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides an easier way to navigate and manipulate TypeScript and JavaScript code.
 
 Formerly `ts-simple-ast`.
 
@@ -60,13 +60,13 @@ const myEnumFile = project.createSourceFile("src/MyEnum.ts", {
     }]
 });
 
-// get information from ast
+// get information
 const myClass = myClassFile.getClassOrThrow("MyClass");
 myClass.getName();          // returns: "MyClass"
 myClass.hasExportKeyword(); // returns: true
 myClass.isDefaultExport();  // returns: false
 
-// manipulate ast
+// manipulate
 const myInterface = myClassFile.addInterface({
     name: "IMyInterface",
     isExported: true,
