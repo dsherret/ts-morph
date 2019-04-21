@@ -13,6 +13,7 @@ export const kindToWrapperMappings: { [key: number]: unknown } = {
     [SyntaxKind.ArrowFunction]: compiler.ArrowFunction,
     [SyntaxKind.AsExpression]: compiler.AsExpression,
     [SyntaxKind.AwaitExpression]: compiler.AwaitExpression,
+    [SyntaxKind.BigIntLiteral]: compiler.BigIntLiteral,
     [SyntaxKind.BindingElement]: compiler.BindingElement,
     [SyntaxKind.BinaryExpression]: compiler.BinaryExpression,
     [SyntaxKind.Block]: compiler.Block,

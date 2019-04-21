@@ -11,7 +11,7 @@ describe(nameof(ConditionalTypeNode), () => {
 
     describe(nameof<ConditionalTypeNode>(n => n.getCheckType), () => {
         it("should get the check type", () => {
-            expect(descendant.getExtendsType().getText()).to.equal("CheckType");
+            expect(descendant.getCheckType().getText()).to.equal("CheckType");
         });
     });
 
