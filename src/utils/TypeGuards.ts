@@ -223,14 +223,6 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a BigIntLiteral.
-     * @param node - Node to check.
-     */
-    static isBigIntLiteral(node: compiler.Node): node is compiler.BigIntLiteral {
-        return node.getKind() === SyntaxKind.BigIntLiteral;
-    }
-
-    /**
      * Gets if the node is a BinaryExpression.
      * @param node - Node to check.
      */
@@ -736,7 +728,6 @@ export class TypeGuards {
             case SyntaxKind.JsxOpeningElement:
             case SyntaxKind.JsxOpeningFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
@@ -1433,7 +1424,6 @@ export class TypeGuards {
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
@@ -1474,7 +1464,6 @@ export class TypeGuards {
      */
     static isLiteralExpression(node: compiler.Node): node is compiler.LiteralExpression {
         switch (node.getKind()) {
-            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -1492,7 +1481,6 @@ export class TypeGuards {
     static isLiteralLikeNode(node: compiler.Node): node is compiler.LiteralLikeNode & compiler.LiteralLikeNodeExtensionType {
         switch (node.getKind()) {
             case SyntaxKind.JsxText:
-            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -1533,7 +1521,6 @@ export class TypeGuards {
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
@@ -1917,7 +1904,6 @@ export class TypeGuards {
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
@@ -2703,7 +2689,6 @@ export class TypeGuards {
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
@@ -2789,7 +2774,6 @@ export class TypeGuards {
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:

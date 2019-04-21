@@ -817,11 +817,6 @@ export declare class TypeGuards {
      */
     static isAwaitableNode(node: Node): node is AwaitableNode & AwaitableNodeExtensionType;
     /**
-     * Gets if the node is a BigIntLiteral.
-     * @param node - Node to check.
-     */
-    static isBigIntLiteral(node: Node): node is BigIntLiteral;
-    /**
      * Gets if the node is a BinaryExpression.
      * @param node - Node to check.
      */
@@ -6469,7 +6464,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ArrowFunction]: ArrowFunction;
     [SyntaxKind.AsExpression]: AsExpression;
     [SyntaxKind.AwaitExpression]: AwaitExpression;
-    [SyntaxKind.BigIntLiteral]: BigIntLiteral;
     [SyntaxKind.BindingElement]: BindingElement;
     [SyntaxKind.BinaryExpression]: BinaryExpression;
     [SyntaxKind.Block]: Block;
@@ -6649,7 +6643,6 @@ export interface KindToExpressionMappings {
     [SyntaxKind.ArrowFunction]: ArrowFunction;
     [SyntaxKind.AsExpression]: AsExpression;
     [SyntaxKind.AwaitExpression]: AwaitExpression;
-    [SyntaxKind.BigIntLiteral]: BigIntLiteral;
     [SyntaxKind.BinaryExpression]: BinaryExpression;
     [SyntaxKind.CallExpression]: CallExpression;
     [SyntaxKind.ClassExpression]: ClassExpression;
@@ -6704,22 +6697,6 @@ export interface KindToExpressionMappings {
     [SyntaxKind.SuperKeyword]: SuperExpression;
     [SyntaxKind.ThisKeyword]: ThisExpression;
     [SyntaxKind.VoidExpression]: VoidExpression;
-}
-
-declare const BigIntLiteralBase: typeof LiteralExpression;
-
-export declare class BigIntLiteral extends BigIntLiteralBase<ts.BigIntLiteral> {
-    /**
-     * Gets the BigInt literal value.
-     *
-     * Assert this as a `bigint` in environments that support it (not currently part of the declaration file for backwards compatibility).
-     */
-    getLiteralValue(): unknown;
-    /**
-     * Sets the bigint literal value.
-     * @param value - Value to set (must provide a bigint here at runtime).
-     */
-    setLiteralValue(value: unknown): this;
 }
 
 declare const BooleanLiteralBase: typeof PrimaryExpression;
