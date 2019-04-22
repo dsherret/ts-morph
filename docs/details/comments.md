@@ -98,7 +98,13 @@ functionCall();
 
 ### Removing Comments
 
-This also makes removing comments easier. For example, you could call `sourceFile.getStatementsWithComments()[0].remove()` to remove a comment node.
+To remove a comment node, call `#remove()` on it:
+
+```ts
+sourceFile.getStatementsWithComments()[0].remove();
+```
+
+This will remove the comment and any of its trailing comment nodes.
 
 ### Trailing comment ranges of comment nodes
 
