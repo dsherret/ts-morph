@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import { ExtendedCommentParser, ContainerNodes, isComment } from "../../../../compiler/ast/utils";
+import { CommentNodeParser, ContainerNodes, isComment } from "../../../../compiler/ast/utils";
 import { ts, SyntaxKind } from "../../../../typescript";
 
-describe(nameof(ExtendedCommentParser), () => {
+describe(nameof(CommentNodeParser), () => {
     function createSourceFile(text: string) {
         return ts.createSourceFile("test.ts", text, ts.ScriptTarget.Latest, false);
     }
@@ -20,7 +20,7 @@ describe(nameof(ExtendedCommentParser), () => {
             // source file
             {
                 const sourceFile = createSourceFile(text);
-                const result = ExtendedCommentParser.getOrParseChildren(sourceFile, sourceFile);
+                const result = CommentNodeParser.getOrParseChildren(sourceFile, sourceFile);
                 assertEqual(expectedNodes, result, "for source files");
             }
             // namespaces
@@ -31,7 +31,7 @@ describe(nameof(ExtendedCommentParser), () => {
             function doForLeadingText(leadingText: string, message: string) {
                 const sourceFile = createSourceFile(leadingText + text + "\n}");
                 const block = getBlock(sourceFile);
-                const result = ExtendedCommentParser.getOrParseChildren(block, sourceFile);
+                const result = CommentNodeParser.getOrParseChildren(block, sourceFile);
                 const adjustedExpectedNodes = expectedNodes.map(n => ({
                     kind: n.kind,
                     pos: (n.pos === 0 && !isComment(n) ? leadingText.length - 1 : leadingText.length) + n.pos,
@@ -136,7 +136,7 @@ describe(nameof(ExtendedCommentParser), () => {
 
         it("should not get a multi-line comment on the last line that has a preceeding token", () => {
             const sourceFile = createSourceFile("t; /*1*/");
-            const result = ExtendedCommentParser.getOrParseChildren(sourceFile, sourceFile);
+            const result = CommentNodeParser.getOrParseChildren(sourceFile, sourceFile);
             assertEqual([{
                 kind: ts.SyntaxKind.ExpressionStatement,
                 pos: 0,
@@ -146,7 +146,7 @@ describe(nameof(ExtendedCommentParser), () => {
 
         it("should get a multi-line comment on the same line as the last close brace", () => {
             const sourceFile = createSourceFile("function f() {\n/*1*/}");
-            const result = ExtendedCommentParser.getOrParseChildren(getBlock(sourceFile), sourceFile);
+            const result = CommentNodeParser.getOrParseChildren(getBlock(sourceFile), sourceFile);
             assertEqual([{
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,
                 pos: 15,
@@ -156,7 +156,7 @@ describe(nameof(ExtendedCommentParser), () => {
 
         it("should not get a multi-line comment on the same line as the last close brace that has a preceeding token", () => {
             const sourceFile = createSourceFile("function f() {\nt;/*1*/}");
-            const result = ExtendedCommentParser.getOrParseChildren(getBlock(sourceFile), sourceFile);
+            const result = CommentNodeParser.getOrParseChildren(getBlock(sourceFile), sourceFile);
             assertEqual([{
                 kind: ts.SyntaxKind.ExpressionStatement,
                 pos: 14,
@@ -199,7 +199,7 @@ describe(nameof(ExtendedCommentParser), () => {
         function doTest(text: string, expectedNodes: { kind: SyntaxKind; pos: number; end: number; }[]) {
             const sourceFile = createSourceFile(text);
             const container = getContainer(sourceFile)!;
-            const result = ExtendedCommentParser.getOrParseChildren(container, sourceFile);
+            const result = CommentNodeParser.getOrParseChildren(container, sourceFile);
 
             assertEqual(expectedNodes, result);
 

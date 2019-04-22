@@ -600,7 +600,7 @@ describe(nameof(TypeElementMemberedNode), () => {
             expect(firstChild.getMembers().map(m => m.getText())).to.deep.equal(members);
         }
 
-        it("should get the members not including extended comments", () => {
+        it("should get the members not including comment nodes", () => {
             doTest("interface T {\n  //a\n  /*b*/\n  prop;\n  //c\n}", ["prop;"]);
         });
     });
@@ -611,7 +611,7 @@ describe(nameof(TypeElementMemberedNode), () => {
             expect(firstChild.getMembersWithComments().map(m => m.getText())).to.deep.equal(members);
         }
 
-        it("should get the members including extended comments", () => {
+        it("should get the members including comment nodes", () => {
             doTest("interface T {\n  //a\n  /*b*/\n  prop;\n  //c\n}", [
                 "//a",
                 "/*b*/",
@@ -629,7 +629,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
     });
 
-    describe("extended comments", () => {
+    describe("comment nodes", () => {
         it("should insert taking into account comments in an interface", () => {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface T {\n  //a\n  /*b*/\n}");
             firstChild.insertProperty(1, { name: "p" });
