@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(ExtendedParser), () => {
     // todo: more tests
     describe(nameof(ExtendedParser.getCompilerForEachChildren), () => {
-        it("should include extended comments", () => {
+        it("should include comment nodes", () => {
             const { sourceFile } = getInfoFromText("//a\nclass Test {} //b\n/*c*/\n/*d*/interface Interface {}\n//e");
             const result = ExtendedParser.getCompilerForEachChildren(sourceFile.compilerNode, sourceFile.compilerNode);
             expect(result.map(r => r.kind)).to.deep.equal([

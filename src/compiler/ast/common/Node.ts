@@ -833,7 +833,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
-     * Gets the first source file text position that is not whitespace taking into account extended comments.
+     * Gets the first source file text position that is not whitespace taking into account comment nodes.
      */
     getNonWhitespaceStart(): number {
         const parent = this.getParent() as Node | undefined;
@@ -1113,7 +1113,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * Gets the parent if it's a syntax list.
      */
     getParentSyntaxList(): SyntaxList | undefined {
-        // extended comments need special handling because they might not be within the range of the syntax list
+        // comment nodes need special handling because they might not be within the range of the syntax list
         const kind = this.getKind();
         if (kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia)
             return this.getParentOrThrow().getChildSyntaxList();

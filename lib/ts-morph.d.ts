@@ -4426,7 +4426,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
      */
     getFullStart(): number;
     /**
-     * Gets the first source file text position that is not whitespace taking into account extended comments.
+     * Gets the first source file text position that is not whitespace taking into account comment nodes.
      */
     getNonWhitespaceStart(): number;
     /**

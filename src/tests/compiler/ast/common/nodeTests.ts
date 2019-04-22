@@ -382,7 +382,7 @@ describe(nameof(Node), () => {
             expect(sourceFile.getDescendantStatements().map(s => s.getText())).to.deep.equal(expectedStatements);
         }
 
-        it("should get the descendant statements not including extended comments", () => {
+        it("should get the descendant statements not including comment nodes", () => {
             const expected = [
                 `const a = () => {\n    const b = "";\n};`,
                 `const b = "";`,
@@ -1707,7 +1707,7 @@ class MyClass {
                 [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]);
         });
 
-        it("should not return extended comments", () => {
+        it("should not return comment nodes", () => {
             runTest("// testing\nclass T {}",
                 sourceFile => sourceFile,
                 [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken]);
@@ -1824,7 +1824,7 @@ class MyClass {
             doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0].getModifiers()[0], 11);
         });
 
-        it("should not include an extended comment", () => {
+        it("should not include a comment node", () => {
             doTest("// testing\ndeclare function test() {}", sourceFile => sourceFile.getFunctions()[0], 11);
         });
 
