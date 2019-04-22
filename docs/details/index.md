@@ -44,7 +44,7 @@ Common:
 * [JS Docs](documentation)
 * [Literals](literals)
 * [Modifiers](modifiers)
-* [Comment Ranges](comment-ranges)
+* [Comments](comments)
 * Question tokenable - todo
 * Readonly - todo
 * Return Types - todo
