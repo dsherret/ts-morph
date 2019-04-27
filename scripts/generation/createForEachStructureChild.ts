@@ -42,6 +42,32 @@ function clearPreviouslyGeneratedFunctions(sourceFile: SourceFile) {
     }
 }
 
+function updateForEachStructureChild(sourceFile: SourceFile, structureInfos: StructureInfo[]) {
+    const func = sourceFile.getFunctionOrThrow("forEachStructureChild");
+    func.removeStatements([0, func.getStatementsWithComments().length - 1]);
+
+    func.addStatements(writer => {
+        writer.writeLine("// automatically generated: run `yarn run code-generate` to update the code in here");
+        writer.write("if (structure instanceof Array)").block(() => {
+            writer.write("for (const item of structure)").block(() => {
+                writer.writeLine("const result = action(item);");
+                writer.writeLine("if (result)");
+                writer.indent().write("return result;").newLine();
+            });
+            writer.writeLine("return undefined;");
+        });
+        writer.blankLine();
+        writer.write("switch (structure.kind)").block(() => {
+            for (const structureInfo of structureInfos.filter(s => s.syntaxKind != null)) {
+                writer.writeLine(`case StructureKind.${structureInfo.syntaxKind!}:`);
+                writer.indent().write(`return ${getInfoFunctionName(structureInfo)}(structure, action);`).newLine();
+            }
+            writer.writeLine("default:");
+            writer.indent().write("return undefined;").newLine();
+        });
+    });
+}
+
 function addNewFunctions(sourceFile: SourceFile, structureInfos: StructureInfo[]) {
     const functions: FunctionDeclarationStructure[] = [];
     for (const info of structureInfos) {
@@ -49,26 +75,36 @@ function addNewFunctions(sourceFile: SourceFile, structureInfos: StructureInfo[]
             kind: StructureKind.Function,
             docs: ["@generated"],
             name: getInfoFunctionName(info),
-            parameters: [{ name: "structure", type: info.name }, { name: "action", type: "(structure: Structures) => void" }],
+            typeParameters: ["TStructure"],
+            parameters: [{ name: "structure", type: info.name }, { name: "action", type: "(structure: Structures) => TStructure | void" }],
+            returnType: "TStructure | undefined",
             statements: writer => {
-                for (const baseStructure of info.baseStructures) {
-                    writer.write(getInfoFunctionName(baseStructure))
-                        .write("(structure, action);")
-                        .newLine();
-                }
+                let isFirst = true;
+                writer.write("return ");
 
-                if (info.baseStructures.length > 0 && info.members.length > 0)
-                    writer.blankLineIfLastNot();
+                for (const baseStructure of info.baseStructures)
+                    addExpression(getInfoFunctionName(baseStructure) + "(structure, action)");
 
                 for (const member of info.members) {
                     if (member.syntaxKind != null) {
                         if (member.allStructure)
-                            writer.writeLine(`forAll(structure.${member.name}, action, StructureKind.${member.syntaxKind});`);
+                            addExpression(`forAll(structure.${member.name}, action, StructureKind.${member.syntaxKind})`);
                         else
-                            writer.writeLine(`forAllIfStructure(structure.${member.name}, action, StructureKind.${member.syntaxKind});`);
+                            addExpression(`forAllIfStructure(structure.${member.name}, action, StructureKind.${member.syntaxKind})`);
                     }
                     else
-                        writer.writeLine(`forAllUnknownKindIfStructure(structure.${member.name}, action);`);
+                        addExpression(`forAllUnknownKindIfStructure(structure.${member.name}, action)`);
+                }
+
+                writer.write(";");
+
+                function addExpression(text: string) {
+                    if (isFirst)
+                        isFirst = false;
+                    else
+                        writer.newLine().indent().write("|| ");
+
+                    writer.write(text);
                 }
             }
         });
@@ -76,28 +112,6 @@ function addNewFunctions(sourceFile: SourceFile, structureInfos: StructureInfo[]
 
     const insertIndex = sourceFile.getFunctionOrThrow("forEachStructureChild").getChildIndex() + 1;
     sourceFile.insertFunctions(insertIndex, functions);
-}
-
-function updateForEachStructureChild(sourceFile: SourceFile, structureInfos: StructureInfo[]) {
-    const func = sourceFile.getFunctionOrThrow("forEachStructureChild");
-    func.removeStatements([0, func.getStatementsWithComments().length - 1]);
-
-    func.addStatements(writer => {
-        writer.writeLine("// run `yarn run code-generate` to update the code in here");
-        writer.write("if (structure instanceof Array)").block(() => {
-            writer.writeLine("for (const item of structure)");
-            writer.indent().write("forEachStructureChild(item, action);").newLine();
-            writer.writeLine("return;");
-        });
-        writer.blankLine();
-        writer.write("switch (structure.kind)").block(() => {
-            for (const structureInfo of structureInfos.filter(s => s.syntaxKind != null)) {
-                writer.writeLine(`case StructureKind.${structureInfo.syntaxKind!}:`);
-                writer.indent().write(`${getInfoFunctionName(structureInfo)}(structure, action);`).newLine();
-                writer.indent().write("break;").newLine();
-            }
-        });
-    });
 }
 
 function getStructureInfos(inspector: TsMorphInspector) {
@@ -162,7 +176,7 @@ function getStructureInfos(inspector: TsMorphInspector) {
             const kinds: string[] = [];
             let allStructure = true;
             for (const arrayType of arrayTypes) {
-                const arrayElementType = arrayType.getArrayType();
+                const arrayElementType = arrayType.getArrayElementType();
                 for (const unionElementType of getTypeOrUnionElementTypes(arrayElementType)) {
                     const kindProperty = getTypeKindProperty(unionElementType);
                     if (kindProperty != null)

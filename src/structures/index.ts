@@ -11,6 +11,7 @@ export * from "./jsx";
 export * from "./module";
 export * from "./statement";
 export * from "./type";
-export * from "./types";
+export * from "./utils";
 export * from "./Structure";
 export * from "./StructureKind";
+export * from "./types";

@@ -60,7 +60,8 @@
     "include": [
       "src/**/*.ts",
       "!src/tests/**/*.ts",
-      "!src/utils/TypeGuards.ts"
+      "!src/utils/TypeGuards.ts",
+      "!src/structures/utils/forEachStructureChild.ts"
     ],
     "reporter": [
       "html"
