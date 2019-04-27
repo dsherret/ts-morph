@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { CommentStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe("general extended comment tests", () => {
+describe("general comment node tests", () => {
     it("should not forget comments between manipulations", () => {
         const { sourceFile } = getInfoFromText("//1\nlet t;\n/*2*/");
         const statements = sourceFile.getStatementsWithComments();

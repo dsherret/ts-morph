@@ -21,6 +21,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.CatchClause]: compiler.CatchClause;
     [SyntaxKind.ClassDeclaration]: compiler.ClassDeclaration;
     [SyntaxKind.ClassExpression]: compiler.ClassExpression;
+    [SyntaxKind.ConditionalType]: compiler.ConditionalTypeNode;
     [SyntaxKind.Constructor]: compiler.ConstructorDeclaration;
     [SyntaxKind.ConstructorType]: compiler.ConstructorTypeNode;
     [SyntaxKind.ConstructSignature]: compiler.ConstructSignatureDeclaration;
@@ -63,6 +64,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.LastTypeNode]: compiler.ImportTypeNode;
     [SyntaxKind.IndexedAccessType]: compiler.IndexedAccessTypeNode;
     [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration;
+    [SyntaxKind.InferType]: compiler.InferTypeNode;
     [SyntaxKind.InterfaceDeclaration]: compiler.InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode;
     [SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag;
@@ -138,6 +140,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TemplateSpan]: compiler.TemplateSpan;
     [SyntaxKind.TemplateTail]: compiler.TemplateTail;
     [SyntaxKind.LastTemplateToken]: compiler.TemplateTail;
+    [SyntaxKind.ThisType]: compiler.ThisTypeNode;
     [SyntaxKind.ThrowStatement]: compiler.ThrowStatement;
     [SyntaxKind.TryStatement]: compiler.TryStatement;
     [SyntaxKind.TupleType]: compiler.TupleTypeNode;
@@ -154,6 +157,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypePredicate]: compiler.TypeNode;
     [SyntaxKind.FirstTypeNode]: compiler.TypeNode;
     [SyntaxKind.SemicolonToken]: compiler.Node;
+    [SyntaxKind.InferKeyword]: compiler.Node;
     [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression;
     [SyntaxKind.WhileStatement]: compiler.WhileStatement;
     [SyntaxKind.WithStatement]: compiler.WithStatement;

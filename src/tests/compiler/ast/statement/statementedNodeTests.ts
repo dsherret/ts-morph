@@ -1,6 +1,7 @@
 import { expect } from "chai";
+import { assert, IsExact } from "conditional-type-checks";
 import { CaseClause, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile, StatementedNode, Block,
-    BodyableNode } from "../../../../compiler";
+    BodyableNode, ClassDeclaration } from "../../../../compiler";
 import { StatementedNodeStructure, StatementStructures, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { TypeGuards } from "../../../../utils";
@@ -65,7 +66,9 @@ describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(s => s.getStatement), () => {
         it("should get the statement when it exists", () => {
             const { sourceFile } = getInfoFromText("var t; class T {}");
-            expect(sourceFile.getStatement(s => TypeGuards.isClassDeclaration(s))!.getText()).to.equal("class T {}");
+            const statement = sourceFile.getStatement(TypeGuards.isClassDeclaration);
+            assert<IsExact<typeof statement, ClassDeclaration | undefined>>(true);
+            expect(statement!.getText()).to.equal("class T {}");
         });
 
         it("should return undefined when it doesn't exist", () => {
@@ -77,7 +80,9 @@ describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(s => s.getStatementOrThrow), () => {
         it("should get the statement when it exists", () => {
             const { sourceFile } = getInfoFromText("var t; class T {}");
-            expect(sourceFile.getStatementOrThrow(s => TypeGuards.isClassDeclaration(s)).getText()).to.equal("class T {}");
+            const statement = sourceFile.getStatementOrThrow(TypeGuards.isClassDeclaration);
+            assert<IsExact<typeof statement, ClassDeclaration>>(true);
+            expect(statement.getText()).to.equal("class T {}");
         });
 
         it("should throw when it doesn't exist", () => {

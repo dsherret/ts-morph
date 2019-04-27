@@ -922,6 +922,11 @@ export declare class TypeGuards {
      */
     static isConditionalExpression(node: Node): node is ConditionalExpression;
     /**
+     * Gets if the node is a ConditionalTypeNode.
+     * @param node - Node to check.
+     */
+    static isConditionalTypeNode(node: Node): node is ConditionalTypeNode;
+    /**
      * Gets if the node is a ConstructSignatureDeclaration.
      * @param node - Node to check.
      */
@@ -1166,6 +1171,16 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isIndexedAccessTypeNode(node: Node): node is IndexedAccessTypeNode;
+    /**
+     * Gets if the node is a InferKeyword.
+     * @param node - Node to check.
+     */
+    static isInferKeyword(node: Node): node is Node;
+    /**
+     * Gets if the node is a InferTypeNode.
+     * @param node - Node to check.
+     */
+    static isInferTypeNode(node: Node): node is InferTypeNode;
     /**
      * Gets if the node is a InitializerExpressionGetableNode.
      * @param node - Node to check.
@@ -1736,6 +1751,11 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isThisExpression(node: Node): node is ThisExpression;
+    /**
+     * Gets if the node is a ThisTypeNode.
+     * @param node - Node to check.
+     */
+    static isThisTypeNode(node: Node): node is ThisTypeNode;
     /**
      * Gets if the node is a ThrowStatement.
      * @param node - Node to check.
@@ -4426,7 +4446,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
      */
     getFullStart(): number;
     /**
-     * Gets the first source file text position that is not whitespace taking into account extended comments.
+     * Gets the first source file text position that is not whitespace taking into account comment nodes.
      */
     getNonWhitespaceStart(): number;
     /**
@@ -6455,6 +6475,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.CatchClause]: CatchClause;
     [SyntaxKind.ClassDeclaration]: ClassDeclaration;
     [SyntaxKind.ClassExpression]: ClassExpression;
+    [SyntaxKind.ConditionalType]: ConditionalTypeNode;
     [SyntaxKind.Constructor]: ConstructorDeclaration;
     [SyntaxKind.ConstructorType]: ConstructorTypeNode;
     [SyntaxKind.ConstructSignature]: ConstructSignatureDeclaration;
@@ -6497,6 +6518,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.LastTypeNode]: ImportTypeNode;
     [SyntaxKind.IndexedAccessType]: IndexedAccessTypeNode;
     [SyntaxKind.IndexSignature]: IndexSignatureDeclaration;
+    [SyntaxKind.InferType]: InferTypeNode;
     [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: IntersectionTypeNode;
     [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
@@ -6572,6 +6594,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TemplateSpan]: TemplateSpan;
     [SyntaxKind.TemplateTail]: TemplateTail;
     [SyntaxKind.LastTemplateToken]: TemplateTail;
+    [SyntaxKind.ThisType]: ThisTypeNode;
     [SyntaxKind.ThrowStatement]: ThrowStatement;
     [SyntaxKind.TryStatement]: TryStatement;
     [SyntaxKind.TupleType]: TupleTypeNode;
@@ -6588,6 +6611,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypePredicate]: TypeNode;
     [SyntaxKind.FirstTypeNode]: TypeNode;
     [SyntaxKind.SemicolonToken]: Node;
+    [SyntaxKind.InferKeyword]: Node;
     [SyntaxKind.TypeOfExpression]: TypeOfExpression;
     [SyntaxKind.WhileStatement]: WhileStatement;
     [SyntaxKind.WithStatement]: WithStatement;
@@ -8007,7 +8031,17 @@ export interface StatementedNode {
      * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
      * @param findFunction - Function to find the statement by.
      */
+    getStatement<T extends Statement>(findFunction: (statement: Statement) => statement is T): T | undefined;
+    /**
+     * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
+     * @param findFunction - Function to find the statement by.
+     */
     getStatement(findFunction: (statement: Statement) => boolean): Statement | undefined;
+    /**
+     * Gets the first statement that matches the provided condition or throws if it doesn't exist.
+     * @param findFunction - Function to find the statement by.
+     */
+    getStatementOrThrow<T extends Statement>(findFunction: (statement: Statement) => statement is T): T;
     /**
      * Gets the first statement that matches the provided condition or throws if it doesn't exist.
      * @param findFunction - Function to find the statement by.
@@ -8547,6 +8581,33 @@ export declare class ArrayTypeNode extends TypeNode<ts.ArrayTypeNode> {
     getElementTypeNode(): TypeNode;
 }
 
+export declare class ConditionalTypeNode extends TypeNode<ts.ConditionalTypeNode> {
+    /**
+     * Gets the conditional type node's check type.
+     *
+     * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `CheckType`.
+     */
+    getCheckType(): TypeNode<ts.TypeNode>;
+    /**
+     * Gets the conditional type node's extends type.
+     *
+     * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `ExtendsType`.
+     */
+    getExtendsType(): TypeNode<ts.TypeNode>;
+    /**
+     * Gets the conditional type node's true type.
+     *
+     * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `TrueType`.
+     */
+    getTrueType(): TypeNode<ts.TypeNode>;
+    /**
+     * Gets the conditional type node's false type.
+     *
+     * Ex. In `CheckType extends ExtendsType ? TrueType : FalseType` returns `FalseType`.
+     */
+    getFalseType(): TypeNode<ts.TypeNode>;
+}
+
 export declare class ConstructorTypeNode extends FunctionOrConstructorTypeNodeBase<ts.ConstructorTypeNode> {
 }
 
@@ -8611,6 +8672,15 @@ export declare class IndexedAccessTypeNode extends TypeNode<ts.IndexedAccessType
     getIndexTypeNode(): TypeNode;
 }
 
+export declare class InferTypeNode extends TypeNode<ts.InferTypeNode> {
+    /**
+     * Gets the infer type node's type parameter.
+     *
+     * Ex. In `infer R` returns `R`.
+     */
+    getTypeParameter(): TypeParameterDeclaration;
+}
+
 export declare class IntersectionTypeNode extends TypeNode<ts.IntersectionTypeNode> {
     /**
      * Gets the intersection type nodes.
@@ -8635,6 +8705,9 @@ export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedType
      * @param textOrWriterFunction - Text or writer function to set the type with.
      */
     setType(textOrWriterFunction: string | WriterFunction): this;
+}
+
+export declare class ThisTypeNode extends TypeNode<ts.ThisTypeNode> {
 }
 
 export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {
@@ -8810,15 +8883,6 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
      * @param structures - Structures representing the variable declarations to insert.
      */
     insertDeclarations(index: number, structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>): VariableDeclaration[];
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<VariableDeclarationListStructure>): this;
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): VariableDeclarationListStructure;
 }
 
 export declare class Signature {
@@ -9852,7 +9916,6 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      */
     readonly compilerType: TType;
     private _hasTypeFlag;
-    private _hasAnyTypeFlag;
     private _hasObjectFlag;
     protected constructor();
     /**
@@ -9878,9 +9941,13 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      */
     getApparentType(): Type;
     /**
-     * Gets the array type
+     * Gets the array element type or throws if it doesn't exist (ex. for `T[]` it would be `T`).
      */
-    getArrayType(): Type<ts.Type> | undefined;
+    getArrayElementTypeOrThrow(): Type<ts.Type>;
+    /**
+     * Gets the array element type or returns undefined if it doesn't exist (ex. for `T[]` it would be `T`).
+     */
+    getArrayElementType(): Type<ts.Type> | undefined;
     /**
      * Gets the base types.
      */
@@ -9970,11 +10037,11 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      */
     getTupleElements(): Type[];
     /**
-     * Gets the union types.
+     * Gets the union types (ex. for `T | U` it returns the array `[T, U]`).
      */
     getUnionTypes(): Type[];
     /**
-     * Gets the intersection types.
+     * Gets the intersection types (ex. for `T & U` it returns the array `[T, U]`).
      */
     getIntersectionTypes(): Type[];
     /**
@@ -10295,7 +10362,7 @@ export declare type ClassMemberStructures = ConstructorDeclarationStructure | Ge
 export declare type InterfaceMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
 export declare type ObjectLiteralElementMemberStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure;
 export declare type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure | JsxElementStructure | JsxSelfClosingElementStructure;
-export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralElementMemberStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure;
+export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralElementMemberStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | DecoratorStructure;
 
 export interface AbstractableNodeStructure {
     isAbstract?: boolean;
@@ -10703,14 +10770,6 @@ interface SourceFileSpecificStructure {
 
 export interface StatementedNodeStructure {
     statements?: (string | WriterFunction | StatementStructures)[] | string | WriterFunction;
-}
-
-export interface VariableDeclarationListStructure extends Structure, VariableDeclarationListSpecificStructure {
-}
-
-interface VariableDeclarationListSpecificStructure {
-    declarationKind?: VariableDeclarationKind;
-    declarations: OptionalKind<VariableDeclarationStructure>[];
 }
 
 export interface VariableDeclarationStructure extends Structure, VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure, ExclamationTokenableNodeStructure {

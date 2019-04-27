@@ -1,7 +1,7 @@
 import { ts, SyntaxKind } from "../../../typescript";
 
 /** @internal */
-export enum ExtendedCommentKind {
+export enum CommentNodeKind {
     Statement,
     ClassElement,
     TypeElement,
@@ -27,7 +27,7 @@ export abstract class CompilerExtendedComment implements ts.Node {
     }
 
     /** @internal */
-    abstract _commentKind: ExtendedCommentKind;
+    abstract _commentKind: CommentNodeKind;
 
     pos: number;
     end: number;
@@ -101,21 +101,21 @@ export abstract class CompilerExtendedComment implements ts.Node {
 export class CompilerCommentStatement extends CompilerExtendedComment implements ts.Statement {
     _statementBrand: any;
     /** @internal */
-    _commentKind = ExtendedCommentKind.Statement;
+    _commentKind = CommentNodeKind.Statement;
 }
 
 export class CompilerCommentClassElement extends CompilerExtendedComment implements ts.ClassElement {
     _classElementBrand: any;
     _declarationBrand: any;
     /** @internal */
-    _commentKind = ExtendedCommentKind.ClassElement;
+    _commentKind = CommentNodeKind.ClassElement;
 }
 
 export class CompilerCommentTypeElement extends CompilerExtendedComment implements ts.TypeElement {
     _typeElementBrand: any;
     _declarationBrand: any;
     /** @internal */
-    _commentKind = ExtendedCommentKind.TypeElement;
+    _commentKind = CommentNodeKind.TypeElement;
 }
 
 export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment implements ts.ObjectLiteralElement {
@@ -124,10 +124,10 @@ export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment
     _objectLiteralBrand: any; // ts >= 3.5
     declarationBrand: any;
     /** @internal */
-    _commentKind = ExtendedCommentKind.ObjectLiteralElement;
+    _commentKind = CommentNodeKind.ObjectLiteralElement;
 }
 
 export class CompilerCommentEnumMember extends CompilerExtendedComment implements ts.Node {
     /** @internal */
-    _commentKind = ExtendedCommentKind.EnumMember;
+    _commentKind = CommentNodeKind.EnumMember;
 }

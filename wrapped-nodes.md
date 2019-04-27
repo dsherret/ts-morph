@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 173
+**Total:** 176
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -70,6 +70,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: whenTrue
     * :heavy_check_mark: colonToken
     * :heavy_check_mark: whenFalse
+* [ConditionalTypeNode](src/compiler/ast/type/ConditionalTypeNode.ts)
+    * :heavy_check_mark: checkType
+    * :heavy_check_mark: extendsType
+    * :heavy_check_mark: trueType
+    * :heavy_check_mark: falseType
 * [ConstructSignatureDeclaration](src/compiler/ast/interface/ConstructSignatureDeclaration.ts)
 * [ConstructorDeclaration](src/compiler/ast/class/ConstructorDeclaration.ts)
     * :heavy_check_mark: body
@@ -167,6 +172,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [IndexedAccessTypeNode](src/compiler/ast/type/IndexedAccessTypeNode.ts)
     * :heavy_check_mark: objectType
     * :heavy_check_mark: indexType
+* [InferTypeNode](src/compiler/ast/type/InferTypeNode.ts)
+    * :heavy_check_mark: typeParameter
 * [InterfaceDeclaration](src/compiler/ast/interface/InterfaceDeclaration.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: typeParameters
@@ -378,6 +385,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: literal
 * [TemplateTail](src/compiler/ast/literal/template/TemplateTail.ts)
 * [ThisExpression](src/compiler/ast/expression/ThisExpression.ts)
+* [ThisTypeNode](src/compiler/ast/type/ThisTypeNode.ts)
 * [ThrowStatement](src/compiler/ast/statement/ThrowStatement.ts)
     * :heavy_check_mark: expression
 * [TryStatement](src/compiler/ast/statement/TryStatement.ts)
@@ -434,16 +442,14 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 55
+**Total:** 52
 
 * BigIntLiteral
 * Bundle
 * ClassLikeDeclarationBase
-* ConditionalTypeNode
 * DeclarationStatement
 * FunctionOrConstructorTypeNodeBase
 * ImportCall
-* InferTypeNode
 * InputFiles
 * JSDocAllType
 * JSDocCallbackTag
@@ -478,7 +484,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * SemicolonClassElement
 * SuperCall
 * SyntheticExpression
-* ThisTypeNode
 * Token
 * TransientIdentifier
 * TsConfigSourceFile

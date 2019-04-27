@@ -69,9 +69,16 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
-     * Gets the array type
+     * Gets the array element type or throws if it doesn't exist (ex. for `T[]` it would be `T`).
      */
-    getArrayType() {
+    getArrayElementTypeOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getArrayElementType(), "Expected to find an array element type.");
+    }
+
+    /**
+     * Gets the array element type or returns undefined if it doesn't exist (ex. for `T[]` it would be `T`).
+     */
+    getArrayElementType() {
         if (!this.isArray())
             return undefined;
         return this.getTypeArguments()[0];
@@ -235,7 +242,7 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
-     * Gets the union types.
+     * Gets the union types (ex. for `T | U` it returns the array `[T, U]`).
      */
     getUnionTypes(): Type[] {
         if (!this.isUnion())
@@ -245,7 +252,7 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
-     * Gets the intersection types.
+     * Gets the intersection types (ex. for `T & U` it returns the array `[T, U]`).
      */
     getIntersectionTypes(): Type[] {
         if (!this.isIntersection())
@@ -477,10 +484,6 @@ export class Type<TType extends ts.Type = ts.Type> {
 
     private _hasTypeFlag(flag: TypeFlags) {
         return (this.compilerType.flags & flag) === flag;
-    }
-
-    private _hasAnyTypeFlag(flag: TypeFlags) {
-        return (this.compilerType.flags & flag) !== 0;
     }
 
     private _hasObjectFlag(flag: ObjectFlags) {

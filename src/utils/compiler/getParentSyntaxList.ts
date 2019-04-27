@@ -9,7 +9,7 @@ export function getParentSyntaxList(node: ts.Node, sourceFile: ts.SourceFile) {
         return undefined;
 
     const { pos, end } = node;
-    // @code-fence-allow(getChildren): The extended comments are not needed here.
+    // @code-fence-allow(getChildren): The comment nodes are not needed here.
     for (const child of parent.getChildren(sourceFile)) {
         if (child.pos > end || child === node)
             return undefined;

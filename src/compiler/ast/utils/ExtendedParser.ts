@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../../typescript";
-import { ExtendedCommentParser, ContainerNodes } from "./ExtendedCommentParser";
+import { CommentNodeParser, ContainerNodes } from "./CommentNodeParser";
 import { hasParsedTokens } from "./hasParsedTokens";
 
 const forEachChildSaver = new WeakMap<ts.Node, ts.Node[]>();
@@ -9,9 +9,9 @@ const getChildrenSaver = new WeakMap<ts.Node, ts.Node[]>();
  * Parser that parses around nodes for comments.
  */
 export class ExtendedParser {
-    /** Gets the `#statements`, `#members`, or `#properties` array with extended comments. */
+    /** Gets the `#statements`, `#members`, or `#properties` array with comment nodes. */
     static getContainerArray(container: ContainerNodes, sourceFile: ts.SourceFile) {
-        return ExtendedCommentParser.getOrParseChildren(container, sourceFile);
+        return CommentNodeParser.getOrParseChildren(container, sourceFile);
     }
 
     static getCompilerChildrenFast(node: ts.Node, sourceFile: ts.SourceFile) {
@@ -22,11 +22,11 @@ export class ExtendedParser {
     }
 
     static getCompilerForEachChildren(node: ts.Node, sourceFile: ts.SourceFile) {
-        if (ExtendedCommentParser.shouldParseChildren(node)) {
+        if (CommentNodeParser.shouldParseChildren(node)) {
             let result = forEachChildSaver.get(node);
             if (result == null) {
                 result = getForEachChildren();
-                mergeInComments(result, ExtendedCommentParser.getOrParseChildren(node, sourceFile));
+                mergeInComments(result, CommentNodeParser.getOrParseChildren(node, sourceFile));
                 forEachChildSaver.set(node, result);
             }
             return result;
@@ -47,26 +47,26 @@ export class ExtendedParser {
         if (isStatementMemberOrPropertyHoldingSyntaxList()) {
             let result = getChildrenSaver.get(node);
             if (result == null) {
-                // @code-fence-allow(getChildren): This merges in extended comments.
+                // @code-fence-allow(getChildren): This merges in comment nodes.
                 result = [...node.getChildren(sourceFile)]; // make a copy; do not modify the compiler api's array
-                mergeInComments(result, ExtendedCommentParser.getOrParseChildren(node as ts.SyntaxList, sourceFile));
+                mergeInComments(result, CommentNodeParser.getOrParseChildren(node as ts.SyntaxList, sourceFile));
                 getChildrenSaver.set(node, result);
             }
             return result;
         }
 
-        // @code-fence-allow(getChildren): No need to merge in extended comments.
+        // @code-fence-allow(getChildren): No need to merge in comment nodes.
         return node.getChildren(sourceFile);
 
         function isStatementMemberOrPropertyHoldingSyntaxList() {
             if (node.kind !== ts.SyntaxKind.SyntaxList)
                 return false;
             const parent = node.parent;
-            if (!ExtendedCommentParser.shouldParseChildren(parent))
+            if (!CommentNodeParser.shouldParseChildren(parent))
                 return false;
 
             // is this the correct syntax list?
-            return ExtendedCommentParser.getContainerBodyPos(parent, sourceFile) === node.pos;
+            return CommentNodeParser.getContainerBodyPos(parent, sourceFile) === node.pos;
         }
     }
 }

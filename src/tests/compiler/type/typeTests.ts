@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { FunctionDeclaration, Node, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
 import { VirtualFileSystemHost } from "../../../fileSystem";
 import { ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "../../../typescript";
-import { StringUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Type), () => {
@@ -643,6 +642,41 @@ let unknownType: unknown;
 
             it("should return the same type for any other type", () => {
                 doTest("interfaceType", "MyInterface");
+            });
+        });
+
+        describe(nameof<Type>(t => t.getArrayElementTypeOrThrow), () => {
+            function doTest(typeName: string, expected: string | undefined) {
+                if (expected == null)
+                    expect(() => typesByName[typeName].getArrayElementTypeOrThrow()).to.throw();
+                else
+                    expect(typesByName[typeName].getArrayElementTypeOrThrow().getText()).to.equal(expected);
+            }
+
+            it("should get when exists", () => {
+                doTest("arrayType", "string");
+            });
+
+            it("should be undefined when not exists", () => {
+                doTest("stringType", undefined);
+            });
+        });
+
+        describe(nameof<Type>(t => t.getArrayElementType), () => {
+            function doTest(typeName: string, expected: string | undefined) {
+                const type = typesByName[typeName].getArrayElementType();
+                if (expected == null)
+                    expect(type).to.be.undefined;
+                else
+                    expect(type!.getText()).to.equal(expected);
+            }
+
+            it("should get when exists", () => {
+                doTest("arrayType", "string");
+            });
+
+            it("should be undefined when not exists", () => {
+                doTest("stringType", undefined);
             });
         });
     });

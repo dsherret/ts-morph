@@ -1,7 +1,7 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter,
     CommentStatement, CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerExtendedComment, CommentEnumMember } from "../compiler";
-import { ExtendedCommentParser } from "../compiler/ast/utils";
+import { CommentNodeParser } from "../compiler/ast/utils";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
@@ -265,15 +265,15 @@ export class CompilerFactory {
         function createNode(this: CompilerFactory): Node<NodeType> {
             // todo: improve kind to wrapper mappings to handle this scenario
             if (isExtendedCommentRange(compilerNode)) {
-                if (ExtendedCommentParser.isCommentStatement(compilerNode))
+                if (CommentNodeParser.isCommentStatement(compilerNode))
                     return new CommentStatement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
-                if (ExtendedCommentParser.isCommentClassElement(compilerNode))
+                if (CommentNodeParser.isCommentClassElement(compilerNode))
                     return new CommentClassElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
-                if (ExtendedCommentParser.isCommentTypeElement(compilerNode))
+                if (CommentNodeParser.isCommentTypeElement(compilerNode))
                     return new CommentTypeElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
-                if (ExtendedCommentParser.isCommentObjectLiteralElement(compilerNode))
+                if (CommentNodeParser.isCommentObjectLiteralElement(compilerNode))
                     return new CommentObjectLiteralElement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
-                if (ExtendedCommentParser.isCommentEnumMember(compilerNode))
+                if (CommentNodeParser.isCommentEnumMember(compilerNode))
                     return new CommentEnumMember(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
                 return errors.throwNotImplementedForNeverValueError(compilerNode);
             }

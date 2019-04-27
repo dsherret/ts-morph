@@ -2,6 +2,94 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/dsherret/ts-morph/compare/1.3.2...2.0.0) (2019-04-20)
+
+
+### Bug Fixes
+
+* The code writer did not handle escaping string chars in strings. ([a87850e](https://github.com/dsherret/ts-morph/commit/a87850e))
+* `Node#getDescendantStatements()` is now properly typed as possibly returning an `Expression`. ([9d26400](https://github.com/dsherret/ts-morph/commit/9d26400))
+* `ReturnTypedNode` and `TypedNode`'s `#getStructure()` should return the type and return type text without leading indentation. ([4d95e64](https://github.com/dsherret/ts-morph/commit/4d95e64))
+* DefinitionInfo.getDeclarationNode() should return a source file when the kind is "module" and width equal to the source file. ([967206f](https://github.com/dsherret/ts-morph/commit/967206f))
+* Do not add trailing whitespace when a jsdoc's description includes a blank line. ([cf314da](https://github.com/dsherret/ts-morph/commit/cf314da))
+* Fix removing class elements on object literal expressions. ([4e1464e](https://github.com/dsherret/ts-morph/commit/4e1464e))
+* Getting/inserting statements on a ModuleBlock was throwing an error. ([2b8adad](https://github.com/dsherret/ts-morph/commit/2b8adad))
+* `isOverload()` should return `true` for abstract methods. ([558cdd1](https://github.com/dsherret/ts-morph/commit/558cdd1))
+
+
+### Chores
+
+* `EnumMember#getStructure()` no longer returns `#value` and will only return `#initializer`. ([ed25348](https://github.com/dsherret/ts-morph/commit/ed25348))
+
+
+### Code Refactoring
+
+* FileSystemHost.isCaseSensitive() is now required in implementations. ([015a124](https://github.com/dsherret/ts-morph/commit/015a124))
+* InitializerGetExpressionableNode is now InitializerExpressionGetableNode for consistency. ([27c25c9](https://github.com/dsherret/ts-morph/commit/27c25c9))
+* Remove `VariableDeclarationListStructure` and `VariableDeclarationList#set` and `#getStructure` ([e6953ed](https://github.com/dsherret/ts-morph/commit/e6953ed))
+* Remove InitializerSetExpressionableNode. ([990c3c1](https://github.com/dsherret/ts-morph/commit/990c3c1))
+* Removed default export from library. ([f127cf4](https://github.com/dsherret/ts-morph/commit/f127cf4))
+* Renamed `Type#getArrayType()` to `Type#getArrayElementType()`. ([56b4935](https://github.com/dsherret/ts-morph/commit/56b4935))
+
+
+### Features
+
+* [#470](https://github.com/dsherret/ts-morph/issues/470) - Node - Ability to get text without leading indentation. ([cd380fa](https://github.com/dsherret/ts-morph/commit/cd380fa))
+* [#514](https://github.com/dsherret/ts-morph/issues/514) - Add Node#forEachChildAsArray() ([ba4cd7a](https://github.com/dsherret/ts-morph/commit/ba4cd7a))
+* [#563](https://github.com/dsherret/ts-morph/issues/563) - ParameterDeclaration now implements BindingNamedNode instead of DeclarationNamedNode. ([debd09b](https://github.com/dsherret/ts-morph/commit/debd09b))
+* [#573](https://github.com/dsherret/ts-morph/issues/573) - ModuledNode#getExportedDeclarations() now returns a map. ([752aaf1](https://github.com/dsherret/ts-morph/commit/752aaf1))
+* [#575](https://github.com/dsherret/ts-morph/issues/575) - Extended comments ([a9cc491](https://github.com/dsherret/ts-morph/commit/a9cc491))
+* [#581](https://github.com/dsherret/ts-morph/issues/581) - TraversalControl - Add ability to return a value. ([d072b63](https://github.com/dsherret/ts-morph/commit/d072b63))
+* [#587](https://github.com/dsherret/ts-morph/issues/587) - SourceFile#getLineAndColumnAtPos ([b987657](https://github.com/dsherret/ts-morph/commit/b987657)) - Thanks [@cancerberoSgx](https://github.com/cancerberoSgx)!
+* [#588](https://github.com/dsherret/ts-morph/issues/588) - Move `ChildOrderableNode` to `Statement`. ([b5ff9ad](https://github.com/dsherret/ts-morph/commit/b5ff9ad))
+* [#595](https://github.com/dsherret/ts-morph/issues/595) - Add SourceFile#fixUnusedIdentifiers ([e4b1b64](https://github.com/dsherret/ts-morph/commit/e4b1b64)) - [@cancerberoSgx](https://github.com/cancerberoSgx)
+* [#596](https://github.com/dsherret/ts-morph/issues/596) - Add `CombinedCodeAction#applyChanges()` ([2566d53](https://github.com/dsherret/ts-morph/commit/2566d53))
+* [#601](https://github.com/dsherret/ts-morph/issues/601) - Add `RefactorEditInfo#applyChanges()` ([ca0ca8c](https://github.com/dsherret/ts-morph/commit/ca0ca8c)) - [@cancerberoSgx](https://github.com/cancerberoSgx)
+* [#603](https://github.com/dsherret/ts-morph/issues/603) - Make `emit` async and add new `emitSync` ([8a8c1c7](https://github.com/dsherret/ts-morph/commit/8a8c1c7))
+* [#606](https://github.com/dsherret/ts-morph/issues/606) - `Symbol#getXByName`-like methods are now `Symbol#getX`. ([08f0710](https://github.com/dsherret/ts-morph/commit/08f0710))
+* `#addStatements`/`#insertStatements` now also accepts an array of strings or writer functions. ([d1c361a](https://github.com/dsherret/ts-morph/commit/d1c361a))
+* Ability to add/insert statement structures. ([faaa2cd](https://github.com/dsherret/ts-morph/commit/faaa2cd))
+* Add `Type#getArrayElementTypeOrThrow()` ([cfd420e](https://github.com/dsherret/ts-morph/commit/cfd420e))
+* Add ClassMemberStructures, InterfaceMemberStructures, and Structures type aliases. ([3af3d32](https://github.com/dsherret/ts-morph/commit/3af3d32))
+* Add ObjectLiteralElement. ([a40a46d](https://github.com/dsherret/ts-morph/commit/a40a46d))
+* getName() should always just return the name node text. ([968c13c](https://github.com/dsherret/ts-morph/commit/968c13c))
+* Removed `Project#applyFileTextChanges()`. Added `FileTextChanges#applyChanges()`. ([4c62acb](https://github.com/dsherret/ts-morph/commit/4c62acb))
+* Replace `StatementedNode` with new `.statements` property / Add trivia properties to structures ([5f4943b](https://github.com/dsherret/ts-morph/commit/5f4943b))
+* Wrap ClassElement. ([73ecfb1](https://github.com/dsherret/ts-morph/commit/73ecfb1))
+
+
+### reactor
+
+* [#574](https://github.com/dsherret/ts-morph/issues/574) - Target ES2015. ([1e56a01](https://github.com/dsherret/ts-morph/commit/1e56a01))
+
+
+### BREAKING CHANGES
+
+* The default export was removed. Use the named `Project` export from now on.
+* ModuledNode#getExportedDeclarations() now returns a map with a key as the export name and the value as an array of declarations that are exported.
+* * Removed `BodyableNodeStructure`, `BodiedNodeStructure`, `ModuledNodeStructure`.
+* Removed `.bodyText`, `.classes`, `.enums` properties on structures. Replaced with `.statements` property.
+* Comments are parsed as children in certain scenarios. See #575 for more details.
+* `Type#getArrayType()` is now `Type#getArrayElementType()`. This was renamed to better reflect what the method does.
+* * ParameterDeclaration now implements BindingNamedNode instead of DeclarationNamedNode.
+* `EnumMember#getStructure()` no longer returns the `#value` and will only return `#initializer`. `#value` should be seen as more of a convenience property for setting the initializer.
+* `Symbol#getXByName`-like methods were renamed to `Symbol#getX`.
+* `Project#applyFileTextChanges()` has moved to `FileTextChanges#applyChanges()`.
+* `SourceFile#getLineNumberAtPos` is now `SourceFile#getLineAndColumnAtPos`
+* JsxText#containsOnlyWhiteSpaces() is now #containsOnlyTriviaWhiteSpaces(). `FileSystemHost` requires `realpathSync`.
+* Removed `VariableDeclarationListStructure` and `VariableDeclarationList#set` and `#getStructure`. This was done to simplify the structures.
+* The library now targets ES2015.
+* `JsxAttributeStructure` and `JsxSpreadAttributeStructure` are now differentiated based on their `.kind` property.
+* `JsxElementStructure` and `JsxSelfClosingElementStructure` are now differentiated based on their `.kind` property.
+* FileSystemHost.isCaseSensitive() is now required in implementations.
+* Removed DeclarationNamedNode.
+* InitializerSetExpressionableNode was removed and merged with InitializerExpressionableNode.
+* InitializerGetExpressionableNode was renamed to InitializerExpressionGetableNode.
+* getName() always returns the name node text and now never throws.
+
+
+
 <a name="1.3.2"></a>
 ## [1.3.2](https://github.com/dsherret/ts-morph/compare/1.3.1...1.3.2) (2019-03-30)
 

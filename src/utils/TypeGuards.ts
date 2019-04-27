@@ -60,35 +60,35 @@ export class TypeGuards {
      * Gets if the provided value is a CommentStatement.
      */
     static isCommentStatement(node: compiler.Node): node is compiler.CommentStatement {
-        return (node.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.ExtendedCommentKind.Statement;
+        return (node.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.CommentNodeKind.Statement;
     }
 
     /**
      * Gets if the provided value is a CommentClassElement.
      */
     static isCommentClassElement(node: compiler.Node): node is compiler.CommentClassElement {
-        return (node.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.ExtendedCommentKind.ClassElement;
+        return (node.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.CommentNodeKind.ClassElement;
     }
 
     /**
      * Gets if the provided value is a CommentTypeElement.
      */
     static isCommentTypeElement(node: compiler.Node): node is compiler.CommentTypeElement {
-        return (node.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.ExtendedCommentKind.TypeElement;
+        return (node.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.CommentNodeKind.TypeElement;
     }
 
     /**
      * Gets if the provided value is a CommentObjectLiteralElement.
      */
     static isCommentObjectLiteralElement(node: compiler.Node): node is compiler.CommentObjectLiteralElement {
-        return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.ExtendedCommentKind.ObjectLiteralElement;
+        return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;
     }
 
     /**
      * Gets if the provided value is a CommentEnumMember.
      */
     static isCommentEnumMember(node: compiler.Node): node is compiler.CommentEnumMember {
-        return (node.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.ExtendedCommentKind.EnumMember;
+        return (node.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.CommentNodeKind.EnumMember;
     }
 
     /**
@@ -468,6 +468,14 @@ export class TypeGuards {
      */
     static isConditionalExpression(node: compiler.Node): node is compiler.ConditionalExpression {
         return node.getKind() === SyntaxKind.ConditionalExpression;
+    }
+
+    /**
+     * Gets if the node is a ConditionalTypeNode.
+     * @param node - Node to check.
+     */
+    static isConditionalTypeNode(node: compiler.Node): node is compiler.ConditionalTypeNode {
+        return node.getKind() === SyntaxKind.ConditionalType;
     }
 
     /**
@@ -1001,6 +1009,22 @@ export class TypeGuards {
      */
     static isIndexedAccessTypeNode(node: compiler.Node): node is compiler.IndexedAccessTypeNode {
         return node.getKind() === SyntaxKind.IndexedAccessType;
+    }
+
+    /**
+     * Gets if the node is a InferKeyword.
+     * @param node - Node to check.
+     */
+    static isInferKeyword(node: compiler.Node): node is compiler.Node {
+        return node.getKind() === SyntaxKind.InferKeyword;
+    }
+
+    /**
+     * Gets if the node is a InferTypeNode.
+     * @param node - Node to check.
+     */
+    static isInferTypeNode(node: compiler.Node): node is compiler.InferTypeNode {
+        return node.getKind() === SyntaxKind.InferType;
     }
 
     /**
@@ -2426,6 +2450,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ThisTypeNode.
+     * @param node - Node to check.
+     */
+    static isThisTypeNode(node: compiler.Node): node is compiler.ThisTypeNode {
+        return node.getKind() === SyntaxKind.ThisType;
+    }
+
+    /**
      * Gets if the node is a ThrowStatement.
      * @param node - Node to check.
      */
@@ -2538,14 +2570,17 @@ export class TypeGuards {
             case SyntaxKind.JSDocSignature:
             case SyntaxKind.JSDocTypeExpression:
             case SyntaxKind.ArrayType:
+            case SyntaxKind.ConditionalType:
             case SyntaxKind.ConstructorType:
             case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.FunctionType:
             case SyntaxKind.ImportType:
             case SyntaxKind.IndexedAccessType:
+            case SyntaxKind.InferType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
             case SyntaxKind.ParenthesizedType:
+            case SyntaxKind.ThisType:
             case SyntaxKind.TupleType:
             case SyntaxKind.TypeLiteral:
             case SyntaxKind.TypeReference:
@@ -2850,7 +2885,6 @@ export class TypeGuards {
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:
-            case SyntaxKind.VariableDeclarationList:
             case SyntaxKind.PropertyAssignment:
             case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.SpreadAssignment:

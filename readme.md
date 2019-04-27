@@ -6,15 +6,13 @@
 [![Coverage Status](https://coveralls.io/repos/dsherret/ts-morph/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-morph?branch=master)
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
-[TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
+[TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides an easier way to navigate and manipulate TypeScript and JavaScript code.
 
 Formerly `ts-simple-ast`.
 
-## Library Development - Progress Update (02 February 2019)
+## Library Development - Progress Update (20 April 2019)
 
-The library has been renamed from `ts-simple-ast` to `ts-morph`. The version was also reset back to 1.0.0 with this change.
-
-View information on breaking changes in [breaking-changes.md](breaking-changes.md).
+There were a lot of breaking changes in v2.0. Please review [breaking-changes.md](breaking-changes.md) and see the [changelog](CHANGELOG.md) for information on new features.
 
 This library is still under early active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
@@ -62,13 +60,13 @@ const myEnumFile = project.createSourceFile("src/MyEnum.ts", {
     }]
 });
 
-// get information from ast
+// get information
 const myClass = myClassFile.getClassOrThrow("MyClass");
 myClass.getName();          // returns: "MyClass"
 myClass.hasExportKeyword(); // returns: true
 myClass.isDefaultExport();  // returns: false
 
-// manipulate ast
+// manipulate
 const myInterface = myClassFile.addInterface({
     name: "IMyInterface",
     isExported: true,

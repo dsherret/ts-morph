@@ -67,7 +67,7 @@ function shouldCreateForStructure(name: string) {
 }
 
 function shouldAllowExtends(structure: Structure, baseStructure: Structure) {
-    if (baseStructure.getName() === "Structure")
+    if (baseStructure.getName() === "Structure" || baseStructure.getName().endsWith("SpecificStructure") || baseStructure.getName() === "KindedStructure")
         return false;
 
     if (structure.getName() === "FunctionDeclarationOverloadStructure") {

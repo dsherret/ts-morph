@@ -2,7 +2,7 @@ import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
 import { StringUtils, getSyntaxKindName } from "../../../utils";
 import { CompilerExtendedComment, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement,
-    CompilerCommentObjectLiteralElement, CompilerCommentEnumMember, ExtendedCommentKind } from "../comment/CompilerComments";
+    CompilerCommentObjectLiteralElement, CompilerCommentEnumMember, CommentNodeKind } from "../comment/CompilerComments";
 
 enum CommentKind {
     SingleLine,
@@ -40,7 +40,7 @@ const extendedCommentParserKinds = new Set<SyntaxKind>([
     SyntaxKind.ObjectLiteralExpression
 ]);
 
-export class ExtendedCommentParser {
+export class CommentNodeParser {
     private constructor() {
     }
 
@@ -72,23 +72,23 @@ export class ExtendedCommentParser {
     }
 
     static isCommentStatement(node: ts.Node): node is CompilerCommentStatement {
-        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.Statement;
+        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.Statement;
     }
 
     static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement {
-        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.ClassElement;
+        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.ClassElement;
     }
 
     static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement {
-        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.TypeElement;
+        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.TypeElement;
     }
 
     static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement {
-        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.ObjectLiteralElement;
+        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.ObjectLiteralElement;
     }
 
     static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember {
-        return (node as CompilerExtendedComment)._commentKind === ExtendedCommentKind.EnumMember;
+        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.EnumMember;
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {
@@ -129,7 +129,7 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
     const createComment = getCreationFunction();
 
     if (childNodes.length === 0) {
-        const bodyStartPos = ExtendedCommentParser.getContainerBodyPos(container, sourceFile);
+        const bodyStartPos = CommentNodeParser.getContainerBodyPos(container, sourceFile);
         yield* getExtendedComments(bodyStartPos, false); // do not skip js docs because they won't have a node to be attached to
     }
     else {
@@ -299,7 +299,7 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
             if (ts.isEnumDeclaration(container))
                 return CompilerCommentEnumMember;
 
-            throw new errors.NotImplementedError(`Not implemented extended comment container type: ${getSyntaxKindName(container.kind)}`);
+            throw new errors.NotImplementedError(`Not implemented comment node container type: ${getSyntaxKindName(container.kind)}`);
         }
     }
 }
