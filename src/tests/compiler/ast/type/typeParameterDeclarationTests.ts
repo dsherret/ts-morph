@@ -244,5 +244,14 @@ describe(nameof(TypeParameterDeclaration), () => {
                 default: "number"
             });
         });
+
+        it("should trim leading indentation on the contraint and default", () => {
+            doTest("class C<T extends {\n    } = {\n    }> {}", {
+                kind: StructureKind.TypeParameter,
+                name: "T",
+                constraint: "{\n}",
+                default: "{\n}"
+            });
+        });
     });
 });

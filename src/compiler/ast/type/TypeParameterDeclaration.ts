@@ -162,8 +162,8 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
 
         return callBaseGetStructure<TypeParameterDeclarationSpecificStructure>(TypeParameterDeclarationBase.prototype, this, {
             kind: StructureKind.TypeParameter,
-            constraint: constraintNode != null ? constraintNode.getText() : undefined,
-            default: defaultNode ? defaultNode.getText() : undefined
+            constraint: constraintNode != null ? constraintNode.getText({ trimLeadingIndentation: true }) : undefined,
+            default: defaultNode ? defaultNode.getText({ trimLeadingIndentation: true }) : undefined
         });
     }
 }
