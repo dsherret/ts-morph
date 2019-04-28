@@ -61,7 +61,8 @@
       "src/**/*.ts",
       "!src/tests/**/*.ts",
       "!src/utils/TypeGuards.ts",
-      "!src/structures/utils/forEachStructureChild.ts"
+      "!src/structures/utils/forEachStructureChild.ts",
+      "!src/structures/utils/StructureTypeGuards.ts"
     ],
     "reporter": [
       "html"

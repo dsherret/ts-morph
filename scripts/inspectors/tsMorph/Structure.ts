@@ -11,6 +11,17 @@ export class Structure {
         return this.node.getName();
     }
 
+    @Memoize
+    getStructureKindName() {
+        const type = this.getType();
+        const kindSymbol = type.getProperty("kind");
+        if (kindSymbol == null)
+            return undefined;
+
+        const structureType = kindSymbol.getTypeAtLocation(this.node);
+        return structureType.getNonNullableType().getText().replace(/^.*\.([^\.]+)$/, "$1");
+    }
+
     getFilePath() {
         return this.node.getSourceFile().getFilePath();
     }

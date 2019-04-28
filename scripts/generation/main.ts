@@ -6,6 +6,7 @@ import { createKindToNodeMappings } from "./createKindToNodeMappings";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
 import { createDeclarationFile } from "./createDeclarationFile";
 import { createForEachStructureChild } from "./createForEachStructureChild";
+import { createStructureTypeGuardsUtility } from "./createStructureTypeGuardsUtility";
 import { InspectorFactory } from "../inspectors";
 
 const args = process.argv.slice(2);
@@ -44,6 +45,10 @@ const tsInspector = factory.getTsInspector();
     if (checkHasArg("create-for-each-structure-child")) {
         console.log("Creating for each structure child...");
         createForEachStructureChild(inspector);
+    }
+    if (checkHasArg("create-structure-type-guards")) {
+        console.log("Creating structure type guards utility class...");
+        createStructureTypeGuardsUtility(inspector);
     }
 
     if (args.length > 0)

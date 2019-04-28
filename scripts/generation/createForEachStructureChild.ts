@@ -14,7 +14,7 @@ import { TsMorphInspector, Structure } from "../inspectors";
 
 interface StructureInfo {
     name: string;
-    syntaxKind: string | undefined;
+    structureKind: string | undefined;
     baseStructures: StructureInfo[];
     members: MemberInfo[];
 }
@@ -58,8 +58,8 @@ function updateForEachStructureChild(sourceFile: SourceFile, structureInfos: Str
         });
         writer.blankLine();
         writer.write("switch (structure.kind)").block(() => {
-            for (const structureInfo of structureInfos.filter(s => s.syntaxKind != null)) {
-                writer.writeLine(`case StructureKind.${structureInfo.syntaxKind!}:`);
+            for (const structureInfo of structureInfos.filter(s => s.structureKind != null)) {
+                writer.writeLine(`case StructureKind.${structureInfo.structureKind!}:`);
                 writer.indent().write(`return ${getInfoFunctionName(structureInfo)}(structure, callback);`).newLine();
             }
             writer.writeLine("default:");
@@ -136,12 +136,11 @@ function getStructureInfos(inspector: TsMorphInspector) {
         if (infos.has(structure))
             return infos.get(structure)!;
 
-        const structureKindProperty = getTypeKindProperty(structure.getType());
         const info: StructureInfo = {
             name: structure.getName(),
             baseStructures: [],
             members: [],
-            syntaxKind: structureKindProperty == null ? undefined : getSyntaxKind(structureKindProperty.getTypeAtLocation(structure.node))
+            structureKind: structure.getStructureKindName()
         };
         infos.set(structure, info);
 
@@ -180,7 +179,7 @@ function getStructureInfos(inspector: TsMorphInspector) {
                 for (const unionElementType of getTypeOrUnionElementTypes(arrayElementType)) {
                     const kindProperty = getTypeKindProperty(unionElementType);
                     if (kindProperty != null)
-                        kinds.push(getSyntaxKind(kindProperty.getTypeAtLocation(property.getTypeNodeOrThrow())));
+                        kinds.push(getStructureKind(kindProperty.getTypeAtLocation(property.getTypeNodeOrThrow())));
                     else
                         allStructure = false;
                 }
@@ -209,7 +208,7 @@ function getStructureInfos(inspector: TsMorphInspector) {
             return type.getProperty("kind");
         }
 
-        function getSyntaxKind(type: Type) {
+        function getStructureKind(type: Type) {
             return type.getNonNullableType().getText().replace(/^.*\.([^\.]+)$/, "$1");
         }
     }
