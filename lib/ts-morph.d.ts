@@ -714,14 +714,14 @@ export declare class TypeGuards {
      * Gets if the node has an expression.
      * @param node - Node to check.
      */
-    static hasExpression(node: Node): node is Node & {
+    static hasExpression<T extends Node>(node: T): node is T & {
             getExpression(): Expression;
         };
     /**
      * Gets if the node has a name.
      * @param node - Node to check.
      */
-    static hasName(node: Node): node is Node & {
+    static hasName<T extends Node>(node: T): node is T & {
             getName(): string;
             getNameNode(): Node;
         };
@@ -729,7 +729,7 @@ export declare class TypeGuards {
      * Gets if the node has a body.
      * @param node - Node to check.
      */
-    static hasBody(node: Node): node is Node & {
+    static hasBody<T extends Node>(node: T): node is T & {
             getBody(): Node;
         };
     /**
@@ -760,12 +760,12 @@ export declare class TypeGuards {
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */
-    static isAbstractableNode(node: Node): node is AbstractableNode & AbstractableNodeExtensionType;
+    static isAbstractableNode<T extends Node>(node: T): node is AbstractableNode & T & AbstractableNodeExtensionType;
     /**
      * Gets if the node is an AmbientableNode.
      * @param node - Node to check.
      */
-    static isAmbientableNode(node: Node): node is AmbientableNode & AmbientableNodeExtensionType;
+    static isAmbientableNode<T extends Node>(node: T): node is AmbientableNode & T & AmbientableNodeExtensionType;
     /**
      * Gets if the node is an AnyKeyword.
      * @param node - Node to check.
@@ -775,7 +775,7 @@ export declare class TypeGuards {
      * Gets if the node is an ArgumentedNode.
      * @param node - Node to check.
      */
-    static isArgumentedNode(node: Node): node is ArgumentedNode & ArgumentedNodeExtensionType;
+    static isArgumentedNode<T extends Node>(node: T): node is ArgumentedNode & T & ArgumentedNodeExtensionType;
     /**
      * Gets if the node is an ArrayBindingPattern.
      * @param node - Node to check.
@@ -805,7 +805,7 @@ export declare class TypeGuards {
      * Gets if the node is an AsyncableNode.
      * @param node - Node to check.
      */
-    static isAsyncableNode(node: Node): node is AsyncableNode & AsyncableNodeExtensionType;
+    static isAsyncableNode<T extends Node>(node: T): node is AsyncableNode & T & AsyncableNodeExtensionType;
     /**
      * Gets if the node is an AwaitExpression.
      * @param node - Node to check.
@@ -815,7 +815,7 @@ export declare class TypeGuards {
      * Gets if the node is an AwaitableNode.
      * @param node - Node to check.
      */
-    static isAwaitableNode(node: Node): node is AwaitableNode & AwaitableNodeExtensionType;
+    static isAwaitableNode<T extends Node>(node: T): node is AwaitableNode & T & AwaitableNodeExtensionType;
     /**
      * Gets if the node is a BinaryExpression.
      * @param node - Node to check.
@@ -830,7 +830,7 @@ export declare class TypeGuards {
      * Gets if the node is a BindingNamedNode.
      * @param node - Node to check.
      */
-    static isBindingNamedNode(node: Node): node is BindingNamedNode & BindingNamedNodeExtensionType;
+    static isBindingNamedNode<T extends Node>(node: T): node is BindingNamedNode & T & BindingNamedNodeExtensionType;
     /**
      * Gets if the node is a Block.
      * @param node - Node to check.
@@ -840,12 +840,12 @@ export declare class TypeGuards {
      * Gets if the node is a BodiedNode.
      * @param node - Node to check.
      */
-    static isBodiedNode(node: Node): node is BodiedNode & BodiedNodeExtensionType;
+    static isBodiedNode<T extends Node>(node: T): node is BodiedNode & T & BodiedNodeExtensionType;
     /**
      * Gets if the node is a BodyableNode.
      * @param node - Node to check.
      */
-    static isBodyableNode(node: Node): node is BodyableNode & BodyableNodeExtensionType;
+    static isBodyableNode<T extends Node>(node: T): node is BodyableNode & T & BodyableNodeExtensionType;
     /**
      * Gets if the node is a BooleanKeyword.
      * @param node - Node to check.
@@ -890,7 +890,7 @@ export declare class TypeGuards {
      * Gets if the node is a ChildOrderableNode.
      * @param node - Node to check.
      */
-    static isChildOrderableNode(node: Node): node is ChildOrderableNode & ChildOrderableNodeExtensionType;
+    static isChildOrderableNode<T extends Node>(node: T): node is ChildOrderableNode & T & ChildOrderableNodeExtensionType;
     /**
      * Gets if the node is a ClassDeclaration.
      * @param node - Node to check.
@@ -905,7 +905,7 @@ export declare class TypeGuards {
      * Gets if the node is a ClassLikeDeclarationBase.
      * @param node - Node to check.
      */
-    static isClassLikeDeclarationBase(node: Node): node is ClassLikeDeclarationBase & ClassLikeDeclarationBaseExtensionType;
+    static isClassLikeDeclarationBase<T extends Node>(node: T): node is ClassLikeDeclarationBase & T & ClassLikeDeclarationBaseExtensionType;
     /**
      * Gets if the node is a CommaListExpression.
      * @param node - Node to check.
@@ -955,7 +955,7 @@ export declare class TypeGuards {
      * Gets if the node is a DecoratableNode.
      * @param node - Node to check.
      */
-    static isDecoratableNode(node: Node): node is DecoratableNode & DecoratableNodeExtensionType;
+    static isDecoratableNode<T extends Node>(node: T): node is DecoratableNode & T & DecoratableNodeExtensionType;
     /**
      * Gets if the node is a Decorator.
      * @param node - Node to check.
@@ -1000,7 +1000,7 @@ export declare class TypeGuards {
      * Gets if the node is an ExclamationTokenableNode.
      * @param node - Node to check.
      */
-    static isExclamationTokenableNode(node: Node): node is ExclamationTokenableNode & ExclamationTokenableNodeExtensionType;
+    static isExclamationTokenableNode<T extends Node>(node: T): node is ExclamationTokenableNode & T & ExclamationTokenableNodeExtensionType;
     /**
      * Gets if the node is an ExportAssignment.
      * @param node - Node to check.
@@ -1015,7 +1015,7 @@ export declare class TypeGuards {
      * Gets if the node is an ExportGetableNode.
      * @param node - Node to check.
      */
-    static isExportGetableNode(node: Node): node is ExportGetableNode & ExportGetableNodeExtensionType;
+    static isExportGetableNode<T extends Node>(node: T): node is ExportGetableNode & T & ExportGetableNodeExtensionType;
     /**
      * Gets if the node is an ExportSpecifier.
      * @param node - Node to check.
@@ -1025,7 +1025,7 @@ export declare class TypeGuards {
      * Gets if the node is an ExportableNode.
      * @param node - Node to check.
      */
-    static isExportableNode(node: Node): node is ExportableNode & ExportableNodeExtensionType;
+    static isExportableNode<T extends Node>(node: T): node is ExportableNode & T & ExportableNodeExtensionType;
     /**
      * Gets if the node is an Expression.
      * @param node - Node to check.
@@ -1045,12 +1045,12 @@ export declare class TypeGuards {
      * Gets if the node is an ExpressionedNode.
      * @param node - Node to check.
      */
-    static isExpressionedNode(node: Node): node is ExpressionedNode & ExpressionedNodeExtensionType;
+    static isExpressionedNode<T extends Node>(node: T): node is ExpressionedNode & T & ExpressionedNodeExtensionType;
     /**
      * Gets if the node is an ExtendsClauseableNode.
      * @param node - Node to check.
      */
-    static isExtendsClauseableNode(node: Node): node is ExtendsClauseableNode & ExtendsClauseableNodeExtensionType;
+    static isExtendsClauseableNode<T extends Node>(node: T): node is ExtendsClauseableNode & T & ExtendsClauseableNodeExtensionType;
     /**
      * Gets if the node is an ExternalModuleReference.
      * @param node - Node to check.
@@ -1090,7 +1090,7 @@ export declare class TypeGuards {
      * Gets if the node is a FunctionLikeDeclaration.
      * @param node - Node to check.
      */
-    static isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration & FunctionLikeDeclarationExtensionType;
+    static isFunctionLikeDeclaration<T extends Node>(node: T): node is FunctionLikeDeclaration & T & FunctionLikeDeclarationExtensionType;
     /**
      * Gets if the node is a FunctionTypeNode.
      * @param node - Node to check.
@@ -1100,7 +1100,7 @@ export declare class TypeGuards {
      * Gets if the node is a GeneratorableNode.
      * @param node - Node to check.
      */
-    static isGeneratorableNode(node: Node): node is GeneratorableNode & GeneratorableNodeExtensionType;
+    static isGeneratorableNode<T extends Node>(node: T): node is GeneratorableNode & T & GeneratorableNodeExtensionType;
     /**
      * Gets if the node is a GetAccessorDeclaration.
      * @param node - Node to check.
@@ -1115,7 +1115,7 @@ export declare class TypeGuards {
      * Gets if the node is a HeritageClauseableNode.
      * @param node - Node to check.
      */
-    static isHeritageClauseableNode(node: Node): node is HeritageClauseableNode & HeritageClauseableNodeExtensionType;
+    static isHeritageClauseableNode<T extends Node>(node: T): node is HeritageClauseableNode & T & HeritageClauseableNodeExtensionType;
     /**
      * Gets if the node is a Identifier.
      * @param node - Node to check.
@@ -1130,7 +1130,7 @@ export declare class TypeGuards {
      * Gets if the node is a ImplementsClauseableNode.
      * @param node - Node to check.
      */
-    static isImplementsClauseableNode(node: Node): node is ImplementsClauseableNode & ImplementsClauseableNodeExtensionType;
+    static isImplementsClauseableNode<T extends Node>(node: T): node is ImplementsClauseableNode & T & ImplementsClauseableNodeExtensionType;
     /**
      * Gets if the node is a ImportClause.
      * @param node - Node to check.
@@ -1185,12 +1185,12 @@ export declare class TypeGuards {
      * Gets if the node is a InitializerExpressionGetableNode.
      * @param node - Node to check.
      */
-    static isInitializerExpressionGetableNode(node: Node): node is InitializerExpressionGetableNode & InitializerExpressionGetableNodeExtensionType;
+    static isInitializerExpressionGetableNode<T extends Node>(node: T): node is InitializerExpressionGetableNode & T & InitializerExpressionGetableNodeExtensionType;
     /**
      * Gets if the node is a InitializerExpressionableNode.
      * @param node - Node to check.
      */
-    static isInitializerExpressionableNode(node: Node): node is InitializerExpressionableNode & InitializerExpressionableNodeExtensionType;
+    static isInitializerExpressionableNode<T extends Node>(node: T): node is InitializerExpressionableNode & T & InitializerExpressionableNodeExtensionType;
     /**
      * Gets if the node is a InterfaceDeclaration.
      * @param node - Node to check.
@@ -1235,7 +1235,7 @@ export declare class TypeGuards {
      * Gets if the node is a JSDocPropertyLikeTag.
      * @param node - Node to check.
      */
-    static isJSDocPropertyLikeTag(node: Node): node is JSDocPropertyLikeTag & JSDocPropertyLikeTagExtensionType;
+    static isJSDocPropertyLikeTag<T extends Node>(node: T): node is JSDocPropertyLikeTag & T & JSDocPropertyLikeTagExtensionType;
     /**
      * Gets if the node is a JSDocPropertyTag.
      * @param node - Node to check.
@@ -1285,7 +1285,7 @@ export declare class TypeGuards {
      * Gets if the node is a JSDocableNode.
      * @param node - Node to check.
      */
-    static isJSDocableNode(node: Node): node is JSDocableNode & JSDocableNodeExtensionType;
+    static isJSDocableNode<T extends Node>(node: T): node is JSDocableNode & T & JSDocableNodeExtensionType;
     /**
      * Gets if the node is a JsxAttribute.
      * @param node - Node to check.
@@ -1295,7 +1295,7 @@ export declare class TypeGuards {
      * Gets if the node is a JsxAttributedNode.
      * @param node - Node to check.
      */
-    static isJsxAttributedNode(node: Node): node is JsxAttributedNode & JsxAttributedNodeExtensionType;
+    static isJsxAttributedNode<T extends Node>(node: T): node is JsxAttributedNode & T & JsxAttributedNodeExtensionType;
     /**
      * Gets if the node is a JsxClosingElement.
      * @param node - Node to check.
@@ -1345,7 +1345,7 @@ export declare class TypeGuards {
      * Gets if the node is a JsxTagNamedNode.
      * @param node - Node to check.
      */
-    static isJsxTagNamedNode(node: Node): node is JsxTagNamedNode & JsxTagNamedNodeExtensionType;
+    static isJsxTagNamedNode<T extends Node>(node: T): node is JsxTagNamedNode & T & JsxTagNamedNodeExtensionType;
     /**
      * Gets if the node is a JsxText.
      * @param node - Node to check.
@@ -1365,7 +1365,7 @@ export declare class TypeGuards {
      * Gets if the node is a LeftHandSideExpressionedNode.
      * @param node - Node to check.
      */
-    static isLeftHandSideExpressionedNode(node: Node): node is LeftHandSideExpressionedNode & LeftHandSideExpressionedNodeExtensionType;
+    static isLeftHandSideExpressionedNode<T extends Node>(node: T): node is LeftHandSideExpressionedNode & T & LeftHandSideExpressionedNodeExtensionType;
     /**
      * Gets if the node is a LiteralExpression.
      * @param node - Node to check.
@@ -1375,7 +1375,7 @@ export declare class TypeGuards {
      * Gets if the node is a LiteralLikeNode.
      * @param node - Node to check.
      */
-    static isLiteralLikeNode(node: Node): node is LiteralLikeNode & LiteralLikeNodeExtensionType;
+    static isLiteralLikeNode<T extends Node>(node: T): node is LiteralLikeNode & T & LiteralLikeNodeExtensionType;
     /**
      * Gets if the node is a LiteralTypeNode.
      * @param node - Node to check.
@@ -1405,7 +1405,7 @@ export declare class TypeGuards {
      * Gets if the node is a ModifierableNode.
      * @param node - Node to check.
      */
-    static isModifierableNode(node: Node): node is ModifierableNode & ModifierableNodeExtensionType;
+    static isModifierableNode<T extends Node>(node: T): node is ModifierableNode & T & ModifierableNodeExtensionType;
     /**
      * Gets if the node is a ModuleBlock.
      * @param node - Node to check.
@@ -1415,12 +1415,12 @@ export declare class TypeGuards {
      * Gets if the node is a ModuledNode.
      * @param node - Node to check.
      */
-    static isModuledNode(node: Node): node is ModuledNode & ModuledNodeExtensionType;
+    static isModuledNode<T extends Node>(node: T): node is ModuledNode & T & ModuledNodeExtensionType;
     /**
      * Gets if the node is a NameableNode.
      * @param node - Node to check.
      */
-    static isNameableNode(node: Node): node is NameableNode & NameableNodeExtensionType;
+    static isNameableNode<T extends Node>(node: T): node is NameableNode & T & NameableNodeExtensionType;
     /**
      * Gets if the node is a NamedExports.
      * @param node - Node to check.
@@ -1435,12 +1435,12 @@ export declare class TypeGuards {
      * Gets if the node is a NamedNode.
      * @param node - Node to check.
      */
-    static isNamedNode(node: Node): node is NamedNode & NamedNodeExtensionType;
+    static isNamedNode<T extends Node>(node: T): node is NamedNode & T & NamedNodeExtensionType;
     /**
      * Gets if the node is a NamespaceChildableNode.
      * @param node - Node to check.
      */
-    static isNamespaceChildableNode(node: Node): node is NamespaceChildableNode & NamespaceChildableNodeExtensionType;
+    static isNamespaceChildableNode<T extends Node>(node: T): node is NamespaceChildableNode & T & NamespaceChildableNodeExtensionType;
     /**
      * Gets if the node is a NamespaceDeclaration.
      * @param node - Node to check.
@@ -1515,7 +1515,7 @@ export declare class TypeGuards {
      * Gets if the node is a OverloadableNode.
      * @param node - Node to check.
      */
-    static isOverloadableNode(node: Node): node is OverloadableNode & OverloadableNodeExtensionType;
+    static isOverloadableNode<T extends Node>(node: T): node is OverloadableNode & T & OverloadableNodeExtensionType;
     /**
      * Gets if the node is a ParameterDeclaration.
      * @param node - Node to check.
@@ -1525,7 +1525,7 @@ export declare class TypeGuards {
      * Gets if the node is a ParameteredNode.
      * @param node - Node to check.
      */
-    static isParameteredNode(node: Node): node is ParameteredNode & ParameteredNodeExtensionType;
+    static isParameteredNode<T extends Node>(node: T): node is ParameteredNode & T & ParameteredNodeExtensionType;
     /**
      * Gets if the node is a ParenthesizedExpression.
      * @param node - Node to check.
@@ -1575,7 +1575,7 @@ export declare class TypeGuards {
      * Gets if the node is a PropertyNamedNode.
      * @param node - Node to check.
      */
-    static isPropertyNamedNode(node: Node): node is PropertyNamedNode & PropertyNamedNodeExtensionType;
+    static isPropertyNamedNode<T extends Node>(node: T): node is PropertyNamedNode & T & PropertyNamedNodeExtensionType;
     /**
      * Gets if the node is a PropertySignature.
      * @param node - Node to check.
@@ -1590,17 +1590,17 @@ export declare class TypeGuards {
      * Gets if the node is a QuestionTokenableNode.
      * @param node - Node to check.
      */
-    static isQuestionTokenableNode(node: Node): node is QuestionTokenableNode & QuestionTokenableNodeExtensionType;
+    static isQuestionTokenableNode<T extends Node>(node: T): node is QuestionTokenableNode & T & QuestionTokenableNodeExtensionType;
     /**
      * Gets if the node is a ReadonlyableNode.
      * @param node - Node to check.
      */
-    static isReadonlyableNode(node: Node): node is ReadonlyableNode & ReadonlyableNodeExtensionType;
+    static isReadonlyableNode<T extends Node>(node: T): node is ReadonlyableNode & T & ReadonlyableNodeExtensionType;
     /**
      * Gets if the node is a ReferenceFindableNode.
      * @param node - Node to check.
      */
-    static isReferenceFindableNode(node: Node): node is ReferenceFindableNode & ReferenceFindableNodeExtensionType;
+    static isReferenceFindableNode<T extends Node>(node: T): node is ReferenceFindableNode & T & ReferenceFindableNodeExtensionType;
     /**
      * Gets if the node is a RegularExpressionLiteral.
      * @param node - Node to check.
@@ -1610,7 +1610,7 @@ export declare class TypeGuards {
      * Gets if the node is a RenameableNode.
      * @param node - Node to check.
      */
-    static isRenameableNode(node: Node): node is RenameableNode & RenameableNodeExtensionType;
+    static isRenameableNode<T extends Node>(node: T): node is RenameableNode & T & RenameableNodeExtensionType;
     /**
      * Gets if the node is a ReturnStatement.
      * @param node - Node to check.
@@ -1620,17 +1620,17 @@ export declare class TypeGuards {
      * Gets if the node is a ReturnTypedNode.
      * @param node - Node to check.
      */
-    static isReturnTypedNode(node: Node): node is ReturnTypedNode & ReturnTypedNodeExtensionType;
+    static isReturnTypedNode<T extends Node>(node: T): node is ReturnTypedNode & T & ReturnTypedNodeExtensionType;
     /**
      * Gets if the node is a ScopeableNode.
      * @param node - Node to check.
      */
-    static isScopeableNode(node: Node): node is ScopeableNode & ScopeableNodeExtensionType;
+    static isScopeableNode<T extends Node>(node: T): node is ScopeableNode & T & ScopeableNodeExtensionType;
     /**
      * Gets if the node is a ScopedNode.
      * @param node - Node to check.
      */
-    static isScopedNode(node: Node): node is ScopedNode & ScopedNodeExtensionType;
+    static isScopedNode<T extends Node>(node: T): node is ScopedNode & T & ScopedNodeExtensionType;
     /**
      * Gets if the node is a SemicolonToken.
      * @param node - Node to check.
@@ -1650,7 +1650,7 @@ export declare class TypeGuards {
      * Gets if the node is a SignaturedDeclaration.
      * @param node - Node to check.
      */
-    static isSignaturedDeclaration(node: Node): node is SignaturedDeclaration & SignaturedDeclarationExtensionType;
+    static isSignaturedDeclaration<T extends Node>(node: T): node is SignaturedDeclaration & T & SignaturedDeclarationExtensionType;
     /**
      * Gets if the node is a SourceFile.
      * @param node - Node to check.
@@ -1675,12 +1675,12 @@ export declare class TypeGuards {
      * Gets if the node is a StatementedNode.
      * @param node - Node to check.
      */
-    static isStatementedNode(node: Node): node is StatementedNode & StatementedNodeExtensionType;
+    static isStatementedNode<T extends Node>(node: T): node is StatementedNode & T & StatementedNodeExtensionType;
     /**
      * Gets if the node is a StaticableNode.
      * @param node - Node to check.
      */
-    static isStaticableNode(node: Node): node is StaticableNode & StaticableNodeExtensionType;
+    static isStaticableNode<T extends Node>(node: T): node is StaticableNode & T & StaticableNodeExtensionType;
     /**
      * Gets if the node is a StringKeyword.
      * @param node - Node to check.
@@ -1745,7 +1745,7 @@ export declare class TypeGuards {
      * Gets if the node is a TextInsertableNode.
      * @param node - Node to check.
      */
-    static isTextInsertableNode(node: Node): node is TextInsertableNode & TextInsertableNodeExtensionType;
+    static isTextInsertableNode<T extends Node>(node: T): node is TextInsertableNode & T & TextInsertableNodeExtensionType;
     /**
      * Gets if the node is a ThisExpression.
      * @param node - Node to check.
@@ -1785,7 +1785,7 @@ export declare class TypeGuards {
      * Gets if the node is a TypeArgumentedNode.
      * @param node - Node to check.
      */
-    static isTypeArgumentedNode(node: Node): node is TypeArgumentedNode & TypeArgumentedNodeExtensionType;
+    static isTypeArgumentedNode<T extends Node>(node: T): node is TypeArgumentedNode & T & TypeArgumentedNodeExtensionType;
     /**
      * Gets if the node is a TypeAssertion.
      * @param node - Node to check.
@@ -1800,7 +1800,7 @@ export declare class TypeGuards {
      * Gets if the node is a TypeElementMemberedNode.
      * @param node - Node to check.
      */
-    static isTypeElementMemberedNode(node: Node): node is TypeElementMemberedNode & TypeElementMemberedNodeExtensionType;
+    static isTypeElementMemberedNode<T extends Node>(node: T): node is TypeElementMemberedNode & T & TypeElementMemberedNodeExtensionType;
     /**
      * Gets if the node is a TypeLiteralNode.
      * @param node - Node to check.
@@ -1825,7 +1825,7 @@ export declare class TypeGuards {
      * Gets if the node is a TypeParameteredNode.
      * @param node - Node to check.
      */
-    static isTypeParameteredNode(node: Node): node is TypeParameteredNode & TypeParameteredNodeExtensionType;
+    static isTypeParameteredNode<T extends Node>(node: T): node is TypeParameteredNode & T & TypeParameteredNodeExtensionType;
     /**
      * Gets if the node is a TypeReferenceNode.
      * @param node - Node to check.
@@ -1835,7 +1835,7 @@ export declare class TypeGuards {
      * Gets if the node is a TypedNode.
      * @param node - Node to check.
      */
-    static isTypedNode(node: Node): node is TypedNode & TypedNodeExtensionType;
+    static isTypedNode<T extends Node>(node: T): node is TypedNode & T & TypedNodeExtensionType;
     /**
      * Gets if the node is a UnaryExpression.
      * @param node - Node to check.
@@ -1845,7 +1845,7 @@ export declare class TypeGuards {
      * Gets if the node is a UnaryExpressionedNode.
      * @param node - Node to check.
      */
-    static isUnaryExpressionedNode(node: Node): node is UnaryExpressionedNode & UnaryExpressionedNodeExtensionType;
+    static isUnaryExpressionedNode<T extends Node>(node: T): node is UnaryExpressionedNode & T & UnaryExpressionedNodeExtensionType;
     /**
      * Gets if the node is a UndefinedKeyword.
      * @param node - Node to check.
@@ -1860,7 +1860,7 @@ export declare class TypeGuards {
      * Gets if the node is a UnwrappableNode.
      * @param node - Node to check.
      */
-    static isUnwrappableNode(node: Node): node is UnwrappableNode & UnwrappableNodeExtensionType;
+    static isUnwrappableNode<T extends Node>(node: T): node is UnwrappableNode & T & UnwrappableNodeExtensionType;
     /**
      * Gets if the node is a UpdateExpression.
      * @param node - Node to check.

@@ -11,7 +11,7 @@
  * 3. Forward support: Features we add in the future will be auto-implemented.
  * ------------------------------------------
  */
-import { CodeBlockWriter } from "ts-morph";
+import { CodeBlockWriter, OptionalKind, TypeParameterDeclarationStructure } from "ts-morph";
 import { ArrayUtils, KeyValueCache } from "../../src/utils";
 import { TsMorphInspector, WrappedNode, Mixin } from "../inspectors";
 
@@ -41,8 +41,9 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             description: `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.\r\n` +
                 "@param node - Node to check."
         }],
-        parameters: [{ name: "node", type: "compiler.Node" }],
-        returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType` : ""),
+        typeParameters: method.isMixin ? [{ name: "T", constraint: "compiler.Node" }] : [],
+        parameters: [{ name: "node", type: method.isMixin ? "T" : "compiler.Node" }],
+        returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType & T` : ""),
         statements: [(writer: CodeBlockWriter) => {
             if (method.syntaxKinds.length === 0)
                 throw new Error(`For some reason ${method.name} had no syntax kinds.`);
