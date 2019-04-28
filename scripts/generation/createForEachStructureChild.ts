@@ -50,7 +50,7 @@ function updateForEachStructureChild(sourceFile: SourceFile, structureInfos: Str
         writer.writeLine("// automatically generated: run `yarn run code-generate` to update the code in here");
         writer.write("if (structure instanceof Array)").block(() => {
             writer.write("for (const item of structure)").block(() => {
-                writer.writeLine("const result = action(item);");
+                writer.writeLine("const result = callback(item);");
                 writer.writeLine("if (result)");
                 writer.indent().write("return result;").newLine();
             });
@@ -60,7 +60,7 @@ function updateForEachStructureChild(sourceFile: SourceFile, structureInfos: Str
         writer.write("switch (structure.kind)").block(() => {
             for (const structureInfo of structureInfos.filter(s => s.syntaxKind != null)) {
                 writer.writeLine(`case StructureKind.${structureInfo.syntaxKind!}:`);
-                writer.indent().write(`return ${getInfoFunctionName(structureInfo)}(structure, action);`).newLine();
+                writer.indent().write(`return ${getInfoFunctionName(structureInfo)}(structure, callback);`).newLine();
             }
             writer.writeLine("default:");
             writer.indent().write("return undefined;").newLine();
@@ -76,24 +76,24 @@ function addNewFunctions(sourceFile: SourceFile, structureInfos: StructureInfo[]
             docs: ["@generated"],
             name: getInfoFunctionName(info),
             typeParameters: ["TStructure"],
-            parameters: [{ name: "structure", type: info.name }, { name: "action", type: "(structure: Structures) => TStructure | void" }],
+            parameters: [{ name: "structure", type: info.name }, { name: "callback", type: "(structure: Structures) => TStructure | void" }],
             returnType: "TStructure | undefined",
             statements: writer => {
                 let isFirst = true;
                 writer.write("return ");
 
                 for (const baseStructure of info.baseStructures)
-                    addExpression(getInfoFunctionName(baseStructure) + "(structure, action)");
+                    addExpression(getInfoFunctionName(baseStructure) + "(structure, callback)");
 
                 for (const member of info.members) {
                     if (member.syntaxKind != null) {
                         if (member.allStructure)
-                            addExpression(`forAll(structure.${member.name}, action, StructureKind.${member.syntaxKind})`);
+                            addExpression(`forAll(structure.${member.name}, callback, StructureKind.${member.syntaxKind})`);
                         else
-                            addExpression(`forAllIfStructure(structure.${member.name}, action, StructureKind.${member.syntaxKind})`);
+                            addExpression(`forAllIfStructure(structure.${member.name}, callback, StructureKind.${member.syntaxKind})`);
                     }
                     else
-                        addExpression(`forAllUnknownKindIfStructure(structure.${member.name}, action)`);
+                        addExpression(`forAllUnknownKindIfStructure(structure.${member.name}, callback)`);
                 }
 
                 writer.write(";");
