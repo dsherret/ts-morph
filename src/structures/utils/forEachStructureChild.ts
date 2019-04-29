@@ -1,3 +1,4 @@
+import { ArrayUtils } from "../../utils";
 import { StructureKind } from "../StructureKind";
 import { Structures } from "../aliases";
 import { DecoratableNodeStructure, SignaturedDeclarationStructure, ParameteredNodeStructure, TypeElementMemberedNodeStructure, TypeParameteredNodeStructure,
@@ -21,7 +22,7 @@ import { OptionalKind } from "../types";
  * @param structures - Array of structures to iterate over.
  * @param callback - Callback to do on each element in the array. Returning a truthy value will return that value in the main function call.
  */
-export function forEachStructureChild<TStructure>(structures: Structures[], callback: (child: Structures) => TStructure | void): TStructure | undefined;
+export function forEachStructureChild<TStructure>(structures: ReadonlyArray<Structures>, callback: (child: Structures) => TStructure | void): TStructure | undefined;
 /**
  * Iterates over the children of the provided array.
  * @remarks If the children do not have a `kind` property, it will be automatically added.
@@ -29,9 +30,9 @@ export function forEachStructureChild<TStructure>(structures: Structures[], call
  * @param callback - Callback to do on each child of the provided structure. Returning a truthy value will return that value in the main function call.
  */
 export function forEachStructureChild<TStructure>(structure: Structures, callback: (child: Structures) => TStructure | void): TStructure | undefined;
-export function forEachStructureChild<TStructure>(structure: Structures | Structures[], callback: (child: Structures) => TStructure | void): TStructure | undefined {
+export function forEachStructureChild<TStructure>(structure: Structures | ReadonlyArray<Structures>, callback: (child: Structures) => TStructure | void): TStructure | undefined {
     // automatically generated: run `yarn run code-generate` to update the code in here
-    if (structure instanceof Array) {
+    if (ArrayUtils.isReadonlyArray(structure)) {
         for (const item of structure) {
             const result = callback(item);
             if (result)

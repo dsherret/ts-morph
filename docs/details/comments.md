@@ -49,7 +49,7 @@ These are nodes ts-morph parses out. They do not include all comments, but only 
 
 For example, in the following scenario:
 
-```ts
+```ts setup: let functionCall: any;
 // do something
 functionCall(); // ok
 ```
@@ -62,7 +62,7 @@ Comment ranges can be retrieved using various `#getXWithComments()` methods.
 
 For example:
 
-```ts
+```ts setup: let classDec: any, interfaceDec: any;
 sourceFile.getStatementsWithComments();
 classDec.getMembersWithComments();
 interfaceDec.getMembersWithComments();
@@ -81,7 +81,7 @@ This extends the behaviour of the compiler API.
 
 The reason this is done is to make inserting before or after comments possible. For example, given the following source file:
 
-```ts
+```ts setup: let functionCall: any;
 // 1
 // 2
 functionCall();
@@ -89,7 +89,7 @@ functionCall();
 
 It is possible to insert a statement after the first comment by specifying `sourceFile.insertStatement(1, "// new comment");`, which would modify the source file to be:
 
-```ts
+```ts setup: let functionCall: any;
 // 1
 // new comment
 // 2

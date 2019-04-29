@@ -15,12 +15,13 @@ declare class CodeBlockWriter {
     private readonly _indentNumberOfSpaces;
     private _currentIndentation;
     private _queuedIndentation;
-    private _text;
+    private _texts;
     private _newLineOnNextWrite;
     private _stringCharStack;
     private _isInRegEx;
     private _isOnFirstLineOfBlock;
     private static readonly _newLineRegEx;
+    private static readonly _isCharToHandle;
     private static readonly _spacesOrTabsRegEx;
     constructor(opts?: Partial<CodeBlockWriterOptions>);
     /**
@@ -202,6 +203,7 @@ declare class CodeBlockWriter {
      * Gets the last char written.
      */
     getLastChar(): string | undefined;
+    private _getLastCharWithOffset(offset);
     /**
      * Gets the writer's text.
      */

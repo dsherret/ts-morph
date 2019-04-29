@@ -5,6 +5,10 @@ export class ArrayUtils {
     private constructor() {
     }
 
+    static isReadonlyArray<T>(a: unknown): a is ReadonlyArray<T> {
+        return a instanceof Array;
+    }
+
     static isNullOrEmpty<T>(a: (ReadonlyArray<T> | undefined)): a is undefined {
         return !(a instanceof Array) || a.length === 0;
     }

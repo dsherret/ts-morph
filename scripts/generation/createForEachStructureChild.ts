@@ -48,7 +48,7 @@ function updateForEachStructureChild(sourceFile: SourceFile, structureInfos: Str
 
     func.addStatements(writer => {
         writer.writeLine("// automatically generated: run `yarn run code-generate` to update the code in here");
-        writer.write("if (structure instanceof Array)").block(() => {
+        writer.write("if (ArrayUtils.isReadonlyArray(structure))").block(() => {
             writer.write("for (const item of structure)").block(() => {
                 writer.writeLine("const result = callback(item);");
                 writer.writeLine("if (result)");

@@ -10807,7 +10807,7 @@ interface TypeParameterDeclarationSpecificStructure extends KindedStructure<Stru
  * @param structures - Array of structures to iterate over.
  * @param callback - Callback to do on each element in the array. Returning a truthy value will return that value in the main function call.
  */
-export declare function forEachStructureChild<TStructure>(structures: Structures[], callback: (child: Structures) => TStructure | void): TStructure | undefined;
+export declare function forEachStructureChild<TStructure>(structures: ReadonlyArray<Structures>, callback: (child: Structures) => TStructure | void): TStructure | undefined;
 /**
  * Iterates over the children of the provided array.
  * @remarks If the children do not have a `kind` property, it will be automatically added.
