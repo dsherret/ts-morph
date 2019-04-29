@@ -692,13 +692,13 @@ co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
 
-code-block-writer@7.3.1, code-block-writer@^7.2.2:
-  version "7.3.1"
-  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.3.1.tgz#b3b921b885fe7fb869866c0648491eae6c08cfa9"
-
 code-block-writer@8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-8.0.0.tgz#bc59193040b51a3e9a9150fe12da09dc74ca2a95"
+
+code-block-writer@^7.2.2:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.3.1.tgz#b3b921b885fe7fb869866c0648491eae6c08cfa9"
 
 code-point-at@^1.0.0:
   version "1.1.0"
@@ -3847,12 +3847,12 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-ts-morph@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-2.0.1.tgz#7ae7ca47ecad817354105b4579bf581d323ec64f"
+ts-morph@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-2.1.0.tgz#a899b3fe284a72090f73c4d6a7f82e4168667abd"
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
-    code-block-writer "7.3.1"
+    code-block-writer "8.0.0"
     fs-extra "^7.0.0"
     glob-parent "^3.1.0"
     globby "^8.0.1"

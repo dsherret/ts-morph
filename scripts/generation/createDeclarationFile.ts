@@ -8,7 +8,7 @@
 import * as os from "os";
 import { Node, TypeGuards, Scope, ClassDeclaration, StructureKind, InterfaceDeclarationStructure, TypeAliasDeclarationStructure,
     FunctionDeclarationStructure, VariableStatementStructure} from "ts-morph";
-import { createDeclarationProject, removeImportTypes } from "../common";
+import { createDeclarationProject, forEachTypeText } from "../common";
 import { getDeclarationFileStatements } from "./declarationFile";
 
 // todo: remove this once this code's performance is improved.
@@ -45,6 +45,12 @@ export async function createDeclarationFile() {
     hideSpecificDeclarations();
     log("Hiding base declarations...");
     hideBaseDeclarations();
+    log("Removing import types...");
+    statements.forEach(statement => forEachTypeText(statement,
+        typeText => typeText
+            .replace(/compiler\.([A-Za-z]+)/g, "$1")
+            .replace(/ts\.(SyntaxKind)/g, "$1")
+            .replace(/import\([^\)]+\)\./g, "")));
 
     log("Printing...");
     mainFile.set({
@@ -52,9 +58,6 @@ export async function createDeclarationFile() {
     });
 
     // todo: will work on improving the rest of this later
-    mainFile.replaceWithText(mainFile.getFullText().replace(/compiler\.([A-Za-z]+)/g, "$1").replace(/ts\.(SyntaxKind)/g, "$1"));
-    log("Removing import types...");
-    removeImportTypes(mainFile);
     log("Making constructors private...");
     makeConstructorsPrivate();
     log("Removing @skipOrThrowCheck...");
