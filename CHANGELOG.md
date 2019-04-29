@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/dsherret/ts-morph/compare/2.0.0...2.1.0) (2019-04-29)
+
+
+### Bug Fixes
+
+* `TypeParameterDeclaration#getStructure()` should trim leading indentation on contraint and default. ([ec971ce](https://github.com/dsherret/ts-morph/commit/ec971ce))
+* Mixin type guards should maintain the passed in type. ([616c4cc](https://github.com/dsherret/ts-morph/commit/616c4cc))
+
+
+### Features
+
+* [#567](https://github.com/dsherret/ts-morph/issues/567) - Update `#getStatement()` to work with type guards. ([02c8d89](https://github.com/dsherret/ts-morph/commit/02c8d89))
+* [#614](https://github.com/dsherret/ts-morph/issues/614)  - Add forEachStructureChild ([f8b0f6d](https://github.com/dsherret/ts-morph/commit/f8b0f6d))
+* Add `StructureTypeGuards`. ([6138472](https://github.com/dsherret/ts-morph/commit/6138472))
+* Wrap `BigIntLiteral`. ([fbe59fc](https://github.com/dsherret/ts-morph/commit/fbe59fc))
+* Wrap `ConditionalTypeNode`. ([5e3e74c](https://github.com/dsherret/ts-morph/commit/5e3e74c))
+* Wrap `InferTypeNode`. ([ec4b3f2](https://github.com/dsherret/ts-morph/commit/ec4b3f2))
+* Wrap `ThisTypeNode`. ([6655c51](https://github.com/dsherret/ts-morph/commit/6655c51))
+
+
+### Performance Improvements
+
+* Upgrade to code-block-writer 8.0.0. ([218442b](https://github.com/dsherret/ts-morph/commit/218442b))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/dsherret/ts-morph/compare/1.3.2...2.0.0) (2019-04-20)
 
