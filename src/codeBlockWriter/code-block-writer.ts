@@ -1,28 +1,39 @@
 import ImportedCodeBlockWriter from "code-block-writer";
 
+/**
+ * Options for the writer.
+ */
 interface CodeBlockWriterOptions {
-    newLine: string;
+    /**
+     * Newline character.
+     * @remarks Defaults to \n.
+     */
+    newLine: "\n" | "\r\n";
+    /**
+     * Number of spaces to indent when `useTabs` is false.
+     * @remarks Defaults to 4.
+     */
     indentNumberOfSpaces: number;
+    /**
+     * Whether to use tabs (true) or spaces (false).
+     * @remarks Defaults to false.
+     */
     useTabs: boolean;
+    /**
+     * Whether to use a single quote (true) or double quote (false).
+     * @remarks Defaults to false.
+     */
     useSingleQuote: boolean;
 }
 
+/**
+ * Code writer that assists with formatting and visualizing blocks of JavaScript or TypeScript code.
+ */
 declare class CodeBlockWriter {
-    private readonly _indentationText;
-    private readonly _newLine;
-    private readonly _useTabs;
-    private readonly _quoteChar;
-    private readonly _indentNumberOfSpaces;
-    private _currentIndentation;
-    private _queuedIndentation;
-    private _texts;
-    private _newLineOnNextWrite;
-    private _stringCharStack;
-    private _isInRegEx;
-    private _isOnFirstLineOfBlock;
-    private static readonly _newLineRegEx;
-    private static readonly _isCharToHandle;
-    private static readonly _spacesOrTabsRegEx;
+    /**
+     * Constructor.
+     * @param opts - Options for the writer.
+     */
     constructor(opts?: Partial<CodeBlockWriterOptions>);
     /**
      * Gets the options.
@@ -67,7 +78,6 @@ declare class CodeBlockWriter {
      * @param block - Block to indent.
      */
     indentBlock(block: () => void): this;
-    private _indentBlockInternal(block?: any);
     /**
      * Conditionally writes a line of text.
      * @param condition - Condition to evaluate.
@@ -105,7 +115,7 @@ declare class CodeBlockWriter {
     /**
      * Indents the code one level for the current line.
      */
-    indent(): this;
+    indent(times?: number): this;
     /**
      * Writes a newline if the condition is true.
      * @param condition - Condition to evaluate.
@@ -203,18 +213,10 @@ declare class CodeBlockWriter {
      * Gets the last char written.
      */
     getLastChar(): string | undefined;
-    private _getLastCharWithOffset(offset);
     /**
      * Gets the writer's text.
      */
     toString(): string;
-    private _writeIndentingNewLines(text);
-    private _baseWriteNewline();
-    private dequeueQueuedIndentation();
-    private _updateInternalState(str);
-    private _writeIndentation();
-    private _newLineIfNewLineOnNextWrite();
-    private _getIndentationLevelFromArg(countOrText);
 }
 
 // this is a trick to get the import module defined in the local scope by its name, but have the compiler
