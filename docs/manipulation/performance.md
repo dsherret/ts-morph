@@ -29,7 +29,8 @@ Example:
 ```ts
 // this code will get a structure from declarations.ts, make all the descendants not be exported,
 // then create a new file called private.ts from that structure
-import { StructureTypeGuards, forEachStructureChild, SourceFileStructure, StructureKind, Structures } from "ts-morph";
+import { StructureTypeGuards, forEachStructureChild, SourceFileStructure, StructureKind,
+    Structures } from "ts-morph";
 
 const project = new Project({ tsConfigFilePath: "tsconfig.json" });
 const classesFile = project.getSourceFileOrThrow("declarations.ts");
