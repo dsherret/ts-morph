@@ -3,11 +3,10 @@ import * as errors from "../../errors";
 import { StructurePrinterFactory } from "../../factories";
 import { StatementStructures, StructureKind } from "../../structures";
 import { WriterFunction } from "../../types";
+import { StringUtils } from "../../utils";
 import { Printer } from "../Printer";
 
 export type StatementStructuresArrayItem = string | WriterFunction | StatementStructures;
-
-const isLastNonWhitespaceCharCloseBrace = /[}]\s*$/;
 
 export class StatementsStructurePrinter extends Printer<StatementStructuresArrayItem> {
     constructor(private readonly factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
@@ -22,7 +21,7 @@ export class StatementsStructurePrinter extends Printer<StatementStructuresArray
             this.printText(writer, statements);
         else {
             for (const statement of statements) {
-                if (isLastNonWhitespaceCharCloseBrace.test(writer.toString()))
+                if (isLastNonWhitespaceCharCloseBrace(writer.toString()))
                     writer.blankLineIfLastNot();
                 else if (!writer.isAtStartOfFirstLineOfBlock())
                     writer.newLineIfLastNot();
@@ -84,4 +83,15 @@ export class StatementsStructurePrinter extends Printer<StatementStructuresArray
                 writer.blankLineIfLastNot();
         }
     }
+}
+
+function isLastNonWhitespaceCharCloseBrace(str: string) {
+    for (let i = str.length - 1; i >= 0; i--) {
+        const char = str[i];
+        if (StringUtils.isWhitespaceChar(char))
+            continue;
+        return char === "}";
+    }
+
+    return false;
 }

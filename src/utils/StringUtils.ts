@@ -1,13 +1,26 @@
 ﻿import { QuoteKind } from "../compiler";
 import * as errors from "../errors";
 
-const isSpaces = /^ +$/;
-const isWhitespace = /^\s*$/;
-const startsWithNewLine = /^\r?\n/;
-const endsWithNewLine = /\r?\n$/;
+const regExWhitespaceSet = new Set<string>([" ", "\f", "\n", "\r", "\t", "\v", "\u00A0", "\u2028", "\u2029"]);
 
 export class StringUtils {
     private constructor() {
+    }
+
+    static isWhitespaceChar(char: string | undefined) {
+        return regExWhitespaceSet.has(char!);
+    }
+
+    static isSpaces(text: string) {
+        if (text == null || text.length === 0)
+            return false;
+
+        for (let i = 0; i < text.length; i++) {
+            if (text[i] !== " ")
+                return false;
+        }
+
+        return true;
     }
 
     static hasBom(text: string) {
@@ -28,21 +41,33 @@ export class StringUtils {
         return typeof str !== "string" || str.length === 0;
     }
 
-    static isWhitespace(str: string) {
-        return isWhitespace.test(str);
+    static isWhitespace(text: string | undefined) {
+        if (text == null)
+            return true; // might as well since text.length === 0 returns true
+
+        for (let i = 0; i < text.length; i++) {
+            if (!StringUtils.isWhitespaceChar(text[i]))
+                return false;
+        }
+
+        return true;
     }
 
-    static startsWithNewLine(str: string) {
-        return startsWithNewLine.test(str);
+    static startsWithNewLine(str: string | undefined) {
+        if (str == null)
+            return false;
+        return str[0] === "\n" || str[0] === "\r" && str[1] === "\n";
     }
 
-    static endsWithNewLine(str: string) {
-        return endsWithNewLine.test(str);
+    static endsWithNewLine(str: string | undefined) {
+        if (str == null)
+            return false;
+        return str[str.length - 1] === "\n";
     }
 
     static insertAtLastNonWhitespace(str: string, insertText: string) {
         let i = str.length;
-        while (i > 0 && isWhitespace.test(str[i - 1]))
+        while (i > 0 && StringUtils.isWhitespaceChar(str[i - 1]))
             i--;
         return str.substring(0, i) + insertText + str.substring(i);
     }
@@ -134,7 +159,7 @@ export class StringUtils {
             let text = "^";
             for (let i = 0; i < Math.abs(times); i++) {
                 text += "(";
-                if (isSpaces.test(indentText)) {
+                if (StringUtils.isSpaces(indentText)) {
                     // the optional string makes it possible to unindent when a line doesn't have the full number of spaces
                     for (let j = 0; j < indentText.length; j++)
                         text += " ?";
