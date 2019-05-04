@@ -17,7 +17,6 @@ All notable changes to this project will be documented in this file. See [standa
 * [#567](https://github.com/dsherret/ts-morph/issues/567) - Update `#getStatement()` to work with type guards. ([02c8d89](https://github.com/dsherret/ts-morph/commit/02c8d89))
 * [#614](https://github.com/dsherret/ts-morph/issues/614)  - Add forEachStructureChild ([f8b0f6d](https://github.com/dsherret/ts-morph/commit/f8b0f6d))
 * Add `StructureTypeGuards`. ([6138472](https://github.com/dsherret/ts-morph/commit/6138472))
-* Wrap `BigIntLiteral`. ([fbe59fc](https://github.com/dsherret/ts-morph/commit/fbe59fc))
 * Wrap `ConditionalTypeNode`. ([5e3e74c](https://github.com/dsherret/ts-morph/commit/5e3e74c))
 * Wrap `InferTypeNode`. ([ec4b3f2](https://github.com/dsherret/ts-morph/commit/ec4b3f2))
 * Wrap `ThisTypeNode`. ([6655c51](https://github.com/dsherret/ts-morph/commit/6655c51))

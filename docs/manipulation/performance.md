@@ -8,6 +8,64 @@ There's a lot of opportunity for performance improvements. The library originall
 
 [View Issues](https://github.com/dsherret/ts-morph/labels/performance)
 
+### Manipulations are slow...
+
+Right now with every manipulation the following occurs:
+
+1. The file text is updated.
+2. The new text is parsed and a new AST is created using the compiler API.
+3. The previously wrapped nodes are backfilled with new compiler nodes.
+
+This might not be too bad when working with small to medium sized files, but large files may take a bit of time. If you find it's too slow, then I recommend reading the performance tips below.
+
+Note: I'm working on eliminating the need to do a complete parse of the source file between manipulations. Once implemented these performance tips won't be necessary.
+
+### Performance Tip: Work With Structures Instead
+
+Structures are simplified ASTs. You can get a huge performance improvement by working with structures as much as possible. This is especially useful to do if you are code generating.
+
+Example:
+
+```ts
+// this code will get a structure from declarations.ts, make all the descendants not be exported,
+// then create a new file called private.ts from that structure
+import { StructureTypeGuards, forEachStructureChild, SourceFileStructure, StructureKind,
+    Structures } from "ts-morph";
+
+const project = new Project({ tsConfigFilePath: "tsconfig.json" });
+const classesFile = project.getSourceFileOrThrow("declarations.ts");
+const classesFileStructure = classesFile.getStructure();
+
+removeExports(classesFileStructure);
+
+project.createSourceFile("private.ts", classesFileStructure);
+
+function removeExports(structure: Structures) {
+    forEachStructureChild(structure, removeExports);
+
+    if (StructureTypeGuards.isExportableNode(structure))
+        structure.isExported = false;
+}
+```
+
+Read more in [structures](structures.md).
+
+### Performance Tip: Batch operations
+
+You can reduce the amount of parsing that needs to happen by batching operations.
+
+For example, instead of writing code like this:
+
+```ts setup: const classStructures: ClassDeclarationStructure[];
+for (const classStructure of classStructures)
+	sourceFile.addClass(classStructure);
+```
+
+Write this instead:
+
+```ts setup: const classStructures: ClassDeclarationStructure[];
+sourceFile.addClasses(classStructures);
+```
 
 ### Performance Tip: Analyze then Manipulate
 
