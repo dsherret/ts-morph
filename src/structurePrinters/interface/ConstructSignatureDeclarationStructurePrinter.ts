@@ -12,11 +12,10 @@ export class ConstructSignatureDeclarationStructurePrinter extends NodePrinter<O
 
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ConstructSignatureDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
+
         writer.write("new");
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        writer.write("(");
-        this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
-        writer.write(")");
+        this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
         this.factory.forReturnTypedNode().printText(writer, structure);
         writer.write(";");
     }

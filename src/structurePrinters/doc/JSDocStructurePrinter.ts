@@ -16,7 +16,7 @@ export class JSDocStructurePrinter extends NodePrinter<OptionalKind<JSDocStructu
     }
 
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<JSDocStructure> | string | WriterFunction) {
-        const lines = getText().split(/\r?\n/);
+        const lines = getText.call(this).split(/\r?\n/);
         writer.writeLine("/**");
         for (const line of lines) {
             writer.write(` *`);
@@ -26,10 +26,10 @@ export class JSDocStructurePrinter extends NodePrinter<OptionalKind<JSDocStructu
         }
         writer.write(" */");
 
-        function getText() {
+        function getText(this: JSDocStructurePrinter) {
             if (typeof structure === "string")
                 return structure;
-            const tempWriter = new CodeBlockWriter(writer.getOptions());
+            const tempWriter = this.getNewWriter(writer);
             if (typeof structure === "function") {
                 structure(tempWriter);
                 return tempWriter.toString();

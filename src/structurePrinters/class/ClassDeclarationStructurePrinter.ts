@@ -20,28 +20,7 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
         const isAmbient = structure.hasDeclareKeyword || this.options.isAmbient;
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forDecorator().printTexts(writer, structure.decorators);
-        this.factory.forModifierableNode().printText(writer, structure);
-        writer.write(`class`);
-        // can be null, ex. `export default class { ... }`
-        if (!StringUtils.isNullOrWhitespace(structure.name))
-            writer.space().write(structure.name);
-        this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        writer.space();
-
-        if (structure.extends != null) {
-            const extendsText = this.getTextWithQueuedChildIndentation(writer, structure.extends);
-            if (!StringUtils.isNullOrWhitespace(extendsText))
-                writer.write(`extends ${extendsText} `);
-        }
-
-        if (structure.implements != null) {
-            const implementsText = structure.implements instanceof Array
-                ? structure.implements.map(i => this.getTextWithQueuedChildIndentation(writer, i)).join(", ")
-                : this.getTextWithQueuedChildIndentation(writer, structure.implements);
-
-            if (!StringUtils.isNullOrWhitespace(implementsText))
-                writer.write(`implements ${implementsText} `);
-        }
+        this.printHeader(writer, structure);
 
         writer.inlineBlock(() => {
             this.factory.forPropertyDeclaration().printTexts(writer, structure.properties);
@@ -51,6 +30,33 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
             if (!ArrayUtils.isNullOrEmpty(structure.methods)) {
                 this.conditionalSeparator(writer, isAmbient);
                 this.factory.forMethodDeclaration({ isAmbient }).printTexts(writer, structure.methods);
+            }
+        });
+    }
+
+    private printHeader(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>) {
+        this.factory.forModifierableNode().printText(writer, structure);
+        writer.write(`class`);
+        // can be null, ex. `export default class { ... }`
+        if (!StringUtils.isNullOrWhitespace(structure.name))
+            writer.space().write(structure.name);
+        this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
+        writer.space();
+
+        writer.withHangingIndentation(() => {
+            if (structure.extends != null) {
+                const extendsText = this.getText(writer, structure.extends);
+                if (!StringUtils.isNullOrWhitespace(extendsText))
+                    writer.write(`extends ${extendsText} `);
+            }
+
+            if (structure.implements != null) {
+                const implementsText = structure.implements instanceof Array
+                    ? structure.implements.map(i => this.getText(writer, i)).join(", ")
+                    : this.getText(writer, structure.implements);
+
+                if (!StringUtils.isNullOrWhitespace(implementsText))
+                    writer.write(`implements ${implementsText} `);
             }
         });
     }

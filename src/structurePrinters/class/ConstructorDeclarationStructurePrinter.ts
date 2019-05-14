@@ -27,7 +27,7 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
 
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure>) {
         this.printOverloads(writer, getOverloadStructures());
-        this.printBase(writer, structure);
+        this.printHeader(writer, structure);
         if (this.options.isAmbient)
             writer.write(";");
         else
@@ -59,17 +59,15 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
     }
 
     printOverload(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationOverloadStructure>) {
-        this.printBase(writer, structure);
+        this.printHeader(writer, structure);
         writer.write(";");
     }
 
-    private printBase(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure>) {
+    private printHeader(writer: CodeBlockWriter, structure: OptionalKind<ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write("constructor");
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        writer.write("(");
-        this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
-        writer.write(")");
+        this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
     }
 }

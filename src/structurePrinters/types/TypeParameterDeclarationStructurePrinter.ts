@@ -16,7 +16,9 @@ export class TypeParameterDeclarationStructurePrinter extends NodePrinter<Option
     }
 
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<TypeParameterDeclarationStructure> | string> | undefined) {
-        this.multipleWriter.printText(writer, structures);
+        writer.withHangingIndentation(() => {
+            this.multipleWriter.printText(writer, structures);
+        });
     }
 
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<TypeParameterDeclarationStructure> | string) {

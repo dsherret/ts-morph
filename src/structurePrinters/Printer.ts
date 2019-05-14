@@ -22,12 +22,15 @@ export abstract class Printer<TStructure> {
         return newWriter;
     }
 
+    protected getText(writer: CodeBlockWriter, textOrWriterFunc: string | WriterFunction) {
+        const newWriter = this.getNewWriter(writer);
+        this.printTextOrWriterFunc(newWriter, textOrWriterFunc);
+        return newWriter.toString();
+    }
+
     protected getTextWithQueuedChildIndentation(writer: CodeBlockWriter, textOrWriterFunc: string | WriterFunction) {
         const queuedChildIndentationWriter = this.getNewWriterWithQueuedChildIndentation(writer);
-        if (typeof textOrWriterFunc === "string")
-            queuedChildIndentationWriter.write(textOrWriterFunc);
-        else
-            textOrWriterFunc(queuedChildIndentationWriter);
+        this.printTextOrWriterFunc(queuedChildIndentationWriter, textOrWriterFunc);
         return queuedChildIndentationWriter.toString();
     }
 }

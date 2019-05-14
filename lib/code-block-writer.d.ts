@@ -47,6 +47,11 @@ declare class CodeBlockWriter {
      */
     queueIndentationLevel(whitespaceText: string): this;
     /**
+     * Writes the text within the provided action with hanging indentation.
+     * @param action - Action to perform with hanging indentation.
+     */
+    withHangingIndentation(action: () => void): this;
+    /**
      * Sets the current indentation level.
      * @param indentationLevel - Indentation level to be at.
      */
@@ -56,6 +61,21 @@ declare class CodeBlockWriter {
      * @param whitespaceText - Gets the indentation level from the indentation text.
      */
     setIndentationLevel(whitespaceText: string): this;
+    /**
+     * Sets the indentation level within the provided action and restores the writer's indentation
+     * state afterwards.
+     * @remarks Restores the writer's state after the action.
+     * @param indentationLevel - Indentation level to queue.
+     * @param action - Action to perform with the indentation.
+     */
+    withIndentationLevel(indentationLevel: number, action: () => void): this;
+    /**
+     * Sets the identation level with the provided indentation text within the provided action
+     * and restores the writer's indentation state afterwards.
+     * @param whitespaceText - Gets the indentation level from the indentation text.
+     * @param action - Action to perform with the indentation.
+     */
+    withIndentationLevel(whitespaceText: string, action: () => void): this;
     /**
      * Gets the current indentation level.
      */

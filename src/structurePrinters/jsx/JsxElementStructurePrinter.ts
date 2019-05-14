@@ -4,10 +4,12 @@ import { NodePrinter } from "../NodePrinter";
 
 export class JsxElementStructurePrinter extends NodePrinter<OptionalKind<JsxElementStructure>> {
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<JsxElementStructure>) {
-        writer.write(`<${structure.name}`);
-        if (structure.attributes)
-            this.printAttributes(writer, structure.attributes);
-        writer.write(">");
+        writer.withHangingIndentation(() => {
+            writer.write(`<${structure.name}`);
+            if (structure.attributes)
+                this.printAttributes(writer, structure.attributes);
+            writer.write(">");
+        });
 
         this.printChildren(writer, structure.children);
 
