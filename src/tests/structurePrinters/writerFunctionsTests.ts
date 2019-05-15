@@ -128,4 +128,14 @@ describe(nameof<WriterFunctions>(), () => {
             doWriterTest((writer, { intersectionType }) => intersectionType("C", "A", w => w.write("5"), 7)(writer), "C & A & 5 & 7");
         });
     });
+
+    describe(nameof(WriterFunctions.assertion), () => {
+        it("should write when specifying writer functions", () => {
+            doWriterTest((writer, { assertion }) => assertion(w => w.write("a"), w => w.write("b"))(writer), "a as b");
+        });
+
+        it("should write when specifying strings", () => {
+            doWriterTest((writer, { assertion }) => assertion("a", "b")(writer), "a as b");
+        });
+    });
 });
