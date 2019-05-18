@@ -614,10 +614,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         const startLinePos = getPreviousMatchingPos(sourceFileText, positionRange[0], char => char === "\n");
         const endLinePos = getNextMatchingPos(sourceFileText, positionRange[1], char => char === "\r" || char === "\n");
-        const indentText = this._context.manipulationSettings.getIndentationText();
 
-        const correctedText = StringUtils.indent(sourceFileText.substring(startLinePos, endLinePos),
-            times, indentText, pos => this.isInStringAtPos(pos + startLinePos));
+        const correctedText = StringUtils.indent(sourceFileText.substring(startLinePos, endLinePos), times, {
+            indentText: this._context.manipulationSettings.getIndentationText(),
+            indentSizeInSpaces: this._context.manipulationSettings._getIndentSizeInSpaces(),
+            isInStringAtPos: pos => this.isInStringAtPos(pos + startLinePos)
+        });
 
         replaceSourceFileTextForFormatting({
             sourceFile: this,

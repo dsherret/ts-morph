@@ -142,9 +142,9 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
 
     /**
      * @internal
-     * Gets the tab size as represented in spaces.
+     * Gets the indent size as represented in spaces.
      */
-    _getTabSize() {
+    _getIndentSizeInSpaces() {
         const indentationText = this.getIndentationText();
         switch (indentationText) {
             case IndentationText.EightSpaces:

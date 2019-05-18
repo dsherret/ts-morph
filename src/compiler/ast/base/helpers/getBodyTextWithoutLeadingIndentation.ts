@@ -15,9 +15,8 @@ export function getBodyTextWithoutLeadingIndentation(body: Node) {
         return "";
 
     const fullText = sourceFile.getFullText().substring(startPos, endPos);
-
-    return StringUtils.indent(fullText,
-        -1 * textArea.getIndentationLevel(),
-        textArea._context.manipulationSettings.getIndentationText(),
-        pos => sourceFile.isInStringAtPos(pos + startPos));
+    return StringUtils.removeIndentation(fullText, {
+            indentSizeInSpaces: body._context.manipulationSettings._getIndentSizeInSpaces(),
+            isInStringAtPos: pos => sourceFile.isInStringAtPos(pos + startPos)
+        });
 }

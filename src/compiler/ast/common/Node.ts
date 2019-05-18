@@ -932,7 +932,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
         if (trimLeadingIndentation) {
             return StringUtils.removeIndentation(text, {
                 isInStringAtPos: pos => this._sourceFile.isInStringAtPos(pos + startPos),
-                tabSize: this._context.manipulationSettings._getTabSize()
+                indentSizeInSpaces: this._context.manipulationSettings._getIndentSizeInSpaces()
             });
         }
         else {
