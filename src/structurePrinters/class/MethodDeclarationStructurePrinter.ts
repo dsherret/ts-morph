@@ -26,7 +26,7 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
 
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<MethodDeclarationStructure>) {
         this.printOverloads(writer, structure.name, getOverloadStructures());
-        this.printBase(writer, structure.name, structure);
+        this.printHeader(writer, structure.name, structure);
 
         if (this.options.isAmbient || structure.isAbstract)
             writer.write(";");
@@ -63,21 +63,20 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     }
 
     printOverload(writer: CodeBlockWriter, name: string, structure: OptionalKind<MethodDeclarationOverloadStructure>) {
-        this.printBase(writer, name, structure);
+        this.printHeader(writer, name, structure);
         writer.write(";");
     }
 
-    private printBase(writer: CodeBlockWriter, name: string, structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>) {
+    private printHeader(writer: CodeBlockWriter, name: string, structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         if ((structure as MethodDeclarationStructure).decorators != null)
             this.factory.forDecorator().printTexts(writer, (structure as MethodDeclarationStructure).decorators);
+
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        writer.write("(");
-        this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
-        writer.write(`)`);
+        this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
         this.factory.forReturnTypedNode().printText(writer, structure);
     }
 }

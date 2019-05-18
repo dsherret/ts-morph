@@ -4,11 +4,13 @@ import { NodePrinter } from "../NodePrinter";
 
 export class JsxSelfClosingElementStructurePrinter extends NodePrinter<OptionalKind<JsxSelfClosingElementStructure>> {
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<JsxSelfClosingElementStructure>) {
-        writer.write(`<${structure.name}`);
-        if (structure.attributes)
-            this.printAttributes(writer, structure.attributes);
+        writer.withHangingIndentation(() => {
+            writer.write(`<${structure.name}`);
+            if (structure.attributes)
+                this.printAttributes(writer, structure.attributes);
 
-        writer.write(" />");
+            writer.write(" />");
+        });
     }
 
     private printAttributes(writer: CodeBlockWriter, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure>) {

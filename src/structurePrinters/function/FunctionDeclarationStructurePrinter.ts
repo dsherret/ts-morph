@@ -29,7 +29,7 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
 
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<FunctionDeclarationStructure>) {
         this.printOverloads(writer, structure.name, getOverloadStructures());
-        this.printBase(writer, structure.name, structure);
+        this.printHeader(writer, structure.name, structure);
         if (this.options.isAmbient || structure.hasDeclareKeyword)
             writer.write(";");
         else
@@ -64,22 +64,20 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
     }
 
     printOverload(writer: CodeBlockWriter, name: string | undefined, structure: OptionalKind<FunctionDeclarationOverloadStructure>) {
-        this.printBase(writer, name, structure);
+        this.printHeader(writer, name, structure);
         writer.write(";");
     }
 
-    private printBase(writer: CodeBlockWriter, name: string | undefined, structure: OptionalKind<FunctionDeclarationOverloadStructure> | OptionalKind<FunctionDeclarationStructure>) {
+    private printHeader(writer: CodeBlockWriter, name: string | undefined, structure: OptionalKind<FunctionDeclarationOverloadStructure> | OptionalKind<FunctionDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
+
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`function`);
         writer.conditionalWrite(structure.isGenerator, "*");
         if (!StringUtils.isNullOrWhitespace(name))
             writer.write(` ${name}`);
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        writer.write("(");
-        if (structure.parameters != null)
-            this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
-        writer.write(`)`);
+        this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
         this.factory.forReturnTypedNode().printText(writer, structure);
     }
 }

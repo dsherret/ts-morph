@@ -13,6 +13,7 @@ export class PropertyDeclarationStructurePrinter extends NodePrinter<OptionalKin
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<PropertyDeclarationStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forDecorator().printTexts(writer, structure.decorators);
+
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");

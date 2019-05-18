@@ -13,8 +13,10 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<EnumMemberStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         writer.write(structure.name);
-        if (typeof structure.value === "string")
-            writer.write(` = `).quote(structure.value);
+        if (typeof structure.value === "string") {
+            const { value } = structure;
+            writer.withHangingIndentation(() => writer.write(` = `).quote(value));
+        }
         else if (typeof structure.value === "number")
             writer.write(` = ${structure.value}`);
         else

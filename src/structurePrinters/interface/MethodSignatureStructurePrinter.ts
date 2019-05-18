@@ -15,9 +15,7 @@ export class MethodSignatureStructurePrinter extends NodePrinter<OptionalKind<Me
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        writer.write("(");
-        this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
-        writer.write(")");
+        this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
         this.factory.forReturnTypedNode().printText(writer, structure);
         writer.write(";");
     }

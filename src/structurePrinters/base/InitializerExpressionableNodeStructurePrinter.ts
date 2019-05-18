@@ -9,8 +9,12 @@ export class InitializerExpressionableNodeStructurePrinter extends Printer<Initi
         if (initializer == null)
             return;
 
-        const initializerText = this.getTextWithQueuedChildIndentation(writer, initializer);
-        if (!StringUtils.isNullOrWhitespace(initializerText))
-            writer.write(` = ${initializerText}`);
+        const initializerText = this.getText(writer, initializer);
+        if (!StringUtils.isNullOrWhitespace(initializerText)) {
+            writer.withHangingIndentation(() => {
+                writer.spaceIfLastNot();
+                writer.write(`= ${initializerText}`);
+            });
+        }
     }
 }

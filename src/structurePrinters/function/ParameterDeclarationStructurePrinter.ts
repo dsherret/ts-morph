@@ -7,10 +7,19 @@ import { CommaSeparatedStructuresPrinter } from "../formatting";
 export class ParameterDeclarationStructurePrinter extends NodePrinter<OptionalKind<ParameterDeclarationStructure>> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
+    printTextsWithParenthesis(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>> | undefined) {
+        writer.write("(");
+        if (structures != null)
+            this.factory.forParameterDeclaration().printTexts(writer, structures);
+        writer.write(`)`);
+    }
+
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>> | undefined) {
         if (structures == null || structures.length === 0)
             return;
-        this.multipleWriter.printText(writer, structures);
+        writer.withHangingIndentation(() => {
+            this.multipleWriter.printText(writer, structures);
+        });
     }
 
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ParameterDeclarationStructure>) {

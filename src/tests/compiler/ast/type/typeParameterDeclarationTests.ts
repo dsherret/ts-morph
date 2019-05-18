@@ -219,6 +219,11 @@ describe(nameof(TypeParameterDeclaration), () => {
             doTest("class C<T> {}", { name: "U", constraint: "number", default: "string" },
                 "class C<U extends number = string> {}");
         });
+
+        it("should add constraint and default properly when they span multiple lines", () => {
+            doTest("class C<T> {}", { name: "U", constraint: "{\n    prop: string;\n}", default: "{\n    other: number;\n}" },
+                "class C<U extends {\n        prop: string;\n    } = {\n        other: number;\n    }> {}");
+        });
     });
 
     describe(nameof<TypeParameterDeclaration>(n => n.getStructure), () => {
@@ -249,10 +254,10 @@ describe(nameof(TypeParameterDeclaration), () => {
         // for some reason this test was failing in 3.1. Not a big deal... ignoring.
         if (TypeScriptVersionChecker.isGreaterThanOrEqual(3, 2, 0)) {
             it("should trim leading indentation on the contraint and default", () => {
-                doTest("class C<T extends {\n    } = {\n    }> {}", {
+                doTest("class C<T extends {\n        prop: string;\n    } = {\n    }> {}", {
                     kind: StructureKind.TypeParameter,
                     name: "T",
-                    constraint: "{\n}",
+                    constraint: "{\n    prop: string;\n}",
                     default: "{\n}"
                 });
             });

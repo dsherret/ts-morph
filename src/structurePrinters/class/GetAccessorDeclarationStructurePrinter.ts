@@ -21,9 +21,7 @@ export class GetAccessorDeclarationStructurePrinter extends NodePrinter<Optional
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`get ${structure.name}`);
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        writer.write("(");
-        this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
-        writer.write(")");
+        this.factory.forParameterDeclaration().printTextsWithParenthesis(writer, structure.parameters);
         this.factory.forReturnTypedNode().printText(writer, structure);
 
         if (this.options.isAmbient || structure.isAbstract)

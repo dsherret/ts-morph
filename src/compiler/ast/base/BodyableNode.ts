@@ -69,7 +69,6 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
                 return this;
 
             const semiColon = this.getLastChildByKind(SyntaxKind.SemicolonToken);
-
             insertIntoParentTextRange({
                 parent: this,
                 insertPos: semiColon == null ? this.getEnd() : semiColon.getStart(),

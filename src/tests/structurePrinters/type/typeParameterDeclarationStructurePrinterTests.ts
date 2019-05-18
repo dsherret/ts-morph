@@ -9,15 +9,31 @@ describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
         formatCodeSettings?: FormatCodeSettings;
     }
 
-    function doTest(structure: OptionalKind<TypeParameterDeclarationStructure> | string, expectedOutput: string, options: Options = {}) {
-        const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
-        factory.forTypeParameterDeclaration().printText(writer, structure);
-        expect(writer.toString()).to.equal(expectedOutput);
-    }
-
     // todo: more tests
+    describe(nameof<TypeParameterDeclarationStructurePrinter>(p => p.printTextsWithBrackets), () => {
+        function doTest(structures: (OptionalKind<TypeParameterDeclarationStructure> | string)[], expectedOutput: string, options: Options = {}) {
+            const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
+            factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structures);
+            expect(writer.toString()).to.equal(expectedOutput);
+        }
+
+        it("should write the text with brackets and use a hanging indent", () => {
+            doTest([{
+                name: "MyName"
+            }, {
+                name: "MyNextName",
+                constraint: writer => writer.write("{").newLine().indent().write("prop: string;").newLine().write("}")
+            }], "<MyName, MyNextName extends {\n        prop: string;\n    }>");
+        });
+    });
 
     describe(nameof<TypeParameterDeclarationStructurePrinter>(p => p.printText), () => {
+        function doTest(structure: OptionalKind<TypeParameterDeclarationStructure> | string, expectedOutput: string, options: Options = {}) {
+            const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
+            factory.forTypeParameterDeclaration().printText(writer, structure);
+            expect(writer.toString()).to.equal(expectedOutput);
+        }
+
         it("should write when a string", () => {
             doTest("T extends string", `T extends string`);
         });
