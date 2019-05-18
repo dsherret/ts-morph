@@ -114,6 +114,9 @@ function addNewMethods(typeGuardsClass: ClassDeclaration, structureInfos: Struct
     }
 
     function formatName(name: string) {
-        return name.replace("Structure", "");
+        name = name.replace("Structure", "").replace(/Node$/, "");
+        if (name === "ExportDeclaration" || name === "ImportDeclaration" || name === "VariableDeclaration")
+            return name;
+        return name.replace(/Declaration$/, "");
     }
 }

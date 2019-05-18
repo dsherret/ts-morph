@@ -2,6 +2,28 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 3
+
+### Renamed some `StructureTypeGuards` static methods
+
+`StructureTypeGuards` was added in version 2. This class unfortunately had some poorly named methods.
+
+In version 3, some `StructureTypeGuards` static methods have removed the word `Node` and `Declaration` in certain cases.
+
+For example the following:
+
+```ts
+if (StructureTypeGuards.isExportableNode(structure))
+    structure.isExported = false;
+```
+
+...is now updated to be...
+
+```ts
+if (StructureTypeGuards.isExportable(structure))
+    structure.isExported = false;
+```
+
 ## Version 2
 
 ### Removed default export

@@ -43,7 +43,7 @@ project.createSourceFile("private.ts", classesFileStructure);
 function removeExports(structure: Structures) {
     forEachStructureChild(structure, removeExports);
 
-    if (StructureTypeGuards.isExportableNode(structure))
+    if (StructureTypeGuards.isExportable(structure))
         structure.isExported = false;
 }
 ```

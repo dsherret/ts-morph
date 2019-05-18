@@ -74,11 +74,9 @@ import { StructureTypeGuards } from "ts-morph";
 
 // ...etc...
 
-if (StructureTypeGuards.isExportableNode(structure))
+if (StructureTypeGuards.isExportable(structure))
     structure.isExported = false;
 ```
-
-Note: In ts-morph 3.0, the `isExportableNode` method will be renamed to `isExportable` to reduce confusion.
 
 #### `forEachStructureChild`
 
@@ -116,5 +114,5 @@ Note that unlike ts-morph's `forEachChild`, this function acts like the `forEach
 
 ```ts setup: const structure: SourceFileStructure;
 const firstClassDecStructure = forEachStructureChild(structure,
-    child => StructureTypeGuards.isClassDeclaration(child) ? child : undefined);
+    child => StructureTypeGuards.isClass(child) ? child : undefined);
 ```

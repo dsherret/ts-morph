@@ -22,18 +22,18 @@ describe(nameof(StructureTypeGuards), () => {
     describe("base structure method tests", () => {
         it("should type the type correctly within a guard", () => {
             const structure: Structure & { kind: StructureKind; } = { kind: StructureKind.Class };
-            if (StructureTypeGuards.isAbstractableNode(structure))
+            if (StructureTypeGuards.isAbstractable(structure))
                 assert<IsExact<typeof structure, Structure & { kind: StructureKind; } & AbstractableNodeStructure>>(true);
-            expect(StructureTypeGuards.isAbstractableNode(structure)).to.be.true;
+            expect(StructureTypeGuards.isAbstractable(structure)).to.be.true;
         });
     });
 
     describe("top level structure method types", () => {
         it("should type the type correctly within a guard", () => {
             const structure: Structure & { kind: StructureKind; } = { kind: StructureKind.Class };
-            if (StructureTypeGuards.isClassDeclaration(structure))
+            if (StructureTypeGuards.isClass(structure))
                 assert<IsExact<typeof structure, ClassDeclarationStructure>>(true);
-            expect(StructureTypeGuards.isClassDeclaration(structure)).to.be.true;
+            expect(StructureTypeGuards.isClass(structure)).to.be.true;
         });
     });
 });
