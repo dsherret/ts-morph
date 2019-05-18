@@ -250,6 +250,49 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /**
+     * Gets the specified local symbol by name or throws if it doesn't exist.
+     *
+     * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
+     * @param name - Name of the local symbol.
+     */
+    getLocalOrThrow(name: string): Symbol {
+        return errors.throwIfNullOrUndefined(this.getLocal(name), `Expected to find local symbol with name: ${name}`);
+    }
+
+    /**
+     * Gets the specified local symbol by name or returns undefined if it doesn't exist.
+     *
+     * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
+     * @param name - Name of the local symbol.
+     */
+    getLocal(name: string): Symbol | undefined {
+        const locals = this._getCompilerLocals();
+        if (locals == null)
+            return undefined;
+
+        const tsSymbol = locals.get(name as ts.__String);
+        return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
+    }
+
+    /**
+     * Gets the symbols within the current scope.
+     *
+     * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
+     */
+    getLocals(): Symbol[] {
+        const locals = this._getCompilerLocals();
+        if (locals == null)
+            return [];
+        return ArrayUtils.from(locals.values()).map(symbol => this._context.compilerFactory.getSymbol(symbol));
+    }
+
+    /** @internal */
+    private _getCompilerLocals() {
+        this._ensureBound();
+        return (this.compilerNode as any).locals as ts.SymbolTable | undefined;
+    }
+
+    /**
      * Gets the type of the node.
      */
     getType(): Type {

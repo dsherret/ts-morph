@@ -4237,6 +4237,26 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
      */
     getSymbol(): Symbol | undefined;
     /**
+     * Gets the specified local symbol by name or throws if it doesn't exist.
+     *
+     * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
+     * @param name - Name of the local symbol.
+     */
+    getLocalOrThrow(name: string): Symbol;
+    /**
+     * Gets the specified local symbol by name or returns undefined if it doesn't exist.
+     *
+     * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
+     * @param name - Name of the local symbol.
+     */
+    getLocal(name: string): Symbol | undefined;
+    /**
+     * Gets the symbols within the current scope.
+     *
+     * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
+     */
+    getLocals(): Symbol[];
+    /**
      * Gets the type of the node.
      */
     getType(): Type;

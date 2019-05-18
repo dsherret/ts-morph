@@ -1943,4 +1943,49 @@ class MyClass {
             }, `/** Testing */\nclass A {\n}`);
         });
     });
+
+    describe(nameof<Node>(n => n.getLocals), () => {
+        function doTest(text: string, expectedLocalNames: string[]) {
+            const { sourceFile } = getInfoFromText(text);
+            expect(sourceFile.getLocals().map(l => l.getName())).to.deep.equal(expectedLocalNames);
+        }
+
+        it("should get all the locals in the source file scope", () => {
+            doTest("const t = 5;\nclass U {}\ninterface I", ["t", "U", "I"]);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getLocal), () => {
+        function doTest(text: string, name: string, expectedName: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            const result = sourceFile.getLocal(name);
+            expect(result && result.getName() || undefined).to.equal(expectedName);
+        }
+
+        it("should get the local by name", () => {
+            doTest("const t = 5;\nclass U {}\ninterface I", "t", "t");
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            doTest("const t = 5;\nclass U {}\ninterface I", "m", undefined);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getLocalOrThrow), () => {
+        function doTest(text: string, name: string, expectedName: string | undefined) {
+            const { sourceFile } = getInfoFromText(text);
+            if (expectedName == null)
+                expect(() => sourceFile.getLocalOrThrow(name)).to.throw();
+            else
+                expect(sourceFile.getLocalOrThrow(name).getName()).to.equal(expectedName);
+        }
+
+        it("should get the local by name", () => {
+            doTest("const t = 5;\nclass U {}\ninterface I", "t", "t");
+        });
+
+        it("should throw when it doesn't exist", () => {
+            doTest("const t = 5;\nclass U {}\ninterface I", "m", undefined);
+        });
+    });
 });
