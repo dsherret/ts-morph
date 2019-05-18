@@ -10854,7 +10854,7 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a ClassDeclarationStructure.
      */
-    static isClassDeclaration(structure: Structure & {
+    static isClass(structure: Structure & {
             kind: StructureKind;
         }): structure is ClassDeclarationStructure;
     /**
@@ -10866,91 +10866,91 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a NameableNodeStructure.
      */
-    static isNameableNode<T extends Structure & {
+    static isNameable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & NameableNodeStructure;
     /**
      * Gets if the provided structure is a ImplementsClauseableNodeStructure.
      */
-    static isImplementsClauseableNode<T extends Structure & {
+    static isImplementsClauseable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ImplementsClauseableNodeStructure;
     /**
      * Gets if the provided structure is a DecoratableNodeStructure.
      */
-    static isDecoratableNode<T extends Structure & {
+    static isDecoratable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & DecoratableNodeStructure;
     /**
      * Gets if the provided structure is a TypeParameteredNodeStructure.
      */
-    static isTypeParameteredNode<T extends Structure & {
+    static isTypeParametered<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & TypeParameteredNodeStructure;
     /**
      * Gets if the provided structure is a JSDocableNodeStructure.
      */
-    static isJSDocableNode<T extends Structure & {
+    static isJSDocable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & JSDocableNodeStructure;
     /**
      * Gets if the provided structure is a AbstractableNodeStructure.
      */
-    static isAbstractableNode<T extends Structure & {
+    static isAbstractable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & AbstractableNodeStructure;
     /**
      * Gets if the provided structure is a AmbientableNodeStructure.
      */
-    static isAmbientableNode<T extends Structure & {
+    static isAmbientable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & AmbientableNodeStructure;
     /**
      * Gets if the provided structure is a ExportableNodeStructure.
      */
-    static isExportableNode<T extends Structure & {
+    static isExportable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ExportableNodeStructure;
     /**
      * Gets if the provided structure is a ConstructorDeclarationStructure.
      */
-    static isConstructorDeclaration(structure: Structure & {
+    static isConstructor(structure: Structure & {
             kind: StructureKind;
         }): structure is ConstructorDeclarationStructure;
     /**
      * Gets if the provided structure is a ScopedNodeStructure.
      */
-    static isScopedNode<T extends Structure & {
+    static isScoped<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ScopedNodeStructure;
     /**
      * Gets if the provided structure is a FunctionLikeDeclarationStructure.
      */
-    static isFunctionLikeDeclaration<T extends Structure & {
+    static isFunctionLike<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & FunctionLikeDeclarationStructure;
     /**
      * Gets if the provided structure is a SignaturedDeclarationStructure.
      */
-    static isSignaturedDeclaration<T extends Structure & {
+    static isSignatured<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & SignaturedDeclarationStructure;
     /**
      * Gets if the provided structure is a ParameteredNodeStructure.
      */
-    static isParameteredNode<T extends Structure & {
+    static isParametered<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ParameteredNodeStructure;
     /**
      * Gets if the provided structure is a ReturnTypedNodeStructure.
      */
-    static isReturnTypedNode<T extends Structure & {
+    static isReturnTyped<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ReturnTypedNodeStructure;
     /**
      * Gets if the provided structure is a StatementedNodeStructure.
      */
-    static isStatementedNode<T extends Structure & {
+    static isStatemented<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & StatementedNodeStructure;
     /**
@@ -10962,43 +10962,43 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a GetAccessorDeclarationStructure.
      */
-    static isGetAccessorDeclaration(structure: Structure & {
+    static isGetAccessor(structure: Structure & {
             kind: StructureKind;
         }): structure is GetAccessorDeclarationStructure;
     /**
      * Gets if the provided structure is a PropertyNamedNodeStructure.
      */
-    static isPropertyNamedNode<T extends Structure & {
+    static isPropertyNamed<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & PropertyNamedNodeStructure;
     /**
      * Gets if the provided structure is a StaticableNodeStructure.
      */
-    static isStaticableNode<T extends Structure & {
+    static isStaticable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & StaticableNodeStructure;
     /**
      * Gets if the provided structure is a MethodDeclarationStructure.
      */
-    static isMethodDeclaration(structure: Structure & {
+    static isMethod(structure: Structure & {
             kind: StructureKind;
         }): structure is MethodDeclarationStructure;
     /**
      * Gets if the provided structure is a AsyncableNodeStructure.
      */
-    static isAsyncableNode<T extends Structure & {
+    static isAsyncable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & AsyncableNodeStructure;
     /**
      * Gets if the provided structure is a GeneratorableNodeStructure.
      */
-    static isGeneratorableNode<T extends Structure & {
+    static isGeneratorable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & GeneratorableNodeStructure;
     /**
      * Gets if the provided structure is a QuestionTokenableNodeStructure.
      */
-    static isQuestionTokenableNode<T extends Structure & {
+    static isQuestionTokenable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & QuestionTokenableNodeStructure;
     /**
@@ -11010,37 +11010,37 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a PropertyDeclarationStructure.
      */
-    static isPropertyDeclaration(structure: Structure & {
+    static isProperty(structure: Structure & {
             kind: StructureKind;
         }): structure is PropertyDeclarationStructure;
     /**
      * Gets if the provided structure is a TypedNodeStructure.
      */
-    static isTypedNode<T extends Structure & {
+    static isTyped<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & TypedNodeStructure;
     /**
      * Gets if the provided structure is a ExclamationTokenableNodeStructure.
      */
-    static isExclamationTokenableNode<T extends Structure & {
+    static isExclamationTokenable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ExclamationTokenableNodeStructure;
     /**
      * Gets if the provided structure is a ReadonlyableNodeStructure.
      */
-    static isReadonlyableNode<T extends Structure & {
+    static isReadonlyable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ReadonlyableNodeStructure;
     /**
      * Gets if the provided structure is a InitializerExpressionableNodeStructure.
      */
-    static isInitializerExpressionableNode<T extends Structure & {
+    static isInitializerExpressionable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & InitializerExpressionableNodeStructure;
     /**
      * Gets if the provided structure is a SetAccessorDeclarationStructure.
      */
-    static isSetAccessorDeclaration(structure: Structure & {
+    static isSetAccessor(structure: Structure & {
             kind: StructureKind;
         }): structure is SetAccessorDeclarationStructure;
     /**
@@ -11058,13 +11058,13 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a EnumDeclarationStructure.
      */
-    static isEnumDeclaration(structure: Structure & {
+    static isEnum(structure: Structure & {
             kind: StructureKind;
         }): structure is EnumDeclarationStructure;
     /**
      * Gets if the provided structure is a NamedNodeStructure.
      */
-    static isNamedNode<T extends Structure & {
+    static isNamed<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & NamedNodeStructure;
     /**
@@ -11076,7 +11076,7 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a FunctionDeclarationStructure.
      */
-    static isFunctionDeclaration(structure: Structure & {
+    static isFunction(structure: Structure & {
             kind: StructureKind;
         }): structure is FunctionDeclarationStructure;
     /**
@@ -11088,55 +11088,55 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a ParameterDeclarationStructure.
      */
-    static isParameterDeclaration(structure: Structure & {
+    static isParameter(structure: Structure & {
             kind: StructureKind;
         }): structure is ParameterDeclarationStructure;
     /**
      * Gets if the provided structure is a BindingNamedNodeStructure.
      */
-    static isBindingNamedNode<T extends Structure & {
+    static isBindingNamed<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & BindingNamedNodeStructure;
     /**
      * Gets if the provided structure is a ScopeableNodeStructure.
      */
-    static isScopeableNode<T extends Structure & {
+    static isScopeable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ScopeableNodeStructure;
     /**
      * Gets if the provided structure is a CallSignatureDeclarationStructure.
      */
-    static isCallSignatureDeclaration(structure: Structure & {
+    static isCallSignature(structure: Structure & {
             kind: StructureKind;
         }): structure is CallSignatureDeclarationStructure;
     /**
      * Gets if the provided structure is a ConstructSignatureDeclarationStructure.
      */
-    static isConstructSignatureDeclaration(structure: Structure & {
+    static isConstructSignature(structure: Structure & {
             kind: StructureKind;
         }): structure is ConstructSignatureDeclarationStructure;
     /**
      * Gets if the provided structure is a IndexSignatureDeclarationStructure.
      */
-    static isIndexSignatureDeclaration(structure: Structure & {
+    static isIndexSignature(structure: Structure & {
             kind: StructureKind;
         }): structure is IndexSignatureDeclarationStructure;
     /**
      * Gets if the provided structure is a InterfaceDeclarationStructure.
      */
-    static isInterfaceDeclaration(structure: Structure & {
+    static isInterface(structure: Structure & {
             kind: StructureKind;
         }): structure is InterfaceDeclarationStructure;
     /**
      * Gets if the provided structure is a ExtendsClauseableNodeStructure.
      */
-    static isExtendsClauseableNode<T extends Structure & {
+    static isExtendsClauseable<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ExtendsClauseableNodeStructure;
     /**
      * Gets if the provided structure is a TypeElementMemberedNodeStructure.
      */
-    static isTypeElementMemberedNode<T extends Structure & {
+    static isTypeElementMembered<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & TypeElementMemberedNodeStructure;
     /**
@@ -11172,13 +11172,13 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a JsxTagNamedNodeStructure.
      */
-    static isJsxTagNamedNode<T extends Structure & {
+    static isJsxTagNamed<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & JsxTagNamedNodeStructure;
     /**
      * Gets if the provided structure is a JsxAttributedNodeStructure.
      */
-    static isJsxAttributedNode<T extends Structure & {
+    static isJsxAttributed<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & JsxAttributedNodeStructure;
     /**
@@ -11220,7 +11220,7 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a NamespaceDeclarationStructure.
      */
-    static isNamespaceDeclaration(structure: Structure & {
+    static isNamespace(structure: Structure & {
             kind: StructureKind;
         }): structure is NamespaceDeclarationStructure;
     /**
@@ -11244,13 +11244,13 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a TypeAliasDeclarationStructure.
      */
-    static isTypeAliasDeclaration(structure: Structure & {
+    static isTypeAlias(structure: Structure & {
             kind: StructureKind;
         }): structure is TypeAliasDeclarationStructure;
     /**
      * Gets if the provided structure is a TypeParameterDeclarationStructure.
      */
-    static isTypeParameterDeclaration(structure: Structure & {
+    static isTypeParameter(structure: Structure & {
             kind: StructureKind;
         }): structure is TypeParameterDeclarationStructure;
     /**
@@ -11274,7 +11274,7 @@ export declare class StructureTypeGuards {
     /**
      * Gets if the provided structure is a ExpressionedNodeStructure.
      */
-    static isExpressionedNode<T extends Structure & {
+    static isExpressioned<T extends Structure & {
         kind: StructureKind;
         }>(structure: T): structure is T & ExpressionedNodeStructure;
 }
