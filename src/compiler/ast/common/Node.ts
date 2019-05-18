@@ -930,10 +930,10 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
         const text = this._sourceFile.getFullText().substring(startPos, this.getEnd());
 
         if (trimLeadingIndentation) {
-            return StringUtils.indent(text,
-                -1 * this.getIndentationLevel(),
-                this._context.manipulationSettings.getIndentationText(),
-                pos => this._sourceFile.isInStringAtPos(pos + startPos));
+            return StringUtils.removeIndentation(text, {
+                isInStringAtPos: pos => this._sourceFile.isInStringAtPos(pos + startPos),
+                indentSizeInSpaces: this._context.manipulationSettings._getIndentSizeInSpaces()
+            });
         }
         else {
             return text;

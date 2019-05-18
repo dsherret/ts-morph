@@ -276,4 +276,140 @@ describe(nameof(StringUtils), () => {
             doTest(`"testing \\"this\\" out"`, `"`, `\\"testing \\\\"this\\\\" out\\"`);
         });
     });
+
+    describe(nameof(StringUtils.removeIndentation), () => {
+        function doTest(input: string, expectedOutput: string, options: { indentSizeInSpaces?: number; isInStringAtPos?: (pos: number) => boolean; } = {}) {
+            const actualResult = StringUtils.removeIndentation(input, {
+                indentSizeInSpaces: options.indentSizeInSpaces || 4,
+                isInStringAtPos: options.isInStringAtPos || (() => false)
+            });
+
+            expect(actualResult).to.equal(expectedOutput);
+        }
+
+        it("should not do anything for a string on one line with no indentation", () => {
+            doTest("testing", "testing");
+        });
+
+        it("should remove indentation on a single line", () => {
+            doTest("    \t    testing", "testing");
+        });
+
+        it("should do nothing when one of the lines has no indentation, but others do", () => {
+            const text = "testing\n    this\nout\n\tmore";
+            doTest(text, text);
+        });
+
+        it("should remove hanging indentation", () => {
+            doTest("testing\n    this", "testing\nthis");
+        });
+
+        it("should consider the first line's indent, but only if indented", () => {
+            doTest("    testing\n        this", "testing\n    this");
+        });
+
+        it("should consider the first line's indent if only indented by one space and the tab size is 4", () => {
+            doTest(" testing\n        this", "testing\n    this", { indentSizeInSpaces: 4 });
+        });
+
+        it("should consider the first line's indent if only indented by one space and the tab size is 2", () => {
+            doTest(" testing\n    this", "testing\n  this", { indentSizeInSpaces: 2 });
+        });
+
+        it("should remove based on the minimum width", () => {
+            doTest("{\n        test\n    }", "{\n    test\n}");
+        });
+
+        it("should remove tabs", () => {
+            doTest("{\n\t\ttest\n\t}", "{\n\ttest\n}");
+        });
+
+        it("should treat tabs based on the tab size provided when mixing spaces and tabs", () => {
+            doTest("{\n  \t  test\n    }", "{\n  test\n}", { indentSizeInSpaces: 2 });
+        });
+
+        it("should not deindent within strings", () => {
+            let str = "this is a `";
+            const pos = str.length;
+            str += "\n    test`";
+            const end = str.length;
+            str += "\n    other";
+            doTest(str, "this is a `\n    test`\nother", { isInStringAtPos: index => index >= pos && index < end });
+        });
+    });
+
+    describe(nameof(StringUtils.indent), () => {
+        interface TestOptions {
+            indentText?: string;
+            indentSizeInSpaces?: number;
+            isInStringAtPos?: (pos: number) => boolean;
+        }
+
+        function doTest(input: string, times: number, expectedOutput: string, options: TestOptions = {}) {
+            const actualResult = StringUtils.indent(input, times, {
+                indentSizeInSpaces: options.indentSizeInSpaces || 4,
+                indentText: options.indentText || "    ",
+                isInStringAtPos: options.isInStringAtPos || (() => false)
+            });
+
+            expect(actualResult).to.equal(expectedOutput);
+        }
+
+        it("should do nothing when providing 0", () => {
+            const text = "t\nu\n  v";
+            doTest(text, 0, text);
+        });
+
+        it("should indent the provided number of times", () => {
+            doTest("testing\nthis\n    out", 2, "        testing\n        this\n            out");
+        });
+
+        it("should indent based on the provided", () => {
+            doTest("testing\nthis\n  out", 2, "    testing\n    this\n      out", { indentText: "  ", indentSizeInSpaces: 2 });
+        });
+
+        it("should indent with tabs", () => {
+            doTest("testing\nthis\n  out", 1, "\ttesting\n\tthis\n\t  out", { indentText: "\t", indentSizeInSpaces: 4 });
+        });
+
+        it("should not indent the last line if it's empty", () => {
+            doTest("testing\n", 1, "    testing\n");
+        });
+
+        it("should not indent within strings", () => {
+            let text = "t`";
+            const pos = text.length;
+            text += "\nt`";
+            const end = text.length;
+            text += "\nt";
+
+            doTest(text, 1, "    t`\nt`\n    t", {
+                isInStringAtPos: p => p >= pos && p < end
+            });
+        });
+
+        it("should deindent when providing a negative number", () => {
+            doTest("t\n    u\nv", -1, "t\nu\nv");
+        });
+
+        it("should deindent by the provided amount", () => {
+            doTest("    t\n  u\n  v", -1, "  t\nu\nv", { indentText: "  ", indentSizeInSpaces: 2 });
+        });
+
+        it("should deindent handling tabs and spaces", () => {
+            doTest("\t    \tt\n\tu\n        v", -2, "\tt\nu\nv");
+        });
+
+        it("should not deindent within strings", () => {
+            let text = "t`";
+            const pos = text.length;
+            text += "\n    t`";
+            const end = text.length;
+            text += "\n    t";
+
+            doTest(text, -1, "t`\n    t`\nt", {
+                isInStringAtPos: p => p >= pos && p < end
+            });
+        });
+    });
 });

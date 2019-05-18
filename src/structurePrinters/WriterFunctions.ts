@@ -75,6 +75,15 @@ export class WriterFunctions {
     static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]) {
         return getWriteFunctionForUnionOrIntersectionType("&", [firstType, secondType, ...additionalTypes]);
     }
+
+    /** Gets a writer function for writing a type assertion (ex. `type as assertionType`). */
+    static assertion(type: WriterFunctionOrValue, assertionType: WriterFunctionOrValue) {
+        return (writer: CodeBlockWriter) => {
+            writeValue(writer, type);
+            writer.spaceIfLastNot().write("as ");
+            writeValue(writer, assertionType);
+        };
+    }
 }
 
 function getWriteFunctionForUnionOrIntersectionType(separator: "|" | "&", args: WriterFunctionOrValue[]) {

@@ -136,41 +136,129 @@ export class StringUtils {
         return result;
     }
 
-    static indent(str: string, times: number, indentText: string, isInStringAtPos: (pos: number) => boolean) {
-        // todo: unit test this (right now it's somewhat tested indirectly)
-        const unIndentRegex = times > 0 ? undefined : new RegExp(getDeIndentRegexText());
-        const newLines: string[] = [];
-        let pos = 0;
+    static removeIndentation(str: string, opts: { isInStringAtPos: (pos: number) => boolean; indentSizeInSpaces: number; }) {
+        const { isInStringAtPos, indentSizeInSpaces } = opts;
+        const startPositions: number[] = [];
+        const endPositions: number[] = [];
+        let minIndentWidth: number | undefined;
 
-        for (const line of str.split("\n")) {
-            if (isInStringAtPos(pos))
-                newLines.push(line);
-            else if (times > 0)
-                newLines.push(indentText.repeat(times) + line);
-            else // negative
-                newLines.push(line.replace(unIndentRegex!, ""));
+        analyze();
+        return buildString();
 
-            pos += line.length + 1; // +1 for \n char
+        function analyze() {
+            let isAtStartOfLine = str[0] === " " || str[0] === "\t";
+
+            for (let i = 0; i < str.length; i++) {
+                if (!isAtStartOfLine) {
+                    if (str[i] === "\n" && !isInStringAtPos(i + 1))
+                        isAtStartOfLine = true;
+                    continue;
+                }
+
+                startPositions.push(i);
+
+                let spacesCount = 0;
+                let tabsCount = 0;
+
+                while (true) {
+                    if (str[i] === " ")
+                        spacesCount++;
+                    else if (str[i] === "\t")
+                        tabsCount++;
+                    else
+                        break;
+
+                    i++;
+                }
+
+                // indentation for spaces rounds up to the nearest tab size multiple
+                const indentWidth = Math.ceil(spacesCount / indentSizeInSpaces) * indentSizeInSpaces + tabsCount * indentSizeInSpaces;
+                if (minIndentWidth == null || indentWidth < minIndentWidth)
+                    minIndentWidth = indentWidth;
+
+                endPositions.push(i);
+                isAtStartOfLine = false;
+            }
         }
 
-        return newLines.join("\n");
+        function buildString() {
+            if (startPositions.length === 0)
+                return str;
+            if (minIndentWidth == null || minIndentWidth === 0)
+                return str;
 
-        function getDeIndentRegexText() {
-            let text = "^";
-            for (let i = 0; i < Math.abs(times); i++) {
-                text += "(";
-                if (StringUtils.isSpaces(indentText)) {
-                    // the optional string makes it possible to unindent when a line doesn't have the full number of spaces
-                    for (let j = 0; j < indentText.length; j++)
-                        text += " ?";
+            const deindentWidth = minIndentWidth;
+            let result = "";
+            result += str.substring(0, startPositions[0]);
+            let lastEndPos = startPositions[0];
+
+            for (let i = 0; i < startPositions.length; i++) {
+                const startPosition = startPositions[i];
+                const endPosition = endPositions[i];
+                let indentCount = 0;
+                let pos: number;
+                for (pos = startPosition; pos < endPosition; pos++) {
+                    if (indentCount >= deindentWidth)
+                        break;
+                    if (str[pos] === " ")
+                        indentCount++;
+                    else if (str[pos] === "\t")
+                        indentCount += indentSizeInSpaces;
                 }
-                else
-                    text += indentText;
 
-                text += "|\t)?";
+                lastEndPos = startPositions[i + 1] == null ? str.length : startPositions[i + 1];
+                result += str.substring(pos, lastEndPos);
             }
 
-            return text;
+            result += str.substring(lastEndPos);
+
+            return result;
+        }
+    }
+
+    static indent(str: string, times: number, options: { indentText: string; indentSizeInSpaces: number; isInStringAtPos: (pos: number) => boolean; }) {
+        if (times === 0)
+            return str;
+
+        // this assumes that the indentText and indentSizeInSpaces are proportional
+        const { indentText, indentSizeInSpaces, isInStringAtPos } = options;
+        const fullIndentationText = times > 0 ? indentText.repeat(times) : undefined;
+        const totalIndentSpaces = Math.abs(times * indentSizeInSpaces);
+        let result = "";
+        let lineStart = 0;
+        let lineEnd = 0;
+
+        for (let i = 0; i < str.length; i++) {
+            lineStart = i;
+            while (i < str.length && str[i] !== "\n")
+                i++;
+            lineEnd = i === str.length ? i : i + 1;
+            appendLine();
+        }
+
+        return result;
+
+        function appendLine() {
+            if (isInStringAtPos(lineStart))
+                result += str.substring(lineStart, lineEnd);
+            else if (times > 0)
+                result += fullIndentationText + str.substring(lineStart, lineEnd);
+            else { // negative times
+                let start = lineStart;
+                let indentSpaces = 0;
+                for (start = lineStart; start < str.length; start++) {
+                    if (indentSpaces >= totalIndentSpaces)
+                        break;
+
+                    if (str[start] === " ")
+                        indentSpaces++;
+                    else if (str[start] === "\t")
+                        indentSpaces += indentSizeInSpaces;
+                    else
+                        break;
+                }
+                result += str.substring(start, lineEnd);
+            }
         }
     }
 }

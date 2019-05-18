@@ -1928,6 +1928,10 @@ export declare class WriterFunctions {
      * Gets a writer function for writing an intersection type.
      */
     static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
+    /**
+     * Gets a writer function for writing a type assertion (ex. `type as assertionType`).
+     */
+    static assertion(type: WriterFunctionOrValue, assertionType: WriterFunctionOrValue): (writer: CodeBlockWriter) => void;
 }
 
 export declare type WriterFunctionOrValue = string | number | WriterFunction;
