@@ -1,4 +1,5 @@
 import { QuoteKind, UserPreferences } from "../compiler";
+import * as errors from "../errors";
 import { EditorSettings, NewLineKind } from "../typescript";
 import { fillDefaultEditorSettings, newLineKindToString } from "../utils";
 import { SettingsContainer } from "./SettingsContainer";
@@ -137,5 +138,25 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
         this._editorSettings = undefined;
         this._formatCodeSettings = undefined;
         this._userPreferences = undefined;
+    }
+
+    /**
+     * @internal
+     * Gets the tab size as represented in spaces.
+     */
+    _getTabSize() {
+        const indentationText = this.getIndentationText();
+        switch (indentationText) {
+            case IndentationText.EightSpaces:
+                return 8;
+            case IndentationText.FourSpaces:
+                return 4;
+            case IndentationText.TwoSpaces:
+                return 2;
+            case IndentationText.Tab:
+                return 4; // most common
+            default:
+                return errors.throwNotImplementedForNeverValueError(indentationText);
+        }
     }
 }
