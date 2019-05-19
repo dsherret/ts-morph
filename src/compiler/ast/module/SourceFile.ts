@@ -63,10 +63,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         context: ProjectContext,
         node: ts.SourceFile
     ) {
-        // start hack :(
-        super(context, node, undefined as any);
-        this._sourceFile = this;
-        // end hack
+        super(context, node, undefined);
+        // typescript doesn't allow calling `super` with `this`, so set this after
+        this.__sourceFile = this;
 
         // store this before a modification happens to the file
         const onPreModified = () => {

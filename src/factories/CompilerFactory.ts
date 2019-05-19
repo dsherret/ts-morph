@@ -226,7 +226,7 @@ export class CompilerFactory {
         let currentNode = compilerNode;
         while (currentNode.kind !== SyntaxKind.SourceFile) {
             if (currentNode.parent == null)
-                throw new errors.NotImplementedError("Could not find node source file.");
+                return undefined;
             currentNode = currentNode.parent;
         }
         return this.getSourceFile(currentNode as ts.SourceFile, { markInProject: false });
@@ -252,7 +252,7 @@ export class CompilerFactory {
      * Gets a wrapped compiler type based on the node's kind.
      * @param node - Node to get the wrapped object from.
      */
-    getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: SourceFile): CompilerNodeToWrappedType<NodeType> {
+    getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: SourceFile | undefined): CompilerNodeToWrappedType<NodeType> {
         if (compilerNode.kind === SyntaxKind.SourceFile)
             return this.getSourceFile(compilerNode as any as ts.SourceFile, { markInProject: false }) as Node as CompilerNodeToWrappedType<NodeType>;
 

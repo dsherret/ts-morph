@@ -49,7 +49,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     /** @internal */
     _wrappedChildCount = 0;
     /** @internal */
-    _sourceFile: SourceFile;
+    protected __sourceFile: SourceFile | undefined;
+
+    /** @internal */
+    get _sourceFile(): SourceFile {
+        if (this.__sourceFile == null)
+            throw new errors.InvalidOperationError("Operation cannot be performed on a node that has no source file.");
+        return this.__sourceFile;
+    }
 
     /**
      * Gets the underlying compiler node.
@@ -74,7 +81,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     constructor(
         context: ProjectContext,
         node: NodeType,
-        sourceFile: SourceFile
+        sourceFile: SourceFile | undefined
     ) {
         if (context == null || context.compilerFactory == null)
             throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export " +
@@ -82,7 +89,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
 
         this._context = context;
         this._compilerNode = node;
-        this._sourceFile = sourceFile;
+        this.__sourceFile = sourceFile;
     }
 
     /**
