@@ -1,7 +1,6 @@
 import { expect } from "chai";
-import { CallExpression, TypeChecker, NamedNode } from "../../../compiler";
-import { InvalidOperationError } from "../../../errors";
-import { SyntaxKind } from "../../../typescript";
+import { CallExpression, TypeChecker, NamedNode, SourceFile, Node } from "../../../compiler";
+import { SyntaxKind, SymbolFlags } from "../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(TypeChecker), () => {
@@ -68,6 +67,22 @@ describe(nameof(TypeChecker), () => {
 
         it("should resolve signature in same file", () => {
             doTest("function foo(){}; foo();", "foo");
+        });
+    });
+
+    describe(nameof<TypeChecker>(p => p.getSymbolsInScope), () => {
+        function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, meaning: SymbolFlags, expectedSymbolNames: string[]) {
+            const { sourceFile, project } = getInfoFromText(text);
+            const node = selectNode(sourceFile);
+            const result = project.getTypeChecker().getSymbolsInScope(node, meaning);
+            expect(result.map(s => s.getName()).sort()).to.deep.equal(expectedSymbolNames.sort());
+        }
+
+        it("should get all the symbols in the provided scope filtered by meaning", () => {
+            doTest("function a() { function b() {} const c = ''; function e() { function f() {} } }",
+                sourceFile => sourceFile.getFunctionOrThrow("a").getVariableDeclarationOrThrow("c"),
+                SymbolFlags.Function,
+                ["a", "b", "e"]);
         });
     });
 });

@@ -9,7 +9,7 @@ import { hasParsedTokens } from "../../../../compiler/ast/utils";
 import { Project } from "../../../../Project";
 import * as errors from "../../../../errors";
 import { WriterFunction } from "../../../../types";
-import { NewLineKind, SyntaxKind, ts } from "../../../../typescript";
+import { NewLineKind, SyntaxKind, ts, SymbolFlags } from "../../../../typescript";
 import { TypeGuards } from "../../../../utils";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -1986,6 +1986,22 @@ class MyClass {
 
         it("should throw when it doesn't exist", () => {
             doTest("const t = 5;\nclass U {}\ninterface I", "m", undefined);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getSymbolsInScope), () => {
+        function doTest(text: string, selectNode: (sourceFile: SourceFile) => Node, meaning: SymbolFlags, expectedSymbolNames: string[]) {
+            const { sourceFile } = getInfoFromText(text);
+            const node = selectNode(sourceFile);
+            const result = node.getSymbolsInScope(meaning);
+            expect(result.map(s => s.getName()).sort()).to.deep.equal(expectedSymbolNames.sort());
+        }
+
+        it("should get all the symbols in the provided scope filtered by meaning", () => {
+            doTest("const var = 5; function a() { function b() {} const c = ''; function e() { function f() {} } }",
+                sourceFile => sourceFile.getFunctionOrThrow("a").getVariableDeclarationOrThrow("c"),
+                SymbolFlags.BlockScopedVariable,
+                ["c"]);
         });
     });
 });

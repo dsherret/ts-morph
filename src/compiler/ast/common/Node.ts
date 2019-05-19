@@ -4,7 +4,7 @@ import { ProjectContext } from "../../../ProjectContext";
 import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits,
     insertIntoParentTextRange, replaceSourceFileTextForFormatting, replaceSourceFileTextStraight } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
-import { SyntaxKind, ts } from "../../../typescript";
+import { ts, SyntaxKind, SymbolFlags } from "../../../typescript";
 import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
     TypeGuards, StoredComparer } from "../../../utils";
 import { FormatCodeSettings } from "../../tools";
@@ -254,6 +254,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
             return this._getNodeFromCompilerNode(nameNode).getSymbol();
 
         return undefined;
+    }
+
+    /**
+     * Gets the symbols in the scope of the node.
+     *
+     * Note: This will always return the local symbols. If you want the export symbol from a local symbol, then
+     * use the `#getExportSymbol()` method on the symbol.
+     * @param meaning - Meaning of symbol to filter by.
+     */
+    getSymbolsInScope(meaning: SymbolFlags): Symbol[] {
+        return this._context.typeChecker.getSymbolsInScope(this, meaning);
     }
 
     /**

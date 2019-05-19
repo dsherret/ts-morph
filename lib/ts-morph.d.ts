@@ -4237,6 +4237,14 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
      */
     getSymbol(): Symbol | undefined;
     /**
+     * Gets the symbols in the scope of the node.
+     *
+     * Note: This will always return the local symbols. If you want the export symbol from a local symbol, then
+     * use the `#getExportSymbol()` method on the symbol.
+     * @param meaning - Meaning of symbol to filter by.
+     */
+    getSymbolsInScope(meaning: SymbolFlags): Symbol[];
+    /**
      * Gets the specified local symbol by name or throws if it doesn't exist.
      *
      * WARNING: The symbol table of locals is not exposed publicly by the compiler. Use this at your own risk knowing it may break.
@@ -9932,6 +9940,15 @@ export declare class TypeChecker {
      * @param type - Literal type to get the base type of.
      */
     getBaseTypeOfLiteralType(type: Type): Type<ts.Type>;
+    /**
+     * Gets the symbols in the scope of the provided node.
+     *
+     * Note: This will always return the local symbols. If you want the export symbol from a local symbol, then
+     * use the `#getExportSymbolOfSymbol(symbol)` method.
+     * @param node - Node to check the scope for.
+     * @param meaning - Meaning of symbol to filter by.
+     */
+    getSymbolsInScope(node: Node, meaning: SymbolFlags): Symbol[];
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {

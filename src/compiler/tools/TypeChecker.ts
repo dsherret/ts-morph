@@ -210,6 +210,19 @@ export class TypeChecker {
         return this._context.compilerFactory.getType(this.compilerObject.getBaseTypeOfLiteralType(type.compilerType));
     }
 
+    /**
+     * Gets the symbols in the scope of the provided node.
+     *
+     * Note: This will always return the local symbols. If you want the export symbol from a local symbol, then
+     * use the `#getExportSymbolOfSymbol(symbol)` method.
+     * @param node - Node to check the scope for.
+     * @param meaning - Meaning of symbol to filter by.
+     */
+    getSymbolsInScope(node: Node, meaning: SymbolFlags) {
+        return this.compilerObject.getSymbolsInScope(node.compilerNode, meaning)
+            .map(s => this._context.compilerFactory.getSymbol(s));
+    }
+
     private _getDefaultTypeFormatFlags(enclosingNode?: Node) {
         let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType |
             TypeFormatFlags.WriteTypeArgumentsOfSignature) as TypeFormatFlags;
