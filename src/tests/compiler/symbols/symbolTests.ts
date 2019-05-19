@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { Symbol } from "../../../compiler";
+import { Symbol, TypeAliasDeclaration } from "../../../compiler";
 import { SymbolFlags } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
@@ -200,6 +200,27 @@ describe(nameof(Symbol), () => {
         it("should throw when it doesn't exist", () => {
             const { sourceFile } = getInfoFromText("class MyTest {}\nexport default MyTest;");
             expect(() => sourceFile.getClassOrThrow("MyTest").getSymbolOrThrow().getAliasedSymbolOrThrow()).to.throw();
+        });
+    });
+
+    describe(nameof<Symbol>(s => s.getExportSymbol), () => {
+        it("should get the export symbol of an export symbol", () => {
+            const { firstChild } = getInfoFromText<TypeAliasDeclaration>("export type T = number;");
+            const typeAliasSymbol = firstChild.getNameNode().getSymbolsInScope(SymbolFlags.TypeAlias)[0];
+            expect(typeAliasSymbol.getName()).to.equal("T");
+
+            const exportSymbol = typeAliasSymbol.getExportSymbol();
+            expect(exportSymbol).to.not.equal(typeAliasSymbol);
+            expect(exportSymbol.getName()).to.equal("T");
+        });
+
+        it("should return the local symbol ", () => {
+            const { firstChild } = getInfoFromText<TypeAliasDeclaration>("type T = number;");
+            const typeAliasSymbol = firstChild.getNameNode().getSymbolsInScope(SymbolFlags.TypeAlias)[0];
+            expect(typeAliasSymbol.getName()).to.equal("T");
+
+            const exportSymbol = typeAliasSymbol.getExportSymbol();
+            expect(exportSymbol).to.equal(typeAliasSymbol);
         });
     });
 });

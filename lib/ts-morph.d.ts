@@ -8972,6 +8972,17 @@ export declare class Symbol {
      */
     getAliasedSymbol(): Symbol | undefined;
     /**
+     * Gets the export symbol of the symbol if its a local symbol with a corresponding export symbol. Otherwise returns the current symbol.
+     *
+     * The following is from the compiler API documentation:
+     *
+     * For example, at `export type T = number;`:
+     *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
+     *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
+     *     - Calling `getExportSymbol` on that local symbol will return the exported symbol.
+     */
+    getExportSymbol(): Symbol;
+    /**
      * Gets if the symbol is an alias.
      */
     isAlias(): boolean;
@@ -9891,6 +9902,17 @@ export declare class TypeChecker {
      * @param symbol - Symbol to get the alias symbol of.
      */
     getAliasedSymbol(symbol: Symbol): Symbol | undefined;
+    /**
+     * Gets the export symbol of a local symbol with a corresponding export symbol. Otherwise returns the input symbol.
+     *
+     * The following is from the compiler API documentation:
+     *
+     * For example, at `export type T = number;`:
+     *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
+     *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
+     *     - Calling `getExportSymbolOfSymbol` on that local symbol will return the exported symbol.
+     */
+    getExportSymbolOfSymbol(symbol: Symbol): Symbol;
     /**
      * Gets the properties of a type.
      * @param type - Type.

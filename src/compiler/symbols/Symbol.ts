@@ -62,6 +62,20 @@ export class Symbol {
     }
 
     /**
+     * Gets the export symbol of the symbol if its a local symbol with a corresponding export symbol. Otherwise returns the current symbol.
+     *
+     * The following is from the compiler API documentation:
+     *
+     * For example, at `export type T = number;`:
+     *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
+     *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
+     *     - Calling `getExportSymbol` on that local symbol will return the exported symbol.
+     */
+    getExportSymbol() {
+        return this._context.typeChecker.getExportSymbolOfSymbol(this);
+    }
+
+    /**
      * Gets if the symbol is an alias.
      */
     isAlias() {

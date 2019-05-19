@@ -125,6 +125,20 @@ export class TypeChecker {
     }
 
     /**
+     * Gets the export symbol of a local symbol with a corresponding export symbol. Otherwise returns the input symbol.
+     *
+     * The following is from the compiler API documentation:
+     *
+     * For example, at `export type T = number;`:
+     *     - `getSymbolAtLocation` at the location `T` will return the exported symbol for `T`.
+     *     - But the result of `getSymbolsInScope` will contain the *local* symbol for `T`, not the exported symbol.
+     *     - Calling `getExportSymbolOfSymbol` on that local symbol will return the exported symbol.
+     */
+    getExportSymbolOfSymbol(symbol: Symbol) {
+        return this._context.compilerFactory.getSymbol(this.compilerObject.getExportSymbolOfSymbol(symbol.compilerSymbol));
+    }
+
+    /**
      * Gets the properties of a type.
      * @param type - Type.
      */
