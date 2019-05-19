@@ -5297,6 +5297,9 @@ export declare class EnumMember extends EnumMemberBase<ts.EnumMember> {
     getValue(): string | number | undefined;
     /**
      * Sets the enum value.
+     *
+     * This is a helper method. Use `#setInitializer` if you want to set the initializer
+     * to something other than a string or number.
      * @param value - Enum value.
      */
     setValue(value: string | number): this;

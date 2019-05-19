@@ -18,6 +18,9 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
 
     /**
      * Sets the enum value.
+     *
+     * This is a helper method. Use `#setInitializer` if you want to set the initializer
+     * to something other than a string or number.
      * @param value - Enum value.
      */
     setValue(value: string | number) {
