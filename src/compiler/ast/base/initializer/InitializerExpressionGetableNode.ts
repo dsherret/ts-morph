@@ -37,15 +37,15 @@ export function InitializerExpressionGetableNode<T extends Constructor<Initializ
             return this.compilerNode.initializer != null;
         }
 
-        getInitializerIfKindOrThrow(kind: SyntaxKind) {
+        getInitializerIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
             return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), `Expected to find an initializer of kind '${getSyntaxKindName(kind)}'.`);
         }
 
-        getInitializerIfKind(kind: SyntaxKind) {
+        getInitializerIfKind<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] | undefined {
             const initializer = this.getInitializer();
             if (initializer != null && initializer.getKind() !== kind)
                 return undefined;
-            return initializer;
+            return initializer as KindToExpressionMappings[TKind];
         }
 
         getInitializerOrThrow() {

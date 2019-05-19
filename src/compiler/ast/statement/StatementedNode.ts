@@ -486,12 +486,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return errors.throwIfNullOrUndefined(this.getStatement(findFunction), "Expected to find a statement matching the provided condition.");
         }
 
-        getStatementByKind(kind: SyntaxKind) {
+        getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappingsWithCommentStatements[TKind] | undefined {
             const statement = this._getCompilerStatementsWithComments().find(s => s.kind === kind);
-            return this._getNodeFromCompilerNodeIfExists(statement);
+            return this._getNodeFromCompilerNodeIfExists(statement) as KindToNodeMappingsWithCommentStatements[TKind] | undefined;
         }
 
-        getStatementByKindOrThrow(kind: SyntaxKind) {
+        getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
             return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`);
         }
 

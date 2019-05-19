@@ -62,14 +62,14 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
             return this.getCompilerModifiers().map(m => this._getNodeFromCompilerNode(m));
         }
 
-        getFirstModifierByKindOrThrow(kind: SyntaxKind) {
+        getFirstModifierByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
             return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`);
         }
 
-        getFirstModifierByKind(kind: SyntaxKind) {
+        getFirstModifierByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
             for (const modifier of this.getCompilerModifiers()) {
                 if (modifier.kind === kind)
-                    return this._getNodeFromCompilerNode(modifier);
+                    return this._getNodeFromCompilerNode(modifier) as KindToNodeMappings[TKind];
             }
 
             return undefined;
@@ -102,8 +102,8 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
             if (existingModifier != null)
                 return existingModifier;
 
-            // get insert position & index
-            const { insertPos, insertIndex } = getInsertInfo(this);
+            // get insert position
+            const insertPos = getInsertPos(this);
 
             // insert setup
             let startPos: number;
@@ -127,22 +127,19 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
 
             return this.getModifiers().find(m => m.getStart() === startPos) as Node<ts.Modifier>;
 
-            function getInsertInfo(node: ModifierableNode & Node) {
+            function getInsertPos(node: ModifierableNode & Node) {
                 let pos = getInitialInsertPos();
-                let index = 0;
                 for (const addAfterText of getAddAfterModifierTexts(text)) {
                     for (let i = 0; i < modifiers.length; i++) {
                         const modifier = modifiers[i];
                         if (modifier.getText() === addAfterText) {
-                            if (pos < modifier.getEnd()) {
+                            if (pos < modifier.getEnd())
                                 pos = modifier.getEnd();
-                                index = i + 1;
-                            }
                             break;
                         }
                     }
                 }
-                return { insertPos: pos, insertIndex: index };
+                return pos;
 
                 function getInitialInsertPos() {
                     if (modifiers.length > 0)

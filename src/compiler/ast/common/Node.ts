@@ -1142,7 +1142,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @param kind - Syntax kind to check for.
      */
     getParentWhileKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        return this.getParentWhile(n => n.getKind() === kind);
+        return this.getParentWhile(n => n.getKind() === kind) as KindToNodeMappings[TKind] | undefined;
     }
 
     /**
@@ -1498,7 +1498,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @param kind - Syntax kind.
      */
     getChildrenOfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind][] {
-        return this._getCompilerChildrenOfKind(kind).map(c => this._getNodeFromCompilerNode(c));
+        return this._getCompilerChildrenOfKind(kind).map(c => this._getNodeFromCompilerNode(c) as KindToNodeMappings[TKind]);
     }
 
     /**
@@ -1515,7 +1515,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getFirstChildByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const child = this._getCompilerChildrenOfKind(kind)[0];
-        return child == null ? undefined : this._getNodeFromCompilerNode(child);
+        return child == null ? undefined : (this._getNodeFromCompilerNode(child) as KindToNodeMappings[TKind]);
     }
 
     /**
@@ -1532,7 +1532,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getFirstChildIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const firstChild = this._getCompilerFirstChild();
-        return firstChild != null && firstChild.kind === kind ? this._getNodeFromCompilerNode(firstChild) : undefined;
+        return firstChild != null && firstChild.kind === kind ? (this._getNodeFromCompilerNode(firstChild) as KindToNodeMappings[TKind]) : undefined;
     }
 
     /**
@@ -1550,7 +1550,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     getLastChildByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const children = this._getCompilerChildrenOfKind(kind);
         const lastChild = children[children.length - 1] as ts.Node | undefined;
-        return this._getNodeFromCompilerNodeIfExists(lastChild);
+        return this._getNodeFromCompilerNodeIfExists(lastChild) as KindToNodeMappings[TKind] | undefined;
     }
 
     /**
@@ -1567,7 +1567,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getLastChildIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const lastChild = this._getCompilerLastChild();
-        return lastChild != null && lastChild.kind === kind ? this._getNodeFromCompilerNode(lastChild) : undefined;
+        return lastChild != null && lastChild.kind === kind ? (this._getNodeFromCompilerNode(lastChild) as KindToNodeMappings[TKind]) : undefined;
     }
 
     /**
@@ -1586,7 +1586,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getChildAtIndexIfKind<TKind extends SyntaxKind>(index: number, kind: TKind): KindToNodeMappings[TKind] | undefined {
         const node = this._getCompilerChildAtIndex(index);
-        return node.kind === kind ? this._getNodeFromCompilerNode(node) : undefined;
+        return node.kind === kind ? (this._getNodeFromCompilerNode(node) as KindToNodeMappings[TKind]) : undefined;
     }
 
     /**
@@ -1611,7 +1611,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getPreviousSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const previousSibling = this._getCompilerPreviousSibling();
-        return previousSibling != null && previousSibling.kind === kind ? this._getNodeFromCompilerNode(previousSibling) : undefined;
+        return previousSibling != null && previousSibling.kind === kind ? (this._getNodeFromCompilerNode(previousSibling) as KindToNodeMappings[TKind]) : undefined;
     }
 
     /**
@@ -1620,7 +1620,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getNextSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const nextSibling = this._getCompilerNextSibling();
-        return nextSibling != null && nextSibling.kind === kind ? this._getNodeFromCompilerNode(nextSibling) : undefined;
+        return nextSibling != null && nextSibling.kind === kind ? (this._getNodeFromCompilerNode(nextSibling) as KindToNodeMappings[TKind]) : undefined;
     }
 
     /**
@@ -1628,7 +1628,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getParentIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const parentNode = this.getParent();
-        return parentNode == null || parentNode.getKind() !== kind ? undefined : parentNode;
+        return parentNode == null || parentNode.getKind() !== kind ? undefined : (parentNode as KindToNodeMappings[TKind]);
     }
 
     /**
@@ -1653,7 +1653,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     getFirstAncestorByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         for (const parent of this._getAncestorsIterator(kind === SyntaxKind.SyntaxList)) {
             if (parent.getKind() === kind)
-                return parent;
+                return parent as KindToNodeMappings[TKind];
         }
         return undefined;
     }
@@ -1695,9 +1695,9 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      * @param kind - Kind to check.
      */
     getDescendantsOfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind][] {
-        const descendants: Node[] = [];
+        const descendants: KindToNodeMappings[TKind][] = [];
         for (const descendant of this._getCompilerDescendantsOfKindIterator(kind))
-            descendants.push(this._getNodeFromCompilerNode(descendant));
+            descendants.push(this._getNodeFromCompilerNode(descendant) as KindToNodeMappings[TKind]);
         return descendants;
     }
 
@@ -1715,7 +1715,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
      */
     getFirstDescendantByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         for (const descendant of this._getCompilerDescendantsOfKindIterator(kind))
-            return this._getNodeFromCompilerNode(descendant);
+            return this._getNodeFromCompilerNode(descendant) as KindToNodeMappings[TKind];
         return undefined;
     }
 
