@@ -563,11 +563,11 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         addConstructor(structure: OptionalKind<ConstructorDeclarationStructure> = {}) {
-            return this.insertConstructor(getEndIndexFromArray(this.getMembers()), structure);
+            return this.insertConstructor(getEndIndexFromArray(this.getMembersWithComments()), structure);
         }
 
         addConstructors(structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>) {
-            return this.insertConstructors(getEndIndexFromArray(this.getMembers()), structures);
+            return this.insertConstructors(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertConstructor(index: number, structure: OptionalKind<ConstructorDeclarationStructure> = {}) {
@@ -604,7 +604,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
-            return this.insertGetAccessors(getEndIndexFromArray(this.getMembers()), structures);
+            return this.insertGetAccessors(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertGetAccessor(index: number, structure: OptionalKind<GetAccessorDeclarationStructure>) {
@@ -639,7 +639,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
-            return this.insertSetAccessors(getEndIndexFromArray(this.getMembers()), structures);
+            return this.insertSetAccessors(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertSetAccessor(index: number, structure: OptionalKind<SetAccessorDeclarationStructure>) {
@@ -674,7 +674,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         addProperties(structures: ReadonlyArray<OptionalKind<PropertyDeclarationStructure>>) {
-            return this.insertProperties(getEndIndexFromArray(this.getMembers()), structures);
+            return this.insertProperties(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertProperty(index: number, structure: OptionalKind<PropertyDeclarationStructure>) {
@@ -705,7 +705,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
-            return this.insertMethods(getEndIndexFromArray(this.getMembers()), structures);
+            return this.insertMethods(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertMethod(index: number, structure: OptionalKind<MethodDeclarationStructure>) {

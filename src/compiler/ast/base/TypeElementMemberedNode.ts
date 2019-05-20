@@ -5,7 +5,7 @@ import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructu
     PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind, Structure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
-import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { TypeElementTypes } from "../aliases";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
@@ -241,7 +241,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         addConstructSignatures(structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>) {
-            return this.insertConstructSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
+            return this.insertConstructSignatures(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertConstructSignature(index: number, structure: OptionalKind<ConstructSignatureDeclarationStructure>) {
@@ -276,7 +276,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         addCallSignatures(structures: ReadonlyArray<OptionalKind<CallSignatureDeclarationStructure>>) {
-            return this.insertCallSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
+            return this.insertCallSignatures(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertCallSignature(index: number, structure: OptionalKind<CallSignatureDeclarationStructure>) {
@@ -311,7 +311,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         addIndexSignatures(structures: ReadonlyArray<OptionalKind<IndexSignatureDeclarationStructure>>) {
-            return this.insertIndexSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
+            return this.insertIndexSignatures(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertIndexSignature(index: number, structure: OptionalKind<IndexSignatureDeclarationStructure>) {
@@ -346,7 +346,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         addMethods(structures: ReadonlyArray<OptionalKind<MethodSignatureStructure>>) {
-            return this.insertMethods(getEndIndexFromArray(this.compilerNode.members), structures);
+            return this.insertMethods(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertMethod(index: number, structure: OptionalKind<MethodSignatureStructure>) {
@@ -382,7 +382,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         addProperties(structures: ReadonlyArray<OptionalKind<PropertySignatureStructure>>) {
-            return this.insertProperties(getEndIndexFromArray(this.compilerNode.members), structures);
+            return this.insertProperties(getEndIndexFromArray(this.getMembersWithComments()), structures);
         }
 
         insertProperty(index: number, structure: OptionalKind<PropertySignatureStructure>) {
