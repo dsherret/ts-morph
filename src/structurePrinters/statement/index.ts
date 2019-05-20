@@ -1,3 +1,3 @@
 export * from "./StatementedNodeStructurePrinter";
-export * from "./StatementsStructurePrinter";
+export * from "./StatementStructurePrinter";
 export * from "./VariableStatementStructurePrinter";

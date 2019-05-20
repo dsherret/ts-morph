@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { Node, ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
     PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase, CommentClassElement } from "../../../../../compiler";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure, StructureKind} from "../../../../../structures";
+    SetAccessorDeclarationStructure, StructureKind, ClassMemberStructures} from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { SyntaxKind } from "../../../../../typescript";
 import { TypeGuards } from "../../../../../utils";
@@ -105,6 +105,140 @@ describe(nameof(ClassLikeDeclarationBase), () => {
 
         it("should remove when there is an extends and implements", () => {
             doTest("class Identifier extends Base1 implements T {}", "class Identifier implements T {}");
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.addMember), () => {
+        function doTest(startCode: string, member: string | WriterFunction | ClassMemberStructures, expectedCode: string) {
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addMember(member);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(Node);
+        }
+
+        it("should add a member", () => {
+            const expectedText = "class c {\n    // test\n    p1;\n    p2;\n    p3;\n}";
+            doTest("class c {\n    // test\n    p1;\n    p2;\n}", {
+                kind: StructureKind.Property,
+                name: "p3"
+            }, expectedText);
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.addMembers), () => {
+        type MembersType = string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[];
+        function doTest(startCode: string, members: MembersType, expectedCode: string, expectedResultCount: number) {
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addMembers(members);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result.length).to.equal(expectedResultCount);
+        }
+
+        it("should add members", () => {
+            const expectedText = "class c {\n    // test\n    p1;\n    p2;\n    p3;\n\n    m4() {\n    }\n}";
+            doTest("class c {\n    // test\n    p1;\n    p2;\n}", [{
+                kind: StructureKind.Property,
+                name: "p3"
+            }, {
+                kind: StructureKind.Method,
+                name: "m4"
+            }], expectedText, 2);
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.insertMember), () => {
+        function doTest(startCode: string, insertIndex: number, member: string | WriterFunction | ClassMemberStructures, expectedCode: string) {
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertMember(insertIndex, member);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(Node);
+        }
+
+        it("should insert at the specified index", () => {
+            const expectedText = "class c {\n    p1;\n    p2;\n    p3;\n}";
+            doTest("class c {\n    p1;\n    p3;\n}", 1, {
+                kind: StructureKind.Property,
+                name: "p2"
+            }, expectedText);
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.insertMembers), () => {
+        type MembersType = string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[];
+        function doTest(startCode: string, insertIndex: number, members: MembersType, expectedCode: string, expectedResultCount: number) {
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertMembers(insertIndex, members);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result.length).to.equal(expectedResultCount);
+        }
+
+        it("should accept providing a string", () => {
+            doTest("class c {\n}", 0, "// test", "class c {\n    // test\n}", 1);
+        });
+
+        it("should accept providing a writer function", () => {
+            doTest("class c {\n}", 0, writer => writer.write("// test"), "class c {\n    // test\n}", 1);
+        });
+
+        it("should insert all the different kinds of members", () => {
+            const expectedText = `class c {\n    constructor() {\n    }\n\n    p1;\n    p2;\n\n`
+                + `    m1() {\n    }\n\n    get g1() {\n    }\n\n    set s1() {\n    }\n\n    // testing\n}`;
+            doTest("class c {\n}", 0, [{
+                    kind: StructureKind.Constructor
+                }, {
+                    kind: StructureKind.Property,
+                    name: "p1"
+                }, {
+                    kind: StructureKind.Property,
+                    name: "p2"
+                }, {
+                    kind: StructureKind.Method,
+                    name: "m1"
+                }, {
+                    kind: StructureKind.GetAccessor,
+                    name: "g1"
+                }, {
+                    kind: StructureKind.SetAccessor,
+                    name: "s1"
+                },
+                "// testing"
+            ], expectedText, 7);
+        });
+
+        it("should insert between properties with correct spacing when inserting a property", () => {
+            const expectedText = "class c {\n    p1;\n    p2;\n    p3;\n}";
+            doTest("class c {\n    p1;\n    p3;\n}", 1, [{
+                    kind: StructureKind.Property,
+                    name: "p2"
+                }
+            ], expectedText, 1);
+        });
+
+        it("should insert between properties with correct spacing when inserting a method", () => {
+            const expectedText = "class c {\n    p1;\n\n    m2() {\n    }\n\n    p3;\n}";
+            doTest("class c {\n    p1;\n    p3;\n}", 1, [{
+                    kind: StructureKind.Method,
+                    name: "m2"
+                }
+            ], expectedText, 1);
+        });
+
+        it("should insert between methods with correct spacing when inserting a property", () => {
+            const expectedText = "class c {\n    m1() {\n    }\n\n    p2;\n\n    m3() {\n    }\n}";
+            doTest("class c {\n    m1() {\n    }\n\n    m3() {\n    }\n}", 1, [{
+                    kind: StructureKind.Property,
+                    name: "p2"
+                }
+            ], expectedText, 1);
+        });
+
+        it("should insert between methods with correct spacing when inserting a method", () => {
+            const expectedText = "class c {\n    m1() {\n    }\n\n    m2() {\n    }\n\n    m3() {\n    }\n}";
+            doTest("class c {\n    m1() {\n    }\n\n    m3() {\n    }\n}", 1, [{
+                    kind: StructureKind.Method,
+                    name: "m2"
+                }
+            ], expectedText, 1);
         });
     });
 

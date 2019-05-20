@@ -2,11 +2,12 @@ import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { Constructor } from "../../../../types";
 import { ts, SyntaxKind } from "../../../../typescript";
 import * as errors from "../../../../errors";
-import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange, InsertIntoBracesOrSourceFileOptionsWriteInfo } from "../../../../manipulation";
-import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure,
-    PropertyDeclarationStructure, SetAccessorDeclarationStructure, OptionalKind, Structure } from "../../../../structures";
+import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange,
+    InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildrenWithComments } from "../../../../manipulation";
+import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
+    SetAccessorDeclarationStructure, ClassMemberStructures, OptionalKind, Structure, StructureTypeGuards, Structures } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../../../utils";
+import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards, isNodeAmbientOrInAmbientContext } from "../../../../utils";
 import { Type } from "../../../types";
 import { DecoratableNode, JSDocableNode, ModifierableNode, TypeParameteredNode, ImplementsClauseableNode, TextInsertableNode,
     HeritageClauseableNode, NameableNode } from "../../base";
@@ -63,6 +64,28 @@ export interface ClassLikeDeclarationBaseSpecific {
      * Gets the extends expression or returns undefined if it doesn't exist.
      */
     getExtends(): ExpressionWithTypeArguments | undefined;
+    /**
+     * Inserts a class member.
+     * @param member - Class member to insert.
+     */
+    addMember(member: string | WriterFunction | ClassMemberStructures): ClassMemberTypes | CommentClassElement;
+    /**
+     * Inserts class members.
+     * @param members - Collection of class members to insert.
+     */
+    addMembers(members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[];
+    /**
+     * Inserts a class member.
+     * @param index - Child index to insert at.
+     * @param member - Class member to insert.
+     */
+    insertMember(index: number, member: string | WriterFunction | ClassMemberStructures): ClassMemberTypes | CommentClassElement;
+    /**
+     * Inserts class members.
+     * @param index - Child index to insert at.
+     * @param members - Collection of class members to insert.
+     */
+    insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[];
     /**
      * Adds a constructor.
      * @param structure - Structure of the constructor.
@@ -562,6 +585,62 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return types.length === 0 ? undefined : types[0];
         }
 
+        addMembers(members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]) {
+            return this.insertMembers(getEndIndexFromArray(this.getMembersWithComments()), members);
+        }
+
+        addMember(member: string | WriterFunction | ClassMemberStructures) {
+            return this.insertMember(getEndIndexFromArray(this.getMembersWithComments()), member);
+        }
+
+        insertMember(index: number, member: string | WriterFunction | ClassMemberStructures) {
+            return this.insertMembers(index, [member])[0];
+        }
+
+        insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[] {
+            const isAmbient = isNodeAmbientOrInAmbientContext(this);
+            return insertIntoBracesOrSourceFileWithGetChildrenWithComments({
+                getIndexedChildren: () => this.getMembersWithComments(),
+                index,
+                parent: this,
+                write: (writer, info) => {
+                    const previousMemberHasBody = !isAmbient && info.previousMember != null && TypeGuards.isBodyableNode(info.previousMember) && info.previousMember.hasBody();
+                    const firstStructureHasBody = !isAmbient && members instanceof Array && structureHasBody(members[0]);
+
+                    if (previousMemberHasBody || info.previousMember != null && firstStructureHasBody)
+                        writer.blankLineIfLastNot();
+                    else
+                        writer.newLineIfLastNot();
+
+                    // create a new writer here because the class member printer will add a blank line in certain cases
+                    // at the front if it's not on the first line of a block
+                    const memberWriter = this._getWriter();
+                    const memberPrinter = this._context.structurePrinterFactory.forClassMember({ isAmbient });
+                    memberPrinter.printTexts(memberWriter, members);
+                    writer.write(memberWriter.toString());
+
+                    const lastStructureHasBody = !isAmbient && members instanceof Array && structureHasBody(members[members.length - 1]);
+                    const nextMemberHasBody = !isAmbient && info.nextMember != null && TypeGuards.isBodyableNode(info.nextMember) && info.nextMember.hasBody();
+
+                    if (info.nextMember != null && lastStructureHasBody || nextMemberHasBody)
+                        writer.blankLineIfLastNot();
+                    else
+                        writer.newLineIfLastNot();
+                }
+            }) as (ClassMemberTypes | CommentClassElement)[];
+
+            function structureHasBody(value: unknown) {
+                if (isAmbient || value == null || typeof (value as any).kind !== "number")
+                    return false;
+
+                const structure = value as Structures;
+                return StructureTypeGuards.isMethod(structure)
+                    || StructureTypeGuards.isGetAccessor(structure)
+                    || StructureTypeGuards.isSetAccessor(structure)
+                    || StructureTypeGuards.isConstructor(structure);
+            }
+        }
+
         addConstructor(structure: OptionalKind<ConstructorDeclarationStructure> = {}) {
             return this.insertConstructor(getEndIndexFromArray(this.getMembersWithComments()), structure);
         }
@@ -575,7 +654,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         insertConstructors(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationStructure>>): ConstructorDeclaration[] {
-            const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
+            const isAmbient = isNodeAmbientOrInAmbientContext(this);
 
             return insertChildren<ConstructorDeclaration>(this, {
                 index,
@@ -623,7 +702,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.newLineIfLastNot();
 
                     this._context.structurePrinterFactory.forGetAccessorDeclaration({
-                        isAmbient: TypeGuards.isAmbientableNode(this) && this.isAmbient()
+                        isAmbient: isNodeAmbientOrInAmbientContext(this)
                     }).printTexts(writer, structures);
 
                     if (info.nextMember != null)
@@ -658,7 +737,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.newLineIfLastNot();
 
                     this._context.structurePrinterFactory.forSetAccessorDeclaration({
-                        isAmbient: TypeGuards.isAmbientableNode(this) && this.isAmbient()
+                        isAmbient: isNodeAmbientOrInAmbientContext(this)
                     }).printTexts(writer, structures);
 
                     if (info.nextMember != null)
@@ -713,7 +792,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>): MethodDeclaration[] {
-            const isAmbient = TypeGuards.isAmbientableNode(this) && this.isAmbient();
+            const isAmbient = isNodeAmbientOrInAmbientContext(this);
             structures = structures.map(s => ({...s}));
 
             // insert, fill, and get created nodes
@@ -1008,7 +1087,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 }
 
 function getAllMembers(classDec: Node<ts.ClassLikeDeclarationBase>, compilerMembers: ts.Node[] | ts.NodeArray<ts.Node>) {
-    const isAmbient = TypeGuards.isAmbientableNode(classDec) && classDec.isAmbient();
+    const isAmbient = isNodeAmbientOrInAmbientContext(classDec);
     // not sure why this cast is necessary, but localized it to here...
     const members = (compilerMembers as any as ts.Node[]).map(m => classDec._getNodeFromCompilerNode(m));
 

@@ -9,6 +9,6 @@ export class StatementedNodeStructurePrinter extends Printer<StatementedNodeStru
     }
 
     printText(writer: CodeBlockWriter, structure: StatementedNodeStructure) {
-        this.factory.forStatements(this.options).printTexts(writer, structure.statements);
+        this.factory.forStatement(this.options).printTexts(writer, structure.statements);
     }
 }

@@ -40,6 +40,11 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forClassMember(options: { isAmbient: boolean; }): structurePrinters.ClassMemberStructurePrinter {
+        return new structurePrinters.ClassMemberStructurePrinter(this, options);
+    }
+
+    @Memoize
     forConstructorDeclaration(options: { isAmbient: boolean; }): structurePrinters.ConstructorDeclarationStructurePrinter {
         return new structurePrinters.ConstructorDeclarationStructurePrinter(this, options);
     }
@@ -210,8 +215,8 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forStatements(options: { isAmbient: boolean; }): structurePrinters.StatementsStructurePrinter {
-        return new structurePrinters.StatementsStructurePrinter(this, options);
+    forStatement(options: { isAmbient: boolean; }): structurePrinters.StatementStructurePrinter {
+        return new structurePrinters.StatementStructurePrinter(this, options);
     }
 
     @Memoize

@@ -3477,6 +3477,28 @@ interface ClassLikeDeclarationBaseSpecific {
      */
     getExtends(): ExpressionWithTypeArguments | undefined;
     /**
+     * Inserts a class member.
+     * @param member - Class member to insert.
+     */
+    addMember(member: string | WriterFunction | ClassMemberStructures): ClassMemberTypes | CommentClassElement;
+    /**
+     * Inserts class members.
+     * @param members - Collection of class members to insert.
+     */
+    addMembers(members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[];
+    /**
+     * Inserts a class member.
+     * @param index - Child index to insert at.
+     * @param member - Class member to insert.
+     */
+    insertMember(index: number, member: string | WriterFunction | ClassMemberStructures): ClassMemberTypes | CommentClassElement;
+    /**
+     * Inserts class members.
+     * @param index - Child index to insert at.
+     * @param members - Collection of class members to insert.
+     */
+    insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[];
+    /**
      * Adds a constructor.
      * @param structure - Structure of the constructor.
      */

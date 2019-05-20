@@ -291,6 +291,11 @@ describe(nameof(StatementedNode), () => {
             firstChild.insertStatements(1, "if(b){return 1;}else {return 2;}");
             expect(firstChild.getStatementByKindOrThrow(SyntaxKind.IfStatement).getText()).equals("if(b){return 1;}else {return 2;}");
         });
+
+        it("should insert comments into a function", () => {
+            doFirstChildTest<FunctionDeclaration>("function f() {\n}", 0, "// comment", 1,
+                "function f() {\n    // comment\n}");
+        });
     });
 
     describe(nameof<StatementedNode>(s => s.addStatements), () => {

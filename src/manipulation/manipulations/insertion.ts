@@ -267,3 +267,35 @@ export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node>(
         return startChildren[index - 1].getChildIndex() + 1;
     }
 }
+
+export interface InsertIntoBracesOrSourceFileWithGetChildrenWithCommentsOptions {
+    getIndexedChildren: () => Node[];
+    write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
+    parent: Node;
+    index: number;
+}
+
+export function insertIntoBracesOrSourceFileWithGetChildrenWithComments(opts: InsertIntoBracesOrSourceFileWithGetChildrenWithCommentsOptions) {
+    const startChildren = opts.getIndexedChildren();
+    const parentSyntaxList = opts.parent.getChildSyntaxListOrThrow();
+    const index = verifyAndGetIndex(opts.index, startChildren.length);
+
+    insertIntoBracesOrSourceFile({
+        parent: opts.parent,
+        index: getChildIndex(),
+        children: parentSyntaxList.getChildren(),
+        write: opts.write
+    });
+
+    const newChildren = opts.getIndexedChildren();
+    const newLength = newChildren.length - startChildren.length;
+    return newChildren.slice(index, index + newLength);
+
+    function getChildIndex() {
+        if (index === 0)
+            return 0;
+
+        // get the previous member in order to get the implementation signature + 1
+        return startChildren[index - 1].getChildIndex() + 1;
+    }
+}

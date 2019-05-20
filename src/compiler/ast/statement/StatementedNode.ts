@@ -502,7 +502,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertStatements(index: number, statements: string | WriterFunction | ReadonlyArray<string | WriterFunction | StatementStructures>) {
             addBodyIfNotExists(this);
             const writerFunction = (writer: CodeBlockWriter) => {
-                const statementsPrinter = this._context.structurePrinterFactory.forStatements({ isAmbient: isNodeAmbientOrInAmbientContext(this) });
+                const statementsPrinter = this._context.structurePrinterFactory.forStatement({ isAmbient: isNodeAmbientOrInAmbientContext(this) });
                 statementsPrinter.printTexts(writer, statements);
             };
 
