@@ -280,6 +280,19 @@ describe(nameof(CommentNodeParser), () => {
             }]);
         });
 
+        it("should include comment after last nodes in object literal expression when it ends with a comma", () => {
+            // there was a bug where it wasn't picking this up
+            doTest("const o = {\nprop: 5,\n// 1\n};", [{
+                kind: ts.SyntaxKind.PropertyAssignment,
+                pos: 11,
+                end: 19
+            }, {
+                kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                pos: 21,
+                end: 25
+            }]);
+        });
+
         it("should include comments in case clause", () => {
             doTest("switch (a) {\ncase 5:\n//a\n}", [{
                 kind: ts.SyntaxKind.SingleLineCommentTrivia,

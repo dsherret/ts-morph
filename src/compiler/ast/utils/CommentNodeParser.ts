@@ -173,7 +173,7 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
                     else
                         lineEnd = StringUtils.getLineEndFromPos(sourceFileText, pos);
                 }
-                else if (!StringUtils.isWhitespace(sourceFileText[pos]))
+                else if (!StringUtils.isWhitespace(sourceFileText[pos]) && sourceFileText[pos] !== ",") // skip any trailing comments too
                     return;
                 else
                     pos++;
