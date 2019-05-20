@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.2"></a>
+## [2.1.2](https://github.com/dsherret/ts-morph/compare/2.1.1...2.1.2) (2019-05-20)
+
+
+### Bug Fixes
+
+* ObjectLiteralExpression methods would not get the correct "add" index when a comment member node was present. ([23f9276](https://github.com/dsherret/ts-morph/commit/23f9276))
+
+
+
 <a name="2.1.1"></a>
 ## [2.1.1](https://github.com/dsherret/ts-morph/compare/2.1.0...2.1.1) (2019-05-20)
 
