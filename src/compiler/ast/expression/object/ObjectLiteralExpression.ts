@@ -4,7 +4,7 @@ import { CommaNewLineSeparatedStructuresPrinter, Printer } from "../../../../str
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
     ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind } from "../../../../structures";
 import { SyntaxKind, ts } from "../../../../typescript";
-import { ArrayUtils, getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
+import { getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "../../class";
 import { PrimaryExpression } from "../PrimaryExpression";

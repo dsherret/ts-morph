@@ -24,6 +24,10 @@ if (StructureTypeGuards.isExportable(structure))
     structure.isExported = false;
 ```
 
+### Renamed `ObjectLiteralElementMemberStructures` to `ObjectLiteralExpressionPropertyStructures`
+
+The `ObjectLiteralElementMemberStructures` alias is now called `ObjectLiteralExpressionPropertyStructures`. This is a more correct name as an object literal expression has "properties" rather than "members" in the compiler api.
+
 ## Version 2
 
 ### Removed default export
