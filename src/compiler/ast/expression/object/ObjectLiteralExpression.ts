@@ -71,6 +71,12 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         return members.map(p => this._getNodeFromCompilerNode(p)) as (ObjectLiteralElementLike | CommentObjectLiteralElement)[];
     }
 
+    /** @internal */
+    private _getAddIndex() {
+        const members = ExtendedParser.getContainerArray(this.compilerNode, this.getSourceFile().compilerNode);
+        return members.length;
+    }
+
     /* Property Assignments */
 
     /**
@@ -86,7 +92,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structure that represents the property assignments to add.
      */
     addPropertyAssignments(structures: ReadonlyArray<OptionalKind<PropertyAssignmentStructure>>) {
-        return this.insertPropertyAssignments(this.compilerNode.properties.length, structures);
+        return this.insertPropertyAssignments(this._getAddIndex(), structures);
     }
 
     /**
@@ -122,7 +128,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structure that represents the shorthand property assignments to add.
      */
     addShorthandPropertyAssignments(structures: ReadonlyArray<OptionalKind<ShorthandPropertyAssignmentStructure>>) {
-        return this.insertShorthandPropertyAssignments(this.compilerNode.properties.length, structures);
+        return this.insertShorthandPropertyAssignments(this._getAddIndex(), structures);
     }
 
     /**
@@ -158,7 +164,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structure that represents the spread assignments to add.
      */
     addSpreadAssignments(structures: ReadonlyArray<OptionalKind<SpreadAssignmentStructure>>) {
-        return this.insertSpreadAssignments(this.compilerNode.properties.length, structures);
+        return this.insertSpreadAssignments(this._getAddIndex(), structures);
     }
 
     /**
@@ -194,7 +200,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structure that represents the methods to add.
      */
     addMethods(structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
-        return this.insertMethods(this.compilerNode.properties.length, structures);
+        return this.insertMethods(this._getAddIndex(), structures);
     }
 
     /**
@@ -230,7 +236,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structure that represents the get accessors to add.
      */
     addGetAccessors(structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
-        return this.insertGetAccessors(this.compilerNode.properties.length, structures);
+        return this.insertGetAccessors(this._getAddIndex(), structures);
     }
 
     /**
@@ -266,7 +272,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structure that represents the set accessors to add.
      */
     addSetAccessors(structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
-        return this.insertSetAccessors(this.compilerNode.properties.length, structures);
+        return this.insertSetAccessors(this._getAddIndex(), structures);
     }
 
     /**
@@ -291,7 +297,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @internal
      */
     private _insertProperty<T>(index: number, structures: ReadonlyArray<T>, createStructurePrinter: () => Printer<T>) {
-        index = verifyAndGetIndex(index, this.compilerNode.properties.length);
+        index = verifyAndGetIndex(index, this._getAddIndex());
         const writer = this._getWriterWithChildIndentation();
         const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(createStructurePrinter());
 
