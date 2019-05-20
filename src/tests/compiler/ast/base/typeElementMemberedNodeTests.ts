@@ -1,12 +1,114 @@
 ﻿import { expect } from "chai";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature, PropertySignature,
-    TypeElementMemberedNode, CommentTypeElement, TypeLiteralNode } from "../../../../compiler";
+    TypeElementMemberedNode, CommentTypeElement, TypeLiteralNode, Node } from "../../../../compiler";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure, StructureKind } from "../../../../structures";
+    PropertySignatureStructure, TypeElementMemberedNodeStructure, TypeElementMemberStructures, StructureKind } from "../../../../structures";
+import { WriterFunction } from "../../../../types";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(TypeElementMemberedNode), () => {
+    describe(nameof<TypeElementMemberedNode>(d => d.addMember), () => {
+        function doTest(startCode: string, member: string | WriterFunction | TypeElementMemberStructures, expectedCode: string) {
+            const { sourceFile, firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.addMember(member);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(Node);
+        }
+
+        it("should add a member", () => {
+            const expectedText = "interface i {\n    // test\n    p1;\n    p2;\n    p3;\n}";
+            doTest("interface i {\n    // test\n    p1;\n    p2;\n}", {
+                kind: StructureKind.PropertySignature,
+                name: "p3"
+            }, expectedText);
+        });
+    });
+
+    describe(nameof<TypeElementMemberedNode>(d => d.addMembers), () => {
+        type MembersType = string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[];
+        function doTest(startCode: string, members: MembersType, expectedCode: string, expectedResultCount: number) {
+            const { sourceFile, firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.addMembers(members);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result.length).to.equal(expectedResultCount);
+        }
+
+        it("should add members", () => {
+            const expectedText = "interface i {\n    // test\n    p1;\n    p2;\n    p3;\n    m4();\n}";
+            doTest("interface i {\n    // test\n    p1;\n    p2;\n}", [{
+                kind: StructureKind.PropertySignature,
+                name: "p3"
+            }, {
+                kind: StructureKind.MethodSignature,
+                name: "m4"
+            }], expectedText, 2);
+        });
+    });
+
+    describe(nameof<TypeElementMemberedNode>(d => d.insertMember), () => {
+        function doTest(startCode: string, insertIndex: number, member: string | WriterFunction | TypeElementMemberStructures, expectedCode: string) {
+            const { sourceFile, firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.insertMember(insertIndex, member);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(Node);
+        }
+
+        it("should insert at the specified index", () => {
+            const expectedText = "interface i {\n    p1;\n    p2;\n    p3;\n}";
+            doTest("interface i {\n    p1;\n    p3;\n}", 1, {
+                kind: StructureKind.PropertySignature,
+                name: "p2"
+            }, expectedText);
+        });
+    });
+
+    describe(nameof<TypeElementMemberedNode>(d => d.insertMembers), () => {
+        type MembersType = string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[];
+        function doTest(startCode: string, insertIndex: number, members: MembersType, expectedCode: string, expectedResultCount: number) {
+            const { sourceFile, firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.insertMembers(insertIndex, members);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result.length).to.equal(expectedResultCount);
+        }
+
+        it("should accept providing a string", () => {
+            doTest("interface i {\n}", 0, "// test", "interface i {\n    // test\n}", 1);
+        });
+
+        it("should accept providing a writer function", () => {
+            doTest("interface i {\n}", 0, writer => writer.write("// test"), "interface i {\n    // test\n}", 1);
+        });
+
+        it("should insert all the different kinds of members", () => {
+            const expectedText = `interface i {\n    new();\n    p1;\n    m1();\n    [key: string];\n    (): void;\n    // testing\n}`;
+            doTest("interface i {\n}", 0, [{
+                    kind: StructureKind.ConstructSignature
+                }, {
+                    kind: StructureKind.PropertySignature,
+                    name: "p1"
+                }, {
+                    kind: StructureKind.MethodSignature,
+                    name: "m1"
+                }, {
+                    kind: StructureKind.IndexSignature
+                }, {
+                    kind: StructureKind.CallSignature
+                },
+                "// testing"
+            ], expectedText, 6);
+        });
+
+        it("should insert between members", () => {
+            const expectedText = "interface i {\n    p1;\n    p2;\n    p3;\n}";
+            doTest("interface i {\n    p1;\n    p3;\n}", 1, [{
+                    kind: StructureKind.PropertySignature,
+                    name: "p2"
+                }
+            ], expectedText, 1);
+        });
+    });
+
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignatures), () => {
         function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);

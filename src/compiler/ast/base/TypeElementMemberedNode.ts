@@ -1,9 +1,9 @@
 ﻿import { CodeBlockWriter } from "../../../codeBlockWriter";
 import * as errors from "../../../errors";
-import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren } from "../../../manipulation";
+import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoBracesOrSourceFileWithGetChildrenWithComments } from "../../../manipulation";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind, Structure } from "../../../structures";
-import { Constructor } from "../../../types";
+    PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind, Structure, TypeElementMemberStructures } from "../../../structures";
+import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { TypeElementTypes } from "../aliases";
@@ -16,6 +16,28 @@ import { ExtendedParser } from "../utils";
 export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.NodeArray<ts.TypeElement>; }>;
 
 export interface TypeElementMemberedNode {
+    /**
+     * Adds a member.
+     * @param member - Member to add.
+     */
+    addMember(member: string | WriterFunction | TypeElementMemberStructures): TypeElementTypes | CommentTypeElement;
+    /**
+     * Adds members.
+     * @param members - Collection of members to add.
+     */
+    addMembers(members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[];
+    /**
+     * Inserts a member.
+     * @param index - Child index to insert at.
+     * @param member - Member to insert.
+     */
+    insertMember(index: number, member: string | WriterFunction | TypeElementMemberStructures): TypeElementTypes | CommentTypeElement;
+    /**
+     * Inserts members.
+     * @param index - Child index to insert at.
+     * @param members - Collection of members to insert.
+     */
+    insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[];
     /**
      * Add construct signature.
      * @param structure - Structure representing the construct signature.
@@ -236,6 +258,38 @@ export interface TypeElementMemberedNode {
 
 export function TypeElementMemberedNode<T extends Constructor<TypeElementMemberedNodeExtensionType>>(Base: T): Constructor<TypeElementMemberedNode> & T {
     return class extends Base implements TypeElementMemberedNode {
+        addMember(member: string | WriterFunction | TypeElementMemberStructures): TypeElementTypes | CommentTypeElement {
+            return this.addMembers([member])[0];
+        }
+
+        addMembers(members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[] {
+            return this.insertMembers(getEndIndexFromArray(this.getMembersWithComments()), members);
+        }
+
+        insertMember(index: number, member: string | WriterFunction | TypeElementMemberStructures): TypeElementTypes | CommentTypeElement {
+            return this.insertMembers(index, [member])[0];
+        }
+
+        insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[] {
+            return insertIntoBracesOrSourceFileWithGetChildrenWithComments({
+                getIndexedChildren: () => this.getMembersWithComments(),
+                index,
+                parent: this,
+                write: writer => {
+                    writer.newLineIfLastNot();
+
+                    // create a new writer here because the class member printer will add a blank line in certain cases
+                    // at the front if it's not on the first line of a block
+                    const memberWriter = this._getWriter();
+                    const memberPrinter = this._context.structurePrinterFactory.forTypeElementMember();
+                    memberPrinter.printTexts(memberWriter, members);
+                    writer.write(memberWriter.toString());
+
+                    writer.newLineIfLastNot();
+                }
+            }) as (TypeElementTypes | CommentTypeElement)[];
+        }
+
         addConstructSignature(structure: OptionalKind<ConstructSignatureDeclarationStructure>) {
             return this.addConstructSignatures([structure])[0];
         }

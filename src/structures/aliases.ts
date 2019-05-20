@@ -20,8 +20,10 @@ export type StatementStructures = ClassDeclarationStructure | EnumDeclarationStr
 export type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure
     | PropertyDeclarationStructure;
 
-export type InterfaceMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure
+export type TypeElementMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure
     | MethodSignatureStructure | PropertySignatureStructure;
+
+export type InterfaceMemberStructures = TypeElementMemberStructures;
 
 export type ObjectLiteralElementMemberStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure
     | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure;

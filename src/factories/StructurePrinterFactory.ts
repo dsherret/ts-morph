@@ -150,6 +150,11 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forTypeElementMember(): structurePrinters.TypeElementMemberStructurePrinter {
+        return new structurePrinters.TypeElementMemberStructurePrinter(this);
+    }
+
+    @Memoize
     forJsxAttribute(): structurePrinters.JsxAttributeStructurePrinter {
         return new structurePrinters.JsxAttributeStructurePrinter(this);
     }

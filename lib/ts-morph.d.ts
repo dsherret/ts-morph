@@ -3112,6 +3112,28 @@ export declare function TypeElementMemberedNode<T extends Constructor<TypeElemen
 
 export interface TypeElementMemberedNode {
     /**
+     * Adds a member.
+     * @param member - Member to add.
+     */
+    addMember(member: string | WriterFunction | TypeElementMemberStructures): TypeElementTypes | CommentTypeElement;
+    /**
+     * Adds members.
+     * @param members - Collection of members to add.
+     */
+    addMembers(members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[];
+    /**
+     * Inserts a member.
+     * @param index - Child index to insert at.
+     * @param member - Member to insert.
+     */
+    insertMember(index: number, member: string | WriterFunction | TypeElementMemberStructures): TypeElementTypes | CommentTypeElement;
+    /**
+     * Inserts members.
+     * @param index - Child index to insert at.
+     * @param members - Collection of members to insert.
+     */
+    insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[];
+    /**
      * Add construct signature.
      * @param structure - Structure representing the construct signature.
      */
@@ -10447,7 +10469,8 @@ export declare abstract class SettingsContainer<T extends object> {
 
 export declare type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | NamespaceDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
 export declare type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure | PropertyDeclarationStructure;
-export declare type InterfaceMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
+export declare type TypeElementMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
+export declare type InterfaceMemberStructures = TypeElementMemberStructures;
 export declare type ObjectLiteralElementMemberStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure;
 export declare type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure | JsxElementStructure | JsxSelfClosingElementStructure;
 export declare type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures | ObjectLiteralElementMemberStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | DecoratorStructure;

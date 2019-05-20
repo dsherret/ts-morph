@@ -5,3 +5,4 @@ export * from "./InterfaceDeclarationStructurePrinter";
 export * from "./MethodSignatureStructurePrinter";
 export * from "./PropertySignatureStructurePrinter";
 export * from "./TypeElementMemberedNodeStructurePrinter";
+export * from "./TypeElementMemberStructurePrinter";
