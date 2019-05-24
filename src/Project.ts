@@ -62,10 +62,10 @@ export class Project {
         const compilerOptions = getCompilerOptions();
 
         // init compiler host overrides
-        const compilerHostOverrides = options.compilerHostFactoty ? options.compilerHostFactoty(fileSystem) : {};
+        const compilerHost = options.compilerHostFactoty ? options.compilerHostFactoty(fileSystem) : {};
 
         // setup context
-        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true, compilerHostOverrides });
+        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true, compilerHost });
 
         // initialize manipulation settings
         if (options.manipulationSettings != null)

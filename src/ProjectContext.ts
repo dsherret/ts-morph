@@ -14,7 +14,7 @@ import { createWrappedNode } from "./utils/compiler/createWrappedNode";
  */
 export interface ProjectContextOptions {
     createLanguageService: boolean;
-    compilerHost: CompilerHostOverrides;
+    compilerHost?: CompilerHostOverrides;
     typeChecker?: ts.TypeChecker;
 }
 
@@ -43,7 +43,7 @@ export class ProjectContext {
     readonly compilerFactory: CompilerFactory;
     readonly inProjectCoordinator: InProjectCoordinator;
 
-    constructor(project: Project | undefined, fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, { compilerHost, ...opts}: ProjectContextOptions) {
+    constructor(project: Project | undefined, fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, { compilerHost = {}, ...opts}: ProjectContextOptions) {
         this._project = project;
         this.fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions.set(compilerOptions);
