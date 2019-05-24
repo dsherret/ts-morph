@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
-import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
+import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker, CompilerHostFactory } from "./compiler";
 import * as errors from "./errors";
 import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { ProjectContext } from "./ProjectContext";
@@ -27,6 +27,8 @@ export interface ProjectOptions {
      * @remarks Consider using `useVirtualFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
+    /** Custom overrides for Compiler Host that don't overlap with sys default */
+    compilerHostFactoty?: CompilerHostFactory;
 }
 
 export interface SourceFileCreateOptions {

@@ -11,6 +11,18 @@ import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction,
     CombinedCodeActions } from "./results";
 
+export interface CompilerHostOverrides {
+    resolveModuleNames?(moduleNames: string[], containingFile: string, reusedNames?: string[], ref?: ts.ResolvedProjectReference): (ts.ResolvedModule | undefined)[];
+    getResolvedModuleWithFailedLookupLocationsFromCache?(modulename: string, containingFile: string): ts.ResolvedModuleWithFailedLookupLocations | undefined;
+    resolveTypeReferenceDirectives?(typeDirectiveNames: string[], containingFile: string, ref?: ts.ResolvedProjectReference): (ts.ResolvedTypeReferenceDirective | undefined)[];
+}
+
+export type CompilerHostFactory = (languageService: ts.LanguageServiceHost) => CompilerHostOverrides;
+
+export interface LanguageServiceOptions {
+    compilerHostFactory?: CompilerHostFactory;
+}
+
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
     private readonly _compilerHost: ts.CompilerHost;
@@ -26,7 +38,7 @@ export class LanguageService {
     }
 
     /** @private */
-    constructor(context: ProjectContext) {
+    constructor(context: ProjectContext, { compilerHostFactory }: LanguageServiceOptions) {
         this._context = context;
 
         let version = 0;
@@ -63,6 +75,7 @@ export class LanguageService {
             directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName) || this._context.fileSystemWrapper.directoryExistsSync(dirName)
         };
 
+        const compilerHostOverrides = compilerHostFactory ? compilerHostFactory(languageServiceHost) : {};
         this._compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
                 const sourceFile = this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, { markInProject: false });
@@ -82,7 +95,11 @@ export class LanguageService {
             useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
             getNewLine: () => languageServiceHost.getNewLine!(),
             getEnvironmentVariable: (name: string) => process.env[name],
-            directoryExists: dirName => languageServiceHost.directoryExists!(dirName)
+            directoryExists: dirName => languageServiceHost.directoryExists!(dirName),
+
+            // Apply implementations safely to avoid overrides for predefined
+            resolveModuleNames: compilerHostOverrides.resolveModuleNames,
+            resolveTypeReferenceDirectives: compilerHostOverrides.resolveTypeReferenceDirectives
         };
 
         this._compilerObject = ts.createLanguageService(languageServiceHost, this._context.compilerFactory.documentRegistry);
