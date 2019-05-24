@@ -14,7 +14,7 @@ import { createWrappedNode } from "./utils/compiler/createWrappedNode";
  */
 export interface ProjectContextOptions {
     createLanguageService: boolean;
-    compilerHostOverrides: CompilerHostOverrides;
+    compilerHost: CompilerHostOverrides;
     typeChecker?: ts.TypeChecker;
 }
 
@@ -43,7 +43,7 @@ export class ProjectContext {
     readonly compilerFactory: CompilerFactory;
     readonly inProjectCoordinator: InProjectCoordinator;
 
-    constructor(project: Project | undefined, fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, { compilerHostOverrides, ...opts}: ProjectContextOptions) {
+    constructor(project: Project | undefined, fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, { compilerHost, ...opts}: ProjectContextOptions) {
         this._project = project;
         this.fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions.set(compilerOptions);
@@ -52,7 +52,7 @@ export class ProjectContext {
         this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
         this.lazyReferenceCoordinator = new LazyReferenceCoordinator(this.compilerFactory);
         this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, fileSystemWrapper);
-        this._languageService = opts.createLanguageService ? new LanguageService(this, { compilerHostOverrides }) : undefined;
+        this._languageService = opts.createLanguageService ? new LanguageService(this, { compilerHost }) : undefined;
 
         if (opts.typeChecker != null) {
             errors.throwIfTrue(opts.createLanguageService, "Cannot specify a type checker and create a language service.");

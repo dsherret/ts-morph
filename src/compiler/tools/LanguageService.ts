@@ -20,7 +20,7 @@ export interface CompilerHostOverrides {
 export type CompilerHostFactory = (languageService: FileSystemHost) => CompilerHostOverrides;
 
 export interface LanguageServiceOptions {
-    compilerHostOverrides: CompilerHostOverrides;
+    compilerHost: CompilerHostOverrides;
 }
 
 export class LanguageService {
@@ -38,7 +38,7 @@ export class LanguageService {
     }
 
     /** @private */
-    constructor(context: ProjectContext, { compilerHostOverrides }: LanguageServiceOptions) {
+    constructor(context: ProjectContext, { compilerHost }: LanguageServiceOptions) {
         this._context = context;
 
         let version = 0;
@@ -97,8 +97,8 @@ export class LanguageService {
             directoryExists: dirName => languageServiceHost.directoryExists!(dirName),
 
             // Apply implementations safely to avoid overrides for predefined
-            resolveModuleNames: compilerHostOverrides.resolveModuleNames,
-            resolveTypeReferenceDirectives: compilerHostOverrides.resolveTypeReferenceDirectives
+            resolveModuleNames: compilerHost.resolveModuleNames,
+            resolveTypeReferenceDirectives: compilerHost.resolveTypeReferenceDirectives
         };
 
         this._compilerObject = ts.createLanguageService(languageServiceHost, this._context.compilerFactory.documentRegistry);
