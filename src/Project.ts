@@ -61,8 +61,11 @@ export class Project {
         const tsConfigResolver = options.tsConfigFilePath == null ? undefined : new TsConfigResolver(fileSystemWrapper, options.tsConfigFilePath, getEncoding());
         const compilerOptions = getCompilerOptions();
 
+        // init compiler host overrides
+        const compilerHostOverrides = options.compilerHostFactoty ? options.compilerHostFactoty(fileSystem) : {};
+
         // setup context
-        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true });
+        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true, compilerHostOverrides });
 
         // initialize manipulation settings
         if (options.manipulationSettings != null)

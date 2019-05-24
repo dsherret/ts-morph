@@ -1,5 +1,5 @@
 import * as errors from "../../errors";
-import { DefaultFileSystemHost } from "../../fileSystem";
+import { DefaultFileSystemHost, FileSystemHost } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
 import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
@@ -17,10 +17,10 @@ export interface CompilerHostOverrides {
     resolveTypeReferenceDirectives?(typeDirectiveNames: string[], containingFile: string, ref?: ts.ResolvedProjectReference): (ts.ResolvedTypeReferenceDirective | undefined)[];
 }
 
-export type CompilerHostFactory = (languageService: ts.LanguageServiceHost) => CompilerHostOverrides;
+export type CompilerHostFactory = (languageService: FileSystemHost) => CompilerHostOverrides;
 
 export interface LanguageServiceOptions {
-    compilerHostFactory?: CompilerHostFactory;
+    compilerHostOverrides: CompilerHostOverrides;
 }
 
 export class LanguageService {
@@ -38,7 +38,7 @@ export class LanguageService {
     }
 
     /** @private */
-    constructor(context: ProjectContext, { compilerHostFactory }: LanguageServiceOptions) {
+    constructor(context: ProjectContext, { compilerHostOverrides }: LanguageServiceOptions) {
         this._context = context;
 
         let version = 0;
@@ -75,7 +75,6 @@ export class LanguageService {
             directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName) || this._context.fileSystemWrapper.directoryExistsSync(dirName)
         };
 
-        const compilerHostOverrides = compilerHostFactory ? compilerHostFactory(languageServiceHost) : {};
         this._compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
                 const sourceFile = this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, { markInProject: false });
