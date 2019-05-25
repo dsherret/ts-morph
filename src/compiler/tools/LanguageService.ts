@@ -1,5 +1,5 @@
 import * as errors from "../../errors";
-import { DefaultFileSystemHost } from "../../fileSystem";
+import { DefaultFileSystemHost, FileSystemHost } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
 import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
@@ -10,6 +10,19 @@ import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction,
     CombinedCodeActions } from "./results";
+
+export interface ResolutionHostOverrides {
+    resolveModuleNames?(moduleNames: string[], containingFile: string, reusedNames?: string[], ref?: ts.ResolvedProjectReference): (ts.ResolvedModule | undefined)[];
+    getResolvedModuleWithFailedLookupLocationsFromCache?(modulename: string, containingFile: string): ts.ResolvedModuleWithFailedLookupLocations | undefined;
+    resolveTypeReferenceDirectives?(typeDirectiveNames: string[], containingFile: string, ref?: ts.ResolvedProjectReference): (ts.ResolvedTypeReferenceDirective | undefined)[];
+}
+
+export type ResolutionHostFactory = (fileSystem: FileSystemHost) => ResolutionHostOverrides;
+
+ /** @internal */
+export interface LanguageServiceOptions {
+    resolutionHost?: ResolutionHostOverrides;
+}
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -26,7 +39,7 @@ export class LanguageService {
     }
 
     /** @private */
-    constructor(context: ProjectContext) {
+    constructor(context: ProjectContext, { resolutionHost = {} }: LanguageServiceOptions) {
         this._context = context;
 
         let version = 0;
@@ -60,7 +73,12 @@ export class LanguageService {
                 return this._context.fileSystemWrapper.readFileSync(path, encoding);
             },
             fileExists: fileExistsSync,
-            directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName) || this._context.fileSystemWrapper.directoryExistsSync(dirName)
+            directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName) || this._context.fileSystemWrapper.directoryExistsSync(dirName),
+
+            // Apply implementations safely to avoid overrides for predefined methods
+            resolveModuleNames: resolutionHost.resolveModuleNames,
+            resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives,
+            getResolvedModuleWithFailedLookupLocationsFromCache: resolutionHost.getResolvedModuleWithFailedLookupLocationsFromCache
         };
 
         this._compilerHost = {
@@ -82,7 +100,11 @@ export class LanguageService {
             useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
             getNewLine: () => languageServiceHost.getNewLine!(),
             getEnvironmentVariable: (name: string) => process.env[name],
-            directoryExists: dirName => languageServiceHost.directoryExists!(dirName)
+            directoryExists: dirName => languageServiceHost.directoryExists!(dirName),
+
+            // Apply implementations safely to avoid overrides for predefined methods
+            resolveModuleNames: resolutionHost.resolveModuleNames,
+            resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives
         };
 
         this._compilerObject = ts.createLanguageService(languageServiceHost, this._context.compilerFactory.documentRegistry);

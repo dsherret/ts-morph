@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
-import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
+import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker, ResolutionHostFactory } from "./compiler";
 import * as errors from "./errors";
 import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { ProjectContext } from "./ProjectContext";
@@ -27,6 +27,8 @@ export interface ProjectOptions {
      * @remarks Consider using `useVirtualFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
+    /** Custom overrides for Compiler Host that don't overlap with sys default */
+    resolutionHost?: ResolutionHostFactory;
 }
 
 export interface SourceFileCreateOptions {
@@ -59,8 +61,11 @@ export class Project {
         const tsConfigResolver = options.tsConfigFilePath == null ? undefined : new TsConfigResolver(fileSystemWrapper, options.tsConfigFilePath, getEncoding());
         const compilerOptions = getCompilerOptions();
 
+        // init compiler host overrides
+        const resolutionHost = options.resolutionHost ? options.resolutionHost(fileSystem) : {};
+
         // setup context
-        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true });
+        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true, resolutionHost });
 
         // initialize manipulation settings
         if (options.manipulationSettings != null)

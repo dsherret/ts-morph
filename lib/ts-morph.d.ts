@@ -361,6 +361,10 @@ export interface ProjectOptions {
      * @remarks Consider using `useVirtualFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
+    /**
+     * Custom overrides for Compiler Host that don't overlap with sys default
+     */
+    resolutionHost?: ResolutionHostFactory;
 }
 
 /**
@@ -3418,7 +3422,7 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
      *
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNode(): NumericLiteral | StringLiteral | Identifier | ComputedPropertyName | undefined;
+    getPropertyNameNode(): Identifier | NumericLiteral | StringLiteral | ComputedPropertyName | undefined;
 }
 
 export declare class ObjectBindingPattern extends Node<ts.ObjectBindingPattern> {
@@ -6457,7 +6461,7 @@ export declare class JsxText extends JsxTextBase<ts.JsxText> {
     /**
      * Gets if the JSX text contains only white spaces.
      */
-    containsOnlyTriviaWhiteSpaces(): boolean;
+    containsOnlyTriviaWhiteSpaces(): any;
 }
 
 export interface ImplementedKindToNodeMappings {
@@ -8918,7 +8922,7 @@ export declare class Signature {
     /**
      * Gets the signature's declaration.
      */
-    getDeclaration(): MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | ArrowFunction | FunctionDeclaration | JSDocFunctionType;
+    getDeclaration(): ArrowFunction | MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | FunctionDeclaration | JSDocFunctionType;
 }
 
 export declare class Symbol {
@@ -9050,6 +9054,14 @@ export interface RenameOptions {
  */
 export interface UserPreferences extends ts.UserPreferences {
 }
+
+export interface ResolutionHostOverrides {
+    resolveModuleNames?(moduleNames: string[], containingFile: string, reusedNames?: string[], ref?: ts.ResolvedProjectReference): (ts.ResolvedModule | undefined)[];
+    getResolvedModuleWithFailedLookupLocationsFromCache?(modulename: string, containingFile: string): ts.ResolvedModuleWithFailedLookupLocations | undefined;
+    resolveTypeReferenceDirectives?(typeDirectiveNames: string[], containingFile: string, ref?: ts.ResolvedProjectReference): (ts.ResolvedTypeReferenceDirective | undefined)[];
+}
+
+export declare type ResolutionHostFactory = (fileSystem: FileSystemHost) => ResolutionHostOverrides;
 
 export declare class LanguageService {
     private readonly _compilerObject;
