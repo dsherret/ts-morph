@@ -3,7 +3,7 @@ import { DefaultFileSystemHost, FileSystemHost } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
 import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
-import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
+import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils } from "../../utils";
 import { Node, TextRange } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
@@ -11,17 +11,19 @@ import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction,
     CombinedCodeActions } from "./results";
 
-export interface ResolutionHostOverrides {
-    resolveModuleNames?(moduleNames: string[], containingFile: string, reusedNames?: string[], ref?: ts.ResolvedProjectReference): (ts.ResolvedModule | undefined)[];
-    getResolvedModuleWithFailedLookupLocationsFromCache?(modulename: string, containingFile: string): ts.ResolvedModuleWithFailedLookupLocations | undefined;
-    resolveTypeReferenceDirectives?(typeDirectiveNames: string[], containingFile: string, ref?: ts.ResolvedProjectReference): (ts.ResolvedTypeReferenceDirective | undefined)[];
+/** Host for implementing custom module and/or type reference directive resolution. */
+export interface ResolutionHost {
+    resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
+    getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
+    resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
 }
 
-export type ResolutionHostFactory = (fileSystem: FileSystemHost) => ResolutionHostOverrides;
+/** Factory used to create a resolution host. */
+export type ResolutionHostFactory = (fileSystem: FileSystemHost) => ResolutionHost;
 
  /** @internal */
 export interface LanguageServiceOptions {
-    resolutionHost?: ResolutionHostOverrides;
+    resolutionHost?: ResolutionHost;
 }
 
 export class LanguageService {
@@ -39,7 +41,8 @@ export class LanguageService {
     }
 
     /** @private */
-    constructor(context: ProjectContext, { resolutionHost = {} }: LanguageServiceOptions) {
+    constructor(context: ProjectContext, opts: LanguageServiceOptions) {
+        const { resolutionHost = {} } = opts;
         this._context = context;
 
         let version = 0;
@@ -74,8 +77,6 @@ export class LanguageService {
             },
             fileExists: fileExistsSync,
             directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName) || this._context.fileSystemWrapper.directoryExistsSync(dirName),
-
-            // Apply implementations safely to avoid overrides for predefined methods
             resolveModuleNames: resolutionHost.resolveModuleNames,
             resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives,
             getResolvedModuleWithFailedLookupLocationsFromCache: resolutionHost.getResolvedModuleWithFailedLookupLocationsFromCache
@@ -83,6 +84,7 @@ export class LanguageService {
 
         this._compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
+                // todo: use languageVersion here?
                 const sourceFile = this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, { markInProject: false });
                 return sourceFile == null ? undefined : sourceFile.compilerNode;
             },
@@ -101,8 +103,6 @@ export class LanguageService {
             getNewLine: () => languageServiceHost.getNewLine!(),
             getEnvironmentVariable: (name: string) => process.env[name],
             directoryExists: dirName => languageServiceHost.directoryExists!(dirName),
-
-            // Apply implementations safely to avoid overrides for predefined methods
             resolveModuleNames: resolutionHost.resolveModuleNames,
             resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives
         };

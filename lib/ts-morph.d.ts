@@ -331,6 +331,9 @@ export interface FileSystemHost {
     glob(patterns: ReadonlyArray<string>): string[];
 }
 
+/**
+ * Options for creating a project.
+ */
 export interface ProjectOptions {
     /**
      * Compiler options
@@ -362,7 +365,7 @@ export interface ProjectOptions {
      */
     fileSystem?: FileSystemHost;
     /**
-     * Custom overrides for Compiler Host that don't overlap with sys default
+     * Creates a resolution host for specifying custom module and/or type reference directive resolution.
      */
     resolutionHost?: ResolutionHostFactory;
 }
@@ -612,7 +615,14 @@ export declare class Project {
         }): string;
 }
 
+/**
+ * Options for creating a source file.
+ */
 export interface SourceFileCreateOptions {
+    /**
+     * Whether a source file should be overwritten if it exists. Defaults to false.
+     * @remarks When false, the method will throw when a file exists.
+     */
     overwrite?: boolean;
 }
 
@@ -3422,7 +3432,7 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
      *
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNode(): Identifier | NumericLiteral | StringLiteral | ComputedPropertyName | undefined;
+    getPropertyNameNode(): NumericLiteral | StringLiteral | Identifier | ComputedPropertyName | undefined;
 }
 
 export declare class ObjectBindingPattern extends Node<ts.ObjectBindingPattern> {
@@ -6461,7 +6471,7 @@ export declare class JsxText extends JsxTextBase<ts.JsxText> {
     /**
      * Gets if the JSX text contains only white spaces.
      */
-    containsOnlyTriviaWhiteSpaces(): any;
+    containsOnlyTriviaWhiteSpaces(): boolean;
 }
 
 export interface ImplementedKindToNodeMappings {
@@ -8922,7 +8932,7 @@ export declare class Signature {
     /**
      * Gets the signature's declaration.
      */
-    getDeclaration(): ArrowFunction | MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | FunctionDeclaration | JSDocFunctionType;
+    getDeclaration(): MethodSignature | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionExpression | ArrowFunction | FunctionDeclaration | JSDocFunctionType;
 }
 
 export declare class Symbol {
@@ -9055,13 +9065,19 @@ export interface RenameOptions {
 export interface UserPreferences extends ts.UserPreferences {
 }
 
-export interface ResolutionHostOverrides {
-    resolveModuleNames?(moduleNames: string[], containingFile: string, reusedNames?: string[], ref?: ts.ResolvedProjectReference): (ts.ResolvedModule | undefined)[];
-    getResolvedModuleWithFailedLookupLocationsFromCache?(modulename: string, containingFile: string): ts.ResolvedModuleWithFailedLookupLocations | undefined;
-    resolveTypeReferenceDirectives?(typeDirectiveNames: string[], containingFile: string, ref?: ts.ResolvedProjectReference): (ts.ResolvedTypeReferenceDirective | undefined)[];
+/**
+ * Host for implementing custom module and/or type reference directive resolution.
+ */
+export interface ResolutionHost {
+    resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
+    getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
+    resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
 }
 
-export declare type ResolutionHostFactory = (fileSystem: FileSystemHost) => ResolutionHostOverrides;
+/**
+ * Factory used to create a resolution host.
+ */
+export declare type ResolutionHostFactory = (fileSystem: FileSystemHost) => ResolutionHost;
 
 export declare class LanguageService {
     private readonly _compilerObject;

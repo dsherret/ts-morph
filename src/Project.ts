@@ -9,6 +9,7 @@ import { WriterFunction } from "./types";
 import { ts, CompilerOptions } from "./typescript";
 import { IterableUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
 
+/** Options for creating a project. */
 export interface ProjectOptions {
     /** Compiler options */
     compilerOptions?: CompilerOptions;
@@ -27,11 +28,16 @@ export interface ProjectOptions {
      * @remarks Consider using `useVirtualFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
-    /** Custom overrides for Compiler Host that don't overlap with sys default */
+    /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
     resolutionHost?: ResolutionHostFactory;
 }
 
+/** Options for creating a source file. */
 export interface SourceFileCreateOptions {
+    /**
+     * Whether a source file should be overwritten if it exists. Defaults to false.
+     * @remarks When false, the method will throw when a file exists.
+     */
     overwrite?: boolean;
 }
 
@@ -61,8 +67,8 @@ export class Project {
         const tsConfigResolver = options.tsConfigFilePath == null ? undefined : new TsConfigResolver(fileSystemWrapper, options.tsConfigFilePath, getEncoding());
         const compilerOptions = getCompilerOptions();
 
-        // init compiler host overrides
-        const resolutionHost = options.resolutionHost ? options.resolutionHost(fileSystem) : {};
+        // initialize the compiler resolution host
+        const resolutionHost = options.resolutionHost ? options.resolutionHost(fileSystem) : undefined;
 
         // setup context
         this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true, resolutionHost });
