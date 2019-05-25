@@ -1488,14 +1488,14 @@ describe(nameof(Project), () => {
             expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
                 "/dir1",
                 "/dir2",
-                "/dir3",
+                "/dir3"
             ]);
         });
 
         it("should get the real path", () => {
             const { moduleResolutionHost, fileSystem } = setup();
-            fileSystem.realpathSync = path => path + "_RealPath";
-            expect(moduleResolutionHost.realpath!("test")).to.equal("/test_RealPath");
+            fileSystem.realpathSync = p => p + "_RealPath";
+            expect(moduleResolutionHost.realpath!("/test")).to.equal("/test_RealPath");
         });
 
         it("should not have a trace function", () => {
