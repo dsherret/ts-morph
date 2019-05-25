@@ -3954,9 +3954,13 @@ typedarray@^0.0.6:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.1.tgz#6de14e1db4b8a006ac535e482c8ba018c55f750b"
 
-"typescript-3.4.1@npm:typescript@3.4.1", "typescript@>=3.0.1 <3.5.0":
+"typescript-3.4.1@npm:typescript@3.4.1":
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.1.tgz#b6691be11a881ffa9a05765a205cb7383f3b63c6"
+
+"typescript@>=3.0.1 <3.6.0":
+  version "3.4.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.5.tgz#2d2618d10bb566572b8d7aad5180d84257d70a99"
 
 uglify-js@^3.1.4:
   version "3.4.9"
