@@ -21,7 +21,7 @@ export class FileUtils {
      * @param err - Error to check.
      */
     static isNotExistsError(err: any) {
-        return err.code === FileUtils.ENOENT;
+        return err != null && err.code === FileUtils.ENOENT;
     }
 
     /**
