@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { EOL } from "os";
 import * as path from "path";
-import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile, FileTextChanges } from "../compiler";
+import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile, Identifier } from "../compiler";
 import * as errors from "../errors";
 import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
@@ -70,6 +70,136 @@ describe(nameof(Project), () => {
             it("should skip dependency resolution when specified", () => {
                 const { project, initialFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
                 expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(initialFiles);
+            });
+        });
+
+        describe("custom module resolution", () => {
+            it("should throw if getting the compiler options not within a method", () => {
+                expect(() => new Project({
+                    useVirtualFileSystem: true,
+                    resolutionHost: (_, getCompilerOptions) => {
+                        getCompilerOptions(); // this isn't allowed here
+                        return {};
+                    }
+                })).to.throw(errors.InvalidOperationError);
+            });
+
+            it("should throw if using the module resolution host not within a method", () => {
+                expect(() => new Project({
+                    useVirtualFileSystem: true,
+                    resolutionHost: moduleResolutionHost => {
+                        moduleResolutionHost.fileExists("./test.ts"); // this isn't allowed here
+                        return {};
+                    }
+                })).to.throw(errors.InvalidOperationError);
+            });
+
+            function setup() {
+                // this is deno style module resolution
+                const project = new Project({
+                    useVirtualFileSystem: true,
+                    resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
+                        return {
+                            resolveModuleNames: (moduleNames, containingFile) => {
+                                const compilerOptions = getCompilerOptions();
+                                const resolvedModules: ts.ResolvedModule[] = [];
+
+                                for (const moduleName of moduleNames.map(removeTsExtension)) {
+                                    const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
+                                    if (result.resolvedModule)
+                                        resolvedModules.push(result.resolvedModule);
+                                }
+
+                                return resolvedModules;
+                            }
+                        };
+
+                        function removeTsExtension(moduleName: string) {
+                            if (moduleName.slice(-3).toLowerCase() === ".ts")
+                                return moduleName.slice(0, -3);
+                            return moduleName;
+                        }
+                    }
+                });
+
+                const testFile = project.createSourceFile("/Test.ts", "export class Test {}");
+                const mainFile = project.createSourceFile("/main.ts", `import { Test } from "./Test.ts";\n\nconst test = new Test();`);
+                return { testFile, mainFile };
+            }
+
+            it("should support when the file exists only in the project", () => {
+                const { mainFile } = setup();
+                const importDec = mainFile.getImportDeclarationOrThrow("./Test.ts");
+                const testFile = importDec.getModuleSpecifierSourceFile();
+                expect(testFile).to.not.be.undefined;
+            });
+
+            it("should support when the file exists only on disk", () => {
+                const { mainFile, testFile } = setup();
+                testFile.saveSync();
+                testFile.forget();
+                const importDec = mainFile.getImportDeclarationOrThrow("./Test.ts");
+                const newTestFile = importDec.getModuleSpecifierSourceFile();
+                expect(newTestFile).to.not.be.undefined;
+            });
+
+            it("should support when renaming with the language service", () => {
+                // this test indicates that the language service was passed the custom module resolution
+                const { mainFile, testFile } = setup();
+                testFile.getClassOrThrow("Test").rename("NewClass");
+                expect(mainFile.getFullText()).to.equal(`import { NewClass } from "./Test.ts";\n\nconst test = new NewClass();`);
+            });
+        });
+
+        describe("custom type reference directive resolution", () => {
+            function setup() {
+                const fileSystem = new VirtualFileSystemHost();
+                const testFilePath = "/other/test.d.ts";
+                fileSystem.writeFileSync("/dir/tsconfig.json", `{ "compilerOptions": { "target": "ES5" } }`);
+                fileSystem.writeFileSync("/dir/main.ts", `/// <reference types="../other/testasdf" />\n\nconst test = new Test();`);
+                fileSystem.writeFileSync(testFilePath, `declare class Test {}`);
+                fileSystem.getCurrentDirectory = () => "/dir";
+                const project = new Project({
+                    fileSystem,
+                    resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
+                        return {
+                            resolveTypeReferenceDirectives: (typeDirectiveNames: string[], containingFile: string) => {
+                                const compilerOptions = getCompilerOptions();
+                                const resolvedTypeReferenceDirectives: ts.ResolvedTypeReferenceDirective[] = [];
+
+                                for (const typeDirectiveName of typeDirectiveNames.map(replaceAsdfExtension)) {
+                                    const result = ts.resolveTypeReferenceDirective(typeDirectiveName, containingFile, compilerOptions, moduleResolutionHost);
+                                    if (result.resolvedTypeReferenceDirective)
+                                        resolvedTypeReferenceDirectives.push(result.resolvedTypeReferenceDirective);
+                                }
+
+                                return resolvedTypeReferenceDirectives;
+                            }
+                        };
+
+                        function replaceAsdfExtension(moduleName: string) {
+                            return moduleName.replace("asdf", "");
+                        }
+                    },
+                    tsConfigFilePath: "/dir/tsconfig.json"
+                });
+
+                const mainFile = project.getSourceFileOrThrow("main.ts");
+                const testIdentifier = mainFile.getFirstDescendantOrThrow(d => d.getText() === "Test") as Identifier;
+                return { project, mainFile, testFilePath, testIdentifier };
+            }
+
+            it("should support custom resolution", () => {
+                const { testIdentifier } = setup();
+                expect(testIdentifier.getDefinitionNodes().map(d => d.getText())).to.deep.equal(["declare class Test {}"]);
+            });
+
+            it("should support when renaming with the language service", () => {
+                // todo: this should be investigated in the future as this test doesn't fail when the custom type reference directive resolution
+                // is not provided to the language service.
+                const { testIdentifier } = setup();
+                testIdentifier.rename("NewClass");
+                expect(testIdentifier.getDefinitionNodes().map(d => d.getText())).to.deep.equal(["declare class NewClass {}"]);
             });
         });
     });
@@ -1276,6 +1406,105 @@ describe(nameof(Project), () => {
             const project = setup();
             const text = project.formatDiagnosticsWithColorAndContext(project.getPreEmitDiagnostics(), { newLineChar: "\r\n" });
             testForCarriageReturnLineFeed(text);
+        });
+    });
+
+    describe(nameof<Project>(p => p.getModuleResolutionHost), () => {
+        function setup() {
+            const project = new Project({ useVirtualFileSystem: true });
+            const moduleResolutionHost = project.getModuleResolutionHost();
+            return {
+                project,
+                fileSystem: project.getFileSystem(),
+                moduleResolutionHost
+            };
+        }
+
+        it("should get if a directory exists on the file system", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            fileSystem.mkdirSync("/dir");
+            expect(moduleResolutionHost.directoryExists!("/dir")).to.be.true;
+            expect(moduleResolutionHost.directoryExists!("/dir2")).to.be.false;
+        });
+
+        it("should get if a directory exists in the project", () => {
+            const { moduleResolutionHost, project } = setup();
+            project.createDirectory("/dir");
+            expect(moduleResolutionHost.directoryExists!("/dir")).to.be.true;
+        });
+
+        it("should get if a file exists on the file system", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            fileSystem.writeFileSync("/file.ts", "");
+            expect(moduleResolutionHost.fileExists!("/file.ts")).to.be.true;
+            expect(moduleResolutionHost.fileExists!("/file2.ts")).to.be.false;
+        });
+
+        it("should get if a file exists in the project", () => {
+            const { moduleResolutionHost, project } = setup();
+            project.createSourceFile("/file.ts", "");
+            expect(moduleResolutionHost.fileExists!("/file.ts")).to.be.true;
+        });
+
+        it("should read the contents of a file when it exists on the file system", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            const contents = "test";
+            fileSystem.writeFileSync("/file.ts", contents);
+            expect(moduleResolutionHost.readFile!("/file.ts")).to.equal(contents);
+        });
+
+        it("should read the contents of a file when it exists in the project", () => {
+            const { moduleResolutionHost, project } = setup();
+            const contents = "test";
+            project.createSourceFile("/file.ts", contents);
+            expect(moduleResolutionHost.readFile!("/file.ts")).to.equal(contents);
+        });
+
+        it("should return undefined when reading a file that doesn't exist", () => {
+            const { moduleResolutionHost } = setup();
+            expect(moduleResolutionHost.readFile!("/file.ts")).to.be.undefined;
+        });
+
+        it("should get the current directory", () => {
+            const { moduleResolutionHost } = setup();
+            expect(moduleResolutionHost.getCurrentDirectory!()).to.equal("/");
+        });
+
+        it("should read the directories in a folder on the file system", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            fileSystem.mkdirSync("/dir1");
+            fileSystem.mkdirSync("/dir2");
+            expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
+                "/dir1",
+                "/dir2"
+            ]);
+        });
+
+        it("should read the directories in a folder combining that with directores that exist in the project", () => {
+            const { moduleResolutionHost, fileSystem, project } = setup();
+            fileSystem.mkdirSync("/dir1");
+            project.createDirectory("/dir2").saveSync(); // exists on both file system and project
+            project.createDirectory("/dir3");
+            expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
+                "/dir1",
+                "/dir2",
+                "/dir3"
+            ]);
+        });
+
+        it("should get the real path", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            fileSystem.realpathSync = p => p + "_RealPath";
+            expect(moduleResolutionHost.realpath!("/test")).to.equal("/test_RealPath");
+        });
+
+        it("should not have a trace function", () => {
+            const { moduleResolutionHost } = setup();
+            // This hasn't been implemented and I'm not sure it will be.
+            // Looking at the compiler API code, it seems this writes to
+            // stdout. Probably best to let people implement this themselves
+            // if they want it.
+            expect(moduleResolutionHost.trace).to.be.undefined;
         });
     });
 });

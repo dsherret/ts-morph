@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
-import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
+import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker, ResolutionHostFactory } from "./compiler";
 import * as errors from "./errors";
 import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { ProjectContext } from "./ProjectContext";
@@ -7,12 +7,13 @@ import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsCon
 import { SourceFileStructure, OptionalKind } from "./structures";
 import { WriterFunction } from "./types";
 import { ts, CompilerOptions } from "./typescript";
-import { IterableUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
+import { IterableUtils, FileUtils, matchGlobs, TsConfigResolver, Memoize } from "./utils";
 
+/** Options for creating a project. */
 export interface ProjectOptions {
     /** Compiler options */
     compilerOptions?: CompilerOptions;
-    /** File path to the tsconfig.json file */
+    /** File path to the tsconfig.json file. */
     tsConfigFilePath?: string;
     /** Whether to add the source files from the specified tsconfig.json or not. Defaults to true. */
     addFilesFromTsConfig?: boolean;
@@ -27,9 +28,16 @@ export interface ProjectOptions {
      * @remarks Consider using `useVirtualFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
+    /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
+    resolutionHost?: ResolutionHostFactory;
 }
 
+/** Options for creating a source file. */
 export interface SourceFileCreateOptions {
+    /**
+     * Whether a source file should be overwritten if it exists. Defaults to false.
+     * @remarks When false, the method will throw when a file exists.
+     */
     overwrite?: boolean;
 }
 
@@ -59,8 +67,16 @@ export class Project {
         const tsConfigResolver = options.tsConfigFilePath == null ? undefined : new TsConfigResolver(fileSystemWrapper, options.tsConfigFilePath, getEncoding());
         const compilerOptions = getCompilerOptions();
 
+        // initialize the compiler resolution host
+        const resolutionHost = !options.resolutionHost ? undefined : options.resolutionHost(this.getModuleResolutionHost(), () => {
+            if (this._context == null)
+                throw new errors.InvalidOperationError("Cannot get the compiler options until the project has initialized. " +
+                    "Please ensure `getCompilerOptions` is called within the functions of the resolution host.");
+            return this._context.compilerOptions.get();
+        });
+
         // setup context
-        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true });
+        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true, resolutionHost });
 
         // initialize manipulation settings
         if (options.manipulationSettings != null)
@@ -576,6 +592,61 @@ export class Project {
             getCanonicalFileName: fileName => fileName,
             getNewLine: () => opts.newLineChar || require("os").EOL
         });
+    }
+
+    /**
+     * Gets a ts.ModuleResolutionHost for the project.
+     */
+    @Memoize
+    getModuleResolutionHost(): ts.ModuleResolutionHost {
+        // defer getting the context because this could be created in the constructor
+        const project = this;
+
+        return {
+            directoryExists: dirName => {
+                const context = getContext();
+                if (context.compilerFactory.containsDirectoryAtPath(dirName))
+                    return true;
+                return context.fileSystemWrapper.directoryExistsSync(dirName);
+            },
+            fileExists: fileName => {
+                const context = getContext();
+                if (context.compilerFactory.containsSourceFileAtPath(fileName))
+                    return true;
+                return context.fileSystemWrapper.fileExistsSync(fileName);
+            },
+            readFile: fileName => {
+                const context = getContext();
+                const sourceFile = context.compilerFactory.getSourceFileFromCacheFromFilePath(fileName);
+                if (sourceFile != null)
+                    return sourceFile.getFullText();
+
+                try {
+                    return context.fileSystemWrapper.readFileSync(fileName, project._context.getEncoding());
+                } catch (err) {
+                    // this is what the compiler api does
+                    if (FileUtils.isNotExistsError(err))
+                        return undefined;
+                    throw err;
+                }
+            },
+            getCurrentDirectory: () => getContext().fileSystemWrapper.getCurrentDirectory(),
+            getDirectories: path => {
+                const context = getContext();
+                const dirs = new Set<string>(context.fileSystemWrapper.readDirSync(path));
+                for (const dir of context.compilerFactory.getChildDirectoriesOfDirectory(path))
+                    dirs.add(dir.getPath());
+                return Array.from(dirs);
+            },
+            realpath: path => getContext().fileSystemWrapper.realpathSync(path)
+        };
+
+        function getContext() {
+            if (project._context == null)
+                throw new errors.InvalidOperationError("Cannot use the module resolution host until the project has finished initializing.");
+
+            return project._context;
+        }
     }
 }
 

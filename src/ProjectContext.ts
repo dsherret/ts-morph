@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
-import { LanguageService, QuoteKind, TypeChecker, SourceFile, Diagnostic } from "./compiler";
+import { LanguageService, QuoteKind, TypeChecker, SourceFile, Diagnostic, ResolutionHost } from "./compiler";
 import * as errors from "./errors";
 import { CompilerFactory, StructurePrinterFactory, InProjectCoordinator } from "./factories";
 import { DirectoryCoordinator, FileSystemWrapper } from "./fileSystem";
@@ -14,6 +14,7 @@ import { createWrappedNode } from "./utils/compiler/createWrappedNode";
  */
 export interface ProjectContextOptions {
     createLanguageService: boolean;
+    resolutionHost?: ResolutionHost;
     typeChecker?: ts.TypeChecker;
 }
 
@@ -51,7 +52,7 @@ export class ProjectContext {
         this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
         this.lazyReferenceCoordinator = new LazyReferenceCoordinator(this.compilerFactory);
         this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, fileSystemWrapper);
-        this._languageService = opts.createLanguageService ? new LanguageService(this) : undefined;
+        this._languageService = opts.createLanguageService ? new LanguageService(this, { resolutionHost: opts.resolutionHost }) : undefined;
 
         if (opts.typeChecker != null) {
             errors.throwIfTrue(opts.createLanguageService, "Cannot specify a type checker and create a language service.");

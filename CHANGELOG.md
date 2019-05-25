@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.2.0"></a>
+# [2.2.0](https://github.com/dsherret/ts-morph/compare/2.1.2...2.2.0) (2019-05-25)
+
+
+### Features
+
+* [#628](https://github.com/dsherret/ts-morph/issues/628) - Custom module and type reference directive resolution ([c38c77f](https://github.com/dsherret/ts-morph/commit/c38c77f)) - Thanks [@DanTsk](https://github.com/DanTsk)!
+* Add `Project#getModuleResolutionHost()` ([9085100](https://github.com/dsherret/ts-morph/commit/9085100))
+
+
+
 <a name="2.1.2"></a>
 ## [2.1.2](https://github.com/dsherret/ts-morph/compare/2.1.1...2.1.2) (2019-05-20)
 

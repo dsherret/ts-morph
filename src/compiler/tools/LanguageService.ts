@@ -3,13 +3,31 @@ import { DefaultFileSystemHost } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
 import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
-import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
+import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils } from "../../utils";
 import { Node, TextRange } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction,
     CombinedCodeActions } from "./results";
+
+/** Host for implementing custom module and/or type reference directive resolution. */
+export interface ResolutionHost {
+    resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
+    getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
+    resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
+}
+
+/**
+ * Factory used to create a resolution host.
+ * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
+ */
+export type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
+
+ /** @internal */
+export interface LanguageServiceOptions {
+    resolutionHost?: ResolutionHost;
+}
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -26,7 +44,8 @@ export class LanguageService {
     }
 
     /** @private */
-    constructor(context: ProjectContext) {
+    constructor(context: ProjectContext, opts: LanguageServiceOptions) {
+        const { resolutionHost = {} } = opts;
         this._context = context;
 
         let version = 0;
@@ -49,9 +68,9 @@ export class LanguageService {
             getCurrentDirectory: () => context.fileSystemWrapper.getCurrentDirectory(),
             getDefaultLibFileName: options => {
                 if (this._context.fileSystemWrapper.getFileSystem() instanceof DefaultFileSystemHost)
-                    return ts.getDefaultLibFilePath(context.compilerOptions.get());
+                    return ts.getDefaultLibFilePath(options);
                 else
-                    return FileUtils.pathJoin(context.fileSystemWrapper.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(context.compilerOptions.get()));
+                    return FileUtils.pathJoin(context.fileSystemWrapper.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(options));
             },
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
@@ -60,11 +79,15 @@ export class LanguageService {
                 return this._context.fileSystemWrapper.readFileSync(path, encoding);
             },
             fileExists: fileExistsSync,
-            directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName) || this._context.fileSystemWrapper.directoryExistsSync(dirName)
+            directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName) || this._context.fileSystemWrapper.directoryExistsSync(dirName),
+            resolveModuleNames: resolutionHost.resolveModuleNames,
+            resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives,
+            getResolvedModuleWithFailedLookupLocationsFromCache: resolutionHost.getResolvedModuleWithFailedLookupLocationsFromCache
         };
 
         this._compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
+                // todo: use languageVersion here?
                 const sourceFile = this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, { markInProject: false });
                 return sourceFile == null ? undefined : sourceFile.compilerNode;
             },
@@ -82,7 +105,9 @@ export class LanguageService {
             useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
             getNewLine: () => languageServiceHost.getNewLine!(),
             getEnvironmentVariable: (name: string) => process.env[name],
-            directoryExists: dirName => languageServiceHost.directoryExists!(dirName)
+            directoryExists: dirName => languageServiceHost.directoryExists!(dirName),
+            resolveModuleNames: resolutionHost.resolveModuleNames,
+            resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives
         };
 
         this._compilerObject = ts.createLanguageService(languageServiceHost, this._context.compilerFactory.documentRegistry);

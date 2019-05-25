@@ -44,3 +44,39 @@ const project = new Project({
     addFilesFromTsConfig: false
 });
 ```
+
+### Custom Module Resolution (Advanced)
+
+To support custom module resolution, provide a resolution host factory function. This also supports providing custom type reference directive resolution.
+
+For example:
+
+```ts
+import { Project, ts } from "ts-morph";
+
+// this is deno style module resolution (ex. `import { MyClass } from "./MyClass.ts"`)
+const project = new Project({
+    resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
+        return {
+            resolveModuleNames: (moduleNames, containingFile) => {
+                const compilerOptions = getCompilerOptions();
+                const resolvedModules: ts.ResolvedModule[] = [];
+
+                for (const moduleName of moduleNames.map(removeTsExtension)) {
+                    const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
+                    if (result.resolvedModule)
+                        resolvedModules.push(result.resolvedModule);
+                }
+
+                return resolvedModules;
+            }
+        };
+
+        function removeTsExtension(moduleName: string) {
+            if (moduleName.slice(-3).toLowerCase() === ".ts")
+                return moduleName.slice(0, -3);
+            return moduleName;
+        }
+    }
+});
+```
