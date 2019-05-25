@@ -613,6 +613,10 @@ export declare class Project {
     formatDiagnosticsWithColorAndContext(diagnostics: ReadonlyArray<Diagnostic>, opts?: {
             newLineChar?: "\n" | "\r\n";
         }): string;
+    /**
+     * Gets a ts.ModuleResolutionHost for the project.
+     */
+    getModuleResolutionHost(): ts.ModuleResolutionHost;
 }
 
 /**

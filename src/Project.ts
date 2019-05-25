@@ -7,7 +7,7 @@ import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsCon
 import { SourceFileStructure, OptionalKind } from "./structures";
 import { WriterFunction } from "./types";
 import { ts, CompilerOptions } from "./typescript";
-import { IterableUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
+import { IterableUtils, FileUtils, matchGlobs, TsConfigResolver, Memoize } from "./utils";
 
 /** Options for creating a project. */
 export interface ProjectOptions {
@@ -68,7 +68,7 @@ export class Project {
         const compilerOptions = getCompilerOptions();
 
         // initialize the compiler resolution host
-        const resolutionHost = !options.resolutionHost ? undefined : options.resolutionHost(getModuleResolutionHost(this), () => {
+        const resolutionHost = !options.resolutionHost ? undefined : options.resolutionHost(this.getModuleResolutionHost(), () => {
             if (this._context == null)
                 throw new errors.InvalidOperationError("Cannot get the compiler options until the project has initialized. " +
                     "Please ensure `getCompilerOptions` is called within the functions of the resolution host.");
@@ -108,53 +108,6 @@ export class Project {
             if (options.compilerOptions != null)
                 return options.compilerOptions.charset || defaultEncoding;
             return defaultEncoding;
-        }
-
-        function getModuleResolutionHost(project: Project): ts.ModuleResolutionHost {
-            return {
-                directoryExists: dirName => {
-                    const context = getContext();
-                    if (context.compilerFactory.containsDirectoryAtPath(dirName))
-                        return true;
-                    return fileSystemWrapper.directoryExistsSync(dirName);
-                },
-                fileExists: fileName => {
-                    const context = getContext();
-                    if (context.compilerFactory.containsSourceFileAtPath(fileName))
-                        return true;
-                    return fileSystemWrapper.fileExistsSync(fileName);
-                },
-                readFile: fileName => {
-                    const context = getContext();
-                    const sourceFile = context.compilerFactory.getSourceFileFromCacheFromFilePath(fileName);
-                    if (sourceFile != null)
-                        return sourceFile.getFullText();
-
-                    try {
-                        return fileSystemWrapper.readFileSync(fileName, project._context.getEncoding());
-                    } catch (err) {
-                        // this is what the compiler api does
-                        if (FileUtils.isNotExistsError(err))
-                            return undefined;
-                        throw err;
-                    }
-                },
-                getCurrentDirectory: () => fileSystemWrapper.getCurrentDirectory(),
-                getDirectories: path => {
-                    const dirs = new Set<string>(fileSystemWrapper.readDirSync(path));
-                    for (const dir of getContext().compilerFactory.getChildDirectoriesOfDirectory(path))
-                        dirs.add(dir.getPath());
-                    return Array.from(dirs);
-                },
-                realpath: path => fileSystemWrapper.realpathSync(path)
-            };
-
-            function getContext() {
-                if (project._context == null)
-                    throw new errors.InvalidOperationError("Cannot use the module resolution host until the project has finished initializing.");
-
-                return project._context;
-            }
         }
     }
 
@@ -639,6 +592,61 @@ export class Project {
             getCanonicalFileName: fileName => fileName,
             getNewLine: () => opts.newLineChar || require("os").EOL
         });
+    }
+
+    /**
+     * Gets a ts.ModuleResolutionHost for the project.
+     */
+    @Memoize
+    getModuleResolutionHost(): ts.ModuleResolutionHost {
+        // defer getting the context because this could be created in the constructor
+        const project = this;
+
+        return {
+            directoryExists: dirName => {
+                const context = getContext();
+                if (context.compilerFactory.containsDirectoryAtPath(dirName))
+                    return true;
+                return context.fileSystemWrapper.directoryExistsSync(dirName);
+            },
+            fileExists: fileName => {
+                const context = getContext();
+                if (context.compilerFactory.containsSourceFileAtPath(fileName))
+                    return true;
+                return context.fileSystemWrapper.fileExistsSync(fileName);
+            },
+            readFile: fileName => {
+                const context = getContext();
+                const sourceFile = context.compilerFactory.getSourceFileFromCacheFromFilePath(fileName);
+                if (sourceFile != null)
+                    return sourceFile.getFullText();
+
+                try {
+                    return context.fileSystemWrapper.readFileSync(fileName, project._context.getEncoding());
+                } catch (err) {
+                    // this is what the compiler api does
+                    if (FileUtils.isNotExistsError(err))
+                        return undefined;
+                    throw err;
+                }
+            },
+            getCurrentDirectory: () => getContext().fileSystemWrapper.getCurrentDirectory(),
+            getDirectories: path => {
+                const context = getContext();
+                const dirs = new Set<string>(context.fileSystemWrapper.readDirSync(path));
+                for (const dir of context.compilerFactory.getChildDirectoriesOfDirectory(path))
+                    dirs.add(dir.getPath());
+                return Array.from(dirs);
+            },
+            realpath: path => getContext().fileSystemWrapper.realpathSync(path)
+        };
+
+        function getContext() {
+            if (project._context == null)
+                throw new errors.InvalidOperationError("Cannot use the module resolution host until the project has finished initializing.");
+
+            return project._context;
+        }
     }
 }
 

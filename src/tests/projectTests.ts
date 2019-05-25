@@ -1408,6 +1408,105 @@ describe(nameof(Project), () => {
             testForCarriageReturnLineFeed(text);
         });
     });
+
+    describe(nameof<Project>(p => p.getModuleResolutionHost), () => {
+        function setup() {
+            const project = new Project({ useVirtualFileSystem: true });
+            const moduleResolutionHost = project.getModuleResolutionHost();
+            return {
+                project,
+                fileSystem: project.getFileSystem(),
+                moduleResolutionHost
+            };
+        }
+
+        it("should get if a directory exists on the file system", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            fileSystem.mkdirSync("/dir");
+            expect(moduleResolutionHost.directoryExists!("/dir")).to.be.true;
+            expect(moduleResolutionHost.directoryExists!("/dir2")).to.be.false;
+        });
+
+        it("should get if a directory exists in the project", () => {
+            const { moduleResolutionHost, project } = setup();
+            project.createDirectory("/dir");
+            expect(moduleResolutionHost.directoryExists!("/dir")).to.be.true;
+        });
+
+        it("should get if a file exists on the file system", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            fileSystem.writeFileSync("/file.ts", "");
+            expect(moduleResolutionHost.fileExists!("/file.ts")).to.be.true;
+            expect(moduleResolutionHost.fileExists!("/file2.ts")).to.be.false;
+        });
+
+        it("should get if a file exists in the project", () => {
+            const { moduleResolutionHost, project } = setup();
+            project.createSourceFile("/file.ts", "");
+            expect(moduleResolutionHost.fileExists!("/file.ts")).to.be.true;
+        });
+
+        it("should read the contents of a file when it exists on the file system", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            const contents = "test";
+            fileSystem.writeFileSync("/file.ts", contents);
+            expect(moduleResolutionHost.readFile!("/file.ts")).to.equal(contents);
+        });
+
+        it("should read the contents of a file when it exists in the project", () => {
+            const { moduleResolutionHost, project } = setup();
+            const contents = "test";
+            project.createSourceFile("/file.ts", contents);
+            expect(moduleResolutionHost.readFile!("/file.ts")).to.equal(contents);
+        });
+
+        it("should return undefined when reading a file that doesn't exist", () => {
+            const { moduleResolutionHost } = setup();
+            expect(moduleResolutionHost.readFile!("/file.ts")).to.be.undefined;
+        });
+
+        it("should get the current directory", () => {
+            const { moduleResolutionHost } = setup();
+            expect(moduleResolutionHost.getCurrentDirectory!()).to.equal("/");
+        });
+
+        it("should read the directories in a folder on the file system", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            fileSystem.mkdirSync("/dir1");
+            fileSystem.mkdirSync("/dir2");
+            expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
+                "/dir1",
+                "/dir2"
+            ]);
+        });
+
+        it("should read the directories in a folder combining that with directores that exist in the project", () => {
+            const { moduleResolutionHost, fileSystem, project } = setup();
+            fileSystem.mkdirSync("/dir1");
+            project.createDirectory("/dir2").saveSync(); // exists on both file system and project
+            project.createDirectory("/dir3");
+            expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
+                "/dir1",
+                "/dir2",
+                "/dir3",
+            ]);
+        });
+
+        it("should get the real path", () => {
+            const { moduleResolutionHost, fileSystem } = setup();
+            fileSystem.realpathSync = path => path + "_RealPath";
+            expect(moduleResolutionHost.realpath!("test")).to.equal("/test_RealPath");
+        });
+
+        it("should not have a trace function", () => {
+            const { moduleResolutionHost } = setup();
+            // This hasn't been implemented and I'm not sure it will be.
+            // Looking at the compiler API code, it seems this writes to
+            // stdout. Probably best to let people implement this themselves
+            // if they want it.
+            expect(moduleResolutionHost.trace).to.be.undefined;
+        });
+    });
 });
 
 function assertHasDirectories(project: Project, dirPaths: string[]) {
