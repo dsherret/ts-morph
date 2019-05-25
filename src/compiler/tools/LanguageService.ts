@@ -1,5 +1,5 @@
 import * as errors from "../../errors";
-import { DefaultFileSystemHost, FileSystemHost } from "../../fileSystem";
+import { DefaultFileSystemHost } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
 import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
@@ -18,8 +18,11 @@ export interface ResolutionHost {
     resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
 }
 
-/** Factory used to create a resolution host. */
-export type ResolutionHostFactory = (fileSystem: FileSystemHost) => ResolutionHost;
+/**
+ * Factory used to create a resolution host.
+ * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
+ */
+export type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 
  /** @internal */
 export interface LanguageServiceOptions {
@@ -65,9 +68,9 @@ export class LanguageService {
             getCurrentDirectory: () => context.fileSystemWrapper.getCurrentDirectory(),
             getDefaultLibFileName: options => {
                 if (this._context.fileSystemWrapper.getFileSystem() instanceof DefaultFileSystemHost)
-                    return ts.getDefaultLibFilePath(context.compilerOptions.get());
+                    return ts.getDefaultLibFilePath(options);
                 else
-                    return FileUtils.pathJoin(context.fileSystemWrapper.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(context.compilerOptions.get()));
+                    return FileUtils.pathJoin(context.fileSystemWrapper.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(options));
             },
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {

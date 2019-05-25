@@ -340,7 +340,7 @@ export interface ProjectOptions {
      */
     compilerOptions?: CompilerOptions;
     /**
-     * File path to the tsconfig.json file
+     * File path to the tsconfig.json file.
      */
     tsConfigFilePath?: string;
     /**
@@ -9076,8 +9076,9 @@ export interface ResolutionHost {
 
 /**
  * Factory used to create a resolution host.
+ * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
  */
-export declare type ResolutionHostFactory = (fileSystem: FileSystemHost) => ResolutionHost;
+export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 
 export declare class LanguageService {
     private readonly _compilerObject;

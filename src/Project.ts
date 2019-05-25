@@ -13,7 +13,7 @@ import { IterableUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils"
 export interface ProjectOptions {
     /** Compiler options */
     compilerOptions?: CompilerOptions;
-    /** File path to the tsconfig.json file */
+    /** File path to the tsconfig.json file. */
     tsConfigFilePath?: string;
     /** Whether to add the source files from the specified tsconfig.json or not. Defaults to true. */
     addFilesFromTsConfig?: boolean;
@@ -68,7 +68,12 @@ export class Project {
         const compilerOptions = getCompilerOptions();
 
         // initialize the compiler resolution host
-        const resolutionHost = options.resolutionHost ? options.resolutionHost(fileSystem) : undefined;
+        const resolutionHost = !options.resolutionHost ? undefined : options.resolutionHost(getModuleResolutionHost(this), () => {
+            if (this._context == null)
+                throw new errors.InvalidOperationError("Cannot get the compiler options until the project has initialized. " +
+                    "Please ensure `getCompilerOptions` is called within the functions of the resolution host.");
+            return this._context.compilerOptions.get();
+        });
 
         // setup context
         this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true, resolutionHost });
@@ -103,6 +108,53 @@ export class Project {
             if (options.compilerOptions != null)
                 return options.compilerOptions.charset || defaultEncoding;
             return defaultEncoding;
+        }
+
+        function getModuleResolutionHost(project: Project): ts.ModuleResolutionHost {
+            return {
+                directoryExists: dirName => {
+                    const context = getContext();
+                    if (context.compilerFactory.containsDirectoryAtPath(dirName))
+                        return true;
+                    return fileSystemWrapper.directoryExistsSync(dirName);
+                },
+                fileExists: fileName => {
+                    const context = getContext();
+                    if (context.compilerFactory.containsSourceFileAtPath(fileName))
+                        return true;
+                    return fileSystemWrapper.fileExistsSync(fileName);
+                },
+                readFile: fileName => {
+                    const context = getContext();
+                    const sourceFile = context.compilerFactory.getSourceFileFromCacheFromFilePath(fileName);
+                    if (sourceFile != null)
+                        return sourceFile.getFullText();
+
+                    try {
+                        return fileSystemWrapper.readFileSync(fileName, project._context.getEncoding());
+                    } catch (err) {
+                        // this is what the compiler api does
+                        if (FileUtils.isNotExistsError(err))
+                            return undefined;
+                        throw err;
+                    }
+                },
+                getCurrentDirectory: () => fileSystemWrapper.getCurrentDirectory(),
+                getDirectories: path => {
+                    const dirs = new Set<string>(fileSystemWrapper.readDirSync(path));
+                    for (const dir of getContext().compilerFactory.getChildDirectoriesOfDirectory(path))
+                        dirs.add(dir.getPath());
+                    return Array.from(dirs);
+                },
+                realpath: path => fileSystemWrapper.realpathSync(path)
+            };
+
+            function getContext() {
+                if (project._context == null)
+                    throw new errors.InvalidOperationError("Cannot use the module resolution host until the project has finished initializing.");
+
+                return project._context;
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { EOL } from "os";
 import * as path from "path";
-import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile, FileTextChanges } from "../compiler";
+import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile, Identifier } from "../compiler";
 import * as errors from "../errors";
 import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
@@ -70,6 +70,136 @@ describe(nameof(Project), () => {
             it("should skip dependency resolution when specified", () => {
                 const { project, initialFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
                 expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal(initialFiles);
+            });
+        });
+
+        describe("custom module resolution", () => {
+            it("should throw if getting the compiler options not within a method", () => {
+                expect(() => new Project({
+                    useVirtualFileSystem: true,
+                    resolutionHost: (_, getCompilerOptions) => {
+                        getCompilerOptions(); // this isn't allowed here
+                        return {};
+                    }
+                })).to.throw(errors.InvalidOperationError);
+            });
+
+            it("should throw if using the module resolution host not within a method", () => {
+                expect(() => new Project({
+                    useVirtualFileSystem: true,
+                    resolutionHost: moduleResolutionHost => {
+                        moduleResolutionHost.fileExists("./test.ts"); // this isn't allowed here
+                        return {};
+                    }
+                })).to.throw(errors.InvalidOperationError);
+            });
+
+            function setup() {
+                // this is deno style module resolution
+                const project = new Project({
+                    useVirtualFileSystem: true,
+                    resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
+                        return {
+                            resolveModuleNames: (moduleNames, containingFile) => {
+                                const compilerOptions = getCompilerOptions();
+                                const resolvedModules: ts.ResolvedModule[] = [];
+
+                                for (const moduleName of moduleNames.map(removeTsExtension)) {
+                                    const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
+                                    if (result.resolvedModule)
+                                        resolvedModules.push(result.resolvedModule);
+                                }
+
+                                return resolvedModules;
+                            }
+                        };
+
+                        function removeTsExtension(moduleName: string) {
+                            if (moduleName.slice(-3).toLowerCase() === ".ts")
+                                return moduleName.slice(0, -3);
+                            return moduleName;
+                        }
+                    }
+                });
+
+                const testFile = project.createSourceFile("/Test.ts", "export class Test {}");
+                const mainFile = project.createSourceFile("/main.ts", `import { Test } from "./Test.ts";\n\nconst test = new Test();`);
+                return { testFile, mainFile };
+            }
+
+            it("should support when the file exists only in the project", () => {
+                const { mainFile } = setup();
+                const importDec = mainFile.getImportDeclarationOrThrow("./Test.ts");
+                const testFile = importDec.getModuleSpecifierSourceFile();
+                expect(testFile).to.not.be.undefined;
+            });
+
+            it("should support when the file exists only on disk", () => {
+                const { mainFile, testFile } = setup();
+                testFile.saveSync();
+                testFile.forget();
+                const importDec = mainFile.getImportDeclarationOrThrow("./Test.ts");
+                const newTestFile = importDec.getModuleSpecifierSourceFile();
+                expect(newTestFile).to.not.be.undefined;
+            });
+
+            it("should support when renaming with the language service", () => {
+                // this test indicates that the language service was passed the custom module resolution
+                const { mainFile, testFile } = setup();
+                testFile.getClassOrThrow("Test").rename("NewClass");
+                expect(mainFile.getFullText()).to.equal(`import { NewClass } from "./Test.ts";\n\nconst test = new NewClass();`);
+            });
+        });
+
+        describe("custom type reference directive resolution", () => {
+            function setup() {
+                const fileSystem = new VirtualFileSystemHost();
+                const testFilePath = "/other/test.d.ts";
+                fileSystem.writeFileSync("/dir/tsconfig.json", `{ "compilerOptions": { "target": "ES5" } }`);
+                fileSystem.writeFileSync("/dir/main.ts", `/// <reference types="../other/testasdf" />\n\nconst test = new Test();`);
+                fileSystem.writeFileSync(testFilePath, `declare class Test {}`);
+                fileSystem.getCurrentDirectory = () => "/dir";
+                const project = new Project({
+                    fileSystem,
+                    resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
+                        return {
+                            resolveTypeReferenceDirectives: (typeDirectiveNames: string[], containingFile: string) => {
+                                const compilerOptions = getCompilerOptions();
+                                const resolvedTypeReferenceDirectives: ts.ResolvedTypeReferenceDirective[] = [];
+
+                                for (const typeDirectiveName of typeDirectiveNames.map(replaceAsdfExtension)) {
+                                    const result = ts.resolveTypeReferenceDirective(typeDirectiveName, containingFile, compilerOptions, moduleResolutionHost);
+                                    if (result.resolvedTypeReferenceDirective)
+                                        resolvedTypeReferenceDirectives.push(result.resolvedTypeReferenceDirective);
+                                }
+
+                                return resolvedTypeReferenceDirectives;
+                            }
+                        };
+
+                        function replaceAsdfExtension(moduleName: string) {
+                            return moduleName.replace("asdf", "");
+                        }
+                    },
+                    tsConfigFilePath: "/dir/tsconfig.json"
+                });
+
+                const mainFile = project.getSourceFileOrThrow("main.ts");
+                const testIdentifier = mainFile.getFirstDescendantOrThrow(d => d.getText() === "Test") as Identifier;
+                return { project, mainFile, testFilePath, testIdentifier };
+            }
+
+            it("should support custom resolution", () => {
+                const { testIdentifier } = setup();
+                expect(testIdentifier.getDefinitionNodes().map(d => d.getText())).to.deep.equal(["declare class Test {}"]);
+            });
+
+            it("should support when renaming with the language service", () => {
+                // todo: this should be investigated in the future as this test doesn't fail when the custom type reference directive resolution
+                // is not provided to the language service.
+                const { testIdentifier } = setup();
+                testIdentifier.rename("NewClass");
+                expect(testIdentifier.getDefinitionNodes().map(d => d.getText())).to.deep.equal(["declare class NewClass {}"]);
             });
         });
     });
