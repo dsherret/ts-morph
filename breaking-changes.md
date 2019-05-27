@@ -4,6 +4,14 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 
 ## Version 3
 
+### `Node#forEachChild` is now aligned with the compiler API
+
+Todo: This section.
+
+### `Node#forEachDescendant` is now aligned with `forEachChild`'s new behaviour
+
+Todo: This section.
+
 ### Renamed some `StructureTypeGuards` static methods
 
 `StructureTypeGuards` was added in version 2. This class unfortunately had some poorly named methods.

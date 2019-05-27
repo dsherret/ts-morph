@@ -782,12 +782,12 @@ export declare class TypeGuards {
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */
-    static isAbstractableNode<T extends Node>(node: T): node is AbstractableNode & T & AbstractableNodeExtensionType;
+    static isAbstractableNode<T extends Node>(node: T): node is AbstractableNode & AbstractableNodeExtensionType & T;
     /**
      * Gets if the node is an AmbientableNode.
      * @param node - Node to check.
      */
-    static isAmbientableNode<T extends Node>(node: T): node is AmbientableNode & T & AmbientableNodeExtensionType;
+    static isAmbientableNode<T extends Node>(node: T): node is AmbientableNode & AmbientableNodeExtensionType & T;
     /**
      * Gets if the node is an AnyKeyword.
      * @param node - Node to check.
@@ -797,7 +797,7 @@ export declare class TypeGuards {
      * Gets if the node is an ArgumentedNode.
      * @param node - Node to check.
      */
-    static isArgumentedNode<T extends Node>(node: T): node is ArgumentedNode & T & ArgumentedNodeExtensionType;
+    static isArgumentedNode<T extends Node>(node: T): node is ArgumentedNode & ArgumentedNodeExtensionType & T;
     /**
      * Gets if the node is an ArrayBindingPattern.
      * @param node - Node to check.
@@ -4477,21 +4477,21 @@ export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRan
     /**
      * Invokes the `cbNode` callback for each child and the `cbNodeArray` for every array of nodes stored in properties of the node.
      * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
-     *
-     * @remarks There exists a `traversal.stop()` function on the second parameter that allows stopping iteration.
+     * @returns The first truthy value returned by a callback.
      * @param cbNode - Callback invoked for each child.
      * @param cbNodeArray - Callback invoked for each array of nodes.
      */
-    forEachChild(cbNode: (node: Node, traversal: ForEachChildTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachChildTraversalControl) => void): Node<ts.Node> | undefined;
+    forEachChild<T>(cbNode: (node: Node) => T | undefined, cbNodeArray?: (nodes: Node[]) => T | undefined): T | undefined;
     /**
      * Invokes the `cbNode` callback for each descendant and the `cbNodeArray` for every array of nodes stored in properties of the node and descendant nodes.
      * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
      *
+     * @returns The first truthy value returned by a callback.
      * @remarks There exists a `traversal` object on the second parameter that allows various control of iteration.
      * @param cbNode - Callback invoked for each descendant.
      * @param cbNodeArray - Callback invoked for each array of nodes.
      */
-    forEachDescendant(cbNode: (node: Node, traversal: ForEachDescendantTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => void): Node<ts.Node> | undefined;
+    forEachDescendant<T>(cbNode: (node: Node, traversal: ForEachDescendantTraversalControl) => T | undefined, cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => T | undefined): T | undefined;
     /**
      * Gets the child nodes passed to the delegate of `node.forEachChild(child => {})` as an array.
      */
@@ -4925,15 +4925,11 @@ export interface TextRange {
     getEnd(): number;
 }
 
-export interface ForEachChildTraversalControl {
+export interface ForEachDescendantTraversalControl {
     /**
      * Stops traversal.
-     * @param node - Optional node to return.
      */
-    stop(node?: Node): void;
-}
-
-export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
+    stop(): void;
     /**
      * Skips traversal of the current node's descendants.
      */

@@ -69,15 +69,10 @@ export interface GetInfoFromTextOptions {
 /** @internal */
 export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: GetInfoFromTextOptions) {
     const info = getInfoFromTextInternal(text, opts);
-    let firstChild: Node;
-    info.sourceFile.forEachChild((child, traversal) => {
-        firstChild = child;
-        traversal.stop();
-    });
 
     return {
         ...info,
-        firstChild: firstChild! as TFirstChild
+        firstChild: info.sourceFile.forEachChild(child => child as TFirstChild)!
     };
 }
 

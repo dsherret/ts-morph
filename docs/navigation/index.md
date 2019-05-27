@@ -36,19 +36,10 @@ const allChildren = node.getChildren();
 node.forEachChild(node => {
     console.log(node.getText());
 });
-```
 
-#### Traversal Control
-
-One major difference between the `.forEachChild` method in ts-morph and the compiler API, is that returning a truthy value in the callback will not stop iteration. If you wish to stop iteration, then use the `stop` method on the second parameter:
-
-```ts
-node.forEachChild((node, traversal) => {
-    console.log(node.getText());
-
-    // stop iterating when the node is a class declaration
-    if (node.getKind() === SyntaxKind.ClassDeclaration)
-        traversal.stop();
+const classDec = node.forEachChild(node => {
+    if (TypeGuards.isClassDeclaration(node))
+        return node; // stops iterating over the children and returns this value
 });
 ```
 
@@ -75,11 +66,10 @@ for (const sourceFile of sourceFiles)
 
 #### Traversal Control
 
-Traversal can similarly be controlled with the second parameter as with `forEachChild`, but
-`forEachDescendant` offers a bit more control:
+Traversal can be controlled with the second parameter:
 
 ```ts
-node.forEachDescendant((node, traversal) => {
+const result = node.forEachDescendant((node, traversal) => {
     switch (node.getKind()) {
         case SyntaxKind.ClassDeclaration:
             // skips traversal of the current node's descendants
@@ -93,6 +83,9 @@ node.forEachDescendant((node, traversal) => {
             // stops traversal completely
             traversal.stop();
             break;
+        case SyntaxKind.InterfaceDeclaration:
+            // stops traversal completely and returns this value
+            return node;
     }
 });
 ```
