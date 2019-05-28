@@ -6,11 +6,33 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 
 ### `Node#forEachChild` is now aligned with the compiler API
 
-Todo: This section.
+The `Node#forEachChild` method now short circuits when a truthy value is returned from the callback. It will also return this value.
 
-### `Node#forEachDescendant` is now aligned with `forEachChild`'s new behaviour
+This allows for the following:
 
-Todo: This section.
+```ts
+const classDec = sourceFile.forEachChild(node => TypeGuards.isClassDeclaration(node) ? node : undefined);
+```
+
+Additionally, the second `control` parameter has been removed. So instead of writing this...
+
+```ts
+node.forEachChild((child, control) => {
+    if (child.kind === SyntaxKind.PropertyDeclaration)
+        child.stop();
+    doSomethingWithChild(child);
+});
+```
+
+...you can just return a truthy value to stop. This now aligns exactly with how the compiler api behaves.
+
+**BUG WARNING!** Previous code that returned a truthy value should be updated to not return one unless the functionality described above is desired.
+
+Read more in issue [#633](https://github.com/dsherret/ts-morph/issues/633).
+
+### `Node#forEachDescendant` is aligned with `forEachChild`'s new behaviour
+
+In addition to what is described in the previous section, the `forEachDescendant` method has also been updated to stop and return on truthy values returned in the callback.
 
 ### Renamed some `StructureTypeGuards` static methods
 
