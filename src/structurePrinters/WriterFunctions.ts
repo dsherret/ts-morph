@@ -1,8 +1,8 @@
 /* barrel:ignore */
 import { CodeBlockWriter } from "../codeBlockWriter";
 import * as errors from "../errors";
-import { TypeElementMemberedNodeStructure } from "../structures";
 import { StructurePrinterFactory } from "../factories/StructurePrinterFactory";
+import { TypeElementMemberedNodeStructure } from "../structures";
 import { WriterFunction } from "../types";
 
 export type WriterFunctionOrValue = string | number | WriterFunction;
@@ -74,6 +74,17 @@ export class WriterFunctions {
     /** Gets a writer function for writing an intersection type. */
     static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]) {
         return getWriteFunctionForUnionOrIntersectionType("&", [firstType, secondType, ...additionalTypes]);
+    }
+
+    /**
+     * Gets a writer function for writing a return statement returning the provided value.
+     * @param value - Value to be returned.
+     */
+    static returnStatement(value: WriterFunctionOrValue): WriterFunction {
+        return (writer: CodeBlockWriter) => {
+            writeSeparatedByString(writer, ' ', ['return', value]);
+            writer.write(';');
+        };
     }
 }
 

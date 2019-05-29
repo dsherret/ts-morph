@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunctions } from "../../structurePrinters/WriterFunctions";
 import { TypeElementMemberedNodeStructure } from "../../structures";
 import { WriterFunction } from "../../types";
-import { WriterFunctions } from "../../structurePrinters/WriterFunctions";
 
 describe(nameof<WriterFunctions>(), () => {
     function getWriter() {
@@ -126,6 +126,12 @@ describe(nameof<WriterFunctions>(), () => {
 
         it("should write when specifying more than two types", () => {
             doWriterTest((writer, { intersectionType }) => intersectionType("C", "A", w => w.write("5"), 7)(writer), "C & A & 5 & 7");
+        });
+    });
+
+    describe(nameof(WriterFunctions.returnStatement), () => {
+        it("should write when specifying some value", () => {
+            doWriterTest((writer, { returnStatement }) => returnStatement("A")(writer), "return A;");
         });
     });
 });
