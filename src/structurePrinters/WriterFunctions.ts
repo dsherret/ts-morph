@@ -1,8 +1,8 @@
 /* barrel:ignore */
 import { CodeBlockWriter } from "../codeBlockWriter";
 import * as errors from "../errors";
-import { StructurePrinterFactory } from "../factories/StructurePrinterFactory";
 import { TypeElementMemberedNodeStructure } from "../structures";
+import { StructurePrinterFactory } from "../factories/StructurePrinterFactory";
 import { WriterFunction } from "../types";
 
 export type WriterFunctionOrValue = string | number | WriterFunction;
