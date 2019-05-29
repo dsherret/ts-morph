@@ -128,4 +128,10 @@ describe(nameof<WriterFunctions>(), () => {
             doWriterTest((writer, { intersectionType }) => intersectionType("C", "A", w => w.write("5"), 7)(writer), "C & A & 5 & 7");
         });
     });
+
+    describe(nameof(WriterFunctions.returnStatement), () => {
+        it("should write when specifying some value", () => {
+            doWriterTest((writer, { returnStatement }) => returnStatement("A")(writer), "return A;");
+        });
+    });
 });
