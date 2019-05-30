@@ -382,7 +382,7 @@ export class LanguageService {
      * @param actionName - Refactor action name.
      * @param preferences - User preferences for refactoring.
      */
-    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings, positionOrRange: number | TextRange,
+    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings, positionOrRange: number | { getPos(): number; getEnd(): number; },
         refactorName: string, actionName: string, preferences: UserPreferences = {}): RefactorEditInfo | undefined
     {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);

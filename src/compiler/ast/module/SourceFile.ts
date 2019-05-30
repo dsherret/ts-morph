@@ -11,10 +11,10 @@ import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings
 import { ModuledNode, TextInsertableNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
-import { Node } from "../common";
+import { Node, TextRange } from "../common";
 import { StringLiteral } from "../literal";
 import { StatementedNode } from "../statement";
-import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
+import { FileReference, FileSystemRefreshResult } from "./results";
 
 export interface SourceFileCopyOptions {
     overwrite?: boolean;
@@ -49,6 +49,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     private readonly _preModifiedEventContainer = new EventContainer<SourceFile>();
     /** @internal */
     readonly _referenceContainer = new SourceFileReferenceContainer(this);
+    /** @internal */
+    private _referencedFiles: FileReference[] | undefined;
+    /** @internal */
+    private _libReferenceDirectives: FileReference[] | undefined;
+    /** @internal */
+    private _typeReferenceDirectives: FileReference[] | undefined;
 
     /** @internal */
     _hasBom: true | undefined;
@@ -85,6 +91,23 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         this._context.resetProgram(); // make sure the program has the latest source file
         this._isSaved = false;
         this._modifiedEventContainer.fire(this);
+    }
+
+    /** @internal */
+    protected _clearInternals() {
+        super._clearInternals();
+        clearTextRanges(this._referencedFiles);
+        clearTextRanges(this._typeReferenceDirectives);
+        clearTextRanges(this._libReferenceDirectives);
+        delete this._referencedFiles;
+        delete this._typeReferenceDirectives;
+        delete this._libReferenceDirectives;
+
+        function clearTextRanges(textRanges: ReadonlyArray<TextRange> | undefined) {
+            if (textRanges == null)
+                return;
+            textRanges.forEach(r => r._forget());
+        }
     }
 
     /**
@@ -445,23 +468,36 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets any source files referenced via `/// <reference path="..." />` comments.
+     * Gets any `/// <reference path="..." />` comments.
      */
     getReferencedFiles() {
-        const dirPath = this.getDirectoryPath();
-        return (this.compilerNode.referencedFiles || [])
-            .map(f => this._context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), { markInProject: false }))
-            .filter(f => f != null) as SourceFile[];
+        if (this._referencedFiles == null) {
+            this._referencedFiles = (this.compilerNode.referencedFiles || [])
+                .map(f => new FileReference(f, this));
+        }
+        return this._referencedFiles;
     }
 
     /**
-     * Gets any source files referenced via `/// <reference types="..." />` comments.
+     * Gets any `/// <reference types="..." />` comments.
      */
     getTypeReferenceDirectives() {
-        const dirPath = this.getDirectoryPath();
-        return (this.compilerNode.typeReferenceDirectives || [])
-            .map(f => this._context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), { markInProject: false }))
-            .filter(f => f != null) as SourceFile[];
+        if (this._typeReferenceDirectives == null) {
+            this._typeReferenceDirectives = (this.compilerNode.typeReferenceDirectives || [])
+                .map(f => new FileReference(f, this));
+        }
+        return this._typeReferenceDirectives;
+    }
+
+    /**
+     * Gets any `/// <reference lib="..." />` comments.
+     */
+    getLibReferenceDirectives() {
+        if (this._libReferenceDirectives == null) {
+            this._libReferenceDirectives = (this.compilerNode.libReferenceDirectives || [])
+                .map(f => new FileReference(f, this));
+        }
+        return this._libReferenceDirectives;
     }
 
     /**

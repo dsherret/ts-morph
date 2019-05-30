@@ -4132,43 +4132,12 @@ export declare class SetAccessorDeclaration extends SetAccessorDeclarationBase<t
     getStructure(): SetAccessorDeclarationStructure;
 }
 
-export declare class CommentRange {
-    /**
-     * Gets the underlying compiler object.
-     */
-    readonly compilerObject: ts.CommentRange;
-    private _throwIfForgotten;
+export declare class CommentRange extends TextRange<ts.CommentRange> {
     private constructor();
-    /**
-     * Gets the source file of the comment range.
-     */
-    getSourceFile(): SourceFile;
     /**
      * Gets the comment syntax kind.
      */
     getKind(): ts.CommentKind;
-    /**
-     * Gets the position.
-     */
-    getPos(): number;
-    /**
-     * Gets the end.
-     */
-    getEnd(): number;
-    /**
-     * Gets the width of the comment range.
-     */
-    getWidth(): number;
-    /**
-     * Gets the text of the comment range.
-     */
-    getText(): string;
-    /**
-     * Gets if the comment range was forgotten.
-     *
-     * This will be true after any manipulations have occured to the source file this comment range was generated from.
-     */
-    wasForgotten(): boolean;
 }
 
 export declare abstract class CompilerExtendedComment implements ts.Node {
@@ -4259,7 +4228,7 @@ export declare class Identifier extends IdentifierBase<ts.Identifier> {
 export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined : NodeType[KeyName];
 export declare type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
 
-export declare class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
+export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the underlying compiler node.
      */
@@ -4920,9 +4889,39 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
     insertChildText(index: number, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>): Node<ts.Node>[];
 }
 
-export interface TextRange {
+export declare class TextRange<TRange extends ts.TextRange = ts.TextRange> {
+    /**
+     * Gets the underlying compiler object.
+     */
+    readonly compilerObject: TRange;
+    private _throwIfForgotten;
+    protected constructor();
+    /**
+     * Gets the source file of the text range.
+     */
+    getSourceFile(): SourceFile;
+    /**
+     * Gets the position.
+     */
     getPos(): number;
+    /**
+     * Gets the end.
+     */
     getEnd(): number;
+    /**
+     * Gets the width of the text range.
+     */
+    getWidth(): number;
+    /**
+     * Gets the text of the text range.
+     */
+    getText(): string;
+    /**
+     * Gets if the text range was forgotten.
+     *
+     * This will be true after any manipulations have occured to the source file this text range was generated from.
+     */
+    wasForgotten(): boolean;
 }
 
 export interface ForEachDescendantTraversalControl {
@@ -7555,6 +7554,14 @@ export declare class NamespaceImport extends NamespaceImportBase<ts.NamespaceImp
     getNameNode(): Identifier;
 }
 
+export declare class FileReference extends TextRange<ts.FileReference> {
+    constructor(compilerObject: ts.FileReference, sourceFile: SourceFile);
+    /**
+     * Gets the referenced file name.
+     */
+    getFileName(): string;
+}
+
 export interface SourceFileCopyOptions {
     overwrite?: boolean;
 }
@@ -7703,13 +7710,17 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     saveSync(): void;
     /**
-     * Gets any source files referenced via `/// <reference path="..." />` comments.
+     * Gets any `/// <reference path="..." />` comments.
      */
-    getReferencedFiles(): SourceFile[];
+    getReferencedFiles(): FileReference[];
     /**
-     * Gets any source files referenced via `/// <reference types="..." />` comments.
+     * Gets any `/// <reference types="..." />` comments.
      */
-    getTypeReferenceDirectives(): SourceFile[];
+    getTypeReferenceDirectives(): FileReference[];
+    /**
+     * Gets any `/// <reference lib="..." />` comments.
+     */
+    getLibReferenceDirectives(): FileReference[];
     /**
      * Get any source files that reference this source file.
      */
@@ -9318,7 +9329,10 @@ export declare class LanguageService {
      * @param actionName - Refactor action name.
      * @param preferences - User preferences for refactoring.
      */
-    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings, positionOrRange: number | TextRange, refactorName: string, actionName: string, preferences?: UserPreferences): RefactorEditInfo | undefined;
+    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings, positionOrRange: number | {
+            getPos(): number;
+            getEnd(): number;
+        }, refactorName: string, actionName: string, preferences?: UserPreferences): RefactorEditInfo | undefined;
     /**
      * Gets file changes and actions to perform for the provided fixId.
      * @param filePathOrSourceFile - File path or source file to get the combined code fixes for.

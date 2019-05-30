@@ -17,8 +17,8 @@ import { KindToNodeMappings } from "../kindToNodeMappings";
 import { SourceFile } from "../module";
 import { Statement, StatementedNode } from "../statement";
 import { CommentRange } from "../comment/CommentRange";
-import { SyntaxList } from "./SyntaxList";
 import { TextRange } from "./TextRange";
+import { SyntaxList } from "./SyntaxList";
 import { ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
 
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
@@ -33,7 +33,7 @@ export type NodeParentType<NodeType extends ts.Node> =
     ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
     CompilerNodeToWrappedType<NodeType["parent"]>;
 
-export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
+export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     readonly _context: ProjectContext;
     /** @internal */
@@ -186,18 +186,18 @@ export class Node<NodeType extends ts.Node = ts.Node> implements TextRange {
     }
 
     /** @internal */
-    private _clearInternals() {
+    protected _clearInternals() {
         this._compilerNode = undefined;
         this._childStringRanges = undefined;
-        clearCommentRanges(this._leadingCommentRanges);
-        clearCommentRanges(this._trailingCommentRanges);
-        this._leadingCommentRanges = undefined;
-        this._trailingCommentRanges = undefined;
+        clearTextRanges(this._leadingCommentRanges);
+        clearTextRanges(this._trailingCommentRanges);
+        delete this._leadingCommentRanges;
+        delete this._trailingCommentRanges;
 
-        function clearCommentRanges(commentRanges: ReadonlyArray<CommentRange> | undefined) {
-            if (commentRanges == null)
+        function clearTextRanges(textRanges: ReadonlyArray<TextRange> | undefined) {
+            if (textRanges == null)
                 return;
-            commentRanges.forEach(r => r._forget());
+            textRanges.forEach(r => r._forget());
         }
     }
 

@@ -58,6 +58,10 @@ if (StructureTypeGuards.isExportable(structure))
 
 The `ObjectLiteralElementMemberStructures` alias is now called `ObjectLiteralExpressionPropertyStructures`. This is a more correct name as an object literal expression has "properties" rather than "members" in the compiler api.
 
+### `SourceFile#getTypeReferenceDirectives()` and `#getReferencedFiles()` better reflect the compiler API
+
+These methods used to return source files, but now they return objects similar to what the compiler API returns. There is some loss of functionality here because you will need to resolve the source file reference yourself (previously it wasn't working properly). Please open an issue if you need an easy way to resolve the source file.
+
 ## Version 2
 
 ### Removed default export

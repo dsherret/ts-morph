@@ -1342,22 +1342,50 @@ function myFunction(param: MyClass) {
     });
 
     describe(nameof<SourceFile>(s => s.getReferencedFiles), () => {
-        it("should get any files referenced via reference comments", () => {
-            const { sourceFile, project } = getInfoFromText("/// <reference path='file.d.ts' />");
-            project.getFileSystem().writeFileSync("file.d.ts", "");
+        it("should get when they exist", () => {
+            const { sourceFile } = getInfoFromText("/// <reference path='file.d.ts' />");
             const referencedFiles = sourceFile.getReferencedFiles();
-            expect(referencedFiles.map(f => f.getFilePath())).to.deep.equal(["/file.d.ts"]);
-            expect(referencedFiles[0]._isInProject()).to.be.false;
+            expect(referencedFiles.map(f => f.getFileName())).to.deep.equal(["file.d.ts"]);
+        });
+
+        it("should forget them after a manipulation", () => {
+            const { sourceFile } = getInfoFromText("/// <reference path='file.d.ts' />");
+            const referencedFiles = sourceFile.getReferencedFiles();
+            sourceFile.replaceWithText("");
+            expect(referencedFiles[0].wasForgotten()).to.be.true;
+            expect(sourceFile.getReferencedFiles().length).to.equal(0);
         });
     });
 
     describe(nameof<SourceFile>(s => s.getTypeReferenceDirectives), () => {
-        it("should get any files referenced via reference comments", () => {
-            const { sourceFile, project } = getInfoFromText("/// <reference types='file.d.ts' />");
-            project.getFileSystem().writeFileSync("file.d.ts", "");
+        it("should get when they exist", () => {
+            const { sourceFile } = getInfoFromText("/// <reference types='file.d.ts' />");
             const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
-            expect(typeReferenceDirectives.map(f => f.getFilePath())).to.deep.equal(["/file.d.ts"]);
-            expect(typeReferenceDirectives[0]._isInProject()).to.be.false;
+            expect(typeReferenceDirectives.map(f => f.getFileName())).to.deep.equal(["file.d.ts"]);
+        });
+
+        it("should forget them after a manipulation", () => {
+            const { sourceFile } = getInfoFromText("/// <reference types='es2017.string' />");
+            const directives = sourceFile.getTypeReferenceDirectives();
+            sourceFile.replaceWithText("");
+            expect(directives[0].wasForgotten()).to.be.true;
+            expect(sourceFile.getTypeReferenceDirectives().length).to.equal(0);
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.getLibReferenceDirectives), () => {
+        it("should get when they exist", () => {
+            const { sourceFile } = getInfoFromText("/// <reference lib='es2017.string' />");
+            const directives = sourceFile.getLibReferenceDirectives();
+            expect(directives.map(f => f.getFileName())).to.deep.equal(["es2017.string"]);
+        });
+
+        it("should forget them after a manipulation", () => {
+            const { sourceFile } = getInfoFromText("/// <reference lib='es2017.string' />");
+            const directives = sourceFile.getLibReferenceDirectives();
+            sourceFile.replaceWithText("");
+            expect(directives[0].wasForgotten()).to.be.true;
+            expect(sourceFile.getLibReferenceDirectives().length).to.equal(0);
         });
     });
 

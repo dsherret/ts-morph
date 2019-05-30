@@ -159,20 +159,17 @@ project.removeSourceFile(sourceFile); // returns: boolean (if was removed)
 
 Note: This does not delete the file from the file system. To do delete it, call `.delete()`.
 
-### Referenced files
+### Reference comments
 
-This returns any files that are referenced via `/// <reference path="..." />` comments:
+This returns any files that are referenced via :
 
 ```ts
+// gets `/// <reference path="..." />` comments
 const referencedFiles = sourceFile.getReferencedFiles();
-```
-
-### Type reference directives
-
-This returns any files that are referenced via `/// <reference types="..." />` comments:
-
-```ts
+// gets `/// <reference types="..." />` comments
 const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
+// gets `/// <reference lib="..." />` comments
+const libReferenceDirectives = sourceFile.getLibReferenceDirectives();
 ```
 
 ### Import Declarations
