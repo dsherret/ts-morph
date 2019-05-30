@@ -82,7 +82,8 @@ export class WriterFunctions {
      */
     static returnStatement(value: WriterFunctionOrValue): WriterFunction {
         return (writer: CodeBlockWriter) => {
-            writeSeparatedByString(writer, " ", ["return", value]);
+            writer.write("return ");
+            writeValue(writer, value);
             writer.write(";");
         };
     }

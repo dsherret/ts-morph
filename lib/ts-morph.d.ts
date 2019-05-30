@@ -1946,6 +1946,11 @@ export declare class WriterFunctions {
      * Gets a writer function for writing an intersection type.
      */
     static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
+    /**
+     * Gets a writer function for writing a return statement returning the provided value.
+     * @param value - Value to be returned.
+     */
+    static returnStatement(value: WriterFunctionOrValue): WriterFunction;
 }
 
 export declare type WriterFunctionOrValue = string | number | WriterFunction;
