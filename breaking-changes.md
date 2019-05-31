@@ -62,6 +62,10 @@ The `ObjectLiteralElementMemberStructures` alias is now called `ObjectLiteralExp
 
 These methods used to return source files, but now they return objects similar to what the compiler API returns. There is some loss of functionality here because you will need to resolve the source file reference yourself (previously it wasn't working properly). Please open an issue if you need an easy way to resolve the source file.
 
+### Removed `LanguageService#renameNode` and `#renameLocations`
+
+It wasn't consistent for the language service to have methods that manipulate nodes. These methods are very old from the beginning of the library, but it is better to use `identifier.rename("newName")`.
+
 ## Version 2
 
 ### Removed default export

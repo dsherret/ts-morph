@@ -133,42 +133,6 @@ export class LanguageService {
     }
 
     /**
-     * Rename the specified node.
-     * @param node - Node to rename.
-     * @param newName - New name for the node.
-     * @param options - Options for renaming the node.
-     */
-    renameNode(node: Node, newName: string, options: RenameOptions = {}) {
-        errors.throwIfWhitespaceOrNotString(newName, nameof(newName));
-
-        if (node.getText() === newName)
-            return;
-
-        this.renameLocations(this.findRenameLocations(node, options), newName);
-    }
-
-    /**
-     * Rename the provided rename locations.
-     * @param renameLocations - Rename locations.
-     * @param newName - New name for the node.
-     */
-    renameLocations(renameLocations: ReadonlyArray<RenameLocation>, newName: string) {
-        const renameLocationsBySourceFile = new KeyValueCache<SourceFile, RenameLocation[]>();
-        for (const renameLocation of renameLocations) {
-            const locations = renameLocationsBySourceFile.getOrCreate<RenameLocation[]>(renameLocation.getSourceFile(), () => []);
-            locations.push(renameLocation);
-        }
-
-        for (const [sourceFile, locations] of renameLocationsBySourceFile.getEntries()) {
-            replaceSourceFileTextForRename({
-                sourceFile,
-                renameLocations: locations,
-                newName
-            });
-        }
-    }
-
-    /**
      * Gets the definitions for the specified node.
      * @param node - Node.
      */

@@ -9198,19 +9198,6 @@ export declare class LanguageService {
      */
     getProgram(): Program;
     /**
-     * Rename the specified node.
-     * @param node - Node to rename.
-     * @param newName - New name for the node.
-     * @param options - Options for renaming the node.
-     */
-    renameNode(node: Node, newName: string, options?: RenameOptions): void;
-    /**
-     * Rename the provided rename locations.
-     * @param renameLocations - Rename locations.
-     * @param newName - New name for the node.
-     */
-    renameLocations(renameLocations: ReadonlyArray<RenameLocation>, newName: string): void;
-    /**
      * Gets the definitions for the specified node.
      * @param node - Node.
      */
