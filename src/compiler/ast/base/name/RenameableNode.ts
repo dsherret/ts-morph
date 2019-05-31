@@ -22,7 +22,7 @@ export function RenameableNode<T extends Constructor<RenameableNodeExtensionType
     return class extends Base implements RenameableNode {
         rename(newName: string, options?: RenameOptions) {
             const languageService = this._context.languageService;
-            renameNode(getNodeToRename(this), newName, options);
+            renameNode(getNodeToRename(this));
             return this;
 
             function getNodeToRename(thisNode: Node) {
@@ -39,17 +39,15 @@ export function RenameableNode<T extends Constructor<RenameableNodeExtensionType
                     throw new errors.NotImplementedError(`Not implemented renameable scenario for ${thisNode.getKindName()}`);
             }
 
-            function renameNode(node: Node, newName: string, options: RenameOptions = {}) {
+            function renameNode(node: Node) {
                 errors.throwIfWhitespaceOrNotString(newName, nameof(newName));
 
                 if (node.getText() === newName)
                     return;
 
-                renameLocations(languageService.findRenameLocations(node, options), newName);
-            }
-
-            function renameLocations(renameLocations: ReadonlyArray<RenameLocation>, newName: string) {
+                const renameLocations = languageService.findRenameLocations(node, options);
                 const renameLocationsBySourceFile = new KeyValueCache<SourceFile, RenameLocation[]>();
+
                 for (const renameLocation of renameLocations) {
                     const locations = renameLocationsBySourceFile.getOrCreate<RenameLocation[]>(renameLocation.getSourceFile(), () => []);
                     locations.push(renameLocation);
