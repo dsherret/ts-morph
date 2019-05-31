@@ -9858,6 +9858,14 @@ export declare class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
  * Rename location.
  */
 export declare class RenameLocation extends DocumentSpan<ts.RenameLocation> {
+    /**
+     * Gets the text to insert before the rename.
+     */
+    getPrefixText(): string | undefined;
+    /**
+     * Gets the text to insert after the rename.
+     */
+    getSuffixText(): string | undefined;
 }
 
 /**
