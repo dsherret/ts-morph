@@ -51,7 +51,7 @@ export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; r
 
     doManipulation(sourceFile,
         new RenameLocationTextManipulator(renameLocations, newName),
-        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForForgetChanged(sourceFile._context.compilerFactory)));
+        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForRename(sourceFile._context.compilerFactory)));
 }
 
 export interface ReplaceTextPossiblyCreatingChildNodesOptions {

@@ -78,7 +78,7 @@ export class DefaultParentHandler implements NodeHandler {
         const customMappings = this.customMappings(newParentNode);
 
         for (const mapping of customMappings)
-            mapping.currentNode._context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
+            this.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
     }
 
     private tryReplaceNode(currentCompilerNode: ts.Node) {

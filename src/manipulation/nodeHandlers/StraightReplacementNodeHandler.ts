@@ -10,9 +10,9 @@ import { NodeHandlerHelper } from "./NodeHandlerHelper";
  * Replacement handler for replacing parts of the tree that should be equal.
  */
 export class StraightReplacementNodeHandler implements NodeHandler {
-    private readonly helper: NodeHandlerHelper;
+    protected readonly helper: NodeHandlerHelper;
 
-    constructor(private readonly compilerFactory: CompilerFactory) {
+    constructor(protected readonly compilerFactory: CompilerFactory) {
         this.helper = new NodeHandlerHelper(compilerFactory);
     }
 

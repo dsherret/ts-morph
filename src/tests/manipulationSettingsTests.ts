@@ -34,7 +34,8 @@ describe(nameof(ManipulationSettingsContainer), () => {
             quoteKind: QuoteKind.Double,
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
-            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
+            usePrefixAndSuffixTextForRename: false
         });
     });
 
@@ -48,7 +49,8 @@ describe(nameof(ManipulationSettingsContainer), () => {
             quoteKind: QuoteKind.Single,
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
-            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
+            usePrefixAndSuffixTextForRename: false
         });
     });
 
@@ -58,14 +60,16 @@ describe(nameof(ManipulationSettingsContainer), () => {
             quoteKind: QuoteKind.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
-            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false,
+            usePrefixAndSuffixTextForRename: true
         });
 
         checkSettings(settings, {
             quoteKind: QuoteKind.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
-            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false,
+            usePrefixAndSuffixTextForRename: true
         });
     });
 
@@ -109,15 +113,21 @@ describe(nameof(ManipulationSettingsContainer), () => {
 
         it("should get the default preferences", () => {
             doTest(new ManipulationSettingsContainer().getUserPreferences(), {
-                quotePreference: "double"
+                quotePreference: "double",
+                providePrefixAndSuffixTextForRename: false
             });
         });
 
         it("should have a single preferences after changing it", () => {
             const container = new ManipulationSettingsContainer();
-            container.set({ quoteKind: QuoteKind.Single });
+            container.set({
+                quoteKind: QuoteKind.Single,
+                usePrefixAndSuffixTextForRename: true
+            });
+
             doTest(container.getUserPreferences(), {
-                quotePreference: "single"
+                quotePreference: "single",
+                providePrefixAndSuffixTextForRename: true
             });
         });
     });

@@ -9163,6 +9163,11 @@ export interface RenameOptions {
      * @remarks False by default.
      */
     renameInStrings?: boolean;
+    /**
+     * Whether to enable renaming shorthand property assignments, binding elements, and import & export specifiers without changing behaviour.
+     * @remarks Defaults to the `usePrefixAndSuffixTextForRename` manipulation setting.
+     */
+    usePrefixAndSuffixText?: boolean;
 }
 
 /**
@@ -10434,6 +10439,12 @@ export interface ManipulationSettings extends SupportedFormatCodeSettingsOnly {
      * Quote type used for string literals.
      */
     quoteKind: QuoteKind;
+    /**
+     * Whether to enable renaming shorthand property assignments, binding elements,
+     * and import & export specifiers without changing behaviour.
+     * @remarks Defaults to true.
+     */
+    usePrefixAndSuffixTextForRename: boolean;
 }
 
 /**
@@ -10450,6 +10461,7 @@ export interface SupportedFormatCodeSettingsOnly {
      * Whether to insert a space after opening and before closing non-empty braces.
      *
      * ex. `import { Item } from "./Item";` or `import {Item} from "./Item";`
+     * @remarks Defaults to true.
      */
     insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: boolean;
 }
@@ -10487,9 +10499,13 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
      */
     getNewLineKindAsString(): "\n" | "\r\n";
     /**
-     * Gets the indentation text;
+     * Gets the indentation text.
      */
     getIndentationText(): IndentationText;
+    /**
+     * Gets whether to use prefix and suffix text when renaming.
+     */
+    getUsePrefixAndSuffixTextForRename(): boolean;
     /**
      * Sets one or all of the settings.
      * @param settings - Settings to set.

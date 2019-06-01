@@ -7,13 +7,18 @@ export class RenameLocationTextManipulator implements TextManipulator {
 
     getNewText(inputText: string) {
         // get the rename locations in reverse order
-        const renameLocations = this.renameLocations.map(l => l.getTextSpan()).sort((a, b) => b.getStart() - a.getStart());
+        const renameLocations = [...this.renameLocations].sort((a, b) => b.getTextSpan().getStart() - a.getTextSpan().getStart());
         let currentPos = inputText.length;
         let result = "";
 
         for (let i = 0; i < renameLocations.length; i++) {
-            const textSpan = renameLocations[i];
-            result = this.newName + inputText.substring(textSpan.getEnd(), currentPos) + result;
+            const renameLocation = renameLocations[i];
+            const textSpan = renameLocation.getTextSpan();
+            result = (renameLocation.getPrefixText() || "")
+                + this.newName
+                + (renameLocation.getSuffixText() || "")
+                + inputText.substring(textSpan.getEnd(), currentPos)
+                + result;
             currentPos = textSpan.getStart();
         }
 

@@ -1,10 +1,10 @@
 import * as errors from "../../errors";
 import { DefaultFileSystemHost } from "../../fileSystem";
 import { ProjectContext } from "../../ProjectContext";
-import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
+import { getTextFromFormattingEdits } from "../../manipulation";
 import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
-import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils } from "../../utils";
-import { Node, TextRange } from "../ast/common";
+import { FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, ObjectUtils } from "../../utils";
+import { Node } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
@@ -215,8 +215,11 @@ export class LanguageService {
      * @param options - Options for renaming.
      */
     findRenameLocations(node: Node, options: RenameOptions = {}): RenameLocation[] {
+        const usePrefixAndSuffixText = options.usePrefixAndSuffixText == null
+            ? this._context.manipulationSettings.getUsePrefixAndSuffixTextForRename()
+            : options.usePrefixAndSuffixText;
         const renameLocations = this.compilerObject.findRenameLocations(node._sourceFile.getFilePath(), node.getStart(),
-            options.renameInStrings || false, options.renameInComments || false) || [];
+            options.renameInStrings || false, options.renameInComments || false, usePrefixAndSuffixText) || [];
         return renameLocations.map(l => new RenameLocation(this._context, l));
     }
 

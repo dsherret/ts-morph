@@ -12,4 +12,9 @@ export interface RenameOptions {
      * @remarks False by default.
      */
     renameInStrings?: boolean;
+    /**
+     * Whether to enable renaming shorthand property assignments, binding elements, and import & export specifiers without changing behaviour.
+     * @remarks Defaults to the `usePrefixAndSuffixTextForRename` manipulation setting.
+     */
+    usePrefixAndSuffixText?: boolean;
 }

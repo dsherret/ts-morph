@@ -26,6 +26,12 @@ export interface ManipulationSettings extends SupportedFormatCodeSettingsOnly {
     newLineKind: NewLineKind;
     /** Quote type used for string literals. */
     quoteKind: QuoteKind;
+    /**
+     * Whether to enable renaming shorthand property assignments, binding elements,
+     * and import & export specifiers without changing behaviour.
+     * @remarks Defaults to true.
+     */
+    usePrefixAndSuffixTextForRename: boolean;
 }
 
 /**
@@ -42,6 +48,7 @@ export interface SupportedFormatCodeSettingsOnly {
      * Whether to insert a space after opening and before closing non-empty braces.
      *
      * ex. `import { Item } from "./Item";` or `import {Item} from "./Item";`
+     * @remarks Defaults to true.
      */
     insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: boolean;
 }
@@ -59,7 +66,8 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
             indentationText: IndentationText.FourSpaces,
             newLineKind: NewLineKind.LineFeed,
             quoteKind: QuoteKind.Double,
-            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
+            usePrefixAndSuffixTextForRename: false
         });
     }
 
@@ -95,7 +103,8 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
     getUserPreferences(): Readonly<UserPreferences> {
         if (this._userPreferences == null) {
             this._userPreferences = {
-                quotePreference: this.getQuoteKind() === QuoteKind.Double ? "double" : "single"
+                quotePreference: this.getQuoteKind() === QuoteKind.Double ? "double" : "single",
+                providePrefixAndSuffixTextForRename: this.getUsePrefixAndSuffixTextForRename()
             };
         }
         return { ...this._userPreferences };
@@ -123,10 +132,17 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
     }
 
     /**
-     * Gets the indentation text;
+     * Gets the indentation text.
      */
     getIndentationText() {
         return this._settings.indentationText;
+    }
+
+    /**
+     * Gets whether to use prefix and suffix text when renaming.
+     */
+    getUsePrefixAndSuffixTextForRename() {
+        return this._settings.usePrefixAndSuffixTextForRename;
     }
 
     /**

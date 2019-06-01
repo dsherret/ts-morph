@@ -540,7 +540,6 @@ export class CompilerFactory {
         const node = oldNode instanceof Node ? oldNode : this.nodeCache.get(oldNode);
 
         if (nodeToReplace.kind === SyntaxKind.SourceFile && (nodeToReplace as ts.SourceFile).fileName !== (newNode as ts.SourceFile).fileName) {
-            const oldFilePath = (nodeToReplace as ts.SourceFile).fileName;
             const sourceFile = node! as SourceFile;
             this.removeCompilerNodeFromCache(nodeToReplace);
             sourceFile._replaceCompilerNodeFromFactory(newNode as ts.SourceFile);

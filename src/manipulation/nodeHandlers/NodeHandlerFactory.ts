@@ -8,6 +8,7 @@ import { ForgetChangedNodeHandler } from "./ForgetChangedNodeHandler";
 import { NodeHandler } from "./NodeHandler";
 import { ParentFinderReplacementNodeHandler } from "./ParentFinderReplacementNodeHandler";
 import { RangeHandler } from "./RangeHandler";
+import { RenameNodeHandler } from "./RenameNodeHandler";
 import { RangeParentHandler } from "./RangeParentHandler";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
 import { TryOrForgetNodeHandler } from "./TryOrForgetNodeHandler";
@@ -118,6 +119,10 @@ export class NodeHandlerFactory {
 
     getForForgetChanged(compilerFactory: CompilerFactory) {
         return new ForgetChangedNodeHandler(compilerFactory);
+    }
+
+    getForRename(compilerFactory: CompilerFactory) {
+        return new RenameNodeHandler(compilerFactory);
     }
 
     getForTryOrForget(handler: NodeHandler) {
