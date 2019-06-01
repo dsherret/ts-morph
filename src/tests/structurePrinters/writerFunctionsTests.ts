@@ -138,4 +138,10 @@ describe(nameof<WriterFunctions>(), () => {
             doWriterTest((writer, { assertion }) => assertion("a", "b")(writer), "a as b");
         });
     });
+
+    describe(nameof(WriterFunctions.returnStatement), () => {
+        it("should write when specifying some value", () => {
+            doWriterTest((writer, { returnStatement }) => returnStatement("A")(writer), "return A;");
+        });
+    });
 });

@@ -45,9 +45,9 @@ const project = new Project({
 });
 ```
 
-### Custom Module Resolution (Advanced)
+### Custom Module Resolution
 
-To support custom module resolution, provide a resolution host factory function. This also supports providing custom type reference directive resolution.
+Custom module resolution can be specified by providing a resolution host factory function. This also supports providing custom type reference directive resolution.
 
 For example:
 
