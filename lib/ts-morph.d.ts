@@ -1943,17 +1943,22 @@ export declare class WriterFunctions {
      */
     static objectType(structure: TypeElementMemberedNodeStructure): WriterFunction;
     /**
-     * Gets a writer function for writing a union type.
+     * Gets a writer function for writing a union type (ex. `FirstType | SecondType`).
      */
     static unionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
     /**
-     * Gets a writer function for writing an intersection type.
+     * Gets a writer function for writing an intersection type (ex. `FirstType & SecondType`).
      */
     static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]): (writer: CodeBlockWriter) => void;
     /**
      * Gets a writer function for writing a type assertion (ex. `type as assertionType`).
      */
     static assertion(type: WriterFunctionOrValue, assertionType: WriterFunctionOrValue): (writer: CodeBlockWriter) => void;
+    /**
+     * Gets a writer function for writing a return statement returning the provided value (ex. `return value;`).
+     * @param value - Value to be returned.
+     */
+    static returnStatement(value: WriterFunctionOrValue): WriterFunction;
 }
 
 export declare type WriterFunctionOrValue = string | number | WriterFunction;

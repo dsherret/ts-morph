@@ -66,12 +66,12 @@ export class WriterFunctions {
         };
     }
 
-    /** Gets a writer function for writing a union type. */
+    /** Gets a writer function for writing a union type (ex. `FirstType | SecondType`). */
     static unionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]) {
         return getWriteFunctionForUnionOrIntersectionType("|", [firstType, secondType, ...additionalTypes]);
     }
 
-    /** Gets a writer function for writing an intersection type. */
+    /** Gets a writer function for writing an intersection type (ex. `FirstType & SecondType`). */
     static intersectionType(firstType: WriterFunctionOrValue, secondType: WriterFunctionOrValue, ...additionalTypes: WriterFunctionOrValue[]) {
         return getWriteFunctionForUnionOrIntersectionType("&", [firstType, secondType, ...additionalTypes]);
     }
@@ -86,14 +86,16 @@ export class WriterFunctions {
     }
 
     /**
-     * Gets a writer function for writing a return statement returning the provided value.
+     * Gets a writer function for writing a return statement returning the provided value (ex. `return value;`).
      * @param value - Value to be returned.
      */
     static returnStatement(value: WriterFunctionOrValue): WriterFunction {
         return (writer: CodeBlockWriter) => {
             writer.write("return ");
-            writeValue(writer, value);
-            writer.write(";");
+            writer.withHangingIndentationUnlessBlock(() => {
+                writeValue(writer, value);
+                writer.write(";");
+            });
         };
     }
 }

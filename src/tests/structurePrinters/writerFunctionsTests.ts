@@ -143,5 +143,13 @@ describe(nameof<WriterFunctions>(), () => {
         it("should write when specifying some value", () => {
             doWriterTest((writer, { returnStatement }) => returnStatement("A")(writer), "return A;");
         });
+
+        it("should write with hanging indentation when not using a block", () => {
+            doWriterTest((writer, { returnStatement }) => returnStatement("A\n&& B")(writer), "return A\n    && B;");
+        });
+
+        it("should not write with hanging indentation when using a block", () => {
+            doWriterTest((writer, { returnStatement }) => returnStatement(() => writer.inlineBlock(() => writer.write("prop")))(writer), "return {\n    prop\n};");
+        });
     });
 });
