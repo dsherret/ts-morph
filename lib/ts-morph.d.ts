@@ -9166,6 +9166,7 @@ export interface RenameOptions {
     /**
      * Whether to enable renaming shorthand property assignments, binding elements, and import & export specifiers without changing behaviour.
      * @remarks Defaults to the `usePrefixAndSuffixTextForRename` manipulation setting.
+     * This setting is only available when using TypeScript 3.4+.
      */
     usePrefixAndSuffixText?: boolean;
 }
@@ -10443,6 +10444,7 @@ export interface ManipulationSettings extends SupportedFormatCodeSettingsOnly {
      * Whether to enable renaming shorthand property assignments, binding elements,
      * and import & export specifiers without changing behaviour.
      * @remarks Defaults to true.
+     * This setting is only available when using TypeScript 3.4+.
      */
     usePrefixAndSuffixTextForRename: boolean;
 }

@@ -46,6 +46,8 @@ myEnum.rename("SomeOtherName", {
 
 ### Renaming with prefix and suffix text
 
+**Note:** This feature is only supported when using TypeScript 3.4+
+
 By default, renames will not change shorthand property assignments or add aliases to import & export specifiers.
 
 For example, renaming the `a` variable declaration to `b`...

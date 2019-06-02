@@ -1,6 +1,7 @@
 ﻿import { expect } from "chai";
 import { InterfaceDeclaration, EnumDeclaration, FunctionDeclaration, Identifier, NamedNode, RenameOptions, VariableStatement,
     ObjectLiteralExpression, ShorthandPropertyAssignment} from "../../../../../compiler";
+import { TypeScriptVersionChecker } from "../../../../../utils";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(NamedNode), () => {
@@ -38,74 +39,76 @@ describe(nameof(NamedNode), () => {
                 "// MyNewEnum\nenum MyNewEnum {}\nlet myEnum = 'MyNewEnum';");
         });
 
-        it("should rename shorthand property assignments to property assignments when using prefix and suffix text", () => {
-            const { firstChild, sourceFile } = getInfoFromText<VariableStatement>("const a = 2; const b = {a};");
-            const ole = sourceFile.getVariableDeclarationOrThrow("b").getInitializerOrThrow() as ObjectLiteralExpression;
-            const shortHandPropertyAssignment = ole.getPropertyOrThrow("a") as ShorthandPropertyAssignment;
-            const identifier = shortHandPropertyAssignment.getNameNode();
-            firstChild.getDeclarations()[0].rename("c", { usePrefixAndSuffixText: true });
-            expect(sourceFile.getFullText()).to.equal("const c = 2; const b = {a: c};");
-            expect(identifier.getText()).to.equal("c");
-            expect(shortHandPropertyAssignment.wasForgotten()).to.be.true;
-        });
+        if (TypeScriptVersionChecker.isGreaterThan(3, 4, 0)) {
+            it("should rename shorthand property assignments to property assignments when using prefix and suffix text", () => {
+                const { firstChild, sourceFile } = getInfoFromText<VariableStatement>("const a = 2; const b = {a};");
+                const ole = sourceFile.getVariableDeclarationOrThrow("b").getInitializerOrThrow() as ObjectLiteralExpression;
+                const shortHandPropertyAssignment = ole.getPropertyOrThrow("a") as ShorthandPropertyAssignment;
+                const identifier = shortHandPropertyAssignment.getNameNode();
+                firstChild.getDeclarations()[0].rename("c", { usePrefixAndSuffixText: true });
+                expect(sourceFile.getFullText()).to.equal("const c = 2; const b = {a: c};");
+                expect(identifier.getText()).to.equal("c");
+                expect(shortHandPropertyAssignment.wasForgotten()).to.be.true;
+            });
 
-        it("should not rename shorthand property assignments to property assignments when not using prefix and suffix text", () => {
-            const { firstChild, sourceFile } = getInfoFromText<VariableStatement>("const a = 2; const b = {a};");
-            firstChild.getDeclarations()[0].rename("c", { usePrefixAndSuffixText: false });
-            expect(sourceFile.getFullText()).to.equal("const c = 2; const b = {c};");
-        });
+            it("should not rename shorthand property assignments to property assignments when not using prefix and suffix text", () => {
+                const { firstChild, sourceFile } = getInfoFromText<VariableStatement>("const a = 2; const b = {a};");
+                firstChild.getDeclarations()[0].rename("c", { usePrefixAndSuffixText: false });
+                expect(sourceFile.getFullText()).to.equal("const c = 2; const b = {c};");
+            });
 
-        it("should rename an identifier exported via an export specifier when using prefix and suffix text", () => {
-            const { sourceFile } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
-            const exportSpecifier = sourceFile.getExportDeclarations()[0].getNamedExports()[0];
-            const exportIdentifier = exportSpecifier.getNameNode();
-            sourceFile.getVariableDeclarationOrThrow("a").rename("c", { usePrefixAndSuffixText: true });
-            expect(sourceFile.getFullText()).to.equal("const c = 1; export { c as a };");
-            expect(exportSpecifier.getText()).to.equal("c as a");
-            expect(exportIdentifier.getText()).to.equal("c");
-        });
+            it("should rename an identifier exported via an export specifier when using prefix and suffix text", () => {
+                const { sourceFile } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
+                const exportSpecifier = sourceFile.getExportDeclarations()[0].getNamedExports()[0];
+                const exportIdentifier = exportSpecifier.getNameNode();
+                sourceFile.getVariableDeclarationOrThrow("a").rename("c", { usePrefixAndSuffixText: true });
+                expect(sourceFile.getFullText()).to.equal("const c = 1; export { c as a };");
+                expect(exportSpecifier.getText()).to.equal("c as a");
+                expect(exportIdentifier.getText()).to.equal("c");
+            });
 
-        it("should not rename the export specifier when specifying not to use prefix and suffix text", () => {
-            const { sourceFile } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
-            sourceFile.getVariableDeclarationOrThrow("a").rename("c", { usePrefixAndSuffixText: false });
-            expect(sourceFile.getFullText()).to.equal("const c = 1; export { c };");
-        });
+            it("should not rename the export specifier when specifying not to use prefix and suffix text", () => {
+                const { sourceFile } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
+                sourceFile.getVariableDeclarationOrThrow("a").rename("c", { usePrefixAndSuffixText: false });
+                expect(sourceFile.getFullText()).to.equal("const c = 1; export { c };");
+            });
 
-        it("should rename an export specifier's identifier when using prefix and suffix text", () => {
-            const { sourceFile } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
-            const exportSpecifier = sourceFile.getExportDeclarations()[0].getNamedExports()[0];
-            const exportIdentifier = exportSpecifier.getNameNode();
-            exportIdentifier.rename("c", { usePrefixAndSuffixText: true });
-            expect(sourceFile.getFullText()).to.equal("const a = 1; export { a as c };");
-            expect(exportSpecifier.getText()).to.equal("a as c");
-            expect(exportIdentifier.getText()).to.equal("c");
-        });
+            it("should rename an export specifier's identifier when using prefix and suffix text", () => {
+                const { sourceFile } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
+                const exportSpecifier = sourceFile.getExportDeclarations()[0].getNamedExports()[0];
+                const exportIdentifier = exportSpecifier.getNameNode();
+                exportIdentifier.rename("c", { usePrefixAndSuffixText: true });
+                expect(sourceFile.getFullText()).to.equal("const a = 1; export { a as c };");
+                expect(exportSpecifier.getText()).to.equal("a as c");
+                expect(exportIdentifier.getText()).to.equal("c");
+            });
 
-        it("should rename an import specifier's identifier when using prefix and suffix text", () => {
-            const { sourceFile } = getInfoFromText<VariableStatement>("import { a } from './a'; const b = a;");
-            const importSpecifier = sourceFile.getImportDeclarations()[0].getNamedImports()[0];
-            const importIdentifier = importSpecifier.getNameNode();
-            importIdentifier.rename("c", { usePrefixAndSuffixText: true });
-            expect(sourceFile.getFullText()).to.equal("import { a as c } from './a'; const b = c;");
-            expect(importSpecifier.getText()).to.equal("a as c");
-            expect(importIdentifier.getText()).to.equal("c");
-        });
+            it("should rename an import specifier's identifier when using prefix and suffix text", () => {
+                const { sourceFile } = getInfoFromText<VariableStatement>("import { a } from './a'; const b = a;");
+                const importSpecifier = sourceFile.getImportDeclarations()[0].getNamedImports()[0];
+                const importIdentifier = importSpecifier.getNameNode();
+                importIdentifier.rename("c", { usePrefixAndSuffixText: true });
+                expect(sourceFile.getFullText()).to.equal("import { a as c } from './a'; const b = c;");
+                expect(importSpecifier.getText()).to.equal("a as c");
+                expect(importIdentifier.getText()).to.equal("c");
+            });
 
-        it("should not rename with prefix and suffix by default", () => {
-            const { sourceFile, project } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
-            sourceFile.move("./a.ts");
-            const otherFile = project.createSourceFile("./test.ts", "import { a } from './a';");
-            sourceFile.getVariableDeclarationOrThrow("a").rename("c");
-            expect(sourceFile.getFullText()).to.equal("const c = 1; export { c };");
-            expect(otherFile.getFullText()).to.equal("import { c } from './a';");
-        });
+            it("should not rename with prefix and suffix by default", () => {
+                const { sourceFile, project } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
+                sourceFile.move("./a.ts");
+                const otherFile = project.createSourceFile("./test.ts", "import { a } from './a';");
+                sourceFile.getVariableDeclarationOrThrow("a").rename("c");
+                expect(sourceFile.getFullText()).to.equal("const c = 1; export { c };");
+                expect(otherFile.getFullText()).to.equal("import { c } from './a';");
+            });
 
-        it("should rename with prefix and suffix text when specifying that in the manipulation settings", () => {
-            const { sourceFile, project } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
-            project.manipulationSettings.set({ usePrefixAndSuffixTextForRename: true });
-            sourceFile.getVariableDeclarationOrThrow("a").rename("c");
-            expect(sourceFile.getFullText()).to.equal("const c = 1; export { c as a };");
-        });
+            it("should rename with prefix and suffix text when specifying that in the manipulation settings", () => {
+                const { sourceFile, project } = getInfoFromText<VariableStatement>("const a = 1; export { a };");
+                project.manipulationSettings.set({ usePrefixAndSuffixTextForRename: true });
+                sourceFile.getVariableDeclarationOrThrow("a").rename("c");
+                expect(sourceFile.getFullText()).to.equal("const c = 1; export { c as a };");
+            });
+        }
 
         it("should rename across files", () => {
             const { project, sourceFile, firstChild } = getInfoFromText<EnumDeclaration>("export enum Test {}");
