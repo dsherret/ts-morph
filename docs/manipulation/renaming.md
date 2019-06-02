@@ -88,6 +88,12 @@ varA.rename("SomeOtherName", {
 Or globally:
 
 ```ts
+const project = new Project({
+    manipulationSettings: {
+        usePrefixAndSuffixTextForRename: true
+    }
+});
+// or
 project.manipulationSettings.set({
     usePrefixAndSuffixTextForRename: true
 });

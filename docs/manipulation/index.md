@@ -1,8 +1,8 @@
 ---
-title: Manipulating the AST
+title: Manipulating Source Files
 ---
 
-## Manipulating the AST
+## Manipulating Source Files
 
 Most information about manipulation can be found in the [Details](../details) section. This section only contains general information about manipulation.
 
