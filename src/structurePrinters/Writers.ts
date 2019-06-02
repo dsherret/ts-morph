@@ -12,10 +12,9 @@ const structurePrinterFactory = new StructurePrinterFactory(() => {
 });
 
 /**
- * Writer functions.
- * @remarks These functions are currently very experimental.
+ * Functions for writing code.
  */
-export class WriterFunctions {
+export class Writers {
     private constructor() {
     }
 

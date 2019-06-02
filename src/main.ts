@@ -13,5 +13,10 @@ export { printNode, PrintNodeOptions } from "./utils/compiler/printNode";
 export { SourceFileReferencingNodes } from "./utils/references/SourceFileReferenceContainer";
 export { CompilerOptionsFromTsConfigOptions, CompilerOptionsFromTsConfigResult, getCompilerOptionsFromTsConfig } from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
 export { TypeGuards } from "./utils";
-export { WriterFunctions, WriterFunctionOrValue } from "./structurePrinters/WriterFunctions";
+import { Writers } from "./structurePrinters/Writers";
+/** @deprecated Use `Writers`. */
+const WriterFunctions = Writers;
+export { Writers };
+export { WriterFunctions };
+export { WriterFunctionOrValue } from "./structurePrinters/Writers";
 export * from "./typescript/public";

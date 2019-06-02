@@ -1926,10 +1926,9 @@ export declare class TypeGuards {
 }
 
 /**
- * Writer functions.
- * @remarks These functions are currently very experimental.
+ * Functions for writing code.
  */
-export declare class WriterFunctions {
+export declare class Writers {
     private constructor();
     /**
      * Gets a writer function for writing the provided object as an object literal expression.
@@ -1961,6 +1960,10 @@ export declare class WriterFunctions {
     static returnStatement(value: WriterFunctionOrValue): WriterFunction;
 }
 
+/**
+ * @deprecated Use `Writers`.
+ */
+declare const WriterFunctions: typeof Writers;
 export declare type WriterFunctionOrValue = string | number | WriterFunction;
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
 export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
