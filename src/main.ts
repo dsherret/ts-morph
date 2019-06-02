@@ -7,7 +7,6 @@ export * from "./options";
 export { ProjectOptions, Project, SourceFileCreateOptions } from "./Project";
 export * from "./structures";
 export { Constructor, WriterFunction } from "./types";
-export { createModuleResolutionHost } from "./utils/compiler/createModuleResolutionHost";
 export { createWrappedNode, CreateWrappedNodeOptions } from "./utils/compiler/createWrappedNode";
 export { printNode, PrintNodeOptions } from "./utils/compiler/printNode";
 export { SourceFileReferencingNodes } from "./utils/references/SourceFileReferenceContainer";
