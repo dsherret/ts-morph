@@ -597,7 +597,7 @@ export class FileSystemWrapper {
     }
 
     getCurrentDirectory() {
-        return this.fileSystem.getCurrentDirectory();
+        return this.getStandardizedAbsolutePath(this.fileSystem.getCurrentDirectory());
     }
 
     getDirectories(dirPath: string) {

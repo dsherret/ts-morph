@@ -84,7 +84,6 @@ export class TsConfigResolver {
     private parseJsonConfigFileContent() {
         this.host.clearDirectories();
         const result = ts.parseJsonConfigFileContent(this.getTsConfigFileJson(), this.host, this.tsConfigDirPath, undefined, this.tsConfigFilePath);
-        delete result.options.configFilePath;
         return { ...result, directories: this.host.getDirectories() };
     }
 

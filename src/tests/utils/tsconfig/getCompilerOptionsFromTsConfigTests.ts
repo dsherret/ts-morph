@@ -31,7 +31,7 @@ describe(nameof(getCompilerOptionsFromTsConfig), () => {
         }, {
             filePath: "main.ts", text: ""
         }]);
-        doTest(host, { options: { rootDir: "/test", target: 1 }, errorCount: 0 });
+        doTest(host, { options: { rootDir: "/test", target: 1, configFilePath: "/tsconfig.json" }, errorCount: 0 });
     });
 
     it("should get the error when specifying an invalid compiler option", () => {
@@ -40,7 +40,7 @@ describe(nameof(getCompilerOptionsFromTsConfig), () => {
         }, {
             filePath: "main.ts", text: ""
         }]);
-        doTest(host, { options: { target: undefined }, errorCount: 1 });
+        doTest(host, { options: { target: undefined, configFilePath: "/tsconfig.json" }, errorCount: 1 });
     });
 
     it("should get compiler options when using extends", () => {
@@ -51,6 +51,6 @@ describe(nameof(getCompilerOptionsFromTsConfig), () => {
         }, {
             filePath: "main.ts", text: ""
         }]);
-        doTest(host, { options: { target: 1, rootDir: "/test" }, errorCount: 0 });
+        doTest(host, { options: { target: 1, rootDir: "/test", configFilePath: "/tsconfig.json" }, errorCount: 0 });
     });
 });

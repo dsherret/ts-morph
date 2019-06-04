@@ -354,7 +354,7 @@ describe(nameof(Project), () => {
                 addFilesFromTsConfig, // the behaviour changes based on this value so it's good to test both of these
                 fileSystem
             });
-            expect(project.getCompilerOptions()).to.deep.equal({ rootDir: "/test", target: 2, allowJs: true });
+            expect(project.getCompilerOptions()).to.deep.equal({ rootDir: "/test", target: 2, allowJs: true, configFilePath: "/tsconfig.json" });
         }
 
         it(`should override the tsconfig options when specifying to add files from tsconfig`, () => {

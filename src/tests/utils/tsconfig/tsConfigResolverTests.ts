@@ -27,19 +27,19 @@ describe(nameof(TsConfigResolver), () => {
 
         it("should get the compiler options plus the defaults when providing some", () => {
             const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
-            expect(getCompilerOptions(host)).to.deep.equal({ rootDir: "/test", target: 1 });
+            expect(getCompilerOptions(host)).to.deep.equal({ rootDir: "/test", target: 1, configFilePath: "/tsconfig.json" });
         });
 
         it("should return an undefined target when it specifies something else", () => {
             const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "target": "FUN" } }` }]);
-            expect(getCompilerOptions(host)).to.deep.equal({ target: undefined });
+            expect(getCompilerOptions(host)).to.deep.equal({ target: undefined, configFilePath: "/tsconfig.json" });
         });
 
         it("should get compiler options when using extends", () => {
             const fs = new VirtualFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "target": "es5" }, "extends": "./base" }`);
             fs.writeFileSync("base.json", `{ "compilerOptions": { "rootDir": "/test" } }`);
-            expect(getCompilerOptions(fs)).to.deep.equal({ rootDir: "/test", target: 1 });
+            expect(getCompilerOptions(fs)).to.deep.equal({ rootDir: "/test", target: 1, configFilePath: "/tsconfig.json" });
         });
     });
 

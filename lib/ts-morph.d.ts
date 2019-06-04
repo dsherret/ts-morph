@@ -356,7 +356,7 @@ export interface ProjectOptions {
      */
     skipFileDependencyResolution?: boolean;
     /**
-     * Whether to use a virtual file system.
+     * Whether to use an in-memory file system.
      */
     useVirtualFileSystem?: boolean;
     /**
@@ -632,10 +632,6 @@ export interface SourceFileCreateOptions {
 
 export declare type Constructor<T> = new (...args: any[]) => T;
 export declare type WriterFunction = (writer: CodeBlockWriter) => void;
-/**
- * Helper function for creating a module resolution host from a file system.
- */
-export declare function createModuleResolutionHost(fileSystemHost: FileSystemHost): ts.ModuleResolutionHost;
 /**
  * Creates a wrapped node from a compiler node.
  * @param node - Node to create a wrapped node from.

@@ -21,7 +21,7 @@ export interface ProjectOptions {
     manipulationSettings?: Partial<ManipulationSettings>;
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. */
     skipFileDependencyResolution?: boolean;
-    /** Whether to use a virtual file system. */
+    /** Whether to use an in-memory file system. */
     useVirtualFileSystem?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.

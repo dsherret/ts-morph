@@ -107,7 +107,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     fileExists(filePath: string) {
-        return new Promise<boolean>((resolve, reject) => {
+        return new Promise<boolean>(resolve => {
             this.fs.stat(filePath, (err, stat) => {
                 if (err)
                     resolve(false);
@@ -126,7 +126,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     directoryExists(dirPath: string) {
-        return new Promise<boolean>((resolve, reject) => {
+        return new Promise<boolean>(resolve => {
             this.fs.stat(dirPath, (err, stat) => {
                 if (err)
                     resolve(false);
