@@ -111,12 +111,13 @@
     "ts-node": "7.0.0",
     "tslint": "^5.11.0",
     "ttypescript": "1.5.5",
-    "typescript": "3.4.5",
+    "typescript": "3.5.1",
     "typescript-3.0.1": "npm:typescript@3.0.1",
     "typescript-3.0.3": "npm:typescript@3.0.3",
     "typescript-3.1.6": "npm:typescript@3.1.6",
     "typescript-3.2.4": "npm:typescript@3.2.4",
-    "typescript-3.3.3": "npm:typescript@3.3.3"
+    "typescript-3.3.3": "npm:typescript@3.3.3",
+    "typescript-3.4.5": "npm:typescript@3.4.5"
   },
   "standard-version": {
     "tagPrefix": ""

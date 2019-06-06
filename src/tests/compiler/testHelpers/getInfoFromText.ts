@@ -1,5 +1,6 @@
 import * as path from "path";
-import { Node } from "../../../compiler";
+import { IsAny } from "conditional-type-checks";
+import { Node, SourceFile } from "../../../compiler";
 import { DefaultFileSystemHost, FileSystemHost, VirtualFileSystemHost } from "../../../fileSystem";
 import { Project } from "../../../Project";
 import { CompilerOptions, SyntaxKind, ts } from "../../../typescript";
@@ -55,7 +56,6 @@ const libFileNames = [
 ];
 const libFiles = libFileNames.map(name => getTextForLibFile(name));
 
-/** @internal */
 export interface GetInfoFromTextOptions {
     isDefinitionFile?: boolean;
     filePath?: string;
@@ -66,22 +66,42 @@ export interface GetInfoFromTextOptions {
     isJsx?: boolean;
 }
 
-/** @internal */
-export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: GetInfoFromTextOptions) {
+export interface GetInfoFromTextResult<TFirstChild extends Node> extends GetInfoFromTextInternalResult {
+    // typescript bug fix in ts 3.5.1 (todo: check if this works by removing the conditional type in a future version)
+    firstChild: IsAny<TFirstChild> extends true ? Node : TFirstChild;
+}
+
+export interface GetInfoFromTextWithDescendantResult<TDescendant extends Node> extends GetInfoFromTextInternalResult {
+    // typescript bug fix in ts 3.5.1 (todo: check if this works by removing the conditional type in a future version)
+    descendant: IsAny<TDescendant> extends true ? Node : TDescendant;
+}
+
+export interface GetInfoFromTextInternalResult {
+    project: Project;
+    sourceFile: SourceFile;
+}
+
+// I know type parameters aren't supposed to be used this way, but it's way too convenient
+export function getInfoFromText<TFirstChild extends Node = Node>(text: string, opts?: GetInfoFromTextOptions): GetInfoFromTextResult<TFirstChild> {
     const info = getInfoFromTextInternal(text, opts);
 
     return {
         ...info,
-        firstChild: info.sourceFile.forEachChild(child => child as TFirstChild)!
+        firstChild: info.sourceFile.forEachChild(child => child) as any
     };
 }
 
 // todo: use the mapping between syntax kind and nodes for the descendant
-export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: string, descendantKind: SyntaxKind, opts?: GetInfoFromTextOptions) {
+export function getInfoFromTextWithDescendant<TDescendant extends Node>(
+    text: string,
+    descendantKind: SyntaxKind,
+    opts?: GetInfoFromTextOptions
+): GetInfoFromTextWithDescendantResult<TDescendant>
+{
     const info = getInfoFromTextInternal(text, opts);
     return {
         ...info,
-        descendant: info.sourceFile.getFirstDescendantByKindOrThrow(descendantKind) as TDescendant
+        descendant: info.sourceFile.getFirstDescendantByKindOrThrow(descendantKind) as any
     };
 }
 
@@ -98,7 +118,7 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     const project = new Project({ compilerOptions, fileSystem: host });
     const sourceFile = project.createSourceFile(getFilePath(), text);
 
-    return {project, sourceFile};
+    return { project, sourceFile };
 
     function getFilePath() {
         if (filePath != null)

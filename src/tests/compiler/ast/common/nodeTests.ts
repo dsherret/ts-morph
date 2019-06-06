@@ -1439,8 +1439,8 @@ class MyClass {
 
         it("should return the value in an array callback", () => {
             const { firstChild } = getInfoFromText("class Test { prop: string; method() {} }");
-            const value = firstChild.forEachChild<boolean>(() => {
-                return undefined;
+            const value = firstChild.forEachChild(() => {
+                return undefined as any as boolean;
             }, () => {
                 return true;
             });
