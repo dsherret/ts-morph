@@ -107,7 +107,7 @@
     "shx": "^0.3.2",
     "source-map-support": "^0.5.5",
     "ts-morph": "2.1.0",
-    "ts-nameof": "^3.0.3",
+    "ts-nameof": "^3.1.0",
     "ts-node": "7.0.0",
     "tslint": "^5.11.0",
     "ttypescript": "1.5.5",
