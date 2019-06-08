@@ -418,7 +418,8 @@ export interface StatementedNode {
     /** @internal */
     getVariableStatementOrThrow(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean)): VariableStatement;
     /**
-     * Gets all the variable declarations within all the variable declarations of the direct variable statement children.
+     * Gets all the variable declarations within the variable statement children.
+     * @remarks This does not return the variable declarations within for statements or for of statements.
      */
     getVariableDeclarations(): VariableDeclaration[];
     /**
@@ -863,9 +864,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getVariableDeclarations(): VariableDeclaration[] {
             const variables: VariableDeclaration[] = [];
 
-            for (const list of this.getVariableStatements()) {
+            for (const list of this.getVariableStatements())
                 variables.push(...list.getDeclarations());
-            }
 
             return variables;
         }
