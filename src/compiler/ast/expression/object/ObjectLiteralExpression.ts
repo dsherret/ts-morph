@@ -305,12 +305,12 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
         insertIntoCommaSeparatedNodes({
             parent: this.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
-            currentNodes: this.getProperties(),
+            currentNodes: this.getPropertiesWithComments(),
             insertIndex: index,
             newText: writer.toString(),
             useNewLines: true
         });
 
-        return getNodesToReturn(this.getProperties(), index, structures.length);
+        return getNodesToReturn(this.getPropertiesWithComments(), index, structures.length);
     }
 }

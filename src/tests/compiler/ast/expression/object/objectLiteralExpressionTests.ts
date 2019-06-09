@@ -81,6 +81,29 @@ describe(nameof(ObjectLiteralExpression), () => {
         });
     });
 
+    describe("general inserting", () => {
+        // todo: move this into the general insertProperty method tests once implemented
+        function doTest(text: string, index: number, structures: OptionalKind<PropertyAssignmentStructure>[], expectedText: string) {
+            const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
+            const result = objectLiteralExpression.insertPropertyAssignments(index, structures);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result.length).to.deep.equal(structures.length);
+        }
+
+        // bug -- it inserts a comma... will fix this later
+        it.skip("should take into account inserting around comments", () => {
+            doTest("const t = {\n    // test\n};", 1,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    // test\n    prop2: 4\n};");
+        });
+
+        it("should take into account comments in the index", () => {
+            doTest("const t = {\n    // test\n    prop1: 5\n};", 2,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    // test\n    prop1: 5,\n    prop2: 4\n};");
+        });
+    });
+
     describe("removing elements", () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
