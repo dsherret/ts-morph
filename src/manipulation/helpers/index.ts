@@ -1,3 +1,4 @@
+export * from "./appendCommaToText";
 export * from "./getEndIndexFromArray";
 export * from "./getInsertPosFromIndex";
 export * from "./getMixinStructureFunctions";

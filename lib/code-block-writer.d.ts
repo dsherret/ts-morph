@@ -236,6 +236,11 @@ declare class CodeBlockWriter {
      */
     getLastChar(): string | undefined;
     /**
+     * Gets if the writer ends with the provided text.
+     * @param text - Text to check if the writer ends with the provided text.
+     */
+    endsWith(text: string): boolean;
+    /**
      * Iterates over the writer characters in reverse order. The iteration stops when a non-null or
      * undefined value is returned from the action. The returned value is then returned by the method.
      *

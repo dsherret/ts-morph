@@ -696,9 +696,9 @@ code-block-writer@8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-8.0.0.tgz#bc59193040b51a3e9a9150fe12da09dc74ca2a95"
 
-code-block-writer@9.2.1:
-  version "9.2.1"
-  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-9.2.1.tgz#9f760bb6fdd6aea4754459d579dca69085376a74"
+code-block-writer@9.3.0:
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-9.3.0.tgz#a4ce3c877cd4bf1ff243df35c7b5b0d3f4ec8b69"
 
 code-block-writer@^7.2.2:
   version "7.3.1"

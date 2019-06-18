@@ -11,6 +11,7 @@ import { EnumMember } from "./EnumMember";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { CommentEnumMember } from "./CommentEnumMember";
 import { ExtendedParser } from "../utils";
+import { WriterFunction } from "../../../types";
 
 export const EnumDeclarationBase = TextInsertableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(
     ModifierableNode(NamedNode(Statement))
@@ -37,7 +38,13 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Adds a member to the enum.
      * @param structure - Structure of the enum.
      */
-    addMember(structure: OptionalKind<EnumMemberStructure>) {
+    addMember(structure: OptionalKind<EnumMemberStructure>): EnumMember;
+    /**
+     * Adds a member to the enum.
+     * @param structure - Structure of the enum.
+     */
+    addMember(structure: OptionalKind<EnumMemberStructure> | WriterFunction): EnumMember | CommentEnumMember;
+    addMember(structure: OptionalKind<EnumMemberStructure> | WriterFunction) {
         return this.addMembers([structure])[0];
     }
 
@@ -45,7 +52,13 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Adds members to the enum.
      * @param structures - Structures of the enums.
      */
-    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>) {
+    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>): EnumMember[];
+    /**
+     * Adds members to the enum.
+     * @param structures - Structures of the enums.
+     */
+    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>): (EnumMember | CommentEnumMember)[];
+    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>) {
         return this.insertMembers(this.getMembers().length, structures);
     }
 
@@ -54,7 +67,14 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param index - Child index to insert at.
      * @param structure - Structure of the enum.
      */
-    insertMember(index: number, structure: OptionalKind<EnumMemberStructure>) {
+    insertMember(index: number, structure: OptionalKind<EnumMemberStructure>): EnumMember;
+    /**
+     * Inserts a member to the enum.
+     * @param index - Child index to insert at.
+     * @param structure - Structure of the enum.
+     */
+    insertMember(index: number, structure: OptionalKind<EnumMemberStructure> | WriterFunction): EnumMember | CommentEnumMember;
+    insertMember(index: number, structure: OptionalKind<EnumMemberStructure> | WriterFunction) {
         return this.insertMembers(index, [structure])[0];
     }
 
@@ -63,12 +83,19 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
-    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>) {
-        const members = this.getMembers();
-        index = verifyAndGetIndex(index, members.length);
-
+    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>): EnumMember[];
+    /**
+     * Inserts members to an enum.
+     * @param index - Child index to insert at.
+     * @param structures - Structures of the enums.
+     */
+    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>): (EnumMember | CommentEnumMember)[];
+    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>) {
         if (structures.length === 0)
             return [];
+
+        const members = this.getMembersWithComments();
+        index = verifyAndGetIndex(index, members.length);
 
         // create member code
         // todo: pass in the StructureToText to the function below
@@ -86,7 +113,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         });
 
         // get the members
-        return getNodesToReturn(this.getMembers(), index, structures.length) as EnumMember[];
+        return getNodesToReturn(this.getMembersWithComments(), index, structures.length) as (EnumMember | CommentEnumMember)[];
     }
 
     /**

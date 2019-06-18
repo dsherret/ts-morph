@@ -1,6 +1,8 @@
 ﻿import { expect } from "chai";
-import { EnumDeclaration, EnumMember } from "../../../../compiler";
+import { assert, IsExact } from "conditional-type-checks";
+import { EnumDeclaration, EnumMember, CommentEnumMember } from "../../../../compiler";
 import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
+import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
@@ -57,6 +59,8 @@ describe(nameof(EnumDeclaration), () => {
         function doTest(startCode: string, index: number, structures: OptionalKind<EnumMemberStructure>[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.insertMembers(index, structures);
+            assert<IsExact<typeof result, EnumMember[]>>(true);
+
             expect(sourceFile.getFullText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
         }
@@ -85,14 +89,26 @@ describe(nameof(EnumDeclaration), () => {
             doTest("enum MyEnum {\n    member1,\n}\n", 1, [{ name: "member2" }], "enum MyEnum {\n    member1,\n    member2\n}\n");
         });
 
+        it("should insert a member handling comment ranges before and after the comma", () => {
+            doTest("enum MyEnum {\n    member1/*1*/,//test\n}\n", 1, [{ name: "member2" }], "enum MyEnum {\n    member1/*1*/,//test\n    member2\n}\n");
+        });
+
+        it("should insert a member adding a comma before the comment", () => {
+            doTest("enum MyEnum {\n    member1 //test\n}\n", 1, [{ name: "member2" }], "enum MyEnum {\n    member1, //test\n    member2\n}\n");
+        });
+
         it("should insert in the middle", () => {
             doTest("enum MyEnum {\n    member1,\n    member3\n}\n", 1, [{ name: "member2" }],
                 "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n");
         });
 
         it("should insert multiple", () => {
-            doTest("enum MyEnum {\n}\n", 0, [{ name: "member1" }, { name: "member2", value: 2, docs: [{ description: "description" }] }, { name: "member3" }],
-                "enum MyEnum {\n    member1,\n    /**\n     * description\n     */\n    member2 = 2,\n    member3\n}\n");
+            doTest("enum MyEnum {\n}\n", 0, [
+                    { leadingTrivia: "// a", name: "member1", trailingTrivia: " // testing" },
+                    { name: "member2", value: 2, docs: [{ description: "description" }] },
+                    { name: "member3" }
+                ],
+                "enum MyEnum {\n    // a\n    member1, // testing\n    /**\n     * description\n     */\n    member2 = 2,\n    member3\n}\n");
         });
 
         it("should insert for all the structure's properties", () => {
@@ -104,6 +120,21 @@ describe(nameof(EnumDeclaration), () => {
             };
             doTest("enum MyEnum {\n}\n", 0, [structure],
                 "enum MyEnum {\n    /**\n     * testing\n     */\n    member = 5\n}\n");
+        });
+
+        function doWriterTest(startCode: string, index: number, structures: (OptionalKind<EnumMemberStructure> | WriterFunction)[], expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
+            const result = firstChild.insertMembers(index, structures);
+            assert<IsExact<typeof result, (EnumMember | CommentEnumMember)[]>>(true);
+
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert with comments", () => {
+            doWriterTest("enum MyEnum {\n}\n", 0,
+                [writer => writer.write("// testing"), writer => writer.write("asdf"), writer => writer.write("test"), writer => writer.write("// test")],
+                "enum MyEnum {\n    // testing\n    asdf,\n    test,\n    // test\n}\n");
         });
     });
 

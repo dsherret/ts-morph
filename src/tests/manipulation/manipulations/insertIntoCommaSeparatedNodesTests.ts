@@ -75,16 +75,8 @@ describe("insertIntoCommaSeparatedNodes", () => {
             doTest(`{}`, 0, writer => writer.newLine().writeLine("name1"), `{\n        name1\n    }`);
         });
 
-        it("should not prepend a comma if the user wrote one", () => {
-            doTest(`{name1}`, 1, writer => writer.write(",name2"), `{name1,name2}`, false);
-        });
-
         it("should not append a comma if the user wrote one", () => {
-            doTest(`{name2}`, 0, writer => writer.write("name1,"), `{name1,name2}`, false);
-        });
-
-        it("should not append and prepend a comma if the user wrote both", () => {
-            doTest(`{name1, name3}`, 1, writer => writer.write(",name2,"), `{name1,name2,name3}`, false);
+            doTest(`{name2}`, 0, writer => writer.write("name1,"), `{name1, name2}`, false);
         });
     });
 

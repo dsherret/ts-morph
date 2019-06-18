@@ -2,7 +2,7 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Node, SourceFile } from "../../compiler";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards, StringUtils } from "../../utils";
-import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromArray, verifyAndGetIndex } from "../helpers";
+import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromArray, verifyAndGetIndex, appendCommaToText } from "../helpers";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { InsertionTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
@@ -73,9 +73,6 @@ export interface InsertIntoCommaSeparatedNodesOptions {
     surroundWithSpaces?: boolean;
 }
 
-const endsWithComma = /\,\s*$/;
-const startsWithComma = /^\s*\,/;
-
 export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNodesOptions) {
     const { currentNodes, insertIndex, parent } = opts;
     const nextNode = currentNodes[insertIndex] as Node | undefined;
@@ -137,9 +134,26 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     }
 
     function prependCommaAndSeparator() {
-        if (!startsWithComma.test(newText)) {
-            prependSeparator();
-            newText = `,${newText}`;
+        const originalSourceFileText = parent.getSourceFile().getFullText();
+        const previousNodeNextSibling = previousNode!.getNextSibling();
+        let text = "";
+        if (previousNodeNextSibling != null && previousNodeNextSibling.getKind() === SyntaxKind.CommaToken) {
+            appendNodeTrailingCommentRanges(previousNode!);
+            text += ",";
+            appendNodeTrailingCommentRanges(previousNodeNextSibling);
+        }
+        else {
+            text += ",";
+            appendNodeTrailingCommentRanges(previousNode!);
+        }
+
+        prependSeparator();
+        newText = text + newText;
+
+        function appendNodeTrailingCommentRanges(node: Node) {
+            for (const commentRange of node.getTrailingCommentRanges()) {
+                text += originalSourceFileText.substring(node.getEnd(), commentRange.getPos()) + commentRange.getText();
+            }
         }
     }
 
@@ -149,12 +163,8 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     }
 
     function appendCommaAndSeparator() {
-        if (!endsWithComma.test(newText)) {
-            newText = StringUtils.insertAtLastNonWhitespace(newText, ",");
-            appendSeparator();
-        }
-        else
-            appendIndentation();
+        newText = appendCommaToText(newText);
+        appendSeparator();
     }
 
     function appendSeparator() {

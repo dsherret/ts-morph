@@ -9,36 +9,47 @@ export abstract class NodePrinter<TStructure> extends Printer<TStructure> {
         super();
     }
 
+    printTextWithoutTrivia(writer: CodeBlockWriter, structure: TStructure) {
+        this.printTextInternal(writer, structure);
+    }
+
     printText(writer: CodeBlockWriter, structure: TStructure) {
-        const typedStructure: { leadingTrivia: Structure["leadingTrivia"], trailingTrivia: Structure["trailingTrivia"] } = structure as any;
-        const leadingTrivia = typedStructure && typedStructure.leadingTrivia;
-        const trailingTrivia = typedStructure && typedStructure.trailingTrivia;
+        this.printLeadingTrivia(writer, structure);
+        writer.closeComment();
+        this.printTextInternal(writer, structure);
+        this.printTrailingTrivia(writer, structure);
+    }
+
+    protected abstract printTextInternal(writer: CodeBlockWriter, structure: TStructure): void;
+
+    printLeadingTrivia(writer: CodeBlockWriter, structure: TStructure) {
+        const leadingTrivia = (structure as any)["leadingTrivia"] as Structure["leadingTrivia"];
 
         if (leadingTrivia != null) {
-            printTrivia.call(this, leadingTrivia);
+            this.printTrivia(writer, leadingTrivia);
 
             if (writer.isInComment())
                 writer.closeComment();
         }
-
-        this.printTextInternal(writer, structure);
-
-        if (trailingTrivia != null)
-            printTrivia.call(this, trailingTrivia);
-
-        function printTrivia(this: NodePrinter<TStructure>, trivia: Structure["leadingTrivia"]) {
-            if (trivia instanceof Array) {
-                for (let i = 0; i < trivia.length; i++) {
-                    this.printTextOrWriterFunc(writer, trivia[i]);
-                    if (i !== trivia.length - 1)
-                        writer.newLineIfLastNot();
-                }
-            }
-            else {
-                this.printTextOrWriterFunc(writer, trivia);
-            }
-        }
     }
 
-    protected abstract printTextInternal(writer: CodeBlockWriter, structure: TStructure): void;
+    printTrailingTrivia(writer: CodeBlockWriter, structure: TStructure) {
+        const trailingTrivia = (structure as any)["trailingTrivia"] as Structure["trailingTrivia"];
+
+        if (trailingTrivia != null)
+            this.printTrivia(writer, trailingTrivia);
+    }
+
+    private printTrivia(writer: CodeBlockWriter, trivia: Structure["leadingTrivia"]) {
+        if (trivia instanceof Array) {
+            for (let i = 0; i < trivia.length; i++) {
+                this.printTextOrWriterFunc(writer, trivia[i]);
+                if (i !== trivia.length - 1)
+                    writer.newLineIfLastNot();
+            }
+        }
+        else {
+            this.printTextOrWriterFunc(writer, trivia);
+        }
+    }
 }

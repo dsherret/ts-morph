@@ -5291,10 +5291,20 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      */
     addMember(structure: OptionalKind<EnumMemberStructure>): EnumMember;
     /**
+     * Adds a member to the enum.
+     * @param structure - Structure of the enum.
+     */
+    addMember(structure: OptionalKind<EnumMemberStructure> | WriterFunction): EnumMember | CommentEnumMember;
+    /**
      * Adds members to the enum.
      * @param structures - Structures of the enums.
      */
     addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>): EnumMember[];
+    /**
+     * Adds members to the enum.
+     * @param structures - Structures of the enums.
+     */
+    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>): (EnumMember | CommentEnumMember)[];
     /**
      * Inserts a member to the enum.
      * @param index - Child index to insert at.
@@ -5302,11 +5312,23 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      */
     insertMember(index: number, structure: OptionalKind<EnumMemberStructure>): EnumMember;
     /**
+     * Inserts a member to the enum.
+     * @param index - Child index to insert at.
+     * @param structure - Structure of the enum.
+     */
+    insertMember(index: number, structure: OptionalKind<EnumMemberStructure> | WriterFunction): EnumMember | CommentEnumMember;
+    /**
      * Inserts members to an enum.
      * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
     insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure>>): EnumMember[];
+    /**
+     * Inserts members to an enum.
+     * @param index - Child index to insert at.
+     * @param structures - Structures of the enums.
+     */
+    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>): (EnumMember | CommentEnumMember)[];
     /**
      * Gets an enum member.
      * @param name - Name of the member.
