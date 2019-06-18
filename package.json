@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
-    "code-block-writer": "9.3.0",
+    "code-block-writer": "9.4.0",
     "fs-extra": "^7.0.0",
     "glob-parent": "^3.1.0",
     "globby": "^8.0.1",

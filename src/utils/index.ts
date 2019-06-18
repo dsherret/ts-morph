@@ -20,3 +20,4 @@ export * from "./StringUtils";
 export * from "./tsconfig";
 export * from "./TypeGuards";
 export * from "./TypeScriptVersionChecker";
+export * from "./WriterUtils";

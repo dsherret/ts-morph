@@ -1,52 +1,55 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { WriterFunction } from "../../types";
+import { WriterUtils } from "../../utils";
 import { Printer } from "../Printer";
-import { NodePrinter } from "../NodePrinter";
 import { getAppendCommaPos } from "../../manipulation/helpers/appendCommaToText";
 
 export class CommaSeparatedStructuresPrinter<T> extends Printer<ReadonlyArray<T | WriterFunction> | WriterFunction> {
-    private readonly _nodePrinter: NodePrinter<T | WriterFunction> | undefined;
-
     constructor(private readonly printer: Printer<T | WriterFunction>) {
         super();
-        this._nodePrinter = printer instanceof NodePrinter ? printer : undefined;
     }
 
     printText(writer: CodeBlockWriter, structures: ReadonlyArray<T | WriterFunction> | WriterFunction | undefined) {
-        if (structures == null)
-            return;
+        printTextWithSeparator(this.printer, writer, structures, () => writer.spaceIfLastNot());
+    }
+}
 
-        if (structures instanceof Function)
-            this.printer.printText(writer, structures);
-        else {
-            for (let i = 0; i < structures.length; i++) {
-                const structure = structures[i];
-                const isLast = i === structures.length - 1;
-                const startPos = writer.getLength();
+export function printTextWithSeparator<T>(
+    printer: Printer<T | WriterFunction>,
+    writer: CodeBlockWriter,
+    structures: ReadonlyArray<T | WriterFunction> | WriterFunction | undefined,
+    separator: () => void
+) {
+    if (structures == null)
+        return;
 
-                if (this._nodePrinter != null && !(structure instanceof Function)) {
-                    this._nodePrinter.printLeadingTrivia(writer, structure);
-                    writer.closeComment();
-                    this._nodePrinter.printTextWithoutTrivia(writer, structure);
-                    if (!isLast)
-                        writer.write(",");
-                    this._nodePrinter.printTrailingTrivia(writer, structure);
-                    if (!isLast) {
-                        writer.closeComment();
-                        if (!writer.isAtStartOfFirstLineOfBlock())
-                            writer.spaceIfLastNot();
-                    }
-                }
-                else {
-                    this.printer.printText(writer, structure);
-                    if (!isLast) {
-                        const appendPos = getAppendCommaPos(writer.toString(), startPos);
-                        if (appendPos === writer.getLength())
-                            writer.write(",");
-                        writer.spaceIfLastNot();
-                    }
-                }
-            }
+    if (structures instanceof Function)
+        printer.printText(writer, structures);
+    else {
+        // insert all the texts first
+        const commaAppendPositions: (number | false)[] = new Array(structures.length);
+        for (let i = 0; i < structures.length; i++) {
+            if (i > 0)
+                separator();
+            const structure = structures[i];
+            const startPos = writer.getLength();
+            printer.printText(writer, structure);
+
+            // collect the comma append position for this text
+            const pos = getAppendCommaPos(WriterUtils.getLastCharactersToPos(writer, startPos));
+            commaAppendPositions[i] = pos === -1 ? false : pos + startPos;
+        }
+
+        // now insert the commas as necessary
+        let foundFirst = false;
+        for (let i = commaAppendPositions.length - 1; i >= 0; i--) {
+            const pos = commaAppendPositions[i];
+            if (pos === false)
+                continue;
+            else if (!foundFirst)
+                foundFirst = true;
+            else
+                writer.unsafeInsert(pos, ",");
         }
     }
 }

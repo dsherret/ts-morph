@@ -134,7 +134,7 @@ describe(nameof(EnumDeclaration), () => {
         it("should insert with comments", () => {
             doWriterTest("enum MyEnum {\n}\n", 0,
                 [writer => writer.write("// testing"), writer => writer.write("asdf"), writer => writer.write("test"), writer => writer.write("// test")],
-                "enum MyEnum {\n    // testing\n    asdf,\n    test,\n    // test\n}\n");
+                "enum MyEnum {\n    // testing\n    asdf,\n    test\n    // test\n}\n");
         });
     });
 

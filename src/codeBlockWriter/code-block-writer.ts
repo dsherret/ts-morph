@@ -199,6 +199,17 @@ declare class CodeBlockWriter {
      */
     closeComment(): this;
     /**
+     * Inserts text at the provided position.
+     *
+     * This method is "unsafe" because it won't update the state of the writer unless
+     * inserting at the end position. It is biased towards being fast at inserting closer
+     * to the start or end, but slower to insert in the middle. Only use this if
+     * absolutely necessary.
+     * @param pos - Position to insert at.
+     * @param text - Text to insert.
+     */
+    unsafeInsert(pos: number, text: string): this;
+    /**
      * Gets the length of the string in the writer.
      */
     getLength(): number;

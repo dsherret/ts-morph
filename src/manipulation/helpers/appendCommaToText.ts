@@ -6,7 +6,7 @@ const scanner = ts.createScanner(ts.ScriptTarget.Latest, true);
  * Appends a comma to the text taking into account the various language aspects.
  */
 export function appendCommaToText(text: string) {
-    const pos = getAppendCommaPos(text, 0);
+    const pos = getAppendCommaPos(text);
     if (pos === -1)
         return text;
 
@@ -16,12 +16,10 @@ export function appendCommaToText(text: string) {
 /**
  * Gets the position in the text that a comma could be appended.
  * @param text - Text to search.
- * @param searchStartPos - Position to start searching.
  * @returns The position to append. -1 otherwise.
  */
-export function getAppendCommaPos(text: string, searchStartPos: number) {
+export function getAppendCommaPos(text: string) {
     scanner.setText(text);
-    scanner.setTextPos(searchStartPos);
 
     if (scanner.scan() === ts.SyntaxKind.EndOfFileToken)
         return -1;
