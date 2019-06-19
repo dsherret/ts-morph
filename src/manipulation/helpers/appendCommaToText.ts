@@ -21,13 +21,19 @@ export function appendCommaToText(text: string) {
 export function getAppendCommaPos(text: string) {
     scanner.setText(text);
 
-    if (scanner.scan() === ts.SyntaxKind.EndOfFileToken)
-        return -1;
+    try {
+        if (scanner.scan() === ts.SyntaxKind.EndOfFileToken)
+            return -1;
 
-    while (scanner.scan() !== ts.SyntaxKind.EndOfFileToken) {
-        // just keep scanning...
+        while (scanner.scan() !== ts.SyntaxKind.EndOfFileToken) {
+            // just keep scanning...
+        }
+
+        const pos = scanner.getStartPos();
+        return text[pos - 1] === "," ? -1 : pos;
+    } finally {
+        // ensure the scanner doesn't hold onto the text so the string
+        // gets garbage collected
+        scanner.setText(undefined);
     }
-
-    const pos = scanner.getStartPos();
-    return text[pos - 1] === "," ? -1 : pos;
 }
