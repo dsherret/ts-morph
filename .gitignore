@@ -1,5 +1,4 @@
 /node_modules
-/.vscode
 *.js.map
 /obj
 /temp

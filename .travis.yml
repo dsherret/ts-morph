@@ -4,9 +4,9 @@ node_js:
 before_script:
     - yarn run lint
     - yarn run ensure-no-project-compile-errors
-    - travis_wait 20 yarn run build-declarations
+    - travis_wait 20 yarn run build:declarations
 script:
-    - yarn run test-coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-    - yarn run test-ts-versions
+    - yarn run test:coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+    - yarn run test:ts-versions
 after_script:
     - yarn run code-verification
