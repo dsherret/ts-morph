@@ -10,13 +10,13 @@
 
 Formerly `ts-simple-ast`.
 
-## Library Development - Progress Update (20 April 2019)
+## Library Development - Progress Update (29 June 2019)
 
-There were a lot of breaking changes in v2.0. Please review [breaking-changes.md](breaking-changes.md) and see the [changelog](CHANGELOG.md) for information on new features.
+v3.0 is now released! Always review [breaking-changes.md](breaking-changes.md) before upgrading and see the [changelog](CHANGELOG.md) for information on new features.
 
-This library is still under early active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
+This library is still under active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
-Please open an issue if you find a feature missing or bug that isn't in the issue tracker.
+Please open an issue if you find a feature missing, bug, or question that isn't in the issue tracker.
 
 ### Report
 
