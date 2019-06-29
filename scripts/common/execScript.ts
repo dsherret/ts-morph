@@ -22,5 +22,5 @@ export function execScript(command: string) {
 }
 
 export function execNpmScript(scriptName: string) {
-    return execScript(`npm run ${scriptName} --no-update-notifier`);
+    return execScript(`npm run ${scriptName} --no-update-notifier --scripts-prepend-node-path`);
 }

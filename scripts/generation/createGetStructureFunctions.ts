@@ -19,7 +19,7 @@ export function createGetStructureFunctions(structures: Structure[]) {
     const writer = new CodeBlockWriter({ newLine: "\r\n" });
 
     writer.writeLine("/* tslint:disable */");
-    writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: npm run code-generate").newLine();
+    writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: yarn code-generate").newLine();
     writer.writeLine(`import * as compiler from "../../compiler";`);
     writer.writeLine(`import * as structures from "../../structures";`);
     writer.writeLine(`import { ObjectUtils } from "../../utils";`);
