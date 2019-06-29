@@ -331,7 +331,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         }
 
         const newNamedImports = this.getNamedImports();
-        return getNodesToReturn(newNamedImports, index, newNamedImports.length - originalNamedImports.length);
+        return getNodesToReturn(originalNamedImports, newNamedImports, index, false);
     }
 
     /**

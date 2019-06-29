@@ -73,7 +73,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
             });
 
             const newElements = node.getElements();
-            return getNodesToReturn(newElements, index, newElements.length - elements.length);
+            return getNodesToReturn(elements, newElements, index, false);
         }
 
         function getUseNewLines(node: ArrayLiteralExpression) {

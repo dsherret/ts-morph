@@ -23,7 +23,7 @@ export function printTextWithSeparator<T>(
     if (structures == null)
         return;
 
-    if (structures instanceof Function)
+    if (structures instanceof Function || typeof structures === "string")
         printer.printText(writer, structures);
     else {
         // insert all the texts first

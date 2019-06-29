@@ -113,7 +113,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                 newText: decoratorCode
             });
 
-            return getNodesToReturn(this.getDecorators(), index, structures.length);
+            return getNodesToReturn(decorators, this.getDecorators(), index, false);
         }
 
         set(structure: Partial<DecoratableNodeStructure>) {

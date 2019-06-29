@@ -97,7 +97,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                 });
             }
 
-            return getNodesToReturn(this.getTypeArguments(), index, argumentTexts.length);
+            return getNodesToReturn(typeArguments, this.getTypeArguments(), index, false);
         }
 
         removeTypeArgument(typeArg: Node): this;

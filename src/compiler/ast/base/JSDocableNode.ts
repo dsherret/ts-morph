@@ -80,7 +80,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
                 newText: code
             });
 
-            return getNodesToReturn(this.getJsDocs(), index, structures.length);
+            return getNodesToReturn(nodes, this.getJsDocs(), index, false);
         }
 
         set(structure: Partial<JSDocableNodeStructure>) {

@@ -129,7 +129,7 @@ describe(nameof(EnumDeclaration), () => {
             assert<IsExact<typeof result, (EnumMember | CommentEnumMember)[]>>(true);
 
             expect(sourceFile.getFullText()).to.equal(expectedCode);
-            expect(result.length).to.equal(structures.length);
+            expect(result.length).to.equal(structures instanceof Array ? structures.length : 1);
         }
 
         it("should insert with comments", () => {

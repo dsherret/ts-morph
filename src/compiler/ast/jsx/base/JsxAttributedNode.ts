@@ -88,7 +88,8 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
             if (structures.length === 0)
                 return [];
 
-            index = verifyAndGetIndex(index, this.compilerNode.attributes.properties.length);
+            const originalChildrenCount = this.compilerNode.attributes.properties.length;
+            index = verifyAndGetIndex(index, originalChildrenCount);
 
             const insertPos = index === 0 ? this.getTagNameNode().getEnd() : this.getAttributes()[index - 1].getEnd();
             const writer = this._getWriterWithQueuedChildIndentation();
@@ -101,7 +102,7 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
                 parent: this.getNodeProperty("attributes").getFirstChildByKindOrThrow(SyntaxKind.SyntaxList)
             });
 
-            return getNodesToReturn(this.getAttributes(), index, structures.length);
+            return getNodesToReturn(originalChildrenCount, this.getAttributes(), index, false);
         }
 
         set(structure: Partial<JsxAttributedNodeStructure>) {

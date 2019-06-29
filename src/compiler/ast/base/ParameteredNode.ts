@@ -106,7 +106,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 newText: writer.toString()
             });
 
-            return getNodesToReturn(this.getParameters(), index, structures.length);
+            return getNodesToReturn(parameters, this.getParameters(), index, false);
         }
 
         set(structure: Partial<ParameteredNodeStructure>) {

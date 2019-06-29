@@ -2,7 +2,7 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Node, SourceFile } from "../../compiler";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards, StringUtils } from "../../utils";
-import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromArray, verifyAndGetIndex, appendCommaToText } from "../helpers";
+import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromArray, verifyAndGetIndex, appendCommaToText, getNodesToReturn } from "../helpers";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { InsertionTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
@@ -342,9 +342,7 @@ export function insertIntoBracesOrSourceFileWithGetChildrenWithComments(opts: In
         write: opts.write
     });
 
-    const newChildren = opts.getIndexedChildren();
-    const newLength = newChildren.length - startChildren.length;
-    return newChildren.slice(index, index + newLength);
+    return getNodesToReturn(startChildren, opts.getIndexedChildren(), index, true);
 
     function getChildIndex() {
         if (index === 0)

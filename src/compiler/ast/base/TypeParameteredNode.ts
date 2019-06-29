@@ -117,7 +117,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                 });
             }
 
-            return getNodesToReturn(this.getTypeParameters(), index, structures.length);
+            return getNodesToReturn(typeParameters, this.getTypeParameters(), index, false);
         }
 
         set(structure: Partial<TypeParameteredNodeStructure>) {

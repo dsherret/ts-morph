@@ -108,7 +108,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             }
 
             const newExtends = this.getExtends();
-            return wasStringInput ? newExtends[index] : getNodesToReturn(newExtends, index, newExtends.length - originalExtends.length);
+            return wasStringInput ? newExtends[index] : getNodesToReturn(originalExtends, newExtends, index, false);
         }
 
         removeExtends(index: number): this;

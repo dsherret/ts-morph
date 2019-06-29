@@ -2,7 +2,7 @@ import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
 import { EnumDeclarationStructure, EnumMemberStructure, EnumDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards } from "../../../utils";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";
@@ -113,7 +113,14 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         });
 
         // get the members
-        return getNodesToReturn(this.getMembersWithComments(), index, structures.length);
+        return getNodesToReturn(members, this.getMembersWithComments(), index, !areAllStructuresStructures());
+
+        function areAllStructuresStructures() {
+            // if every item is a structure
+            if (!(structures instanceof Array))
+                return false;
+            return structures.every(s => typeof s === "object");
+        }
     }
 
     /**

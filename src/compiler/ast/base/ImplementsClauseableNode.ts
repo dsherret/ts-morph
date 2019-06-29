@@ -109,7 +109,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             }
 
             const newImplements = this.getImplements();
-            return wasStringInput ? newImplements[0] : getNodesToReturn(newImplements, index, newImplements.length - originalImplements.length);
+            return wasStringInput ? newImplements[0] : getNodesToReturn(originalImplements, newImplements, index, false);
         }
 
         removeImplements(index: number): this;

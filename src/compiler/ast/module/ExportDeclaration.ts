@@ -203,7 +203,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
         }
 
         const newNamedExports = this.getNamedExports();
-        return getNodesToReturn(newNamedExports, index, newNamedExports.length - originalNamedExports.length);
+        return getNodesToReturn(originalNamedExports, newNamedExports, index, false);
     }
 
     /**

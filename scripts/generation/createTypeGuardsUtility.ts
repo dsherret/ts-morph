@@ -225,7 +225,8 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             returnType: `node is ${commentMethods.map(c => "compiler." + c.name.replace("is", "")).join(" | ")}`,
             parameters: [{ name: "node", type: "compiler.Node" }],
             statements: [writer => {
-                writer.writeLine(`return node.getKind() === SyntaxKind.SingleLineCommentTrivia || node.getKind() === SyntaxKind.MultiLineCommentTrivia;`);
+                writer.writeLine("const kind = node.getKind();");
+                writer.writeLine(`return kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia;`);
             }]
         }, ...commentMethods]);
     }

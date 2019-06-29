@@ -64,6 +64,6 @@ export class SyntaxList extends Node<ts.SyntaxList> {
 
         // get inserted children
         const finalChildren = this.getChildren();
-        return getNodesToReturn(finalChildren, index, finalChildren.length - initialChildCount);
+        return getNodesToReturn(initialChildCount, finalChildren, index, true);
     }
 }

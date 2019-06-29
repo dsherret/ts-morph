@@ -1,5 +1,5 @@
 import * as errors from "../../../errors";
-import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange } from "../../../manipulation";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { CommaSeparatedStructuresPrinter } from "../../../structurePrinters";
 import { VariableDeclarationStructure, OptionalKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
@@ -102,6 +102,9 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
     insertDeclarations(index: number, structures: ReadonlyArray<OptionalKind<VariableDeclarationStructure>>) {
         const writer = this._getWriterWithQueuedChildIndentation();
         const structurePrinter = new CommaSeparatedStructuresPrinter(this._context.structurePrinterFactory.forVariableDeclaration());
+        const originalChildrenCount = this.compilerNode.declarations.length;
+
+        index = verifyAndGetIndex(index, originalChildrenCount);
 
         structurePrinter.printText(writer, structures);
 
@@ -112,6 +115,6 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
             newText: writer.toString()
         });
 
-        return getNodesToReturn(this.getDeclarations(), index, structures.length);
+        return getNodesToReturn(originalChildrenCount, this.getDeclarations(), index, false);
     }
 }

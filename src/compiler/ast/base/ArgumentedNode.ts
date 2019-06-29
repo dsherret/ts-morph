@@ -91,8 +91,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
                 newText: writer.toString()
             });
 
-            const newArgs = this.getArguments();
-            return getNodesToReturn(newArgs, index, newArgs.length - originalArgs.length);
+            return getNodesToReturn(originalArgs, this.getArguments(), index, false);
         }
 
         removeArgument(arg: Node): this;

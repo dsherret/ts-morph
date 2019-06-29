@@ -118,9 +118,6 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @structures - The structures to insert.
      */
     insertProperties(index: number, structures: string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[]) {
-        if (structures.length === 0)
-            return [];
-
         const properties = this.getPropertiesWithComments();
         index = verifyAndGetIndex(index, properties.length);
 
@@ -139,7 +136,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         });
 
         // get the properties
-        return getNodesToReturn(this.getPropertiesWithComments(), index, structures.length);
+        return getNodesToReturn(properties, this.getPropertiesWithComments(), index, true);
     }
 
     /* Property Assignments */
@@ -365,17 +362,18 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         index = verifyAndGetIndex(index, this._getAddIndex());
         const writer = this._getWriterWithChildIndentation();
         const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(createStructurePrinter());
+        const oldProperties = this.getPropertiesWithComments();
 
         structurePrinter.printText(writer, structures);
 
         insertIntoCommaSeparatedNodes({
             parent: this.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
-            currentNodes: this.getPropertiesWithComments(),
+            currentNodes: oldProperties,
             insertIndex: index,
             newText: writer.toString(),
             useNewLines: true
         });
 
-        return getNodesToReturn(this.getPropertiesWithComments(), index, structures.length);
+        return getNodesToReturn(oldProperties, this.getPropertiesWithComments(), index, false);
     }
 }

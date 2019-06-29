@@ -60,11 +60,6 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forObjectLiteralExpressionProperty(): structurePrinters.ObjectLiteralExpressionPropertyStructurePrinter {
-        return new structurePrinters.ObjectLiteralExpressionPropertyStructurePrinter(this);
-    }
-
-    @Memoize
     forPropertyDeclaration(): structurePrinters.PropertyDeclarationStructurePrinter {
         return new structurePrinters.PropertyDeclarationStructurePrinter(this);
     }
@@ -72,21 +67,6 @@ export class StructurePrinterFactory {
     @Memoize
     forSetAccessorDeclaration(options: { isAmbient: boolean; }): structurePrinters.SetAccessorDeclarationStructurePrinter {
         return new structurePrinters.SetAccessorDeclarationStructurePrinter(this, options);
-    }
-
-    @Memoize
-    forPropertyAssignment(): structurePrinters.PropertyAssignmentStructurePrinter {
-        return new structurePrinters.PropertyAssignmentStructurePrinter(this);
-    }
-
-    @Memoize
-    forShorthandPropertyAssignment(): structurePrinters.ShorthandPropertyAssignmentStructurePrinter {
-        return new structurePrinters.ShorthandPropertyAssignmentStructurePrinter(this);
-    }
-
-    @Memoize
-    forSpreadAssignment(): structurePrinters.SpreadAssignmentStructurePrinter {
-        return new structurePrinters.SpreadAssignmentStructurePrinter(this);
     }
 
     @Memoize
@@ -107,6 +87,26 @@ export class StructurePrinterFactory {
     @Memoize
     forEnumMember(): structurePrinters.EnumMemberStructurePrinter {
         return new structurePrinters.EnumMemberStructurePrinter(this);
+    }
+
+    @Memoize
+    forObjectLiteralExpressionProperty(): structurePrinters.ObjectLiteralExpressionPropertyStructurePrinter {
+        return new structurePrinters.ObjectLiteralExpressionPropertyStructurePrinter(this);
+    }
+
+    @Memoize
+    forPropertyAssignment(): structurePrinters.PropertyAssignmentStructurePrinter {
+        return new structurePrinters.PropertyAssignmentStructurePrinter(this);
+    }
+
+    @Memoize
+    forShorthandPropertyAssignment(): structurePrinters.ShorthandPropertyAssignmentStructurePrinter {
+        return new structurePrinters.ShorthandPropertyAssignmentStructurePrinter(this);
+    }
+
+    @Memoize
+    forSpreadAssignment(): structurePrinters.SpreadAssignmentStructurePrinter {
+        return new structurePrinters.SpreadAssignmentStructurePrinter(this);
     }
 
     @Memoize
