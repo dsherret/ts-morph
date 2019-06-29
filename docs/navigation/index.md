@@ -40,6 +40,7 @@ node.forEachChild(node => {
 const classDec = node.forEachChild(node => {
     if (TypeGuards.isClassDeclaration(node))
         return node; // stops iterating over the children and returns this value
+    return undefined; // return a falsy value or no value to continue iterating
 });
 ```
 
@@ -87,5 +88,7 @@ const result = node.forEachDescendant((node, traversal) => {
             // stops traversal completely and returns this value
             return node;
     }
+
+    return undefined;
 });
 ```

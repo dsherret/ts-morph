@@ -17,7 +17,7 @@ const project = new Project({
         // LineFeed or CarriageReturnLineFeed
         newLineKind: NewLineKind.LineFeed,
         // Single or Double
-        quoteKind: QuoteKind.Double
+        quoteKind: QuoteKind.Double,
         // Whether to change shorthand property assignments to property assignments
         // and add aliases to import & export specifiers (see more information in
         // the renaming section of the documentation).

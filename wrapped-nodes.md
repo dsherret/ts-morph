@@ -349,7 +349,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :x: moduleName
     * :heavy_check_mark: referencedFiles
     * :heavy_check_mark: typeReferenceDirectives
-    * :x: libReferenceDirectives
+    * :heavy_check_mark: libReferenceDirectives
     * :heavy_check_mark: languageVariant
     * :heavy_check_mark: isDeclarationFile
     * :x: hasNoDefaultLib

@@ -74,7 +74,7 @@ This behaviour can be changed by enabling the `usePrefixAndSuffixText` setting, 
 const b = 5;
 const x = { a: b };
 
-export { a as b };
+export { b as a };
 ```
 
 This behaviour change can be specified when renaming:
