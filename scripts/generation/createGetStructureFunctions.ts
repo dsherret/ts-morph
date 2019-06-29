@@ -26,7 +26,7 @@ export function createGetStructureFunctions(structures: Structure[]) {
     writer.writeLine(`import * as getMixinStructureFuncs from "./getMixinStructureFunctions";`);
 
     for (const structure of structures.filter(s => shouldCreateForStructure(s.getName()))) {
-        writer.newLine();
+        writer.blankLineIfLastNot();
         write(writer, structure);
     }
 
