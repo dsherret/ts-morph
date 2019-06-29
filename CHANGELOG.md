@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/dsherret/ts-morph/compare/2.3.0...3.0.0) (2019-06-29)
+
+
+### Bug Fixes
+
+* [#534](https://github.com/dsherret/ts-morph/issues/534) - Incorrect type resolution behaviour when providing a tsconfig.json file path and having a different current working directory. ([0ecce83](https://github.com/dsherret/ts-morph/commit/0ecce83))
+* [#648](https://github.com/dsherret/ts-morph/issues/648) - Comment nodes are no longer accidentally returned in some scenarios. ([ad4c64c](https://github.com/dsherret/ts-morph/commit/ad4c64c))
+* ClassLike and TypeElementMembered nodes would not get the correct "add" index when a comment member node was present. ([571ba69](https://github.com/dsherret/ts-morph/commit/571ba69))
+* Comment node parser now correctly returns comments on next line after tailing comma in object literal expressions. ([966acb0](https://github.com/dsherret/ts-morph/commit/966acb0))
+* Fix issues with `Node#getText({ trimLeadingIndentation: true })` indenting more than it should. ([a2210de](https://github.com/dsherret/ts-morph/commit/a2210de))
+* ObjectLiteralExpression insert should insert around comment nodes. ([c3b9f28](https://github.com/dsherret/ts-morph/commit/c3b9f28)), closes [#605](https://github.com/dsherret/ts-morph/issues/605)
+* Support nodes that may not have a source file (ex. `globalThis` node returned from a symbol) ([b9b0cb0](https://github.com/dsherret/ts-morph/commit/b9b0cb0))
+
+
+### Code Refactoring
+
+* [#619](https://github.com/dsherret/ts-morph/issues/619) - Rename `StructureTypeGuards` methods to remove word `Node` and `Declaration` in certain cases. ([92331e1](https://github.com/dsherret/ts-morph/commit/92331e1))
+* [#633](https://github.com/dsherret/ts-morph/issues/633) - `Node#forEachChild` is now aligned with the compiler API (same with `forEachDescendant`). ([27fa43a](https://github.com/dsherret/ts-morph/commit/27fa43a))
+* `SourceFile#getTypeReferenceDirectives()` and `#getReferencedFiles()` better reflects the compiler api. ([350bacb](https://github.com/dsherret/ts-morph/commit/350bacb))
+* Remove `renameNode` and `renameLocations` from the language service. ([72f0e1d](https://github.com/dsherret/ts-morph/commit/72f0e1d))
+* Rename `ObjectLiteralElementMemberStructures` to `ObjectLiteralExpressionPropertyStructures`. ([98f00d2](https://github.com/dsherret/ts-morph/commit/98f00d2))
+
+
+### Features
+
+* [#310](https://github.com/dsherret/ts-morph/issues/310) - Add `Symbol#getExportSymbol` and `TypeChecker#getExportSymbolOfSymbol`. ([5fce598](https://github.com/dsherret/ts-morph/commit/5fce598))
+* [#561](https://github.com/dsherret/ts-morph/issues/561) - Add methods `Node#getLocals`, `#getLocalByName`, `#getLocalByNameOrThrow` ([c343de3](https://github.com/dsherret/ts-morph/commit/c343de3))
+* [#605](https://github.com/dsherret/ts-morph/issues/605) - Add ability to insert comments on enum declarations. ([0420ae1](https://github.com/dsherret/ts-morph/commit/0420ae1))
+* [#605](https://github.com/dsherret/ts-morph/issues/605) - Add insertMember-like methods to `ClassLikeDeclarationBase`. ([f55850b](https://github.com/dsherret/ts-morph/commit/f55850b))
+* [#605](https://github.com/dsherret/ts-morph/issues/605) - Add insertMember-like methods to `TypeElementMemberedNode`. ([93a070d](https://github.com/dsherret/ts-morph/commit/93a070d))
+* [#605](https://github.com/dsherret/ts-morph/issues/605) - ObjectLiteralExpression#insertProperties and similar methods. ([be0f046](https://github.com/dsherret/ts-morph/commit/be0f046))
+* [#625](https://github.com/dsherret/ts-morph/issues/625) - Add `writer.withHangingIndent(() => {})`. Also better hanging indent printing ([a544e55](https://github.com/dsherret/ts-morph/commit/a544e55)), closes [#616](https://github.com/dsherret/ts-morph/issues/616)
+* Add `Writers` alias for `WriterFunctions`. ([79c6694](https://github.com/dsherret/ts-morph/commit/79c6694))
+* [#636](https://github.com/dsherret/ts-morph/issues/636) - Writers.returnStatement should do hanging indent in certain cases. ([db6602d](https://github.com/dsherret/ts-morph/commit/db6602d))
+* [#638](https://github.com/dsherret/ts-morph/issues/638) - RenameLocation - Support `prefixText` and `suffixText` when renaming. ([9326100](https://github.com/dsherret/ts-morph/commit/9326100))
+* `RenameLocation` - Add `getPrefixText()` and `getSuffixText()` ([3cb7a7f](https://github.com/dsherret/ts-morph/commit/3cb7a7f))
+* Add `Node#getSymbolsInScope(meaning)` and `TypeChecker#getSymbolsInScope(node, meaning)`. ([25ab43d](https://github.com/dsherret/ts-morph/commit/25ab43d))
+* Add TypeGuards.isCommentNode. ([89125a2](https://github.com/dsherret/ts-morph/commit/89125a2))
+* Add WriterFunctions.assertion. ([37c875e](https://github.com/dsherret/ts-morph/commit/37c875e))
+* Smart comma insertion when printing comma separated values with comments. ([ae62b07](https://github.com/dsherret/ts-morph/commit/ae62b07))
+* Upgrade to code-block-writer 9.4.0.
+
+
+### Performance Improvements
+
+* [#615](https://github.com/dsherret/ts-morph/issues/615) - Remove some internal regular expressions. ([cfce40b](https://github.com/dsherret/ts-morph/commit/cfce40b))
+* Improve performance of `SourceFile#indent()` and `deindent()`. ([17eefea](https://github.com/dsherret/ts-morph/commit/17eefea))
+
+
+### BREAKING CHANGES
+
+* `renameNode` and `renameLocations` are removed from the language service. To be consistent, the language service should not have methods that manipulate nodes.
+* `SourceFile#getTypeReferenceDirectives()` and `#getReferencedFiles()` now return the objects similar to what the compiler api returns.
+* `Node#forEachChild` is now aligned with the compiler API (same with `forEachDescendant`). These methods now stop when a value is returned in a callback and they will return the returned value.
+* The `ObjectLiteralElementMemberStructures` alias is now called `ObjectLiteralExpressionPropertyStructures`. This is a more correct name as an object literal expression has "properties" rather than "members" in the compiler api.
+* Renamed `StructureTypeGuards` methods to remove word `Node` and `Declaration` in certain cases.
+
+
+
 <a name="2.3.0"></a>
 # [2.3.0](https://github.com/dsherret/ts-morph/compare/2.2.0...2.3.0) (2019-05-30)
 
