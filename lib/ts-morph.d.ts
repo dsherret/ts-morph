@@ -755,11 +755,15 @@ export declare class TypeGuards {
      */
     static isNode(value: unknown): value is Node;
     /**
-     * Gets if the provided value is a CommentStatement.
+     * Gets if the provided node is a comment node.
+     */
+    static isCommentNode(node: Node): node is CommentStatement | CommentClassElement | CommentTypeElement | CommentObjectLiteralElement | CommentEnumMember;
+    /**
+     * Gets if the provided node is a CommentStatement.
      */
     static isCommentStatement(node: Node): node is CommentStatement;
     /**
-     * Gets if the provided value is a CommentClassElement.
+     * Gets if the provided node is a CommentClassElement.
      */
     static isCommentClassElement(node: Node): node is CommentClassElement;
     /**
@@ -767,11 +771,11 @@ export declare class TypeGuards {
      */
     static isCommentTypeElement(node: Node): node is CommentTypeElement;
     /**
-     * Gets if the provided value is a CommentObjectLiteralElement.
+     * Gets if the provided node is a CommentObjectLiteralElement.
      */
     static isCommentObjectLiteralElement(node: Node): node is CommentObjectLiteralElement;
     /**
-     * Gets if the provided value is a CommentEnumMember.
+     * Gets if the provided node is a CommentEnumMember.
      */
     static isCommentEnumMember(node: Node): node is CommentEnumMember;
     /**
@@ -5294,7 +5298,7 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * Adds a member to the enum.
      * @param structure - Structure of the enum.
      */
-    addMember(structure: OptionalKind<EnumMemberStructure> | WriterFunction): EnumMember | CommentEnumMember;
+    addMember(structure: OptionalKind<EnumMemberStructure> | WriterFunction | string): EnumMember | CommentEnumMember;
     /**
      * Adds members to the enum.
      * @param structures - Structures of the enums.
@@ -5304,7 +5308,7 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * Adds members to the enum.
      * @param structures - Structures of the enums.
      */
-    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>): (EnumMember | CommentEnumMember)[];
+    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | string | WriterFunction): (EnumMember | CommentEnumMember)[];
     /**
      * Inserts a member to the enum.
      * @param index - Child index to insert at.
@@ -5316,7 +5320,7 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * @param index - Child index to insert at.
      * @param structure - Structure of the enum.
      */
-    insertMember(index: number, structure: OptionalKind<EnumMemberStructure> | WriterFunction): EnumMember | CommentEnumMember;
+    insertMember(index: number, structure: OptionalKind<EnumMemberStructure> | WriterFunction | string): EnumMember | CommentEnumMember;
     /**
      * Inserts members to an enum.
      * @param index - Child index to insert at.
@@ -5328,7 +5332,7 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
-    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>): (EnumMember | CommentEnumMember)[];
+    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string): (EnumMember | CommentEnumMember)[];
     /**
      * Gets an enum member.
      * @param name - Name of the member.
@@ -5719,6 +5723,36 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Gets the properties with comment object literal elements.
      */
     getPropertiesWithComments(): (ObjectLiteralElementLike | CommentObjectLiteralElement)[];
+    /**
+     * Adds the specified property to the object literal expression.
+     *
+     * Note: If you only want to add a property assignment, then it might be more convenient to use #addPropertyAssignment.
+     * @structure - The structure to add.
+     */
+    addProperty(structure: string | WriterFunction | ObjectLiteralExpressionPropertyStructures): CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment;
+    /**
+     * Adds the specified properties to the object literal expression.
+     *
+     * Note: If you only want to add property assignments, then it might be more convenient to use #addPropertyAssignments.
+     * @structures - The structures to add.
+     */
+    addProperties(structures: string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[]): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
+    /**
+     * Inserts the specified property to the object literal expression.
+     *
+     * Note: If you only want to insert a property assignment, then it might be more convenient to use #insertPropertyAssignment.
+     * @index - The index to insert at.
+     * @structure - The structure to insert.
+     */
+    insertProperty(index: number, structure: string | WriterFunction | ObjectLiteralExpressionPropertyStructures): CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment;
+    /**
+     * Inserts the specified properties to the object literal expression.
+     *
+     * Note: If you only want to insert property assignments, then it might be more convenient to use #insertPropertyAssignments.
+     * @index - The index to insert at.
+     * @structures - The structures to insert.
+     */
+    insertProperties(index: number, structures: string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[]): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
     /**
      * Adds a property assignment.
      * @param structure - Structure that represents the property assignment to add.

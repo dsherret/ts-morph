@@ -59,7 +59,7 @@ export class TypeGuards {
     /**
      * Gets if the provided node is a comment node.
      */
-    static isCommentNode(node: compiler.Node): node is CommentStatement | CommentClassElement | CommentTypeElement | CommentObjectLiteralElement | CommentEnumMember {
+    static isCommentNode(node: compiler.Node): node is compiler.CommentStatement | compiler.CommentClassElement | compiler.CommentTypeElement | compiler.CommentObjectLiteralElement | compiler.CommentEnumMember {
         return node.getKind() === SyntaxKind.SingleLineCommentTrivia || node.getKind() === SyntaxKind.MultiLineCommentTrivia;
     }
 

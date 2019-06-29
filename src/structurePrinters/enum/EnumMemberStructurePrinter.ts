@@ -4,16 +4,20 @@ import { NodePrinter } from "../NodePrinter";
 import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 import { WriterFunction } from "../../types";
 
-export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMemberStructure> | WriterFunction> {
+export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMemberStructure> | WriterFunction | string> {
     private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 
-    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<EnumMemberStructure> | WriterFunction) {
+    protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<EnumMemberStructure> | WriterFunction | string) {
         if (structure instanceof Function) {
             structure(writer);
+            return;
+        }
+        else if (typeof structure === "string") {
+            writer.write(structure);
             return;
         }
 

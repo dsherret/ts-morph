@@ -222,7 +222,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             docs: ["Gets if the provided node is a comment node."],
             isStatic: true,
             name: "isCommentNode",
-            returnType: `node is ${commentMethods.map(c => c.name.replace("is", "")).join(" | ")}`,
+            returnType: `node is ${commentMethods.map(c => "compiler." + c.name.replace("is", "")).join(" | ")}`,
             parameters: [{ name: "node", type: "compiler.Node" }],
             statements: [writer => {
                 writer.writeLine(`return node.getKind() === SyntaxKind.SingleLineCommentTrivia || node.getKind() === SyntaxKind.MultiLineCommentTrivia;`);

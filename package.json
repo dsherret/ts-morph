@@ -24,7 +24,7 @@
     "code-generate": "ts-node --transpileOnly --compiler ttypescript scripts/generation/main",
     "refactor": "ts-node --transpileOnly scripts/refactor",
     "output-wrapped-nodes": "ts-node --transpileOnly scripts/generation/outputWrappedNodesInfo",
-    "package": "yarn build && yarn build-declarations",
+    "package": "yarn build && yarn build:declarations",
     "publish-code-verification": "yarn code-verification && yarn ensure-no-declaration-file-errors && yarn ensure-declaration-files-not-changed",
     "code-verification": "ts-node --transpileOnly scripts/verification/main ensure-structures-match-classes ensure-overload-structures-match ensure-array-inputs-readonly ensure-classes-implement-structure-methods ensure-mixin-not-applied-multiple-times validate-public-api-class-member-names validate-compiler-node-to-wrapped-type validate-code-fences",
     "ensure-structures-match-classes": "ts-node --transpileOnly scripts/verification/main ensure-structures-match-classes",
@@ -34,7 +34,7 @@
     "ensure-declaration-files-not-changed": "ts-node --transpileOnly scripts/verification/ensureDeclarationFilesNotChanged",
     "ensure-array-inputs-readonly": "ts-node --transpileOnly scripts/verification/main ensure-array-inputs-readonly",
     "ensure-or-throw-exists": "ts-node --transpileOnly scripts/verification/main ensure-or-throw-exists",
-    "overwrite-declaration-files": "yarn build-declarations && shx cp -rf dist-declarations/ts-morph.d.ts lib/ts-morph.d.ts && shx cp -rf dist-declarations/code-block-writer.d.ts lib/code-block-writer.d.ts",
+    "overwrite-declaration-files": "yarn build:declarations && shx cp -rf dist-declarations/ts-morph.d.ts lib/ts-morph.d.ts && shx cp -rf dist-declarations/code-block-writer.d.ts lib/code-block-writer.d.ts",
     "type-check-docs": "ts-node --transpileOnly scripts/typeCheckDocumentation.ts",
     "maintain-barrels": "barrel-maintainer src"
   },

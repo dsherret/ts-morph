@@ -2,9 +2,12 @@ import * as errors from "../../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../../manipulation";
 import { CommaNewLineSeparatedStructuresPrinter, Printer } from "../../../../structurePrinters";
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind } from "../../../../structures";
+    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, ObjectLiteralExpressionPropertyStructures,
+    OptionalKind } from "../../../../structures";
 import { SyntaxKind, ts } from "../../../../typescript";
+import { WriterFunction } from "../../../../types";
 import { getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
+import { ExtendedParser } from "../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "../../class";
 import { PrimaryExpression } from "../PrimaryExpression";
@@ -12,7 +15,6 @@ import { CommentObjectLiteralElement } from "./CommentObjectLiteralElement";
 import { PropertyAssignment } from "./PropertyAssignment";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 import { SpreadAssignment } from "./SpreadAssignment";
-import { ExtendedParser } from "../../utils";
 
 export const ObjectLiteralExpressionBase = PrimaryExpression;
 export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
@@ -75,6 +77,69 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
     private _getAddIndex() {
         const members = ExtendedParser.getContainerArray(this.compilerNode, this.getSourceFile().compilerNode);
         return members.length;
+    }
+
+    /**
+     * Adds the specified property to the object literal expression.
+     *
+     * Note: If you only want to add a property assignment, then it might be more convenient to use #addPropertyAssignment.
+     * @structure - The structure to add.
+     */
+    addProperty(structure: string | WriterFunction | ObjectLiteralExpressionPropertyStructures) {
+        return this.insertProperties(this._getAddIndex(), [structure])[0];
+    }
+
+    /**
+     * Adds the specified properties to the object literal expression.
+     *
+     * Note: If you only want to add property assignments, then it might be more convenient to use #addPropertyAssignments.
+     * @structures - The structures to add.
+     */
+    addProperties(structures: string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[]) {
+        return this.insertProperties(this._getAddIndex(), structures);
+    }
+
+    /**
+     * Inserts the specified property to the object literal expression.
+     *
+     * Note: If you only want to insert a property assignment, then it might be more convenient to use #insertPropertyAssignment.
+     * @index - The index to insert at.
+     * @structure - The structure to insert.
+     */
+    insertProperty(index: number, structure: string | WriterFunction | ObjectLiteralExpressionPropertyStructures) {
+        return this.insertProperties(index, [structure])[0];
+    }
+
+    /**
+     * Inserts the specified properties to the object literal expression.
+     *
+     * Note: If you only want to insert property assignments, then it might be more convenient to use #insertPropertyAssignments.
+     * @index - The index to insert at.
+     * @structures - The structures to insert.
+     */
+    insertProperties(index: number, structures: string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[]) {
+        if (structures.length === 0)
+            return [];
+
+        const properties = this.getPropertiesWithComments();
+        index = verifyAndGetIndex(index, properties.length);
+
+        // create property code
+        const writer = this._getWriterWithChildIndentation();
+        const structurePrinter = this._context.structurePrinterFactory.forObjectLiteralExpressionProperty();
+        structurePrinter.printTexts(writer, structures);
+
+        // insert
+        insertIntoCommaSeparatedNodes({
+            parent: this.getChildSyntaxListOrThrow(),
+            currentNodes: properties,
+            insertIndex: index,
+            newText: writer.toString(),
+            useNewLines: true
+        });
+
+        // get the properties
+        return getNodesToReturn(this.getPropertiesWithComments(), index, structures.length);
     }
 
     /* Property Assignments */

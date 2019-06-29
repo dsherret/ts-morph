@@ -74,9 +74,12 @@ export interface InsertIntoCommaSeparatedNodesOptions {
 }
 
 export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNodesOptions) {
+    // todo: this function could use a bit of clean up
     const { currentNodes, insertIndex, parent } = opts;
-    const nextNode = currentNodes[insertIndex] as Node | undefined;
     const previousNode = currentNodes[insertIndex - 1] as Node | undefined;
+    const previousNonCommentNode = getPreviousNonCommentNode();
+    const nextNode = currentNodes[insertIndex] as Node | undefined;
+    const nextNonCommentNode = getNextNonCommentNode();
     const separator = opts.useNewLines ? parent._context.manipulationSettings.getNewLineKindAsString() : " ";
     const parentNextSibling = parent.getNextSibling();
     const isContained = parentNextSibling != null && (
@@ -87,7 +90,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     if (previousNode != null) {
         prependCommaAndSeparator();
 
-        if (nextNode != null)
+        if (nextNonCommentNode != null)
             appendCommaAndSeparator();
         else if (opts.useNewLines || opts.surroundWithSpaces)
             appendSeparator();
@@ -95,7 +98,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
             appendIndentation();
 
         const nextEndStart = nextNode == null ? (isContained ? parentNextSibling!.getStart(true) : parent.getEnd()) : nextNode.getStart(true);
-        const insertPos = previousNode.getEnd();
+        const insertPos = (previousNonCommentNode || previousNode).getEnd();
         insertIntoParentTextRange({
             insertPos,
             newText,
@@ -107,7 +110,10 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         if (opts.useNewLines || opts.surroundWithSpaces)
             prependSeparator();
 
-        appendCommaAndSeparator();
+        if (nextNonCommentNode == null)
+            appendSeparator();
+        else
+            appendCommaAndSeparator();
 
         const insertPos = isContained ? parent.getPos() : parent.getStart(true);
         insertIntoParentTextRange({
@@ -134,27 +140,66 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     }
 
     function prependCommaAndSeparator() {
+        if (previousNonCommentNode == null) {
+            prependSeparator();
+            return;
+        }
+
         const originalSourceFileText = parent.getSourceFile().getFullText();
-        const previousNodeNextSibling = previousNode!.getNextSibling();
+        const previousNodeNextSibling = previousNonCommentNode.getNextSibling();
         let text = "";
         if (previousNodeNextSibling != null && previousNodeNextSibling.getKind() === SyntaxKind.CommaToken) {
-            appendNodeTrailingCommentRanges(previousNode!);
+            appendNodeTrailingCommentRanges(previousNonCommentNode);
             text += ",";
-            appendNodeTrailingCommentRanges(previousNodeNextSibling);
+            if (previousNonCommentNode === previousNode)
+                appendNodeTrailingCommentRanges(previousNodeNextSibling);
+            else
+                appendCommentNodeTexts();
         }
         else {
             text += ",";
-            appendNodeTrailingCommentRanges(previousNode!);
+            if (previousNonCommentNode === previousNode)
+                appendNodeTrailingCommentRanges(previousNonCommentNode);
+            else
+                appendCommentNodeTexts();
         }
 
         prependSeparator();
         newText = text + newText;
 
-        function appendNodeTrailingCommentRanges(node: Node) {
-            for (const commentRange of node.getTrailingCommentRanges()) {
-                text += originalSourceFileText.substring(node.getEnd(), commentRange.getPos()) + commentRange.getText();
-            }
+        function appendCommentNodeTexts() {
+            const lastCommentRangeEnd = getLastCommentRangeEnd(previousNode!) || previousNode!.getEnd();
+            text += originalSourceFileText.substring(previousNonCommentNode!.getEnd(), lastCommentRangeEnd);
         }
+
+        function appendNodeTrailingCommentRanges(node: Node) {
+            const lastCommentRangeEnd = getLastCommentRangeEnd(node);
+            if (lastCommentRangeEnd == null)
+                return;
+            text += originalSourceFileText.substring(node.getEnd(), lastCommentRangeEnd);
+        }
+
+        function getLastCommentRangeEnd(node: Node) {
+            const commentRanges = node.getTrailingCommentRanges();
+            const lastCommentRange = commentRanges[commentRanges.length - 1];
+            return lastCommentRange == null ? undefined : lastCommentRange.getEnd();
+        }
+    }
+
+    function getPreviousNonCommentNode() {
+        for (let i = insertIndex - 1; i >= 0; i--) {
+            if (!TypeGuards.isCommentNode(currentNodes[i]))
+                return currentNodes[i];
+        }
+        return undefined;
+    }
+
+    function getNextNonCommentNode() {
+        for (let i = insertIndex; i < currentNodes.length; i++) {
+            if (!TypeGuards.isCommentNode(currentNodes[i]))
+                return currentNodes[i];
+        }
+        return undefined;
     }
 
     function prependSeparator() {

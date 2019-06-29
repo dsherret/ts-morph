@@ -60,6 +60,11 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forObjectLiteralExpressionProperty(): structurePrinters.ObjectLiteralExpressionPropertyStructurePrinter {
+        return new structurePrinters.ObjectLiteralExpressionPropertyStructurePrinter(this);
+    }
+
+    @Memoize
     forPropertyDeclaration(): structurePrinters.PropertyDeclarationStructurePrinter {
         return new structurePrinters.PropertyDeclarationStructurePrinter(this);
     }

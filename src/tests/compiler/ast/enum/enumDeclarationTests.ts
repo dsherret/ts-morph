@@ -122,7 +122,8 @@ describe(nameof(EnumDeclaration), () => {
                 "enum MyEnum {\n    /**\n     * testing\n     */\n    member = 5\n}\n");
         });
 
-        function doWriterTest(startCode: string, index: number, structures: (OptionalKind<EnumMemberStructure> | WriterFunction)[], expectedCode: string) {
+        type WriterStructureType = (OptionalKind<EnumMemberStructure> | WriterFunction | string)[] | string | WriterFunction;
+        function doWriterTest(startCode: string, index: number, structures: WriterStructureType, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.insertMembers(index, structures);
             assert<IsExact<typeof result, (EnumMember | CommentEnumMember)[]>>(true);
@@ -135,6 +136,16 @@ describe(nameof(EnumDeclaration), () => {
             doWriterTest("enum MyEnum {\n}\n", 0,
                 [writer => writer.write("// testing"), writer => writer.write("asdf"), writer => writer.write("test"), writer => writer.write("// test")],
                 "enum MyEnum {\n    // testing\n    asdf,\n    test\n    // test\n}\n");
+        });
+
+        it("should insert when using only a writer", () => {
+            doWriterTest("enum MyEnum {\n}\n", 0, writer => writer.write("// testing"),
+                "enum MyEnum {\n    // testing\n}\n");
+        });
+
+        it("should insert when using only a string", () => {
+            doWriterTest("enum MyEnum {\n}\n", 0, "// testing",
+                "enum MyEnum {\n    // testing\n}\n");
         });
     });
 

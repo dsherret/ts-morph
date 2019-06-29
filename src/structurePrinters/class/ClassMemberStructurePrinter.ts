@@ -31,38 +31,38 @@ export class ClassMemberStructurePrinter extends Printer<ClassMemberStructuresAr
         }
     }
 
-    printText(writer: CodeBlockWriter, members: ClassMemberStructuresArrayItem) {
-        if (typeof members === "string" || members instanceof Function || members == null) {
-            this.printTextOrWriterFunc(writer, members);
+    printText(writer: CodeBlockWriter, member: ClassMemberStructuresArrayItem) {
+        if (typeof member === "string" || member instanceof Function || member == null) {
+            this.printTextOrWriterFunc(writer, member);
             return;
         }
 
-        switch (members.kind) {
+        switch (member.kind) {
             case StructureKind.Method:
                 if (!this.options.isAmbient)
                     ensureBlankLine();
-                this.factory.forMethodDeclaration(this.options).printText(writer, members);
+                this.factory.forMethodDeclaration(this.options).printText(writer, member);
                 break;
             case StructureKind.Property:
-                this.factory.forPropertyDeclaration().printText(writer, members);
+                this.factory.forPropertyDeclaration().printText(writer, member);
                 break;
             case StructureKind.GetAccessor:
                 if (!this.options.isAmbient)
                     ensureBlankLine();
-                this.factory.forGetAccessorDeclaration(this.options).printText(writer, members);
+                this.factory.forGetAccessorDeclaration(this.options).printText(writer, member);
                 break;
             case StructureKind.SetAccessor:
                 if (!this.options.isAmbient)
                     ensureBlankLine();
-                this.factory.forSetAccessorDeclaration(this.options).printText(writer, members);
+                this.factory.forSetAccessorDeclaration(this.options).printText(writer, member);
                 break;
             case StructureKind.Constructor:
                 if (!this.options.isAmbient)
                     ensureBlankLine();
-                this.factory.forConstructorDeclaration(this.options).printText(writer, members);
+                this.factory.forConstructorDeclaration(this.options).printText(writer, member);
                 break;
             default:
-                errors.throwNotImplementedForNeverValueError(members);
+                errors.throwNotImplementedForNeverValueError(member);
         }
 
         function ensureBlankLine() {

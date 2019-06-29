@@ -3,6 +3,7 @@ import { ArrayLiteralExpression, NamespaceDeclaration } from "../../../compiler"
 import { SyntaxKind } from "../../../typescript";
 import { WriterFunction } from "../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../compiler/testHelpers";
+import { OptionalKind, PropertyAssignmentStructure } from "../../../structures";
 
 describe("insertIntoCommaSeparatedNodes", () => {
     // these are high level tests of this function
@@ -121,6 +122,66 @@ describe("insertIntoCommaSeparatedNodes", () => {
 
         it("should insert at the start when no other elements on a new line", () => {
             doTest(`[]`, 0, writer => writer.newLine().writeLine("name1"), `[\n        name1\n    ]`);
+        });
+    });
+
+    function getObjectLiteralExpression(text: string) {
+        const opts = getInfoFromText(text);
+        const objectLiteralExpression = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression);
+        return {
+            objectLiteralExpression,
+            ...opts
+        };
+    }
+
+    describe("object literal expression", () => {
+        function doTest(text: string, index: number, structures: OptionalKind<PropertyAssignmentStructure>[], expectedText: string) {
+            const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
+            const result = objectLiteralExpression.insertPropertyAssignments(index, structures);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result.length).to.deep.equal(structures.length);
+        }
+
+        it("should take into account inserting after a comment", () => {
+            doTest("const t = {\n    // test\n};", 1,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    // test\n    prop2: 4\n};");
+        });
+
+        it("should take into account inserting after a comment when there exists a node before that comment with no comma", () => {
+            doTest("const t = {\n    prop1\n    // test\n};", 2,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    prop1,\n    // test\n    prop2: 4\n};");
+        });
+
+        it("should take into account inserting after a comment with a trailing comment when there exists a node before that comment with no comma", () => {
+            doTest("const t = {\n    prop1\n    /* 1 */ // 2\n};", 2,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    prop1,\n    /* 1 */ // 2\n    prop2: 4\n};");
+        });
+
+        it("should take into account comments in the index", () => {
+            doTest("const t = {\n    // test\n    prop1: 5\n};", 2,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    // test\n    prop1: 5,\n    prop2: 4\n};");
+        });
+
+        it("should take into account inserting before a comment", () => {
+            doTest("const t = {\n    // test\n};", 0,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    prop2: 4\n    // test\n};");
+        });
+
+        it("should take into account inserting before a comment that has a non-comment node after", () => {
+            doTest("const t = {\n    // test\n    p};", 0,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    prop2: 4,\n    // test\n    p};");
+        });
+
+        it("should take into account inserting before a comment with a preceeding node", () => {
+            doTest("const t = {\n    p\n    // test\n};", 1,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    p,\n    prop2: 4\n    // test\n};");
         });
     });
 });

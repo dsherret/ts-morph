@@ -1,8 +1,10 @@
 import { expect } from "chai";
-import { GetAccessorDeclaration, MethodDeclaration, ObjectLiteralExpression, PropertyAssignment, SetAccessorDeclaration, ShorthandPropertyAssignment,
-    SpreadAssignment } from "../../../../../compiler";
+import { Node, GetAccessorDeclaration, MethodDeclaration, ObjectLiteralExpression, PropertyAssignment, SetAccessorDeclaration,
+    ShorthandPropertyAssignment, SpreadAssignment } from "../../../../../compiler";
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind } from "../../../../../structures";
+    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind, ObjectLiteralExpressionPropertyStructures,
+    StructureKind } from "../../../../../structures";
+import { WriterFunction } from "../../../../../types";
 import { SyntaxKind } from "../../../../../typescript";
 import { getInfoFromText } from "../../../testHelpers";
 
@@ -81,26 +83,99 @@ describe(nameof(ObjectLiteralExpression), () => {
         });
     });
 
-    describe("general inserting", () => {
-        // todo: move this into the general insertProperty method tests once implemented
-        function doTest(text: string, index: number, structures: OptionalKind<PropertyAssignmentStructure>[], expectedText: string) {
+    describe(nameof<ObjectLiteralExpression>(e => e.insertProperties), () => {
+        type StructuresType = string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[];
+        function doTest(text: string, index: number, structures: StructuresType, expectedText: string) {
             const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
-            const result = objectLiteralExpression.insertPropertyAssignments(index, structures);
+            const result = objectLiteralExpression.insertProperties(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.deep.equal(structures.length);
         }
 
-        // bug -- it inserts a comma... will fix this later
-        it.skip("should take into account inserting around comments", () => {
-            doTest("const t = {\n    // test\n};", 1,
-                [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    // test\n    prop2: 4\n};");
-        });
+        it("should insert when specifying all the different kinds along with comments", () => {
+            const expectedText = `const o = {\n    p1: 5,\n    p2,\n    ...p3,\n    m1() {\n    },`
+                + `\n    get g1() {\n    },\n    set s1() {\n    }\n    //1\n    //2\n};`;
 
-        it("should take into account comments in the index", () => {
-            doTest("const t = {\n    // test\n    prop1: 5\n};", 2,
-                [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    // test\n    prop1: 5,\n    prop2: 4\n};");
+            doTest("const o = {\n};", 0, [{
+                kind: StructureKind.PropertyAssignment,
+                name: "p1",
+                initializer: "5"
+            }, {
+                kind: StructureKind.ShorthandPropertyAssignment,
+                name: "p2"
+            }, {
+                kind: StructureKind.SpreadAssignment,
+                expression: "p3"
+            }, {
+                kind: StructureKind.Method,
+                name: "m1"
+            }, {
+                kind: StructureKind.GetAccessor,
+                name: "g1"
+            }, {
+                kind: StructureKind.SetAccessor,
+                name: "s1"
+            }, "//1", writer => writer.write("//2")], expectedText);
+        });
+    });
+
+    describe(nameof<ObjectLiteralExpression>(e => e.insertProperty), () => {
+        type StructureType = string | WriterFunction | ObjectLiteralExpressionPropertyStructures;
+        function doTest(text: string, index: number, structure: StructureType, expectedText: string) {
+            const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
+            const result = objectLiteralExpression.insertProperty(index, structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result).to.be.instanceof(Node);
+        }
+
+        it("should insert", () => {
+            const expectedText = `const o = {\n    p1: 5,\n    p2\n    // 2\n};`;
+
+            doTest("const o = {\n    p1: 5\n    // 2\n};", 1, {
+                kind: StructureKind.ShorthandPropertyAssignment,
+                name: "p2"
+            }, expectedText);
+        });
+    });
+
+    describe(nameof<ObjectLiteralExpression>(e => e.addProperty), () => {
+        type StructureType = string | WriterFunction | ObjectLiteralExpressionPropertyStructures;
+        function doTest(text: string, structure: StructureType, expectedText: string) {
+            const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
+            const result = objectLiteralExpression.addProperty(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result).to.be.instanceof(Node);
+        }
+
+        it("should add", () => {
+            const expectedText = `const o = {\n    p1: 5,\n    p2\n};`;
+
+            doTest("const o = {\n    p1: 5\n};", {
+                kind: StructureKind.ShorthandPropertyAssignment,
+                name: "p2"
+            }, expectedText);
+        });
+    });
+
+    describe(nameof<ObjectLiteralExpression>(e => e.addProperties), () => {
+        type StructuresType = string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[];
+        function doTest(text: string, structures: StructuresType, expectedText: string) {
+            const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
+            const result = objectLiteralExpression.addProperties(structures);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result.length).to.deep.equal(structures.length);
+        }
+
+        it("should insert when specifying all the different kinds along with comments", () => {
+            const expectedText = `const o = {\n    p1: 5,\n    p2,\n    ...p3\n    //1\n};`;
+
+            doTest("const o = {\n    p1: 5\n};", [{
+                kind: StructureKind.ShorthandPropertyAssignment,
+                name: "p2"
+            }, {
+                kind: StructureKind.SpreadAssignment,
+                expression: "p3"
+            }, "//1"], expectedText);
         });
     });
 

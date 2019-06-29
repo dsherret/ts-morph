@@ -7,6 +7,6 @@ describe("tests for issue #654", () => {
         const { sourceFile } = getInfoFromText("const ole = {\n    foo: 'foo',\n    // c\n    bar: 'bar'\n}");
         const ole = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression);
         ole.addPropertyAssignment({ name: "baz", initializer: "'test'" });
-        expect(ole.getText()).to.equal(`{\n    foo: 'foo',\n    // c\n    bar: 'bar',\n    baz: 'test'\n}`)
+        expect(ole.getText()).to.equal(`{\n    foo: 'foo',\n    // c\n    bar: 'bar',\n    baz: 'test'\n}`);
     });
 });

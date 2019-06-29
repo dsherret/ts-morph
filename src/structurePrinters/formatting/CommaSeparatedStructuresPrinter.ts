@@ -4,20 +4,20 @@ import { WriterUtils } from "../../utils";
 import { Printer } from "../Printer";
 import { getAppendCommaPos } from "../../manipulation/helpers/appendCommaToText";
 
-export class CommaSeparatedStructuresPrinter<T> extends Printer<ReadonlyArray<T | WriterFunction> | WriterFunction> {
+export class CommaSeparatedStructuresPrinter<T> extends Printer<ReadonlyArray<T | WriterFunction | string> | WriterFunction | string> {
     constructor(private readonly printer: Printer<T | WriterFunction>) {
         super();
     }
 
-    printText(writer: CodeBlockWriter, structures: ReadonlyArray<T | WriterFunction> | WriterFunction | undefined) {
+    printText(writer: CodeBlockWriter, structures: ReadonlyArray<T | WriterFunction | string> | WriterFunction | string | undefined) {
         printTextWithSeparator(this.printer, writer, structures, () => writer.spaceIfLastNot());
     }
 }
 
 export function printTextWithSeparator<T>(
-    printer: Printer<T | WriterFunction>,
+    printer: Printer<T | WriterFunction | string>,
     writer: CodeBlockWriter,
-    structures: ReadonlyArray<T | WriterFunction> | WriterFunction | undefined,
+    structures: ReadonlyArray<T | WriterFunction | string> | WriterFunction | string | undefined,
     separator: () => void
 ) {
     if (structures == null)

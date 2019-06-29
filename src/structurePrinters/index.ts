@@ -4,6 +4,7 @@ export * from "./common";
 export * from "./decorator";
 export * from "./doc";
 export * from "./enum";
+export * from "./expression";
 export * from "./NodePrinter";
 export * from "./formatting";
 export * from "./function";
