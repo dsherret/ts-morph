@@ -95,7 +95,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * Note: If you only want to add property assignments, then it might be more convenient to use #addPropertyAssignments.
      * @structures - The structures to add.
      */
-    addProperties(structures: string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[]) {
+    addProperties(structures: string | WriterFunction | ReadonlyArray<string | WriterFunction | ObjectLiteralExpressionPropertyStructures>) {
         return this.insertProperties(this._getAddIndex(), structures);
     }
 
@@ -117,7 +117,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @index - The index to insert at.
      * @structures - The structures to insert.
      */
-    insertProperties(index: number, structures: string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[]) {
+    insertProperties(index: number, structures: string | WriterFunction | ReadonlyArray<string | WriterFunction | ObjectLiteralExpressionPropertyStructures>) {
         const properties = this.getPropertiesWithComments();
         index = verifyAndGetIndex(index, properties.length);
 

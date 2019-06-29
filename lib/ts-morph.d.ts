@@ -3150,7 +3150,7 @@ export interface TypeElementMemberedNode {
      * Adds members.
      * @param members - Collection of members to add.
      */
-    addMembers(members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[];
+    addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes | CommentTypeElement)[];
     /**
      * Inserts a member.
      * @param index - Child index to insert at.
@@ -3162,7 +3162,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param members - Collection of members to insert.
      */
-    insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[];
+    insertMembers(index: number, members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes | CommentTypeElement)[];
     /**
      * Add construct signature.
      * @param structure - Structure representing the construct signature.
@@ -3537,7 +3537,7 @@ interface ClassLikeDeclarationBaseSpecific {
      * Inserts class members.
      * @param members - Collection of class members to insert.
      */
-    addMembers(members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[];
+    addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>): (ClassMemberTypes | CommentClassElement)[];
     /**
      * Inserts a class member.
      * @param index - Child index to insert at.
@@ -3549,7 +3549,7 @@ interface ClassLikeDeclarationBaseSpecific {
      * @param index - Child index to insert at.
      * @param members - Collection of class members to insert.
      */
-    insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[];
+    insertMembers(index: number, members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>): (ClassMemberTypes | CommentClassElement)[];
     /**
      * Adds a constructor.
      * @param structure - Structure of the constructor.
@@ -5736,7 +5736,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Note: If you only want to add property assignments, then it might be more convenient to use #addPropertyAssignments.
      * @structures - The structures to add.
      */
-    addProperties(structures: string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[]): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
+    addProperties(structures: string | WriterFunction | ReadonlyArray<string | WriterFunction | ObjectLiteralExpressionPropertyStructures>): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
     /**
      * Inserts the specified property to the object literal expression.
      *
@@ -5752,7 +5752,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * @index - The index to insert at.
      * @structures - The structures to insert.
      */
-    insertProperties(index: number, structures: string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[]): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
+    insertProperties(index: number, structures: string | WriterFunction | ReadonlyArray<string | WriterFunction | ObjectLiteralExpressionPropertyStructures>): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
     /**
      * Adds a property assignment.
      * @param structure - Structure that represents the property assignment to add.

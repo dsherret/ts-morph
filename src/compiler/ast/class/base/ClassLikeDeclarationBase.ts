@@ -73,7 +73,7 @@ export interface ClassLikeDeclarationBaseSpecific {
      * Inserts class members.
      * @param members - Collection of class members to insert.
      */
-    addMembers(members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[];
+    addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>): (ClassMemberTypes | CommentClassElement)[];
     /**
      * Inserts a class member.
      * @param index - Child index to insert at.
@@ -85,7 +85,7 @@ export interface ClassLikeDeclarationBaseSpecific {
      * @param index - Child index to insert at.
      * @param members - Collection of class members to insert.
      */
-    insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[];
+    insertMembers(index: number, members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>): (ClassMemberTypes | CommentClassElement)[];
     /**
      * Adds a constructor.
      * @param structure - Structure of the constructor.
@@ -585,7 +585,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return types.length === 0 ? undefined : types[0];
         }
 
-        addMembers(members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]) {
+        addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>) {
             return this.insertMembers(getEndIndexFromArray(this.getMembersWithComments()), members);
         }
 
@@ -597,7 +597,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.insertMembers(index, [member])[0];
         }
 
-        insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[]): (ClassMemberTypes | CommentClassElement)[] {
+        insertMembers(index: number, members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>): (ClassMemberTypes | CommentClassElement)[] {
             const isAmbient = isNodeAmbientOrInAmbientContext(this);
             return insertIntoBracesOrSourceFileWithGetChildrenWithComments({
                 getIndexedChildren: () => this.getMembersWithComments(),

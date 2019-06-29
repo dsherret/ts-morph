@@ -25,7 +25,7 @@ export interface TypeElementMemberedNode {
      * Adds members.
      * @param members - Collection of members to add.
      */
-    addMembers(members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[];
+    addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes | CommentTypeElement)[];
     /**
      * Inserts a member.
      * @param index - Child index to insert at.
@@ -37,7 +37,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param members - Collection of members to insert.
      */
-    insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[];
+    insertMembers(index: number, members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes | CommentTypeElement)[];
     /**
      * Add construct signature.
      * @param structure - Structure representing the construct signature.
@@ -262,7 +262,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.addMembers([member])[0];
         }
 
-        addMembers(members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[] {
+        addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes | CommentTypeElement)[] {
             return this.insertMembers(getEndIndexFromArray(this.getMembersWithComments()), members);
         }
 
@@ -270,7 +270,10 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertMembers(index, [member])[0];
         }
 
-        insertMembers(index: number, members: string | WriterFunction | (string | WriterFunction | TypeElementMemberStructures)[]): (TypeElementTypes | CommentTypeElement)[] {
+        insertMembers(
+            index: number,
+            members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>
+        ): (TypeElementTypes | CommentTypeElement)[] {
             return insertIntoBracesOrSourceFileWithGetChildrenWithComments({
                 getIndexedChildren: () => this.getMembersWithComments(),
                 index,
