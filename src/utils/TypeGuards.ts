@@ -57,14 +57,21 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the provided value is a CommentStatement.
+     * Gets if the provided node is a comment node.
+     */
+    static isCommentNode(node: compiler.Node): node is CommentStatement | CommentClassElement | CommentTypeElement | CommentObjectLiteralElement | CommentEnumMember {
+        return node.getKind() === SyntaxKind.SingleLineCommentTrivia || node.getKind() === SyntaxKind.MultiLineCommentTrivia;
+    }
+
+    /**
+     * Gets if the provided node is a CommentStatement.
      */
     static isCommentStatement(node: compiler.Node): node is compiler.CommentStatement {
         return (node.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.CommentNodeKind.Statement;
     }
 
     /**
-     * Gets if the provided value is a CommentClassElement.
+     * Gets if the provided node is a CommentClassElement.
      */
     static isCommentClassElement(node: compiler.Node): node is compiler.CommentClassElement {
         return (node.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.CommentNodeKind.ClassElement;
@@ -78,14 +85,14 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the provided value is a CommentObjectLiteralElement.
+     * Gets if the provided node is a CommentObjectLiteralElement.
      */
     static isCommentObjectLiteralElement(node: compiler.Node): node is compiler.CommentObjectLiteralElement {
         return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;
     }
 
     /**
-     * Gets if the provided value is a CommentEnumMember.
+     * Gets if the provided node is a CommentEnumMember.
      */
     static isCommentEnumMember(node: compiler.Node): node is compiler.CommentEnumMember {
         return (node.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.CommentNodeKind.EnumMember;

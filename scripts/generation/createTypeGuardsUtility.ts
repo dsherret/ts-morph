@@ -11,7 +11,7 @@
  * 3. Forward support: Features we add in the future will be auto-implemented.
  * ------------------------------------------
  */
-import { CodeBlockWriter, OptionalKind, TypeParameterDeclarationStructure } from "ts-morph";
+import { CodeBlockWriter, OptionalKind, MethodDeclarationStructure } from "ts-morph";
 import { ArrayUtils, KeyValueCache } from "../../src/utils";
 import { TsMorphInspector, WrappedNode, Mixin } from "../inspectors";
 
@@ -171,8 +171,8 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     }
 
     function createIsCommentMethods() {
-        typeGuardsClass.addMethods([{
-            docs: ["Gets if the provided value is a CommentStatement."],
+        const commentMethods: OptionalKind<MethodDeclarationStructure>[] = [{
+            docs: ["Gets if the provided node is a CommentStatement."],
             isStatic: true,
             name: "isCommentStatement",
             returnType: `node is compiler.CommentStatement`,
@@ -181,7 +181,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.CommentNodeKind.Statement;`);
             }]
         }, {
-            docs: ["Gets if the provided value is a CommentClassElement."],
+            docs: ["Gets if the provided node is a CommentClassElement."],
             isStatic: true,
             name: "isCommentClassElement",
             returnType: `node is compiler.CommentClassElement`,
@@ -199,7 +199,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.CommentNodeKind.TypeElement;`);
             }]
         }, {
-            docs: ["Gets if the provided value is a CommentObjectLiteralElement."],
+            docs: ["Gets if the provided node is a CommentObjectLiteralElement."],
             isStatic: true,
             name: "isCommentObjectLiteralElement",
             returnType: `node is compiler.CommentObjectLiteralElement`,
@@ -208,7 +208,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;`);
             }]
         }, {
-            docs: ["Gets if the provided value is a CommentEnumMember."],
+            docs: ["Gets if the provided node is a CommentEnumMember."],
             isStatic: true,
             name: "isCommentEnumMember",
             returnType: `node is compiler.CommentEnumMember`,
@@ -216,7 +216,18 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             statements: [writer => {
                 writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.CommentNodeKind.EnumMember;`);
             }]
-        }]);
+        }];
+
+        typeGuardsClass.addMethods([{
+            docs: ["Gets if the provided node is a comment node."],
+            isStatic: true,
+            name: "isCommentNode",
+            returnType: `node is ${commentMethods.map(c => c.name.replace("is", "")).join(" | ")}`,
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            statements: [writer => {
+                writer.writeLine(`return node.getKind() === SyntaxKind.SingleLineCommentTrivia || node.getKind() === SyntaxKind.MultiLineCommentTrivia;`);
+            }]
+        }, ...commentMethods]);
     }
 }
 
