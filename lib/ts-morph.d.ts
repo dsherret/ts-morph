@@ -285,13 +285,18 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
 }
 
 export declare class DirectoryEmitResult {
-    private readonly _emitSkipped;
+    private readonly _skippedFilePaths;
     private readonly _outputFilePaths;
     private constructor();
     /**
      * Gets if the emit was skipped.
+     * @deprecated This is being deprecated in favour of getSkippedFilePaths().
      */
     getEmitSkipped(): boolean;
+    /**
+     * Gets a collections of skipped file paths.
+     */
+    getSkippedFilePaths(): string[];
     /**
      * Gets the output file paths.
      */
@@ -628,6 +633,10 @@ export interface SourceFileCreateOptions {
      * @remarks When false, the method will throw when a file exists.
      */
     overwrite?: boolean;
+    /**
+     * Specifies the script kind of the source file.
+     */
+    scriptKind?: ScriptKind;
 }
 
 export declare type Constructor<T> = new (...args: any[]) => T;
@@ -7805,6 +7814,10 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the language variant of the source file.
      */
     getLanguageVariant(): LanguageVariant;
+    /**
+     * Gets the script kind of the source file.
+     */
+    getScriptKind(): ScriptKind;
     /**
      * Gets if this is a declaration file.
      */

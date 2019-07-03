@@ -5,7 +5,7 @@ import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulatio
 import { ProjectContext } from "../../../ProjectContext";
 import { SourceFileSpecificStructure, SourceFileStructure, StructureKind } from "../../../structures";
 import { Constructor } from "../../../types";
-import { LanguageVariant, ScriptTarget, ts } from "../../../typescript";
+import { LanguageVariant, ScriptTarget, ts, ScriptKind } from "../../../typescript";
 import { ArrayUtils, EventContainer, FileUtils, Memoize, ModuleUtils, SourceFileReferenceContainer, StringUtils } from "../../../utils";
 import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, TextChange, UserPreferences } from "../../tools";
 import { ModuledNode, TextInsertableNode } from "../base";
@@ -542,6 +542,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getLanguageVariant(): LanguageVariant {
         return this.compilerNode.languageVariant;
+    }
+
+    /**
+     * Gets the script kind of the source file.
+     */
+    getScriptKind(): ScriptKind {
+        // todo: open issue on typescript repo about making this not internal?
+        // otherwise, store a collection of what each source file should be.
+        return (this.compilerNode as any).scriptKind;
     }
 
     /**

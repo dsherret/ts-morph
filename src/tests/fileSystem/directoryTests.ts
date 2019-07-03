@@ -5,7 +5,7 @@ import { Directory, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOpti
 import { Project } from "../../Project";
 import { SourceFileStructure, StructureKind, OptionalKind } from "../../structures";
 import { WriterFunction } from "../../types";
-import { CompilerOptions, ModuleResolutionKind, ScriptTarget } from "../../typescript";
+import { CompilerOptions, ModuleResolutionKind, ScriptTarget, ScriptKind } from "../../typescript";
 import { FileUtils } from "../../utils";
 import { CustomFileSystemProps, getFileSystemHostWithFiles, testDirectoryTree } from "../testHelpers";
 
@@ -348,6 +348,17 @@ describe(nameof(Directory), () => {
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             const sourceFile = dir.createSourceFile("/file.ts");
             expect(sourceFile._isInProject()).to.be.false;
+        });
+
+        it("should be able to specify a script kind", () => {
+            // people should not be using markdown files in here... adding tests anyway...
+            const directory = new Project({ useVirtualFileSystem: true }).createDirectory("/dir");
+            const sourceFile = directory.createSourceFile("MyFile.md", "# Header", { scriptKind: ScriptKind.External });
+            expect(sourceFile.getScriptKind()).to.equal(ScriptKind.External);
+
+            // should work after manipulation
+            sourceFile.replaceWithText("# New Header");
+            expect(sourceFile.getScriptKind()).to.equal(ScriptKind.External);
         });
     });
 

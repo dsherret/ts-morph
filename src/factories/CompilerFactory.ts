@@ -8,7 +8,7 @@ import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure, OptionalKind } from "../structures";
 import { WriterFunction } from "../types";
-import { SyntaxKind, ts, TypeFlags } from "../typescript";
+import { SyntaxKind, ts, TypeFlags, ScriptKind } from "../typescript";
 import { replaceSourceFileForCacheUpdate } from "../manipulation";
 import { EventContainer, FileUtils, KeyValueCache, WeakCache, StringUtils, getTextFromStringOrWriter } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
@@ -142,10 +142,10 @@ export class CompilerFactory {
      */
     createSourceFileFromText(filePath: string, sourceText: string, options: SourceFileCreateOptions & { markInProject: boolean; }) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        if (options != null && options.overwrite === true)
-            return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options);
+        if (options.overwrite === true)
+            return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
         this.throwIfFileExists(filePath);
-        return this.createSourceFileFromTextInternal(filePath, sourceText, options);
+        return this.createSourceFileFromTextInternal(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
     }
 
     /**
@@ -160,12 +160,12 @@ export class CompilerFactory {
         throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
     }
 
-    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string, options: { markInProject: boolean; }) {
+    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
         if (existingSourceFile != null) {
             existingSourceFile.getChildren().forEach(c => c.forget());
-            this.replaceCompilerNode(existingSourceFile, this.createCompilerSourceFileFromText(filePath, sourceText));
+            this.replaceCompilerNode(existingSourceFile, this.createCompilerSourceFileFromText(filePath, sourceText, options.scriptKind));
             return existingSourceFile;
         }
 
@@ -185,7 +185,7 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    addOrGetSourceFileFromFilePath(filePath: string, options: { markInProject: boolean; }): SourceFile | undefined {
+    addOrGetSourceFileFromFilePath(filePath: string, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): SourceFile | undefined {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null && this.context.fileSystemWrapper.fileExistsSync(filePath)) {
@@ -305,18 +305,18 @@ export class CompilerFactory {
         }
     }
 
-    private createSourceFileFromTextInternal(filePath: string, text: string, options: { markInProject: boolean; }): SourceFile {
+    private createSourceFileFromTextInternal(filePath: string, text: string, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): SourceFile {
         const hasBom = StringUtils.hasBom(text);
         if (hasBom)
             text = StringUtils.stripBom(text);
-        const sourceFile = this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text), options);
+        const sourceFile = this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text, options.scriptKind), options);
         if (hasBom)
             sourceFile._hasBom = true;
         return sourceFile;
     }
 
-    createCompilerSourceFileFromText(filePath: string, text: string): ts.SourceFile {
-        return this.documentRegistry.createOrUpdateSourceFile(filePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text));
+    createCompilerSourceFileFromText(filePath: string, text: string, scriptKind: ScriptKind | undefined): ts.SourceFile {
+        return this.documentRegistry.createOrUpdateSourceFile(filePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
     }
 
     /**

@@ -7,7 +7,7 @@ import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure, StructureKind } from "../structures";
-import { CompilerOptions, ScriptTarget, SyntaxKind, ts } from "../typescript";
+import { CompilerOptions, ScriptTarget, SyntaxKind, ts, ScriptKind } from "../typescript";
 import { OptionalKindAndTrivia } from "./compiler/testHelpers";
 import * as testHelpers from "./testHelpers";
 
@@ -805,6 +805,16 @@ describe(nameof(Project), () => {
             const sourceFile = new Project({ useVirtualFileSystem: true }).createSourceFile("MyFile.ts", structure);
             const expectedText = "console.log('here');\n";
             expect(sourceFile.getFullText()).to.equal(expectedText);
+        });
+
+        it("should be able to specify a script kind", () => {
+            // people should not be using markdown files in here... adding tests anyway...
+            const sourceFile = new Project({ useVirtualFileSystem: true }).createSourceFile("MyFile.md", "# Header", { scriptKind: ScriptKind.External });
+            expect(sourceFile.getScriptKind()).to.equal(ScriptKind.External);
+
+            // should work after manipulation
+            sourceFile.replaceWithText("# New Header");
+            expect(sourceFile.getScriptKind()).to.equal(ScriptKind.External);
         });
 
         it("", () => {

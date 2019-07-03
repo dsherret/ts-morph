@@ -8,7 +8,10 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
     sourceFile._firePreModified();
     const newFileText = textManipulator.getNewText(sourceFile.getFullText());
     try {
-        const replacementSourceFile = sourceFile._context.compilerFactory.createCompilerSourceFileFromText(newFilePath || sourceFile.getFilePath(), newFileText);
+        const replacementSourceFile = sourceFile._context.compilerFactory.createCompilerSourceFileFromText(
+            newFilePath || sourceFile.getFilePath(),
+            newFileText,
+            sourceFile.getScriptKind());
         nodeHandler.handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
     } catch (err) {
         throw new errors.InvalidOperationError(err.message + "\n"

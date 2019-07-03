@@ -15,38 +15,38 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         this.sourceFileCacheByFilePath.removeByKey(fileName);
     }
 
-    createOrUpdateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot) {
+    createOrUpdateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined) {
         let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
         if (sourceFile == null)
-            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.initialVersion);
+            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.initialVersion, scriptKind);
         else
-            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.getNextSourceFileVersion(sourceFile));
+            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.getNextSourceFileVersion(sourceFile), scriptKind);
         return sourceFile;
     }
 
-    acquireDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind?: ScriptKind | undefined): ts.SourceFile {
+    acquireDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile {
         let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
         if (sourceFile == null || this.getSourceFileVersion(sourceFile) !== version)
-            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, version);
+            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
         return sourceFile;
     }
 
     acquireDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot,
-        version: string, scriptKind?: ScriptKind | undefined): ts.SourceFile
+        version: string, scriptKind: ScriptKind | undefined): ts.SourceFile
     {
         // ignore the key because we only ever keep track of one key
         return this.acquireDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
     }
 
     updateDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string,
-        scriptKind?: ScriptKind | undefined): ts.SourceFile
+        scriptKind: ScriptKind | undefined): ts.SourceFile
     {
         // the compiler will call this even when it doesn't need to update for some reason
         return this.acquireDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
     }
 
     updateDocumentWithKey(fileName: string, path: ts.Path, compilationSettings: CompilerOptions, key: ts.DocumentRegistryBucketKey, scriptSnapshot: ts.IScriptSnapshot,
-        version: string, scriptKind?: ScriptKind | undefined): ts.SourceFile
+        version: string, scriptKind: ScriptKind | undefined): ts.SourceFile
     {
         // ignore the key because we only ever keep track of one key
         return this.updateDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
@@ -77,15 +77,19 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         return (currentVersion + 1).toString();
     }
 
-    private updateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string): ts.SourceFile {
+    private updateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string,
+        scriptKind: ScriptKind | undefined): ts.SourceFile
+    {
         fileName = this.fileSystemWrapper.getStandardizedAbsolutePath(fileName);
-        const newSourceFile = this.createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings, version);
+        const newSourceFile = this.createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings, version, scriptKind);
         this.sourceFileCacheByFilePath.set(fileName, newSourceFile);
         return newSourceFile;
     }
 
-    private createCompilerSourceFile(fileName: string, scriptSnapshot: ts.IScriptSnapshot, compilationSettings: CompilerOptions, version: string) {
+    private createCompilerSourceFile(fileName: string, scriptSnapshot: ts.IScriptSnapshot, compilationSettings: CompilerOptions, version: string,
+        scriptKind: ScriptKind | undefined)
+    {
         const scriptTarget = compilationSettings.target || ScriptTarget.Latest;
-        return ts.createLanguageServiceSourceFile(fileName, scriptSnapshot, scriptTarget, version, true, /* scriptKind */ undefined);
+        return ts.createLanguageServiceSourceFile(fileName, scriptSnapshot, scriptTarget, version, true, scriptKind);
     }
 }

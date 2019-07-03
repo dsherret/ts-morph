@@ -39,7 +39,10 @@ export class DirectoryCoordinator {
     }
 
     addExistingSourceFileIfExists(filePath: string, options: { markInProject: boolean; }): SourceFile | undefined {
-        return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options);
+        return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, {
+            markInProject: options.markInProject,
+            scriptKind: undefined
+        });
     }
 
     addExistingSourceFile(filePath: string, options: { markInProject: boolean; }): SourceFile {

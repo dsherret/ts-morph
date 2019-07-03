@@ -63,7 +63,10 @@ export class LanguageService {
             getScriptSnapshot: fileName => {
                 if (!fileExistsSync(fileName))
                     return undefined;
-                return ts.ScriptSnapshot.fromString(this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, { markInProject: false })!.getFullText());
+                return ts.ScriptSnapshot.fromString(this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, {
+                    markInProject: false,
+                    scriptKind: undefined
+                })!.getFullText());
             },
             getCurrentDirectory: () => context.fileSystemWrapper.getCurrentDirectory(),
             getDefaultLibFileName: options => {
@@ -88,7 +91,10 @@ export class LanguageService {
         this._compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
                 // todo: use languageVersion here?
-                const sourceFile = this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, { markInProject: false });
+                const sourceFile = this._context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, {
+                    markInProject: false,
+                    scriptKind: undefined
+                });
                 return sourceFile == null ? undefined : sourceFile.compilerNode;
             },
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path

@@ -6,7 +6,7 @@ import { ProjectContext } from "./ProjectContext";
 import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsContainer } from "./options";
 import { SourceFileStructure, OptionalKind } from "./structures";
 import { WriterFunction } from "./types";
-import { ts, CompilerOptions } from "./typescript";
+import { ts, CompilerOptions, ScriptKind } from "./typescript";
 import { IterableUtils, FileUtils, matchGlobs, TsConfigResolver, Memoize } from "./utils";
 
 /** Options for creating a project. */
@@ -39,6 +39,10 @@ export interface SourceFileCreateOptions {
      * @remarks When false, the method will throw when a file exists.
      */
     overwrite?: boolean;
+    /**
+     * Specifies the script kind of the source file.
+     */
+    scriptKind?: ScriptKind;
 }
 
 /**
