@@ -289,7 +289,15 @@ export class LanguageService {
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput;
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
-        return new EmitOutput(this._context, filePath, this.compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles));
+        const compilerObject = this.compilerObject;
+        return new EmitOutput(this._context, filePath, getCompilerEmitOutput());
+
+        function getCompilerEmitOutput(): ts.EmitOutput {
+            const program = compilerObject.getProgram();
+            if (program == null || program.getSourceFile(filePath) == null)
+                return { emitSkipped: true, outputFiles: [] };
+            return compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles);
+        }
     }
 
     /**

@@ -812,7 +812,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getChildCount() {
         // Do not use the compiler's #getChildCount() because it
-        // does not take into account ExtendedCommentRanges.
+        // does not take into account comment nodes.
         return this._getCompilerChildren().length;
     }
 

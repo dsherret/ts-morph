@@ -1512,7 +1512,6 @@ describe(nameof(Directory), () => {
 
         function runChecks(fileSystem: FileSystemHost & CustomFileSystemProps, result: DirectoryEmitResult, outDir: string, declarationDir: string) {
             const writeLog = fileSystem.getWriteLog();
-            const createdDirectories = fileSystem.getCreatedDirectories();
 
             expect(result.getEmitSkipped()).to.be.false;
             expect(result.getOutputFilePaths().sort()).to.deep.equal(writeLog.map(l => l.filePath).sort());
@@ -1566,20 +1565,21 @@ describe(nameof(Directory), () => {
             expect(writeLog.length).to.equal(2);
         });
 
-        it("should stop emitting when it encounters a problem", async () => {
+        it("should get a list of files it didn't emit", async () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ compilerOptions: { declaration: true }, fileSystem });
             const directory = project.createDirectory("dir");
             const subDir = directory.createDirectory("sub");
-            subDir.createSourceFile("file1.ts", "");
-            subDir.createSourceFile("file2.ts", "export class Parent extends Child {}");
+            subDir.createSourceFile("file1.ts", "export class Parent extends Child {}");
+            subDir.createSourceFile("file2.ts", "");
             const result = await directory.emit();
             expect(result.getEmitSkipped()).to.be.true;
+            expect(result.getSkippedFilePaths()).to.deep.equal(["/dir/sub/file1.ts"]);
 
             const writeLog = fileSystem.getWriteLog();
             expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
-            expect(writeLog[0].filePath).to.equal("/dir/sub/file1.js");
-            expect(writeLog[1].filePath).to.equal("/dir/sub/file1.d.ts");
+            expect(writeLog[0].filePath).to.equal("/dir/sub/file2.js");
+            expect(writeLog[1].filePath).to.equal("/dir/sub/file2.d.ts");
             expect(writeLog.length).to.equal(2);
         });
     });
@@ -1633,20 +1633,21 @@ describe(nameof(Directory), () => {
             expect(writeLog.length).to.equal(1);
         });
 
-        it("should stop emitting when it encounters a problem", () => {
+        it("should get a list of files it didn't emit", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ compilerOptions: { declaration: true }, fileSystem });
             const directory = project.createDirectory("dir");
             const subDir = directory.createDirectory("sub");
-            subDir.createSourceFile("file1.ts", "");
-            subDir.createSourceFile("file2.ts", "export class Parent extends Child {}");
+            subDir.createSourceFile("file1.ts", "export class Parent extends Child {}");
+            subDir.createSourceFile("file2.ts", "");
             const result = directory.emitSync();
             expect(result.getEmitSkipped()).to.be.true;
+            expect(result.getSkippedFilePaths()).to.deep.equal(["/dir/sub/file1.ts"]);
 
             const writeLog = fileSystem.getWriteLog();
             expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
-            expect(writeLog[0].filePath).to.equal("/dir/sub/file1.js");
-            expect(writeLog[1].filePath).to.equal("/dir/sub/file1.d.ts");
+            expect(writeLog[0].filePath).to.equal("/dir/sub/file2.js");
+            expect(writeLog[1].filePath).to.equal("/dir/sub/file2.d.ts");
             expect(writeLog.length).to.equal(2);
         });
     });

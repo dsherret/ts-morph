@@ -336,19 +336,19 @@ export class Directory {
         const { fileSystemWrapper } = this._context;
         const writeTasks: Promise<void>[] = [];
         const outputFilePaths: string[] = [];
+        const skippedFilePaths: string[] = [];
 
         for (const emitResult of this._emitInternal(options)) {
-            if (emitResult === false) {
-                await Promise.all(writeTasks);
-                return new DirectoryEmitResult(true, outputFilePaths);
+            if (typeof emitResult === "string")
+                skippedFilePaths.push(emitResult);
+            else {
+                writeTasks.push(fileSystemWrapper.writeFile(emitResult.filePath, emitResult.fileText));
+                outputFilePaths.push(emitResult.filePath);
             }
-
-            writeTasks.push(fileSystemWrapper.writeFile(emitResult.filePath, emitResult.fileText));
-            outputFilePaths.push(emitResult.filePath);
         }
 
         await Promise.all(writeTasks);
-        return new DirectoryEmitResult(false, outputFilePaths);
+        return new DirectoryEmitResult(skippedFilePaths, outputFilePaths);
     }
 
     /**
@@ -360,16 +360,18 @@ export class Directory {
     emitSync(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
         const { fileSystemWrapper } = this._context;
         const outputFilePaths: string[] = [];
+        const skippedFilePaths: string[] = [];
 
         for (const emitResult of this._emitInternal(options)) {
-            if (emitResult === false)
-                return new DirectoryEmitResult(true, outputFilePaths);
-
-            fileSystemWrapper.writeFileSync(emitResult.filePath, emitResult.fileText);
-            outputFilePaths.push(emitResult.filePath);
+            if (typeof emitResult === "string")
+                skippedFilePaths.push(emitResult);
+            else {
+                fileSystemWrapper.writeFileSync(emitResult.filePath, emitResult.fileText);
+                outputFilePaths.push(emitResult.filePath);
+            }
         }
 
-        return new DirectoryEmitResult(false, outputFilePaths);
+        return new DirectoryEmitResult(skippedFilePaths, outputFilePaths);
     }
 
     private _emitInternal(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
@@ -383,12 +385,13 @@ export class Directory {
 
         return emitDirectory(this, getStandardizedPath(options.outDir), getStandardizedPath(options.declarationDir));
 
-        function *emitDirectory(directory: Directory, outDir?: string, declarationDir?: string): IterableIterator<false | { filePath: string; fileText: string; }> {
+        function *emitDirectory(directory: Directory, outDir?: string, declarationDir?: string): IterableIterator<string | { filePath: string; fileText: string; }> {
             for (const sourceFile of directory.getSourceFiles()) {
                 const output = sourceFile.getEmitOutput({ emitOnlyDtsFiles });
+
                 if (output.getEmitSkipped()) {
-                    yield false;
-                    return;
+                    yield sourceFile.getFilePath();
+                    continue;
                 }
 
                 for (const outputFile of output.getOutputFiles()) {

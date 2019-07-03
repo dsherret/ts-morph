@@ -264,7 +264,7 @@ export class CompilerFactory {
 
         function createNode(this: CompilerFactory): Node<NodeType> {
             // todo: improve kind to wrapper mappings to handle this scenario
-            if (isExtendedCommentRange(compilerNode)) {
+            if (isCommentNode(compilerNode)) {
                 if (CommentNodeParser.isCommentStatement(compilerNode))
                     return new CommentStatement(this.context, compilerNode, sourceFile) as any as Node<NodeType>;
                 if (CommentNodeParser.isCommentClassElement(compilerNode))
@@ -282,7 +282,7 @@ export class CompilerFactory {
             return new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
         }
 
-        function isExtendedCommentRange(node: ts.Node): node is CompilerExtendedComment {
+        function isCommentNode(node: ts.Node): node is CompilerExtendedComment {
             return (node as CompilerExtendedComment)._commentKind != null;
         }
 
