@@ -835,19 +835,24 @@ describe(nameof(Project), () => {
     });
 
     describe("mixing real files with virtual files", () => {
-        const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles");
-        const project = new Project();
-        project.addExistingSourceFiles(`${testFilesDirPath}/**/*.ts`);
-        project.createSourceFile(
-            path.join(testFilesDirPath, "variableTestFile.ts"),
-            `import * as testClasses from "./testClasses";\n\nlet myVar = new testClasses.TestClass().name;\n`
-        );
+        function createProject() {
+            const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles").replace(/\\/g, "/");
+            const project = new Project();
+            project.addExistingSourceFiles(`${testFilesDirPath}/**/*.ts`);
+            project.createSourceFile(
+                path.join(testFilesDirPath, "variableTestFile.ts"),
+                `import * as testClasses from "./testClasses";\n\nlet myVar = new testClasses.TestClass().name;\n`
+            );
+            return project;
+        }
 
         it("should have 4 source files", () => {
+            const project = createProject();
             expect(project.getSourceFiles().length).to.equal(4);
         });
 
         it("should rename a name appropriately", () => {
+            const project = createProject();
             const interfaceFile = project.getSourceFileOrThrow("testInterfaces.ts");
             interfaceFile.getInterfaces()[0].getProperties()[0].rename("newName");
             const variableFile = project.getSourceFileOrThrow("variableTestFile.ts");
