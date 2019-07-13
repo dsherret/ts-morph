@@ -4,11 +4,11 @@ export function forEachTypeText(structure: Structures, func: (typeText: string) 
     forEachChild(structure);
 
     function forEachChild(child: Structures) {
-        if (StructureTypeGuards.isTypedNode(child) && child.type != null)
+        if (StructureTypeGuards.isTyped(child) && child.type != null)
             child.type = withType(child.type);
-        if (StructureTypeGuards.isReturnTypedNode(child) && child.returnType != null)
+        if (StructureTypeGuards.isReturnTyped(child) && child.returnType != null)
             child.returnType = withType(child.returnType);
-        if (StructureTypeGuards.isTypeParameterDeclaration(child) && child.constraint != null)
+        if (StructureTypeGuards.isTypeParameter(child) && child.constraint != null)
             child.constraint = withType(child.constraint);
 
         forEachStructureChild(child, forEachChild);
