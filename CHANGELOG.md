@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.2.0"></a>
+# [3.2.0](https://github.com/dsherret/ts-morph/compare/3.0.0...3.2.0) (2019-07-13)
+
+
+### Bug Fixes
+
+* [#663](https://github.com/dsherret/ts-morph/issues/663) - Update globby to 10.0.1. ([07f3417](https://github.com/dsherret/ts-morph/commit/07f3417))
+
+
+### Features
+
+* [#657](https://github.com/dsherret/ts-morph/issues/657) - Ability to specify the script kind when creating a source file. ([cb22219](https://github.com/dsherret/ts-morph/commit/cb22219))
+* Add DirectoryEmitResult#getSkippedFilePaths(). ([e92ea8d](https://github.com/dsherret/ts-morph/commit/e92ea8d))
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/dsherret/ts-morph/compare/3.0.0...3.1.0) (2019-07-03)
 
