@@ -587,12 +587,6 @@ co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
 
-code-block-writer@9.4.0:
-  version "9.4.0"
-  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-9.4.0.tgz#99f835317ed56b61775f64f862aa87704d27a4d4"
-  dependencies:
-    chai "^4.2.0"
-
 code-block-writer@9.4.1:
   version "9.4.1"
   resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-9.4.1.tgz#1448fca79dfc7a3649000f4c85be6bc770604c4c"
@@ -3315,12 +3309,12 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-ts-morph@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-3.1.1.tgz#18d02c9d53f590f942d4d148efd4a24624bc0ea6"
+ts-morph@3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-3.1.2.tgz#fc4f33a51a95a79d27cb64d00825fb72be598083"
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
-    code-block-writer "9.4.0"
+    code-block-writer "9.4.1"
     fs-extra "^8.1.0"
     glob-parent "^5.0.0"
     globby "^10.0.1"
