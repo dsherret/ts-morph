@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.1.2"></a>
+## [3.1.2](https://github.com/dsherret/ts-morph/compare/3.1.1...3.1.2) (2019-07-16)
+
+
+### Bug Fixes
+
+* Fix windows glob filepaths problem due to upgrading to latest globby. ([e9665a0](https://github.com/dsherret/ts-morph/commit/e9665a0))
+* Update to code-block-writer 9.4.1 (Removes accidentally added chai dependency). ([fd6534c](https://github.com/dsherret/ts-morph/commit/fd6534c))
+
+
+
 <a name="3.1.1"></a>
 ## [3.1.1](https://github.com/dsherret/ts-morph/compare/3.0.0...3.1.1) (2019-07-13)
 
