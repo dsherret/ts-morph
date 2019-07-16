@@ -153,6 +153,8 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     glob(patterns: ReadonlyArray<string>) {
+        // convert backslashes to foward
+        patterns = patterns.map(p => p.replace(/\\/g, "/")); // maybe this isn't full-proof?
         return this.globby.sync(patterns, {
             cwd: this.getCurrentDirectory(),
             absolute: true

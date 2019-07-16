@@ -836,7 +836,7 @@ describe(nameof(Project), () => {
 
     describe("mixing real files with virtual files", () => {
         function createProject() {
-            const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles").replace(/\\/g, "/");
+            const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles");
             const project = new Project();
             project.addExistingSourceFiles(`${testFilesDirPath}/**/*.ts`);
             project.createSourceFile(
