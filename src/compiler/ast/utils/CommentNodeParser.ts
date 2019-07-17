@@ -61,7 +61,10 @@ export class CommentNodeParser {
 
     static shouldParseChildren(container: ts.Node): container is ContainerNodes {
         // this needs to be really fast because it's used whenever getting the children, so use a map
-        return extendedCommentParserKinds.has(container.kind);
+        return extendedCommentParserKinds.has(container.kind)
+            // Ignore zero length nodes... for some reason this might happen when parsing
+            // jsx in non-jsx files.
+            && container.pos !== container.end;
     }
 
     static hasParsedChildren(container: ContainerNodes | ts.SyntaxList) {
