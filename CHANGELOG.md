@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.1.3"></a>
+## [3.1.3](https://github.com/dsherret/ts-morph/compare/3.1.2...3.1.3) (2019-07-18)
+
+
+### Bug Fixes
+
+* [#665](https://github.com/dsherret/ts-morph/issues/665) - Getting descendants where jsx was used in a non-jsx file would throw an error. ([fa3c3bb](https://github.com/dsherret/ts-morph/commit/fa3c3bb))
+
+
+
 <a name="3.1.2"></a>
 ## [3.1.2](https://github.com/dsherret/ts-morph/compare/3.1.1...3.1.2) (2019-07-16)
 
