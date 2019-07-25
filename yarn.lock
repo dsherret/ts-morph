@@ -153,19 +153,19 @@
   version "5.2.7"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.7.tgz#315d570ccb56c53452ff8638738df60726d5b6ea"
 
-"@types/multimatch@^2.1.3":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/@types/multimatch/-/multimatch-2.1.3.tgz#fbc0a7e507ccc9fc58455f83d26971310cedc597"
+"@types/multimatch@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/multimatch/-/multimatch-4.0.0.tgz#e14237ade6cba7b79fe3a1a5d4e9579613cee6b6"
   dependencies:
-    "@types/minimatch" "*"
+    multimatch "*"
 
 "@types/node@*":
   version "12.6.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.2.tgz#a5ccec6abb6060d5f20d256fb03ed743e9774999"
 
-"@types/node@^12.6.3":
-  version "12.6.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.3.tgz#44d507c5634f85e7164707ca36bba21b5213d487"
+"@types/node@^12.6.8":
+  version "12.6.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.8.tgz#e469b4bf9d1c9832aee4907ba8a051494357c12c"
 
 "@types/ts-nameof@^3.2.0":
   version "3.2.0"
@@ -2010,9 +2010,9 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   dependencies:
     minimist "0.0.8"
 
-mocha@6.1.4:
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/mocha/-/mocha-6.1.4.tgz#e35fada242d5434a7e163d555c705f6875951640"
+mocha@6.2.0:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/mocha/-/mocha-6.2.0.tgz#f896b642843445d1bb8bca60eabd9206b8916e56"
   dependencies:
     ansi-colors "3.2.3"
     browser-stdout "1.3.1"
@@ -2061,7 +2061,7 @@ ms@^2.0.0, ms@^2.1.1:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
 
-multimatch@^4.0.0:
+multimatch@*, multimatch@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/multimatch/-/multimatch-4.0.0.tgz#8c3c0f6e3e8449ada0af3dd29efb491a375191b3"
   dependencies:
@@ -3309,9 +3309,9 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-ts-morph@3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-3.1.2.tgz#fc4f33a51a95a79d27cb64d00825fb72be598083"
+ts-morph@3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-3.1.3.tgz#bbfa1d14481ee23bdd1c030340ccf4a243cfc844"
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
     code-block-writer "9.4.1"
