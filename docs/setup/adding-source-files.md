@@ -57,7 +57,7 @@ project.addSourceFilesFromTsConfig("dir2/tsconfig.json");
 project.addExistingSourceFiles("dir3/**/*{.d.ts,.ts}");
 
 // optionally call this when complete to resolve and
-// add the depenent source files to the project
+// add the dependent source files to the project
 project.resolveSourceFileDependencies();
 ```
 
