@@ -1133,15 +1133,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getParentWhile(condition: (parent: Node, node: Node) => boolean): Node | undefined;
     getParentWhile(condition: (parent: Node, node: Node) => boolean) {
         let node: Node | undefined;
-	let parent: Node | undefined = this.getParent();
+        let parent: Node | undefined = this.getParent();
 
-	if (parent && condition(parent, this))
-		do {
-			node = parent;
-			parent = node.getParent();
-		} while (parent && condition(parent, node));
+        if (parent && condition(parent, this))
+                do {
+                        node = parent;
+                        parent = node.getParent();
+                } while (parent && condition(parent, node));
 
-	return node;
+        return node;
     }
 
     /**
