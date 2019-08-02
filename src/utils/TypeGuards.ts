@@ -4,7 +4,6 @@
 // Note: This file is excluded from code coverage reports because it's automatically maintained (low risk).
 // -----------------------
 
-/* tslint:disable */
 import * as compiler from "../compiler";
 import { SyntaxKind } from "../typescript";
 import { Structure } from "../structures";

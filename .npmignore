@@ -26,10 +26,10 @@ breaking-changes.md
 CHANGELOG.md
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
+dprint.json
 gulpfile.js
 tsconfig.json
 tsconfig.*.json
-tslint.json
 wrapped-nodes.md
 yarn-error.log
 # do not include lock files in order to not restrict the typescript version

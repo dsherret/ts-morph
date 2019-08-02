@@ -15,8 +15,6 @@ import { VariableStatementStructure, StatementedNodeStructure } from "../stateme
 import { TypeAliasDeclarationStructure } from "../type";
 import { OptionalKind } from "../types";
 
-/* tslint:disable */
-
 /**
  * Iterates over the elements in the provided array.
  * @param structures - Array of structures to iterate over.

@@ -22,8 +22,6 @@ import { ExportAssignmentStructure, ExportDeclarationStructure, ExportSpecifierS
 import { VariableDeclarationStructure, StatementedNodeStructure, VariableStatementStructure } from "../statement";
 import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "../type";
 
-/* tslint:disable */
-
 /** Type guards for use on structures. */
 export class StructureTypeGuards {
     private constructor() {

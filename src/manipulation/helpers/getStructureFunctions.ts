@@ -1,4 +1,3 @@
-/* tslint:disable */
 // DO NOT MANUALLY EDIT!! File generated via: yarn code-generate
 
 import * as compiler from "../../compiler";
