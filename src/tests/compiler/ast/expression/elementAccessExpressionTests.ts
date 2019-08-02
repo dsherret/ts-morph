@@ -5,7 +5,7 @@ import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getInfoFromTextWithElementAccessExpression(text: string) {
     const info = getInfoFromTextWithDescendant<ElementAccessExpression>(text, SyntaxKind.ElementAccessExpression);
-    return {...info, elementAccessExpression: info.descendant};
+    return { ...info, elementAccessExpression: info.descendant };
 }
 
 describe(nameof(ElementAccessExpression), () => {

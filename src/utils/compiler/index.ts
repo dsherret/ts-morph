@@ -1,4 +1,4 @@
-﻿export * from "./getNodeByNameOrFindFunction";
+export * from "./getNodeByNameOrFindFunction";
 export * from "./getParentSyntaxList";
 export * from "./getSymbolByNameOrFindFunction";
 export * from "./getSyntaxKindName";

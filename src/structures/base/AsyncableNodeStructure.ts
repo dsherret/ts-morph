@@ -1,3 +1,3 @@
-﻿export interface AsyncableNodeStructure {
+export interface AsyncableNodeStructure {
     isAsync?: boolean;
 }

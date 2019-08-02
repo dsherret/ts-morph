@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { TypeAliasDeclaration } from "../../../../compiler";
 import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";

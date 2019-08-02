@@ -1,3 +1,3 @@
-﻿export interface BindingNamedNodeStructure {
+export interface BindingNamedNodeStructure {
     name: string;
 }

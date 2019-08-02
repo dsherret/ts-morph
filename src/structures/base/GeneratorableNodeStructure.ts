@@ -1,3 +1,3 @@
-﻿export interface GeneratorableNodeStructure {
+export interface GeneratorableNodeStructure {
     isGenerator?: boolean;
 }

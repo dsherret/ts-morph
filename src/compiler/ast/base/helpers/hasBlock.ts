@@ -1,4 +1,4 @@
-﻿import { Node } from "../../common";
+import { Node } from "../../common";
 import { TypeGuards } from "../../../../utils";
 
 export function hasBlock(node: Node) {

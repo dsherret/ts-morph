@@ -5,7 +5,7 @@ import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getInfoFromTextWithBindingPattern(text: string) {
     const info = getInfoFromTextWithDescendant<ObjectBindingPattern>(text, SyntaxKind.ObjectBindingPattern);
-    return {...info, bindingPattern: info.descendant};
+    return { ...info, bindingPattern: info.descendant };
 }
 
 describe(nameof(ObjectBindingPattern), () => {

@@ -5,7 +5,7 @@ import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getInfoFromTextWithYieldExpression(text: string) {
     const info = getInfoFromTextWithDescendant<YieldExpression>(text, SyntaxKind.YieldExpression);
-    return {...info, yieldExpression: info.descendant};
+    return { ...info, yieldExpression: info.descendant };
 }
 
 describe(nameof(YieldExpression), () => {

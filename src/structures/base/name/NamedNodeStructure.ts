@@ -1,3 +1,3 @@
-﻿export interface NamedNodeStructure {
+export interface NamedNodeStructure {
     name: string;
 }

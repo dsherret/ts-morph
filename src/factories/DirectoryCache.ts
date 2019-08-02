@@ -1,4 +1,4 @@
-﻿/* barrel:ignore */
+/* barrel:ignore */
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem/Directory";
 import { ProjectContext } from "../ProjectContext";

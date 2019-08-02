@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { DecoratorStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 

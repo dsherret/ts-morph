@@ -1,2 +1,2 @@
-﻿export * from "./Type";
+export * from "./Type";
 export * from "./TypeParameter";

@@ -1,4 +1,4 @@
-﻿import { getNextMatchingPos } from "./getNextMatchingPos";
+import { getNextMatchingPos } from "./getNextMatchingPos";
 import { getPreviousMatchingPos } from "./getPreviousMatchingPos";
 
 export function getNextNonWhitespacePos(text: string, pos: number) {

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { QuoteKind, UserPreferences } from "../compiler";
 import { IndentationText, ManipulationSettings, ManipulationSettingsContainer } from "../options";
 import { EditorSettings, IndentStyle, NewLineKind } from "../typescript";

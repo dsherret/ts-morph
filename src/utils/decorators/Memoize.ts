@@ -1,4 +1,4 @@
-﻿export function Memoize(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>) {
+export function Memoize(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>) {
     if (descriptor.value != null)
         descriptor.value = getNewFunction(descriptor.value);
     else if (descriptor.get != null)

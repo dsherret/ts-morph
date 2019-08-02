@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import * as errors from "../../errors";
 import { ts } from "../../typescript";
 import { TypeGuards } from "../../utils";

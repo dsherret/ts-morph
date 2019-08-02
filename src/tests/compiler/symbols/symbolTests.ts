@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { Symbol, TypeAliasDeclaration } from "../../../compiler";
 import { SymbolFlags } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";

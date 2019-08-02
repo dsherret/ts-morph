@@ -1,4 +1,4 @@
-﻿import { BindingNamedNodeStructure, ExclamationTokenableNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure } from "../base";
+import { BindingNamedNodeStructure, ExclamationTokenableNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 

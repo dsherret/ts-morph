@@ -1,4 +1,4 @@
-﻿import { ts } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { SignaturedDeclaration } from "../base";
 import { TypeNode } from "./TypeNode";
 

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, Node, PropertyDeclaration, TypeAliasDeclaration, TypedNode, VariableStatement } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { TypeGuards } from "../../../../utils";

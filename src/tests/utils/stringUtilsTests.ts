@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { QuoteKind } from "../../compiler";
 import * as errors from "../../errors";
 import { StringUtils } from "../../utils";

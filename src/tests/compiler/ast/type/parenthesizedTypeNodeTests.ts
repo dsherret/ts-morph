@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ParenthesizedTypeNode } from "../../../../compiler";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";

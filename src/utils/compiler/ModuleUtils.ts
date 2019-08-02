@@ -1,4 +1,4 @@
-﻿import { SourceFile, Symbol } from "../../compiler";
+import { SourceFile, Symbol } from "../../compiler";
 import { SyntaxKind } from "../../typescript";
 import { StringUtils } from "../StringUtils";
 

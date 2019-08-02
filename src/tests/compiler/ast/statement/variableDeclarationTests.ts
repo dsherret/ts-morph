@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { TryStatement, VariableDeclaration } from "../../../../compiler";
 import { VariableDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";

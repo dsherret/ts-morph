@@ -1,4 +1,4 @@
-﻿export function getPosAtNextNonBlankLine(text: string, pos: number) {
+export function getPosAtNextNonBlankLine(text: string, pos: number) {
     let newPos = pos;
     for (let i = pos; i < text.length; i++) {
         if (text[i] === " " || text[i] === "\t")

@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { FormattingKind } from "../formatting";
 import { isNewLineAtPos } from "../textChecks";
 import { getPosAtEndOfPreviousLine, getPosAtNextNonBlankLine, getPosAtStartOfLineOrNonWhitespace, getPreviousNonWhitespacePos } from "../textSeek";

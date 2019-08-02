@@ -1,4 +1,4 @@
-﻿import { Structure, KindedStructure } from "../Structure";
+import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { JSDocableNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { FunctionLikeDeclarationStructure } from "../function";
@@ -20,5 +20,4 @@ export interface ConstructorDeclarationOverloadStructure
 }
 
 export interface ConstructorDeclarationOverloadSpecificStructure extends KindedStructure<StructureKind.ConstructorOverload> {
-
 }

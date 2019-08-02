@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Options for renaming a node.
  */
 export interface RenameOptions {

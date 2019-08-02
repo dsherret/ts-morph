@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("tests for issue #312", () => {

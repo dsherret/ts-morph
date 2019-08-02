@@ -171,7 +171,7 @@ describe(nameof(InitializerExpressionableNode), () => {
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("class Identifier { prop = 4 }", { }, "class Identifier { prop = 4 }");
+            doTest("class Identifier { prop = 4 }", {}, "class Identifier { prop = 4 }");
         });
 
         it("should remove when undefined", () => {

@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { SourceFileStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";

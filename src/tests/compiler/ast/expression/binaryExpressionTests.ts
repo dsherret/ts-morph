@@ -4,7 +4,7 @@ import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getBinaryExpression(text: string) {
-     return getInfoFromTextWithDescendant<BinaryExpression>(text, SyntaxKind.BinaryExpression).descendant;
+    return getInfoFromTextWithDescendant<BinaryExpression>(text, SyntaxKind.BinaryExpression).descendant;
 }
 
 describe(nameof(BinaryExpression), () => {

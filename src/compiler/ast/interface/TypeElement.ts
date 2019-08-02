@@ -1,4 +1,4 @@
-﻿import { removeInterfaceMember } from "../../../manipulation";
+import { removeInterfaceMember } from "../../../manipulation";
 import { ts } from "../../../typescript";
 import { Node } from "../common";
 

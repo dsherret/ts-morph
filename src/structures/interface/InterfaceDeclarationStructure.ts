@@ -1,4 +1,4 @@
-﻿import { AmbientableNodeStructure, ExportableNodeStructure, ExtendsClauseableNodeStructure, JSDocableNodeStructure, NamedNodeStructure,
+import { AmbientableNodeStructure, ExportableNodeStructure, ExtendsClauseableNodeStructure, JSDocableNodeStructure, NamedNodeStructure,
     TypeElementMemberedNodeStructure, TypeParameteredNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";

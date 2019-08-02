@@ -1,4 +1,4 @@
-﻿import { ArgumentError } from "./ArgumentError";
+import { ArgumentError } from "./ArgumentError";
 
 export class ArgumentOutOfRangeError extends ArgumentError {
     /** @private */

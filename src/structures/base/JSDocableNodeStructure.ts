@@ -1,4 +1,4 @@
-﻿import { JSDocStructure } from "../doc";
+import { JSDocStructure } from "../doc";
 import { OptionalKind } from "../types";
 
 export interface JSDocableNodeStructure {

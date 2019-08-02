@@ -3,7 +3,7 @@ import { ts } from "../../../../typescript";
 import { Node } from "../../common";
 import { SuperExpression } from "../SuperExpression";
 
-export type SuperExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.SuperExpression}>;
+export type SuperExpressionedNodeExtensionType = Node<ts.Node & { expression: ts.SuperExpression; }>;
 
 export interface SuperExpressionedNode {
     /**

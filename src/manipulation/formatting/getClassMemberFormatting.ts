@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { TypeGuards } from "../../utils";
 import { FormattingKind } from "./FormattingKind";
 

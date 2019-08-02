@@ -1,3 +1,3 @@
-﻿export interface ReadonlyableNodeStructure {
+export interface ReadonlyableNodeStructure {
     isReadonly?: boolean;
 }

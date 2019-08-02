@@ -1,4 +1,4 @@
-﻿import * as errors from "../../errors";
+import * as errors from "../../errors";
 import { FormattingKind } from "./FormattingKind";
 
 export function getFormattingKindText(formattingKind: FormattingKind, opts: { newLineKind: string; }) {

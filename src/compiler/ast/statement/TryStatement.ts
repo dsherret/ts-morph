@@ -6,7 +6,6 @@ import { Statement } from "./Statement";
 
 export const TryStatementBase = Statement;
 export class TryStatement extends TryStatementBase<ts.TryStatement> {
-
     /**
      * Gets this try statement's try block.
      */

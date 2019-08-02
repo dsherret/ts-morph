@@ -1,4 +1,4 @@
-﻿import { Diagnostic } from "../../compiler";
+import { Diagnostic } from "../../compiler";
 import { FileSystemWrapper } from "../../fileSystem";
 import { CompilerOptions, ts } from "../../typescript";
 import { FileUtils, Memoize } from "../../utils";

@@ -59,8 +59,12 @@ describe(nameof(SyntaxList), () => {
         }
 
         it("should add the children at the end of a source file", () => {
-            doSourceFileTest("function a() {}\nfunction b() {}", "newText;\nsecondText;", 2,
-                "function a() {}\nfunction b() {}\nnewText;\nsecondText;");
+            doSourceFileTest(
+                "function a() {}\nfunction b() {}",
+                "newText;\nsecondText;",
+                2,
+                "function a() {}\nfunction b() {}\nnewText;\nsecondText;"
+            );
         });
     });
 });

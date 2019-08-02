@@ -1,4 +1,4 @@
-﻿type Mutable<T extends { [x: string]: any }, K extends string> = {
+type Mutable<T extends { [x: string]: any; }, K extends string> = {
     [P in K]: T[P];
 };
 type GetStrings<T> = T extends string ? T : never;

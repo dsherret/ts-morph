@@ -1,4 +1,4 @@
-﻿export enum FormattingKind {
+export enum FormattingKind {
     Newline,
     Blankline,
     Space,

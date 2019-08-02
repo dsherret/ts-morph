@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../../compiler";
 import { EnumMemberSpecificStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";

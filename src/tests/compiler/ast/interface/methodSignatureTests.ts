@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { InterfaceDeclaration, MethodSignature } from "../../../../compiler";
 import { MethodSignatureStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";

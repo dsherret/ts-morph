@@ -1,4 +1,4 @@
-﻿import * as errors from "../../../errors";
+import * as errors from "../../../errors";
 import { AsyncableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";

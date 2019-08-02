@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { FormatCodeSettings } from "../../compiler";
 import { StructurePrinterFactory } from "../../factories";
 import { ManipulationSettingsContainer, SupportedFormatCodeSettings } from "../../options";

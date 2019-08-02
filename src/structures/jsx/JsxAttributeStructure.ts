@@ -1,4 +1,4 @@
-﻿import { NamedNodeStructure } from "../base";
+import { NamedNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 

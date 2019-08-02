@@ -1,4 +1,4 @@
-﻿import { ts } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { TextRange } from "../common/TextRange";
 import { SourceFile } from "../module";
 

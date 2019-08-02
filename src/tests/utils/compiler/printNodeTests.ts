@@ -46,7 +46,7 @@ describe(nameof(printNode), () => {
         // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
         const tsFunctionDeclaration = ts.createFunctionDeclaration(
             /*decorators*/ undefined,
-            /*modifiers*/[ts.createToken(SyntaxKind.ExportKeyword)],
+            /*modifiers*/ [ts.createToken(SyntaxKind.ExportKeyword)],
             /*asteriskToken*/ undefined,
             "myFunction",
             /*typeParameters*/ undefined,

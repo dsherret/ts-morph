@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code generation: Create "get structure" functions
  * -------------------------------------------------
  * This file generations the functions found in getStructureFunctions.ts

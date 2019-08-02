@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { WriterFunction } from "../../types";
 import { Printer } from "../Printer";
 import { printTextWithSeparator } from "./CommaSeparatedStructuresPrinter";

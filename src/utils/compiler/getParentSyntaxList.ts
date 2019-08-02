@@ -1,4 +1,4 @@
-﻿import { SyntaxKind, ts } from "../../typescript";
+import { SyntaxKind, ts } from "../../typescript";
 
 export function getParentSyntaxList(node: ts.Node, sourceFile: ts.SourceFile) {
     if (node.kind === SyntaxKind.EndOfFileToken)

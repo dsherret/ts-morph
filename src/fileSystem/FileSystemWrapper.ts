@@ -1,4 +1,4 @@
-﻿import * as errors from "../errors";
+import * as errors from "../errors";
 import { ArrayUtils, FileUtils, KeyValueCache, SortedKeyValueArray, LocaleStringComparer } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 
@@ -511,7 +511,6 @@ export class FileSystemWrapper {
             this.addBackDirAndSubDirs(dir);
             this.queueDirectoryDelete(dirPath);
         }
-
     }
 
     deleteDirectoryImmediatelySync(dirPath: string) {

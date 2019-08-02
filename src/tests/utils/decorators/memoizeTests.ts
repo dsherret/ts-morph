@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { Memoize } from "../../../utils/decorators/Memoize";
 
 describe(nameof(Memoize), () => {

@@ -1,4 +1,4 @@
-﻿export class KeyValueCache<T, U> {
+export class KeyValueCache<T, U> {
     private readonly cacheItems = new Map<T, U>();
 
     getSize() {

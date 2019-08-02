@@ -1,4 +1,4 @@
-﻿import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
+import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
     PropertySignatureStructure } from "../interface";
 import { OptionalKind } from "../types";
 

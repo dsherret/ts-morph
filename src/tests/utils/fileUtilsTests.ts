@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { VirtualFileSystemHost } from "../../fileSystem";
 import { FileUtils } from "../../utils";
 

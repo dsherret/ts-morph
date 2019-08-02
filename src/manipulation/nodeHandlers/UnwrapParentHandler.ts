@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { ExtendedParser } from "../../compiler/ast/utils";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";

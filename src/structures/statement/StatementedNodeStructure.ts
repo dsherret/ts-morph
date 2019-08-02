@@ -1,4 +1,4 @@
-﻿import { WriterFunction } from "../../types";
+import { WriterFunction } from "../../types";
 import { StatementStructures } from "../aliases";
 
 export interface StatementedNodeStructure {

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { SortedKeyValueArray, Comparer } from "../../../utils";
 
 describe(nameof(SortedKeyValueArray), () => {

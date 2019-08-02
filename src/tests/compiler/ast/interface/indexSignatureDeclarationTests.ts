@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { IndexSignatureDeclarationStructure, StructureKind } from "../../../../structures";

@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { TypeGuards } from "../../utils";
 import { getClassMemberFormatting } from "./getClassMemberFormatting";
 import { getInterfaceMemberFormatting } from "./getInterfaceMemberFormatting";

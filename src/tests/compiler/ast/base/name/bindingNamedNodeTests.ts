@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { AssertTrue, IsExact } from "conditional-type-checks";
 import { VariableStatement, BindingNamedNode, BindingName } from "../../../../../compiler";
 import { TypeGuards } from "../../../../../utils";

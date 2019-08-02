@@ -1,4 +1,4 @@
-﻿import { WriterFunction } from "../../types";
+import { WriterFunction } from "../../types";
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { ImportSpecifierStructure } from "./ImportSpecifierStructure";

@@ -1,4 +1,4 @@
-﻿import { ts } from "../../../typescript";
+import { ts } from "../../../typescript";
 import * as errors from "../../../errors";
 import { BindingNamedNode, InitializerExpressionableNode } from "../base";
 import { Node } from "../common";

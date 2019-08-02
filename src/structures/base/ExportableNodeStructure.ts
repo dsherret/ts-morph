@@ -1,4 +1,4 @@
-﻿export interface ExportableNodeStructure {
+export interface ExportableNodeStructure {
     isExported?: boolean;
     isDefaultExport?: boolean;
 }

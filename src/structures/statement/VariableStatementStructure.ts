@@ -1,4 +1,4 @@
-﻿import { VariableDeclarationKind } from "../../compiler";
+import { VariableDeclarationKind } from "../../compiler";
 import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure } from "../base";
 import { VariableDeclarationStructure } from "./VariableDeclarationStructure";
 import { Structure, KindedStructure } from "../Structure";

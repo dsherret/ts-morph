@@ -1,4 +1,4 @@
-﻿import * as errors from "../../../errors";
+import * as errors from "../../../errors";
 import { changeChildOrder, getGeneralFormatting } from "../../../manipulation";
 import { Constructor } from "../../../types";
 import { Node } from "../common";

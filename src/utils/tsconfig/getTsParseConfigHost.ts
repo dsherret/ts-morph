@@ -1,4 +1,4 @@
-﻿/* barrel:ignore */
+/* barrel:ignore */
 import { FileSystemWrapper } from "../../fileSystem";
 import { ts } from "../../typescript";
 import { readDirectory } from "../compiler";

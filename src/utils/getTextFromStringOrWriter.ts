@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../codeBlockWriter";
+import { CodeBlockWriter } from "../codeBlockWriter";
 import { WriterFunction } from "../types";
 
 export function getTextFromStringOrWriter(writer: CodeBlockWriter, textOrWriterFunction: string | WriterFunction | ReadonlyArray<string | WriterFunction>) {

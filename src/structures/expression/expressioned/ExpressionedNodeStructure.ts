@@ -1,4 +1,4 @@
-﻿import { WriterFunction } from "../../../types";
+import { WriterFunction } from "../../../types";
 
 export interface ExpressionedNodeStructure {
     expression: string | WriterFunction;

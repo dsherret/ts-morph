@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Result of refreshing a source file from the file system.
  */
 export enum FileSystemRefreshResult {

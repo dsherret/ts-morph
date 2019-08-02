@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
 import { JsxElementStructure, JsxAttributeStructure, JsxSpreadAttributeStructure, StructureKind, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";

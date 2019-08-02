@@ -1,3 +1,3 @@
-﻿export interface TestInterface {
+export interface TestInterface {
     name: string;
 }

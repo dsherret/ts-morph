@@ -1,4 +1,4 @@
-﻿import * as multimatch from "multimatch";
+import * as multimatch from "multimatch";
 import { FileUtils } from "./FileUtils";
 
 export function matchGlobs(paths: ReadonlyArray<string>, patterns: ReadonlyArray<string> | string, cwd: string) {

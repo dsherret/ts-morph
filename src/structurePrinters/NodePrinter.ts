@@ -1,4 +1,4 @@
-﻿import { StructurePrinterFactory } from "../factories";
+import { StructurePrinterFactory } from "../factories";
 import { CodeBlockWriter } from "../codeBlockWriter";
 import { Structure } from "../structures";
 import { Printer } from "./Printer";
