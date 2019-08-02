@@ -1,8 +1,8 @@
 import * as errors from "../../../errors";
 import { PropertyDeclarationSpecificStructure, PropertyDeclarationStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { ChildOrderableNode, DecoratableNode, ExclamationTokenableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode,
-    PropertyNamedNode, QuestionTokenableNode, ReadonlyableNode, ScopedNode, StaticableNode, TypedNode } from "../base";
+import { ChildOrderableNode, DecoratableNode, ExclamationTokenableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
+    QuestionTokenableNode, ReadonlyableNode, ScopedNode, StaticableNode, TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { AbstractableNode } from "./base";

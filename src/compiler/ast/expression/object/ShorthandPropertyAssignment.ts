@@ -4,7 +4,8 @@ import { SyntaxKind, ts } from "../../../../typescript";
 import { InitializerExpressionGetableNode, NamedNode, QuestionTokenableNode } from "../../base";
 import { Expression } from "../Expression";
 import { PropertyAssignment } from "./PropertyAssignment";
-import { ShorthandPropertyAssignmentStructure, ShorthandPropertyAssignmentSpecificStructure, QuestionTokenableNodeStructure, StructureKind } from "../../../../structures";
+import { ShorthandPropertyAssignmentStructure, ShorthandPropertyAssignmentSpecificStructure, QuestionTokenableNodeStructure,
+    StructureKind } from "../../../../structures";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { callBaseSet } from "../../callBaseSet";
 import { ObjectLiteralElement } from "./ObjectLiteralElement";

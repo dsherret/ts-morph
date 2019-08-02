@@ -17,8 +17,8 @@ export function getRangeWithoutCommentsFromArray<T extends Node>(array: Node[], 
         // ignore any comments that may have been on the structure's leading trivia or trailing trivia
         if (childKind !== SyntaxKind.SingleLineCommentTrivia && childKind !== SyntaxKind.MultiLineCommentTrivia) {
             if (childKind !== expectedKind) {
-                throw new errors.NotImplementedError(`Unexpected! Inserting syntax kind of ${getSyntaxKindName(expectedKind)}` +
-                    `, but ${child.getKindName()} was inserted.`);
+                throw new errors.NotImplementedError(`Unexpected! Inserting syntax kind of ${getSyntaxKindName(expectedKind)}`
+                    + `, but ${child.getKindName()} was inserted.`);
             }
 
             children.push(child as T);

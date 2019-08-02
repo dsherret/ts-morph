@@ -1,7 +1,7 @@
 import { PropertySignatureStructure, PropertySignatureSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
-import { ChildOrderableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
-    QuestionTokenableNode, ReadonlyableNode, TypedNode } from "../base";
+import { ChildOrderableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode, QuestionTokenableNode, ReadonlyableNode,
+    TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";

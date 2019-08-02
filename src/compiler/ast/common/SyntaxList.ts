@@ -29,7 +29,10 @@ export class SyntaxList extends Node<ts.SyntaxList> {
 
         // get text
         const isInline = this !== parent.getChildSyntaxList();
-        let insertText = getTextFromStringOrWriter(isInline ? parent._getWriterWithQueuedChildIndentation() : parent._getWriterWithChildIndentation(), textOrWriterFunction);
+        let insertText = getTextFromStringOrWriter(
+            isInline ? parent._getWriterWithQueuedChildIndentation() : parent._getWriterWithChildIndentation(),
+            textOrWriterFunction
+        );
 
         if (insertText.length === 0)
             return [];

@@ -46,8 +46,9 @@ export class HeritageClause extends Node<ts.HeritageClause> {
             else
                 removeChildren({ children: [this], removePrecedingSpaces: true });
         }
-        else
+        else {
             removeCommaSeparatedChild(expressionNodeToRemove);
+        }
 
         return this;
 

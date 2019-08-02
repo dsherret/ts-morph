@@ -1,6 +1,6 @@
 import { WriterFunction } from "../../../types";
-import { AbstractableNodeStructure, DecoratableNodeStructure, ImplementsClauseableNodeStructure,
-    JSDocableNodeStructure, NameableNodeStructure, TypeParameteredNodeStructure } from "../../base";
+import { AbstractableNodeStructure, DecoratableNodeStructure, ImplementsClauseableNodeStructure, JSDocableNodeStructure, NameableNodeStructure,
+    TypeParameteredNodeStructure } from "../../base";
 import { OptionalKind } from "../../types";
 import { ConstructorDeclarationStructure } from "../ConstructorDeclarationStructure";
 import { GetAccessorDeclarationStructure } from "../GetAccessorDeclarationStructure";

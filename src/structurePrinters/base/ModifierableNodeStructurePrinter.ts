@@ -3,9 +3,8 @@ import { AbstractableNodeStructure, AmbientableNodeStructure, AsyncableNodeStruc
     ScopeableNodeStructure, ScopedNodeStructure, StaticableNodeStructure } from "../../structures";
 import { Printer } from "../Printer";
 
-export type ModifierableNodeStructures = AbstractableNodeStructure | AmbientableNodeStructure | AsyncableNodeStructure |
-    ExportableNodeStructure | ReadonlyableNodeStructure | ScopeableNodeStructure | ScopedNodeStructure |
-    StaticableNodeStructure;
+export type ModifierableNodeStructures = AbstractableNodeStructure | AmbientableNodeStructure | AsyncableNodeStructure | ExportableNodeStructure
+    | ReadonlyableNodeStructure | ScopeableNodeStructure | ScopedNodeStructure | StaticableNodeStructure;
 
 export class ModifierableNodeStructurePrinter extends Printer<ModifierableNodeStructures> {
     printText(writer: CodeBlockWriter, structure: ModifierableNodeStructures) {

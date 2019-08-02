@@ -76,8 +76,9 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
                 newText: ` as ${alias}`
             });
         }
-        else
+        else {
             aliasIdentifier.replaceWithText(alias);
+        }
 
         return this;
     }

@@ -1,4 +1,5 @@
-import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
+import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure, StructureKind,
+    OptionalKind } from "../../../structures";
 import { ts } from "../../../typescript";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
