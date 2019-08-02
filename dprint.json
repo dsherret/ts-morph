@@ -1,0 +1,5 @@
+{
+    "useBraces": "preferNone",
+    "lineWidth": 160,
+    "tryStatement.nextControlFlowPosition": "sameLine"
+}
