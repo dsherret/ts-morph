@@ -1,4 +1,4 @@
-﻿/* barrel:ignore */
+/* barrel:ignore */
 import { CodeBlock } from "./CodeBlock";
 import { MarkDownFile } from "./MarkDownFile";
 

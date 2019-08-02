@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code generation: Create Code Block Writer File
  * ----------------------------------------------
  * This creates a file that contains the typings for code-block-writer.

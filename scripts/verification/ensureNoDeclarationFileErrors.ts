@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Verification: Ensure no declaration file errors
  * ---------------------------------------------------
  * Does what it says. Goes through and find declaration file errors.

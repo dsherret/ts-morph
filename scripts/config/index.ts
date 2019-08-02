@@ -1,4 +1,4 @@
-﻿import * as path from "path";
+import * as path from "path";
 export * from "./isAllowedMixin";
 export * from "./isAllowedMixinForStructure";
 export * from "./isOverloadStructure";

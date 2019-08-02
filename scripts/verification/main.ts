@@ -1,4 +1,4 @@
-﻿import { InspectorFactory } from "../inspectors";
+import { InspectorFactory } from "../inspectors";
 import { ensureArrayInputsReadonly } from "./ensureArrayInputsReadonly";
 import { ensureOrThrowExists } from "./ensureOrThrowExists";
 import { ensureOverloadStructuresMatch } from "./ensureOverloadStructuresMatch";

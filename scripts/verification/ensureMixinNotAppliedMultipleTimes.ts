@@ -21,14 +21,16 @@ export function ensureMixinNotAppliedMultipleTimes(inspector: TsMorphInspector, 
         node.getMixins().forEach(inspectMixin);
 
         function inspectMixin(mixin: Mixin) {
-            if (foundMixins.has(mixin.getName()))
+            if (foundMixins.has(mixin.getName())) {
                 addProblem({
                     filePath: node.getFilePath(),
                     lineNumber: node.getStartLineNumber(),
                     message: `Node ${node.getName()} has mixin ${mixin.getName()} applied multiple times.`
                 });
-            else
+            }
+            else {
                 foundMixins.add(mixin.getName());
+            }
 
             mixin.getMixins().forEach(inspectMixin);
         }

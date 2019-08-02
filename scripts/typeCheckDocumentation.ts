@@ -1,4 +1,4 @@
-﻿import { Diagnostic, SourceFile } from "ts-morph";
+import { Diagnostic, SourceFile } from "ts-morph";
 import { getProject } from "./common";
 import { MarkDownFile, CodeBlock } from "./markdown";
 
@@ -26,7 +26,7 @@ addAnyInitializers(mainTemplate);
 const markDownFiles = fileSystem.glob(["./docs/**/*.md", "./README.md"]).map(filePath => new MarkDownFile(filePath, fileSystem.readFileSync(filePath)));
 
 console.log("Checking documentation for compile errors...");
-const errors: { diagnostic: Diagnostic, codeBlock: CodeBlock; }[] = [];
+const errors: { diagnostic: Diagnostic; codeBlock: CodeBlock; }[] = [];
 
 // much faster to get all the temporary source files first so the type checker doesn't need to be created after each manipulation
 const markDownFilesWithCodeBlocks = markDownFiles
@@ -35,8 +35,11 @@ const markDownFilesWithCodeBlocks = markDownFiles
         codeBlocksWithSourceFiles: markDownFile.getCodeBlocks()
             .filter(codeBlock => !codeBlock.inline && (codeBlock.codeType === "ts" || codeBlock.codeType === "typescript"))
             .map((codeBlock, j) => ({
-                tempSourceFile: templatesDir.createSourceFile(`tempFile${i}_${j}.ts`,
-                    "let any = undefined as any;\n" + mainTemplate.getText() + getInitializedSetupText(codeBlock.getSetupText()) + getInitializedFileText(codeBlock.text)),
+                tempSourceFile: templatesDir.createSourceFile(
+                    `tempFile${i}_${j}.ts`,
+                    "let any = undefined as any;\n" + mainTemplate.getText() + getInitializedSetupText(codeBlock.getSetupText())
+                        + getInitializedFileText(codeBlock.text)
+                ),
                 codeBlock
             }))
     }));
@@ -55,8 +58,8 @@ for (const { markDownFile, codeBlocksWithSourceFiles } of markDownFilesWithCodeB
 if (errors.length > 0) {
     for (const error of errors) {
         const messageText = error.diagnostic.getMessageText();
-        console.error(`[${error.codeBlock.markdownFile.getFilePath()}:${error.codeBlock.getLineNumber()}]: ` +
-            (typeof messageText === "string" ? messageText : messageText.getMessageText()) + ` (${error.diagnostic.getCode()})`);
+        console.error(`[${error.codeBlock.markdownFile.getFilePath()}:${error.codeBlock.getLineNumber()}]: `
+            + (typeof messageText === "string" ? messageText : messageText.getMessageText()) + ` (${error.diagnostic.getCode()})`);
     }
 
     process.exit(1);

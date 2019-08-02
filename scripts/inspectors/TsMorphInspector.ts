@@ -1,5 +1,5 @@
-﻿import { Project, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName,
-    Directory, TypeGuards, ExportedDeclarations } from "ts-morph";
+import { Project, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName, Directory, TypeGuards,
+    ExportedDeclarations } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../src/utils";
 import { isNodeClass } from "../common";
 import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsMorph";

@@ -1,4 +1,4 @@
-﻿import { StatementedNode, NamespaceDeclaration } from "ts-morph";
+import { StatementedNode, NamespaceDeclaration } from "ts-morph";
 
 export function cloneNamespaces(node: StatementedNode, cloningNamespaces: NamespaceDeclaration[]) {
     const namespaces = node.addNamespaces(cloningNamespaces.map(n => ({
@@ -10,7 +10,7 @@ export function cloneNamespaces(node: StatementedNode, cloningNamespaces: Namesp
         // todo: remove repetitiveness
         namespaces[i].addInterfaces(cloningNamespaces[i].getInterfaces().map(interfaceDec => ({
             ...interfaceDec.getStructure(),
-           isExported: true
+            isExported: true
         })));
         namespaces[i].addClasses(cloningNamespaces[i].getClasses().map(c => ({
             ...c.getStructure(),

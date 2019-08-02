@@ -1,4 +1,4 @@
-﻿import { Node, TypeGuards } from "ts-morph";
+import { Node, TypeGuards } from "ts-morph";
 
 export function hasInternalDocTag(node: Node) {
     return TypeGuards.isJSDocableNode(node)

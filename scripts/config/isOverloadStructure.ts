@@ -1,4 +1,4 @@
-﻿export function isOverloadStructure(name: string) {
+export function isOverloadStructure(name: string) {
     switch (name) {
         case "FunctionDeclarationOverloadStructure":
         case "MethodDeclarationOverloadStructure":

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Manipulation - Create Declaration File
  * -------------------------------------------
  * This flattens the declaration file output of the TypeScript compiler into one ts-morph.d.ts file
@@ -6,8 +6,8 @@
  * -------------------------------------------
  */
 import * as os from "os";
-import { Node, TypeGuards, Scope, ClassDeclaration, StructureKind, InterfaceDeclarationStructure, TypeAliasDeclarationStructure,
-    FunctionDeclarationStructure, VariableStatementStructure} from "ts-morph";
+import { Node, TypeGuards, Scope, ClassDeclaration, StructureKind, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
+    VariableStatementStructure } from "ts-morph";
 import { createDeclarationProject, forEachTypeText } from "../common";
 import { getDeclarationFileStatements } from "./declarationFile";
 
@@ -46,11 +46,13 @@ export async function createDeclarationFile() {
     log("Hiding base declarations...");
     hideBaseDeclarations();
     log("Removing import types...");
-    statements.forEach(statement => forEachTypeText(statement,
+    statements.forEach(statement => forEachTypeText(
+        statement,
         typeText => typeText
             .replace(/compiler\.([A-Za-z]+)/g, "$1")
             .replace(/ts\.(SyntaxKind)/g, "$1")
-            .replace(/import\([^\)]+\)\./g, "")));
+            .replace(/import\([^\)]+\)\./g, "")
+    ));
 
     log("Printing...");
     mainFile.set({
@@ -69,24 +71,29 @@ export async function createDeclarationFile() {
     await Promise.all([codeBlockWriterFile.save(), mainFile.save()]);
 
     function hideSpecificStructures() {
-        const specificStructures = statements.filter(s => s.kind === StructureKind.Interface && s.name.endsWith("SpecificStructure")) as InterfaceDeclarationStructure[];
+        const specificStructures = statements
+            .filter(s => s.kind === StructureKind.Interface && s.name.endsWith("SpecificStructure")) as InterfaceDeclarationStructure[];
         for (const structure of specificStructures)
             structure.isExported = false;
     }
 
     function hideExtensionTypes() {
-        const extensionTypes = statements.filter(s => s.kind === StructureKind.TypeAlias && s.name.endsWith("ExtensionType")) as TypeAliasDeclarationStructure[];
+        const extensionTypes = statements
+            .filter(s => s.kind === StructureKind.TypeAlias && s.name.endsWith("ExtensionType")) as TypeAliasDeclarationStructure[];
         for (const extensionType of extensionTypes)
             extensionType.isExported = false;
     }
 
     function hideSpecificDeclarations() {
-        (statements.find(s => s.kind === StructureKind.Function && s.name === "ClassLikeDeclarationBaseSpecific") as FunctionDeclarationStructure).isExported = false;
-        (statements.find(s => s.kind === StructureKind.Interface && s.name === "ClassLikeDeclarationBaseSpecific") as InterfaceDeclarationStructure).isExported = false;
+        (statements.find(s => s.kind === StructureKind.Function && s.name === "ClassLikeDeclarationBaseSpecific") as FunctionDeclarationStructure)
+            .isExported = false;
+        (statements.find(s => s.kind === StructureKind.Interface && s.name === "ClassLikeDeclarationBaseSpecific") as InterfaceDeclarationStructure)
+            .isExported = false;
     }
 
     function hideBaseDeclarations() {
-        const baseStatements = statements.filter(s => s.kind === StructureKind.VariableStatement && s.declarations.some(d => d.name.endsWith("Base"))) as VariableStatementStructure[];
+        const baseStatements = statements
+            .filter(s => s.kind === StructureKind.VariableStatement && s.declarations.some(d => d.name.endsWith("Base"))) as VariableStatementStructure[];
 
         for (const statement of baseStatements) {
             if (statement.declarations.length > 1)

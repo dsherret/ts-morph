@@ -1,4 +1,4 @@
-﻿import { ClassDeclaration, InterfaceDeclaration, Type, TypeGuards } from "ts-morph";
+import { ClassDeclaration, InterfaceDeclaration, Type, TypeGuards } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../../src/utils";
 import { hasDescendantNodeType } from "../../common";
 import { WrapperFactory } from "../WrapperFactory";
@@ -54,7 +54,8 @@ export class WrappedNode {
         const mixins: Mixin[] = [];
         const baseTypes = this.node.getBaseTypes();
         for (const intersectionType of ArrayUtils.flatten(baseTypes.map(t => t.getIntersectionTypes()))) {
-            const interfaces = intersectionType.getSymbolOrThrow().getDeclarations().filter(d => TypeGuards.isInterfaceDeclaration(d)) as InterfaceDeclaration[];
+            const interfaces = intersectionType.getSymbolOrThrow().getDeclarations()
+                .filter(d => TypeGuards.isInterfaceDeclaration(d)) as InterfaceDeclaration[];
             mixins.push(...interfaces.map(i => this.wrapperFactory.getMixin(i)));
         }
         return mixins;

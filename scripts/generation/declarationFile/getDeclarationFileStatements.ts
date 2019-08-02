@@ -7,8 +7,19 @@ export function getDeclarationFileStatements(mainFile: SourceFile, codeBlockWrit
         .filter(entry => entry[0] !== "ts") // ignore ts namespace export
         .map(entry => entry[1])) as Node[];
     const flattenedCompilerApiExports = [
-        "SyntaxKind", "CompilerOptions", "EmitHint", "ScriptKind", "NewLineKind", "LanguageVariant", "ScriptTarget",
-        "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory", "EditorSettings",
+        "SyntaxKind",
+        "CompilerOptions",
+        "EmitHint",
+        "ScriptKind",
+        "NewLineKind",
+        "LanguageVariant",
+        "ScriptTarget",
+        "TypeFlags",
+        "ObjectFlags",
+        "SymbolFlags",
+        "TypeFormatFlags",
+        "DiagnosticCategory",
+        "EditorSettings",
         "ModuleResolutionKind"
     ];
     const statements: StatementStructures[] = [];
@@ -40,8 +51,9 @@ export function getDeclarationFileStatements(mainFile: SourceFile, codeBlockWrit
 
         if (TypeGuards.isStatement(declaration))
             statements.push((declaration as any).getStructure()); // todo: improve
-        else
+        else {
             throw new Error(`Not handled scenario for ${declaration.getKindName()}`);
+        }
     }
 
     statements.push({ kind: StructureKind.ExportDeclaration, namedExports: ["ts", ...flattenedCompilerApiExports] });

@@ -1,4 +1,4 @@
-﻿import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "./CodeBlock";
 import { parseMarkDown } from "./parseMarkDown";
 
 export class MarkDownFile {

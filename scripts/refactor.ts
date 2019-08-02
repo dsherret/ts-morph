@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Manipulation - Refactor
  * ----------------------------
  * Use this script as a strating point when refactoring the application.

@@ -1,4 +1,4 @@
-﻿import { Project, InterfaceDeclaration, SourceFile, SyntaxKind } from "ts-morph";
+import { Project, InterfaceDeclaration, SourceFile, SyntaxKind } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../src/utils";
 import { hasDescendantBaseType } from "../common";
 import { WrapperFactory } from "./WrapperFactory";

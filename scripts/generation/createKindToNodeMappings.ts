@@ -35,8 +35,8 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
     }));
     addDefaultIndexSignature(addTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression")));
 
-    kindToNodeMappingsFile.insertText(0, writer =>
-        writer.writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while."));
+    kindToNodeMappingsFile.insertText(0, writer => writer
+        .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while."));
 
     function addTypeForSubSet(name: string, nodeClass: ClassDeclaration) {
         const classType = nodeClass.getType();

@@ -1,4 +1,4 @@
-﻿import { Project } from "ts-morph";
+import { Project } from "ts-morph";
 import { getProject } from "../common";
 import { WrapperFactory } from "./WrapperFactory";
 import { TsMorphInspector } from "./TsMorphInspector";
