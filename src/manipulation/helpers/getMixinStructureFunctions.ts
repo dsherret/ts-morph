@@ -1,4 +1,4 @@
-﻿import * as compiler from "../../compiler";
+import * as compiler from "../../compiler";
 import * as structures from "../../structures";
 
 export function fromAbstractableNode(node: compiler.AbstractableNode): MakeRequired<structures.AbstractableNodeStructure> {
@@ -96,7 +96,9 @@ export function fromTypedNode(node: compiler.TypedNode): MakeRequired<structures
     };
 }
 
-export function fromInitializerExpressionableNode(node: compiler.InitializerExpressionableNode): MakeRequired<structures.InitializerExpressionableNodeStructure> {
+export function fromInitializerExpressionableNode(
+    node: compiler.InitializerExpressionableNode
+): MakeRequired<structures.InitializerExpressionableNodeStructure> {
     const initializer = node.getInitializer();
     return {
         initializer: initializer == null ? undefined : initializer.getText()

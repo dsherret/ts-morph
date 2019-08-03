@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { CallSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
 import { CallSignatureDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
@@ -31,8 +31,7 @@ describe(nameof(CallSignatureDeclaration), () => {
                 typeParameters: ["T"],
                 returnType: "string"
             };
-            doTest("interface Identifier {\n    (): any;\n}", structure,
-                "interface Identifier {\n    /**\n     * test\n     */\n    <T>(param): string;\n}");
+            doTest("interface Identifier {\n    (): any;\n}", structure, "interface Identifier {\n    /**\n     * test\n     */\n    <T>(param): string;\n}");
         });
     });
 
@@ -92,8 +91,7 @@ interface Identifier {
         });
 
         it("should remove when it's the last member", () => {
-            doTest("interface Identifier {\n    (): string;\n    (): number;\n}", 1,
-                "interface Identifier {\n    (): string;\n}");
+            doTest("interface Identifier {\n    (): string;\n    (): number;\n}", 1, "interface Identifier {\n    (): string;\n}");
         });
 
         it("should only remove the new signature specified", () => {

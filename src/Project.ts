@@ -293,9 +293,11 @@ export class Project {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
-        options?: SourceFileCreateOptions): SourceFile
-    {
+    createSourceFile(
+        filePath: string,
+        sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
+        options?: SourceFileCreateOptions
+    ): SourceFile {
         return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", { ...(options || {}), markInProject: true });
     }
 

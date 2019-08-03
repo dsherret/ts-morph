@@ -32,10 +32,11 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
         this.printHeader(writer, structure.name, structure);
         if (this.options.isAmbient || structure.hasDeclareKeyword)
             writer.write(";");
-        else
+        else {
             writer.space().inlineBlock(() => {
                 this.factory.forStatementedNode({ isAmbient: false }).printText(writer, structure);
             });
+        }
 
         function getOverloadStructures() {
             // all the overloads need to have similar properties as the implementation
@@ -53,7 +54,10 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
         }
     }
 
-    private printOverloads(writer: CodeBlockWriter, name: string | undefined, structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>> | undefined) {
+    private printOverloads(
+        writer: CodeBlockWriter, name: string | undefined,
+        structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>> | undefined)
+    {
         if (structures == null || structures.length === 0)
             return;
 
@@ -68,7 +72,10 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
         writer.write(";");
     }
 
-    private printHeader(writer: CodeBlockWriter, name: string | undefined, structure: OptionalKind<FunctionDeclarationOverloadStructure> | OptionalKind<FunctionDeclarationStructure>) {
+    private printHeader(
+writer: CodeBlockWriter, name: string | undefined,
+        structure: OptionalKind<FunctionDeclarationOverloadStructure> | OptionalKind<FunctionDeclarationStructure>)
+    {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
 
         this.factory.forModifierableNode().printText(writer, structure);

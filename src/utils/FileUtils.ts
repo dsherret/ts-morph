@@ -1,4 +1,4 @@
-﻿import * as toAbsoluteGlob from "@dsherret/to-absolute-glob";
+import * as toAbsoluteGlob from "@dsherret/to-absolute-glob";
 import * as path from "path";
 import { FileSystemHost, FileSystemWrapper } from "../fileSystem";
 import { ArrayUtils } from "./ArrayUtils";

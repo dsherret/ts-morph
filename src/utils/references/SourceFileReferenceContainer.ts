@@ -1,4 +1,4 @@
-﻿import { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, SourceFile, StringLiteral } from "../../compiler";
+import { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, SourceFile, StringLiteral } from "../../compiler";
 import { KeyValueCache } from "../collections";
 import { ModuleUtils } from "../compiler";
 import { TypeGuards } from "../TypeGuards";
@@ -73,7 +73,7 @@ export class SourceFileReferenceContainer {
 
         if (this.unresolvedLiterals.length === 0)
             this.sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
-    }
+    };
 
     private populateReferences() {
         this.sourceFile._context.compilerFactory.forgetNodesCreatedInBlock(remember => {
@@ -102,8 +102,9 @@ export class SourceFileReferenceContainer {
             if (literalSymbol != null)
                 return ModuleUtils.getReferencedSourceFileFromSymbol(literalSymbol);
         }
-        else
+        else {
             this.sourceFile._context.logger.warn(`Unknown import string literal parent: ${parent.getKindName()}`);
+        }
 
         return undefined;
     }

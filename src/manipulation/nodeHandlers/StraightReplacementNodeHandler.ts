@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import * as errors from "../../errors";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
@@ -18,9 +18,10 @@ export class StraightReplacementNodeHandler implements NodeHandler {
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         /* istanbul ignore if */
-        if (currentNode.getKind() !== newNode.kind)
-            throw new errors.InvalidOperationError(`Error replacing tree! Perhaps a syntax error was inserted ` +
-                `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`);
+        if (currentNode.getKind() !== newNode.kind) {
+            throw new errors.InvalidOperationError(`Error replacing tree! Perhaps a syntax error was inserted `
+                + `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`);
+        }
 
         if (currentNode._hasWrappedChildren())
             this.handleChildren(currentNode, newNode, newSourceFile);
@@ -31,8 +32,12 @@ export class StraightReplacementNodeHandler implements NodeHandler {
     private handleChildren(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         const [currentChildren, newChildren] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
 
-        if (currentChildren.length !== newChildren.length)
-            throw new Error(`Error replacing tree: The children of the old and new trees were expected to have the same count (${currentChildren.length}:${newChildren.length}).`);
+        if (currentChildren.length !== newChildren.length) {
+            throw new Error(
+                `Error replacing tree: The children of the old and new trees were expected to have the `
+                    + `same count (${currentChildren.length}:${newChildren.length}).`
+            );
+        }
 
         for (let i = 0; i < currentChildren.length; i++)
             this.helper.handleForValues(this, currentChildren[i], newChildren[i], newSourceFile);

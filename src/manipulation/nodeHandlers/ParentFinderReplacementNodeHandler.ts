@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
 import { getParentSyntaxList } from "../../utils";
@@ -24,8 +24,9 @@ export class ParentFinderReplacementNodeHandler extends StraightReplacementNodeH
             this.foundParent = true; // don't bother checking for the parent once it's found
             this.parentNodeHandler.handleNode(currentNode, newNode, newSourceFile);
         }
-        else
+        else {
             super.handleNode(currentNode, newNode, newSourceFile);
+        }
     }
 
     private isParentNode(newNode: ts.Node, newSourceFile: ts.SourceFile) {

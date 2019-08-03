@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { ImportDeclarationStructurePrinter } from "../../../structurePrinters";
 import { ImportDeclarationStructure, OptionalKind } from "../../../structures";
@@ -19,7 +19,9 @@ describe(nameof(ImportDeclarationStructurePrinter), () => {
         });
 
         it("should not write named imports with surrounding spaces when providing setting as false", () => {
-            doTest({ namedImports: ["test"], moduleSpecifier: "test" }, `import {test} from "test";`, { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+            doTest(
+{ namedImports: ["test"], moduleSpecifier: "test" }, `import {test} from "test";`,
+                { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
         });
     });
 });

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ChildOrderableNode, EnumDeclaration } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -86,13 +86,11 @@ describe(nameof(ChildOrderableNode), () => {
             }
 
             it("should change the order of the members when there's two, moving first to last", () => {
-                doTest("class C {\n    prop: string;\n\n    method() {}\n}", 0, 1,
-                    "class C {\n    method() {}\n\n    prop: string;\n}");
+                doTest("class C {\n    prop: string;\n\n    method() {}\n}", 0, 1, "class C {\n    method() {}\n\n    prop: string;\n}");
             });
 
             it("should change the order of the members when there's two, moving last to first", () => {
-                doTest("class C {\n    prop: string;\n\n    method() {}\n}", 1, 0,
-                    "class C {\n    method() {}\n\n    prop: string;\n}");
+                doTest("class C {\n    prop: string;\n\n    method() {}\n}", 1, 0, "class C {\n    method() {}\n\n    prop: string;\n}");
             });
 
             it("should change the order of the members when there's multiple, moving first to last", () => {
@@ -114,13 +112,11 @@ describe(nameof(ChildOrderableNode), () => {
             }
 
             it("should change the order of the members when there's two, moving first to last", () => {
-                doTest("interface I {\n    prop: string;\n    method(): void;\n}", 0, 1,
-                    "interface I {\n    method(): void;\n    prop: string;\n}");
+                doTest("interface I {\n    prop: string;\n    method(): void;\n}", 0, 1, "interface I {\n    method(): void;\n    prop: string;\n}");
             });
 
             it("should change the order of the members when there's two, moving last to first", () => {
-                doTest("interface I {\n    prop: string;\n\n    method(): void;\n}", 1, 0,
-                    "interface I {\n    method(): void;\n    prop: string;\n}");
+                doTest("interface I {\n    prop: string;\n\n    method(): void;\n}", 1, 0, "interface I {\n    method(): void;\n    prop: string;\n}");
             });
 
             it("should change the order of the members when there's multiple, moving first to last", () => {

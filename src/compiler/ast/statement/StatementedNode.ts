@@ -3,7 +3,8 @@ import * as errors from "../../../errors";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../../manipulation";
 import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
-    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, StatementStructures, OptionalKind, Structure } from "../../../structures";
+    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, StatementStructures, OptionalKind,
+    Structure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
@@ -445,7 +446,9 @@ export interface StatementedNode {
     /** @internal */
     _insertChildren<TNode extends Node>(opts: InsertChildrenOptions): TNode[];
     /** @internal */
-    _standardWrite(writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void, opts?: StandardWriteOptions): void;
+    _standardWrite(
+writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void, opts?: StandardWriteOptions
+    ): void;
     /** @internal */
     _getCompilerStatementsWithComments(): ts.Statement[];
 }
@@ -558,7 +561,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this._context.structurePrinterFactory.forClassDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forClassDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) })
+                            .printTexts(writer, structures);
                     });
                 }
             });
@@ -578,7 +582,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getClassOrThrow(name: string): ClassDeclaration;
         getClassOrThrow(findFunction: (declaration: ClassDeclaration) => boolean): ClassDeclaration;
         getClassOrThrow(nameOrFindFunction: string | ((declaration: ClassDeclaration) => boolean)): ClassDeclaration {
-            return errors.throwIfNullOrUndefined(this.getClass(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("class", nameOrFindFunction));
+            return errors.throwIfNullOrUndefined(
+this.getClass(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("class", nameOrFindFunction));
         }
 
         /* Enums */
@@ -622,7 +628,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getEnumOrThrow(name: string): EnumDeclaration;
         getEnumOrThrow(findFunction: (declaration: EnumDeclaration) => boolean): EnumDeclaration;
         getEnumOrThrow(nameOrFindFunction: string | ((declaration: EnumDeclaration) => boolean)): EnumDeclaration {
-            return errors.throwIfNullOrUndefined(this.getEnum(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("enum", nameOrFindFunction));
+            return errors.throwIfNullOrUndefined(
+this.getEnum(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("enum", nameOrFindFunction));
         }
 
         /* Functions */
@@ -673,7 +681,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getFunctionOrThrow(name: string): FunctionDeclaration;
         getFunctionOrThrow(findFunction: (declaration: FunctionDeclaration) => boolean): FunctionDeclaration;
         getFunctionOrThrow(nameOrFindFunction: string | ((declaration: FunctionDeclaration) => boolean)): FunctionDeclaration {
-            return errors.throwIfNullOrUndefined(this.getFunction(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("function", nameOrFindFunction));
+            return errors.throwIfNullOrUndefined(
+this.getFunction(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("function", nameOrFindFunction));
         }
 
         /* Interfaces */
@@ -717,7 +727,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getInterfaceOrThrow(name: string): InterfaceDeclaration;
         getInterfaceOrThrow(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration;
         getInterfaceOrThrow(nameOrFindFunction: string | ((declaration: InterfaceDeclaration) => boolean)): InterfaceDeclaration {
-            return errors.throwIfNullOrUndefined(this.getInterface(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("interface", nameOrFindFunction));
+            return errors.throwIfNullOrUndefined(
+this.getInterface(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("interface", nameOrFindFunction));
         }
 
         /* Namespaces */
@@ -741,7 +753,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this._context.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
+                        this._context.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) })
+                            .printTexts(writer, structures);
                     });
                 }
             });
@@ -761,7 +774,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getNamespaceOrThrow(name: string): NamespaceDeclaration;
         getNamespaceOrThrow(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration;
         getNamespaceOrThrow(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration {
-            return errors.throwIfNullOrUndefined(this.getNamespace(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction));
+            return errors.throwIfNullOrUndefined(
+this.getNamespace(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction));
         }
 
         /* Type aliases */
@@ -808,7 +823,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getTypeAliasOrThrow(name: string): TypeAliasDeclaration;
         getTypeAliasOrThrow(findFunction: (declaration: TypeAliasDeclaration) => boolean): TypeAliasDeclaration;
         getTypeAliasOrThrow(nameOrFindFunction: string | ((declaration: TypeAliasDeclaration) => boolean)): TypeAliasDeclaration {
-            return errors.throwIfNullOrUndefined(this.getTypeAlias(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("type alias", nameOrFindFunction));
+            return errors.throwIfNullOrUndefined(
+this.getTypeAlias(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("type alias", nameOrFindFunction));
         }
 
         /* Variable statements */
@@ -828,7 +845,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getVariableStatementOrThrow(nameOrFindFunction: string | ((statement: VariableStatement) => boolean)): VariableStatement {
-            return errors.throwIfNullOrUndefined(this.getVariableStatement(nameOrFindFunction), "Expected to find a variable statement that matched the provided condition.");
+            return errors.throwIfNullOrUndefined(
+this.getVariableStatement(nameOrFindFunction),
+                "Expected to find a variable statement that matched the provided condition.");
         }
 
         addVariableStatement(structure: OptionalKind<VariableStatementStructure>) {
@@ -902,9 +921,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         set(structure: Partial<StatementedNodeStructure>) {
             // todo: I don't think it's necessary to do this in two steps anymore and this could probably
             // be changed to set the body text in one go instead (for performance reasons)
-            if (TypeGuards.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure.statements))) {
+            if (TypeGuards.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure.statements)))
                 this.removeBody();
-            }
             else if (structure.statements != null) {
                 const statementCount = this._getCompilerStatementsWithComments().length;
                 if (statementCount > 0)
@@ -943,9 +961,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     return undefined;
                 return body.compilerNode as any;
             }
-            else if (TypeGuards.isBodiedNode(this)) {
+            else if (TypeGuards.isBodiedNode(this))
                 return this.getBody().compilerNode as any;
-            }
             else if (TypeGuards.isBlock(this) || TypeGuards.isModuleBlock(this))
                 return this.compilerNode;
             else

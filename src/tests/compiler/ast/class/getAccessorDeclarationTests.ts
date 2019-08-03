@@ -7,7 +7,7 @@ import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
     const getAccessor = result.firstChild.getInstanceProperties().find(f => f.getKind() === SyntaxKind.GetAccessor) as GetAccessorDeclaration;
-    return {...result, getAccessor};
+    return { ...result, getAccessor };
 }
 
 describe(nameof(GetAccessorDeclaration), () => {
@@ -18,8 +18,8 @@ describe(nameof(GetAccessorDeclaration), () => {
         });
 
         it("should return the set accessor if a corresponding one exists", () => {
-            const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n` +
-                `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
+            const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n`
+                + `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
             const { getAccessor } = getGetAccessorInfo(code);
             expect(getAccessor.getSetAccessor()!.getText()).to.equal("set identifier(val: string) {}");
         });
@@ -32,8 +32,8 @@ describe(nameof(GetAccessorDeclaration), () => {
         });
 
         it("should return the set accessor if a corresponding one exists", () => {
-            const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n` +
-                `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
+            const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n`
+                + `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
             const { getAccessor } = getGetAccessorInfo(code);
             expect(getAccessor.getSetAccessorOrThrow().getText()).to.equal("set identifier(val: string) {}");
         });
@@ -66,8 +66,7 @@ describe(nameof(GetAccessorDeclaration), () => {
         });
 
         it("should remove when it's the last member", () => {
-            doTest("class Identifier {\n    prop: string;\n    get prop2(): string {}\n}", "prop2",
-                "class Identifier {\n    prop: string;\n}");
+            doTest("class Identifier {\n    prop: string;\n    get prop2(): string {}\n}", "prop2", "class Identifier {\n    prop: string;\n}");
         });
     });
 

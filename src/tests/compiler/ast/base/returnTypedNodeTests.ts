@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { FunctionDeclaration, ReturnTypedNode } from "../../../../compiler";
 import { ReturnTypedNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
@@ -114,7 +114,7 @@ describe(nameof(ReturnTypedNode), () => {
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("function Identifier() {}", { }, "function Identifier() {}");
+            doTest("function Identifier() {}", {}, "function Identifier() {}");
         });
     });
 

@@ -3,8 +3,8 @@ import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFu
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationOverloadSpecificStructure, FunctionDeclarationStructure,
     FunctionDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { AmbientableNode, AsyncableNode, BodyableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode, TextInsertableNode,
-    UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
+import { AmbientableNode, AsyncableNode, BodyableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode, TextInsertableNode, UnwrappableNode,
+    SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Statement } from "../statement";
 import { NamespaceChildableNode } from "../module";
@@ -109,11 +109,12 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
             function getSpecificStructure(): FunctionDeclarationSpecificStructure {
                 if (!hasImplementation)
                     return { kind: StructureKind.Function };
-                else
+                else {
                     return {
                         kind: StructureKind.Function,
                         overloads: thisNode.getOverloads().map(o => o.getStructure() as FunctionDeclarationOverloadStructure)
                     };
+                }
             }
         }
     }

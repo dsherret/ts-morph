@@ -5,9 +5,8 @@ import { getInfoFromText } from "../../testHelpers";
 
 function getInfoFromTextWithBooleanLiteral(text: string) {
     const obj = getInfoFromText(text);
-    const literal = (
-        obj.sourceFile.getFirstDescendantByKind(SyntaxKind.TrueKeyword) || obj.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.FalseKeyword)
-    ) as BooleanLiteral;
+    const literal = (obj.sourceFile.getFirstDescendantByKind(SyntaxKind.TrueKeyword)
+        || obj.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.FalseKeyword)) as BooleanLiteral;
     return { ...obj, literal };
 }
 

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("tests for issue #405", () => {
@@ -17,8 +17,7 @@ interface JQueryStatic {
     test: string;
 }
 `);
-        fileSystem.writeFileSync("/node_modules/@types/jquery/package.json",
-            `{ "name": "@types/jquery", "version": "1.0.0", "typeScriptVersion": "2.3" }`);
+        fileSystem.writeFileSync("/node_modules/@types/jquery/package.json", `{ "name": "@types/jquery", "version": "1.0.0", "typeScriptVersion": "2.3" }`);
 
         const sourceFile1 = project.createSourceFile("/file1.js", `import $ from "jquery";`);
         const sourceFile2 = project.createSourceFile("/file2.js", "");

@@ -183,7 +183,7 @@ export class TypeChecker {
      */
     getExportsOfModule(moduleSymbol: Symbol) {
         const symbols = this.compilerObject.getExportsOfModule(moduleSymbol.compilerSymbol);
-        return(symbols || []).map(s => this._context.compilerFactory.getSymbol(s));
+        return (symbols || []).map(s => this._context.compilerFactory.getSymbol(s));
     }
 
     /**
@@ -238,8 +238,8 @@ export class TypeChecker {
     }
 
     private _getDefaultTypeFormatFlags(enclosingNode?: Node) {
-        let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType |
-            TypeFormatFlags.WriteTypeArgumentsOfSignature) as TypeFormatFlags;
+        let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType
+            | TypeFormatFlags.WriteTypeArgumentsOfSignature) as TypeFormatFlags;
 
         if (enclosingNode != null && enclosingNode.getKind() === SyntaxKind.TypeAliasDeclaration)
             formatFlags |= TypeFormatFlags.InTypeAlias;

@@ -1,4 +1,4 @@
-﻿import * as errors from "../../../../errors";
+import * as errors from "../../../../errors";
 import { getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../../manipulation";
 import { SpaceFormattingStructuresPrinter } from "../../../../structurePrinters";
 import { JsxAttributeStructure, JsxSpreadAttributeStructure, OptionalKind } from "../../../../structures";
@@ -54,7 +54,9 @@ export interface JsxAttributedNode {
     /**
      * Inserts attributes into the element.
      */
-    insertAttributes(index: number, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>): JsxAttributeLike[];
+    insertAttributes(
+index: number, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>
+    ): JsxAttributeLike[];
 }
 
 export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensionType>>(Base: T): Constructor<JsxAttributedNode> & T {

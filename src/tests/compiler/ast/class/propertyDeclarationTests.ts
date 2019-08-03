@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { Scope, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
 import { PropertyDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
@@ -121,8 +121,7 @@ class T {
         });
 
         it("should remove when it's the first property", () => {
-            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n}", "prop",
-                "class Identifier {\n    prop2: string;\n}");
+            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n}", "prop", "class Identifier {\n    prop2: string;\n}");
         });
 
         it("should remove when it's the middle property", () => {
@@ -131,13 +130,11 @@ class T {
         });
 
         it("should remove when it's the last property", () => {
-            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n}", "prop2",
-                "class Identifier {\n    prop: string;\n}");
+            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n}", "prop2", "class Identifier {\n    prop: string;\n}");
         });
 
         it("should remove when it's beside a method with a body", () => {
-            doTest("class Identifier {\n    method(){}\n\n    prop: string;\n}", "prop",
-                "class Identifier {\n    method(){}\n}");
+            doTest("class Identifier {\n    method(){}\n\n    prop: string;\n}", "prop", "class Identifier {\n    method(){}\n}");
         });
 
         it("should remove when it's inside two methods", () => {

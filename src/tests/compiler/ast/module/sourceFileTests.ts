@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, VariableDeclarationKind } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../../options";
@@ -237,13 +237,16 @@ describe(nameof(SourceFile), () => {
         it("should change the module specifiers in other files when moving", () => {
             const fileText = "export interface MyInterface {}\nexport class MyClass {};";
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
-            const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";\nasync function t() { const test = await import('./MyInterface'); }`);
+            const file1 = project.createSourceFile(
+"/file.ts",
+                `import {MyInterface} from "./MyInterface";\nasync function t() { const test = await import('./MyInterface'); }`);
             const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "../MyInterface";\nimport "./../MyInterface";`);
             const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\nimport t = require("./../MyInterface");`);
             const file4Text = `export * from "./sub/MyInterface";\nimport "MyOtherFile";`;
             const file4 = project.createSourceFile("/file4.ts", file4Text);
             sourceFile.move("/dir/NewFile.ts");
-            expect(file1.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";\nasync function t() { const test = await import('./dir/NewFile'); }`);
+            expect(file1.getFullText())
+                .to.equal(`import {MyInterface} from "./dir/NewFile";\nasync function t() { const test = await import('./dir/NewFile'); }`);
             expect(file2.getFullText()).to.equal(`import * as interfaces from "../dir/NewFile";\nimport "../dir/NewFile";`);
             expect(file3.getFullText()).to.equal(`export * from "../dir/NewFile";\nimport t = require("../dir/NewFile");`);
             expect(file4.getFullText()).to.equal(file4Text);
@@ -264,7 +267,8 @@ describe(nameof(SourceFile), () => {
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const otherFile = project.createSourceFile("/OtherInterface.ts", `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
             sourceFile.move("/dir/NewFile.ts");
-            expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../OtherInterface";\nexport interface MyInterface {}\nexport * from "../OtherInterface";`);
+            expect(sourceFile.getFullText())
+                .to.equal(`import {OtherInterface} from "../OtherInterface";\nexport interface MyInterface {}\nexport * from "../OtherInterface";`);
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";\nexport interface OtherInterface {}`);
         });
 
@@ -289,8 +293,8 @@ describe(nameof(SourceFile), () => {
             checkSpecifiers("../dir/subDir/NewFile", "../../dir2/OtherInterface");
 
             function checkSpecifiers(sourceFileSpecifier: string, otherFileSpecifier: string) {
-                expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "${otherFileSpecifier}";\n` +
-                    `export interface MyInterface {}\nexport * from "${otherFileSpecifier}";`);
+                expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "${otherFileSpecifier}";\n`
+                    + `export interface MyInterface {}\nexport * from "${otherFileSpecifier}";`);
                 expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "${sourceFileSpecifier}";\nexport interface OtherInterface {}`);
             }
         });
@@ -325,11 +329,13 @@ describe(nameof(SourceFile), () => {
             // using a weird module specifier to make sure it doesn't update automatically
             const fileText = `import {OtherInterface} from "../dir/OtherInterface";\nexport interface MyInterface {}\nexport * from "../dir/OtherInterface";`;
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/dir/MyInterface.ts" });
-            const otherFile = project.createSourceFile("/dir/OtherInterface.ts", `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
+            const otherFile = project.createSourceFile(
+"/dir/OtherInterface.ts",
+                `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
             sourceFile.move("NewFile.ts");
-            expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../dir/OtherInterface";\n` +
-                `export interface MyInterface {}\n` +
-                `export * from "../dir/OtherInterface";`);
+            expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../dir/OtherInterface";\n`
+                + `export interface MyInterface {}\n`
+                + `export * from "../dir/OtherInterface";`);
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./NewFile";\nexport interface OtherInterface {}`);
         });
 
@@ -708,7 +714,9 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should only emit the declaration file when specified", () => {
-            const project = new Project({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
+            const project = new Project({
+compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 },
+                useVirtualFileSystem: true });
             const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput({ emitOnlyDtsFiles: true });
 
@@ -735,7 +743,8 @@ describe(nameof(SourceFile), () => {
             const structure: OptionalKindAndTrivia<MakeRequired<SourceFileStructure>> = {
                 statements: [
                     { kind: StructureKind.ImportDeclaration, moduleSpecifier: "module" },
-                    { kind: StructureKind.Class, name: "C" }, "console.log()",
+                    { kind: StructureKind.Class, name: "C" },
+                    "console.log()",
                     { kind: StructureKind.ExportDeclaration, moduleSpecifier: "export-module" },
                     { kind: StructureKind.ExportAssignment, expression: "5" }
                 ]
@@ -745,7 +754,10 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.formatText), () => {
-        function doTest(startingCode: string, expectedCode: string, manipulationSettings: Partial<ManipulationSettings> = {}, settings: FormatCodeSettings = {}) {
+        function doTest(
+startingCode: string, expectedCode: string, manipulationSettings: Partial<ManipulationSettings> = {},
+            settings: FormatCodeSettings = {})
+        {
             const { project, sourceFile } = getInfoFromText(startingCode);
             project.manipulationSettings.set(manipulationSettings);
             sourceFile.formatText(settings);
@@ -765,57 +777,55 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should format the text with eight spaces", () => {
-            doTest("class MyClass {\n    myMethod() {\n    }\n}",
-                "class MyClass {\n        myMethod() {\n        }\n}\n",
+            doTest(
+"class MyClass {\n    myMethod() {\n    }\n}", "class MyClass {\n        myMethod() {\n        }\n}\n",
                 { indentationText: IndentationText.EightSpaces });
         });
 
         it("should format the text with four spaces", () => {
-            doTest("class MyClass {\n    myMethod() {\n    }\n}",
-                "class MyClass {\n    myMethod() {\n    }\n}\n",
+            doTest(
+"class MyClass {\n    myMethod() {\n    }\n}", "class MyClass {\n    myMethod() {\n    }\n}\n",
                 { indentationText: IndentationText.FourSpaces });
         });
 
         it("should format the text with two spaces", () => {
-            doTest("class MyClass {\n    myMethod() {\n        console.log(t);\n    }\n}",
-                "class MyClass {\n  myMethod() {\n    console.log(t);\n  }\n}\n",
+            doTest(
+"class MyClass {\n    myMethod() {\n        console.log(t);\n    }\n}", "class MyClass {\n  myMethod() {\n    console.log(t);\n  }\n}\n",
                 { indentationText: IndentationText.TwoSpaces });
         });
 
         it("should format the text with tabs", () => {
-            doTest("class MyClass {\n    myMethod() {\n    }\n}",
-                "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
-                { indentationText: IndentationText.Tab });
+            doTest(
+"class MyClass {\n    myMethod() {\n    }\n}", "class MyClass {\n\tmyMethod() {\n\t}\n}\n", { indentationText: IndentationText.Tab });
         });
 
         it("should format the text to spaces when using tabs", () => {
-            doTest("class MyClass {\n\tmyMethod() {\n\t}\n}",
-                "class MyClass {\n  myMethod() {\n  }\n}\n",
-                { indentationText: IndentationText.TwoSpaces });
+            doTest(
+"class MyClass {\n\tmyMethod() {\n\t}\n}", "class MyClass {\n  myMethod() {\n  }\n}\n", { indentationText: IndentationText.TwoSpaces });
         });
 
         it("should format the text with slash r slash n newlines", () => {
-            doTest("class MyClass {\n    myMethod() {\n    }\n}",
-                "class MyClass {\r\n\tmyMethod() {\r\n\t}\r\n}\r\n",
+            doTest(
+"class MyClass {\n    myMethod() {\n    }\n}", "class MyClass {\r\n\tmyMethod() {\r\n\t}\r\n}\r\n",
                 { indentationText: IndentationText.Tab, newLineKind: NewLineKind.CarriageReturnLineFeed });
         });
 
         it("should format the text with slash n newlines", () => {
-            doTest("class MyClass {\r\n    myMethod() {\r\n    }\r\n}",
-                "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
+            doTest(
+"class MyClass {\r\n    myMethod() {\r\n    }\r\n}", "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
                 { indentationText: IndentationText.Tab, newLineKind: NewLineKind.LineFeed });
         });
 
         it("should format and not indent within strings", () => {
-            doTest("class MyClass {\n    myMethod() {\n        const t = `\nt`;\n    }\n}",
-                "class MyClass {\n  myMethod() {\n    const t = `\nt`;\n  }\n}\n",
+            doTest(
+"class MyClass {\n    myMethod() {\n        const t = `\nt`;\n    }\n}", "class MyClass {\n  myMethod() {\n    const t = `\nt`;\n  }\n}\n",
                 { indentationText: IndentationText.TwoSpaces });
         });
 
         it("should format and not format within strings", () => {
-            doTest("class MyClass {\n    myMethod() {\n        const t = `\n    t`;\n    }\n}",
-                "class MyClass {\n\tmyMethod() {\n\t\tconst t = `\n    t`;\n\t}\n}\n",
-                { indentationText: IndentationText.Tab });
+            doTest(
+"class MyClass {\n    myMethod() {\n        const t = `\n    t`;\n    }\n}",
+                "class MyClass {\n\tmyMethod() {\n\t\tconst t = `\n    t`;\n\t}\n}\n", { indentationText: IndentationText.Tab });
         });
 
         it("should format the text when it contains multiple semi colons", () => {
@@ -871,16 +881,16 @@ function myFunction(param: MyClass) {
 
         it("should indent the specified text based on the lines provided", () => {
             const sourceFileLines = ["class MyClass {", "    test;", "}"];
-            doTest(sourceFileLines.join("\n"), [sourceFileLines[0].length + 1, sourceFileLines[0].length + 1 + sourceFileLines[1].length], 3,
-                `class MyClass {
+            doTest(
+sourceFileLines.join("\n"), [sourceFileLines[0].length + 1, sourceFileLines[0].length + 1 + sourceFileLines[1].length], 3, `class MyClass {
                 test;
 }`);
         });
 
         it("should indent the line when specifying the end of it for the start of the range", () => {
             const sourceFileLines = ["class MyClass {", "    test;", "}"];
-            doTest(sourceFileLines.join("\n"), [sourceFileLines[0].length, sourceFileLines[0].length + 1], 1,
-                `    class MyClass {
+            doTest(
+sourceFileLines.join("\n"), [sourceFileLines[0].length, sourceFileLines[0].length + 1], 1, `    class MyClass {
         test;
 }`);
         });
@@ -1124,15 +1134,16 @@ function myFunction(param: MyClass) {
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
             const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "../MyInterface";\nimport "./../MyInterface";`);
-            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\n` +
-                `import test = require("../MyInterface");\n` +
-                `async function t() { const u = await import("../MyInterface"); }`);
+            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\n`
+                + `import test = require("../MyInterface");\n`
+                + `async function t() { const u = await import("../MyInterface"); }`);
             const file4 = project.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
 
             const referencing = sourceFile.getReferencingNodesInOtherSourceFiles();
-            expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...[...file1.getImportDeclarations(),
-                ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()),
-                `import test = require("../MyInterface");`, `import("../MyInterface")`].sort());
+            expect(referencing.map(r => r.getText()).sort())
+                .to.deep.equal([
+...[...file1.getImportDeclarations(), ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()),
+                    `import test = require("../MyInterface");`, `import("../MyInterface")`].sort());
         });
 
         it("should get the nodes that reference an index file", () => {
@@ -1141,8 +1152,9 @@ function myFunction(param: MyClass) {
             const file1 = project.createSourceFile("/file.ts", `export * from "./sub";`);
             const file2 = project.createSourceFile("/file2.ts", `import "./sub/index";`);
             const referencing = sourceFile.getReferencingNodesInOtherSourceFiles();
-            expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...file1.getExportDeclarations(),
-                ...file2.getImportDeclarations()].map(d => d.getText()).sort());
+            expect(referencing.map(r => r.getText()).sort())
+                .to.deep.equal([
+...file1.getExportDeclarations(), ...file2.getImportDeclarations()].map(d => d.getText()).sort());
         });
 
         it("should keep the references up to date during manipulations", () => {
@@ -1166,15 +1178,16 @@ function myFunction(param: MyClass) {
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
             const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "../MyInterface";\nimport "./../MyInterface";`);
-            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\n` +
-                `import test = require("../MyInterface");\n` +
-                `async function t() { const u = await import("../MyInterface"); }`);
+            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\n`
+                + `import test = require("../MyInterface");\n`
+                + `async function t() { const u = await import("../MyInterface"); }`);
             const file4 = project.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
 
             const referencing = sourceFile.getReferencingLiteralsInOtherSourceFiles();
-            expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...[...file1.getImportDeclarations(),
-                ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getModuleSpecifier()!.getText()),
-                `"../MyInterface"`, `"../MyInterface"`].sort());
+            expect(referencing.map(r => r.getText()).sort())
+ .to.deep.equal([
+...[...file1.getImportDeclarations(), ...file2.getImportDeclarations(), ...file3.getExportDeclarations()]
+                    .map(d => d.getModuleSpecifier()!.getText()), `"../MyInterface"`, `"../MyInterface"`].sort());
         });
     });
 
@@ -1240,15 +1253,16 @@ function myFunction(param: MyClass) {
         }
 
         it("should organize imports and remove unused ones", () => {
-            const startText = "import MyInterface from './MyInterface';\nimport MyClass from './MyClass';\n" +
-                "import UnusedInterface from './UnusedInterface';\n\n" +
-                "const myVar: MyInterface = new MyClass();";
-            const expectedText = "import MyClass from './MyClass';\nimport MyInterface from './MyInterface';\n\n" +
-                "const myVar: MyInterface = new MyClass();";
+            const startText = "import MyInterface from './MyInterface';\nimport MyClass from './MyClass';\n"
+                + "import UnusedInterface from './UnusedInterface';\n\n"
+                + "const myVar: MyInterface = new MyClass();";
+            const expectedText = "import MyClass from './MyClass';\nimport MyInterface from './MyInterface';\n\n"
+                + "const myVar: MyInterface = new MyClass();";
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
                 { path: "/MyInterface.ts", text: "export default interface MyInterface {}" },
-                { path: "/UnusedInterface.ts", text: "export default interface MyUnusedInterface {}" }], expectedText);
+                { path: "/UnusedInterface.ts", text: "export default interface MyUnusedInterface {}" }
+            ], expectedText);
         });
     });
 
@@ -1301,8 +1315,8 @@ function myFunction(param: MyClass) {
 
         it("should add missing ones in existing named imports", () => {
             const startText = `import { MyClass } from "./MyClass";\n\nconst t = new MyClass();\nconst u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
-            const expectedText = `import { MyClass, MyClass2, MyClass3 } from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\n` +
-                `const u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
+            const expectedText = `import { MyClass, MyClass2, MyClass3 } from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\n`
+                + `const u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export class MyClass {} export class MyClass2 {} export class MyClass3 {}" },
                 { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
@@ -1329,8 +1343,8 @@ function myFunction(param: MyClass) {
         }
 
         it("should get the string literals used in imports and exports", () => {
-            const startText = `import './MyInterface';\nimport MyClass from "./MyClass";\n` +
-                `import * as UnusedInterface from "absolute-path";\nexport * from "./export";`;
+            const startText = `import './MyInterface';\nimport MyClass from "./MyClass";\n`
+                + `import * as UnusedInterface from "absolute-path";\nexport * from "./export";`;
             doTest(startText, [`'./MyInterface'`, `"./MyClass"`, `"absolute-path"`, `"./export"`]);
         });
 
@@ -1460,7 +1474,7 @@ const t = 5;`;
     });
 
     describe(nameof<SourceFile>(n => n.getLineAndColumnAtPos), () => {
-        function doTest(code: string, pos: number, expected: { line: number, column: number } | "throw") {
+        function doTest(code: string, pos: number, expected: { line: number; column: number; } | "throw") {
             const { sourceFile } = getInfoFromText(code);
             if (expected === "throw")
                 expect(() => sourceFile.getLineAndColumnAtPos(pos)).to.throw();

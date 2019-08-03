@@ -1,6 +1,7 @@
 import * as errors from "../../../errors";
 import { Directory } from "../../../fileSystem";
-import { getTextFromFormattingEdits, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove, replaceSourceFileTextForFormatting } from "../../../manipulation";
+import { getTextFromFormattingEdits, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove,
+    replaceSourceFileTextForFormatting } from "../../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { ProjectContext } from "../../../ProjectContext";
 import { SourceFileSpecificStructure, SourceFileStructure, StructureKind } from "../../../structures";
@@ -228,8 +229,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         function getCopiedSourceFile(currentFile: SourceFile) {
             try {
-                return compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(),
-                    { overwrite, markInProject: getShouldBeInProject() });
+                return compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), { overwrite, markInProject: getShouldBeInProject() });
             } catch (err) {
                 if (err instanceof errors.InvalidOperationError)
                     throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
@@ -341,8 +341,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 existingSourceFile.forget();
             }
         }
-        else
+        else {
             this._context.compilerFactory.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
+        }
 
         replaceSourceFileForFilePathMove({
             newFilePath: filePath,
@@ -391,8 +392,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             await this._context.fileSystemWrapper.moveFileImmediately(oldFilePath, newFilePath, this.getFullText());
             this._isSaved = true;
         }
-        else
+        else {
             await this.save();
+        }
         return this;
     }
 
@@ -411,8 +413,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             this._context.fileSystemWrapper.moveFileImmediatelySync(oldFilePath, newFilePath, this.getFullText());
             this._isSaved = true;
         }
-        else
+        else {
             this.saveSync();
+        }
         return this;
     }
 
@@ -569,7 +572,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // compiler does the following code:
         //
         // function isSourceFileFromExternalLibrary(file: SourceFile): boolean {
-        //    return !!sourceFilesFoundSearchingNodeModules.get(file.path);
+        //     return !!sourceFilesFoundSearchingNodeModules.get(file.path);
         // }
         //
         // So the compiler node will become out of date after a manipulation occurs and

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { TypeScriptVersionChecker } from "../../../../utils";
@@ -206,18 +206,15 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
 
         it("should remove when specifying undefined for constraint and default", () => {
-            doTest("class C<T extends string = number> {}", { constraint: undefined, default: undefined },
-               "class C<T> {}");
+            doTest("class C<T extends string = number> {}", { constraint: undefined, default: undefined }, "class C<T> {}");
         });
 
         it("should replace existing", () => {
-            doTest("class C<T extends string = number> {}", { name: "U", constraint: "number", default: "string" },
-                "class C<U extends number = string> {}");
+            doTest("class C<T extends string = number> {}", { name: "U", constraint: "number", default: "string" }, "class C<U extends number = string> {}");
         });
 
         it("should add constraint and default when not exists", () => {
-            doTest("class C<T> {}", { name: "U", constraint: "number", default: "string" },
-                "class C<U extends number = string> {}");
+            doTest("class C<T> {}", { name: "U", constraint: "number", default: "string" }, "class C<U extends number = string> {}");
         });
 
         it("should add constraint and default properly when they span multiple lines", () => {

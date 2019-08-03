@@ -1,11 +1,10 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration } from "../../compiler";
 import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("tests for issue #38", () => {
     it("should set the initializer when it's a string", () => {
-        const text =
-`class Identifier {
+        const text = `class Identifier {
     public static readonly Version: string = "1.0";
 }`;
         const { firstChild } = getInfoFromText<ClassDeclaration>(text);

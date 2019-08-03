@@ -57,7 +57,9 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Adds members to the enum.
      * @param structures - Structures of the enums.
      */
-    addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | string | WriterFunction): (EnumMember | CommentEnumMember)[];
+    addMembers(
+        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | string | WriterFunction
+    ): (EnumMember | CommentEnumMember)[];
     addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>) {
         return this.insertMembers(this.getMembers().length, structures);
     }
@@ -89,7 +91,9 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
-    insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string): (EnumMember | CommentEnumMember)[];
+    insertMembers(
+        index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string
+    ): (EnumMember | CommentEnumMember)[];
     insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string) {
         if (structures.length === 0)
             return [];

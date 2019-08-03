@@ -1,8 +1,9 @@
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationOverloadSpecificStructure, ConstructorDeclarationStructure,
-    ConstructorDeclarationSpecificStructure, StructureKind, OptionalKind} from "../../../structures";
+    ConstructorDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode } from "../base";
+import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode,
+    TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -96,11 +97,12 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
             function getSpecificStructure(): ConstructorDeclarationSpecificStructure {
                 if (!hasImplementation)
                     return { kind: StructureKind.Constructor };
-                else
+                else {
                     return {
                         kind: StructureKind.Constructor,
                         overloads: thisNode.getOverloads().map(o => o.getStructure() as ConstructorDeclarationOverloadStructure)
                     };
+                }
             }
         }
     }

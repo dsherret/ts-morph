@@ -43,8 +43,9 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 newText: ` from ${quoteKind}${text}${quoteKind}`
             });
         }
-        else
+        else {
             stringLiteral.setLiteralValue(text);
+        }
 
         return this;
     }
@@ -171,7 +172,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      */
     insertNamedExports(index: number, namedExports: ReadonlyArray<OptionalKind<ExportSpecifierStructure> | string | WriterFunction> | WriterFunction) {
         if (!(namedExports instanceof Function) && ArrayUtils.isNullOrEmpty(namedExports))
-                return [];
+            return [];
 
         const originalNamedExports = this.getNamedExports();
         const writer = this._getWriterWithIndentation();
@@ -249,8 +250,9 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
             setEmptyNamedExport(this);
             this.addNamedExports(structure.namedExports);
         }
-        else if (structure.hasOwnProperty(nameof(structure.namedExports)) && structure.moduleSpecifier == null)
+        else if (structure.hasOwnProperty(nameof(structure.namedExports)) && structure.moduleSpecifier == null) {
             this.toNamespaceExport();
+        }
 
         if (structure.moduleSpecifier != null)
             this.setModuleSpecifier(structure.moduleSpecifier);
@@ -285,8 +287,9 @@ function setEmptyNamedExport(node: ExportDeclaration) {
             return;
         replaceNode = namedExportsNode;
     }
-    else
+    else {
         replaceNode = node.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
+    }
 
     insertIntoParentTextRange({
         parent: node,

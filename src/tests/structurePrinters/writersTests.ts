@@ -149,7 +149,9 @@ describe(nameof<Writers>(), () => {
         });
 
         it("should not write with hanging indentation when using a block", () => {
-            doWriterTest((writer, { returnStatement }) => returnStatement(() => writer.inlineBlock(() => writer.write("prop")))(writer), "return {\n    prop\n};");
+            doWriterTest(
+(writer, { returnStatement }) => returnStatement(() => writer.inlineBlock(() => writer.write("prop")))(writer),
+                "return {\n    prop\n};");
         });
     });
 });

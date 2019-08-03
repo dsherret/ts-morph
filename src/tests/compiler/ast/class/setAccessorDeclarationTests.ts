@@ -7,7 +7,7 @@ import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures 
 function getSetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
     const setAccessor = result.firstChild.getInstanceProperties().find(f => f.getKind() === SyntaxKind.SetAccessor) as SetAccessorDeclaration;
-    return {...result, setAccessor};
+    return { ...result, setAccessor };
 }
 
 describe(nameof(SetAccessorDeclaration), () => {
@@ -18,8 +18,8 @@ describe(nameof(SetAccessorDeclaration), () => {
         });
 
         it("should return the set accessor if a corresponding one exists", () => {
-            const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n` +
-                `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
+            const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n`
+                + `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
             const { setAccessor } = getSetAccessorInfo(code);
             expect(setAccessor.getGetAccessor()!.getText()).to.equal(`get identifier() { return ""; }`);
         });
@@ -32,8 +32,8 @@ describe(nameof(SetAccessorDeclaration), () => {
         });
 
         it("should return the set accessor if a corresponding one exists", () => {
-            const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n` +
-                `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
+            const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n`
+                + `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
             const { setAccessor } = getSetAccessorInfo(code);
             expect(setAccessor.getGetAccessorOrThrow().getText()).to.equal(`get identifier() { return ""; }`);
         });
@@ -66,8 +66,7 @@ describe(nameof(SetAccessorDeclaration), () => {
         });
 
         it("should remove when it's the last member", () => {
-            doTest("class Identifier {\n    prop: string;\n    set prop2(val: string) {}\n}", "prop2",
-                "class Identifier {\n    prop: string;\n}");
+            doTest("class Identifier {\n    prop: string;\n    set prop2(val: string) {}\n}", "prop2", "class Identifier {\n    prop: string;\n}");
         });
     });
 

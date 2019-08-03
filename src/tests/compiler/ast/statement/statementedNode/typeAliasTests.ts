@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { StatementedNode, TypeAliasDeclaration, Node } from "../../../../../compiler";
 import { TypeAliasDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
@@ -20,8 +20,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert at the start with two new lines for a non-type alias after", () => {
-            doTest("namespace Identifier2 {\n}\n", 0, [{ name: "Identifier1", type: "string" }],
-                "type Identifier1 = string;\n\nnamespace Identifier2 {\n}\n");
+            doTest("namespace Identifier2 {\n}\n", 0, [{ name: "Identifier1", type: "string" }], "type Identifier1 = string;\n\nnamespace Identifier2 {\n}\n");
         });
 
         it("should insert at the start with one new lines for a type alias after", () => {
@@ -30,8 +29,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert at the end of a file with two new lines for a non-type alias before", () => {
-            doTest("namespace Identifier1 {\n}\n", 1, [{ name: "Identifier2", type: "string" }],
-                "namespace Identifier1 {\n}\n\ntype Identifier2 = string;\n");
+            doTest("namespace Identifier1 {\n}\n", 1, [{ name: "Identifier2", type: "string" }], "namespace Identifier1 {\n}\n\ntype Identifier2 = string;\n");
         });
 
         it("should insert in the middle of children", () => {

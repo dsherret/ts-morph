@@ -24,8 +24,9 @@ export function getInsertPosFromIndex(index: number, syntaxList: SyntaxList, chi
         const openBraceToken = parentContainer.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
         return openBraceToken.getEnd();
     }
-    else
+    else {
         return children[index - 1].getEnd();
+    }
 }
 
 export function getEndPosFromIndex(index: number, parent: Node, children: Node[], fullText: string) {
@@ -44,8 +45,9 @@ export function getEndPosFromIndex(index: number, parent: Node, children: Node[]
                 endPos = closeBraceToken.getNonWhitespaceStart();
         }
     }
-    else
+    else {
         endPos = children[index].getNonWhitespaceStart();
+    }
 
     // use the start of the current line instead of the end of the previous line so that
     // this works the same for code at the start of the file

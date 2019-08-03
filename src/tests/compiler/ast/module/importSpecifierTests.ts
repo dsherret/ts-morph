@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ImportDeclaration, ImportSpecifier } from "../../../../compiler";
 import { ImportSpecifierStructure, StructureKind } from "../../../../structures";
 import { ArrayUtils } from "../../../../utils";
@@ -224,18 +224,15 @@ describe(nameof(ImportSpecifier), () => {
         });
 
         it("should not rename when adding an alias and changing the name", () => {
-            doTest(`import { name } from './file'; const t = name;`, { name: "a", alias: "alias" },
-                `import { a as alias } from './file'; const t = name;`);
+            doTest(`import { name } from './file'; const t = name;`, { name: "a", alias: "alias" }, `import { a as alias } from './file'; const t = name;`);
         });
 
         it("should not rename when adding an alias", () => {
-            doTest(`import { name } from './file'; const t = name;`, { alias: "alias" },
-                `import { name as alias } from './file'; const t = name;`);
+            doTest(`import { name } from './file'; const t = name;`, { alias: "alias" }, `import { name as alias } from './file'; const t = name;`);
         });
 
         it("should not rename when removing an alias", () => {
-            doTest(`import { name as alias } from './file'; const t = alias;`, { alias: undefined },
-                `import { name } from './file'; const t = alias;`);
+            doTest(`import { name as alias } from './file'; const t = alias;`, { alias: undefined }, `import { name } from './file'; const t = alias;`);
         });
 
         it("should not rename when changing the alias and name", () => {

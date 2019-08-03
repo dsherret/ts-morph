@@ -23,7 +23,9 @@ export interface InitializerExpressionableNode extends InitializerExpressionGeta
     setInitializer(textOrWriterFunction: string | WriterFunction): this;
 }
 
-export function InitializerExpressionableNode<T extends Constructor<InitializerExpressionableNodeExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T {
+export function InitializerExpressionableNode<T extends Constructor<InitializerExpressionableNodeExtensionType>>(
+    Base: T
+): Constructor<InitializerExpressionableNode> & T {
     return apply(InitializerExpressionGetableNode(Base));
 }
 

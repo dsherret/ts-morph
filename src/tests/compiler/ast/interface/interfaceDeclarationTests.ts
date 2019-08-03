@@ -1,6 +1,7 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { InterfaceDeclaration } from "../../../../compiler";
-import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure,
+    StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
@@ -47,8 +48,8 @@ describe(nameof(InterfaceDeclaration), () => {
         });
 
         it("should get the base when there are multiple with the same name", () => {
-            doTest("interface Base1 {} interface Base2 { prop: string; } interface Base2 { prop2: string; } interface Child extends Base1, Base2 {}",
-                "Child", ["Base1", "Base2", "Base2"]);
+            doTest("interface Base1 {} interface Base2 { prop: string; } interface Base2 { prop2: string; } interface Child extends Base1, Base2 {}", "Child",
+                ["Base1", "Base2", "Base2"]);
         });
 
         it("should be empty when there is no base interface", () => {

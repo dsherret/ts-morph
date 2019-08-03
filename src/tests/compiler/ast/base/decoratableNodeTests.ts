@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, DecoratableNode, Decorator } from "../../../../compiler";
 import { DecoratableNodeStructure, DecoratorStructure, OptionalKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
@@ -67,14 +67,15 @@ describe(nameof(DecoratableNode), () => {
 
             it("should insert with arguments", () => {
                 doTest("class MyClass {}", 0, [
-                        { name: "dec", arguments: [] }, { name: "dec2", arguments: ["1"] },
-                        { name: "dec3", arguments: ["1", writer => writer.write("2")] }
-                    ],
-                    "@dec()\n@dec2(1)\n@dec3(1, 2)\nclass MyClass {}");
+                    { name: "dec", arguments: [] },
+                    { name: "dec2", arguments: ["1"] },
+                    { name: "dec3", arguments: ["1", writer => writer.write("2")] }
+                ], "@dec()\n@dec2(1)\n@dec3(1, 2)\nclass MyClass {}");
             });
 
             it("should insert on the same indentation level", () => {
-                doTest("namespace N {\n    class MyClass {}\n}", 0, [{ name: "dec" }, { name: "dec2" }], "namespace N {\n    @dec\n    @dec2\n    class MyClass {}\n}");
+                doTest("namespace N {\n    class MyClass {}\n}", 0, [{ name: "dec" }, { name: "dec2" }],
+                    "namespace N {\n    @dec\n    @dec2\n    class MyClass {}\n}");
             });
 
             it("should insert at the start", () => {
@@ -86,19 +87,24 @@ describe(nameof(DecoratableNode), () => {
             });
 
             it("should insert one in the middle at the same indentation", () => {
-                doTest("namespace N {\n    @dec\n    @dec3\nclass MyClass {}\n}", 1, [{ name: "dec2" }], "namespace N {\n    @dec\n    @dec2\n    @dec3\nclass MyClass {}\n}");
+                doTest("namespace N {\n    @dec\n    @dec3\nclass MyClass {}\n}", 1, [{ name: "dec2" }],
+                    "namespace N {\n    @dec\n    @dec2\n    @dec3\nclass MyClass {}\n}");
             });
 
             it("should insert multiple in the middle at the same indentation", () => {
                 doTest(
-                    "namespace N {\n    @dec\n    @dec5\nclass MyClass {}\n}", 1, [{ name: "dec2" }, { name: "dec3" }, { name: "dec4" }],
+                    "namespace N {\n    @dec\n    @dec5\nclass MyClass {}\n}",
+                    1,
+                    [{ name: "dec2" }, { name: "dec3" }, { name: "dec4" }],
                     "namespace N {\n    @dec\n    @dec2\n    @dec3\n    @dec4\n    @dec5\nclass MyClass {}\n}"
                 );
             });
 
             it("should insert when the decorators are on the same line", () => {
                 doTest(
-                    "    @dec @dec3\n    class MyClass {}", 1, [{ name: "dec2" }],
+                    "    @dec @dec3\n    class MyClass {}",
+                    1,
+                    [{ name: "dec2" }],
                     "    @dec @dec2 @dec3\n    class MyClass {}"
                 );
             });
@@ -118,21 +124,27 @@ describe(nameof(DecoratableNode), () => {
 
             it("should insert on the same line when none exists", () => {
                 doTest(
-                    "class MyClass { myMethod(param) {} }", 0, [{ name: "dec" }],
+                    "class MyClass { myMethod(param) {} }",
+                    0,
+                    [{ name: "dec" }],
                     "class MyClass { myMethod(@dec param) {} }"
                 );
             });
 
             it("should insert at the start on the same line", () => {
                 doTest(
-                    "class MyClass { myMethod(@dec2 param) {} }", 0, [{ name: "dec1" }],
+                    "class MyClass { myMethod(@dec2 param) {} }",
+                    0,
+                    [{ name: "dec1" }],
                     "class MyClass { myMethod(@dec1 @dec2 param) {} }"
                 );
             });
 
             it("should insert at the end on the same line", () => {
                 doTest(
-                    "class MyClass { myMethod(@dec1 param) {} }", 1, [{ name: "dec2" }],
+                    "class MyClass { myMethod(@dec1 param) {} }",
+                    1,
+                    [{ name: "dec2" }],
                     "class MyClass { myMethod(@dec1 @dec2 param) {} }"
                 );
             });

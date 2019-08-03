@@ -14,13 +14,12 @@ export interface ReplaceNodeTextOptions {
  * Replaces text in a source file. Will forget any changed nodes.
  */
 export function replaceNodeText(opts: ReplaceNodeTextOptions) {
-    doManipulation(opts.sourceFile,
-        new InsertionTextManipulator({
-            insertPos: opts.start,
-            newText: opts.newText,
-            replacingLength: opts.replacingLength
-        }),
-        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile._context.compilerFactory));
+    doManipulation(
+ opts.sourceFile, new InsertionTextManipulator({
+        insertPos: opts.start,
+        newText: opts.newText,
+        replacingLength: opts.replacingLength
+    }), new NodeHandlerFactory().getForForgetChanged(opts.sourceFile._context.compilerFactory));
 }
 
 /**
@@ -37,8 +36,8 @@ export function replaceSourceFileTextForFormatting(opts: { sourceFile: SourceFil
  */
 export function replaceSourceFileTextStraight(opts: { sourceFile: SourceFile; newText: string; }) {
     const { sourceFile, newText } = opts;
-    doManipulation(sourceFile,
-        new FullReplacementTextManipulator(newText),
+    doManipulation(
+sourceFile, new FullReplacementTextManipulator(newText),
         new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory));
 }
 
@@ -49,8 +48,8 @@ export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; r
     const { sourceFile, renameLocations, newName } = opts;
     const nodeHandlerFactory = new NodeHandlerFactory();
 
-    doManipulation(sourceFile,
-        new RenameLocationTextManipulator(renameLocations, newName),
+    doManipulation(
+sourceFile, new RenameLocationTextManipulator(renameLocations, newName),
         nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForRename(sourceFile._context.compilerFactory)));
 }
 
@@ -89,9 +88,8 @@ export interface ReplaceSourceFileForFilePathMoveOptions {
 export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFilePathMoveOptions) {
     const { sourceFile, newFilePath } = opts;
 
-    doManipulation(sourceFile,
-        new UnchangedTextManipulator(),
-        new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory),
+    doManipulation(
+sourceFile, new UnchangedTextManipulator(), new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory),
         newFilePath);
 }
 

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, GeneratorableNode } from "../../../../compiler";
 import { GeneratorableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(GeneratorableNode), () => {
     const { sourceFile: mainSourceFile } = getInfoFromText("function* Identifier() {}\nfunction Identifier2() {}");
     const generatorFunc = mainSourceFile.getFunctions()[0];
-    const func  = mainSourceFile.getFunctions()[1];
+    const func = mainSourceFile.getFunctions()[1];
 
     describe(nameof<GeneratorableNode>(n => n.isGenerator), () => {
         it("should be a generator when so", () => {

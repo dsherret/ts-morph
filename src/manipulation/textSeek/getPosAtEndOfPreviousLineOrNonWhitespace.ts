@@ -1,4 +1,4 @@
-﻿export function getPosAtEndOfPreviousLineOrNonWhitespace(fullText: string, pos: number) {
+export function getPosAtEndOfPreviousLineOrNonWhitespace(fullText: string, pos: number) {
     while (pos > 0) {
         pos--;
 
@@ -8,8 +8,9 @@
                 return pos - 1;
             return pos;
         }
-        else if (currentChar !== " " && currentChar !== "\t")
+        else if (currentChar !== " " && currentChar !== "\t") {
             return pos + 1;
+        }
     }
 
     return pos;

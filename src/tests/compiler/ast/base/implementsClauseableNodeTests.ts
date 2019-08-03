@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, ImplementsClauseableNode } from "../../../../compiler";
 import { ImplementsClauseableNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
@@ -95,7 +95,8 @@ describe(nameof(ImplementsClauseableNode), () => {
         });
 
         it("should insert multiple implements at a position", () => {
-            doTest("class Identifier implements Base, Base1 {}", 1, ["Base2", writer => writer.write("Base3")], "class Identifier implements Base, Base2, Base3, Base1 {}");
+            doTest("class Identifier implements Base, Base1 {}", 1, ["Base2", writer => writer.write("Base3")],
+                "class Identifier implements Base, Base2, Base3, Base1 {}");
         });
 
         it("should insert with a writer", () => {

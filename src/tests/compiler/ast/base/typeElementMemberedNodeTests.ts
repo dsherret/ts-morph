@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature, PropertySignature,
     TypeElementMemberedNode, CommentTypeElement, TypeLiteralNode, Node } from "../../../../compiler";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
@@ -83,34 +83,34 @@ describe(nameof(TypeElementMemberedNode), () => {
         it("should insert all the different kinds of members", () => {
             const expectedText = `interface i {\n    new();\n    p1;\n    m1();\n    [key: string];\n    (): void;\n    // testing\n}`;
             doTest("interface i {\n}", 0, [{
-                    kind: StructureKind.ConstructSignature
-                }, {
-                    kind: StructureKind.PropertySignature,
-                    name: "p1"
-                }, {
-                    kind: StructureKind.MethodSignature,
-                    name: "m1"
-                }, {
-                    kind: StructureKind.IndexSignature
-                }, {
-                    kind: StructureKind.CallSignature
-                },
-                "// testing"
-            ], expectedText, 6);
+                kind: StructureKind.ConstructSignature
+            }, {
+                kind: StructureKind.PropertySignature,
+                name: "p1"
+            }, {
+                kind: StructureKind.MethodSignature,
+                name: "m1"
+            }, {
+                kind: StructureKind.IndexSignature
+            }, {
+                kind: StructureKind.CallSignature
+            }, "// testing"], expectedText, 6);
         });
 
         it("should insert between members", () => {
             const expectedText = "interface i {\n    p1;\n    p2;\n    p3;\n}";
             doTest("interface i {\n    p1;\n    p3;\n}", 1, [{
-                    kind: StructureKind.PropertySignature,
-                    name: "p2"
-                }
-            ], expectedText, 1);
+                kind: StructureKind.PropertySignature,
+                name: "p2"
+            }], expectedText, 1);
         });
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignatures), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>[], expectedCode: string) {
+        function doTest(
+startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>[],
+            expectedCode: string)
+        {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertConstructSignatures(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -118,11 +118,11 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should insert when none exists", () => {
-            doTest("interface i {\n}", 0, [{ }], "interface i {\n    new();\n}");
+            doTest("interface i {\n}", 0, [{}], "interface i {\n    new();\n}");
         });
 
         it("should insert multiple into other", () => {
-            doTest("interface i {\n    method1();\n    method2();\n}", 1, [{ returnType: "string" }, { }],
+            doTest("interface i {\n    method1();\n    method2();\n}", 1, [{ returnType: "string" }, {}],
                 "interface i {\n    method1();\n    new(): string;\n    new();\n    method2();\n}");
         });
 
@@ -138,7 +138,10 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignature), () => {
-        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>, expectedCode: string) {
+        function doTest(
+startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>,
+            expectedCode: string)
+        {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertConstructSignature(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -146,7 +149,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should insert at index", () => {
-            doTest("interface i {\n    method1();\n    method2();\n}", 1, { }, "interface i {\n    method1();\n    new();\n    method2();\n}");
+            doTest("interface i {\n    method1();\n    method2();\n}", 1, {}, "interface i {\n    method1();\n    new();\n    method2();\n}");
         });
     });
 
@@ -159,7 +162,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should add multiple at end", () => {
-            doTest("interface i {\n    method1();\n}", [{ }, { }], "interface i {\n    method1();\n    new();\n    new();\n}");
+            doTest("interface i {\n    method1();\n}", [{}, {}], "interface i {\n    method1();\n    new();\n    new();\n}");
         });
     });
 
@@ -172,7 +175,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should add at end", () => {
-            doTest("interface i {\n    method1();\n}", { }, "interface i {\n    method1();\n    new();\n}");
+            doTest("interface i {\n    method1();\n}", {}, "interface i {\n    method1();\n    new();\n}");
         });
     });
 
@@ -223,7 +226,10 @@ describe(nameof(TypeElementMemberedNode), () => {
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertIndexSignatures), () => {
-        function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>[], expectedCode: string) {
+        function doTest(
+startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>[],
+            expectedCode: string)
+        {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertIndexSignatures(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -348,11 +354,11 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should insert when none exists", () => {
-            doTest("interface i {\n}", 0, [{ }], "interface i {\n    (): void;\n}");
+            doTest("interface i {\n}", 0, [{}], "interface i {\n    (): void;\n}");
         });
 
         it("should insert multiple into other", () => {
-            doTest("interface i {\n    method1();\n    method2();\n}", 1, [{ returnType: "string" }, { }],
+            doTest("interface i {\n    method1();\n    method2();\n}", 1, [{ returnType: "string" }, {}],
                 "interface i {\n    method1();\n    (): string;\n    (): void;\n    method2();\n}");
         });
 
@@ -376,7 +382,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should insert at index", () => {
-            doTest("interface i {\n    method1();\n    method2();\n}", 1, { }, "interface i {\n    method1();\n    (): void;\n    method2();\n}");
+            doTest("interface i {\n    method1();\n    method2();\n}", 1, {}, "interface i {\n    method1();\n    (): void;\n    method2();\n}");
         });
     });
 
@@ -389,7 +395,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should add multiple at end", () => {
-            doTest("interface i {\n    method1();\n}", [{ }, { }], "interface i {\n    method1();\n    (): void;\n    (): void;\n}");
+            doTest("interface i {\n    method1();\n}", [{}, {}], "interface i {\n    method1();\n    (): void;\n    (): void;\n}");
         });
     });
 
@@ -402,7 +408,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should add at end", () => {
-            doTest("interface i {\n    method1();\n}", { }, "interface i {\n    method1();\n    (): void;\n}");
+            doTest("interface i {\n    method1();\n}", {}, "interface i {\n    method1();\n    (): void;\n}");
         });
     });
 
@@ -465,7 +471,9 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
 
         it("should insert multiple into other methods", () => {
-            doTest("interface i {\n    method1();\n    method4();\n}", 1, [{ name: "method2", hasQuestionToken: true, returnType: "string" }, { name: "method3" }],
+            doTest(
+"interface i {\n    method1();\n    method4();\n}", 1,
+                [{ name: "method2", hasQuestionToken: true, returnType: "string" }, { name: "method3" }],
                 "interface i {\n    method1();\n    method2?(): string;\n    method3();\n    method4();\n}");
         });
 
@@ -491,7 +499,8 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should insert at index", () => {
-            doTest("interface i {\n    method1();\n    method3();\n}", 1, { name: "method2" }, "interface i {\n    method1();\n    method2();\n    method3();\n}");
+            doTest("interface i {\n    method1();\n    method3();\n}", 1, { name: "method2" },
+                "interface i {\n    method1();\n    method2();\n    method3();\n}");
         });
     });
 
@@ -504,7 +513,8 @@ describe(nameof(TypeElementMemberedNode), () => {
         }
 
         it("should add multiple at end", () => {
-            doTest("interface i {\n    method1();\n}", [{ name: "method2" }, { name: "method3" }], "interface i {\n    method1();\n    method2();\n    method3();\n}");
+            doTest("interface i {\n    method1();\n}", [{ name: "method2" }, { name: "method3" }],
+                "interface i {\n    method1();\n    method2();\n    method3();\n}");
         });
     });
 
@@ -562,7 +572,9 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
 
         describe("has methods", () => {
-            const { firstChild } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n    prop: string;\n    method1():void;\n    method2():string;\n}\n");
+            const {
+firstChild
+            } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n    prop: string;\n    method1():void;\n    method2():string;\n}\n");
 
             it("should get the right number of methods", () => {
                 expect(firstChild.getMethods().length).to.equal(2);
@@ -765,8 +777,8 @@ describe(nameof(TypeElementMemberedNode), () => {
                 properties: [{ name: "p" }],
                 methods: [{ name: "m" }]
             };
-            doTest("interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n}",
-                structure,
+            doTest(
+"interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n}", structure,
                 "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}");
         });
 

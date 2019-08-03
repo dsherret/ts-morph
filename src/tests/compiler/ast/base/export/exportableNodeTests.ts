@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, ExportableNode, FunctionDeclaration, NamespaceDeclaration } from "../../../../../compiler";
 import * as errors from "../../../../../errors";
 import { ExportableNodeStructure } from "../../../../../structures";
@@ -18,7 +18,8 @@ describe(nameof(ExportableNode), () => {
             });
 
             it("should remove any existing default export and make the specified class the default export when using a default export statement", () => {
-                doTest("class Identifier {}\nclass Identifier2 {}\nexport default Identifier2;\n", true, "export default class Identifier {}\nclass Identifier2 {}\n");
+                doTest("class Identifier {}\nclass Identifier2 {}\nexport default Identifier2;\n", true,
+                    "export default class Identifier {}\nclass Identifier2 {}\n");
             });
 
             it("should do nothing if already the default export", () => {
@@ -60,7 +61,8 @@ describe(nameof(ExportableNode), () => {
             });
 
             it("should do nothing if already not the default export", () => {
-                doTest("export class Identifier {}\nexport default class Identifier2 {}", false, "export class Identifier {}\nexport default class Identifier2 {}");
+                doTest("export class Identifier {}\nexport default class Identifier2 {}", false,
+                    "export class Identifier {}\nexport default class Identifier2 {}");
             });
         });
     });

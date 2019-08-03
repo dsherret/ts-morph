@@ -93,9 +93,9 @@ describe(nameof(LanguageService), () => {
             const { project } = getInfoFromText("export default class MyClass {}", { filePath: "/MyClass.ts" });
             project.createSourceFile("/MyInterface.ts", "export default interface MyInterface {}");
             project.createSourceFile("/UnusedInterface.ts", "export default interface Identifier {}");
-            const sourceFile = project.createSourceFile("/main.ts", "import MyInterface from './MyInterface';\nimport MyClass from './MyClass';\n" +
-                "import UnusedInterface from './UnusedInterface';\n" +
-                "const myVar: MyInterface = new MyClass();");
+            const sourceFile = project.createSourceFile("/main.ts", "import MyInterface from './MyInterface';\nimport MyClass from './MyClass';\n"
+                + "import UnusedInterface from './UnusedInterface';\n"
+                + "const myVar: MyInterface = new MyClass();");
             const results = project.getLanguageService().organizeImports(sourceFile.getFilePath());
             expect(results.length).to.equal(1);
             checkFileTextChanges(results[0], {
@@ -151,12 +151,14 @@ describe(nameof(LanguageService), () => {
 
         it("should return undefined if given refactor doesn't exists", () => {
             const { project, sourceFile } = getInfoFromText("const moment = require('moment'); moment(); ");
-            expect(project.getLanguageService().getEditsForRefactor(sourceFile, {}, 1, "Non Existent Refactor", "Non Existent Refactor Action", {})).to.be.undefined;
+            expect(project.getLanguageService().getEditsForRefactor(sourceFile, {}, 1, "Non Existent Refactor", "Non Existent Refactor Action", {}))
+                .to.be.undefined;
         });
 
         it("should throw for a file that doesn't exist", () => {
             const { project } = getInfoFromText("const moment = require('moment'); moment(); ");
-            expect(() => project.getLanguageService().getEditsForRefactor("nonExistent.ts", {}, 1, "Move to a new file", "Move to a new file", {})).to.throw(FileNotFoundError);
+            expect(() => project.getLanguageService().getEditsForRefactor("nonExistent.ts", {}, 1, "Move to a new file", "Move to a new file", {}))
+                .to.throw(FileNotFoundError);
         });
     });
 
@@ -184,8 +186,9 @@ describe(nameof(LanguageService), () => {
         it("should get code fixes at position for known code fixes convertToEs6Module (error code 80001)", () => {
             const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ", { filePath: "/file.ts" });
             const variableDeclaration = sourceFile.getVariableDeclarationOrThrow("moment");
-            const results = project.getLanguageService().getCodeFixesAtPosition(sourceFile,
-                variableDeclaration.getStart(), variableDeclaration.getEnd(), [80001]);
+            const results = project.getLanguageService().getCodeFixesAtPosition(
+sourceFile, variableDeclaration.getStart(), variableDeclaration.getEnd(),
+                [80001]);
 
             expect(results).to.lengthOf(1);
             expect(results[0]!.getFixName()).to.equal("convertToEs6Module");
@@ -227,7 +230,10 @@ describe(nameof(LanguageService), () => {
     });
 });
 
-function checkOutput(output: EmitOutput, expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; }) {
+function checkOutput(
+output: EmitOutput,
+    expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; })
+{
     expect(output.getEmitSkipped()).to.equal(expected.emitSkipped);
     expect(output.getOutputFiles().length).to.equal(expected.outputFiles.length);
     for (let i = 0; i < expected.outputFiles.length; i++) {

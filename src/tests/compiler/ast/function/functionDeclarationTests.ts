@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { FunctionDeclaration } from "../../../../compiler";
 import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure, StructureKind,
     OptionalKind } from "../../../../structures";
@@ -122,12 +122,15 @@ describe(nameof(FunctionDeclaration), () => {
         });
 
         it("should remove the function declaration overload when the first", () => {
-            doOverloadTest("function I() {}\n\nfunction J(): void;\nfunction J() {}\n\nfunction K() {}", 1, 0, "function I() {}\n\nfunction J() {}\n\nfunction K() {}");
+            doOverloadTest(
+"function I() {}\n\nfunction J(): void;\nfunction J() {}\n\nfunction K() {}", 1, 0,
+                "function I() {}\n\nfunction J() {}\n\nfunction K() {}");
         });
 
         it("should remove the function declaration overload when the middle", () => {
-            doOverloadTest("function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}", 1, 1,
-                "function I() {}\n\nfunction J(first): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}");
+            doOverloadTest(
+"function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}",
+                1, 1, "function I() {}\n\nfunction J(first): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}");
         });
         it("should remove the function declaration overload when last", () => {
             doOverloadTest("function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J() {}\n\nfunction K() {}", 1, 1,
@@ -151,16 +154,16 @@ describe(nameof(FunctionDeclaration), () => {
             const structure: OptionalKindAndTrivia<MakeRequired<FunctionDeclarationSpecificStructure>> = {
                 overloads: [{ returnType: "string" }]
             };
-            doTest("function identifier(p): number;\nfunction identifier() {\n}", structure,
-                "function identifier(): string;\nfunction identifier() {\n}");
+            doTest(
+"function identifier(p): number;\nfunction identifier() {\n}", structure, "function identifier(): string;\nfunction identifier() {\n}");
         });
 
         it("should remove overloads when specifying an empty array", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<FunctionDeclarationSpecificStructure>> = {
                 overloads: []
             };
-            doTest("function identifier(p): number;\nfunction identifier() {\n}", structure,
-                "function identifier() {\n}");
+            doTest(
+"function identifier(p): number;\nfunction identifier() {\n}", structure, "function identifier() {\n}");
         });
     });
 

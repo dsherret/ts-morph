@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ExternalModuleReference } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { SyntaxKind } from "../../../../typescript";
@@ -79,7 +79,8 @@ describe(nameof(ExternalModuleReference), () => {
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
             const classSourceFile = project.createSourceFile("class.ts", `export class Class {}`);
 
-            expect(mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ExternalModuleReference).getReferencedSourceFileOrThrow()).to.equal(classSourceFile);
+            expect(mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ExternalModuleReference).getReferencedSourceFileOrThrow())
+                .to.equal(classSourceFile);
         });
 
         it("should throw when the referenced file doesn't exist", () => {

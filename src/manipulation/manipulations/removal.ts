@@ -1,7 +1,8 @@
 import { Node, OverloadableNode } from "../../compiler";
 import { SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
-import { FormattingKind, getClassMemberFormatting, getClausedNodeChildFormatting, getInterfaceMemberFormatting, getStatementedNodeChildFormatting } from "../formatting";
+import { FormattingKind, getClassMemberFormatting, getClausedNodeChildFormatting, getInterfaceMemberFormatting,
+    getStatementedNodeChildFormatting } from "../formatting";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { RemoveChildrenTextManipulator, RemoveChildrenWithFormattingTextManipulator, UnwrapTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
@@ -19,13 +20,12 @@ export function removeChildren(opts: RemoveChildrenOptions) {
     if (children.length === 0)
         return;
 
-    doManipulation(children[0].getSourceFile(),
-        new RemoveChildrenTextManipulator(opts),
-        new NodeHandlerFactory().getForChildIndex({
-            parent: children[0].getParentSyntaxList() || children[0].getParentOrThrow(),
-            childIndex: children[0].getChildIndex(),
-            childCount: -1 * children.length
-        }));
+    doManipulation(
+children[0].getSourceFile(), new RemoveChildrenTextManipulator(opts), new NodeHandlerFactory().getForChildIndex({
+        parent: children[0].getParentSyntaxList() || children[0].getParentOrThrow(),
+        childIndex: children[0].getChildIndex(),
+        childCount: -1 * children.length
+    }));
 }
 
 export interface RemoveChildrenWithFormattingOptions<TNode extends Node> {
@@ -45,8 +45,9 @@ export function removeChildrenWithFormattingFromCollapsibleSyntaxList<TNode exte
             getSiblingFormatting: () => FormattingKind.None
         });
     }
-    else
+    else {
         removeChildrenWithFormatting(opts);
+    }
 }
 
 export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChildrenWithFormattingOptions<TNode>) {
@@ -66,9 +67,8 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
 
 export function removeClassMember(classMember: Node) {
     if (TypeGuards.isOverloadableNode(classMember)) {
-        if (classMember.isImplementation()) {
+        if (classMember.isImplementation())
             removeClassMembers([...classMember.getOverloads(), classMember]);
-        }
         else {
             const parent = classMember.getParentOrThrow();
             if (TypeGuards.isAmbientableNode(parent) && parent.isAmbient())
@@ -163,7 +163,6 @@ export function removeClausedNodeChildren(nodes: Node[]) {
 }
 
 export function unwrapNode(node: Node) {
-    doManipulation(node._sourceFile,
-        new UnwrapTextManipulator(node),
-        new NodeHandlerFactory().getForUnwrappingNode(node));
+    doManipulation(
+node._sourceFile, new UnwrapTextManipulator(node), new NodeHandlerFactory().getForUnwrappingNode(node));
 }

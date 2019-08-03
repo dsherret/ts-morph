@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { ExportDeclarationStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
@@ -17,12 +17,14 @@ export class ExportDeclarationStructurePrinter extends NodePrinter<OptionalKind<
             writer.space();
             this.factory.forNamedImportExportSpecifier().printTextsWithBraces(writer, structure.namedExports);
         }
-        else if (!hasModuleSpecifier)
+        else if (!hasModuleSpecifier) {
             writer.write(" {")
                 .conditionalWrite(this.factory.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ") // compiler does this
                 .write("}");
-        else
+        }
+        else {
             writer.write(` *`);
+        }
 
         if (hasModuleSpecifier) {
             writer.write(" from ");

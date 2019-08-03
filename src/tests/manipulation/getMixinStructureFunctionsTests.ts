@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import * as compiler from "../../compiler";
 import * as getMixinStructureFuncs from "../../manipulation/helpers/getMixinStructureFunctions";
 import * as structures from "../../structures";
@@ -56,11 +56,11 @@ describe(nameof(getMixinStructureFuncs.fromAwaitableNode), () => {
     }
 
     it("should get when is a generator", () => {
-        doTest("for await (const x of []) {}", {isAwaited: true});
+        doTest("for await (const x of []) {}", { isAwaited: true });
     });
 
     it("should get when not a generator", () => {
-        doTest("for (const x of []) {}", {isAwaited: false});
+        doTest("for (const x of []) {}", { isAwaited: false });
     });
 });
 
@@ -240,7 +240,8 @@ describe(nameof(getMixinStructureFuncs.fromTypedNode), () => {
 describe(nameof(getMixinStructureFuncs.fromInitializerExpressionableNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.InitializerExpressionableNodeStructure>) {
         const { firstChild } = getInfoFromText<compiler.ClassDeclaration>(startingCode);
-        expect(getMixinStructureFuncs.fromInitializerExpressionableNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
+        expect(getMixinStructureFuncs.fromInitializerExpressionableNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep
+            .equal(expectedStructure);
     }
 
     it("should get when has a an initailizer", () => {

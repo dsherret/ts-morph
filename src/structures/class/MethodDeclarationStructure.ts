@@ -1,4 +1,4 @@
-﻿import { AbstractableNodeStructure, AsyncableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure,
+import { AbstractableNodeStructure, AsyncableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure,
     PropertyNamedNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure, TypeParameteredNodeStructure,
     QuestionTokenableNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
@@ -18,9 +18,9 @@ export interface MethodDeclarationSpecificStructure extends KindedStructure<Stru
 }
 
 export interface MethodDeclarationOverloadStructure
-    extends Structure, MethodDeclarationOverloadSpecificStructure, StaticableNodeStructure, AbstractableNodeStructure,
-        ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure,
-        TypeParameteredNodeStructure, JSDocableNodeStructure, QuestionTokenableNodeStructure
+    extends Structure, MethodDeclarationOverloadSpecificStructure, StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure,
+        AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure,
+        QuestionTokenableNodeStructure
 {
 }
 

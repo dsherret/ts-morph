@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { AsyncableNode, FunctionDeclaration } from "../../../../compiler";
 import { AsyncableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
@@ -7,7 +7,7 @@ describe(nameof(AsyncableNode), () => {
     describe("navigation", () => {
         const { sourceFile: mainSourceFile } = getInfoFromText("async function Identifier() {}\nfunction Identifier2() {}");
         const asyncFunc = mainSourceFile.getFunctions()[0];
-        const nonAsyncFunc  = mainSourceFile.getFunctions()[1];
+        const nonAsyncFunc = mainSourceFile.getFunctions()[1];
 
         describe(nameof<AsyncableNode>(n => n.isAsync), () => {
             it("should be async when async", () => {

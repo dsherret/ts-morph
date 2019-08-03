@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, ReadonlyableNode } from "../../../../compiler";
 import { ReadonlyableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(ReadonlyableNode), () => {
     function getInfoWithFirstPropertyFromText(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
-        return {...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
+        return { ...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
     }
 
     describe(nameof<ReadonlyableNode>(d => d.isReadonly), () => {

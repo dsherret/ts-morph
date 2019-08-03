@@ -5,8 +5,8 @@ import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePo
     insertIntoParentTextRange, replaceSourceFileTextForFormatting, replaceSourceFileTextStraight } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { ts, SyntaxKind, SymbolFlags } from "../../../typescript";
-import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
-    TypeGuards, StoredComparer } from "../../../utils";
+import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils, TypeGuards,
+    StoredComparer } from "../../../utils";
 import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
 import { Type } from "../../types";
@@ -21,17 +21,17 @@ import { TextRange } from "./TextRange";
 import { SyntaxList } from "./SyntaxList";
 import { ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
 
-export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
-    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined :
-    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] :
-    NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> :
-    NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined :
-    NodeType[KeyName];
+export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType,
+    NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined
+    ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined
+    : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[]
+    : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]>
+    : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined
+    : NodeType[KeyName];
 
-export type NodeParentType<NodeType extends ts.Node> =
-    NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
-    ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
-    CompilerNodeToWrappedType<NodeType["parent"]>;
+export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined
+    : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined
+    : CompilerNodeToWrappedType<NodeType["parent"]>;
 
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
@@ -83,9 +83,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         node: NodeType,
         sourceFile: SourceFile | undefined
     ) {
-        if (context == null || context.compilerFactory == null)
-            throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export " +
-                "of the package and manipulate the source file from there.");
+        if (context == null || context.compilerFactory == null) {
+            throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export "
+                + "of the package and manipulate the source file from there.");
+        }
 
         this._context = context;
         this._compilerNode = node;
@@ -579,16 +580,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             } while ((TypeGuards.isBodyableNode(node) || TypeGuards.isBodiedNode(node)) && (node.compilerNode as ts.Block).statements == null);
         }
 
-        if (
-            TypeGuards.isSourceFile(node) ||
-            TypeGuards.isBodyableNode(this) ||
-            TypeGuards.isBodiedNode(this) ||
-            TypeGuards.isCaseBlock(this) ||
-            TypeGuards.isCaseClause(this) ||
-            TypeGuards.isDefaultClause(this) ||
-            TypeGuards.isJsxElement(this)
-        )
+        if (TypeGuards.isSourceFile(node)
+            || TypeGuards.isBodyableNode(this)
+            || TypeGuards.isBodiedNode(this)
+            || TypeGuards.isCaseBlock(this)
+            || TypeGuards.isCaseClause(this)
+            || TypeGuards.isDefaultClause(this)
+            || TypeGuards.isJsxElement(this))
+        {
             return node.getFirstChildByKind(SyntaxKind.SyntaxList);
+        }
 
         let passedBrace = false;
         for (const child of node._getCompilerChildren()) {
@@ -787,8 +788,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
                 else
                     handleNode(thisNode, arrowFunction.body);
             }
-            else
+            else {
                 handleChildren(thisNode, node);
+            }
         }
 
         function handleStatements(thisNode: Node, node: ts.Node) {
@@ -1045,7 +1047,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getNodeProperty<
         KeyType extends keyof LocalNodeType,
         LocalNodeType extends ts.Node = NodeType // necessary to make the compiler less strict when assigning "this" to Node<NodeType>
-        >(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType> {
+    >(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType> {
         const property = (this.compilerNode as any)[propertyName] as any | any[];
 
         if (property == null)
@@ -1366,7 +1368,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const formattingEdits = this._context.languageService.getFormattingEditsForRange(
             this._sourceFile.getFilePath(),
             [this.getStart(true), this.getEnd()],
-            settings);
+            settings
+        );
 
         replaceSourceFileTextForFormatting({
             sourceFile: this._sourceFile,
@@ -1626,7 +1629,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getPreviousSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const previousSibling = this._getCompilerPreviousSibling();
-        return previousSibling != null && previousSibling.kind === kind ? (this._getNodeFromCompilerNode(previousSibling) as KindToNodeMappings[TKind]) : undefined;
+        return previousSibling != null && previousSibling.kind === kind
+            ? (this._getNodeFromCompilerNode(previousSibling) as KindToNodeMappings[TKind])
+            : undefined;
     }
 
     /**
@@ -1978,8 +1983,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     _getNodeFromCompilerNode<LocalCompilerNodeType extends ts.Node = ts.Node>(
-        compilerNode: LocalCompilerNodeType): CompilerNodeToWrappedType<LocalCompilerNodeType>
-    {
+        compilerNode: LocalCompilerNodeType
+    ): CompilerNodeToWrappedType<LocalCompilerNodeType> {
         return this._context.compilerFactory.getNodeFromCompilerNode(compilerNode, this._sourceFile);
     }
 
@@ -1988,8 +1993,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     _getNodeFromCompilerNodeIfExists<LocalCompilerNodeType extends ts.Node = ts.Node>(
-        compilerNode: LocalCompilerNodeType | undefined): CompilerNodeToWrappedType<LocalCompilerNodeType> | undefined
-    {
+        compilerNode: LocalCompilerNodeType | undefined
+    ): CompilerNodeToWrappedType<LocalCompilerNodeType> | undefined {
         return compilerNode == null ? undefined : this._getNodeFromCompilerNode<LocalCompilerNodeType>(compilerNode);
     }
 

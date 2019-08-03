@@ -55,9 +55,9 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
 
         const writer = useNewLines ? this._getWriterWithChildIndentation() : this._getWriterWithQueuedChildIndentation();
         const stringStructurePrinter = new StringStructurePrinter();
-        const structurePrinter = useNewLines ?
-            new CommaNewLineSeparatedStructuresPrinter(stringStructurePrinter) :
-            new CommaSeparatedStructuresPrinter(stringStructurePrinter);
+        const structurePrinter = useNewLines
+            ? new CommaNewLineSeparatedStructuresPrinter(stringStructurePrinter)
+            : new CommaSeparatedStructuresPrinter(stringStructurePrinter);
 
         structurePrinter.printText(writer, textsOrWriterFunction);
 

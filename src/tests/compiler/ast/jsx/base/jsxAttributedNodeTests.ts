@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { JsxAttributedNode, JsxAttributeLike, Node } from "../../../../../compiler";
 import { JsxAttributeStructure, JsxSpreadAttributeStructure, OptionalKind, StructureKind } from "../../../../../structures";
 import { SyntaxKind } from "../../../../../typescript";
@@ -142,7 +142,7 @@ describe(nameof(JsxAttributedNode), () => {
         }
 
         it("should add the attributes", () => {
-            doTest(`var t = (<jsx a1></jsx>);`, [{ name: "a2" }, { name: "a3"}], `<jsx a1 a2 a3>`);
+            doTest(`var t = (<jsx a1></jsx>);`, [{ name: "a2" }, { name: "a3" }], `<jsx a1 a2 a3>`);
         });
     });
 

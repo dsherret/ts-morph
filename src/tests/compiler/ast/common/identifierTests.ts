@@ -137,7 +137,9 @@ const t = MyNamespace.MyClass;
     describe(nameof<Identifier>(n => n.getDefinitionNodes), () => {
         it("should get the definition nodes", () => {
             const { sourceFile } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
-            const definitionNodes = sourceFile.getVariableDeclarationOrThrow("reference").getInitializerIfKindOrThrow(SyntaxKind.Identifier).getDefinitionNodes();
+            const definitionNodes = sourceFile.getVariableDeclarationOrThrow("reference")
+                .getInitializerIfKindOrThrow(SyntaxKind.Identifier)
+                .getDefinitionNodes();
             expect(definitionNodes.length).to.equal(1);
             expect(definitionNodes[0].getText()).to.equal("function myFunction() {}");
         });

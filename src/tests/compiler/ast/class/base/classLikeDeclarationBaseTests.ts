@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { Node, ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
     PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase, CommentClassElement } from "../../../../../compiler";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure, StructureKind, ClassMemberStructures} from "../../../../../structures";
+    SetAccessorDeclarationStructure, StructureKind, ClassMemberStructures } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { SyntaxKind } from "../../../../../typescript";
 import { TypeGuards } from "../../../../../utils";
@@ -184,61 +184,55 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const expectedText = `class c {\n    constructor() {\n    }\n\n    p1;\n    p2;\n\n`
                 + `    m1() {\n    }\n\n    get g1() {\n    }\n\n    set s1() {\n    }\n\n    // testing\n}`;
             doTest("class c {\n}", 0, [{
-                    kind: StructureKind.Constructor
-                }, {
-                    kind: StructureKind.Property,
-                    name: "p1"
-                }, {
-                    kind: StructureKind.Property,
-                    name: "p2"
-                }, {
-                    kind: StructureKind.Method,
-                    name: "m1"
-                }, {
-                    kind: StructureKind.GetAccessor,
-                    name: "g1"
-                }, {
-                    kind: StructureKind.SetAccessor,
-                    name: "s1"
-                },
-                "// testing"
-            ], expectedText, 7);
+                kind: StructureKind.Constructor
+            }, {
+                kind: StructureKind.Property,
+                name: "p1"
+            }, {
+                kind: StructureKind.Property,
+                name: "p2"
+            }, {
+                kind: StructureKind.Method,
+                name: "m1"
+            }, {
+                kind: StructureKind.GetAccessor,
+                name: "g1"
+            }, {
+                kind: StructureKind.SetAccessor,
+                name: "s1"
+            }, "// testing"], expectedText, 7);
         });
 
         it("should insert between properties with correct spacing when inserting a property", () => {
             const expectedText = "class c {\n    p1;\n    p2;\n    p3;\n}";
             doTest("class c {\n    p1;\n    p3;\n}", 1, [{
-                    kind: StructureKind.Property,
-                    name: "p2"
-                }
-            ], expectedText, 1);
+                kind: StructureKind.Property,
+                name: "p2"
+            }], expectedText, 1);
         });
 
         it("should insert between properties with correct spacing when inserting a method", () => {
             const expectedText = "class c {\n    p1;\n\n    m2() {\n    }\n\n    p3;\n}";
             doTest("class c {\n    p1;\n    p3;\n}", 1, [{
-                    kind: StructureKind.Method,
-                    name: "m2"
-                }
-            ], expectedText, 1);
+                kind: StructureKind.Method,
+                name: "m2"
+            }], expectedText, 1);
         });
 
         it("should insert between methods with correct spacing when inserting a property", () => {
             const expectedText = "class c {\n    m1() {\n    }\n\n    p2;\n\n    m3() {\n    }\n}";
             doTest("class c {\n    m1() {\n    }\n\n    m3() {\n    }\n}", 1, [{
-                    kind: StructureKind.Property,
-                    name: "p2"
-                }
-            ], expectedText, 1);
+                kind: StructureKind.Property,
+                name: "p2"
+            }], expectedText, 1);
         });
 
         it("should insert between methods with correct spacing when inserting a method", () => {
             const expectedText = "class c {\n    m1() {\n    }\n\n    m2() {\n    }\n\n    m3() {\n    }\n}";
             doTest("class c {\n    m1() {\n    }\n\n    m3() {\n    }\n}", 1, [{
-                    kind: StructureKind.Method,
-                    name: "m2"
-                }
-            ], expectedText, 1);
+                kind: StructureKind.Method,
+                name: "m2"
+            }], expectedText, 1);
         });
     });
 
@@ -260,8 +254,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert multiple into other members", () => {
-            doTest("class c {\n//1\n    prop1;\n    prop2;\n}", 2, {},
-                "class c {\n//1\n    prop1;\n\n    constructor() {\n    }\n\n    prop2;\n}");
+            doTest("class c {\n//1\n    prop1;\n    prop2;\n}", 2, {}, "class c {\n//1\n    prop1;\n\n    constructor() {\n    }\n\n    prop2;\n}");
         });
 
         it("should insert all the properties of the structure", () => {
@@ -294,11 +287,11 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 }, "console.log('here');"]
             };
             doTest("class c {\n}", 0, structure,
-                "class c {\n    public constructor();\n    private constructor();\n    /**\n     * Test\n     */\n    public constructor<T>(param) {\n" +
-                "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n" +
-                "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
-                "        console.log('here');\n" +
-                "    }\n}");
+                "class c {\n    public constructor();\n    private constructor();\n    /**\n     * Test\n     */\n    public constructor<T>(param) {\n"
+                    + "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n"
+                    + "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n"
+                    + "        console.log('here');\n"
+                    + "    }\n}");
         });
     });
 
@@ -311,8 +304,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         }
 
         it("should add at the end", () => {
-            doTest("class c {\n    prop1;\n}", {},
-                "class c {\n    prop1;\n\n    constructor() {\n    }\n}");
+            doTest("class c {\n    prop1;\n}", {}, "class c {\n    prop1;\n\n    constructor() {\n    }\n}");
         });
     });
 
@@ -325,8 +317,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         }
 
         it("should add at the end", () => {
-            doTest("class c {\n    prop1;\n}", [{}, {}],
-                "class c {\n    prop1;\n\n    constructor() {\n    }\n\n    constructor() {\n    }\n}");
+            doTest("class c {\n    prop1;\n}", [{}, {}], "class c {\n    prop1;\n\n    constructor() {\n    }\n\n    constructor() {\n    }\n}");
         });
 
         it("should print multiple correctly when ambient", () => {
@@ -344,8 +335,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         }
 
         it("should insert multiple constructors", () => {
-            doTest("class c {\n    prop1;\n}", 0, [{}, {}],
-                "class c {\n    constructor() {\n    }\n\n    constructor() {\n    }\n\n    prop1;\n}");
+            doTest("class c {\n    prop1;\n}", 0, [{}, {}], "class c {\n    constructor() {\n    }\n\n    constructor() {\n    }\n\n    prop1;\n}");
         });
     });
 
@@ -394,8 +384,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert into ambient class", () => {
-            doTest("declare class c {\n}", 0, [{ name: "g1", returnType: "string" }],
-                "declare class c {\n    get g1(): string;\n}");
+            doTest("declare class c {\n}", 0, [{ name: "g1", returnType: "string" }], "declare class c {\n    get g1(): string;\n}");
         });
 
         it("should insert all the properties of the structure", () => {
@@ -411,10 +400,9 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 typeParameters: [{ name: "T" }],
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
-            doTest("class c {\n}", 0, [structure],
-                "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static get prop<T>(param): number {\n" +
-                "        class C {\n        }\n\n        console.log('here');\n" +
-                "    }\n}");
+            doTest("class c {\n}", 0, [structure], "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static get prop<T>(param): number {\n"
+                + "        class C {\n        }\n\n        console.log('here');\n"
+                + "    }\n}");
         });
     });
 
@@ -455,8 +443,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         }
 
         it("should insert", () => {
-            doTest("class c {\n    m1() {\n    }\n}", { name: "m2" },
-                "class c {\n    m1() {\n    }\n\n    get m2() {\n    }\n}");
+            doTest("class c {\n    m1() {\n    }\n}", { name: "m2" }, "class c {\n    m1() {\n    }\n\n    get m2() {\n    }\n}");
         });
     });
 
@@ -478,13 +465,11 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should add an extra newline if inserting before non-property", () => {
-            doTest("class c {\n    myMethod() {}\n}", 0, [{ name: "prop" }],
-                "class c {\n    prop;\n\n    myMethod() {}\n}");
+            doTest("class c {\n    myMethod() {}\n}", 0, [{ name: "prop" }], "class c {\n    prop;\n\n    myMethod() {}\n}");
         });
 
         it("should add an extra newline if inserting ater non-property", () => {
-            doTest("class c {\n    myMethod() {}\n}", 1, [{ name: "prop" }],
-                "class c {\n    myMethod() {}\n\n    prop;\n}");
+            doTest("class c {\n    myMethod() {}\n}", 1, [{ name: "prop" }], "class c {\n    myMethod() {}\n\n    prop;\n}");
         });
 
         it("should insert all the properties of the structure", () => {
@@ -502,8 +487,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 isReadonly: true
             };
             doTest("class c {\n}", 0, [structure, { name: "other", hasExclamationToken: true }],
-                "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static readonly prop?: number = 5;\n    other!;\n" +
-                "}");
+                "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static readonly prop?: number = 5;\n    other!;\n"
+                    + "}");
         });
     });
 
@@ -642,8 +627,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         it("should insert into ambient class", () => {
-            doTest("declare class c {\n}", 0, [{ name: "s1", returnType: "string" }],
-                "declare class c {\n    set s1(): string;\n}");
+            doTest("declare class c {\n}", 0, [{ name: "s1", returnType: "string" }], "declare class c {\n    set s1(): string;\n}");
         });
 
         it("should insert all the properties of the structure", () => {
@@ -659,10 +643,9 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 typeParameters: [{ name: "T" }],
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
-            doTest("class c {\n}", 0, [structure],
-                "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static set prop<T>(param): number {\n" +
-                "        class C {\n        }\n\n        console.log('here');\n" +
-                "    }\n}");
+            doTest("class c {\n}", 0, [structure], "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static set prop<T>(param): number {\n"
+                + "        class C {\n        }\n\n        console.log('here');\n"
+                + "    }\n}");
         });
     });
 
@@ -703,8 +686,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         }
 
         it("should insert", () => {
-            doTest("class c {\n    m1() {\n    }\n}", { name: "m2" },
-                "class c {\n    m1() {\n    }\n\n    set m2() {\n    }\n}");
+            doTest("class c {\n    m1() {\n    }\n}", { name: "m2" }, "class c {\n    m1() {\n    }\n\n    set m2() {\n    }\n}");
         });
     });
 
@@ -717,10 +699,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         describe("has properties", () => {
-            const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-                "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-                "instanceProp: string;\nprop2: number;method1() {}\n" +
-                "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+            const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+                + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+                + "instanceProp: string;\nprop2: number;method1() {}\n"
+                + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of properties", () => {
@@ -752,10 +734,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceProperty), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method1() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method1() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a property by name", () => {
@@ -772,10 +754,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getInstancePropertyOrThrow), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method1() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method1() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a property by name", () => {
@@ -796,10 +778,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticProperty), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method1() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method1() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a property by name", () => {
@@ -816,10 +798,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticPropertyOrThrow), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method1() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method1() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a property by name", () => {
@@ -848,8 +830,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         describe("has static properties", () => {
-            const code = "class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n" +
-                "\nstatic get prop(): string { return ''; }\nstatic set prop(val: string) {}\n}";
+            const code = "class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n"
+                + "\nstatic get prop(): string { return ''; }\nstatic set prop(val: string) {}\n}";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of static properties", () => {
@@ -904,11 +886,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 typeParameters: [{ name: "T" }],
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
-            doTest("class c {\n}", 0, [structure],
-                "class c {\n    public static myMethod?();\n    private myMethod();\n" +
-                "    /**\n     * Test\n     */\n    @dec\n    public static async myMethod?<T>(param): number {\n" +
-                "        class C {\n        }\n\n        console.log('here');\n" +
-                "    }\n}");
+            doTest("class c {\n}", 0, [structure], "class c {\n    public static myMethod?();\n    private myMethod();\n"
+                + "    /**\n     * Test\n     */\n    @dec\n    public static async myMethod?<T>(param): number {\n"
+                + "        class C {\n        }\n\n        console.log('here');\n"
+                + "    }\n}");
         });
 
         it("should write as ambient when inserting into a insert when none exists", () => {
@@ -957,8 +938,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         }
 
         it("should insert", () => {
-            doTest("class c {\n    m1() {\n    }\n}", { name: "m2" },
-                "class c {\n    m1() {\n    }\n\n    m2() {\n    }\n}");
+            doTest("class c {\n    m1() {\n    }\n}", { name: "m2" }, "class c {\n    m1() {\n    }\n\n    m2() {\n    }\n}");
         });
     });
 
@@ -1017,10 +997,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMethod), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1037,10 +1017,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMethodOrThrow), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1069,7 +1049,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         describe("has static methods", () => {
-            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
+            const { firstChild
+            } = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
 
             it("should get the right number of static methods", () => {
                 expect(firstChild.getStaticMethods().length).to.equal(1);
@@ -1082,10 +1063,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMethod), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1102,10 +1083,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMethodOrThrow), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1126,18 +1107,19 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMembers), () => {
-        const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n" +
-            "prop2: number;method1() {}\n}\n");
+        const { firstChild
+        } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
+            + "prop2: number;method1() {}\n}\n");
         it("should get the right number of instance members", () => {
             expect(firstChild.getInstanceMembers().length).to.equal(4);
         });
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMember), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1159,10 +1141,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMemberOrThrow), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1183,18 +1165,19 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMembers), () => {
-        const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n" +
-            "prop2: number;method1() {}\n}\n");
+        const { firstChild
+        } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
+            + "prop2: number;method1() {}\n}\n");
         it("should get the right number of static members", () => {
             expect(firstChild.getStaticMembers().length).to.equal(2);
         });
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMember), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1211,10 +1194,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMemberOrThrow), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1236,16 +1219,16 @@ describe(nameof(ClassLikeDeclarationBase), () => {
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getMembers), () => {
         it("should get the right number of instance, static, and constructor members in a non-ambient context", () => {
-            const code = "class Identifier {\nconstructor();constructor(public param) {}\nstatic prop2: string;\nstatic method();" +
-                "static method() { }\nabstract abstractMethod(): void; \n" +
-                "prop: string;\nprop2: number;method1(str);method1() {}\n}\n";
+            const code = "class Identifier {\nconstructor();constructor(public param) {}\nstatic prop2: string;\nstatic method();"
+                + "static method() { }\nabstract abstractMethod(): void; \n"
+                + "prop: string;\nprop2: number;method1(str);method1() {}\n}\n";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             expect(firstChild.getMembers().length).to.equal(7);
         });
 
         it("should get the right number of instance, static, and constructor members in an ambient context", () => {
-            const code = "declare class Identifier {\nconstructor();constructor();\nstatic prop2: string;\nstatic method();static method();\n" +
-                "prop: string;\nprop2: number;method1(str);method1();\n}\n";
+            const code = "declare class Identifier {\nconstructor();constructor();\nstatic prop2: string;\nstatic method();static method();\n"
+                + "prop: string;\nprop2: number;method1(str);method1();\n}\n";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             expect(firstChild.getMembers().length).to.equal(9);
         });
@@ -1346,10 +1329,10 @@ class c {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getMember), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1364,10 +1347,10 @@ class c {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getMemberOrThrow), () => {
-        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
-            "instanceProp: string;\nprop2: number;method() {}\n" +
-            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
+            + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
+            + "instanceProp: string;\nprop2: number;method() {}\n"
+            + "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
@@ -1462,9 +1445,8 @@ class Child extends Mixin(Base) {}
             const { sourceFile } = getInfoFromText(text);
             if (typeof expectedName === "undefined")
                 expect(() => sourceFile.getClassOrThrow(className).getBaseClassOrThrow()).to.throw();
-            else {
+            else
                 expect(sourceFile.getClassOrThrow(className).getBaseClassOrThrow().getName()).to.equal(expectedName);
-            }
         }
 
         it("should get the base when it's a class", () => {
@@ -1489,8 +1471,8 @@ class Child extends Mixin(Base) {}
         });
 
         it("should not blow up for a circular references", () => {
-            doTest("class Base extends GreatGrandChild1 {} class Child1 extends Base {} class Child2 extends Base {} class Grandchild1 extends Child1 {} " +
-                "class GreatGrandChild1 extends Grandchild1 {}", "Base", ["Child1", "Child2", "Grandchild1", "GreatGrandChild1"]);
+            doTest("class Base extends GreatGrandChild1 {} class Child1 extends Base {} class Child2 extends Base {} class Grandchild1 extends Child1 {} "
+                + "class GreatGrandChild1 extends Grandchild1 {}", "Base", ["Child1", "Child2", "Grandchild1", "GreatGrandChild1"]);
         });
 
         it("should ignore Interfaces that extend classes", () => {

@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { GetAccessorDeclarationStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
@@ -26,9 +26,10 @@ export class GetAccessorDeclarationStructurePrinter extends NodePrinter<Optional
 
         if (this.options.isAmbient || structure.isAbstract)
             writer.write(";");
-        else
+        else {
             writer.spaceIfLastNot().inlineBlock(() => {
                 this.factory.forStatementedNode(this.options).printText(writer, structure);
             });
+        }
     }
 }

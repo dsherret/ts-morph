@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, ExclamationTokenableNode, PropertyDeclaration, VariableStatement } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { ExclamationTokenableNodeStructure } from "../../../../structures";
@@ -7,12 +7,12 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(ExclamationTokenableNode), () => {
     function getInfoWithFirstPropertyFromText(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
-        return {...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
+        return { ...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
     }
 
     function getInfoWithFirstVariableDeclarationFromText(text: string) {
         const result = getInfoFromText<VariableStatement>(text);
-        return {...result, firstDeclaration: result.firstChild.getDeclarations()[0] };
+        return { ...result, firstDeclaration: result.firstChild.getDeclarations()[0] };
     }
 
     describe(nameof<ExclamationTokenableNode>(d => d.hasExclamationToken), () => {

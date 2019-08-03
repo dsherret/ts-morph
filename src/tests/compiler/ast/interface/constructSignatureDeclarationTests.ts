@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ConstructSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
 import { ConstructSignatureDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
@@ -58,8 +58,8 @@ describe(nameof(ConstructSignatureDeclaration), () => {
         });
 
         it("should remove when it's the last member", () => {
-            doTest("interface Identifier {\n    new(): string;\n    new(): number;\n}", 1,
-                "interface Identifier {\n    new(): string;\n}");
+            doTest(
+"interface Identifier {\n    new(): string;\n    new(): number;\n}", 1, "interface Identifier {\n    new(): string;\n}");
         });
 
         it("should only remove the new signature specified", () => {

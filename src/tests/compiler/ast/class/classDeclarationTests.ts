@@ -1,7 +1,7 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration } from "../../../../compiler";
-import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure,
-    InterfaceDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure, InterfaceDeclarationStructure,
+    TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
@@ -26,7 +26,10 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(c => c.set), () => {
-        function doTest(startingCode: string, structure: OptionalKindAndTrivia<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>, expectedCode: string) {
+        function doTest(
+startingCode: string, structure: OptionalKindAndTrivia<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>,
+            expectedCode: string)
+        {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -262,129 +265,128 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
     static myStaticMethod() {}
     protected myProtected() {}
     private myPrivate() {}
-}`,
-                undefined, {
-                    kind: StructureKind.Interface,
-                    name: "Test",
-                    docs: [{ kind: StructureKind.JSDoc, description: "Test" }],
+}`, undefined, {
+                kind: StructureKind.Interface,
+                name: "Test",
+                docs: [{ kind: StructureKind.JSDoc, description: "Test" }],
+                typeParameters: [
+                    { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
+                    { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined }
+                ],
+                properties: [{
+                    kind: StructureKind.PropertySignature,
+                    name: "param1",
+                    type: "string",
+                    hasQuestionToken: false,
+                    isReadonly: false,
+                    docs: [{ kind: StructureKind.JSDoc, description: "Test description." }]
+                }, {
+                    kind: StructureKind.PropertySignature,
+                    name: "param2",
+                    type: "number",
+                    hasQuestionToken: true,
+                    isReadonly: true,
+                    docs: []
+                }, {
+                    kind: StructureKind.PropertySignature,
+                    name: "param3",
+                    type: "string",
+                    hasQuestionToken: false,
+                    isReadonly: true,
+                    docs: []
+                }, {
+                    kind: StructureKind.PropertySignature,
+                    name: "prop1",
+                    type: "string",
+                    hasQuestionToken: false,
+                    isReadonly: false,
+                    docs: [{ kind: StructureKind.JSDoc, description: "Description" }]
+                }, {
+                    kind: StructureKind.PropertySignature,
+                    name: "prop2",
+                    type: "number",
+                    hasQuestionToken: true,
+                    isReadonly: true,
+                    docs: []
+                }, {
+                    kind: StructureKind.PropertySignature,
+                    name: "myGet",
+                    type: "number",
+                    hasQuestionToken: false,
+                    isReadonly: true,
+                    docs: [{ kind: StructureKind.JSDoc, description: "MyGet" }]
+                }, {
+                    kind: StructureKind.PropertySignature,
+                    name: "myGetAndSet",
+                    type: "string",
+                    hasQuestionToken: false,
+                    isReadonly: false,
+                    docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get" }]
+                }, {
+                    kind: StructureKind.PropertySignature,
+                    name: "mySet",
+                    type: "string",
+                    hasQuestionToken: false,
+                    isReadonly: false,
+                    docs: [{ kind: StructureKind.JSDoc, description: "MySet" }]
+                }],
+                methods: [{
+                    kind: StructureKind.MethodSignature,
+                    docs: [{ kind: StructureKind.JSDoc, description: "Method" }],
+                    name: "myMethod",
+                    returnType: "number",
+                    hasQuestionToken: false,
+                    parameters: [{
+                        kind: StructureKind.Parameter,
+                        decorators: [],
+                        hasQuestionToken: false,
+                        initializer: undefined,
+                        isReadonly: false,
+                        isRestParameter: false,
+                        name: "param1",
+                        type: "string",
+                        scope: undefined
+                    }],
                     typeParameters: [
                         { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
                         { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined }
-                    ],
-                    properties: [{
-                        kind: StructureKind.PropertySignature,
-                        name: "param1",
-                        type: "string",
+                    ]
+                }, {
+                    kind: StructureKind.MethodSignature,
+                    docs: [],
+                    name: "overloadMethod",
+                    returnType: "void",
+                    hasQuestionToken: false,
+                    parameters: [{
+                        kind: StructureKind.Parameter,
+                        decorators: [],
                         hasQuestionToken: false,
+                        initializer: undefined,
                         isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Test description." }]
-                    }, {
-                        kind: StructureKind.PropertySignature,
-                        name: "param2",
-                        type: "number",
-                        hasQuestionToken: true,
-                        isReadonly: true,
-                        docs: []
-                    }, {
-                        kind: StructureKind.PropertySignature,
-                        name: "param3",
+                        isRestParameter: false,
+                        name: "str",
                         type: "string",
-                        hasQuestionToken: false,
-                        isReadonly: true,
-                        docs: []
-                    }, {
-                        kind: StructureKind.PropertySignature,
-                        name: "prop1",
-                        type: "string",
-                        hasQuestionToken: false,
-                        isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Description" }]
-                    }, {
-                        kind: StructureKind.PropertySignature,
-                        name: "prop2",
-                        type: "number",
-                        hasQuestionToken: true,
-                        isReadonly: true,
-                        docs: []
-                    }, {
-                        kind: StructureKind.PropertySignature,
-                        name: "myGet",
-                        type: "number",
-                        hasQuestionToken: false,
-                        isReadonly: true,
-                        docs: [{ kind: StructureKind.JSDoc, description: "MyGet" }]
-                    }, {
-                        kind: StructureKind.PropertySignature,
-                        name: "myGetAndSet",
-                        type: "string",
-                        hasQuestionToken: false,
-                        isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get" }]
-                    }, {
-                        kind: StructureKind.PropertySignature,
-                        name: "mySet",
-                        type: "string",
-                        hasQuestionToken: false,
-                        isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "MySet" }]
+                        scope: undefined
                     }],
-                    methods: [{
-                        kind: StructureKind.MethodSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Method" }],
-                        name: "myMethod",
-                        returnType: "number",
-                        hasQuestionToken: false,
-                        parameters: [{
-                            kind: StructureKind.Parameter,
-                            decorators: [],
-                            hasQuestionToken: false,
-                            initializer: undefined,
-                            isReadonly: false,
-                            isRestParameter: false,
-                            name: "param1",
-                            type: "string",
-                            scope: undefined
-                        }],
-                        typeParameters: [
-                            { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
-                            { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined }
-                        ]
-                    }, {
-                        kind: StructureKind.MethodSignature,
-                        docs: [],
-                        name: "overloadMethod",
-                        returnType: "void",
-                        hasQuestionToken: false,
-                        parameters: [{
-                            kind: StructureKind.Parameter,
-                            decorators: [],
-                            hasQuestionToken: false,
-                            initializer: undefined,
-                            isReadonly: false,
-                            isRestParameter: false,
-                            name: "str",
-                            type: "string",
-                            scope: undefined
-                        }],
-                        typeParameters: []
-                    }, {
-                        kind: StructureKind.MethodSignature,
-                        docs: [],
-                        name: "overloadMethod",
-                        returnType: "string",
-                        hasQuestionToken: false,
-                        parameters: [],
-                        typeParameters: []
-                    }, {
-                        kind: StructureKind.MethodSignature,
-                        docs: [],
-                        name: "myAbstractMethod",
-                        returnType: "number",
-                        hasQuestionToken: true,
-                        parameters: [],
-                        typeParameters: []
-                    }]
-                });
+                    typeParameters: []
+                }, {
+                    kind: StructureKind.MethodSignature,
+                    docs: [],
+                    name: "overloadMethod",
+                    returnType: "string",
+                    hasQuestionToken: false,
+                    parameters: [],
+                    typeParameters: []
+                }, {
+                    kind: StructureKind.MethodSignature,
+                    docs: [],
+                    name: "myAbstractMethod",
+                    returnType: "number",
+                    hasQuestionToken: true,
+                    parameters: [],
+                    typeParameters: []
+                }]
+            });
         });
 
         it("should handle constructor and method overloads", () => {
@@ -410,63 +412,62 @@ class Test {
     /** Ignores this implementation */
     method() {
     }
-}`,
-                undefined, {
-                    kind: StructureKind.Interface,
-                    name: "Test",
-                    properties: [{
-                        kind: StructureKind.PropertySignature,
-                        name: "param",
-                        type: "string",
+}`, undefined, {
+                kind: StructureKind.Interface,
+                name: "Test",
+                properties: [{
+                    kind: StructureKind.PropertySignature,
+                    name: "param",
+                    type: "string",
+                    hasQuestionToken: false,
+                    isReadonly: false,
+                    docs: [{ kind: StructureKind.JSDoc, description: "Test." }]
+                }, {
+                    kind: StructureKind.PropertySignature,
+                    name: "param2",
+                    type: "number",
+                    hasQuestionToken: false,
+                    isReadonly: false,
+                    docs: [{ kind: StructureKind.JSDoc, description: "Test2." }]
+                }],
+                methods: [{
+                    kind: StructureKind.MethodSignature,
+                    docs: [{ kind: StructureKind.JSDoc, description: "Description1." }],
+                    name: "method",
+                    returnType: "string",
+                    hasQuestionToken: false,
+                    parameters: [{
+                        kind: StructureKind.Parameter,
+                        decorators: [],
                         hasQuestionToken: false,
+                        initializer: undefined,
                         isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Test." }]
-                    }, {
-                        kind: StructureKind.PropertySignature,
+                        isRestParameter: false,
+                        name: "param1",
+                        type: "string",
+                        scope: undefined
+                    }],
+                    typeParameters: []
+                }, {
+                    kind: StructureKind.MethodSignature,
+                    docs: [{ kind: StructureKind.JSDoc, description: "Description2." }],
+                    name: "method",
+                    returnType: "number",
+                    hasQuestionToken: false,
+                    parameters: [{
+                        kind: StructureKind.Parameter,
+                        decorators: [],
+                        hasQuestionToken: false,
+                        initializer: undefined,
+                        isReadonly: false,
+                        isRestParameter: false,
                         name: "param2",
                         type: "number",
-                        hasQuestionToken: false,
-                        isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Test2." }]
+                        scope: undefined
                     }],
-                    methods: [{
-                        kind: StructureKind.MethodSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Description1." }],
-                        name: "method",
-                        returnType: "string",
-                        hasQuestionToken: false,
-                        parameters: [{
-                            kind: StructureKind.Parameter,
-                            decorators: [],
-                            hasQuestionToken: false,
-                            initializer: undefined,
-                            isReadonly: false,
-                            isRestParameter: false,
-                            name: "param1",
-                            type: "string",
-                            scope: undefined
-                        }],
-                        typeParameters: []
-                    }, {
-                        kind: StructureKind.MethodSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Description2." }],
-                        name: "method",
-                        returnType: "number",
-                        hasQuestionToken: false,
-                        parameters: [{
-                            kind: StructureKind.Parameter,
-                            decorators: [],
-                            hasQuestionToken: false,
-                            initializer: undefined,
-                            isReadonly: false,
-                            isRestParameter: false,
-                            name: "param2",
-                            type: "number",
-                            scope: undefined
-                        }],
-                        typeParameters: []
-                    }]
-                });
+                    typeParameters: []
+                }]
+            });
         });
     });
 
@@ -534,8 +535,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
     myInstanceMethod() {}
     static protected myProtected() {}
     static private myPrivate() {}
-}`,
-                "Name", {
+}`, "Name", {
                     kind: StructureKind.Interface,
                     name: "Name",
                     constructSignatures: [{
@@ -701,8 +701,7 @@ class Test {
     /** Ignores this implementation */
     static method() {
     }
-}`,
-                "Name", {
+}`, "Name", {
                     kind: StructureKind.Interface,
                     name: "Name",
                     constructSignatures: [{

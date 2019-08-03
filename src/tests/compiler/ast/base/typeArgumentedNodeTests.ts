@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, TypeArgumentedNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -106,23 +106,19 @@ describe(nameof(TypeArgumentedNode), () => {
             }
 
             it("should remove when the only type argument", () => {
-                doTest("@decorator<MyClass>(arg1, arg2)\nclass MyClass {}", 0,
-                    "@decorator(arg1, arg2)\nclass MyClass {}");
+                doTest("@decorator<MyClass>(arg1, arg2)\nclass MyClass {}", 0, "@decorator(arg1, arg2)\nclass MyClass {}");
             });
 
             it("should remove the first type argument", () => {
-                doTest("@decorator<string, number, {}>(arg1, arg2)\nclass MyClass {}", 0,
-                    "@decorator<number, {}>(arg1, arg2)\nclass MyClass {}");
+                doTest("@decorator<string, number, {}>(arg1, arg2)\nclass MyClass {}", 0, "@decorator<number, {}>(arg1, arg2)\nclass MyClass {}");
             });
 
             it("should remove the middle type argument", () => {
-                doTest("@decorator<string, number, {}>(arg1, arg2)\nclass MyClass {}", 1,
-                    "@decorator<string, {}>(arg1, arg2)\nclass MyClass {}");
+                doTest("@decorator<string, number, {}>(arg1, arg2)\nclass MyClass {}", 1, "@decorator<string, {}>(arg1, arg2)\nclass MyClass {}");
             });
 
             it("should remove the last type argument", () => {
-                doTest("@decorator<string, number, {}>(arg1, arg2)\nclass MyClass {}", 2,
-                    "@decorator<string, number>(arg1, arg2)\nclass MyClass {}");
+                doTest("@decorator<string, number, {}>(arg1, arg2)\nclass MyClass {}", 2, "@decorator<string, number>(arg1, arg2)\nclass MyClass {}");
             });
         });
 
@@ -135,8 +131,7 @@ describe(nameof(TypeArgumentedNode), () => {
             }
 
             it("should remove the specified type argument", () => {
-                doTest("@decorator<string, number, {}>(arg1, arg2)\nclass MyClass {}", 1,
-                    "@decorator<string, {}>(arg1, arg2)\nclass MyClass {}");
+                doTest("@decorator<string, number, {}>(arg1, arg2)\nclass MyClass {}", 1, "@decorator<string, {}>(arg1, arg2)\nclass MyClass {}");
             });
         });
     });

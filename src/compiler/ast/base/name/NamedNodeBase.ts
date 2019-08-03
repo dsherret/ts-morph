@@ -1,4 +1,4 @@
-﻿import { NamedNodeStructure } from "../../../../structures";
+import { NamedNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
 import { ts } from "../../../../typescript";
 import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
@@ -18,9 +18,9 @@ export interface NamedNodeSpecificBase<TNode extends Node> {
 }
 
 export type NamedNodeBaseExtensionType<TCompilerNode extends ts.Node> = Node<ts.Node & { name: TCompilerNode; }>;
-export function NamedNodeBase<TCompilerNode extends ts.Node, U extends Constructor<NamedNodeBaseExtensionType<TCompilerNode>>>(Base: U):
-    Constructor<NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>>> & U
-{
+export function NamedNodeBase<TCompilerNode extends ts.Node, U extends Constructor<NamedNodeBaseExtensionType<TCompilerNode>>>(
+    Base: U
+): Constructor<NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>>> & U {
     return class extends Base implements NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>> {
         getNameNode() {
             return this._getNodeFromCompilerNode(this.compilerNode.name);

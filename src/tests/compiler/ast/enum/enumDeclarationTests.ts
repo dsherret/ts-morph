@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { EnumDeclaration, EnumMember, CommentEnumMember } from "../../../../compiler";
 import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
@@ -98,17 +98,17 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should insert in the middle", () => {
-            doTest("enum MyEnum {\n    member1,\n    member3\n}\n", 1, [{ name: "member2" }],
-                "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n");
+            doTest(
+"enum MyEnum {\n    member1,\n    member3\n}\n", 1, [{ name: "member2" }], "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n");
         });
 
         it("should insert multiple", () => {
-            doTest("enum MyEnum {\n}\n", 0, [
-                    { leadingTrivia: "// a", name: "member1", trailingTrivia: " // testing" },
-                    { name: "member2", value: 2, docs: [{ description: "description" }] },
-                    { name: "member3" }
-                ],
-                "enum MyEnum {\n    // a\n    member1, // testing\n    /**\n     * description\n     */\n    member2 = 2,\n    member3\n}\n");
+            doTest(
+"enum MyEnum {\n}\n", 0, [
+                { leadingTrivia: "// a", name: "member1", trailingTrivia: " // testing" },
+                { name: "member2", value: 2, docs: [{ description: "description" }] },
+                { name: "member3" }
+            ], "enum MyEnum {\n    // a\n    member1, // testing\n    /**\n     * description\n     */\n    member2 = 2,\n    member3\n}\n");
         });
 
         it("should insert for all the structure's properties", () => {
@@ -118,8 +118,8 @@ describe(nameof(EnumDeclaration), () => {
                 value: 5,
                 name: "member"
             };
-            doTest("enum MyEnum {\n}\n", 0, [structure],
-                "enum MyEnum {\n    /**\n     * testing\n     */\n    member = 5\n}\n");
+            doTest(
+"enum MyEnum {\n}\n", 0, [structure], "enum MyEnum {\n    /**\n     * testing\n     */\n    member = 5\n}\n");
         });
 
         type WriterStructureType = (OptionalKind<EnumMemberStructure> | WriterFunction | string)[] | string | WriterFunction;
@@ -139,13 +139,13 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should insert when using only a writer", () => {
-            doWriterTest("enum MyEnum {\n}\n", 0, writer => writer.write("// testing"),
-                "enum MyEnum {\n    // testing\n}\n");
+            doWriterTest(
+"enum MyEnum {\n}\n", 0, writer => writer.write("// testing"), "enum MyEnum {\n    // testing\n}\n");
         });
 
         it("should insert when using only a string", () => {
-            doWriterTest("enum MyEnum {\n}\n", 0, "// testing",
-                "enum MyEnum {\n    // testing\n}\n");
+            doWriterTest(
+"enum MyEnum {\n}\n", 0, "// testing", "enum MyEnum {\n    // testing\n}\n");
         });
     });
 
@@ -184,7 +184,9 @@ describe(nameof(EnumDeclaration), () => {
         }
 
         it("should add members", () => {
-            doTest("enum MyEnum {\n    member1\n}\n", [{ name: "member2" }, { name: "member3" }], "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n");
+            doTest(
+"enum MyEnum {\n    member1\n}\n", [{ name: "member2" }, { name: "member3" }],
+                "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n");
         });
     });
 

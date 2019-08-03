@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, OptionalKind } from "../../structures";
 import { ObjectUtils, setValueIfUndefined } from "../../utils";
@@ -30,10 +30,11 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
 
         if (this.options.isAmbient || structure.isAbstract)
             writer.write(";");
-        else
+        else {
             writer.spaceIfLastNot().inlineBlock(() => {
                 this.factory.forStatementedNode(this.options).printText(writer, structure);
             });
+        }
 
         function getOverloadStructures() {
             // all the overloads need to have the same scope as the implementation
@@ -67,7 +68,10 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
         writer.write(";");
     }
 
-    private printHeader(writer: CodeBlockWriter, name: string, structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>) {
+    private printHeader(
+writer: CodeBlockWriter, name: string,
+        structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>)
+    {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         if ((structure as MethodDeclarationStructure).decorators != null)
             this.factory.forDecorator().printTexts(writer, (structure as MethodDeclarationStructure).decorators);

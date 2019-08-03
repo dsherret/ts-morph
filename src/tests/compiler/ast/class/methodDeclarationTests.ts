@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Scope } from "../../../../compiler";
 import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure, StructureKind,
     OptionalKind } from "../../../../structures";
@@ -7,7 +7,10 @@ import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures 
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
-        function doTest(startCode: string, index: number, structures: OptionalKind<MethodDeclarationOverloadStructure>[], expectedCode: string, methodIndex = 0) {
+        function doTest(
+startCode: string, index: number, structures: OptionalKind<MethodDeclarationOverloadStructure>[], expectedCode: string,
+            methodIndex = 0)
+        {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[methodIndex] as MethodDeclaration;
             const result = methodDeclaration.insertOverloads(index, structures);
@@ -105,8 +108,7 @@ describe(nameof(MethodDeclaration), () => {
             });
 
             it("should remove when it's the first method", () => {
-                doTest("class Identifier {\n    method() {}\n\n    method2() {}\n}", "method",
-                    "class Identifier {\n    method2() {}\n}");
+                doTest("class Identifier {\n    method() {}\n\n    method2() {}\n}", "method", "class Identifier {\n    method2() {}\n}");
             });
 
             it("should remove when it's the middle method", () => {
@@ -116,18 +118,15 @@ describe(nameof(MethodDeclaration), () => {
 
             it("should remove when the nodes all have js docs", () => {
                 doTest("class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method2 */\n    method2(){}\n\n    /** Method3 */\n    method3() {}\n}",
-                    "method2",
-                    "class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method3 */\n    method3() {}\n}");
+                    "method2", "class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method3 */\n    method3() {}\n}");
             });
 
             it("should remove when it's the last method", () => {
-                doTest("class Identifier {\n    method() {}\n\n    method2() {}\n}", "method2",
-                    "class Identifier {\n    method() {}\n}");
+                doTest("class Identifier {\n    method() {}\n\n    method2() {}\n}", "method2", "class Identifier {\n    method() {}\n}");
             });
 
             it("should remove when it's beside a property ", () => {
-                doTest("class Identifier {\n    method(){}\n\n    prop: string;\n}", "method",
-                    "class Identifier {\n    prop: string;\n}");
+                doTest("class Identifier {\n    method(){}\n\n    prop: string;\n}", "method", "class Identifier {\n    prop: string;\n}");
             });
 
             it("should remove when it's in an ambient class", () => {
@@ -155,13 +154,11 @@ describe(nameof(MethodDeclaration), () => {
             });
 
             it("should remove the method and all its overloads when calling on the body", () => {
-                doTest("class Identifier {\n    method(str): void;\n    method(param) {}\n}", "method", 1,
-                    "class Identifier {\n}");
+                doTest("class Identifier {\n    method(str): void;\n    method(param) {}\n}", "method", 1, "class Identifier {\n}");
             });
 
             it("should remove only the specified overload", () => {
-                doTest("class Identifier {\n    method(str): void;\n    method(param) {}\n}", "method", 0,
-                    "class Identifier {\n    method(param) {}\n}");
+                doTest("class Identifier {\n    method(str): void;\n    method(param) {}\n}", "method", 0, "class Identifier {\n    method(param) {}\n}");
             });
 
             it("should remove when the first overload", () => {
@@ -170,8 +167,9 @@ describe(nameof(MethodDeclaration), () => {
             });
 
             it("should remove when the middle overload", () => {
-                doTest("class Identifier {\n    method(first): void;\n    method(second): void;\n    method(third): void;\n    method(param) {}\n}", "method", 1,
-                    "class Identifier {\n    method(first): void;\n    method(third): void;\n    method(param) {}\n}");
+                doTest(
+"class Identifier {\n    method(first): void;\n    method(second): void;\n    method(third): void;\n    method(param) {}\n}", "method",
+                    1, "class Identifier {\n    method(first): void;\n    method(third): void;\n    method(param) {}\n}");
             });
 
             it("should remove when the last overload", () => {
@@ -208,16 +206,14 @@ describe(nameof(MethodDeclaration), () => {
             const structure: OptionalKindAndTrivia<MakeRequired<MethodDeclarationSpecificStructure>> = {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
-            doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure,
-                "class identifier {\n    method(param);\n    method() {}\n}");
+            doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure, "class identifier {\n    method(param);\n    method() {}\n}");
         });
 
         it("should remove existing overloads when specifying an empty array", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<MethodDeclarationSpecificStructure>> = {
                 overloads: []
             };
-            doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure,
-                "class identifier {\n    method() {}\n}");
+            doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure, "class identifier {\n    method() {}\n}");
         });
     });
 

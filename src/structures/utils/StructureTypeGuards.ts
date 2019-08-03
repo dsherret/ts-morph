@@ -4,7 +4,8 @@ import { NameableNodeStructure, AsyncableNodeStructure, ImplementsClauseableNode
     AmbientableNodeStructure, ExportableNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, ParameteredNodeStructure, ReturnTypedNodeStructure,
     PropertyNamedNodeStructure, StaticableNodeStructure, TypeParameteredNodeStructure, GeneratorableNodeStructure, QuestionTokenableNodeStructure,
     TypedNodeStructure, ExclamationTokenableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, NamedNodeStructure,
-    BindingNamedNodeStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeElementMemberedNodeStructure, DecoratableNodeStructure } from "../base";
+    BindingNamedNodeStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeElementMemberedNodeStructure,
+    DecoratableNodeStructure } from "../base";
 import { ClassDeclarationStructure, ClassLikeDeclarationBaseStructure, ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure,
     GetAccessorDeclarationStructure, MethodDeclarationStructure, MethodDeclarationOverloadStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure } from "../class";
@@ -12,7 +13,8 @@ import { DecoratorStructure } from "../decorator";
 import { JSDocStructure } from "../doc";
 import { EnumDeclarationStructure, EnumMemberStructure } from "../enum";
 import { PropertyAssignmentStructure, SpreadAssignmentStructure, ExpressionedNodeStructure, ShorthandPropertyAssignmentStructure } from "../expression";
-import { FunctionLikeDeclarationStructure, FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, ParameterDeclarationStructure } from "../function";
+import { FunctionLikeDeclarationStructure, FunctionDeclarationStructure, FunctionDeclarationOverloadStructure,
+    ParameterDeclarationStructure } from "../function";
 import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure,
     MethodSignatureStructure, PropertySignatureStructure } from "../interface";
 import { JsxAttributeStructure, JsxElementStructure, JsxSelfClosingElementStructure, JsxTagNamedNodeStructure, JsxAttributedNodeStructure,

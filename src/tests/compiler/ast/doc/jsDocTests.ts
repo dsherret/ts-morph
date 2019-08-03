@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
 import { JSDocStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
@@ -20,7 +20,8 @@ describe(nameof(JSDoc), () => {
         });
 
         it("should remove the js doc when in the middle", () => {
-            doTest("enum I {}\n\n/** first */\n/** second */\n/** third */\nfunction func() {}", 0, 1, "enum I {}\n\n/** first */\n/** third */\nfunction func() {}");
+            doTest("enum I {}\n\n/** first */\n/** second */\n/** third */\nfunction func() {}", 0, 1,
+                "enum I {}\n\n/** first */\n/** third */\nfunction func() {}");
         });
 
         it("should remove the js doc when last", () => {
@@ -68,11 +69,13 @@ describe(nameof(JSDoc), () => {
         });
 
         it("should set a new comment without affecting the tags", () => {
-            doTest("/**\n * Description\n * @param - Something */function identifier() {}", "New", "/**\n * New\n * @param - Something */function identifier() {}");
+            doTest("/**\n * Description\n * @param - Something */function identifier() {}", "New",
+                "/**\n * New\n * @param - Something */function identifier() {}");
         });
 
         it("should set a new comment without affecting the tags when the first tag has some space before it", () => {
-            doTest("/**\n * Description\n *   @param - Something */function identifier() {}", "New", "/**\n * New\n *   @param - Something */function identifier() {}");
+            doTest("/**\n * Description\n *   @param - Something */function identifier() {}", "New",
+                "/**\n * New\n *   @param - Something */function identifier() {}");
         });
     });
 
@@ -146,8 +149,7 @@ describe(nameof(JSDoc), () => {
         });
 
         it("should change when specified", () => {
-            doTest("/**\n * Test\n */\nclass Test {}", { description: "New" },
-                "/**\n * New\n */\nclass Test {}");
+            doTest("/**\n * Test\n */\nclass Test {}", { description: "New" }, "/**\n * New\n */\nclass Test {}");
         });
     });
 

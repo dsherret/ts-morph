@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { NamespaceDeclarationKind } from "../../compiler";
 import * as errors from "../../errors";
 import { StructurePrinterFactory } from "../../factories";
@@ -40,9 +40,10 @@ export class NamespaceDeclarationStructurePrinter extends NodePrinter<OptionalKi
         if (!name.startsWith("'") && !name.startsWith(`"`))
             return structure;
 
-        if (structure.declarationKind === NamespaceDeclarationKind.Namespace)
-            throw new errors.InvalidOperationError(`Cannot print a namespace with quotes for namespace with name ${structure.name}. ` +
-                `Use ${nameof.full(NamespaceDeclarationKind.Module)} instead.`);
+        if (structure.declarationKind === NamespaceDeclarationKind.Namespace) {
+            throw new errors.InvalidOperationError(`Cannot print a namespace with quotes for namespace with name ${structure.name}. `
+                + `Use ${nameof.full(NamespaceDeclarationKind.Module)} instead.`);
+        }
 
         structure = ObjectUtils.clone(structure);
         setValueIfUndefined(structure, "hasDeclareKeyword", true);

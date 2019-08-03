@@ -23,8 +23,7 @@ describe(nameof(SpreadAssignment), () => {
 
     describe(nameof<SpreadAssignment>(p => p.remove), () => {
         function doTest(code: string, index: number, expectedCode: string) {
-            const { sourceFile, descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code,
-                SyntaxKind.ObjectLiteralExpression);
+            const { sourceFile, descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code, SyntaxKind.ObjectLiteralExpression);
 
             descendant.getProperties()[index].remove();
             expect(descendant.getText()).to.equal(expectedCode);
@@ -39,23 +38,19 @@ describe(nameof(SpreadAssignment), () => {
         });
 
         it("should remove the last", () => {
-            doTest("const t = { ...prop1, ...prop2, ...prop3 };", 2,
-                "{ ...prop1, ...prop2 }");
+            doTest("const t = { ...prop1, ...prop2, ...prop3 };", 2, "{ ...prop1, ...prop2 }");
         });
 
         it("should remove the first when on separate lines", () => {
-            doTest(`const t = {\n    ...prop1,\n    ...prop2,\n    ...prop3\n};`, 0,
-                `{\n    ...prop2,\n    ...prop3\n}`);
+            doTest(`const t = {\n    ...prop1,\n    ...prop2,\n    ...prop3\n};`, 0, `{\n    ...prop2,\n    ...prop3\n}`);
         });
 
         it("should remove in the middle when on separate lines", () => {
-            doTest(`const t = {\n    ...prop1,\n    ...prop2,\n    ...prop3\n};`, 1,
-                `{\n    ...prop1,\n    ...prop3\n}`);
+            doTest(`const t = {\n    ...prop1,\n    ...prop2,\n    ...prop3\n};`, 1, `{\n    ...prop1,\n    ...prop3\n}`);
         });
 
         it("should remove the last when on separate lines", () => {
-            doTest(`const t = {\n    ...prop1,\n    ...prop2,\n    ...prop3\n};`, 2,
-                `{\n    ...prop1,\n    ...prop2\n}`);
+            doTest(`const t = {\n    ...prop1,\n    ...prop2,\n    ...prop3\n};`, 2, `{\n    ...prop1,\n    ...prop2\n}`);
         });
     });
 

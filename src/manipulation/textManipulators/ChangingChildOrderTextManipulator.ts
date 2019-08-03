@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { TypeGuards } from "../../utils";
 import { FormattingKind } from "../formatting";
 import { getPosAtNextNonBlankLine } from "../textSeek";
@@ -138,8 +138,9 @@ export class ChangingChildOrderTextManipulator<TParentNode extends Node> impleme
                 else
                     finalText += " ";
             }
-            else
+            else {
                 finalText += spacing;
+            }
         }
     }
 

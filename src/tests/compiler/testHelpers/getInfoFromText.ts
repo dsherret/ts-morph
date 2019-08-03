@@ -96,8 +96,7 @@ export function getInfoFromTextWithDescendant<TDescendant extends Node>(
     text: string,
     descendantKind: SyntaxKind,
     opts?: GetInfoFromTextOptions
-): GetInfoFromTextWithDescendantResult<TDescendant>
-{
+): GetInfoFromTextWithDescendantResult<TDescendant> {
     const info = getInfoFromTextInternal(text, opts);
     return {
         ...info,
@@ -107,7 +106,7 @@ export function getInfoFromTextWithDescendant<TDescendant extends Node>(
 
 function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     const { isDefinitionFile = false, isJsx = false, filePath = undefined, host = new VirtualFileSystemHost(), disableErrorCheck = false,
-                compilerOptions = undefined, includeLibDts = false } = opts || {};
+        compilerOptions = undefined, includeLibDts = false } = opts || {};
 
     if (includeLibDts) {
         for (const libFile of libFiles)

@@ -10,8 +10,8 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassElement } from "./ClassElement";
 
 export const SetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
-    FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ClassElement))
-)))))));
+    FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ClassElement)))
+))))));
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**
      * Sets the node from a structure.
@@ -29,7 +29,9 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
         const parent = this.getParentIfKindOrThrow(SyntaxKind.ClassDeclaration);
         const thisName = this.getName();
 
-        return parent.getInstanceProperties().find(p => p.getKind() === SyntaxKind.GetAccessor && p.getName() === thisName) as GetAccessorDeclaration | undefined;
+        return parent.getInstanceProperties()
+            .find(p => p.getKind() === SyntaxKind.GetAccessor && p.getName() === thisName) as GetAccessorDeclaration
+            | undefined;
     }
 
     /**

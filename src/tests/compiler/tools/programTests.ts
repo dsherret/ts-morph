@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { Program } from "../../../compiler";
 import * as errors from "../../../errors";
 import { getFileSystemHostWithFiles } from "../../testHelpers";

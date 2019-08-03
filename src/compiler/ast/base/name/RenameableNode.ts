@@ -1,4 +1,4 @@
-﻿import * as errors from "../../../../errors";
+import * as errors from "../../../../errors";
 import { Constructor } from "../../../../types";
 import { ts } from "../../../../typescript";
 import { TypeGuards, KeyValueCache } from "../../../../utils";
@@ -35,8 +35,9 @@ export function RenameableNode<T extends Constructor<RenameableNodeExtensionType
                         throw new errors.NotImplementedError(`Not implemented renameable scenario for ${node.getKindName()}.`);
                     return node;
                 }
-                else
+                else {
                     throw new errors.NotImplementedError(`Not implemented renameable scenario for ${thisNode.getKindName()}`);
+                }
             }
 
             function renameNode(node: Node) {

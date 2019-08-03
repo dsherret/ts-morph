@@ -1,9 +1,10 @@
 import { NamespaceDeclarationStructure, VariableStatementStructure, OptionalKind, StructureKind, VariableDeclarationStructure, ImportDeclarationStructure,
     ClassDeclarationStructure, ImportSpecifierStructure, EnumDeclarationStructure, InterfaceDeclarationStructure, FunctionDeclarationStructure,
-    TypeAliasDeclarationStructure, PropertyDeclarationStructure, TypeParameterDeclarationStructure, ParameterDeclarationStructure, JSDocStructure, PropertySignatureStructure,
-    MethodSignatureStructure, CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure, ConstructSignatureDeclarationStructure,
-    FunctionDeclarationOverloadStructure, EnumMemberStructure, MethodDeclarationStructure, MethodDeclarationOverloadStructure, SetAccessorDeclarationStructure,
-    GetAccessorDeclarationStructure, DecoratorStructure, ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure } from "../../../structures";
+    TypeAliasDeclarationStructure, PropertyDeclarationStructure, TypeParameterDeclarationStructure, ParameterDeclarationStructure, JSDocStructure,
+    PropertySignatureStructure, MethodSignatureStructure, CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure,
+    ConstructSignatureDeclarationStructure, FunctionDeclarationOverloadStructure, EnumMemberStructure, MethodDeclarationStructure,
+    MethodDeclarationOverloadStructure, SetAccessorDeclarationStructure, GetAccessorDeclarationStructure, DecoratorStructure, ConstructorDeclarationStructure,
+    ConstructorDeclarationOverloadStructure } from "../../../structures";
 import { NamespaceDeclarationKind, VariableDeclarationKind } from "../../../compiler";
 
 // this file is incomplete... update accordingly as needed

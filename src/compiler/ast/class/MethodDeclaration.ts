@@ -1,6 +1,6 @@
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure, StructureKind,
-    OptionalKind, MethodDeclarationOverloadSpecificStructure } from "../../../structures";
+import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure, StructureKind, OptionalKind,
+    MethodDeclarationOverloadSpecificStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode,
     TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode, QuestionTokenableNode } from "../base";
@@ -14,8 +14,8 @@ export const MethodDeclarationBase = ChildOrderableNode(TextInsertableNode(Overl
     QuestionTokenableNode(StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(ClassElement))))))
 )))))));
 export const MethodDeclarationOverloadBase = JSDocableNode(ChildOrderableNode(TextInsertableNode(ScopedNode(TypeParameteredNode(AbstractableNode(
-    QuestionTokenableNode(StaticableNode(AsyncableNode(ModifierableNode(GeneratorableNode(SignaturedDeclaration(ClassElement))
-))))))))));
+    QuestionTokenableNode(StaticableNode(AsyncableNode(ModifierableNode(GeneratorableNode(SignaturedDeclaration(ClassElement))))))
+))))));
 
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
@@ -86,8 +86,11 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
         const isOverload = this.isOverload();
         const basePrototype = isOverload && hasImplementation ? MethodDeclarationOverloadBase.prototype : MethodDeclarationBase.prototype;
 
-        return callBaseGetStructure<any>(basePrototype, this,
-            getStructure(this)) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;
+        return callBaseGetStructure<any>(
+            basePrototype,
+            this,
+            getStructure(this)
+        ) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;
 
         function getStructure(thisNode: MethodDeclaration) {
             if (hasImplementation && isOverload)
@@ -101,11 +104,12 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
             function getSpecificStructure(): MethodDeclarationSpecificStructure {
                 if (!hasImplementation)
                     return { kind: StructureKind.Method };
-                else
+                else {
                     return {
                         kind: StructureKind.Method,
                         overloads: thisNode.getOverloads().map(o => o.getStructure() as MethodDeclarationOverloadStructure)
                     };
+                }
             }
         }
     }

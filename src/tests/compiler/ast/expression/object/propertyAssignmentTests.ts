@@ -34,8 +34,7 @@ describe(nameof(PropertyAssignment), () => {
 
     describe(nameof<PropertyAssignment>(p => p.remove), () => {
         function doTest(code: string, propertyToRemove: string, expectedCode: string) {
-            const { descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code,
-                SyntaxKind.ObjectLiteralExpression);
+            const { descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code, SyntaxKind.ObjectLiteralExpression);
 
             descendant.getPropertyOrThrow(propertyToRemove).remove();
             expect(descendant.getText()).to.equal(expectedCode);
@@ -50,23 +49,23 @@ describe(nameof(PropertyAssignment), () => {
         });
 
         it("should remove the last", () => {
-            doTest("const t = { prop1: 1, prop2: 2, prop3: 3 };", "prop3",
-                "{ prop1: 1, prop2: 2 }");
+            doTest(
+"const t = { prop1: 1, prop2: 2, prop3: 3 };", "prop3", "{ prop1: 1, prop2: 2 }");
         });
 
         it("should remove the first when on separate lines", () => {
-            doTest(`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop1",
-                `{\n    prop2: 2,\n    prop3: 3\n}`);
+            doTest(
+`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop1", `{\n    prop2: 2,\n    prop3: 3\n}`);
         });
 
         it("should remove in the middle when on separate lines", () => {
-            doTest(`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop2",
-                `{\n    prop1: 1,\n    prop3: 3\n}`);
+            doTest(
+`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop2", `{\n    prop1: 1,\n    prop3: 3\n}`);
         });
 
         it("should remove the last when on separate lines", () => {
-            doTest(`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop3",
-                `{\n    prop1: 1,\n    prop2: 2\n}`);
+            doTest(
+`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop3", `{\n    prop1: 1,\n    prop2: 2\n}`);
         });
     });
 
@@ -79,7 +78,7 @@ describe(nameof(PropertyAssignment), () => {
 
         it("should not change when nothing is specified", () => {
             const code = "const t = { prop1: 1 };";
-            test(code, { }, code);
+            test(code, {}, code);
         });
 
         it("should set when everything is specified", () => {
