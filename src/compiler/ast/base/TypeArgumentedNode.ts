@@ -1,5 +1,6 @@
 import * as errors from "../../../errors";
-import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild, verifyAndGetIndex } from "../../../manipulation";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild,
+    verifyAndGetIndex } from "../../../manipulation";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
@@ -118,8 +119,9 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                     ]
                 });
             }
-            else
+            else {
                 removeCommaSeparatedChild(typeArgToRemove);
+            }
 
             return this;
 

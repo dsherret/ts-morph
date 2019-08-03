@@ -64,7 +64,9 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
 
         insertImplements(index: number, text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
         insertImplements(index: number, text: string): ExpressionWithTypeArguments;
-        insertImplements(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+        insertImplements(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments
+            | ExpressionWithTypeArguments[]
+        {
             const originalImplements = this.getImplements();
             const wasStringInput = typeof texts === "string";
 
@@ -72,8 +74,9 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 errors.throwIfWhitespaceOrNotString(texts, nameof(texts));
                 texts = [texts];
             }
-            else if (texts.length === 0)
+            else if (texts.length === 0) {
                 return [];
+            }
 
             const writer = this._getWriterWithQueuedChildIndentation();
             const structurePrinter = new CommaSeparatedStructuresPrinter<string>(new StringStructurePrinter());
