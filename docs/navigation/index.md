@@ -17,7 +17,7 @@ Search autocomplete for methods like `.getChildren()`, `.getParent()`, `.getFirs
 
 Many exist. If you find one you would really like, then please [open an issue](https://github.com/dsherret/ts-morph/issues).
 
-### `getChildren()` and `forEachChild(child => ...)`
+### getChildren() and forEachChild(child => ...)
 
 In general, you can easily navigate the tree by using methods such as `.getClasses()`, `.getClass('MyClass')`, `.getNamespaces()`, and so on, but in some cases you might want to get all the child nodes.
 
@@ -44,7 +44,7 @@ const classDec = node.forEachChild(node => {
 });
 ```
 
-### `forEachDescendant`
+### forEachDescendant
 
 If you wish to iterate all the descendants, then use the `forEachDescendant` method:
 
