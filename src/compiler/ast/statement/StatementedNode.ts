@@ -663,10 +663,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                             isAmbient: isNodeAmbientOrInAmbientContext(this)
                         }).printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember =>
-                            structures[0].hasDeclareKeyword === true && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,
-                        nextNewLine: nextMember =>
-                            structures[structures.length - 1].hasDeclareKeyword === true && TypeGuards.isFunctionDeclaration(nextMember) && nextMember.getBody() == null
+                        previousNewLine: previousMember => structures[0].hasDeclareKeyword === true
+                            && TypeGuards.isFunctionDeclaration(previousMember)
+                            && previousMember.getBody() == null,
+                        nextNewLine: nextMember => structures[structures.length - 1].hasDeclareKeyword === true
+                            && TypeGuards.isFunctionDeclaration(nextMember)
+                            && nextMember.getBody() == null
                     });
                 }
             });
