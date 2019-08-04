@@ -53,7 +53,9 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
     setComment(textOrWriterFunction: string | WriterFunction) {
         const tags = this.getTags();
         const startEditPos = this.getStart() + 3;
-        const endEditPos = tags.length > 0 ? getPreviousMatchingPos(this._sourceFile.getFullText(), tags[0].getStart(), c => c === "*") - 1 : this.getEnd() - 2;
+        const endEditPos = tags.length > 0
+            ? getPreviousMatchingPos(this._sourceFile.getFullText(), tags[0].getStart(), c => c === "*") - 1
+            : this.getEnd() - 2;
         const indentationText = this.getIndentationText();
         const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();
         const text = getTextFromStringOrWriter(this._getWriter(), textOrWriterFunction);
