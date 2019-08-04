@@ -988,9 +988,9 @@ dotenv@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-5.0.1.tgz#a5317459bd3d79ab88cff6e44057a6a3fbb1fcef"
 
-dprint@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.2.3.tgz#1d8e95b6e5dceb06ebef6c9d230f611d344b358a"
+dprint@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.2.4.tgz#bc410922f130ca4dc0aebc5904d3d383fad7da53"
   dependencies:
     "@babel/core" "^7.5.5"
     "@babel/parser" "^7.5.5"
