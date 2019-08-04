@@ -75,8 +75,9 @@ export class LanguageService {
                     return ts.getDefaultLibFilePath(options);
                 else {
                     return FileUtils.pathJoin(
-context.fileSystemWrapper.getCurrentDirectory(),
-                        "node_modules/typescript/lib/" + ts.getDefaultLibFileName(options));
+                        context.fileSystemWrapper.getCurrentDirectory(),
+                        "node_modules/typescript/lib/" + ts.getDefaultLibFileName(options)
+                    );
                 }
             },
             useCaseSensitiveFileNames: () => true,
@@ -230,8 +231,12 @@ context.fileSystemWrapper.getCurrentDirectory(),
             ? this._context.manipulationSettings.getUsePrefixAndSuffixTextForRename()
             : options.usePrefixAndSuffixText;
         const renameLocations = this.compilerObject.findRenameLocations(
-node._sourceFile.getFilePath(), node.getStart(), options.renameInStrings || false,
-            options.renameInComments || false, usePrefixAndSuffixText) || [];
+            node._sourceFile.getFilePath(),
+            node.getStart(),
+            options.renameInStrings || false,
+            options.renameInComments || false,
+            usePrefixAndSuffixText
+        ) || [];
         return renameLocations.map(l => new RenameLocation(this._context, l));
     }
 
@@ -253,7 +258,11 @@ node._sourceFile.getFilePath(), node.getStart(), options.renameInStrings || fals
      */
     getFormattingEditsForRange(filePath: string, range: [number, number], formatSettings: FormatCodeSettings) {
         return (this.compilerObject.getFormattingEditsForRange(
-filePath, range[0], range[1], this._getFilledSettings(formatSettings)) || [])
+            filePath,
+            range[0],
+            range[1],
+            this._getFilledSettings(formatSettings)
+        ) || [])
             .map(e => new TextChange(e));
     }
 
@@ -354,7 +363,9 @@ filePath, range[0], range[1], this._getFilledSettings(formatSettings)) || [])
      */
     organizeImports(filePath: string, formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
     organizeImports(
-filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}
+        filePathOrSourceFile: string | SourceFile,
+        formatSettings: FormatCodeSettings = {},
+        userPreferences: UserPreferences = {}
     ): FileTextChanges[] {
         const scope: ts.OrganizeImportsScope = {
             type: "file",
@@ -374,14 +385,23 @@ filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings = 
      * @param preferences - User preferences for refactoring.
      */
     getEditsForRefactor(
-filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings,
-        positionOrRange: number | { getPos(): number; getEnd(): number; }, refactorName: string, actionName: string, preferences: UserPreferences = {}
+        filePathOrSourceFile: string | SourceFile,
+        formatSettings: FormatCodeSettings,
+        positionOrRange: number | { getPos(): number; getEnd(): number; },
+        refactorName: string,
+        actionName: string,
+        preferences: UserPreferences = {}
     ): RefactorEditInfo | undefined {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const position = typeof positionOrRange === "number" ? positionOrRange : { pos: positionOrRange.getPos(), end: positionOrRange.getEnd() };
         const compilerObject = this.compilerObject.getEditsForRefactor(
-filePath, this._getFilledSettings(formatSettings), position, refactorName, actionName,
-            this._getFilledUserPreferences(preferences));
+            filePath,
+            this._getFilledSettings(formatSettings),
+            position,
+            refactorName,
+            actionName,
+            this._getFilledUserPreferences(preferences)
+        );
 
         return compilerObject != null ? new RefactorEditInfo(this._context, compilerObject) : undefined;
     }
@@ -416,8 +436,13 @@ filePath, this._getFilledSettings(formatSettings), position, refactorName, actio
     {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const compilerResult = this.compilerObject.getCodeFixesAtPosition(
-filePath, start, end, errorCodes, this._getFilledSettings(formatOptions),
-            this._getFilledUserPreferences(preferences || {}));
+            filePath,
+            start,
+            end,
+            errorCodes,
+            this._getFilledSettings(formatOptions),
+            this._getFilledUserPreferences(preferences || {})
+        );
 
         return compilerResult.map(compilerObject => new CodeFixAction(this._context, compilerObject));
     }
@@ -433,9 +458,8 @@ filePath, start, end, errorCodes, this._getFilledSettings(formatOptions),
 
     private _getFilledSettings(settings: FormatCodeSettings) {
         // optimization
-        if ((settings as any)["_filled"]) {
+        if ((settings as any)["_filled"])
             return settings;
-        }
 
         settings = ObjectUtils.assign(this._context.getFormatCodeSettings(), settings);
         fillDefaultFormatCodeSettings(settings, this._context.manipulationSettings);

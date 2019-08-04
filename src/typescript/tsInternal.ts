@@ -2,10 +2,17 @@
 import { CompilerOptions, ts } from "./public";
 
 export function matchFiles(
-this: any, path: string, extensions: ReadonlyArray<string>, excludes: ReadonlyArray<string>, includes: ReadonlyArray<string>,
-    useCaseSensitiveFileNames: boolean, currentDirectory: string, depth: number | undefined, getEntries: (path: string) => FileSystemEntries,
-    realpath: (path: string) => string): string[]
-{
+    this: any,
+    path: string,
+    extensions: ReadonlyArray<string>,
+    excludes: ReadonlyArray<string>,
+    includes: ReadonlyArray<string>,
+    useCaseSensitiveFileNames: boolean,
+    currentDirectory: string,
+    depth: number | undefined,
+    getEntries: (path: string) => FileSystemEntries,
+    realpath: (path: string) => string
+): string[] {
     return (ts as any).matchFiles.apply(this, arguments);
 }
 

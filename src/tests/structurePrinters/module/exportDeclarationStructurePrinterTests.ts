@@ -20,8 +20,10 @@ describe(nameof(ImportDeclarationStructurePrinter), () => {
 
         it("should not write named imports with surrounding spaces when providing setting as false", () => {
             doTest(
-{ namedImports: ["test"], moduleSpecifier: "test" }, `import {test} from "test";`,
-                { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+                { namedImports: ["test"], moduleSpecifier: "test" },
+                `import {test} from "test";`,
+                { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false }
+            );
         });
     });
 });

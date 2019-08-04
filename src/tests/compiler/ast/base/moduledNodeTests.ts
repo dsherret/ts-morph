@@ -8,9 +8,12 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(ModuledNode), () => {
     describe(nameof<ModuledNode>(n => n.insertImportDeclarations), () => {
         function doTest(
-startCode: string, index: number, structures: OptionalKind<ImportDeclarationStructure>[], expectedCode: string,
-            useSingleQuotes = false)
-        {
+            startCode: string,
+            index: number,
+            structures: OptionalKind<ImportDeclarationStructure>[],
+            expectedCode: string,
+            useSingleQuotes = false
+        ) {
             const { sourceFile, project } = getInfoFromText(startCode);
             if (useSingleQuotes)
                 project.manipulationSettings.set({ quoteKind: QuoteKind.Single });
@@ -494,15 +497,18 @@ startCode: string, index: number, structures: OptionalKind<ImportDeclarationStru
         it("should get from a file", () => {
             const project = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = project.createSourceFile(
-"main.ts",
+                "main.ts",
                 `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n`
-                    + "export class MainFileClass {}\nexport default MainFileClass;");
+                    + "export class MainFileClass {}\nexport default MainFileClass;"
+            );
             project.createSourceFile("class.ts", `export class Class {} export class MyClass {}`);
             project.createSourceFile("otherClass.ts", `export class OtherClass {}\nexport class InnerClass {}`);
             project.createSourceFile("barrel.ts", `export * from "./subBarrel";`);
             project.createSourceFile(
-"subBarrel.ts", `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n`
-                + `export {default as SubClass3} from "./subFile3"`);
+                "subBarrel.ts",
+                `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n`
+                    + `export {default as SubClass3} from "./subFile3"`
+            );
             project.createSourceFile("subFile.ts", `export class SubClass {}`);
             project.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
             project.createSourceFile("subFile3.ts", `class SubClass3 {}\nexport default SubClass3;`);

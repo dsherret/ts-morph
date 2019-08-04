@@ -27,9 +27,10 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(c => c.set), () => {
         function doTest(
-startingCode: string, structure: OptionalKindAndTrivia<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>,
-            expectedCode: string)
-        {
+            startingCode: string,
+            structure: OptionalKindAndTrivia<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>,
+            expectedCode: string
+        ) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);

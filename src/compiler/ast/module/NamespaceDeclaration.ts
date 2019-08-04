@@ -48,7 +48,8 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         const nameNodes = this.getNameNodes();
         if (nameNodes.length > 1) {
             throw new errors.NotSupportedError(
- `Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`);
+                `Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`
+            );
         }
         if (newName.indexOf(".") >= 0)
             throw new errors.NotSupportedError(`Cannot rename a namespace name to a name containing a period.`);

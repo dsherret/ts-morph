@@ -60,9 +60,13 @@ describe(nameof(StatementedNode), () => {
             };
 
             doTest(
-"", 0, [structure], "/**\n * Test\n */\nexport module n {\n"
-                + "    class C {\n    }\n\n    console.log('here');\n"
-                + "}\n");
+                "",
+                0,
+                [structure],
+                "/**\n * Test\n */\nexport module n {\n"
+                    + "    class C {\n    }\n\n    console.log('here');\n"
+                    + "}\n"
+            );
         });
 
         it("should insert an ambient method on a class when inserting a namespace with a class into an ambient module", () => {
@@ -78,8 +82,8 @@ describe(nameof(StatementedNode), () => {
             }]);
 
             expect(sourceFile.getFullText())
-.to.equal("declare module Namespace {\n    namespace Namespace {\n        class Identifier {\n"
-                + "            myMethod();\n        }\n    }\n}\n");
+                .to.equal("declare module Namespace {\n    namespace Namespace {\n        class Identifier {\n"
+                    + "            myMethod();\n        }\n    }\n}\n");
         });
 
         it("should insert a global module", () => {

@@ -1168,9 +1168,13 @@ describe(nameof(Directory), () => {
 
     describe(nameof<Directory>(d => d.copyImmediately), () => {
         function doTests(
-copyImmediately: (
-directory: Directory, toPath: string, options: DirectoryCopyOptions | undefined, doChecks: (err?: any) => void) => void)
-        {
+            copyImmediately: (
+                directory: Directory,
+                toPath: string,
+                options: DirectoryCopyOptions | undefined,
+                doChecks: (err?: any) => void
+            ) => void
+        ) {
             it("should copy the entire directory to the new directory", () => {
                 const project = getProject([{ filePath: "/dir/test.ts", text: "" }]);
                 project.saveSync();
@@ -1326,9 +1330,13 @@ directory: Directory, toPath: string, options: DirectoryCopyOptions | undefined,
 
     describe(nameof<Directory>(d => d.moveImmediately), () => {
         function doTests(
-moveImmediately: (
-directory: Directory, toPath: string, options: DirectoryMoveOptions | undefined, doChecks: (err?: any) => void) => void)
-        {
+            moveImmediately: (
+                directory: Directory,
+                toPath: string,
+                options: DirectoryMoveOptions | undefined,
+                doChecks: (err?: any) => void
+            ) => void
+        ) {
             it("should move the directory to the new directory", () => {
                 const project = getProject([{ filePath: "/dir/test.ts", text: "" }]);
                 project.saveSync();

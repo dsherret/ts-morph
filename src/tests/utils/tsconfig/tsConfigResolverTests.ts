@@ -27,7 +27,9 @@ describe(nameof(TsConfigResolver), () => {
 
         it("should get the compiler options plus the defaults when providing some", () => {
             const host = testHelpers.getFileSystemHostWithFiles([{
-filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+                filePath: "tsconfig.json",
+                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
+            }]);
             expect(getCompilerOptions(host)).to.deep.equal({ rootDir: "/test", target: 1, configFilePath: "/tsconfig.json" });
         });
 

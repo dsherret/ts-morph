@@ -51,9 +51,8 @@ export function getDeclarationFileStatements(mainFile: SourceFile, codeBlockWrit
 
         if (TypeGuards.isStatement(declaration))
             statements.push((declaration as any).getStructure()); // todo: improve
-        else {
+        else
             throw new Error(`Not handled scenario for ${declaration.getKindName()}`);
-        }
     }
 
     statements.push({ kind: StructureKind.ExportDeclaration, namedExports: ["ts", ...flattenedCompilerApiExports] });

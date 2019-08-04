@@ -92,7 +92,8 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param structures - Structures of the enums.
      */
     insertMembers(
-        index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string
+        index: number,
+        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string
     ): (EnumMember | CommentEnumMember)[];
     insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string) {
         if (structures.length === 0)

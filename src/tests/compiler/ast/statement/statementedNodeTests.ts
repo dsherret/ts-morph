@@ -138,9 +138,12 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(s => s.insertStatements), () => {
         function doSourceFileTest(
-code: string, index: number, statements: string | WriterFunction | StatementStructures[], expectedLength: number,
-            expectedCode: string)
-        {
+            code: string,
+            index: number,
+            statements: string | WriterFunction | StatementStructures[],
+            expectedLength: number,
+            expectedCode: string
+        ) {
             const { sourceFile } = getInfoFromText(code);
             const nodes = sourceFile.insertStatements(index, statements);
             expect(nodes.length).to.equal(expectedLength);
@@ -151,7 +154,12 @@ code: string, index: number, statements: string | WriterFunction | StatementStru
 
         it("should insert statements into an empty source file", () => {
             doSourceFileTest(
-"", 0, "newText;\nsecondText;", 2, "newText;\nsecondText;\n");
+                "",
+                0,
+                "newText;\nsecondText;",
+                2,
+                "newText;\nsecondText;\n"
+            );
         });
 
         it("should insert statements after a utf-8 bom", () => {
@@ -189,28 +197,52 @@ code: string, index: number, statements: string | WriterFunction | StatementStru
 
         it("should insert statements at the beginning of a source file", () => {
             doSourceFileTest(
-"function i() {}", 0, "newText;\nsecondText;", 2, "newText;\nsecondText;\nfunction i() {}");
+                "function i() {}",
+                0,
+                "newText;\nsecondText;",
+                2,
+                "newText;\nsecondText;\nfunction i() {}"
+            );
         });
 
         it("should insert statements in the middle of a source file", () => {
             doSourceFileTest(
-"function a() {}\nfunction b() {}", 1, "newText;\nsecondText;", 2, "function a() {}\nnewText;\nsecondText;\nfunction b() {}");
+                "function a() {}\nfunction b() {}",
+                1,
+                "newText;\nsecondText;",
+                2,
+                "function a() {}\nnewText;\nsecondText;\nfunction b() {}"
+            );
         });
 
         it("should insert statements at the end of a source file", () => {
             doSourceFileTest(
-"function a() {}\nfunction b() {}", 2, "newText;\nsecondText;", 2, "function a() {}\nfunction b() {}\nnewText;\nsecondText;");
+                "function a() {}\nfunction b() {}",
+                2,
+                "newText;\nsecondText;",
+                2,
+                "function a() {}\nfunction b() {}\nnewText;\nsecondText;"
+            );
         });
 
         it("should insert structures", () => {
             doSourceFileTest(
-"", 0, [{ kind: StructureKind.Function, name: "f" }], 1, "function f() {\n}\n");
+                "",
+                0,
+                [{ kind: StructureKind.Function, name: "f" }],
+                1,
+                "function f() {\n}\n"
+            );
         });
 
         function doFirstChildTest<T extends Node>(
-code: string, index: number, statements: string, expectedLength: number, expectedCode: string,
-            kind?: SyntaxKind)
-        {
+            code: string,
+            index: number,
+            statements: string,
+            expectedLength: number,
+            expectedCode: string,
+            kind?: SyntaxKind
+        ) {
             const { sourceFile, firstChild } = getInfoFromTextWithSyntax<T>(code, kind);
             const nodes = (firstChild as any as StatementedNode).insertStatements(index, statements);
             expect(nodes.length).to.equal(expectedLength);
@@ -220,12 +252,22 @@ code: string, index: number, statements: string, expectedLength: number, expecte
 
         it("should insert statements into a function with no body", () => {
             doFirstChildTest<FunctionDeclaration>(
-"function i();\n", 0, "statement;", 1, "function i() {\n    statement;\n}\n");
+                "function i();\n",
+                0,
+                "statement;",
+                1,
+                "function i() {\n    statement;\n}\n"
+            );
         });
 
         it("should insert statements into an empty function", () => {
             doFirstChildTest<FunctionDeclaration>(
-"function i() {\n}\n", 0, "statement;", 1, "function i() {\n    statement;\n}\n");
+                "function i() {\n}\n",
+                0,
+                "statement;",
+                1,
+                "function i() {\n    statement;\n}\n"
+            );
         });
 
         it("should insert statements at the beginning and into a function", () => {
@@ -245,7 +287,12 @@ code: string, index: number, statements: string, expectedLength: number, expecte
 
         it("should insert between statements right beside each other", () => {
             doFirstChildTest<FunctionDeclaration>(
-"function i() { var t;var m; }", 1, "newText;", 1, "function i() { var t;\n    newText;var m; }");
+                "function i() { var t;var m; }",
+                1,
+                "newText;",
+                1,
+                "function i() { var t;\n    newText;var m; }"
+            );
         });
 
         const caseClause = "switch (x) {\n    case 1:\n        x = 0;\n        break;\n}";
@@ -299,7 +346,12 @@ code: string, index: number, statements: string, expectedLength: number, expecte
 
         it("should insert comments into a function", () => {
             doFirstChildTest<FunctionDeclaration>(
-"function f() {\n}", 0, "// comment", 1, "function f() {\n    // comment\n}");
+                "function f() {\n}",
+                0,
+                "// comment",
+                1,
+                "function f() {\n    // comment\n}"
+            );
         });
     });
 
@@ -314,7 +366,11 @@ code: string, index: number, statements: string, expectedLength: number, expecte
 
         it("should add statements at the end of a source file", () => {
             doSourceFileTest(
-"function a() {}\nfunction b() {}", "newText;\nsecondText;", 2, "function a() {}\nfunction b() {}\nnewText;\nsecondText;");
+                "function a() {}\nfunction b() {}",
+                "newText;\nsecondText;",
+                2,
+                "function a() {}\nfunction b() {}\nnewText;\nsecondText;"
+            );
         });
     });
 
@@ -492,8 +548,10 @@ code: string, index: number, statements: string, expectedLength: number, expecte
 
             it("should set the text of a function when using a writer", () => {
                 doBodyableTest(
-"function myFunction() {\n}", { statements: [writer => writer.writeLine("var myVar;")] },
-                    "function myFunction() {\n    var myVar;\n}");
+                    "function myFunction() {\n}",
+                    { statements: [writer => writer.writeLine("var myVar;")] },
+                    "function myFunction() {\n    var myVar;\n}"
+                );
             });
 
             it("should remove the body when it's undefined", () => {

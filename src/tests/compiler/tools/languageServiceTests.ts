@@ -187,8 +187,11 @@ describe(nameof(LanguageService), () => {
             const { sourceFile, project } = getInfoFromText("const moment = require('moment'); moment(); ", { filePath: "/file.ts" });
             const variableDeclaration = sourceFile.getVariableDeclarationOrThrow("moment");
             const results = project.getLanguageService().getCodeFixesAtPosition(
-sourceFile, variableDeclaration.getStart(), variableDeclaration.getEnd(),
-                [80001]);
+                sourceFile,
+                variableDeclaration.getStart(),
+                variableDeclaration.getEnd(),
+                [80001]
+            );
 
             expect(results).to.lengthOf(1);
             expect(results[0]!.getFixName()).to.equal("convertToEs6Module");
@@ -231,9 +234,9 @@ sourceFile, variableDeclaration.getStart(), variableDeclaration.getEnd(),
 });
 
 function checkOutput(
-output: EmitOutput,
-    expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; })
-{
+    output: EmitOutput,
+    expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; }
+) {
     expect(output.getEmitSkipped()).to.equal(expected.emitSkipped);
     expect(output.getOutputFiles().length).to.equal(expected.outputFiles.length);
     for (let i = 0; i < expected.outputFiles.length; i++) {

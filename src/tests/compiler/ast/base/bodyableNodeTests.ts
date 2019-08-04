@@ -14,16 +14,22 @@ describe(nameof(BodyableNode), () => {
 
             it("should set the body text with only one ending newline when writing a line at the end", () => {
                 doTest(
-"function myFunction() {}", writer => {
-                    writer.writeLine("test;").writeLine("test2;");
-                }, "function myFunction() {\n    test;\n    test2;\n}");
+                    "function myFunction() {}",
+                    writer => {
+                        writer.writeLine("test;").writeLine("test2;");
+                    },
+                    "function myFunction() {\n    test;\n    test2;\n}"
+                );
             });
 
             it("should set the body text with only one ending newline when not writing a line at the end", () => {
                 doTest(
-"function myFunction() {}", writer => {
-                    writer.writeLine("test;").write("test2;");
-                }, "function myFunction() {\n    test;\n    test2;\n}");
+                    "function myFunction() {}",
+                    writer => {
+                        writer.writeLine("test;").write("test2;");
+                    },
+                    "function myFunction() {\n    test;\n    test2;\n}"
+                );
             });
         });
 

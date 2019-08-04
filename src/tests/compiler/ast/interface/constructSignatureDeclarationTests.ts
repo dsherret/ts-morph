@@ -59,7 +59,10 @@ describe(nameof(ConstructSignatureDeclaration), () => {
 
         it("should remove when it's the last member", () => {
             doTest(
-"interface Identifier {\n    new(): string;\n    new(): number;\n}", 1, "interface Identifier {\n    new(): string;\n}");
+                "interface Identifier {\n    new(): string;\n    new(): number;\n}",
+                1,
+                "interface Identifier {\n    new(): string;\n}"
+            );
         });
 
         it("should only remove the new signature specified", () => {

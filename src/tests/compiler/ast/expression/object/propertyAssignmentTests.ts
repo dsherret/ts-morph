@@ -50,22 +50,34 @@ describe(nameof(PropertyAssignment), () => {
 
         it("should remove the last", () => {
             doTest(
-"const t = { prop1: 1, prop2: 2, prop3: 3 };", "prop3", "{ prop1: 1, prop2: 2 }");
+                "const t = { prop1: 1, prop2: 2, prop3: 3 };",
+                "prop3",
+                "{ prop1: 1, prop2: 2 }"
+            );
         });
 
         it("should remove the first when on separate lines", () => {
             doTest(
-`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop1", `{\n    prop2: 2,\n    prop3: 3\n}`);
+                `const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`,
+                "prop1",
+                `{\n    prop2: 2,\n    prop3: 3\n}`
+            );
         });
 
         it("should remove in the middle when on separate lines", () => {
             doTest(
-`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop2", `{\n    prop1: 1,\n    prop3: 3\n}`);
+                `const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`,
+                "prop2",
+                `{\n    prop1: 1,\n    prop3: 3\n}`
+            );
         });
 
         it("should remove the last when on separate lines", () => {
             doTest(
-`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop3", `{\n    prop1: 1,\n    prop2: 2\n}`);
+                `const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`,
+                "prop3",
+                `{\n    prop1: 1,\n    prop2: 2\n}`
+            );
         });
     });
 

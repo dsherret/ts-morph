@@ -262,9 +262,12 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExports), () => {
         function doTest(
-text: string, index: number, structures: (OptionalKind<ExportSpecifierStructure> | string | WriterFunction)[] | WriterFunction,
-            expected: string, surroundWithSpaces = true)
-        {
+            text: string,
+            index: number,
+            structures: (OptionalKind<ExportSpecifierStructure> | string | WriterFunction)[] | WriterFunction,
+            expected: string,
+            surroundWithSpaces = true
+        ) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ExportDeclaration>(text, SyntaxKind.ExportDeclaration);
             if (!surroundWithSpaces)
                 descendant._context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
@@ -282,8 +285,11 @@ text: string, index: number, structures: (OptionalKind<ExportSpecifierStructure>
 
         it("should insert named exports at the start", () => {
             doTest(
-`export { name3 } from "./test";`, 0, [{ name: "name1" }, writer => writer.write("name2")],
-                `export { name1, name2, name3 } from "./test";`);
+                `export { name3 } from "./test";`,
+                0,
+                [{ name: "name1" }, writer => writer.write("name2")],
+                `export { name1, name2, name3 } from "./test";`
+            );
         });
 
         it("should insert named exports at the start when it shouldn't use a space", () => {

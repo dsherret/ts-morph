@@ -25,9 +25,12 @@ export class DocumentRegistry implements ts.DocumentRegistry {
     }
 
     acquireDocument(
-fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string,
-        scriptKind: ScriptKind | undefined): ts.SourceFile
-    {
+        fileName: string,
+        compilationSettings: CompilerOptions,
+        scriptSnapshot: ts.IScriptSnapshot,
+        version: string,
+        scriptKind: ScriptKind | undefined
+    ): ts.SourceFile {
         let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
         if (sourceFile == null || this.getSourceFileVersion(sourceFile) !== version)
             sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
@@ -35,9 +38,14 @@ fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScri
     }
 
     acquireDocumentWithKey(
-fileName: string, path: ts.Path, compilationSettings: CompilerOptions, key: ts.DocumentRegistryBucketKey,
-        scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile
-    {
+        fileName: string,
+        path: ts.Path,
+        compilationSettings: CompilerOptions,
+        key: ts.DocumentRegistryBucketKey,
+        scriptSnapshot: ts.IScriptSnapshot,
+        version: string,
+        scriptKind: ScriptKind | undefined
+    ): ts.SourceFile {
         // ignore the key because we only ever keep track of one key
         return this.acquireDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
     }
@@ -50,9 +58,14 @@ fileName: string, path: ts.Path, compilationSettings: CompilerOptions, key: ts.D
     }
 
     updateDocumentWithKey(
-fileName: string, path: ts.Path, compilationSettings: CompilerOptions, key: ts.DocumentRegistryBucketKey,
-        scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile
-    {
+        fileName: string,
+        path: ts.Path,
+        compilationSettings: CompilerOptions,
+        key: ts.DocumentRegistryBucketKey,
+        scriptSnapshot: ts.IScriptSnapshot,
+        version: string,
+        scriptKind: ScriptKind | undefined
+    ): ts.SourceFile {
         // ignore the key because we only ever keep track of one key
         return this.updateDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
     }

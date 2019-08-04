@@ -8,9 +8,10 @@ describe(nameof(CommentNodeParser), () => {
     }
 
     function assertEqual(
-expectedNodes: { kind: SyntaxKind; pos: number; end: number; }[], actualNodes: { kind: SyntaxKind; pos: number; end: number; }[],
-        message?: string)
-    {
+        expectedNodes: { kind: SyntaxKind; pos: number; end: number; }[],
+        actualNodes: { kind: SyntaxKind; pos: number; end: number; }[],
+        message?: string
+    ) {
         expect(actualNodes.map(n => ({ kind: n.kind, pos: n.pos, end: n.end }))).to.deep.equal(expectedNodes, message);
     }
 

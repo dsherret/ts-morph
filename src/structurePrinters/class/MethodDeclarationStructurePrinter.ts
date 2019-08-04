@@ -69,9 +69,10 @@ export class MethodDeclarationStructurePrinter extends NodePrinter<OptionalKind<
     }
 
     private printHeader(
-writer: CodeBlockWriter, name: string,
-        structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>)
-    {
+        writer: CodeBlockWriter,
+        name: string,
+        structure: OptionalKind<MethodDeclarationOverloadStructure> | OptionalKind<MethodDeclarationStructure>
+    ) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         if ((structure as MethodDeclarationStructure).decorators != null)
             this.factory.forDecorator().printTexts(writer, (structure as MethodDeclarationStructure).decorators);

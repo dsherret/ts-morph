@@ -108,9 +108,11 @@ describe(nameof(TypeElementMemberedNode), () => {
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignatures), () => {
         function doTest(
-startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>[],
-            expectedCode: string)
-        {
+            startCode: string,
+            insertIndex: number,
+            structures: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>[],
+            expectedCode: string
+        ) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertConstructSignatures(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -139,9 +141,11 @@ startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<Constr
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignature), () => {
         function doTest(
-startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>,
-            expectedCode: string)
-        {
+            startCode: string,
+            insertIndex: number,
+            structure: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>,
+            expectedCode: string
+        ) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertConstructSignature(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -227,9 +231,11 @@ startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<Constru
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertIndexSignatures), () => {
         function doTest(
-startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>[],
-            expectedCode: string)
-        {
+            startCode: string,
+            insertIndex: number,
+            structures: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>[],
+            expectedCode: string
+        ) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertIndexSignatures(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -472,9 +478,11 @@ startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<IndexS
 
         it("should insert multiple into other methods", () => {
             doTest(
-"interface i {\n    method1();\n    method4();\n}", 1,
+                "interface i {\n    method1();\n    method4();\n}",
+                1,
                 [{ name: "method2", hasQuestionToken: true, returnType: "string" }, { name: "method3" }],
-                "interface i {\n    method1();\n    method2?(): string;\n    method3();\n    method4();\n}");
+                "interface i {\n    method1();\n    method2?(): string;\n    method3();\n    method4();\n}"
+            );
         });
 
         it("should insert all the method's properties when specified", () => {
@@ -573,7 +581,7 @@ startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<IndexS
 
         describe("has methods", () => {
             const {
-firstChild
+                firstChild
             } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n    prop: string;\n    method1():void;\n    method2():string;\n}\n");
 
             it("should get the right number of methods", () => {
@@ -778,8 +786,10 @@ firstChild
                 methods: [{ name: "m" }]
             };
             doTest(
-"interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n}", structure,
-                "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}");
+                "interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n}",
+                structure,
+                "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}"
+            );
         });
 
         it("should remove when specifying empty values", () => {

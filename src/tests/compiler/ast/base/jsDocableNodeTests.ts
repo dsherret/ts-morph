@@ -54,9 +54,12 @@ describe(nameof(JSDocableNode), () => {
 
     describe(nameof<JSDocableNode>(n => n.insertJsDocs), () => {
         function doTest(
-startCode: string, insertIndex: number, structures: (OptionalKind<JSDocStructure> | string | WriterFunction)[], expectedCode: string,
-            syntaxKind = SyntaxKind.FunctionDeclaration)
-        {
+            startCode: string,
+            insertIndex: number,
+            structures: (OptionalKind<JSDocStructure> | string | WriterFunction)[],
+            expectedCode: string,
+            syntaxKind = SyntaxKind.FunctionDeclaration
+        ) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant(startCode, syntaxKind);
             const result = (descendant as any as JSDocableNode).insertJsDocs(insertIndex, structures);
             expect(result.length).to.equal(structures.length);

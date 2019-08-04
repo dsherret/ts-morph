@@ -213,8 +213,10 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      */
     insertShorthandPropertyAssignments(index: number, structures: ReadonlyArray<OptionalKind<ShorthandPropertyAssignmentStructure>>) {
         return this._insertProperty(
-  index, structures,
-            () => this._context.structurePrinterFactory.forShorthandPropertyAssignment()) as ShorthandPropertyAssignment[];
+            index,
+            structures,
+            () => this._context.structurePrinterFactory.forShorthandPropertyAssignment()
+        ) as ShorthandPropertyAssignment[];
     }
 
     /* Spread Assignments */
@@ -287,8 +289,10 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      */
     insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
         return this._insertProperty(
-index, structures,
-            () => this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient: false })) as MethodDeclaration[];
+            index,
+            structures,
+            () => this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient: false })
+        ) as MethodDeclaration[];
     }
 
     /* Get Accessor Declarations */
@@ -325,8 +329,10 @@ index, structures,
      */
     insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
         return this._insertProperty(
-index, structures,
-            () => this._context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: false })) as GetAccessorDeclaration[];
+            index,
+            structures,
+            () => this._context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: false })
+        ) as GetAccessorDeclaration[];
     }
 
     /* Set Accessor Declarations */
@@ -363,8 +369,10 @@ index, structures,
      */
     insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
         return this._insertProperty(
-index, structures,
-            () => this._context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false })) as SetAccessorDeclaration[];
+            index,
+            structures,
+            () => this._context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false })
+        ) as SetAccessorDeclaration[];
     }
 
     /**

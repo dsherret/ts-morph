@@ -123,14 +123,20 @@ describe(nameof(FunctionDeclaration), () => {
 
         it("should remove the function declaration overload when the first", () => {
             doOverloadTest(
-"function I() {}\n\nfunction J(): void;\nfunction J() {}\n\nfunction K() {}", 1, 0,
-                "function I() {}\n\nfunction J() {}\n\nfunction K() {}");
+                "function I() {}\n\nfunction J(): void;\nfunction J() {}\n\nfunction K() {}",
+                1,
+                0,
+                "function I() {}\n\nfunction J() {}\n\nfunction K() {}"
+            );
         });
 
         it("should remove the function declaration overload when the middle", () => {
             doOverloadTest(
-"function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}",
-                1, 1, "function I() {}\n\nfunction J(first): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}");
+                "function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}",
+                1,
+                1,
+                "function I() {}\n\nfunction J(first): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}"
+            );
         });
         it("should remove the function declaration overload when last", () => {
             doOverloadTest("function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J() {}\n\nfunction K() {}", 1, 1,
@@ -155,7 +161,10 @@ describe(nameof(FunctionDeclaration), () => {
                 overloads: [{ returnType: "string" }]
             };
             doTest(
-"function identifier(p): number;\nfunction identifier() {\n}", structure, "function identifier(): string;\nfunction identifier() {\n}");
+                "function identifier(p): number;\nfunction identifier() {\n}",
+                structure,
+                "function identifier(): string;\nfunction identifier() {\n}"
+            );
         });
 
         it("should remove overloads when specifying an empty array", () => {
@@ -163,7 +172,10 @@ describe(nameof(FunctionDeclaration), () => {
                 overloads: []
             };
             doTest(
-"function identifier(p): number;\nfunction identifier() {\n}", structure, "function identifier() {\n}");
+                "function identifier(p): number;\nfunction identifier() {\n}",
+                structure,
+                "function identifier() {\n}"
+            );
         });
     });
 

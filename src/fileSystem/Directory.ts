@@ -265,7 +265,9 @@ export class Directory {
     addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
         return this._context.directoryCoordinator.addExistingDirectoryIfExists(
-dirPath, { ...options, markInProject: this._isInProject() });
+            dirPath,
+            { ...options, markInProject: this._isInProject() }
+        );
     }
 
     /**
@@ -278,7 +280,9 @@ dirPath, { ...options, markInProject: this._isInProject() });
     addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
         return this._context.directoryCoordinator.addExistingDirectory(
-dirPath, { ...options, markInProject: this._isInProject() });
+            dirPath,
+            { ...options, markInProject: this._isInProject() }
+        );
     }
 
     /**
@@ -300,9 +304,10 @@ dirPath, { ...options, markInProject: this._isInProject() });
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
     createSourceFile(
-relativeFilePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
-        options?: SourceFileCreateOptions)
-    {
+        relativeFilePath: string,
+        sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
+        options?: SourceFileCreateOptions
+    ) {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
         return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", { ...(options || {}), markInProject: this._isInProject() });
     }
@@ -391,7 +396,9 @@ relativeFilePath: string, sourceFileText?: string | OptionalKind<SourceFileStruc
         return emitDirectory(this, getStandardizedPath(options.outDir), getStandardizedPath(options.declarationDir));
 
         function* emitDirectory(
-directory: Directory, outDir?: string, declarationDir?: string
+            directory: Directory,
+            outDir?: string,
+            declarationDir?: string
         ): IterableIterator<string | { filePath: string; fileText: string; }> {
             for (const sourceFile of directory.getSourceFiles()) {
                 const output = sourceFile.getEmitOutput({ emitOnlyDtsFiles });

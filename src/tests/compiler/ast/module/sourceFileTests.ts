@@ -238,8 +238,9 @@ describe(nameof(SourceFile), () => {
             const fileText = "export interface MyInterface {}\nexport class MyClass {};";
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const file1 = project.createSourceFile(
-"/file.ts",
-                `import {MyInterface} from "./MyInterface";\nasync function t() { const test = await import('./MyInterface'); }`);
+                "/file.ts",
+                `import {MyInterface} from "./MyInterface";\nasync function t() { const test = await import('./MyInterface'); }`
+            );
             const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "../MyInterface";\nimport "./../MyInterface";`);
             const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\nimport t = require("./../MyInterface");`);
             const file4Text = `export * from "./sub/MyInterface";\nimport "MyOtherFile";`;
@@ -330,8 +331,9 @@ describe(nameof(SourceFile), () => {
             const fileText = `import {OtherInterface} from "../dir/OtherInterface";\nexport interface MyInterface {}\nexport * from "../dir/OtherInterface";`;
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/dir/MyInterface.ts" });
             const otherFile = project.createSourceFile(
-"/dir/OtherInterface.ts",
-                `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
+                "/dir/OtherInterface.ts",
+                `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`
+            );
             sourceFile.move("NewFile.ts");
             expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../dir/OtherInterface";\n`
                 + `export interface MyInterface {}\n`
@@ -715,8 +717,9 @@ describe(nameof(SourceFile), () => {
 
         it("should only emit the declaration file when specified", () => {
             const project = new Project({
-compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 },
-                useVirtualFileSystem: true });
+                compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 },
+                useVirtualFileSystem: true
+            });
             const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput({ emitOnlyDtsFiles: true });
 
@@ -755,9 +758,11 @@ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: Scrip
 
     describe(nameof<SourceFile>(n => n.formatText), () => {
         function doTest(
-startingCode: string, expectedCode: string, manipulationSettings: Partial<ManipulationSettings> = {},
-            settings: FormatCodeSettings = {})
-        {
+            startingCode: string,
+            expectedCode: string,
+            manipulationSettings: Partial<ManipulationSettings> = {},
+            settings: FormatCodeSettings = {}
+        ) {
             const { project, sourceFile } = getInfoFromText(startingCode);
             project.manipulationSettings.set(manipulationSettings);
             sourceFile.formatText(settings);
@@ -778,54 +783,74 @@ startingCode: string, expectedCode: string, manipulationSettings: Partial<Manipu
 
         it("should format the text with eight spaces", () => {
             doTest(
-"class MyClass {\n    myMethod() {\n    }\n}", "class MyClass {\n        myMethod() {\n        }\n}\n",
-                { indentationText: IndentationText.EightSpaces });
+                "class MyClass {\n    myMethod() {\n    }\n}",
+                "class MyClass {\n        myMethod() {\n        }\n}\n",
+                { indentationText: IndentationText.EightSpaces }
+            );
         });
 
         it("should format the text with four spaces", () => {
             doTest(
-"class MyClass {\n    myMethod() {\n    }\n}", "class MyClass {\n    myMethod() {\n    }\n}\n",
-                { indentationText: IndentationText.FourSpaces });
+                "class MyClass {\n    myMethod() {\n    }\n}",
+                "class MyClass {\n    myMethod() {\n    }\n}\n",
+                { indentationText: IndentationText.FourSpaces }
+            );
         });
 
         it("should format the text with two spaces", () => {
             doTest(
-"class MyClass {\n    myMethod() {\n        console.log(t);\n    }\n}", "class MyClass {\n  myMethod() {\n    console.log(t);\n  }\n}\n",
-                { indentationText: IndentationText.TwoSpaces });
+                "class MyClass {\n    myMethod() {\n        console.log(t);\n    }\n}",
+                "class MyClass {\n  myMethod() {\n    console.log(t);\n  }\n}\n",
+                { indentationText: IndentationText.TwoSpaces }
+            );
         });
 
         it("should format the text with tabs", () => {
             doTest(
-"class MyClass {\n    myMethod() {\n    }\n}", "class MyClass {\n\tmyMethod() {\n\t}\n}\n", { indentationText: IndentationText.Tab });
+                "class MyClass {\n    myMethod() {\n    }\n}",
+                "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
+                { indentationText: IndentationText.Tab }
+            );
         });
 
         it("should format the text to spaces when using tabs", () => {
             doTest(
-"class MyClass {\n\tmyMethod() {\n\t}\n}", "class MyClass {\n  myMethod() {\n  }\n}\n", { indentationText: IndentationText.TwoSpaces });
+                "class MyClass {\n\tmyMethod() {\n\t}\n}",
+                "class MyClass {\n  myMethod() {\n  }\n}\n",
+                { indentationText: IndentationText.TwoSpaces }
+            );
         });
 
         it("should format the text with slash r slash n newlines", () => {
             doTest(
-"class MyClass {\n    myMethod() {\n    }\n}", "class MyClass {\r\n\tmyMethod() {\r\n\t}\r\n}\r\n",
-                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.CarriageReturnLineFeed });
+                "class MyClass {\n    myMethod() {\n    }\n}",
+                "class MyClass {\r\n\tmyMethod() {\r\n\t}\r\n}\r\n",
+                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.CarriageReturnLineFeed }
+            );
         });
 
         it("should format the text with slash n newlines", () => {
             doTest(
-"class MyClass {\r\n    myMethod() {\r\n    }\r\n}", "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
-                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.LineFeed });
+                "class MyClass {\r\n    myMethod() {\r\n    }\r\n}",
+                "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
+                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.LineFeed }
+            );
         });
 
         it("should format and not indent within strings", () => {
             doTest(
-"class MyClass {\n    myMethod() {\n        const t = `\nt`;\n    }\n}", "class MyClass {\n  myMethod() {\n    const t = `\nt`;\n  }\n}\n",
-                { indentationText: IndentationText.TwoSpaces });
+                "class MyClass {\n    myMethod() {\n        const t = `\nt`;\n    }\n}",
+                "class MyClass {\n  myMethod() {\n    const t = `\nt`;\n  }\n}\n",
+                { indentationText: IndentationText.TwoSpaces }
+            );
         });
 
         it("should format and not format within strings", () => {
             doTest(
-"class MyClass {\n    myMethod() {\n        const t = `\n    t`;\n    }\n}",
-                "class MyClass {\n\tmyMethod() {\n\t\tconst t = `\n    t`;\n\t}\n}\n", { indentationText: IndentationText.Tab });
+                "class MyClass {\n    myMethod() {\n        const t = `\n    t`;\n    }\n}",
+                "class MyClass {\n\tmyMethod() {\n\t\tconst t = `\n    t`;\n\t}\n}\n",
+                { indentationText: IndentationText.Tab }
+            );
         });
 
         it("should format the text when it contains multiple semi colons", () => {
@@ -882,17 +907,25 @@ function myFunction(param: MyClass) {
         it("should indent the specified text based on the lines provided", () => {
             const sourceFileLines = ["class MyClass {", "    test;", "}"];
             doTest(
-sourceFileLines.join("\n"), [sourceFileLines[0].length + 1, sourceFileLines[0].length + 1 + sourceFileLines[1].length], 3, `class MyClass {
+                sourceFileLines.join("\n"),
+                [sourceFileLines[0].length + 1, sourceFileLines[0].length + 1 + sourceFileLines[1].length],
+                3,
+                `class MyClass {
                 test;
-}`);
+}`
+            );
         });
 
         it("should indent the line when specifying the end of it for the start of the range", () => {
             const sourceFileLines = ["class MyClass {", "    test;", "}"];
             doTest(
-sourceFileLines.join("\n"), [sourceFileLines[0].length, sourceFileLines[0].length + 1], 1, `    class MyClass {
+                sourceFileLines.join("\n"),
+                [sourceFileLines[0].length, sourceFileLines[0].length + 1],
+                1,
+                `    class MyClass {
         test;
-}`);
+}`
+            );
         });
 
         it("should not indent within a multiline string", () => {
@@ -1142,8 +1175,10 @@ sourceFileLines.join("\n"), [sourceFileLines[0].length, sourceFileLines[0].lengt
             const referencing = sourceFile.getReferencingNodesInOtherSourceFiles();
             expect(referencing.map(r => r.getText()).sort())
                 .to.deep.equal([
-...[...file1.getImportDeclarations(), ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()),
-                    `import test = require("../MyInterface");`, `import("../MyInterface")`].sort());
+                    ...[...file1.getImportDeclarations(), ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()),
+                    `import test = require("../MyInterface");`,
+                    `import("../MyInterface")`
+                ].sort());
         });
 
         it("should get the nodes that reference an index file", () => {
@@ -1154,7 +1189,9 @@ sourceFileLines.join("\n"), [sourceFileLines[0].length, sourceFileLines[0].lengt
             const referencing = sourceFile.getReferencingNodesInOtherSourceFiles();
             expect(referencing.map(r => r.getText()).sort())
                 .to.deep.equal([
-...file1.getExportDeclarations(), ...file2.getImportDeclarations()].map(d => d.getText()).sort());
+                    ...file1.getExportDeclarations(),
+                    ...file2.getImportDeclarations()
+                ].map(d => d.getText()).sort());
         });
 
         it("should keep the references up to date during manipulations", () => {
@@ -1185,9 +1222,12 @@ sourceFileLines.join("\n"), [sourceFileLines[0].length, sourceFileLines[0].lengt
 
             const referencing = sourceFile.getReferencingLiteralsInOtherSourceFiles();
             expect(referencing.map(r => r.getText()).sort())
- .to.deep.equal([
-...[...file1.getImportDeclarations(), ...file2.getImportDeclarations(), ...file3.getExportDeclarations()]
-                    .map(d => d.getModuleSpecifier()!.getText()), `"../MyInterface"`, `"../MyInterface"`].sort());
+                .to.deep.equal([
+                    ...[...file1.getImportDeclarations(), ...file2.getImportDeclarations(), ...file3.getExportDeclarations()]
+                        .map(d => d.getModuleSpecifier()!.getText()),
+                    `"../MyInterface"`,
+                    `"../MyInterface"`
+                ].sort());
         });
     });
 

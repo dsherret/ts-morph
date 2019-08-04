@@ -56,7 +56,11 @@ describe("insertIntoCommaSeparatedNodes", () => {
 
         it("should insert at the start when writing newlines", () => {
             doTest(
-`{\n        name2\n    }`, 0, writer => writer.newLine().writeLine("name1"), `{\n        name1,\n        name2\n    }`);
+                `{\n        name2\n    }`,
+                0,
+                writer => writer.newLine().writeLine("name1"),
+                `{\n        name1,\n        name2\n    }`
+            );
         });
 
         it("should insert in middle when writing newlines", () => {
@@ -103,7 +107,11 @@ describe("insertIntoCommaSeparatedNodes", () => {
 
         it("should insert at the start with newlines", () => {
             doTest(
-`[\n        name2\n    ]`, 0, writer => writer.newLine().writeLine("name1"), `[\n        name1,\n        name2\n    ]`);
+                `[\n        name2\n    ]`,
+                0,
+                writer => writer.newLine().writeLine("name1"),
+                `[\n        name1,\n        name2\n    ]`
+            );
         });
 
         it("should insert in middle with newlines", () => {
@@ -113,7 +121,11 @@ describe("insertIntoCommaSeparatedNodes", () => {
 
         it("should insert at end with newlines", () => {
             doTest(
-`[\n        name1\n    ]`, 1, writer => writer.newLine().writeLine("name2"), `[\n        name1,\n        name2\n    ]`);
+                `[\n        name1\n    ]`,
+                1,
+                writer => writer.newLine().writeLine("name2"),
+                `[\n        name1,\n        name2\n    ]`
+            );
         });
 
         it("should insert at the start when no other elements", () => {
@@ -144,40 +156,65 @@ describe("insertIntoCommaSeparatedNodes", () => {
 
         it("should take into account inserting after a comment", () => {
             doTest(
-"const t = {\n    // test\n};", 1, [{ name: "prop2", initializer: "4" }], "const t = {\n    // test\n    prop2: 4\n};");
+                "const t = {\n    // test\n};",
+                1,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    // test\n    prop2: 4\n};"
+            );
         });
 
         it("should take into account inserting after a comment when there exists a node before that comment with no comma", () => {
             doTest(
-"const t = {\n    prop1\n    // test\n};", 2, [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    prop1,\n    // test\n    prop2: 4\n};");
+                "const t = {\n    prop1\n    // test\n};",
+                2,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    prop1,\n    // test\n    prop2: 4\n};"
+            );
         });
 
         it("should take into account inserting after a comment with a trailing comment when there exists a node before that comment with no comma", () => {
             doTest(
-"const t = {\n    prop1\n    /* 1 */ // 2\n};", 2, [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    prop1,\n    /* 1 */ // 2\n    prop2: 4\n};");
+                "const t = {\n    prop1\n    /* 1 */ // 2\n};",
+                2,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    prop1,\n    /* 1 */ // 2\n    prop2: 4\n};"
+            );
         });
 
         it("should take into account comments in the index", () => {
             doTest(
-"const t = {\n    // test\n    prop1: 5\n};", 2, [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    // test\n    prop1: 5,\n    prop2: 4\n};");
+                "const t = {\n    // test\n    prop1: 5\n};",
+                2,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    // test\n    prop1: 5,\n    prop2: 4\n};"
+            );
         });
 
         it("should take into account inserting before a comment", () => {
             doTest(
-"const t = {\n    // test\n};", 0, [{ name: "prop2", initializer: "4" }], "const t = {\n    prop2: 4\n    // test\n};");
+                "const t = {\n    // test\n};",
+                0,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    prop2: 4\n    // test\n};"
+            );
         });
 
         it("should take into account inserting before a comment that has a non-comment node after", () => {
             doTest(
-"const t = {\n    // test\n    p};", 0, [{ name: "prop2", initializer: "4" }], "const t = {\n    prop2: 4,\n    // test\n    p};");
+                "const t = {\n    // test\n    p};",
+                0,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    prop2: 4,\n    // test\n    p};"
+            );
         });
 
         it("should take into account inserting before a comment with a preceeding node", () => {
             doTest(
-"const t = {\n    p\n    // test\n};", 1, [{ name: "prop2", initializer: "4" }], "const t = {\n    p,\n    prop2: 4\n    // test\n};");
+                "const t = {\n    p\n    // test\n};",
+                1,
+                [{ name: "prop2", initializer: "4" }],
+                "const t = {\n    p,\n    prop2: 4\n    // test\n};"
+            );
         });
     });
 });

@@ -21,11 +21,14 @@ export function removeChildren(opts: RemoveChildrenOptions) {
         return;
 
     doManipulation(
-children[0].getSourceFile(), new RemoveChildrenTextManipulator(opts), new NodeHandlerFactory().getForChildIndex({
-        parent: children[0].getParentSyntaxList() || children[0].getParentOrThrow(),
-        childIndex: children[0].getChildIndex(),
-        childCount: -1 * children.length
-    }));
+        children[0].getSourceFile(),
+        new RemoveChildrenTextManipulator(opts),
+        new NodeHandlerFactory().getForChildIndex({
+            parent: children[0].getParentSyntaxList() || children[0].getParentOrThrow(),
+            childIndex: children[0].getChildIndex(),
+            childCount: -1 * children.length
+        })
+    );
 }
 
 export interface RemoveChildrenWithFormattingOptions<TNode extends Node> {
@@ -164,5 +167,8 @@ export function removeClausedNodeChildren(nodes: Node[]) {
 
 export function unwrapNode(node: Node) {
     doManipulation(
-node._sourceFile, new UnwrapTextManipulator(node), new NodeHandlerFactory().getForUnwrappingNode(node));
+        node._sourceFile,
+        new UnwrapTextManipulator(node),
+        new NodeHandlerFactory().getForUnwrappingNode(node)
+    );
 }

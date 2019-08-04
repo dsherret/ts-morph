@@ -333,7 +333,9 @@ describe(nameof(Project), () => {
 
         it(`should not get the compiler options from tsconfig.json when not providing anything and a tsconfig exists`, () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{
-filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+                filePath: "tsconfig.json",
+                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
+            }]);
             const project = new Project({ fileSystem });
             expect(project.getCompilerOptions()).to.deep.equal({});
         });
@@ -346,7 +348,9 @@ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "tar
 
         function doTsConfigTest(addFilesFromTsConfig: boolean) {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{
-filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+                filePath: "tsconfig.json",
+                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
+            }]);
             const project = new Project({
                 tsConfigFilePath: "tsconfig.json",
                 compilerOptions: {

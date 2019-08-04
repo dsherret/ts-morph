@@ -3,9 +3,14 @@ import { FileSystemWrapper } from "../../fileSystem";
 import { FileUtils } from "../../utils";
 
 export function readDirectory(
-fileSystemWrapper: FileSystemWrapper, useCaseSensitiveFileNames: boolean, rootDir: string, extensions: ReadonlyArray<string>,
-    excludes: ReadonlyArray<string> | undefined, includes: ReadonlyArray<string>, depth?: number)
-{
+    fileSystemWrapper: FileSystemWrapper,
+    useCaseSensitiveFileNames: boolean,
+    rootDir: string,
+    extensions: ReadonlyArray<string>,
+    excludes: ReadonlyArray<string> | undefined,
+    includes: ReadonlyArray<string>,
+    depth?: number
+) {
     const currentDir = fileSystemWrapper.getCurrentDirectory();
     const directories: string[] = [];
 
@@ -18,13 +23,22 @@ fileSystemWrapper: FileSystemWrapper, useCaseSensitiveFileNames: boolean, rootDi
 
     return {
         files: tsInternal.matchFiles(
-rootDir, extensions, excludes || [], includes, useCaseSensitiveFileNames, currentDir, undefined, path => {
-            const includeDir = dirPathMatches(path);
-            path = fileSystemWrapper.getStandardizedAbsolutePath(path);
-            if (includeDir)
-                directories.push(path);
-            return getFileSystemEntries(path, fileSystemWrapper);
-        }, path => fileSystemWrapper.realpathSync(path)),
+            rootDir,
+            extensions,
+            excludes || [],
+            includes,
+            useCaseSensitiveFileNames,
+            currentDir,
+            undefined,
+            path => {
+                const includeDir = dirPathMatches(path);
+                path = fileSystemWrapper.getStandardizedAbsolutePath(path);
+                if (includeDir)
+                    directories.push(path);
+                return getFileSystemEntries(path, fileSystemWrapper);
+            },
+            path => fileSystemWrapper.realpathSync(path)
+        ),
         directories
     };
 

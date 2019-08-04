@@ -91,9 +91,13 @@ describe(nameof(StatementedNode), () => {
             };
 
             doTest(
-"", 0, [structure], "export function f();\n/**\n * Test\n */\nexport async function* f<T>(param): string {\n"
-                + "    class C {\n    }\n\n    console.log('here');\n"
-                + "}\n");
+                "",
+                0,
+                [structure],
+                "export function f();\n/**\n * Test\n */\nexport async function* f<T>(param): string {\n"
+                    + "    class C {\n    }\n\n    console.log('here');\n"
+                    + "}\n"
+            );
         });
     });
 

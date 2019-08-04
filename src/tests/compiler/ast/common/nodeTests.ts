@@ -1215,11 +1215,14 @@ class MyClass {
 
         it("should format only the provided node with the specified settings", () => {
             doTest(
-"class Test{\n\tprop:string;\n}\n       /** Testing */\nclass Test2{\n\t prop:string;\n\t}\n", f => f.getClassOrThrow("Test2"),
-                "class Test{\n\tprop:string;\n}\n/** Testing */\nclass Test2 {\n  prop: string;\n}\n", {
-                convertTabsToSpaces: true,
-                indentSize: 2
-            });
+                "class Test{\n\tprop:string;\n}\n       /** Testing */\nclass Test2{\n\t prop:string;\n\t}\n",
+                f => f.getClassOrThrow("Test2"),
+                "class Test{\n\tprop:string;\n}\n/** Testing */\nclass Test2 {\n  prop: string;\n}\n",
+                {
+                    convertTabsToSpaces: true,
+                    indentSize: 2
+                }
+            );
         });
     });
 
@@ -1234,14 +1237,20 @@ class MyClass {
 
         it("should prepend whitespace", () => {
             doTest(
-"class Test{\n  prop:string;\n}", f => f.getClassOrThrow("Test").getProperties()[0], "  \t\n ",
-                "class Test{\n    \t\n     prop:string;\n}");
+                "class Test{\n  prop:string;\n}",
+                f => f.getClassOrThrow("Test").getProperties()[0],
+                "  \t\n ",
+                "class Test{\n    \t\n     prop:string;\n}"
+            );
         });
 
         it("should prepend whitespace when using a writer", () => {
             doTest(
-"class Test{\n  prop:string;\n}", f => f.getClassOrThrow("Test").getProperties()[0], writer => writer.space(),
-                "class Test{\n   prop:string;\n}");
+                "class Test{\n  prop:string;\n}",
+                f => f.getClassOrThrow("Test").getProperties()[0],
+                writer => writer.space(),
+                "class Test{\n   prop:string;\n}"
+            );
         });
 
         it("should throw if providing non-whitespace text", () => {
@@ -1261,14 +1270,20 @@ class MyClass {
 
         it("should append whitespace", () => {
             doTest(
-"class Test{\n  prop:string;\n}", f => f.getClassOrThrow("Test").getProperties()[0], "  \t\n ",
-                "class Test{\n  prop:string;  \t\n     \n}");
+                "class Test{\n  prop:string;\n}",
+                f => f.getClassOrThrow("Test").getProperties()[0],
+                "  \t\n ",
+                "class Test{\n  prop:string;  \t\n     \n}"
+            );
         });
 
         it("should append whitespace when using a writer", () => {
             doTest(
-"class Test{\n  prop:string;\n}", f => f.getClassOrThrow("Test").getProperties()[0], writer => writer.space(),
-                "class Test{\n  prop:string; \n}");
+                "class Test{\n  prop:string;\n}",
+                f => f.getClassOrThrow("Test").getProperties()[0],
+                writer => writer.space(),
+                "class Test{\n  prop:string; \n}"
+            );
         });
 
         it("should throw if providing non-whitespace text", () => {
@@ -1595,10 +1610,13 @@ class MyClass {
         });
 
         function doNodeArrayCbSyntaxKindTest(
-node: Node, expectedNodeKinds: SyntaxKind[], expectedArrayKinds: SyntaxKind[][],
+            node: Node,
+            expectedNodeKinds: SyntaxKind[],
+            expectedArrayKinds: SyntaxKind[][],
             arrayCallback?: (children: Node[], traversal: ForEachDescendantTraversalControl) => unknown,
-            nodeCallback?: (node: Node, traversal: ForEachDescendantTraversalControl) => unknown, expectedReturnValue?: Node)
-        {
+            nodeCallback?: (node: Node, traversal: ForEachDescendantTraversalControl) => unknown,
+            expectedReturnValue?: Node
+        ) {
             const foundNodeKinds: SyntaxKind[] = [];
             const foundArrayKinds: SyntaxKind[][] = [];
             const returnValue = node.forEachDescendant<unknown>((child, traversal) => {
@@ -1625,14 +1643,16 @@ node: Node, expectedNodeKinds: SyntaxKind[], expectedArrayKinds: SyntaxKind[][],
         it("should iterate all the descendants when using an array callback", () => {
             const { sourceFile } = getInfoFromText("export class Test { prop; method() {} } interface Test { prop; }");
             doNodeArrayCbSyntaxKindTest(
-sourceFile,
+                sourceFile,
                 [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Block, SyntaxKind.Identifier, SyntaxKind.Identifier,
-                    SyntaxKind.EndOfFileToken], [
-                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
-                [SyntaxKind.ExportKeyword],
-                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
-                [SyntaxKind.PropertySignature]
-            ]);
+                    SyntaxKind.EndOfFileToken],
+                [
+                    [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
+                    [SyntaxKind.ExportKeyword],
+                    [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
+                    [SyntaxKind.PropertySignature]
+                ]
+            );
         });
 
         it("should stop iteration when calling stop in an array callback at the child level", () => {
@@ -1671,28 +1691,35 @@ sourceFile,
         it("should skip looking at the descendants when calling skip on an array callback", () => {
             const { sourceFile } = getInfoFromText("class Test { prop: string; prop2: string; } interface Interface { prop: string; }");
             doNodeArrayCbSyntaxKindTest(
-sourceFile,
-                [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFileToken], [
-                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
-                [SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration],
-                [SyntaxKind.PropertySignature]
-            ], (nodes, traversal) => {
-                if (nodes.some(n => n.getKind() === SyntaxKind.PropertyDeclaration))
-                    traversal.skip();
-            });
+                sourceFile,
+                [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFileToken],
+                [
+                    [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
+                    [SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration],
+                    [SyntaxKind.PropertySignature]
+                ],
+                (nodes, traversal) => {
+                    if (nodes.some(n => n.getKind() === SyntaxKind.PropertyDeclaration))
+                        traversal.skip();
+                }
+            );
         });
 
         it("should go up to the parent when calling up", () => {
             const { sourceFile } = getInfoFromText("class Test { prop: string; prop2: string; } interface Interface { prop: string; }");
             doNodeArrayCbSyntaxKindTest(
-sourceFile,
-                [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFileToken], [
-                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
-                [SyntaxKind.PropertySignature]
-            ], undefined, (node, traversal) => {
-                if (node.getText() === "Test")
-                    traversal.up();
-            });
+                sourceFile,
+                [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFileToken],
+                [
+                    [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
+                    [SyntaxKind.PropertySignature]
+                ],
+                undefined,
+                (node, traversal) => {
+                    if (node.getText() === "Test")
+                        traversal.up();
+                }
+            );
         });
 
         it("should be able to modify nodes midway through", () => {
@@ -1763,19 +1790,26 @@ sourceFile,
 
         it("should iterate over all the children of a source file", () => {
             runTest(
-"class T {} interface I {}", sourceFile => sourceFile,
-                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]);
+                "class T {} interface I {}",
+                sourceFile => sourceFile,
+                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]
+            );
         });
 
         it("should not return comment nodes", () => {
             runTest(
-"// testing\nclass T {}", sourceFile => sourceFile, [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken]);
+                "// testing\nclass T {}",
+                sourceFile => sourceFile,
+                [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken]
+            );
         });
 
         it("should iterate over all the children of a class declaration", () => {
             runTest(
-"class T { prop1: string; prop2: number; }", sourceFile => sourceFile.getClassOrThrow("T"),
-                [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration]);
+                "class T { prop1: string; prop2: number; }",
+                sourceFile => sourceFile.getClassOrThrow("T"),
+                [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration]
+            );
         });
     });
 
@@ -2058,8 +2092,11 @@ sourceFile,
 
         it("should get all the symbols in the provided scope filtered by meaning", () => {
             doTest(
-"const var = 5; function a() { function b() {} const c = ''; function e() { function f() {} } }",
-                sourceFile => sourceFile.getFunctionOrThrow("a").getVariableDeclarationOrThrow("c"), SymbolFlags.BlockScopedVariable, ["c"]);
+                "const var = 5; function a() { function b() {} const c = ''; function e() { function f() {} } }",
+                sourceFile => sourceFile.getFunctionOrThrow("a").getVariableDeclarationOrThrow("c"),
+                SymbolFlags.BlockScopedVariable,
+                ["c"]
+            );
         });
     });
 });

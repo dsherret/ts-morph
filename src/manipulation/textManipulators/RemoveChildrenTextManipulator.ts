@@ -19,7 +19,11 @@ export class RemoveChildrenTextManipulator<TNode extends Node> implements TextMa
 
     getNewText(inputText: string) {
         const {
-            children, removePrecedingSpaces = false, removeFollowingSpaces = false, removePrecedingNewLines = false, removeFollowingNewLines = false
+            children,
+            removePrecedingSpaces = false,
+            removeFollowingSpaces = false,
+            removePrecedingNewLines = false,
+            removeFollowingNewLines = false
         } = this.opts;
         const sourceFile = children[0].getSourceFile();
         const fullText = sourceFile.getFullText();

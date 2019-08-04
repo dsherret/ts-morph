@@ -8,9 +8,12 @@ import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
         function doTest(
-startCode: string, index: number, structures: OptionalKind<MethodDeclarationOverloadStructure>[], expectedCode: string,
-            methodIndex = 0)
-        {
+            startCode: string,
+            index: number,
+            structures: OptionalKind<MethodDeclarationOverloadStructure>[],
+            expectedCode: string,
+            methodIndex = 0
+        ) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[methodIndex] as MethodDeclaration;
             const result = methodDeclaration.insertOverloads(index, structures);
@@ -168,8 +171,11 @@ startCode: string, index: number, structures: OptionalKind<MethodDeclarationOver
 
             it("should remove when the middle overload", () => {
                 doTest(
-"class Identifier {\n    method(first): void;\n    method(second): void;\n    method(third): void;\n    method(param) {}\n}", "method",
-                    1, "class Identifier {\n    method(first): void;\n    method(third): void;\n    method(param) {}\n}");
+                    "class Identifier {\n    method(first): void;\n    method(second): void;\n    method(third): void;\n    method(param) {}\n}",
+                    "method",
+                    1,
+                    "class Identifier {\n    method(first): void;\n    method(third): void;\n    method(param) {}\n}"
+                );
             });
 
             it("should remove when the last overload", () => {

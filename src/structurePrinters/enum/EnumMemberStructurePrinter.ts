@@ -8,9 +8,9 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
     private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
 
     printTexts(
-writer: CodeBlockWriter,
-        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string | undefined)
-    {
+        writer: CodeBlockWriter,
+        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string | undefined
+    ) {
         this.multipleWriter.printText(writer, structures);
     }
 

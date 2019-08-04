@@ -447,7 +447,10 @@ export interface StatementedNode {
     _insertChildren<TNode extends Node>(opts: InsertChildrenOptions): TNode[];
     /** @internal */
     _standardWrite(
-writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void, opts?: StandardWriteOptions
+        writer: CodeBlockWriter,
+        info: InsertIntoBracesOrSourceFileOptionsWriteInfo,
+        writeStructures: () => void,
+        opts?: StandardWriteOptions
     ): void;
     /** @internal */
     _getCompilerStatementsWithComments(): ts.Statement[];
@@ -583,8 +586,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getClassOrThrow(findFunction: (declaration: ClassDeclaration) => boolean): ClassDeclaration;
         getClassOrThrow(nameOrFindFunction: string | ((declaration: ClassDeclaration) => boolean)): ClassDeclaration {
             return errors.throwIfNullOrUndefined(
-this.getClass(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("class", nameOrFindFunction));
+                this.getClass(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("class", nameOrFindFunction)
+            );
         }
 
         /* Enums */
@@ -629,8 +633,9 @@ this.getClass(nameOrFindFunction),
         getEnumOrThrow(findFunction: (declaration: EnumDeclaration) => boolean): EnumDeclaration;
         getEnumOrThrow(nameOrFindFunction: string | ((declaration: EnumDeclaration) => boolean)): EnumDeclaration {
             return errors.throwIfNullOrUndefined(
-this.getEnum(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("enum", nameOrFindFunction));
+                this.getEnum(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("enum", nameOrFindFunction)
+            );
         }
 
         /* Functions */
@@ -682,8 +687,9 @@ this.getEnum(nameOrFindFunction),
         getFunctionOrThrow(findFunction: (declaration: FunctionDeclaration) => boolean): FunctionDeclaration;
         getFunctionOrThrow(nameOrFindFunction: string | ((declaration: FunctionDeclaration) => boolean)): FunctionDeclaration {
             return errors.throwIfNullOrUndefined(
-this.getFunction(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("function", nameOrFindFunction));
+                this.getFunction(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("function", nameOrFindFunction)
+            );
         }
 
         /* Interfaces */
@@ -728,8 +734,9 @@ this.getFunction(nameOrFindFunction),
         getInterfaceOrThrow(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration;
         getInterfaceOrThrow(nameOrFindFunction: string | ((declaration: InterfaceDeclaration) => boolean)): InterfaceDeclaration {
             return errors.throwIfNullOrUndefined(
-this.getInterface(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("interface", nameOrFindFunction));
+                this.getInterface(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("interface", nameOrFindFunction)
+            );
         }
 
         /* Namespaces */
@@ -775,8 +782,9 @@ this.getInterface(nameOrFindFunction),
         getNamespaceOrThrow(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration;
         getNamespaceOrThrow(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration {
             return errors.throwIfNullOrUndefined(
-this.getNamespace(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction));
+                this.getNamespace(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction)
+            );
         }
 
         /* Type aliases */
@@ -824,8 +832,9 @@ this.getNamespace(nameOrFindFunction),
         getTypeAliasOrThrow(findFunction: (declaration: TypeAliasDeclaration) => boolean): TypeAliasDeclaration;
         getTypeAliasOrThrow(nameOrFindFunction: string | ((declaration: TypeAliasDeclaration) => boolean)): TypeAliasDeclaration {
             return errors.throwIfNullOrUndefined(
-this.getTypeAlias(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("type alias", nameOrFindFunction));
+                this.getTypeAlias(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("type alias", nameOrFindFunction)
+            );
         }
 
         /* Variable statements */
@@ -846,8 +855,9 @@ this.getTypeAlias(nameOrFindFunction),
 
         getVariableStatementOrThrow(nameOrFindFunction: string | ((statement: VariableStatement) => boolean)): VariableStatement {
             return errors.throwIfNullOrUndefined(
-this.getVariableStatement(nameOrFindFunction),
-                "Expected to find a variable statement that matched the provided condition.");
+                this.getVariableStatement(nameOrFindFunction),
+                "Expected to find a variable statement that matched the provided condition."
+            );
         }
 
         addVariableStatement(structure: OptionalKind<VariableStatementStructure>) {

@@ -420,9 +420,12 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.insertNamedImports), () => {
         function doTest(
-text: string, index: number, structuresOrNames: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction,
-            expected: string, surroundWithSpaces = true)
-        {
+            text: string,
+            index: number,
+            structuresOrNames: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction,
+            expected: string,
+            surroundWithSpaces = true
+        ) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             if (!surroundWithSpaces)
                 firstChild._context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });

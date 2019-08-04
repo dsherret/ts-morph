@@ -69,8 +69,9 @@ export class FileTextChanges {
 
         if (this.isNewFile() && this._existingFileExists && !options.overwrite) {
             throw new errors.InvalidOperationError(
-`Cannot apply file text change for creating a new file when the `
-                + `file exists at path ${this.getFilePath()}. Did you mean to provide the overwrite option?`);
+                `Cannot apply file text change for creating a new file when the `
+                    + `file exists at path ${this.getFilePath()}. Did you mean to provide the overwrite option?`
+            );
         }
 
         let file: SourceFile | undefined;
@@ -81,8 +82,9 @@ export class FileTextChanges {
 
         if (file == null) {
             throw new errors.InvalidOperationError(
-`Cannot apply file text change to modify existing file `
-                + `that doesn't exist at path: ${this.getFilePath()}`);
+                `Cannot apply file text change to modify existing file `
+                    + `that doesn't exist at path: ${this.getFilePath()}`
+            );
         }
 
         file.applyTextChanges(this.getTextChanges());

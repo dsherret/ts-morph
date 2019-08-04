@@ -55,7 +55,8 @@ export interface JsxAttributedNode {
      * Inserts attributes into the element.
      */
     insertAttributes(
-index: number, attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>
+        index: number,
+        attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>
     ): JsxAttributeLike[];
 }
 

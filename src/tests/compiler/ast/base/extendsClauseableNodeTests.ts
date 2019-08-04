@@ -91,8 +91,11 @@ describe(nameof(ExtendsClauseableNode), () => {
 
         it("should insert multiple extends at a position", () => {
             doTest(
-"interface Identifier extends Base, Base1 {}", 1, ["Base2", writer => writer.write("Base3")],
-                "interface Identifier extends Base, Base2, Base3, Base1 {}");
+                "interface Identifier extends Base, Base1 {}",
+                1,
+                ["Base2", writer => writer.write("Base3")],
+                "interface Identifier extends Base, Base2, Base3, Base1 {}"
+            );
         });
 
         it("should insert multiple with a writer", () => {

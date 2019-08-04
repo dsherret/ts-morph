@@ -119,9 +119,10 @@ export class CompilerFactory {
      * @param options - Options.
      */
     createSourceFile(
-filePath: string, sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction,
-        options: SourceFileCreateOptions & { markInProject: boolean; })
-    {
+        filePath: string,
+        sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction,
+        options: SourceFileCreateOptions & { markInProject: boolean; }
+    ) {
         sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.context.createWriter(), sourceFileText) : sourceFileText || "";
         if (typeof sourceFileText === "string")
             return this.createSourceFileFromText(filePath, sourceFileText, options);
@@ -164,9 +165,10 @@ filePath: string, sourceFileText: string | OptionalKind<SourceFileStructure> | W
     }
 
     private createOrOverwriteSourceFileFromText(
-filePath: string, sourceText: string,
-        options: { markInProject: boolean; scriptKind: ScriptKind | undefined; })
-    {
+        filePath: string,
+        sourceText: string,
+        options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }
+    ) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
         if (existingSourceFile != null) {
@@ -197,8 +199,10 @@ filePath: string, sourceText: string,
         if (sourceFile == null && this.context.fileSystemWrapper.fileExistsSync(filePath)) {
             this.context.logger.log(`Loading file: ${filePath}`);
             sourceFile = this.createSourceFileFromTextInternal(
-filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()),
-                options);
+                filePath,
+                this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()),
+                options
+            );
             sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
         }
 
@@ -314,7 +318,9 @@ filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.get
     }
 
     private createSourceFileFromTextInternal(
-filePath: string, text: string, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }
+        filePath: string,
+        text: string,
+        options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }
     ): SourceFile {
         const hasBom = StringUtils.hasBom(text);
         if (hasBom)
