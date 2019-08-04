@@ -38,8 +38,12 @@ describe(nameof(Identifier), () => {
         });
 
         it("should get the definition when nested inside a namespace", () => {
-            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("namespace N { export function myFunction() {} }\nconst reference = N.myFunction;");
-            const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression).getNameNode().getDefinitions();
+            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>(
+                "namespace N { export function myFunction() {} }\nconst reference = N.myFunction;"
+            );
+            const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression)
+                .getNameNode().getDefinitions();
+
             expect(definitions.length).to.equal(1);
             expect(definitions[0].getDeclarationNode()).to.equal(firstChild.getFunctions()[0]);
         });
