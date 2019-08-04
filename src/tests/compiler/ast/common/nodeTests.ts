@@ -854,10 +854,16 @@ class MyClass {
         });
 
         it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
-            doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.ClassDeclaration, ["class C {}"], sourceFile => {
-                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
-                expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
-            });
+            doTest(
+                "class C {} interface I {}",
+                sourceFile => sourceFile.getChildSyntaxListOrThrow(),
+                SyntaxKind.ClassDeclaration,
+                ["class C {}"],
+                sourceFile => {
+                    expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                    expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
+                }
+            );
         });
 
         it("should get descendants using .getChildren() when specifying a token while on a syntax list", () => {
@@ -918,11 +924,17 @@ class MyClass {
         });
 
         it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
-            doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.InterfaceDeclaration, "interface I {}", sourceFile => {
-                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
-                expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
-                expect(hasParsedTokens(sourceFile.getInterfaceOrThrow("I").compilerNode)).to.be.false;
-            });
+            doTest(
+                "class C {} interface I {}",
+                sourceFile => sourceFile.getChildSyntaxListOrThrow(),
+                SyntaxKind.InterfaceDeclaration,
+                "interface I {}",
+                sourceFile => {
+                    expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                    expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
+                    expect(hasParsedTokens(sourceFile.getInterfaceOrThrow("I").compilerNode)).to.be.false;
+                }
+            );
         });
 
         it("should get descendants using .getChildren() when specifying a token while on a syntax list", () => {
@@ -936,10 +948,16 @@ class MyClass {
         });
 
         it("should get js doc descendants", () => {
-            doTest("/**\n * @return {string}\n */\nfunction test() {}", sourceFile => sourceFile, SyntaxKind.JSDocReturnTag, "@return {string}", sourceFile => {
-                // todo: in the future it would be better for this to be false and only parse the tokens on JSDoc nodes
-                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
-            });
+            doTest(
+                "/**\n * @return {string}\n */\nfunction test() {}",
+                sourceFile => sourceFile,
+                SyntaxKind.JSDocReturnTag,
+                "@return {string}",
+                sourceFile => {
+                    // todo: in the future it would be better for this to be false and only parse the tokens on JSDoc nodes
+                    expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                }
+            );
         });
     });
 
@@ -988,8 +1006,11 @@ class MyClass {
         const { sourceFile } = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the previous sibling based on a condition", () => {
-            expect(sourceFile.getInterfaces()[2].getPreviousSiblingOrThrow(s => TypeGuards.isInterfaceDeclaration(s) && s.getName() === "Interface1").getText())
-                .to.equal("interface Interface1 {}");
+            expect(
+                sourceFile.getInterfaces()[2]
+                    .getPreviousSiblingOrThrow(s => TypeGuards.isInterfaceDeclaration(s) && s.getName() === "Interface1")
+                    .getText()
+            ).to.equal("interface Interface1 {}");
         });
 
         it("should get the previous sibling when not supplying a condition", () => {
