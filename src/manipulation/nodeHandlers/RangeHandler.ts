@@ -41,7 +41,8 @@ export class RangeHandler implements NodeHandler {
             this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
         // go down into the children if before the node or in a surrounding node
-        while (!currentNodeChildren.done && !newNodeChildren.done
+        while (
+            !currentNodeChildren.done && !newNodeChildren.done
             && (
                 currentNodeChildren.peek.getStart(currentSourceFile) < this.start
                 || currentNodeChildren.peek.getStart(currentSourceFile) === this.start && newNodeChildren.peek.end > this.end
