@@ -1,4 +1,4 @@
-﻿import { Symbol } from "../../compiler/symbols/Symbol";
+import { Symbol } from "../../compiler/symbols/Symbol";
 
 // todo: merge with getNamedNodeByNameOrFindFunction
 export function getSymbolByNameOrFindFunction(items: Symbol[], nameOrFindFunc: ((declaration: Symbol) => boolean) | string) {

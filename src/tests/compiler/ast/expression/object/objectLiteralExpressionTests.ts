@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { Node, GetAccessorDeclaration, MethodDeclaration, ObjectLiteralExpression, PropertyAssignment, SetAccessorDeclaration,
-    ShorthandPropertyAssignment, SpreadAssignment } from "../../../../../compiler";
+import { Node, GetAccessorDeclaration, MethodDeclaration, ObjectLiteralExpression, PropertyAssignment, SetAccessorDeclaration, ShorthandPropertyAssignment,
+    SpreadAssignment } from "../../../../../compiler";
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
     ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind, ObjectLiteralExpressionPropertyStructures,
     StructureKind } from "../../../../../structures";
@@ -195,8 +195,11 @@ describe(nameof(ObjectLiteralExpression), () => {
         });
 
         it("should remove a method between properties", () => {
-            doTest("const t = {\n    prop1: 5,\n    myMethod() {},\n    prop2: 6\n};", 1,
-                "const t = {\n    prop1: 5,\n    prop2: 6\n};");
+            doTest(
+                "const t = {\n    prop1: 5,\n    myMethod() {},\n    prop2: 6\n};",
+                1,
+                "const t = {\n    prop1: 5,\n    prop2: 6\n};"
+            );
         });
     });
 
@@ -211,18 +214,30 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should insert the property assignments when none exist", () => {
-            doTest("const t = {};", 0, [{ name: "prop1", initializer: "4", leadingTrivia: "//1" }, { name: "prop2", initializer: writer => writer.write("5") }],
-                "const t = {\n    //1\n    prop1: 4,\n    prop2: 5\n};");
+            doTest(
+                "const t = {};",
+                0,
+                [{ name: "prop1", initializer: "4", leadingTrivia: "//1" }, { name: "prop2", initializer: writer => writer.write("5") }],
+                "const t = {\n    //1\n    prop1: 4,\n    prop2: 5\n};"
+            );
         });
 
         it("should insert the property assignments when none exist and there is some whitespace in the current object", () => {
-            doTest("const t = {\n};", 0, [{ name: "prop", initializer: "5" }],
-                "const t = {\n    prop: 5\n};");
+            doTest(
+                "const t = {\n};",
+                0,
+                [{ name: "prop", initializer: "5" }],
+                "const t = {\n    prop: 5\n};"
+            );
         });
 
         it("should insert the property assignments at the beginning", () => {
-            doTest("const t = {\n    prop: 5\n};", 0, [{ name: "prop1", initializer: `"test"` }],
-                `const t = {\n    prop1: "test",\n    prop: 5\n};`);
+            doTest(
+                "const t = {\n    prop: 5\n};",
+                0,
+                [{ name: "prop1", initializer: `"test"` }],
+                `const t = {\n    prop1: "test",\n    prop: 5\n};`
+            );
         });
 
         it("should insert the property assignments in the middle", () => {
@@ -231,8 +246,12 @@ describe(nameof(ObjectLiteralExpression), () => {
         });
 
         it("should insert the property assignments at the end", () => {
-            doTest("const t = {\n    prop: 5\n};", 1, [{ name: "prop1", initializer: "4" }],
-                "const t = {\n    prop: 5,\n    prop1: 4\n};");
+            doTest(
+                "const t = {\n    prop: 5\n};",
+                1,
+                [{ name: "prop1", initializer: "4" }],
+                "const t = {\n    prop: 5,\n    prop1: 4\n};"
+            );
         });
     });
 
@@ -245,8 +264,12 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should insert a property assignment", () => {
-            doTest("const t = {\n    prop2: 5\n};", 0, { name: "prop1", initializer: "4" },
-                "const t = {\n    prop1: 4,\n    prop2: 5\n};");
+            doTest(
+                "const t = {\n    prop2: 5\n};",
+                0,
+                { name: "prop1", initializer: "4" },
+                "const t = {\n    prop1: 4,\n    prop2: 5\n};"
+            );
         });
     });
 
@@ -273,8 +296,11 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should add a property assignment", () => {
-            doTest("const t = {\n    prop1: 5\n};", { name: "prop2", initializer: "2" },
-                "const t = {\n    prop1: 5,\n    prop2: 2\n};");
+            doTest(
+                "const t = {\n    prop1: 5\n};",
+                { name: "prop2", initializer: "2" },
+                "const t = {\n    prop1: 5,\n    prop2: 2\n};"
+            );
         });
     });
 
@@ -303,8 +329,12 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should insert a shorthand property assignment", () => {
-            doTest("const t = {\n    prop2: 5\n};", 0, { name: "prop1" },
-                "const t = {\n    prop1,\n    prop2: 5\n};");
+            doTest(
+                "const t = {\n    prop2: 5\n};",
+                0,
+                { name: "prop1" },
+                "const t = {\n    prop1,\n    prop2: 5\n};"
+            );
         });
     });
 
@@ -317,8 +347,11 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should add shorthand property assignments", () => {
-            doTest("const t = {\n    prop1: 5\n};", [{ name: "prop2" }, { name: "prop3" }],
-                "const t = {\n    prop1: 5,\n    prop2,\n    prop3\n};");
+            doTest(
+                "const t = {\n    prop1: 5\n};",
+                [{ name: "prop2" }, { name: "prop3" }],
+                "const t = {\n    prop1: 5,\n    prop2,\n    prop3\n};"
+            );
         });
     });
 
@@ -331,8 +364,11 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should add a shorthand property assignment", () => {
-            doTest("const t = {\n    prop1: 5\n};", { name: "prop2" },
-                "const t = {\n    prop1: 5,\n    prop2\n};");
+            doTest(
+                "const t = {\n    prop1: 5\n};",
+                { name: "prop2" },
+                "const t = {\n    prop1: 5,\n    prop2\n};"
+            );
         });
     });
 
@@ -361,8 +397,12 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should insert a spread assignment", () => {
-            doTest("const t = {\n    prop2: 5\n};", 0, { expression: "prop1" },
-                "const t = {\n    ...prop1,\n    prop2: 5\n};");
+            doTest(
+                "const t = {\n    prop2: 5\n};",
+                0,
+                { expression: "prop1" },
+                "const t = {\n    ...prop1,\n    prop2: 5\n};"
+            );
         });
     });
 
@@ -389,8 +429,11 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should add a spread assignment", () => {
-            doTest("const t = {\n    prop1: 5\n};", { expression: "prop2" },
-                "const t = {\n    prop1: 5,\n    ...prop2\n};");
+            doTest(
+                "const t = {\n    prop1: 5\n};",
+                { expression: "prop2" },
+                "const t = {\n    prop1: 5,\n    ...prop2\n};"
+            );
         });
     });
 
@@ -419,8 +462,12 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should insert a method", () => {
-            doTest("const t = {\n    prop2: 5\n};", 0, { name: "prop1" },
-                "const t = {\n    prop1() {\n    },\n    prop2: 5\n};");
+            doTest(
+                "const t = {\n    prop2: 5\n};",
+                0,
+                { name: "prop1" },
+                "const t = {\n    prop1() {\n    },\n    prop2: 5\n};"
+            );
         });
     });
 
@@ -447,8 +494,11 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should add a method", () => {
-            doTest("const t = {\n    prop1: 5\n};", { name: "prop2" },
-                "const t = {\n    prop1: 5,\n    prop2() {\n    }\n};");
+            doTest(
+                "const t = {\n    prop1: 5\n};",
+                { name: "prop2" },
+                "const t = {\n    prop1: 5,\n    prop2() {\n    }\n};"
+            );
         });
     });
 
@@ -477,8 +527,12 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should insert a get accessor", () => {
-            doTest("const t = {\n    prop2: 5\n};", 0, { name: "prop1" },
-                "const t = {\n    get prop1() {\n    },\n    prop2: 5\n};");
+            doTest(
+                "const t = {\n    prop2: 5\n};",
+                0,
+                { name: "prop1" },
+                "const t = {\n    get prop1() {\n    },\n    prop2: 5\n};"
+            );
         });
     });
 
@@ -505,8 +559,11 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should add a get accessor", () => {
-            doTest("const t = {\n    prop1: 5\n};", { name: "prop2" },
-                "const t = {\n    prop1: 5,\n    get prop2() {\n    }\n};");
+            doTest(
+                "const t = {\n    prop1: 5\n};",
+                { name: "prop2" },
+                "const t = {\n    prop1: 5,\n    get prop2() {\n    }\n};"
+            );
         });
     });
 
@@ -535,8 +592,12 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should insert a set accessor", () => {
-            doTest("const t = {\n    prop2: 5\n};", 0, { name: "prop1" },
-                "const t = {\n    set prop1() {\n    },\n    prop2: 5\n};");
+            doTest(
+                "const t = {\n    prop2: 5\n};",
+                0,
+                { name: "prop1" },
+                "const t = {\n    set prop1() {\n    },\n    prop2: 5\n};"
+            );
         });
     });
 
@@ -563,8 +624,11 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should add a set accessor", () => {
-            doTest("const t = {\n    prop1: 5\n};", { name: "prop2" },
-                "const t = {\n    prop1: 5,\n    set prop2() {\n    }\n};");
+            doTest(
+                "const t = {\n    prop1: 5\n};",
+                { name: "prop2" },
+                "const t = {\n    prop1: 5,\n    set prop2() {\n    }\n};"
+            );
         });
     });
 });

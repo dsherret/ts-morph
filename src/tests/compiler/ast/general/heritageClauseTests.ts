@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, HeritageClause } from "../../../../compiler";
 import { ArrayUtils } from "../../../../utils";
 import { getInfoFromText } from "../../testHelpers";

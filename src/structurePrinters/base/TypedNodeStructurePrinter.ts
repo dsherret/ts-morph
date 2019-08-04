@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { TypedNodeStructure } from "../../structures";
 import { StringUtils } from "../../utils";
 import { Printer } from "../Printer";

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { AbstractableNode, ClassDeclaration } from "../../../../../compiler";
 import { AbstractableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";

@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
 import { NodeHandler } from "./NodeHandler";
@@ -54,8 +54,12 @@ export class RangeParentHandler implements NodeHandler {
         // handle the nodes being replaced
         if (this.replacingLength != null) {
             const replacingEnd = this.start + this.replacingLength;
-            while (!currentNodeChildren.done && (currentNodeChildren.peek.end <= replacingEnd || currentNodeChildren.peek.getStart(currentSourceFile) < replacingEnd))
+            while (
+                !currentNodeChildren.done
+                && (currentNodeChildren.peek.end <= replacingEnd || currentNodeChildren.peek.getStart(currentSourceFile) < replacingEnd)
+            ) {
                 this.helper.forgetNodeIfNecessary(currentNodeChildren.next());
+            }
         }
 
         // handle the rest

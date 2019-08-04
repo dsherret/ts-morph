@@ -1,3 +1,4 @@
+/* dprint:ignoreFile */
 import { ArrayUtils } from "../../utils";
 import { StructureKind } from "../StructureKind";
 import { Structures } from "../aliases";
@@ -14,8 +15,6 @@ import { ExportDeclarationStructure, ImportDeclarationStructure, NamespaceDeclar
 import { VariableStatementStructure, StatementedNodeStructure } from "../statement";
 import { TypeAliasDeclarationStructure } from "../type";
 import { OptionalKind } from "../types";
-
-/* tslint:disable */
 
 /**
  * Iterates over the elements in the provided array.

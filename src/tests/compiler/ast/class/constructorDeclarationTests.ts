@@ -1,6 +1,7 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../../compiler";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../../structures";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, StructureKind,
+    OptionalKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
@@ -64,7 +65,8 @@ describe(nameof(ConstructorDeclaration), () => {
         }
 
         it("should be able to add multiple", () => {
-            doTest("class Identifier {\n    constructor();\n    constructor() {}\n }", [{ parameters: [{ name: "param" }] }, { parameters: [{ name: "param2" }] }],
+            doTest("class Identifier {\n    constructor();\n    constructor() {}\n }",
+                [{ parameters: [{ name: "param" }] }, { parameters: [{ name: "param2" }] }],
                 "class Identifier {\n    constructor();\n    constructor(param);\n    constructor(param2);\n    constructor() {}\n }");
         });
     });
@@ -92,8 +94,7 @@ describe(nameof(ConstructorDeclaration), () => {
         }
 
         it("should remove when only member", () => {
-            doTest("class MyClass {\n    constructor() {\n    }\n}",
-                "class MyClass {\n}");
+            doTest("class MyClass {\n    constructor() {\n    }\n}", "class MyClass {\n}");
         });
 
         it("should remove when between other members", () => {
@@ -102,18 +103,15 @@ describe(nameof(ConstructorDeclaration), () => {
         });
 
         it("should remove when at start", () => {
-            doTest("class MyClass {\n    constructor() {\n    }\n\n    prop: string;\n}",
-                "class MyClass {\n    prop: string;\n}");
+            doTest("class MyClass {\n    constructor() {\n    }\n\n    prop: string;\n}", "class MyClass {\n    prop: string;\n}");
         });
 
         it("should remove when at end", () => {
-            doTest("class MyClass {\n    prop: string;\n\n    constructor() {\n    }\n}",
-                "class MyClass {\n    prop: string;\n}");
+            doTest("class MyClass {\n    prop: string;\n\n    constructor() {\n    }\n}", "class MyClass {\n    prop: string;\n}");
         });
 
         it("should remove when there are overloads", () => {
-            doTest("class MyClass {\n    constructor();constructor() {\n    }\n}",
-                "class MyClass {\n}");
+            doTest("class MyClass {\n    constructor();constructor() {\n    }\n}", "class MyClass {\n}");
         });
 
         it("should only remove the overload when calling remove on the overload", () => {
@@ -149,8 +147,7 @@ describe(nameof(ConstructorDeclaration), () => {
             const structure: OptionalKindAndTrivia<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
                 overloads: []
             };
-            doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
-                "class identifier {\n    constructor() {}\n}");
+            doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure, "class identifier {\n    constructor() {}\n}");
         });
     });
 
@@ -196,7 +193,10 @@ class T {
                     parameters: [],
                     returnType: undefined,
                     typeParameters: [{
-                        kind: StructureKind.TypeParameter, name: "T", constraint: undefined, default: undefined
+                        kind: StructureKind.TypeParameter,
+                        name: "T",
+                        constraint: undefined,
+                        default: undefined
                     }]
                 }],
                 parameters: [{ name: "p" }],

@@ -1,4 +1,4 @@
-﻿import { NamespaceDeclarationKind } from "../../compiler";
+import { NamespaceDeclarationKind } from "../../compiler";
 import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure } from "../base";
 import { StatementedNodeStructure } from "../statement";
 import { Structure, KindedStructure } from "../Structure";

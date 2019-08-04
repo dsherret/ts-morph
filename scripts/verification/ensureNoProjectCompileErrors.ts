@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Verification: Ensure no project compile errors
  * ---------------------------------------------------
  * Ensures there are no compile errors in the src directory.

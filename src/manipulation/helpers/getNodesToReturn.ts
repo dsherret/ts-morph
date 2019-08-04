@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { TypeGuards } from "../../utils";
 
 export function getNodesToReturn<T extends Node>(oldChildren: T[] | number, newChildren: T[], index: number, allowCommentNodes: boolean) {

@@ -1,4 +1,4 @@
-﻿import { StringUtils } from "../../../../utils";
+import { StringUtils } from "../../../../utils";
 import { Node } from "../../common";
 
 /**
@@ -16,7 +16,7 @@ export function getBodyTextWithoutLeadingIndentation(body: Node) {
 
     const fullText = sourceFile.getFullText().substring(startPos, endPos);
     return StringUtils.removeIndentation(fullText, {
-            indentSizeInSpaces: body._context.manipulationSettings._getIndentSizeInSpaces(),
-            isInStringAtPos: pos => sourceFile.isInStringAtPos(pos + startPos)
-        });
+        indentSizeInSpaces: body._context.manipulationSettings._getIndentSizeInSpaces(),
+        isInStringAtPos: pos => sourceFile.isInStringAtPos(pos + startPos)
+    });
 }

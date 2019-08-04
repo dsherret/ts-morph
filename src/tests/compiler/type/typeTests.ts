@@ -11,12 +11,12 @@ describe(nameof(Type), () => {
 
     function getTypeFromText(text: string) {
         const result = getInfoFromTextWithTypeChecking<VariableStatement>(text);
-        return {...result, firstType: result.firstChild.getDeclarations()[0].getType()};
+        return { ...result, firstType: result.firstChild.getDeclarations()[0].getType() };
     }
 
     function getTypeAliasTypeFromText(text: string) {
         const result = getInfoFromTextWithTypeChecking<TypeAliasDeclaration>(text);
-        return {...result, firstType: result.firstChild.getTypeNodeOrThrow().getType()};
+        return { ...result, firstType: result.firstChild.getTypeNodeOrThrow().getType() };
     }
 
     // todo: move all the tests to happen in here because this will speed up the tests quite a lot
@@ -62,9 +62,8 @@ let unknownType: unknown;
 `;
         const { sourceFile } = getInfoFromTextWithTypeChecking(text);
         const typesByName: { [name: string]: Type; } = {};
-        for (const dec of sourceFile.getVariableDeclarations()) {
+        for (const dec of sourceFile.getVariableDeclarations())
             typesByName[dec.getName()] = dec.getType();
-        }
 
         describe(nameof<Type>(t => t.compilerType), () => {
             it("should get the compiler type", () => {

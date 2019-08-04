@@ -1,5 +1,5 @@
-﻿import { AmbientableNodeStructure, AsyncableNodeStructure, ExportableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure,
-    NameableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
+import { AmbientableNodeStructure, AsyncableNodeStructure, ExportableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure, NameableNodeStructure,
+    SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { OptionalKind } from "../types";

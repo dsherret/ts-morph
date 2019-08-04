@@ -1,4 +1,4 @@
-﻿import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure } from "../base";
+import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
 import { OptionalKind } from "../types";
 import { StructureKind } from "../StructureKind";

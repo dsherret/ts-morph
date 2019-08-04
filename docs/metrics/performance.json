@@ -1,1 +1,4 @@
-{"1":{"name":"Renaming Performance Test","runs":[{"dateTime":1555118846870,"duration":10905,"version":"1.3.2"}]},"2":{"name":"Removing Performance Test","runs":[{"dateTime":1555118846870,"duration":14834,"version":"1.3.2"}]}}
+{
+  "1": { "name": "Renaming Performance Test", "runs": [{ "dateTime": 1555118846870, "duration": 10905, "version": "1.3.2" }] },
+  "2": { "name": "Removing Performance Test", "runs": [{ "dateTime": 1555118846870, "duration": 14834, "version": "1.3.2" }] }
+}

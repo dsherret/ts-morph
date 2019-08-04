@@ -1,4 +1,4 @@
-﻿import * as errors from "../../../errors";
+import * as errors from "../../../errors";
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
 import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
@@ -241,7 +241,10 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)) {
-            return errors.throwIfNullOrUndefined(this.getImportDeclaration(conditionOrModuleSpecifier), "Expected to find an import with the provided condition.");
+            return errors.throwIfNullOrUndefined(
+                this.getImportDeclaration(conditionOrModuleSpecifier),
+                "Expected to find an import with the provided condition."
+            );
         }
 
         getImportDeclarations(): ImportDeclaration[] {
@@ -289,7 +292,10 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
-            return errors.throwIfNullOrUndefined(this.getExportDeclaration(conditionOrModuleSpecifier), "Expected to find an export declaration with the provided condition.");
+            return errors.throwIfNullOrUndefined(
+                this.getExportDeclaration(conditionOrModuleSpecifier),
+                "Expected to find an export declaration with the provided condition."
+            );
         }
 
         getExportDeclarations(): ExportDeclaration[] {
@@ -409,8 +415,9 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                         return;
                     yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
                 }
-                else
+                else {
                     yield declaration;
+                }
 
                 function* getDeclarationsForSymbol(symbol: Symbol | undefined): IterableIterator<Node> {
                     if (symbol == null)

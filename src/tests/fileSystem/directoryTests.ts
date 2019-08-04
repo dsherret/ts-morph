@@ -257,7 +257,8 @@ describe(nameof(Directory), () => {
             ];
 
             const finalFile = project.getSourceFileOrThrow("final.ts");
-            expect(finalFile.getDirectory().getDescendantSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(sourceFiles.map(s => s.getFilePath()).sort());
+            expect(finalFile.getDirectory().getDescendantSourceFiles().map(s => s.getFilePath()).sort())
+                .to.deep.equal(sourceFiles.map(s => s.getFilePath()).sort());
         });
     });
 
@@ -792,7 +793,7 @@ describe(nameof(Directory), () => {
             const dir = project.getDirectoryOrThrow("dir");
             fileSystem.writeFileSync("/dir/otherFile.txt", "test");
             dir.copy("/dir1", { includeUntrackedFiles: false });
-            dir.copy("/dir2", { });
+            dir.copy("/dir2", {});
             dir.copy("/dir3", { includeUntrackedFiles: true });
             project.saveSync();
 
@@ -1166,7 +1167,14 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.copyImmediately), () => {
-        function doTests(copyImmediately: (directory: Directory, toPath: string, options: DirectoryCopyOptions | undefined, doChecks: (err?: any) => void) => void) {
+        function doTests(
+            copyImmediately: (
+                directory: Directory,
+                toPath: string,
+                options: DirectoryCopyOptions | undefined,
+                doChecks: (err?: any) => void
+            ) => void
+        ) {
             it("should copy the entire directory to the new directory", () => {
                 const project = getProject([{ filePath: "/dir/test.ts", text: "" }]);
                 project.saveSync();
@@ -1321,7 +1329,14 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.moveImmediately), () => {
-        function doTests(moveImmediately: (directory: Directory, toPath: string, options: DirectoryMoveOptions | undefined, doChecks: (err?: any) => void) => void) {
+        function doTests(
+            moveImmediately: (
+                directory: Directory,
+                toPath: string,
+                options: DirectoryMoveOptions | undefined,
+                doChecks: (err?: any) => void
+            ) => void
+        ) {
             it("should move the directory to the new directory", () => {
                 const project = getProject([{ filePath: "/dir/test.ts", text: "" }]);
                 project.saveSync();
@@ -1518,7 +1533,7 @@ describe(nameof(Directory), () => {
             directory.createSourceFile("file1.ts", "const t = '';");
             directory.createDirectory("subDir").createSourceFile("file2.ts");
 
-            return {directory, fileSystem};
+            return { directory, fileSystem };
         }
 
         function runChecks(fileSystem: FileSystemHost & CustomFileSystemProps, result: DirectoryEmitResult, outDir: string, declarationDir: string) {
@@ -1604,7 +1619,7 @@ describe(nameof(Directory), () => {
             directory.createSourceFile("file1.ts", "const t = '';");
             directory.createDirectory("subDir").createSourceFile("file2.ts");
 
-            return {directory, fileSystem};
+            return { directory, fileSystem };
         }
 
         function runChecks(fileSystem: FileSystemHost & CustomFileSystemProps, result: DirectoryEmitResult, outDir: string, declarationDir: string) {

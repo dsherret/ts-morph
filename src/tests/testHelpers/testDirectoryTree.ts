@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { SourceFile } from "../../compiler";
 import { Directory } from "../../fileSystem";
 

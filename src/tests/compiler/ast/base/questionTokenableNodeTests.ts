@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, QuestionTokenableNode } from "../../../../compiler";
 import { QuestionTokenableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(QuestionTokenableNode), () => {
     function getInfoWithFirstMember(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
-        return {...result, firstMember: result.firstChild.getMembers()[0] as QuestionTokenableNode };
+        return { ...result, firstMember: result.firstChild.getMembers()[0] as QuestionTokenableNode };
     }
 
     describe(nameof<QuestionTokenableNode>(d => d.hasQuestionToken), () => {

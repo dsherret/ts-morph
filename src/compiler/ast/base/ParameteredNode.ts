@@ -67,7 +67,8 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
         }
 
         getParameterOrThrow(nameOrFindFunction: string | ((declaration: ParameterDeclaration) => boolean)): ParameterDeclaration {
-            return errors.throwIfNullOrUndefined(this.getParameter(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("parameter", nameOrFindFunction));
+            return errors.throwIfNullOrUndefined(this.getParameter(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("parameter", nameOrFindFunction));
         }
 
         getParameters() {

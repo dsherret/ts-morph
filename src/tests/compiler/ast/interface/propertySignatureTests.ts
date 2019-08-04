@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { InterfaceDeclaration, PropertySignature } from "../../../../compiler";
 import { PropertySignatureStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
@@ -60,8 +60,11 @@ describe(nameof(PropertySignature), () => {
         });
 
         it("should remove when it's the last member", () => {
-            doTest("interface Identifier {\n    member: string;\n    member2: string;\n}", "member2",
-                "interface Identifier {\n    member: string;\n}");
+            doTest(
+                "interface Identifier {\n    member: string;\n    member2: string;\n}",
+                "member2",
+                "interface Identifier {\n    member: string;\n}"
+            );
         });
     });
 

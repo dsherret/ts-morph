@@ -1,4 +1,4 @@
-﻿import { QuoteKind } from "../compiler";
+import { QuoteKind } from "../compiler";
 import * as errors from "../errors";
 
 const regExWhitespaceSet = new Set<string>([" ", "\f", "\n", "\r", "\t", "\v", "\u00A0", "\u2028", "\u2029"]);

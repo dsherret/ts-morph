@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { getPosAfterPreviousNonBlankLine } from "../../../manipulation/textSeek";
 
 describe(nameof(getPosAfterPreviousNonBlankLine), () => {

@@ -1,4 +1,4 @@
-﻿import * as errors from "../../errors";
+import * as errors from "../../errors";
 
 /**
  * Verifies to see if an index or negative index exists within a specified length.

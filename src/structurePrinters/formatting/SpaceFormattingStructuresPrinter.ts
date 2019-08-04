@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Printer } from "../Printer";
 
 export class SpaceFormattingStructuresPrinter<T> extends Printer<ReadonlyArray<T>> {

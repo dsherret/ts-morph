@@ -1,4 +1,4 @@
-﻿import { TestInterface } from "./testInterfaces";
+import { TestInterface } from "./testInterfaces";
 
 export class TestClass implements TestInterface {
     name!: string;

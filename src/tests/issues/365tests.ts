@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { SyntaxKind } from "../../typescript";
 import { getInfoFromText } from "../compiler/testHelpers";
 

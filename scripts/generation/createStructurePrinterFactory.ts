@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Manipulation - Creates the StructurePrinterFactory
  * --------------------------------------------------------
  * Automatically maintains this class based on changes in the application.
@@ -39,8 +39,7 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
         }, ...getMethods()]
     });
 
-    sourceFile.insertText(0, writer =>
-        writer.writeLine("// DO NOT EDIT - Automatically maintained by createStructurePrinterFactory.ts"));
+    sourceFile.insertText(0, writer => writer.writeLine("// DO NOT EDIT - Automatically maintained by createStructurePrinterFactory.ts"));
 
     function getMethods() {
         const structurePrinters = ArrayUtils.flatten(Array.from(project.getSourceFileOrThrow("./src/structurePrinters/index.ts")

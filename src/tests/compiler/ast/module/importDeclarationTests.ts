@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ImportDeclaration } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { Project } from "../../../../Project";
@@ -419,9 +419,13 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.insertNamedImports), () => {
-        function doTest(text: string, index: number, structuresOrNames: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction, expected: string,
-            surroundWithSpaces = true)
-        {
+        function doTest(
+            text: string,
+            index: number,
+            structuresOrNames: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction,
+            expected: string,
+            surroundWithSpaces = true
+        ) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             if (!surroundWithSpaces)
                 firstChild._context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
@@ -433,7 +437,8 @@ describe(nameof(ImportDeclaration), () => {
         }
 
         it("should insert named imports when importing for the side effects", () => {
-            doTest(`import "./test";`, 0, ["name", { name: "name", alias: "alias" }, writer => writer.write("name2")], `import { name, name as alias, name2 } from "./test";`);
+            doTest(`import "./test";`, 0, ["name", { name: "name", alias: "alias" }, writer => writer.write("name2")],
+                `import { name, name as alias, name2 } from "./test";`);
         });
 
         it("should insert named imports when a default import exists", () => {
@@ -461,7 +466,8 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should insert with a writer function", () => {
-            doTest(`import { name1 } from "./test";`, 1, writer => writer.writeLine("name2,").write("name3"), `import { name1, name2,\n    name3 } from "./test";`);
+            doTest(`import { name1 } from "./test";`, 1, writer => writer.writeLine("name2,").write("name3"),
+                `import { name1, name2,\n    name3 } from "./test";`);
         });
     });
 
@@ -582,7 +588,7 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should do nothing when empty", () => {
             const code = `import asdf, * as test from "test";`;
-            doTest(code, { }, code);
+            doTest(code, {}, code);
         });
 
         it("should add default when nothing exists", () => {
@@ -622,13 +628,11 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should add named imports when removing a namespace import", () => {
-            doTest(`import * as test from "test";`, { namedImports: [{ name: "asdf" }], namespaceImport: undefined },
-                `import { asdf } from "test";`);
+            doTest(`import * as test from "test";`, { namedImports: [{ name: "asdf" }], namespaceImport: undefined }, `import { asdf } from "test";`);
         });
 
         it("should add namespace import when removing a named import", () => {
-            doTest(`import * as test from "test";`, { namedImports: [{ name: "asdf" }], namespaceImport: undefined },
-                `import { asdf } from "test";`);
+            doTest(`import * as test from "test";`, { namedImports: [{ name: "asdf" }], namespaceImport: undefined }, `import { asdf } from "test";`);
         });
 
         it("should remove default specifying", () => {

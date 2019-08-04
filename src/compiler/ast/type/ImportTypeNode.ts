@@ -1,4 +1,4 @@
-﻿import * as errors from "../../../errors";
+import * as errors from "../../../errors";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { SyntaxKind, ts } from "../../../typescript";
 import { TypeGuards } from "../../../utils";

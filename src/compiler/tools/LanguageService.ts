@@ -8,8 +8,8 @@ import { Node } from "../ast/common";
 import { SourceFile } from "../ast/module";
 import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
-import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo, CodeFixAction,
-    CombinedCodeActions } from "./results";
+import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo,
+    CodeFixAction, CombinedCodeActions } from "./results";
 
 /** Host for implementing custom module and/or type reference directive resolution. */
 export interface ResolutionHost {
@@ -24,7 +24,7 @@ export interface ResolutionHost {
  */
 export type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 
- /** @internal */
+/** @internal */
 export interface LanguageServiceOptions {
     resolutionHost?: ResolutionHost;
 }
@@ -49,7 +49,8 @@ export class LanguageService {
         this._context = context;
 
         let version = 0;
-        const fileExistsSync = (path: string) => this._context.compilerFactory.containsSourceFileAtPath(path) || context.fileSystemWrapper.fileExistsSync(path);
+        const fileExistsSync = (path: string) => this._context.compilerFactory.containsSourceFileAtPath(path)
+            || context.fileSystemWrapper.fileExistsSync(path);
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => context.compilerOptions.get(),
             getNewLine: () => context.manipulationSettings.getNewLineKindAsString(),
@@ -72,8 +73,12 @@ export class LanguageService {
             getDefaultLibFileName: options => {
                 if (this._context.fileSystemWrapper.getFileSystem() instanceof DefaultFileSystemHost)
                     return ts.getDefaultLibFilePath(options);
-                else
-                    return FileUtils.pathJoin(context.fileSystemWrapper.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(options));
+                else {
+                    return FileUtils.pathJoin(
+                        context.fileSystemWrapper.getCurrentDirectory(),
+                        "node_modules/typescript/lib/" + ts.getDefaultLibFileName(options)
+                    );
+                }
             },
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
@@ -82,7 +87,8 @@ export class LanguageService {
                 return this._context.fileSystemWrapper.readFileSync(path, encoding);
             },
             fileExists: fileExistsSync,
-            directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName) || this._context.fileSystemWrapper.directoryExistsSync(dirName),
+            directoryExists: dirName => this._context.compilerFactory.containsDirectoryAtPath(dirName)
+                || this._context.fileSystemWrapper.directoryExistsSync(dirName),
             resolveModuleNames: resolutionHost.resolveModuleNames,
             resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives,
             getResolvedModuleWithFailedLookupLocationsFromCache: resolutionHost.getResolvedModuleWithFailedLookupLocationsFromCache
@@ -224,8 +230,13 @@ export class LanguageService {
         const usePrefixAndSuffixText = options.usePrefixAndSuffixText == null
             ? this._context.manipulationSettings.getUsePrefixAndSuffixTextForRename()
             : options.usePrefixAndSuffixText;
-        const renameLocations = this.compilerObject.findRenameLocations(node._sourceFile.getFilePath(), node.getStart(),
-            options.renameInStrings || false, options.renameInComments || false, usePrefixAndSuffixText) || [];
+        const renameLocations = this.compilerObject.findRenameLocations(
+            node._sourceFile.getFilePath(),
+            node.getStart(),
+            options.renameInStrings || false,
+            options.renameInComments || false,
+            usePrefixAndSuffixText
+        ) || [];
         return renameLocations.map(l => new RenameLocation(this._context, l));
     }
 
@@ -246,7 +257,12 @@ export class LanguageService {
      * @param formatSettings - Format code settings.
      */
     getFormattingEditsForRange(filePath: string, range: [number, number], formatSettings: FormatCodeSettings) {
-        return (this.compilerObject.getFormattingEditsForRange(filePath, range[0], range[1], this._getFilledSettings(formatSettings)) || []).map(e => new TextChange(e));
+        return (this.compilerObject.getFormattingEditsForRange(
+            filePath,
+            range[0],
+            range[1],
+            this._getFilledSettings(formatSettings)
+        ) || []).map(e => new TextChange(e));
     }
 
     /**
@@ -345,7 +361,11 @@ export class LanguageService {
      * @param userPreferences - User preferences for refactoring.
      */
     organizeImports(filePath: string, formatSettings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
-    organizeImports(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}): FileTextChanges[] {
+    organizeImports(
+        filePathOrSourceFile: string | SourceFile,
+        formatSettings: FormatCodeSettings = {},
+        userPreferences: UserPreferences = {}
+    ): FileTextChanges[] {
         const scope: ts.OrganizeImportsScope = {
             type: "file",
             fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
@@ -363,13 +383,24 @@ export class LanguageService {
      * @param actionName - Refactor action name.
      * @param preferences - User preferences for refactoring.
      */
-    getEditsForRefactor(filePathOrSourceFile: string | SourceFile, formatSettings: FormatCodeSettings, positionOrRange: number | { getPos(): number; getEnd(): number; },
-        refactorName: string, actionName: string, preferences: UserPreferences = {}): RefactorEditInfo | undefined
-    {
+    getEditsForRefactor(
+        filePathOrSourceFile: string | SourceFile,
+        formatSettings: FormatCodeSettings,
+        positionOrRange: number | { getPos(): number; getEnd(): number; },
+        refactorName: string,
+        actionName: string,
+        preferences: UserPreferences = {}
+    ): RefactorEditInfo | undefined {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const position = typeof positionOrRange === "number" ? positionOrRange : { pos: positionOrRange.getPos(), end: positionOrRange.getEnd() };
-        const compilerObject = this.compilerObject.getEditsForRefactor(filePath, this._getFilledSettings(formatSettings),
-            position, refactorName, actionName, this._getFilledUserPreferences(preferences));
+        const compilerObject = this.compilerObject.getEditsForRefactor(
+            filePath,
+            this._getFilledSettings(formatSettings),
+            position,
+            refactorName,
+            actionName,
+            this._getFilledUserPreferences(preferences)
+        );
 
         return compilerObject != null ? new RefactorEditInfo(this._context, compilerObject) : undefined;
     }
@@ -403,8 +434,14 @@ export class LanguageService {
         formatOptions: FormatCodeSettings = {}, preferences: UserPreferences = {}): CodeFixAction[]
     {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
-        const compilerResult = this.compilerObject.getCodeFixesAtPosition(filePath, start, end, errorCodes,
-            this._getFilledSettings(formatOptions), this._getFilledUserPreferences(preferences || {}));
+        const compilerResult = this.compilerObject.getCodeFixesAtPosition(
+            filePath,
+            start,
+            end,
+            errorCodes,
+            this._getFilledSettings(formatOptions),
+            this._getFilledUserPreferences(preferences || {})
+        );
 
         return compilerResult.map(compilerObject => new CodeFixAction(this._context, compilerObject));
     }
@@ -421,6 +458,7 @@ export class LanguageService {
     private _getFilledSettings(settings: FormatCodeSettings) {
         if ((settings as any)["_filled"]) // optimization
             return settings;
+
         settings = ObjectUtils.assign(this._context.getFormatCodeSettings(), settings);
         fillDefaultFormatCodeSettings(settings, this._context.manipulationSettings);
         (settings as any)["_filled"] = true;

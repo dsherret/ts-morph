@@ -1,10 +1,15 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ModuleKind, ModuleResolutionKind, ScriptTarget } from "../../typescript";
 import * as tsInternal from "../../typescript/tsInternal";
 
 describe(nameof(tsInternal), () => {
     describe(nameof(tsInternal.getEmitModuleResolutionKind), () => {
-        function doTest(moduleResolution: ModuleResolutionKind | undefined, module: ModuleKind | undefined, target: ScriptTarget | undefined, expectedKind: ModuleResolutionKind) {
+        function doTest(
+            moduleResolution: ModuleResolutionKind | undefined,
+            module: ModuleKind | undefined,
+            target: ScriptTarget | undefined,
+            expectedKind: ModuleResolutionKind
+        ) {
             const moduleResolutionText = moduleResolution == null ? "no module resolution" : ModuleResolutionKind[moduleResolution];
             const moduleText = module == null ? "no module" : ModuleKind[module];
             const scriptTargetText = target == null ? "no target" : ScriptTarget[target];

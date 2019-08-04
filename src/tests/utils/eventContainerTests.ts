@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { EventContainer } from "../../utils";
 
 describe(nameof(EventContainer), () => {

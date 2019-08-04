@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
-import { forEachStructureChild, StructureKind, InterfaceDeclarationStructure, PropertySignatureStructure, ClassDeclarationStructure, Structures } from "../../../structures";
+import { forEachStructureChild, StructureKind, InterfaceDeclarationStructure, PropertySignatureStructure, ClassDeclarationStructure,
+    Structures } from "../../../structures";
 import { getInfoFromText } from "../../compiler/testHelpers";
 
 describe(nameof(forEachStructureChild), () => {

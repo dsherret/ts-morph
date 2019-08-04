@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, Scope } from "../../../../compiler";
 import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";

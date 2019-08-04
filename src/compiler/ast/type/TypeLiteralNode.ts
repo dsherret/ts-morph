@@ -1,4 +1,4 @@
-﻿import { ts } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { TypeElementMemberedNode } from "../base";
 import { TypeNode } from "./TypeNode";
 

@@ -2,8 +2,7 @@ import * as errors from "../../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../../manipulation";
 import { CommaNewLineSeparatedStructuresPrinter, Printer } from "../../../../structurePrinters";
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, ObjectLiteralExpressionPropertyStructures,
-    OptionalKind } from "../../../../structures";
+    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, ObjectLiteralExpressionPropertyStructures, OptionalKind } from "../../../../structures";
 import { SyntaxKind, ts } from "../../../../typescript";
 import { WriterFunction } from "../../../../types";
 import { getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
@@ -29,7 +28,10 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      */
     getPropertyOrThrow(findFunction: (property: ObjectLiteralElementLike) => boolean): ObjectLiteralElementLike;
     getPropertyOrThrow(nameOrFindFunction: string | ((property: ObjectLiteralElementLike) => boolean)): ObjectLiteralElementLike {
-        return errors.throwIfNullOrUndefined(this.getProperty(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("property", nameOrFindFunction));
+        return errors.throwIfNullOrUndefined(
+            this.getProperty(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("property", nameOrFindFunction)
+        );
     }
 
     /**
@@ -46,14 +48,16 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
     getProperty(nameOrFindFunction: string | ((property: ObjectLiteralElementLike) => boolean)): ObjectLiteralElementLike | undefined;
     getProperty(nameOrFindFunction: string | ((property: ObjectLiteralElementLike) => boolean)): ObjectLiteralElementLike | undefined {
         let findFunc: (property: ObjectLiteralElementLike) => boolean;
-        if (typeof nameOrFindFunction === "string")
+        if (typeof nameOrFindFunction === "string") {
             findFunc = prop => {
                 if ((prop as any)[nameof<PropertyAssignment>(o => o.getName)] == null)
                     return false;
                 return (prop as PropertyAssignment).getName() === nameOrFindFunction;
             };
-        else
+        }
+        else {
             findFunc = nameOrFindFunction;
+        }
 
         return this.getProperties().find(findFunc);
     }
@@ -208,7 +212,11 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the shorthand property assignments to insert.
      */
     insertShorthandPropertyAssignments(index: number, structures: ReadonlyArray<OptionalKind<ShorthandPropertyAssignmentStructure>>) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forShorthandPropertyAssignment()) as ShorthandPropertyAssignment[];
+        return this._insertProperty(
+            index,
+            structures,
+            () => this._context.structurePrinterFactory.forShorthandPropertyAssignment()
+        ) as ShorthandPropertyAssignment[];
     }
 
     /* Spread Assignments */
@@ -280,7 +288,11 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the methods to insert.
      */
     insertMethods(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationStructure>>) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient: false })) as MethodDeclaration[];
+        return this._insertProperty(
+            index,
+            structures,
+            () => this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient: false })
+        ) as MethodDeclaration[];
     }
 
     /* Get Accessor Declarations */
@@ -316,7 +328,11 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the get accessors to insert.
      */
     insertGetAccessors(index: number, structures: ReadonlyArray<OptionalKind<GetAccessorDeclarationStructure>>) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: false })) as GetAccessorDeclaration[];
+        return this._insertProperty(
+            index,
+            structures,
+            () => this._context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: false })
+        ) as GetAccessorDeclaration[];
     }
 
     /* Set Accessor Declarations */
@@ -352,7 +368,11 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the set accessors to insert.
      */
     insertSetAccessors(index: number, structures: ReadonlyArray<OptionalKind<SetAccessorDeclarationStructure>>) {
-        return this._insertProperty(index, structures, () => this._context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false })) as SetAccessorDeclaration[];
+        return this._insertProperty(
+            index,
+            structures,
+            () => this._context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false })
+        ) as SetAccessorDeclaration[];
     }
 
     /**

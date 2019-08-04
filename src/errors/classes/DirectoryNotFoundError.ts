@@ -1,4 +1,4 @@
-﻿import { PathNotFoundError } from "./PathNotFoundError";
+import { PathNotFoundError } from "./PathNotFoundError";
 
 export class DirectoryNotFoundError extends PathNotFoundError {
     /** @private */

@@ -79,35 +79,47 @@ describe(nameof(ClassDeclarationStructurePrinter), () => {
 
         describe("implements", () => {
             it("should write implements", () => {
-                doTest({ name: "C", implements: ["Base1", writer => writer.write("Base2")] },
-                    `class C implements Base1, Base2 {\n}`);
+                doTest(
+                    { name: "C", implements: ["Base1", writer => writer.write("Base2")] },
+                    `class C implements Base1, Base2 {\n}`
+                );
             });
 
             it("should write with a writer with queued child indentation", () => {
-                doTest({ name: "C", implements: writer => writer.writeLine("Base1,").write("Base2") },
-                    `class C implements Base1,\n    Base2 {\n}`);
+                doTest(
+                    { name: "C", implements: writer => writer.writeLine("Base1,").write("Base2") },
+                    `class C implements Base1,\n    Base2 {\n}`
+                );
             });
 
             it("should not write if empty", () => {
-                doTest({ name: "C", implements: _ => {} },
-                    `class C {\n}`);
+                doTest(
+                    { name: "C", implements: _ => {} },
+                    `class C {\n}`
+                );
             });
         });
 
         describe("extends", () => {
             it("should write with string", () => {
-                doTest({ name: "C", extends: "Base" },
-                    `class C extends Base {\n}`);
+                doTest(
+                    { name: "C", extends: "Base" },
+                    `class C extends Base {\n}`
+                );
             });
 
             it("should write with writer and queued child indentation", () => {
-                doTest({ name: "C", extends: writer => writer.writeLine("string |").write("number") },
-                    `class C extends string |\n    number {\n}`);
+                doTest(
+                    { name: "C", extends: writer => writer.writeLine("string |").write("number") },
+                    `class C extends string |\n    number {\n}`
+                );
             });
 
             it("should not write if empty", () => {
-                doTest({ name: "C", extends: _ => {} },
-                    `class C {\n}`);
+                doTest(
+                    { name: "C", extends: _ => {} },
+                    `class C {\n}`
+                );
             });
         });
     });

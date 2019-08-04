@@ -1,8 +1,8 @@
 import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
 import { StringUtils, getSyntaxKindName } from "../../../utils";
-import { CompilerExtendedComment, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement,
-    CompilerCommentObjectLiteralElement, CompilerCommentEnumMember, CommentNodeKind } from "../comment/CompilerComments";
+import { CompilerExtendedComment, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement, CompilerCommentObjectLiteralElement,
+    CompilerCommentEnumMember, CommentNodeKind } from "../comment/CompilerComments";
 
 enum CommentKind {
     SingleLine,
@@ -176,7 +176,8 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
                     else
                         lineEnd = StringUtils.getLineEndFromPos(sourceFileText, pos);
                 }
-                else if (!StringUtils.isWhitespace(sourceFileText[pos]) && sourceFileText[pos] !== ",") // skip any trailing comments too
+                // skip any trailing comments too
+                else if (!StringUtils.isWhitespace(sourceFileText[pos]) && sourceFileText[pos] !== ",")
                     return;
                 else
                     pos++;

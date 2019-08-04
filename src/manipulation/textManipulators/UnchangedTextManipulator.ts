@@ -1,4 +1,4 @@
-﻿import { TextManipulator } from "./TextManipulator";
+import { TextManipulator } from "./TextManipulator";
 
 export class UnchangedTextManipulator implements TextManipulator {
     getNewText(inputText: string) {

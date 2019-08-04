@@ -1,3 +1,3 @@
-﻿export interface PropertyNameableNodeStructure {
+export interface PropertyNameableNodeStructure {
     name?: string;
 }

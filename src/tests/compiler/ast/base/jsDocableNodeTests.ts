@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, JSDocableNode, Node, VariableStatement } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { JSDocableNodeStructure, JSDocStructure, OptionalKind } from "../../../../structures";
@@ -53,9 +53,13 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof<JSDocableNode>(n => n.insertJsDocs), () => {
-        function doTest(startCode: string, insertIndex: number, structures: (OptionalKind<JSDocStructure> | string | WriterFunction)[],
-            expectedCode: string, syntaxKind = SyntaxKind.FunctionDeclaration)
-        {
+        function doTest(
+            startCode: string,
+            insertIndex: number,
+            structures: (OptionalKind<JSDocStructure> | string | WriterFunction)[],
+            expectedCode: string,
+            syntaxKind = SyntaxKind.FunctionDeclaration
+        ) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant(startCode, syntaxKind);
             const result = (descendant as any as JSDocableNode).insertJsDocs(insertIndex, structures);
             expect(result.length).to.equal(structures.length);
@@ -91,8 +95,8 @@ describe(nameof(JSDocableNode), () => {
 
         describe("PropertyDeclaration", () => {
             it("should add a js doc to a property declaration", () => {
-                doTest("class C {\n    prop;\n}", 0, [{ description: "Testing" }],
-                    "class C {\n    /**\n     * Testing\n     */\n    prop;\n}", SyntaxKind.PropertyDeclaration);
+                doTest("class C {\n    prop;\n}", 0, [{ description: "Testing" }], "class C {\n    /**\n     * Testing\n     */\n    prop;\n}",
+                    SyntaxKind.PropertyDeclaration);
             });
         });
     });
@@ -155,8 +159,7 @@ describe(nameof(JSDocableNode), () => {
         });
 
         it("should replace existing", () => {
-            doTest("/** Test */\nclass Identifier {}", { docs: [{ description: "New" }] },
-                "/**\n * New\n */\nclass Identifier {}");
+            doTest("/** Test */\nclass Identifier {}", { docs: [{ description: "New" }] }, "/**\n * New\n */\nclass Identifier {}");
         });
 
         it("should remove existing when structure specifies a value", () => {

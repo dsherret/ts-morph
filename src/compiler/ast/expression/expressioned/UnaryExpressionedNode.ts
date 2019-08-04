@@ -3,7 +3,7 @@ import { ts } from "../../../../typescript";
 import { Node } from "../../common";
 import { UnaryExpression } from "../UnaryExpression";
 
-export type UnaryExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.UnaryExpression}>;
+export type UnaryExpressionedNodeExtensionType = Node<ts.Node & { expression: ts.UnaryExpression; }>;
 
 export interface UnaryExpressionedNode {
     /**

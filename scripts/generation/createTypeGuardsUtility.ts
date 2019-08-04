@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code generation: Create TypeGuards Utility
  * ------------------------------------------
  * This code creates the TypeGurads class found in the utils folder.
@@ -38,8 +38,8 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         name: `is${method.name}`,
         isStatic: true,
         docs: [{
-            description: `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.\r\n` +
-                "@param node - Node to check."
+            description: `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.\r\n`
+                + "@param node - Node to check."
         }],
         typeParameters: method.isMixin ? [{ name: "T", constraint: "compiler.Node" }] : [],
         parameters: [{ name: "node", type: method.isMixin ? "T" : "compiler.Node" }],
@@ -205,7 +205,9 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             returnType: `node is compiler.CommentObjectLiteralElement`,
             parameters: [{ name: "node", type: "compiler.Node" }],
             statements: [writer => {
-                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;`);
+                writer.writeLine(
+                    `return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;`
+                );
             }]
         }, {
             docs: ["Gets if the provided node is a CommentEnumMember."],

@@ -1,4 +1,4 @@
-﻿import { InterfaceDeclaration, SyntaxKind, ClassDeclaration, TypeGuards, PropertyDeclaration, PropertySignature } from "ts-morph";
+import { InterfaceDeclaration, SyntaxKind, ClassDeclaration, TypeGuards, PropertyDeclaration, PropertySignature } from "ts-morph";
 import { Memoize } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 import { WrappedNode } from "../tsMorph";
@@ -57,8 +57,9 @@ export class TsNode {
                 }
                 return result;
             }
-            else
+            else {
                 return node.getProperties();
+            }
         }
     }
 }

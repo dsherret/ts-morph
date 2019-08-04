@@ -2,7 +2,8 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Node, SourceFile } from "../../compiler";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards, StringUtils } from "../../utils";
-import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromArray, verifyAndGetIndex, appendCommaToText, getNodesToReturn } from "../helpers";
+import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromArray, verifyAndGetIndex, appendCommaToText,
+    getNodesToReturn } from "../helpers";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { InsertionTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
@@ -26,19 +27,18 @@ export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions
     const { insertPos, newText, parent } = opts;
 
     // todo: this should only forget the existing node if the kind changes
-    doManipulation(parent._sourceFile,
-        new InsertionTextManipulator({
-            insertPos,
-            newText,
-            replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
-        }), new NodeHandlerFactory().getForParentRange({
-            parent,
-            start: insertPos,
-            end: insertPos + newText.length,
-            replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength,
-            replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes,
-            customMappings: opts.customMappings
-        }));
+    doManipulation(parent._sourceFile, new InsertionTextManipulator({
+        insertPos,
+        newText,
+        replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
+    }), new NodeHandlerFactory().getForParentRange({
+        parent,
+        start: insertPos,
+        end: insertPos + newText.length,
+        replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength,
+        replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes,
+        customMappings: opts.customMappings
+    }));
 }
 
 export interface InsertIntoTextRangeOptions {
@@ -53,15 +53,14 @@ export interface InsertIntoTextRangeOptions {
 export function insertIntoTextRange(opts: InsertIntoTextRangeOptions) {
     const { insertPos, newText, sourceFile } = opts;
 
-    doManipulation(sourceFile,
-        new InsertionTextManipulator({
-            insertPos,
-            newText
-        }), new NodeHandlerFactory().getForRange({
-            sourceFile,
-            start: insertPos,
-            end: insertPos + newText.length
-        }));
+    doManipulation(sourceFile, new InsertionTextManipulator({
+        insertPos,
+        newText
+    }), new NodeHandlerFactory().getForRange({
+        sourceFile,
+        start: insertPos,
+        end: insertPos + newText.length
+    }));
 }
 
 export interface InsertIntoCommaSeparatedNodesOptions {
@@ -128,8 +127,9 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
             prependSeparator();
             appendSeparator();
         }
-        else
+        else {
             appendIndentation();
+        }
 
         insertIntoParentTextRange({
             insertPos: parent.getPos(),

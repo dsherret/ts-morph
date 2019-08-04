@@ -1,4 +1,4 @@
-﻿export function getPosAtStartOfLineOrNonWhitespace(fullText: string, pos: number) {
+export function getPosAtStartOfLineOrNonWhitespace(fullText: string, pos: number) {
     while (pos > 0) {
         pos--;
 

@@ -20,13 +20,11 @@ describe(nameof(DecoratorStructurePrinter), () => {
     describe(nameof<DecoratorStructurePrinter>(p => p.printText), () => {
         describe("arguments", () => {
             it("should write", () => {
-                doTest({ name: "dec", arguments: ["1", writer => writer.write("2")] },
-                    `@dec(1, 2)`);
+                doTest({ name: "dec", arguments: ["1", writer => writer.write("2")] }, `@dec(1, 2)`);
             });
 
             it("should write with a writer with queued child indentation", () => {
-                doTest({ name: "dec", arguments: writer => writer.writeLine("1,").write("2") },
-                    `@dec(1,\n    2)`);
+                doTest({ name: "dec", arguments: writer => writer.writeLine("1,").write("2") }, `@dec(1,\n    2)`);
             });
         });
     });

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../compiler";
 import { VariableDeclarationStructure, VariableStatementStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { getInfoFromText, fillStructures } from "../../testHelpers";
@@ -80,13 +80,11 @@ describe(nameof(VariableStatement), () => {
         });
 
         it("should insert declarations in the middle", () => {
-            doTest("var v1, v4;", 1, [{ name: "v2" }, { name: "v3", type: "number", initializer: "5" }],
-                "var v1, v2, v3: number = 5, v4;");
+            doTest("var v1, v4;", 1, [{ name: "v2" }, { name: "v3", type: "number", initializer: "5" }], "var v1, v2, v3: number = 5, v4;");
         });
 
         it("should insert declarations at the end", () => {
-            doTest("var v1;", 1, [{ name: "v2" }, { name: "v3" }],
-                "var v1, v2, v3;");
+            doTest("var v1;", 1, [{ name: "v2" }, { name: "v3" }], "var v1, v2, v3;");
         });
     });
 

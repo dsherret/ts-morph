@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { SourceFile } from "../../../compiler";
 import * as errors from "../../../errors";
 import { Project } from "../../../Project";
@@ -57,9 +57,9 @@ describe(nameof(createWrappedNode), () => {
     it("should throw when getting the type and no type checker was provided", () => {
         const compilerSourceFile = ts.createSourceFile("file.ts", "let s = '';", ScriptTarget.ES2016, true);
         const wrappedSourceFile = createWrappedNode(compilerSourceFile) as SourceFile;
-        const expectedMessage = "A type checker is required for this operation. This might occur when manipulating or " +
-            "getting type information from a node that was not added to a Project object and created via createWrappedNode. " +
-            "Please submit a bug report if you don't believe a type checker should be required for this operation.";
+        const expectedMessage = "A type checker is required for this operation. This might occur when manipulating or "
+            + "getting type information from a node that was not added to a Project object and created via createWrappedNode. "
+            + "Please submit a bug report if you don't believe a type checker should be required for this operation.";
 
         expect(() => wrappedSourceFile.getVariableDeclarationOrThrow("s").getType()).to.throw(errors.InvalidOperationError, expectedMessage);
     });

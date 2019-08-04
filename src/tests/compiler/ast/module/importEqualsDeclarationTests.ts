@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ImportEqualsDeclaration } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { SyntaxKind } from "../../../../typescript";
@@ -110,7 +110,8 @@ describe(nameof(ImportEqualsDeclaration), () => {
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
             const classSourceFile = project.createSourceFile("class.ts", `export class Class {}`);
 
-            expect(mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ImportEqualsDeclaration).getExternalModuleReferenceSourceFile()).to.equal(classSourceFile);
+            expect(mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ImportEqualsDeclaration).getExternalModuleReferenceSourceFile())
+                .to.equal(classSourceFile);
         });
 
         it("should return undefined when the referenced file doesn't exist", () => {
@@ -134,14 +135,16 @@ describe(nameof(ImportEqualsDeclaration), () => {
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
             const classSourceFile = project.createSourceFile("class.ts", `export class Class {}`);
 
-            expect(mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ImportEqualsDeclaration).getExternalModuleReferenceSourceFileOrThrow()).to.equal(classSourceFile);
+            expect(mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ImportEqualsDeclaration).getExternalModuleReferenceSourceFileOrThrow())
+                .to.equal(classSourceFile);
         });
 
         it("should throw when doesn't have an external module reference", () => {
             const project = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = Namespace.Test;`);
 
-            expect(() => mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ImportEqualsDeclaration).getExternalModuleReferenceSourceFileOrThrow()).to.throw();
+            expect(() => mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ImportEqualsDeclaration).getExternalModuleReferenceSourceFileOrThrow())
+                .to.throw();
         });
     });
 });

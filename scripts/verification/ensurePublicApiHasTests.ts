@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Verification - Ensure Public API Has Tests
  * -----------------------------------------------
  * This code verification checks that all methods and properties
@@ -28,7 +28,9 @@ export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem:
             || filePath.endsWith("src/utils/TypeGuards.ts")
             || filePath.endsWith("src/compiler/kindToNodeMappings.ts")
             || filePath.endsWith("src/codeBlockWriter/code-block-writer.ts"))
+        {
             continue;
+        }
 
         for (const node of dec.getProperties())
             tryAddNode(node);
@@ -49,11 +51,12 @@ export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem:
         const referencingNodes = node.findReferencesAsNodes();
         const testsReference = referencingNodes.some(n => n.getSourceFile().getFilePath().includes("/src/tests"));
 
-        if (!testsReference)
+        if (!testsReference) {
             addProblem({
                 filePath: node.getSourceFile().getFilePath(),
                 lineNumber: node.getStartLineNumber(),
                 message: `Node "${TypeGuards.hasName(node) ? node.getName() : node.getText()}" is not referenced in the tests`
             });
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import * as errors from "../../../errors";
 import { FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "../../../fileSystem";
 import { TsConfigResolver } from "../../../utils";
@@ -26,7 +26,10 @@ describe(nameof(TsConfigResolver), () => {
         });
 
         it("should get the compiler options plus the defaults when providing some", () => {
-            const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+            const host = testHelpers.getFileSystemHostWithFiles([{
+                filePath: "tsconfig.json",
+                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
+            }]);
             expect(getCompilerOptions(host)).to.deep.equal({ rootDir: "/test", target: 1, configFilePath: "/tsconfig.json" });
         });
 
@@ -53,16 +56,19 @@ describe(nameof(TsConfigResolver), () => {
                 filePath: "tsconfig.json",
                 text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
             }, {
-                filePath: "main.ts", text: ""
+                filePath: "main.ts",
+                text: ""
             }]);
             expect(getErrors(host)).to.deep.equal([]);
         });
 
         it("should get the error when specifying an invalid compiler option", () => {
             const host = testHelpers.getFileSystemHostWithFiles([{
-                filePath: "tsconfig.json", text: `{ "compilerOptions": { "target": "FUN" } }`
+                filePath: "tsconfig.json",
+                text: `{ "compilerOptions": { "target": "FUN" } }`
             }, {
-                filePath: "main.ts", text: ""
+                filePath: "main.ts",
+                text: ""
             }]);
             expect(getErrors(host).length).to.equal(1);
         });

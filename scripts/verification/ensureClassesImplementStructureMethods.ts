@@ -22,11 +22,12 @@ export function ensureClassesImplementStructureMethods(inspector: TsMorphInspect
     }
 
     function checkHasMethod(node: WrappedNode, name: string) {
-        if (!node.hasMethod(name))
+        if (!node.hasMethod(name)) {
             addProblem({
                 filePath: node.getFilePath(),
                 lineNumber: node.getStartLineNumber(),
                 message: `${node.getName()} does not have a .${name}() function.`
             });
+        }
     }
 }

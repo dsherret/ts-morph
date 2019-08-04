@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { getEndIndexFromArray } from "../../manipulation";
 
 describe(nameof(getEndIndexFromArray), () => {

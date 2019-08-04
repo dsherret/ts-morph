@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../../../codeBlockWriter";
+import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { WriterFunction } from "../../../../types";
 import { printTextFromStringOrWriter } from "../../../../utils";
 
@@ -7,10 +7,11 @@ import { printTextFromStringOrWriter } from "../../../../utils";
  */
 export function getBodyText(writer: CodeBlockWriter, textOrWriterFunction: string | WriterFunction) {
     writer.newLineIfLastNot();
-    if (typeof textOrWriterFunction !== "string" || textOrWriterFunction.length > 0)
+    if (typeof textOrWriterFunction !== "string" || textOrWriterFunction.length > 0) {
         writer.indentBlock(() => {
             printTextFromStringOrWriter(writer, textOrWriterFunction);
         });
+    }
     writer.newLineIfLastNot();
     writer.write(""); // write last line's indentation
     return writer.toString();

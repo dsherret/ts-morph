@@ -5,7 +5,7 @@ import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 import { Expression } from "../Expression";
 
-export type ExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.Expression}>;
+export type ExpressionedNodeExtensionType = Node<ts.Node & { expression: ts.Expression; }>;
 
 export interface ExpressionedNode {
     /**

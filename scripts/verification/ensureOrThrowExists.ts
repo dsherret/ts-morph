@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Verification - Ensure "OrThrow" exists.
  * --------------------------------------------
  * This code verification goes through all the classes and interfaces in the compiler directory and checks to find all the
@@ -19,12 +19,13 @@ export function ensureOrThrowExists(inspector: TsMorphInspector, addProblem: (pr
                 continue;
 
             const orThrowMethod = c.getInstanceMethod(method.getName() + "OrThrow");
-            if (orThrowMethod == null && !isIgnoredMethod(c, method))
+            if (orThrowMethod == null && !isIgnoredMethod(c, method)) {
                 addProblem({
                     filePath: c.getSourceFile().getFilePath(),
                     lineNumber: method.getStartLineNumber(),
                     message: `Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`
                 });
+            }
         }
     }
 
@@ -34,12 +35,13 @@ export function ensureOrThrowExists(inspector: TsMorphInspector, addProblem: (pr
                 continue;
 
             const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
-            if (orThrowMethod == null && !isIgnoredMethod(i, method))
+            if (orThrowMethod == null && !isIgnoredMethod(i, method)) {
                 addProblem({
                     filePath: i.getSourceFile().getFilePath(),
                     lineNumber: method.getStartLineNumber(),
                     message: `Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`
                 });
+            }
         }
     }
 }

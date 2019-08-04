@@ -1,3 +1,3 @@
-﻿export interface QuestionTokenableNodeStructure {
+export interface QuestionTokenableNodeStructure {
     hasQuestionToken?: boolean;
 }

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { NamespaceDeclaration, StatementedNode, Node, NamespaceDeclarationKind } from "../../../../../compiler";
 import * as errors from "../../../../../errors";
 import { NamespaceDeclarationStructure, StructureKind } from "../../../../../structures";
@@ -59,10 +59,14 @@ describe(nameof(StatementedNode), () => {
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
 
-            doTest("", 0, [structure],
-                "/**\n * Test\n */\nexport module n {\n" +
-                "    class C {\n    }\n\n    console.log('here');\n" +
-                "}\n");
+            doTest(
+                "",
+                0,
+                [structure],
+                "/**\n * Test\n */\nexport module n {\n"
+                    + "    class C {\n    }\n\n    console.log('here');\n"
+                    + "}\n"
+            );
         });
 
         it("should insert an ambient method on a class when inserting a namespace with a class into an ambient module", () => {
@@ -77,8 +81,9 @@ describe(nameof(StatementedNode), () => {
                 }]
             }]);
 
-            expect(sourceFile.getFullText()).to.equal("declare module Namespace {\n    namespace Namespace {\n        class Identifier {\n" +
-                "            myMethod();\n        }\n    }\n}\n");
+            expect(sourceFile.getFullText())
+                .to.equal("declare module Namespace {\n    namespace Namespace {\n        class Identifier {\n"
+                    + "            myMethod();\n        }\n    }\n}\n");
         });
 
         it("should insert a global module", () => {
@@ -110,8 +115,8 @@ describe(nameof(StatementedNode), () => {
         it("should throw when specifying quotes and a namespace declaration kind of namespace", () => {
             const { sourceFile } = getInfoFromText("");
             expect(() => sourceFile.insertNamespaces(0, [{ name: `"Identifier"`, declarationKind: NamespaceDeclarationKind.Namespace }]))
-                .to.throw(errors.InvalidOperationError, `Cannot print a namespace with quotes for namespace with name "Identifier". ` +
-                    `Use NamespaceDeclarationKind.Module instead.`);
+                .to.throw(errors.InvalidOperationError, `Cannot print a namespace with quotes for namespace with name "Identifier". `
+                    + `Use NamespaceDeclarationKind.Module instead.`);
         });
     });
 

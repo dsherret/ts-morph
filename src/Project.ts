@@ -68,16 +68,21 @@ export class Project {
         const fileSystemWrapper = new FileSystemWrapper(fileSystem);
 
         // get tsconfig info
-        const tsConfigResolver = options.tsConfigFilePath == null ? undefined : new TsConfigResolver(fileSystemWrapper, options.tsConfigFilePath, getEncoding());
+        const tsConfigResolver = options.tsConfigFilePath == null
+            ? undefined
+            : new TsConfigResolver(fileSystemWrapper, options.tsConfigFilePath, getEncoding());
         const compilerOptions = getCompilerOptions();
 
         // initialize the compiler resolution host
-        const resolutionHost = !options.resolutionHost ? undefined : options.resolutionHost(this.getModuleResolutionHost(), () => {
-            if (this._context == null)
-                throw new errors.InvalidOperationError("Cannot get the compiler options until the project has initialized. " +
-                    "Please ensure `getCompilerOptions` is called within the functions of the resolution host.");
-            return this._context.compilerOptions.get();
-        });
+        const resolutionHost = !options.resolutionHost
+            ? undefined
+            : options.resolutionHost(this.getModuleResolutionHost(), () => {
+                if (this._context == null) {
+                    throw new errors.InvalidOperationError("Cannot get the compiler options until the project has initialized. "
+                        + "Please ensure `getCompilerOptions` is called within the functions of the resolution host.");
+                }
+                return this._context.compilerOptions.get();
+            });
 
         // setup context
         this._context = new ProjectContext(this, fileSystemWrapper, compilerOptions, { createLanguageService: true, resolutionHost });
@@ -166,8 +171,7 @@ export class Project {
      */
     addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath,
-            { ...options, markInProject: true });
+        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath, { ...options, markInProject: true });
     }
 
     /**
@@ -180,8 +184,7 @@ export class Project {
      */
     addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}): Directory {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addExistingDirectory(dirPath,
-            { ...options, markInProject: true });
+        return this._context.directoryCoordinator.addExistingDirectory(dirPath, { ...options, markInProject: true });
     }
 
     /**
@@ -290,9 +293,12 @@ export class Project {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions): SourceFile {
-        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "",
-            { ...(options || {}), markInProject: true });
+    createSourceFile(
+        filePath: string,
+        sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
+        options?: SourceFileCreateOptions
+    ): SourceFile {
+        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", { ...(options || {}), markInProject: true });
     }
 
     /**
@@ -328,11 +334,13 @@ export class Project {
                 const errorFileNameOrPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(fileNameOrPath);
                 throw new errors.InvalidOperationError(`Could not find source file in project at the provided path: ${errorFileNameOrPath}`);
             }
-            else
+            else {
                 throw new errors.InvalidOperationError(`Could not find source file in project with the provided file name: ${fileNameOrSearchFunction}`);
+            }
         }
-        else
+        else {
             throw new errors.InvalidOperationError(`Could not find source file in project based on the provided condition.`);
+        }
     }
 
     /**

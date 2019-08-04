@@ -1,4 +1,4 @@
-﻿import { SourceFile } from "../../compiler";
+import { SourceFile } from "../../compiler";
 
 export function isBlankLineAtPos(sourceFile: SourceFile, pos: number) {
     const fullText = sourceFile.getFullText();

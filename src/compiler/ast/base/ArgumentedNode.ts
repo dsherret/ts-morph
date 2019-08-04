@@ -1,4 +1,4 @@
-﻿import * as errors from "../../../errors";
+import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, removeCommaSeparatedChild, verifyAndGetIndex } from "../../../manipulation";
 import { Constructor, WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";

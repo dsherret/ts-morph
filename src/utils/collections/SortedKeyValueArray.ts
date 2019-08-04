@@ -1,4 +1,4 @@
-﻿import { ArrayUtils } from "../ArrayUtils";
+import { ArrayUtils } from "../ArrayUtils";
 import { Comparer, PropertyComparer, ComparerToStoredComparer, PropertyStoredComparer } from "../comparers";
 
 export class SortedKeyValueArray<TKey, TValue> {

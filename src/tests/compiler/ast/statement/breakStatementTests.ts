@@ -30,11 +30,10 @@ describe(nameof(BreakStatement), () => {
     describe(nameof<BreakStatement>(n => n.getLabelOrThrow), () => {
         function doTest(text: string, expectedText?: string) {
             const breakStatement = getBreakStatement(text);
-            if (expectedText == null) {
+            if (expectedText == null)
                 expect(() => breakStatement.getLabelOrThrow()).to.throw();
-            } else {
+            else
                 expect(breakStatement.getLabelOrThrow().getText()).to.equal(expectedText);
-            }
         }
 
         it("should get the correct label", () => {

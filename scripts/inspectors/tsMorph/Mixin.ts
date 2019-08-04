@@ -1,4 +1,4 @@
-﻿import { InterfaceDeclaration, SyntaxKind, TypeGuards } from "ts-morph";
+import { InterfaceDeclaration, SyntaxKind, TypeGuards } from "ts-morph";
 import { Memoize, ArrayUtils } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 

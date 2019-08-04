@@ -118,8 +118,8 @@ export class Symbol {
      * Gets the symbol declarations.
      */
     getDeclarations(): Node[] {
-        return (this.compilerSymbol.declarations || []).map(d =>
-            this._context.compilerFactory.getNodeFromCompilerNode(d, this._context.compilerFactory.getSourceFileForNode(d)));
+        return (this.compilerSymbol.declarations || [])
+            .map(d => this._context.compilerFactory.getNodeFromCompilerNode(d, this._context.compilerFactory.getSourceFileForNode(d)));
     }
 
     /**

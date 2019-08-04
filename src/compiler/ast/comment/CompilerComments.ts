@@ -15,7 +15,14 @@ export abstract class CompilerExtendedComment implements ts.Node {
     private _sourceFile: ts.SourceFile;
 
     /** @private */
-    constructor(fullStart: number, pos: number, end: number, kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia, sourceFile: ts.SourceFile, parent: ts.Node) {
+    constructor(
+        fullStart: number,
+        pos: number,
+        end: number,
+        kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia,
+        sourceFile: ts.SourceFile,
+        parent: ts.Node
+    ) {
         this._fullStart = fullStart;
         this._start = pos; // pos and start are the same for comments
         this._sourceFile = sourceFile;

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Event container subscription type
  */
 export type EventContainerSubscription<EventArgType> = (arg: EventArgType) => void;

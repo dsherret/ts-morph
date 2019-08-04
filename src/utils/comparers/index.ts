@@ -1,4 +1,4 @@
-﻿export * from "./Comparer";
+export * from "./Comparer";
 export * from "./ComparerToStoredComparer";
 export * from "./LocaleStringComparer";
 export * from "./PropertyComparer";

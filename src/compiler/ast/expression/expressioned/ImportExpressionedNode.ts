@@ -3,7 +3,7 @@ import { ts } from "../../../../typescript";
 import { Node } from "../../common";
 import { ImportExpression } from "../ImportExpression";
 
-export type ImportExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.ImportExpression}>;
+export type ImportExpressionedNodeExtensionType = Node<ts.Node & { expression: ts.ImportExpression; }>;
 
 export interface ImportExpressionedNode {
     /**

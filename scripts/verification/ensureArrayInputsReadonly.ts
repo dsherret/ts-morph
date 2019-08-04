@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Verification - Ensure Array Inputs Readonly
  * ------------------------------------------------
  * This code verification ensures the inputs for the public API

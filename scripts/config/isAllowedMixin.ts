@@ -1,4 +1,4 @@
-﻿export function isAllowedMixin(name: string) {
+export function isAllowedMixin(name: string) {
     switch (name) {
         case "ModifierableNode":
         case "NamedNode":

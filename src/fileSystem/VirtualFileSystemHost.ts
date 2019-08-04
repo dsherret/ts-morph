@@ -1,4 +1,4 @@
-﻿import * as errors from "../errors";
+import * as errors from "../errors";
 import { FileUtils, KeyValueCache, matchGlobs } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 
@@ -129,8 +129,9 @@ export class VirtualFileSystemHost implements FileSystemHost {
                 moveDirectory(descendantDirPath, FileUtils.pathJoin(destPath, relativePath));
             }
         }
-        else
+        else {
             throw new errors.PathNotFoundError(srcPath);
+        }
     }
 
     copy(srcPath: string, destPath: string) {
@@ -153,8 +154,9 @@ export class VirtualFileSystemHost implements FileSystemHost {
                 this._copyDirInternal(descendantDirPath, FileUtils.pathJoin(destPath, relativePath));
             }
         }
-        else
+        else {
             throw new errors.PathNotFoundError(srcPath);
+        }
     }
 
     private _copyDirInternal(from: string, to: string) {
@@ -203,9 +205,8 @@ export class VirtualFileSystemHost implements FileSystemHost {
         return matchGlobs(allFilePaths, patterns, this.getCurrentDirectory());
 
         function* getAllFilePaths(directories: IterableIterator<VirtualDirectory>) {
-            for (const dir of directories) {
+            for (const dir of directories)
                 yield* dir.files.getKeys();
-            }
         }
     }
 

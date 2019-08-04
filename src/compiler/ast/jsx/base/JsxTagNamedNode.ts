@@ -1,4 +1,4 @@
-﻿import { Constructor } from "../../../../types";
+import { Constructor } from "../../../../types";
 import { ts } from "../../../../typescript";
 import { JsxTagNamedNodeStructure } from "../../../../structures";
 import { callBaseSet } from "../../callBaseSet";

@@ -5,10 +5,8 @@ import { getInfoFromText } from "../../testHelpers";
 
 function getCaseBlock(text: string) {
     const obj = getInfoFromText(text);
-    const caseBlock = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CaseBlock)
-    ) as CaseBlock;
-    return {...obj, caseBlock};
+    const caseBlock = (obj.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CaseBlock)) as CaseBlock;
+    return { ...obj, caseBlock };
 }
 
 describe(nameof(CaseBlock), () => {

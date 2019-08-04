@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code generation: Create "get structure" functions
  * -------------------------------------------------
  * This file generations the functions found in getStructureFunctions.ts
@@ -18,7 +18,7 @@ import { Structure } from "../inspectors";
 export function createGetStructureFunctions(structures: Structure[]) {
     const writer = new CodeBlockWriter({ newLine: "\r\n" });
 
-    writer.writeLine("/* tslint:disable */");
+    writer.writeLine("/* dprint:ignoreFile */");
     writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: yarn code-generate").newLine();
     writer.writeLine(`import * as compiler from "../../compiler";`);
     writer.writeLine(`import * as structures from "../../structures";`);
@@ -29,6 +29,8 @@ export function createGetStructureFunctions(structures: Structure[]) {
         writer.blankLineIfLastNot();
         write(writer, structure);
     }
+
+    writer.newLineIfLastNot();
 
     fs.writeFileSync(path.join(rootFolder, "src/manipulation/helpers/getStructureFunctions.ts"), writer.toString(), { encoding: "utf-8" });
 }

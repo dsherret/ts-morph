@@ -12,7 +12,11 @@ describe(nameof(NamedImportExportSpecifierStructurePrinter), () => {
     // todo: more tests
 
     describe(nameof<NamedImportExportSpecifierStructurePrinter>(p => p.printText), () => {
-        function doTest(structure: OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>, expectedOutput: string, options: Options = {}) {
+        function doTest(
+            structure: OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>,
+            expectedOutput: string,
+            options: Options = {}
+        ) {
             const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
             factory.forNamedImportExportSpecifier().printText(writer, structure);
             expect(writer.toString()).to.equal(expectedOutput);
@@ -32,7 +36,11 @@ describe(nameof(NamedImportExportSpecifierStructurePrinter), () => {
     });
 
     describe(nameof<NamedImportExportSpecifierStructurePrinter>(p => p.printTextsWithBraces), () => {
-        function doTest(structures: (OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>)[], expectedOutput: string, options: Options = {}) {
+        function doTest(
+            structures: (OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>)[],
+            expectedOutput: string,
+            options: Options = {}
+        ) {
             const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
             factory.forNamedImportExportSpecifier().printTextsWithBraces(writer, structures);
             expect(writer.toString()).to.equal(expectedOutput);

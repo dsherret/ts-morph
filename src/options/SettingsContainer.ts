@@ -1,4 +1,4 @@
-﻿import { EventContainer, ObjectUtils } from "../utils";
+import { EventContainer, ObjectUtils } from "../utils";
 
 export abstract class SettingsContainer<T extends object> {
     /** @internal */

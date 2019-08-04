@@ -3,7 +3,8 @@ import { ParameterDeclarationStructure, ParameterDeclarationSpecificStructure, S
 import { WriterFunction } from "../../../types";
 import { ts, SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
-import { BindingNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode } from "../base";
+import { BindingNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode,
+    TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -49,8 +50,9 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
                 newText: "..."
             });
         }
-        else
+        else {
             removeChildren({ children: [this.getDotDotDotToken()!] });
+        }
 
         return this;
     }

@@ -2,8 +2,8 @@ import * as errors from "../../../errors";
 import { removeChildren, insertIntoParentTextRange } from "../../../manipulation";
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { AmbientableNode, BodiedNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode,
-    UnwrappableNode, ModuledNode } from "../base";
+import { AmbientableNode, BodiedNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode, UnwrappableNode,
+    ModuledNode } from "../base";
 import { TypeGuards } from "../../../utils";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
@@ -46,8 +46,11 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      */
     rename(newName: string) {
         const nameNodes = this.getNameNodes();
-        if (nameNodes.length > 1)
-            throw new errors.NotSupportedError(`Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`);
+        if (nameNodes.length > 1) {
+            throw new errors.NotSupportedError(
+                `Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`
+            );
+        }
         if (newName.indexOf(".") >= 0)
             throw new errors.NotSupportedError(`Cannot rename a namespace name to a name containing a period.`);
         if (newName !== "global")
@@ -96,23 +99,26 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
 
             this.getNameNode().replaceWithText("global");
 
-            if (declarationKindKeyword != null)
+            if (declarationKindKeyword != null) {
                 removeChildren({
                     children: [declarationKindKeyword],
                     removeFollowingNewLines: true,
                     removeFollowingSpaces: true
                 });
-        } else {
+            }
+        }
+        else {
             const declarationKindKeyword = this.getDeclarationKindKeyword();
 
             if (declarationKindKeyword != null)
                 declarationKindKeyword.replaceWithText(kind);
-            else
+            else {
                 insertIntoParentTextRange({
                     parent: this,
                     insertPos: this.getNameNode().getStart(),
                     newText: kind + " "
                 });
+            }
         }
 
         return this;
@@ -132,9 +138,8 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets the namespace or module keyword or returns undefined if it's global.
      */
     getDeclarationKindKeyword() {
-        const keyword = this.getFirstChild(child =>
-            child.getKind() === SyntaxKind.NamespaceKeyword ||
-            child.getKind() === SyntaxKind.ModuleKeyword);
+        const keyword = this.getFirstChild(child => child.getKind() === SyntaxKind.NamespaceKeyword
+            || child.getKind() === SyntaxKind.ModuleKeyword);
         /* istanbul ignore if */
         if (keyword == null)
             return undefined;

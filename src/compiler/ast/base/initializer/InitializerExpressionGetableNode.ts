@@ -31,7 +31,9 @@ export interface InitializerExpressionGetableNode {
     getInitializerOrThrow(): Expression;
 }
 
-export function InitializerExpressionGetableNode<T extends Constructor<InitializerExpressionGetableNodeExtensionType>>(Base: T): Constructor<InitializerExpressionGetableNode> & T {
+export function InitializerExpressionGetableNode<T extends Constructor<InitializerExpressionGetableNodeExtensionType>>(
+    Base: T
+): Constructor<InitializerExpressionGetableNode> & T {
     return class extends Base implements InitializerExpressionGetableNode {
         hasInitializer() {
             return this.compilerNode.initializer != null;

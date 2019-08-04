@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Verification - Ensure Structures Match Classes.
  * ----------------------------------------------------
  * Classes like ClassDeclaration can extend a mixin like ExportableNode. In this case, we need to then also make sure
@@ -24,24 +24,26 @@ export function ensureStructuresMatchClasses(inspector: TsMorphInspector, addPro
         for (const mixin of node.getMixins().filter(m => isAllowedMixin(m.getName()) && isAllowedMixinForStructure(m.getName(), structure.getName()))) {
             const mixinStructureName = getStructureName(mixin.getName());
             const structureHasMixin = structure.getBaseStructures().some(s => s.getName() === mixinStructureName);
-            if (!structureHasMixin)
+            if (!structureHasMixin) {
                 addProblem({
                     filePath: structure.getFilePath(),
                     lineNumber: structure.getStartLineNumber(),
                     message: `${structure.getName()} does not have ${mixinStructureName}.`
                 });
+            }
         }
 
         for (const baseStructure of structure.getBaseStructures().filter(s => isAllowedBaseStructure(s.getName()))) {
             const declarationName = baseStructure.getName().replace(/Structure$/, "");
             const mixin = node.getMixins().find(m => m.getName() === declarationName);
 
-            if (mixin == null)
+            if (mixin == null) {
                 addProblem({
                     filePath: structure.getFilePath(),
                     lineNumber: structure.getStartLineNumber(),
                     message: `${structure.getName()} has ${baseStructure.getName()}, but it shouldn't.`
                 });
+            }
         }
     }
 }

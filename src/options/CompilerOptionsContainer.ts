@@ -1,4 +1,4 @@
-﻿import { CompilerOptions } from "../typescript";
+import { CompilerOptions } from "../typescript";
 import { SettingsContainer } from "./SettingsContainer";
 
 /**

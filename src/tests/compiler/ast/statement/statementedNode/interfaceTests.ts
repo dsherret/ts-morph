@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { InterfaceDeclaration, StatementedNode, Node } from "../../../../../compiler";
 import { InterfaceDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
@@ -61,13 +61,13 @@ describe(nameof(StatementedNode), () => {
                 properties: [{ name: "p" }],
                 methods: [{ name: "m" }]
             };
-            const expectedText = "/**\n * Test\n */\nexport default interface I<T> extends IBase, IBase2 {\n" +
-                "    (): void;\n" +
-                "    new();\n" +
-                "    [key: string]: string;\n" +
-                "    p;\n" +
-                "    m();\n" +
-                "}\n";
+            const expectedText = "/**\n * Test\n */\nexport default interface I<T> extends IBase, IBase2 {\n"
+                + "    (): void;\n"
+                + "    new();\n"
+                + "    [key: string]: string;\n"
+                + "    p;\n"
+                + "    m();\n"
+                + "}\n";
             doTest("", 0, [structure], expectedText);
         });
     });

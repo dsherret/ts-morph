@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { NamespaceDeclaration, NamespaceDeclarationKind, VariableDeclarationKind } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../../structures";

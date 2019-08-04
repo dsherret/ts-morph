@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Code Verification - Ensure Overload Structures Match.
  * -----------------------------------------------------
  * When a developer adds another interface to a structure like MethodDeclaration (ex. ScopableNodeStructure),
@@ -34,19 +34,21 @@ export function ensureOverloadStructuresMatch(inspector: TsMorphInspector, addPr
             }
         }
 
-        for (const remainingOverload of overloadBaseStructures)
+        for (const remainingOverload of overloadBaseStructures) {
             addProblem({
                 filePath: overloadStructure.getFilePath(),
                 lineNumber: overloadStructure.getStartLineNumber(),
                 message: `${overloadStructure.getName()} does not have overload extension of ${remainingOverload.getName()}.`
             });
+        }
 
-        for (const remainingStructure of structureBaseStructures)
+        for (const remainingStructure of structureBaseStructures) {
             addProblem({
                 filePath: overloadStructure.getFilePath(),
                 lineNumber: overloadStructure.getStartLineNumber(),
                 message: `${overloadStructure.getName()} does not have structure extension of ${remainingStructure.getName()}`
             });
+        }
     }
 }
 

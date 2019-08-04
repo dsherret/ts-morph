@@ -5,11 +5,12 @@ import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration, Clas
 import { ComputedPropertyName, Identifier, Node, QualifiedName } from "./common";
 import { Decorator } from "./decorator";
 import { EnumDeclaration } from "./enum";
-import { Expression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment,
-    ThisExpression, OmittedExpression, CallExpression, NewExpression } from "./expression";
+import { Expression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ThisExpression, OmittedExpression,
+    CallExpression, NewExpression } from "./expression";
 import { FunctionDeclaration } from "./function";
 import { SourceFile, ExternalModuleReference, ExportAssignment, NamespaceDeclaration } from "./module";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, InterfaceDeclaration } from "./interface";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature,
+    InterfaceDeclaration } from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText, JsxOpeningElement } from "./jsx";
 import { NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TemplateExpression, TaggedTemplateExpression } from "./literal";
 import { CaseClause, DefaultClause } from "./statement";
@@ -91,5 +92,5 @@ export type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceD
  * Declarations that can be exported from a module.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
-export type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration
-    | TypeAliasDeclaration | NamespaceDeclaration | Expression;
+export type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration
+    | NamespaceDeclaration | Expression;

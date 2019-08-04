@@ -61,8 +61,9 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                     newText: "?"
                 });
             }
-            else
+            else {
                 removeChildren({ children: [questionTokenNode!] });
+            }
 
             return this;
 
@@ -93,7 +94,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
 
         getStructure() {
             return callBaseGetStructure<QuestionTokenableNodeStructure>(Base.prototype, this, {
-               hasQuestionToken: this.hasQuestionToken()
+                hasQuestionToken: this.hasQuestionToken()
             });
         }
     };

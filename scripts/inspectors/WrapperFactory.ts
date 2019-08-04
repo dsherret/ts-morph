@@ -1,4 +1,4 @@
-﻿import { Node, ClassDeclaration, InterfaceDeclaration, PropertySignature, PropertyDeclaration } from "ts-morph";
+import { Node, ClassDeclaration, InterfaceDeclaration, PropertySignature, PropertyDeclaration } from "ts-morph";
 import { KeyValueCache } from "../../src/utils";
 import { WrappedNode, Structure, Mixin } from "./tsMorph";
 import { TsNode, TsNodeProperty } from "./ts";

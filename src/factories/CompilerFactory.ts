@@ -1,6 +1,6 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
-    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter,
-    CommentStatement, CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerExtendedComment, CommentEnumMember } from "../compiler";
+    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter, CommentStatement,
+    CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerExtendedComment, CommentEnumMember } from "../compiler";
 import { CommentNodeParser } from "../compiler/ast/utils";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
@@ -118,7 +118,11 @@ export class CompilerFactory {
      * @param structureOrText - Structure or text.
      * @param options - Options.
      */
-    createSourceFile(filePath: string, sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction, options: SourceFileCreateOptions & { markInProject: boolean; }) {
+    createSourceFile(
+        filePath: string,
+        sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction,
+        options: SourceFileCreateOptions & { markInProject: boolean; }
+    ) {
         sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.context.createWriter(), sourceFileText) : sourceFileText || "";
         if (typeof sourceFileText === "string")
             return this.createSourceFileFromText(filePath, sourceFileText, options);
@@ -160,7 +164,11 @@ export class CompilerFactory {
         throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
     }
 
-    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }) {
+    private createOrOverwriteSourceFileFromText(
+        filePath: string,
+        sourceText: string,
+        options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }
+    ) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
         if (existingSourceFile != null) {
@@ -190,7 +198,11 @@ export class CompilerFactory {
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null && this.context.fileSystemWrapper.fileExistsSync(filePath)) {
             this.context.logger.log(`Loading file: ${filePath}`);
-            sourceFile = this.createSourceFileFromTextInternal(filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()), options);
+            sourceFile = this.createSourceFileFromTextInternal(
+                filePath,
+                this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()),
+                options
+            );
             sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
         }
 
@@ -305,7 +317,11 @@ export class CompilerFactory {
         }
     }
 
-    private createSourceFileFromTextInternal(filePath: string, text: string, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): SourceFile {
+    private createSourceFileFromTextInternal(
+        filePath: string,
+        text: string,
+        options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }
+    ): SourceFile {
         const hasBom = StringUtils.hasBom(text);
         if (hasBom)
             text = StringUtils.stripBom(text);
@@ -490,8 +506,7 @@ export class CompilerFactory {
      * @param compilerObject - Compiler referenced symbol definition info.
      */
     getReferencedSymbolDefinitionInfo(compilerObject: ts.ReferencedSymbolDefinitionInfo): ReferencedSymbolDefinitionInfo {
-        return this.referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject,
-            () => new ReferencedSymbolDefinitionInfo(this.context, compilerObject));
+        return this.referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject, () => new ReferencedSymbolDefinitionInfo(this.context, compilerObject));
     }
 
     /**

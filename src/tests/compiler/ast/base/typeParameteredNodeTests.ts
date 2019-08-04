@@ -147,7 +147,12 @@ describe(nameof(TypeParameteredNode), () => {
     });
 
     describe(nameof<TypeParameteredNode>(n => n.insertTypeParameters), () => {
-        function doTest(startCode: string, insertIndex: number, structures: (OptionalKind<TypeParameterDeclarationStructure> | string)[], expectedCode: string) {
+        function doTest(
+            startCode: string,
+            insertIndex: number,
+            structures: (OptionalKind<TypeParameterDeclarationStructure> | string)[],
+            expectedCode: string
+        ) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertTypeParameters(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);

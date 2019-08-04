@@ -1,3 +1,3 @@
-﻿export interface StaticableNodeStructure {
+export interface StaticableNodeStructure {
     isStatic?: boolean;
 }

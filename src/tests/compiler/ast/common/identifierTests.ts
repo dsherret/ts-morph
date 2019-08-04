@@ -38,8 +38,12 @@ describe(nameof(Identifier), () => {
         });
 
         it("should get the definition when nested inside a namespace", () => {
-            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("namespace N { export function myFunction() {} }\nconst reference = N.myFunction;");
-            const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression).getNameNode().getDefinitions();
+            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>(
+                "namespace N { export function myFunction() {} }\nconst reference = N.myFunction;"
+            );
+            const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression)
+                .getNameNode().getDefinitions();
+
             expect(definitions.length).to.equal(1);
             expect(definitions[0].getDeclarationNode()).to.equal(firstChild.getFunctions()[0]);
         });
@@ -137,7 +141,9 @@ const t = MyNamespace.MyClass;
     describe(nameof<Identifier>(n => n.getDefinitionNodes), () => {
         it("should get the definition nodes", () => {
             const { sourceFile } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
-            const definitionNodes = sourceFile.getVariableDeclarationOrThrow("reference").getInitializerIfKindOrThrow(SyntaxKind.Identifier).getDefinitionNodes();
+            const definitionNodes = sourceFile.getVariableDeclarationOrThrow("reference")
+                .getInitializerIfKindOrThrow(SyntaxKind.Identifier)
+                .getDefinitionNodes();
             expect(definitionNodes.length).to.equal(1);
             expect(definitionNodes[0].getText()).to.equal("function myFunction() {}");
         });

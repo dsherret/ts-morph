@@ -1,4 +1,4 @@
-﻿import { Structure, KindedStructure } from "../Structure";
+import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface ImportSpecifierStructure extends Structure, ImportSpecifierSpecificStructure {

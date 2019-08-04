@@ -1,4 +1,4 @@
-﻿// todo: tests
+// todo: tests
 export function getNextMatchingPos(text: string, pos: number, condition: (char: string) => boolean) {
     while (pos < text.length) {
         const char = text[pos];

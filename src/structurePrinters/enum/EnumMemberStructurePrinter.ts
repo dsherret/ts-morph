@@ -7,7 +7,10 @@ import { WriterFunction } from "../../types";
 export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMemberStructure> | WriterFunction | string> {
     private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string | undefined) {
+    printTexts(
+        writer: CodeBlockWriter,
+        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string | undefined
+    ) {
         this.multipleWriter.printText(writer, structures);
     }
 

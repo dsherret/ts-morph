@@ -31,11 +31,10 @@ describe(nameof(ContinueStatement), () => {
     describe(nameof<ContinueStatement>(n => n.getLabelOrThrow), () => {
         function doTest(text: string, expectedText?: string) {
             const continueStatement = getStatement(text);
-            if (expectedText == null) {
+            if (expectedText == null)
                 expect(() => continueStatement.getLabelOrThrow()).to.throw();
-            } else {
+            else
                 expect(continueStatement.getLabelOrThrow().getText()).to.equal(expectedText);
-            }
         }
 
         it("should get the correct label", () => {

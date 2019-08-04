@@ -1,4 +1,4 @@
-﻿import { FileSystemHost, VirtualFileSystemHost } from "../../fileSystem";
+import { FileSystemHost, VirtualFileSystemHost } from "../../fileSystem";
 import { KeyValueCache } from "../../utils";
 
 export interface CustomFileSystemProps {
@@ -8,7 +8,12 @@ export interface CustomFileSystemProps {
     getFiles(): [string, string][];
 }
 
-export function getFileSystemHostWithFiles(initialFiles: { filePath: string; text: string; }[], initialDirectories: string[] = []): FileSystemHost & CustomFileSystemProps {
+export function getFileSystemHostWithFiles(
+    initialFiles: { filePath: string; text: string; }[],
+    initialDirectories: string[] = []
+): FileSystemHost
+    & CustomFileSystemProps
+{
     initialDirectories = initialDirectories.map(d => d[0] === "/" ? d : "/" + d);
     return new VirtualFileSystemForTest(initialFiles, initialDirectories);
 }

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ExportAssignment } from "../../../../compiler";
 import { ExportAssignmentStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";

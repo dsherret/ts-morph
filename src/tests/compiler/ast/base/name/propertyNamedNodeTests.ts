@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ComputedPropertyName, Identifier, InterfaceDeclaration, NumericLiteral, PropertyNamedNode, StringLiteral } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 

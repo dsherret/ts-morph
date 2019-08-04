@@ -1,4 +1,4 @@
-﻿import { ts } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { Node } from "../common";
 
 export class ObjectBindingPattern extends Node<ts.ObjectBindingPattern> {

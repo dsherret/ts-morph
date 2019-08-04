@@ -1,4 +1,4 @@
-﻿import { ArgumentError } from "./ArgumentError";
+import { ArgumentError } from "./ArgumentError";
 
 export class ArgumentNullOrWhitespaceError extends ArgumentError {
     /** @private */

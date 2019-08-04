@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ReturnStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 

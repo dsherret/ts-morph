@@ -1,2 +1,2 @@
-﻿export * from "./JsxAttributedNode";
+export * from "./JsxAttributedNode";
 export * from "./JsxTagNamedNode";

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, FunctionExpression, NameableNode, VariableStatement } from "../../../../../compiler";
 import { NameableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
@@ -7,7 +7,7 @@ describe(nameof(NameableNode), () => {
     function getFunctionExpression(startCode: string) {
         const result = getInfoFromText<VariableStatement>(startCode);
         const funcExpr = result.firstChild.getDeclarations()[0].getInitializerOrThrow() as FunctionExpression;
-        return {funcExpr, ...result};
+        return { funcExpr, ...result };
     }
 
     describe(nameof<NameableNode>(n => n.rename), () => {
@@ -154,7 +154,7 @@ describe(nameof(NameableNode), () => {
         });
 
         it("should do nothing when property not exists", () => {
-            doTest("export default class Test {}", { }, "export default class Test {}");
+            doTest("export default class Test {}", {}, "export default class Test {}");
         });
 
         it("should not rename when specifying name", () => {

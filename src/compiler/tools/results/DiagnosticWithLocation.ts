@@ -1,4 +1,4 @@
-﻿import { ProjectContext } from "../../../ProjectContext";
+import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Diagnostic } from "./Diagnostic";
 

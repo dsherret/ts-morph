@@ -1,4 +1,4 @@
-﻿import { Comparer } from "./Comparer";
+import { Comparer } from "./Comparer";
 
 export class LocaleStringComparer implements Comparer<string> {
     static readonly instance = new LocaleStringComparer();

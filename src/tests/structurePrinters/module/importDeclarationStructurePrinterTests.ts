@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { ExportDeclarationStructurePrinter } from "../../../structurePrinters";
 import { ExportDeclarationStructure, OptionalKind } from "../../../structures";

@@ -119,13 +119,11 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should add new alias and update all usages to the new alias", () => {
-            doTest("import {name} from './file'; export { name };", "newAlias",
-                "import {name} from './file'; export { name as newAlias };", "newAlias");
+            doTest("import {name} from './file'; export { name };", "newAlias", "import {name} from './file'; export { name as newAlias };", "newAlias");
         });
 
         it("should remove and rename existing alias when specifying an empty string", () => {
-            doTest("import {name as alias} from './file'; export { alias as name };", "",
-                "import {name as alias} from './file'; export { alias };", "alias");
+            doTest("import {name as alias} from './file'; export { alias as name };", "", "import {name as alias} from './file'; export { alias };", "alias");
         });
     });
 
@@ -147,13 +145,11 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should add new alias and not update the usages", () => {
-            doTest("import {name} from './file'; export { name };", "newAlias",
-                "import {name} from './file'; export { name as newAlias };", "name");
+            doTest("import {name} from './file'; export { name };", "newAlias", "import {name} from './file'; export { name as newAlias };", "name");
         });
 
         it("should remove existing alias when specifying an empty string and not update the usages", () => {
-            doTest("import {name as alias} from './file'; export { alias as name };", "",
-                "import {name as alias} from './file'; export { alias };", "name");
+            doTest("import {name as alias} from './file'; export { alias as name };", "", "import {name as alias} from './file'; export { alias };", "name");
         });
     });
 
@@ -174,8 +170,7 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should be remove and not rename when there is an alias", () => {
-            doTest("import {name as alias } from './file'; export { alias as name };",
-                "import {name as alias } from './file'; export { alias };", "name");
+            doTest("import {name as alias } from './file'; export { alias as name };", "import {name as alias } from './file'; export { alias };", "name");
         });
     });
 
@@ -196,8 +191,7 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should be remove and update the current file when there is an alias", () => {
-            doTest("import {name as alias} from './file'; export { alias as name};",
-                "import {name as alias} from './file'; export { alias};", "alias");
+            doTest("import {name as alias} from './file'; export { alias as name};", "import {name as alias} from './file'; export { alias};", "alias");
         });
     });
 
@@ -360,8 +354,7 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should not rename when adding an alias", () => {
-            doTest(`import { name } from './file'; export { name };`, { alias: "alias" },
-                `import { name } from './file'; export { name as alias };`, "name");
+            doTest(`import { name } from './file'; export { name };`, { alias: "alias" }, `import { name } from './file'; export { name as alias };`, "name");
         });
 
         it("should not rename when removing an alias", () => {

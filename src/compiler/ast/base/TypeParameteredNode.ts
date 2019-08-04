@@ -68,7 +68,8 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
         }
 
         getTypeParameterOrThrow(nameOrFindFunction: string | ((declaration: TypeParameterDeclaration) => boolean)): TypeParameterDeclaration {
-            return errors.throwIfNullOrUndefined(this.getTypeParameter(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("type parameter", nameOrFindFunction));
+            return errors.throwIfNullOrUndefined(this.getTypeParameter(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("type parameter", nameOrFindFunction));
         }
 
         getTypeParameters() {

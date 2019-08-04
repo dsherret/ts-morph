@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, Node, SourceFile, TextInsertableNode } from "../../../../compiler";
 import * as errors from "../../../../errors";
 import { getInfoFromText } from "../../testHelpers";

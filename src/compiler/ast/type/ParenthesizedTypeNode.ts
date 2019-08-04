@@ -1,4 +1,4 @@
-﻿import { ts } from "../../../typescript";
+import { ts } from "../../../typescript";
 import { WriterFunction } from "../../../types";
 import { TypeNode } from "./TypeNode";
 

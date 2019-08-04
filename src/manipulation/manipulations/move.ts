@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { FormattingKind } from "../formatting";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { ChangingChildOrderTextManipulator } from "../textManipulators";
@@ -18,7 +18,9 @@ export interface ChangeChildOrderOptions<TParentNode extends Node> {
 export function changeChildOrder<TParentNode extends Node>(opts: ChangeChildOrderOptions<TParentNode>) {
     const { parent } = opts;
 
-    doManipulation(parent._sourceFile,
+    doManipulation(
+        parent._sourceFile,
         new ChangingChildOrderTextManipulator(opts),
-        new NodeHandlerFactory().getForChangingChildOrder(opts));
+        new NodeHandlerFactory().getForChangingChildOrder(opts)
+    );
 }

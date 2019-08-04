@@ -1,4 +1,4 @@
-﻿export interface FileSystemHost {
+export interface FileSystemHost {
     /** Gets if this file system is case sensitive. */
     isCaseSensitive(): boolean;
     delete(path: string): Promise<void>;

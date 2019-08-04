@@ -1,4 +1,4 @@
-﻿import { Logger } from "./Logger";
+import { Logger } from "./Logger";
 
 export abstract class EnableableLogger implements Logger {
     private enabled = false;

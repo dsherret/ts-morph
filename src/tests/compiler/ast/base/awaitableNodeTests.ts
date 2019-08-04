@@ -59,7 +59,7 @@ describe(nameof(AwaitableNode), () => {
                 expect(sourceFile.getText()).to.equal(awaitForOfText);
             });
 
-            //  Well, sort of properly - it maintains there is no space before the first parens.
+            // Well, sort of properly - it maintains there is no space before the first parens.
             it("should handle for spacing properly when adding await", () => {
                 const { firstChild, sourceFile } = getInfoFromText<ForOfStatement>("for(const x of [Promise.resolve(1)]) {}");
                 firstChild.setIsAwaited(true);
@@ -90,7 +90,7 @@ describe(nameof(AwaitableNode), () => {
         });
 
         it("should modify when setting as await", () => {
-            doTest(forOfText, {isAwaited: true}, awaitForOfText);
+            doTest(forOfText, { isAwaited: true }, awaitForOfText);
         });
     });
 });

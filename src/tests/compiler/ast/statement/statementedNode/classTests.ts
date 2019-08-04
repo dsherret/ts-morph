@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { FunctionDeclaration, ClassDeclaration, StatementedNode, Node } from "../../../../../compiler";
 import { ClassDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
@@ -31,11 +31,13 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert in the middle of children", () => {
-            doTest("class Identifier1 {\n}\n\nclass Identifier3 {\n}\n", 1, [{ name: "Identifier2" }], "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n\nclass Identifier3 {\n}\n");
+            doTest("class Identifier1 {\n}\n\nclass Identifier3 {\n}\n", 1, [{ name: "Identifier2" }],
+                "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n\nclass Identifier3 {\n}\n");
         });
 
         it("should insert multiple", () => {
-            doTest("class Identifier1 {\n}\n", 1, [{ name: "Identifier2" }, { name: "Identifier3" }], "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n\nclass Identifier3 {\n}\n");
+            doTest("class Identifier1 {\n}\n", 1, [{ name: "Identifier2" }, { name: "Identifier3" }],
+                "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n\nclass Identifier3 {\n}\n");
         });
 
         it("should have the expected text adding to non-source file", () => {
@@ -66,14 +68,14 @@ describe(nameof(StatementedNode), () => {
                 getAccessors: [{ name: "g" }, { name: "s" }, { name: "g2" }, { name: "g3" }],
                 setAccessors: [{ name: "s" }, { name: "g" }, { name: "s2" }]
             };
-            const expectedText = "/**\n * Test\n */\n@D\nexport default abstract class C<T> extends Base implements IBase, IBase2 {\n" +
-                "    p: number;\n\n" +
-                "    constructor() {\n    }\n\n" +
-                "    constructor() {\n    }\n\n" +
-                "    get g() {\n    }\n\n    set g() {\n    }\n\n    get s() {\n    }\n\n    set s() {\n    }\n\n" +
-                "    get g2() {\n    }\n\n    get g3() {\n    }\n\n    set s2() {\n    }\n\n" +
-                "    m() {\n    }\n" +
-                "}\n";
+            const expectedText = "/**\n * Test\n */\n@D\nexport default abstract class C<T> extends Base implements IBase, IBase2 {\n"
+                + "    p: number;\n\n"
+                + "    constructor() {\n    }\n\n"
+                + "    constructor() {\n    }\n\n"
+                + "    get g() {\n    }\n\n    set g() {\n    }\n\n    get s() {\n    }\n\n    set s() {\n    }\n\n"
+                + "    get g2() {\n    }\n\n    get g3() {\n    }\n\n    set s2() {\n    }\n\n"
+                + "    m() {\n    }\n"
+                + "}\n";
             doTest("", 0, [structure], expectedText);
         });
 
@@ -125,7 +127,8 @@ describe(nameof(StatementedNode), () => {
         }
 
         it("should add multiple", () => {
-            doTest("class Identifier1 {\n}\n", [{ name: "Identifier2" }, { name: "Identifier3" }], "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n\nclass Identifier3 {\n}\n");
+            doTest("class Identifier1 {\n}\n", [{ name: "Identifier2" }, { name: "Identifier3" }],
+                "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n\nclass Identifier3 {\n}\n");
         });
     });
 

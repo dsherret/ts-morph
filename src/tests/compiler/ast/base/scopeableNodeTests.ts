@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, ParameterDeclaration, Scope, ScopeableNode } from "../../../../compiler";
 import { ScopeableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(ScopeableNode), () => {
     function getFirstParameter(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
-        return {...result, firstParam: result.firstChild.getConstructors()[0].getParameters()[0]};
+        return { ...result, firstParam: result.firstChild.getConstructors()[0].getParameters()[0] };
     }
 
     describe(nameof<ScopeableNode>(d => d.getScope), () => {

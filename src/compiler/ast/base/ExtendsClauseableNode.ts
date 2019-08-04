@@ -64,7 +64,9 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
 
         insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
         insertExtends(index: number, text: string): ExpressionWithTypeArguments;
-        insertExtends(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+        insertExtends(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[]
+            | ExpressionWithTypeArguments
+        {
             const originalExtends = this.getExtends();
             const wasStringInput = typeof texts === "string";
 

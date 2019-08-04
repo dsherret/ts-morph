@@ -1,4 +1,4 @@
-﻿import * as errors from "../errors";
+import * as errors from "../errors";
 import { SourceFile } from "../compiler";
 import { CompilerFactory } from "../factories";
 import { FileUtils } from "../utils";

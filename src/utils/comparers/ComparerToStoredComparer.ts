@@ -1,4 +1,4 @@
-﻿import { Comparer } from "./Comparer";
+import { Comparer } from "./Comparer";
 import { StoredComparer } from "./StoredComparer";
 
 export class ComparerToStoredComparer<T> implements StoredComparer<T> {

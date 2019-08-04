@@ -119,7 +119,8 @@ export class Program {
         const emitResult = this._emit({
             writeFile: (filePath, text, writeByteOrderMark) => {
                 promises.push(fileSystemWrapper.writeFile(filePath, writeByteOrderMark ? "\uFEFF" + text : text));
-            }, ...options
+            },
+            ...options
         });
         await Promise.all(promises);
         return new EmitResult(this._context, emitResult);
@@ -148,7 +149,8 @@ export class Program {
                     text,
                     writeByteOrderMark: writeByteOrderMark || false
                 });
-            }, ...options
+            },
+            ...options
         });
         return new MemoryEmitResult(this._context, emitResult, sourceFiles);
     }

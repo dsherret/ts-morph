@@ -1,4 +1,4 @@
-﻿import * as path from "path";
+import * as path from "path";
 import { Project, NewLineKind } from "ts-morph";
 import { rootFolder } from "../config";
 import { printDiagnostics } from "./printDiagnostics";

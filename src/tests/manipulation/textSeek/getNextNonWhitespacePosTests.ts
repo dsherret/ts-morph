@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { getNextNonWhitespacePos } from "../../../manipulation/textSeek";
 
 describe(nameof(getNextNonWhitespacePos), () => {

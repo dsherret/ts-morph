@@ -33,8 +33,10 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         function getIdentifierFromName(expression: Expression) {
             const identifier = getNameFromExpression(expression);
             if (!TypeGuards.isIdentifier(identifier)) {
-                throw new errors.NotImplementedError(`Expected the decorator expression '${identifier.getText()}' to be an identifier, ` +
-                    `but it wasn't. Please report this as a bug.`);
+                throw new errors.NotImplementedError(
+                    `Expected the decorator expression '${identifier.getText()}' to be an identifier, `
+                        + `but it wasn't. Please report this as a bug.`
+                );
             }
             return identifier;
         }
@@ -207,7 +209,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds an argument.
      * @param argumentTexts - Argument text.
      */
-    addArgument(argumentText: string| WriterFunction) {
+    addArgument(argumentText: string | WriterFunction) {
         return this.addArguments([argumentText])[0];
     }
 
@@ -270,11 +272,12 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
                 removePrecedingSpaces: true
             });
         }
-        else
+        else {
             removeChildrenWithFormattingFromCollapsibleSyntaxList({
                 children: [this],
                 getSiblingFormatting: (parent, sibling) => sibling.getStartLinePos() === thisStartLinePos ? FormattingKind.Space : FormattingKind.Newline
             });
+        }
     }
 
     /**

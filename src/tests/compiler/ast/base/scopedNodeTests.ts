@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, Scope, ScopedNode } from "../../../../compiler";
 import { ScopedNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
@@ -6,7 +6,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(ScopedNode), () => {
     function getInfoWithFirstPropertyFromText(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
-        return {...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
+        return { ...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
     }
 
     describe(nameof<ScopedNode>(d => d.getScope), () => {

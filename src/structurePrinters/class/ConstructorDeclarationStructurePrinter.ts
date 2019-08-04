@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, OptionalKind } from "../../structures";
 import { ObjectUtils, setValueIfUndefined } from "../../utils";
@@ -30,10 +30,11 @@ export class ConstructorDeclarationStructurePrinter extends NodePrinter<Optional
         this.printHeader(writer, structure);
         if (this.options.isAmbient)
             writer.write(";");
-        else
+        else {
             writer.space().inlineBlock(() => {
                 this.factory.forStatementedNode(this.options).printText(writer, structure);
             });
+        }
 
         function getOverloadStructures() {
             // all the overloads need to have the same scope as the implementation

@@ -79,10 +79,12 @@ describe(nameof(TypeChecker), () => {
         }
 
         it("should get all the symbols in the provided scope filtered by meaning", () => {
-            doTest("function a() { function b() {} const c = ''; function e() { function f() {} } }",
+            doTest(
+                "function a() { function b() {} const c = ''; function e() { function f() {} } }",
                 sourceFile => sourceFile.getFunctionOrThrow("a").getVariableDeclarationOrThrow("c"),
                 SymbolFlags.Function,
-                ["a", "b", "e"]);
+                ["a", "b", "e"]
+            );
         });
     });
 });

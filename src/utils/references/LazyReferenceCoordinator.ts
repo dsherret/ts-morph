@@ -1,4 +1,4 @@
-﻿import { SourceFile } from "../../compiler";
+import { SourceFile } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 
 /**

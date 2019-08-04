@@ -7,7 +7,11 @@ describe(nameof(CommentNodeParser), () => {
         return ts.createSourceFile("test.ts", text, ts.ScriptTarget.Latest, false);
     }
 
-    function assertEqual(expectedNodes: { kind: SyntaxKind; pos: number; end: number; }[], actualNodes: { kind: SyntaxKind; pos: number; end: number; }[], message?: string) {
+    function assertEqual(
+        expectedNodes: { kind: SyntaxKind; pos: number; end: number; }[],
+        actualNodes: { kind: SyntaxKind; pos: number; end: number; }[],
+        message?: string
+    ) {
         expect(actualNodes.map(n => ({ kind: n.kind, pos: n.pos, end: n.end }))).to.deep.equal(expectedNodes, message);
     }
 

@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { FunctionDeclaration, StatementedNode, Node } from "../../../../../compiler";
 import { FunctionDeclarationStructure, StructureKind } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
@@ -37,8 +37,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert without a name", () => {
-            doTest("", 0, [{ isDefaultExport: true, overloads: [{}] }],
-                "export default function();\nexport default function() {\n}\n");
+            doTest("", 0, [{ isDefaultExport: true, overloads: [{}] }], "export default function();\nexport default function() {\n}\n");
         });
 
         it("should insert ones with a declaration keyword accordingly", () => {
@@ -58,8 +57,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert when the structure has everything the writer supports", () => {
-            doTest("", 0, [{ name: "func", parameters: [{ name: "p1" }, { name: "p2" }] }],
-                "function func(p1, p2) {\n}\n");
+            doTest("", 0, [{ name: "func", parameters: [{ name: "p1" }, { name: "p2" }] }], "function func(p1, p2) {\n}\n");
         });
 
         it("should insert with only a body text", () => {
@@ -92,10 +90,14 @@ describe(nameof(StatementedNode), () => {
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
 
-            doTest("", 0, [structure],
-                "export function f();\n/**\n * Test\n */\nexport async function* f<T>(param): string {\n" +
-                "    class C {\n    }\n\n    console.log('here');\n" +
-                "}\n");
+            doTest(
+                "",
+                0,
+                [structure],
+                "export function f();\n/**\n * Test\n */\nexport async function* f<T>(param): string {\n"
+                    + "    class C {\n    }\n\n    console.log('here');\n"
+                    + "}\n"
+            );
         });
     });
 
@@ -140,8 +142,8 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getFunctions), () => {
-        const { sourceFile } = getInfoFromText("function Identifier1();function Identifier1() {}\nfunction Identifier2() {}" +
-            "declare function Identifier3(); declare function Identifier3();");
+        const { sourceFile } = getInfoFromText("function Identifier1();function Identifier1() {}\nfunction Identifier2() {}"
+            + "declare function Identifier3(); declare function Identifier3();");
         const functions = sourceFile.getFunctions();
 
         it("should have the expected number of functions", () => {

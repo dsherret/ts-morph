@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { BodyableNode, ClassDeclaration, FunctionDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
@@ -13,19 +13,23 @@ describe(nameof(BodyableNode), () => {
             }
 
             it("should set the body text with only one ending newline when writing a line at the end", () => {
-                doTest("function myFunction() {}",
+                doTest(
+                    "function myFunction() {}",
                     writer => {
                         writer.writeLine("test;").writeLine("test2;");
                     },
-                    "function myFunction() {\n    test;\n    test2;\n}");
+                    "function myFunction() {\n    test;\n    test2;\n}"
+                );
             });
 
             it("should set the body text with only one ending newline when not writing a line at the end", () => {
-                doTest("function myFunction() {}",
+                doTest(
+                    "function myFunction() {}",
                     writer => {
                         writer.writeLine("test;").write("test2;");
                     },
-                    "function myFunction() {\n    test;\n    test2;\n}");
+                    "function myFunction() {\n    test;\n    test2;\n}"
+                );
             });
         });
 
@@ -37,15 +41,12 @@ describe(nameof(BodyableNode), () => {
             }
 
             it("should set the body text with the correct indentation", () => {
-                doTest("class C {\n    myMethod() {\n        const test = 5;\n    }\n}\n",
-                    "var myVar;\nfunction myInnerFunction() {\n}",
+                doTest("class C {\n    myMethod() {\n        const test = 5;\n    }\n}\n", "var myVar;\nfunction myInnerFunction() {\n}",
                     "class C {\n    myMethod() {\n        var myVar;\n        function myInnerFunction() {\n        }\n    }\n}\n");
             });
 
             it("should add a body if none exists", () => {
-                doTest("declare class C {\n    myMethod();\n}",
-                    "var myVar;",
-                    "declare class C {\n    myMethod() {\n        var myVar;\n    }\n}");
+                doTest("declare class C {\n    myMethod();\n}", "var myVar;", "declare class C {\n    myMethod() {\n        var myVar;\n    }\n}");
             });
         });
 
@@ -77,8 +78,7 @@ describe(nameof(BodyableNode), () => {
             });
 
             it("should insert multiple lines on the correct indentation", () => {
-                doTest("function myFunction() {\n    \n}", "var myVar;\nlet mySecond;",
-                    "function myFunction() {\n    var myVar;\n    let mySecond;\n}");
+                doTest("function myFunction() {\n    \n}", "var myVar;\nlet mySecond;", "function myFunction() {\n    var myVar;\n    let mySecond;\n}");
             });
         });
 

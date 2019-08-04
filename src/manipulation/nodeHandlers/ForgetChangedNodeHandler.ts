@@ -1,4 +1,4 @@
-﻿import { Node } from "../../compiler";
+import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 import { ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";

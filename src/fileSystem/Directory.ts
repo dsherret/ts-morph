@@ -1,4 +1,4 @@
-﻿import { SourceFile, SourceFileCopyOptions, SourceFileMoveOptions } from "../compiler";
+import { SourceFile, SourceFileCopyOptions, SourceFileMoveOptions } from "../compiler";
 import * as errors from "../errors";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
@@ -158,8 +158,10 @@ export class Directory {
     getSourceFileOrThrow(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)): SourceFile;
     getSourceFileOrThrow(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
         return errors.throwIfNullOrUndefined(this.getSourceFile(pathOrCondition), () => {
-            if (typeof pathOrCondition === "string")
-                return `Could not find child source file at path '${this._context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath())}'.`;
+            if (typeof pathOrCondition === "string") {
+                const absolutePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath());
+                return `Could not find child source file at path '${absolutePath}'.`;
+            }
             return "Could not find child source file that matched condition.";
         });
     }
@@ -262,8 +264,10 @@ export class Directory {
      */
     addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath,
-            { ...options, markInProject: this._isInProject() });
+        return this._context.directoryCoordinator.addExistingDirectoryIfExists(
+            dirPath,
+            { ...options, markInProject: this._isInProject() }
+        );
     }
 
     /**
@@ -275,8 +279,10 @@ export class Directory {
      */
     addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this._context.directoryCoordinator.addExistingDirectory(dirPath,
-            { ...options, markInProject: this._isInProject() });
+        return this._context.directoryCoordinator.addExistingDirectory(
+            dirPath,
+            { ...options, markInProject: this._isInProject() }
+        );
     }
 
     /**
@@ -285,8 +291,7 @@ export class Directory {
      */
     createDirectory(dirPath: string) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this._context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath,
-            { markInProject: this._isInProject() });
+        return this._context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath, { markInProject: this._isInProject() });
     }
 
     /**
@@ -298,10 +303,13 @@ export class Directory {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions) {
+    createSourceFile(
+        relativeFilePath: string,
+        sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
+        options?: SourceFileCreateOptions
+    ) {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "",
-            { ...(options || {}), markInProject: this._isInProject() });
+        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", { ...(options || {}), markInProject: this._isInProject() });
     }
 
     /**
@@ -379,13 +387,19 @@ export class Directory {
         const isJsFile = options.outDir == null ? undefined : /\.js$/i;
         const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
         const isDtsFile = options.declarationDir == null && options.outDir == null ? undefined : /\.d\.ts$/i;
-        const getStandardizedPath = (path: string | undefined) => path == null ? undefined : this._context.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
+        const getStandardizedPath = (path: string | undefined) => path == null
+            ? undefined
+            : this._context.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
         const getSubDirPath = (path: string | undefined, dir: Directory) => path == null ? undefined : FileUtils.pathJoin(path, dir.getBaseName());
         const hasDeclarationDir = this._context.compilerOptions.get().declarationDir != null || options.declarationDir != null;
 
         return emitDirectory(this, getStandardizedPath(options.outDir), getStandardizedPath(options.declarationDir));
 
-        function *emitDirectory(directory: Directory, outDir?: string, declarationDir?: string): IterableIterator<string | { filePath: string; fileText: string; }> {
+        function* emitDirectory(
+            directory: Directory,
+            outDir?: string,
+            declarationDir?: string
+        ): IterableIterator<string | { filePath: string; fileText: string; }> {
             for (const sourceFile of directory.getSourceFiles()) {
                 const output = sourceFile.getEmitOutput({ emitOnlyDtsFiles });
 

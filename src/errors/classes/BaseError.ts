@@ -1,4 +1,4 @@
-﻿export abstract class BaseError extends Error {
+export abstract class BaseError extends Error {
     /** @private */
     constructor(public readonly message: string, prototype: any) {
         super(message);

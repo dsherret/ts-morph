@@ -14,13 +14,15 @@ export interface ReplaceNodeTextOptions {
  * Replaces text in a source file. Will forget any changed nodes.
  */
 export function replaceNodeText(opts: ReplaceNodeTextOptions) {
-    doManipulation(opts.sourceFile,
+    doManipulation(
+        opts.sourceFile,
         new InsertionTextManipulator({
             insertPos: opts.start,
             newText: opts.newText,
             replacingLength: opts.replacingLength
         }),
-        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile._context.compilerFactory));
+        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile._context.compilerFactory)
+    );
 }
 
 /**
@@ -37,9 +39,11 @@ export function replaceSourceFileTextForFormatting(opts: { sourceFile: SourceFil
  */
 export function replaceSourceFileTextStraight(opts: { sourceFile: SourceFile; newText: string; }) {
     const { sourceFile, newText } = opts;
-    doManipulation(sourceFile,
+    doManipulation(
+        sourceFile,
         new FullReplacementTextManipulator(newText),
-        new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory));
+        new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory)
+    );
 }
 
 /**
@@ -49,9 +53,11 @@ export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; r
     const { sourceFile, renameLocations, newName } = opts;
     const nodeHandlerFactory = new NodeHandlerFactory();
 
-    doManipulation(sourceFile,
+    doManipulation(
+        sourceFile,
         new RenameLocationTextManipulator(renameLocations, newName),
-        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForRename(sourceFile._context.compilerFactory)));
+        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForRename(sourceFile._context.compilerFactory))
+    );
 }
 
 export interface ReplaceTextPossiblyCreatingChildNodesOptions {
@@ -89,10 +95,12 @@ export interface ReplaceSourceFileForFilePathMoveOptions {
 export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFilePathMoveOptions) {
     const { sourceFile, newFilePath } = opts;
 
-    doManipulation(sourceFile,
+    doManipulation(
+        sourceFile,
         new UnchangedTextManipulator(),
         new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory),
-        newFilePath);
+        newFilePath
+    );
 }
 
 /**

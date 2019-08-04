@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement, Node } from "../../../../../compiler";
 import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
@@ -28,8 +28,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert at the start with two new lines for a non-variable statement after", () => {
-            doTest("namespace Identifier2 {\n}\n", 0, [{ declarations: [{ name: "Identifier1" }] }],
-                "let Identifier1;\n\nnamespace Identifier2 {\n}\n");
+            doTest("namespace Identifier2 {\n}\n", 0, [{ declarations: [{ name: "Identifier1" }] }], "let Identifier1;\n\nnamespace Identifier2 {\n}\n");
         });
 
         it("should insert at the start with one new line for a variable statement after", () => {
@@ -38,8 +37,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert at the end of a file with two new lines for a non-variable statement before", () => {
-            doTest("namespace Identifier1 {\n}\n", 1, [{ declarations: [{ name: "Identifier2" }] }],
-                "namespace Identifier1 {\n}\n\nlet Identifier2;\n");
+            doTest("namespace Identifier1 {\n}\n", 1, [{ declarations: [{ name: "Identifier2" }] }], "namespace Identifier1 {\n}\n\nlet Identifier2;\n");
         });
 
         it("should insert in the middle of children", () => {
@@ -102,7 +100,7 @@ describe(nameof(StatementedNode), () => {
         }
 
         it("should add multiple", () => {
-            doTest("namespace Identifier1 {\n}\n", [{ declarations: [{ name: "Identifier2" }] }, { declarations: [{ name: "Identifier3" }]}],
+            doTest("namespace Identifier1 {\n}\n", [{ declarations: [{ name: "Identifier2" }] }, { declarations: [{ name: "Identifier3" }] }],
                 "namespace Identifier1 {\n}\n\nlet Identifier2;\nlet Identifier3;\n");
         });
     });

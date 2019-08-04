@@ -1,4 +1,4 @@
-﻿import { InterfaceDeclaration, TypeGuards } from "ts-morph";
+import { InterfaceDeclaration, TypeGuards } from "ts-morph";
 import { Memoize } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 import { isOverloadStructure } from "../../config";

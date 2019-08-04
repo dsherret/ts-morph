@@ -1,4 +1,4 @@
-﻿import { EnableableLogger } from "./EnableableLogger";
+import { EnableableLogger } from "./EnableableLogger";
 
 export class ConsoleLogger extends EnableableLogger {
     protected logInternal(text: string) {

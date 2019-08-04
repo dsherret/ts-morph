@@ -127,7 +127,7 @@ export class InProjectCoordinator {
                 (ancestorDir as any)._inProject = true;
         }
 
-        function *getAncestorsUpToOneInProject(dir: Directory): IterableIterator<Directory> {
+        function* getAncestorsUpToOneInProject(dir: Directory): IterableIterator<Directory> {
             if (FileUtils.isRootDirPath(dir.getPath()))
                 return;
             const parentDirPath = FileUtils.getDirPath(dir.getPath());

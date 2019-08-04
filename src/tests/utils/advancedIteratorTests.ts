@@ -1,8 +1,8 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { AdvancedIterator } from "../../utils";
 
 describe(nameof(AdvancedIterator), () => {
-    function *getNumIterator() {
+    function* getNumIterator() {
         for (let i = 0; i < 10; i++)
             yield i;
     }

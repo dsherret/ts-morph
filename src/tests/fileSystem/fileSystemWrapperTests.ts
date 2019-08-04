@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import * as errors from "../../errors";
 import { FileSystemWrapper, VirtualFileSystemHost } from "../../fileSystem";
 

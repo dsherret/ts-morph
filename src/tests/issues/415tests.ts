@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { getInfoFromText } from "../compiler/testHelpers";
 import { ScriptTarget } from "../../typescript";
 

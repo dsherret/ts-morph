@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { Project } from "../../../Project";
 import { isBlankLineAtPos } from "../../../manipulation/textChecks";
 

@@ -86,8 +86,8 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
                 if (i >= validRange[0] && i <= validRange[1])
                     return;
 
-                throw new errors.InvalidOperationError(`Cannot insert or replace text outside the bounds of the node. ` +
-                    `Expected a position between [${validRange[0]}, ${validRange[1]}], but received ${i}.`);
+                throw new errors.InvalidOperationError(`Cannot insert or replace text outside the bounds of the node. `
+                    + `Expected a position between [${validRange[0]}, ${validRange[1]}], but received ${i}.`);
             }
         }
     };

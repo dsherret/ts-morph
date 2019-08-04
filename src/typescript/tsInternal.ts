@@ -1,8 +1,8 @@
-﻿/* barrel:ignore */
+/* barrel:ignore */
 import { CompilerOptions, ts } from "./public";
 
-/* tslint:disable:align */
-export function matchFiles(this: any,
+export function matchFiles(
+    this: any,
     path: string,
     extensions: ReadonlyArray<string>,
     excludes: ReadonlyArray<string>,
@@ -45,4 +45,3 @@ export interface FileSystemEntries {
 export function getEmitModuleResolutionKind(this: any, compilerOptions: CompilerOptions) {
     return (ts as any).getEmitModuleResolutionKind.apply(this, arguments);
 }
-/* tslint:enable:align */

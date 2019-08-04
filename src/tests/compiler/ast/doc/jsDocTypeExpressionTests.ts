@@ -1,7 +1,7 @@
-import {JSDocTypeExpression} from "../../../../compiler";
-import {getInfoFromText} from "../../testHelpers";
-import {TypeGuards} from "../../../../utils";
-import {expect} from "chai";
+import { JSDocTypeExpression } from "../../../../compiler";
+import { getInfoFromText } from "../../testHelpers";
+import { TypeGuards } from "../../../../utils";
+import { expect } from "chai";
 
 describe(nameof(JSDocTypeExpression), () => {
     function getInfo(text: string) {

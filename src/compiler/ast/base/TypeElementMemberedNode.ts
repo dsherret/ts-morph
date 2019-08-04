@@ -1,6 +1,7 @@
-﻿import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import * as errors from "../../../errors";
-import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoBracesOrSourceFileWithGetChildrenWithComments } from "../../../manipulation";
+import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren,
+    insertIntoBracesOrSourceFileWithGetChildrenWithComments } from "../../../manipulation";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
     PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind, Structure, TypeElementMemberStructures } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
@@ -9,7 +10,8 @@ import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFuncti
 import { TypeElementTypes } from "../aliases";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, CommentTypeElement } from "../interface";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature,
+    CommentTypeElement } from "../interface";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ExtendedParser } from "../utils";
 
@@ -25,7 +27,9 @@ export interface TypeElementMemberedNode {
      * Adds members.
      * @param members - Collection of members to add.
      */
-    addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes | CommentTypeElement)[];
+    addMembers(
+        members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>
+    ): (TypeElementTypes | CommentTypeElement)[];
     /**
      * Inserts a member.
      * @param index - Child index to insert at.
@@ -37,7 +41,10 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param members - Collection of members to insert.
      */
-    insertMembers(index: number, members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes | CommentTypeElement)[];
+    insertMembers(
+        index: number,
+        members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>
+    ): (TypeElementTypes | CommentTypeElement)[];
     /**
      * Add construct signature.
      * @param structure - Structure representing the construct signature.
@@ -262,7 +269,8 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.addMembers([member])[0];
         }
 
-        addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes | CommentTypeElement)[] {
+        addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>
+        ): (TypeElementTypes | CommentTypeElement)[] {
             return this.insertMembers(getEndIndexFromArray(this.getMembersWithComments()), members);
         }
 
@@ -305,7 +313,10 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertConstructSignatures(index, [structure])[0];
         }
 
-        insertConstructSignatures(index: number, structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>): ConstructSignatureDeclaration[] {
+        insertConstructSignatures(
+            index: number,
+            structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>
+        ): ConstructSignatureDeclaration[] {
             return insertChildren({
                 thisNode: this,
                 index,
@@ -320,7 +331,10 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         getConstructSignatureOrThrow(findFunction: (member: ConstructSignatureDeclaration) => boolean) {
-            return errors.throwIfNullOrUndefined(this.getConstructSignature(findFunction), "Expected to find a construct signature with the provided condition.");
+            return errors.throwIfNullOrUndefined(
+                this.getConstructSignature(findFunction),
+                "Expected to find a construct signature with the provided condition."
+            );
         }
 
         getConstructSignatures() {
@@ -520,7 +534,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 }
 
 function insertChildren<TNode extends Node, TStructure extends Structure>(opts: {
-    thisNode: Node & TypeElementMemberedNode,
+    thisNode: Node & TypeElementMemberedNode;
     index: number;
     structures: ReadonlyArray<TStructure>;
     expectedKind: SyntaxKind;

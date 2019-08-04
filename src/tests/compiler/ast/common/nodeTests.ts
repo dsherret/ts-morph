@@ -2,9 +2,8 @@ import { expect } from "chai";
 import { assert, IsExact, IsNullable } from "conditional-type-checks";
 import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, FunctionDeclaration, Identifier, InterfaceDeclaration, Node,
-    PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachDescendantTraversalControl,
-    VariableStatement, ForStatement, ForOfStatement, ForInStatement, NumericLiteral, StringLiteral,
-    ExpressionStatement } from "../../../../compiler";
+    PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachDescendantTraversalControl, VariableStatement, ForStatement,
+    ForOfStatement, ForInStatement, NumericLiteral, StringLiteral, ExpressionStatement } from "../../../../compiler";
 import { hasParsedTokens } from "../../../../compiler/ast/utils";
 import { Project } from "../../../../Project";
 import * as errors from "../../../../errors";
@@ -94,9 +93,8 @@ describe(nameof(Node), () => {
         function doTest(text: string, isInStringAtPos: boolean[]) {
             expect(text.length + 1).to.equal(isInStringAtPos.length);
             const { sourceFile } = getInfoFromText(text);
-            for (let i = 0; i < isInStringAtPos.length; i++) {
+            for (let i = 0; i < isInStringAtPos.length; i++)
                 expect(sourceFile.isInStringAtPos(i)).to.equal(isInStringAtPos[i], `should be equal at index ${i}`);
-            }
         }
 
         it("should be within a double quote string when it is", () => {
@@ -113,8 +111,21 @@ describe(nameof(Node), () => {
 
         it("should be within a tagged template string when it is", () => {
             doTest("`t${v}" + "t${u}t`", [
-                false, true, true, false, false, false,
-                true, true, false, false, false, true, false, false]);
+                false,
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                true,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false
+            ]);
         });
 
         it("should throw when specifying a pos less than 0", () => {
@@ -843,10 +854,16 @@ class MyClass {
         });
 
         it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
-            doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.ClassDeclaration, ["class C {}"], sourceFile => {
-                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
-                expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
-            });
+            doTest(
+                "class C {} interface I {}",
+                sourceFile => sourceFile.getChildSyntaxListOrThrow(),
+                SyntaxKind.ClassDeclaration,
+                ["class C {}"],
+                sourceFile => {
+                    expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                    expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
+                }
+            );
         });
 
         it("should get descendants using .getChildren() when specifying a token while on a syntax list", () => {
@@ -907,11 +924,17 @@ class MyClass {
         });
 
         it("should get descendants using .getChildren() for the initial syntax list and then forEachChild afterwards when specifying a parsed kind node", () => {
-            doTest("class C {} interface I {}", sourceFile => sourceFile.getChildSyntaxListOrThrow(), SyntaxKind.InterfaceDeclaration, "interface I {}", sourceFile => {
-                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
-                expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
-                expect(hasParsedTokens(sourceFile.getInterfaceOrThrow("I").compilerNode)).to.be.false;
-            });
+            doTest(
+                "class C {} interface I {}",
+                sourceFile => sourceFile.getChildSyntaxListOrThrow(),
+                SyntaxKind.InterfaceDeclaration,
+                "interface I {}",
+                sourceFile => {
+                    expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                    expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
+                    expect(hasParsedTokens(sourceFile.getInterfaceOrThrow("I").compilerNode)).to.be.false;
+                }
+            );
         });
 
         it("should get descendants using .getChildren() when specifying a token while on a syntax list", () => {
@@ -925,10 +948,16 @@ class MyClass {
         });
 
         it("should get js doc descendants", () => {
-            doTest("/**\n * @return {string}\n */\nfunction test() {}", sourceFile => sourceFile, SyntaxKind.JSDocReturnTag, "@return {string}", sourceFile => {
-                // todo: in the future it would be better for this to be false and only parse the tokens on JSDoc nodes
-                expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
-            });
+            doTest(
+                "/**\n * @return {string}\n */\nfunction test() {}",
+                sourceFile => sourceFile,
+                SyntaxKind.JSDocReturnTag,
+                "@return {string}",
+                sourceFile => {
+                    // todo: in the future it would be better for this to be false and only parse the tokens on JSDoc nodes
+                    expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
+                }
+            );
         });
     });
 
@@ -977,8 +1006,11 @@ class MyClass {
         const { sourceFile } = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the previous sibling based on a condition", () => {
-            expect(sourceFile.getInterfaces()[2].getPreviousSiblingOrThrow(s => TypeGuards.isInterfaceDeclaration(s) && s.getName() === "Interface1").getText())
-                .to.equal("interface Interface1 {}");
+            expect(
+                sourceFile.getInterfaces()[2]
+                    .getPreviousSiblingOrThrow(s => TypeGuards.isInterfaceDeclaration(s) && s.getName() === "Interface1")
+                    .getText()
+            ).to.equal("interface Interface1 {}");
         });
 
         it("should get the previous sibling when not supplying a condition", () => {
@@ -1203,11 +1235,15 @@ class MyClass {
         });
 
         it("should format only the provided node with the specified settings", () => {
-            doTest("class Test{\n\tprop:string;\n}\n       /** Testing */\nclass Test2{\n\t prop:string;\n\t}\n", f => f.getClassOrThrow("Test2"),
-                "class Test{\n\tprop:string;\n}\n/** Testing */\nclass Test2 {\n  prop: string;\n}\n", {
+            doTest(
+                "class Test{\n\tprop:string;\n}\n       /** Testing */\nclass Test2{\n\t prop:string;\n\t}\n",
+                f => f.getClassOrThrow("Test2"),
+                "class Test{\n\tprop:string;\n}\n/** Testing */\nclass Test2 {\n  prop: string;\n}\n",
+                {
                     convertTabsToSpaces: true,
                     indentSize: 2
-                });
+                }
+            );
         });
     });
 
@@ -1221,17 +1257,21 @@ class MyClass {
         }
 
         it("should prepend whitespace", () => {
-            doTest("class Test{\n  prop:string;\n}",
+            doTest(
+                "class Test{\n  prop:string;\n}",
                 f => f.getClassOrThrow("Test").getProperties()[0],
                 "  \t\n ",
-                "class Test{\n    \t\n     prop:string;\n}");
+                "class Test{\n    \t\n     prop:string;\n}"
+            );
         });
 
         it("should prepend whitespace when using a writer", () => {
-            doTest("class Test{\n  prop:string;\n}",
+            doTest(
+                "class Test{\n  prop:string;\n}",
                 f => f.getClassOrThrow("Test").getProperties()[0],
                 writer => writer.space(),
-                "class Test{\n   prop:string;\n}");
+                "class Test{\n   prop:string;\n}"
+            );
         });
 
         it("should throw if providing non-whitespace text", () => {
@@ -1250,17 +1290,21 @@ class MyClass {
         }
 
         it("should append whitespace", () => {
-            doTest("class Test{\n  prop:string;\n}",
+            doTest(
+                "class Test{\n  prop:string;\n}",
                 f => f.getClassOrThrow("Test").getProperties()[0],
                 "  \t\n ",
-                "class Test{\n  prop:string;  \t\n     \n}");
+                "class Test{\n  prop:string;  \t\n     \n}"
+            );
         });
 
         it("should append whitespace when using a writer", () => {
-            doTest("class Test{\n  prop:string;\n}",
+            doTest(
+                "class Test{\n  prop:string;\n}",
                 f => f.getClassOrThrow("Test").getProperties()[0],
                 writer => writer.space(),
-                "class Test{\n  prop:string; \n}");
+                "class Test{\n  prop:string; \n}"
+            );
         });
 
         it("should throw if providing non-whitespace text", () => {
@@ -1586,11 +1630,14 @@ class MyClass {
             });
         });
 
-        function doNodeArrayCbSyntaxKindTest(node: Node, expectedNodeKinds: SyntaxKind[], expectedArrayKinds: SyntaxKind[][],
+        function doNodeArrayCbSyntaxKindTest(
+            node: Node,
+            expectedNodeKinds: SyntaxKind[],
+            expectedArrayKinds: SyntaxKind[][],
             arrayCallback?: (children: Node[], traversal: ForEachDescendantTraversalControl) => unknown,
             nodeCallback?: (node: Node, traversal: ForEachDescendantTraversalControl) => unknown,
-            expectedReturnValue?: Node)
-        {
+            expectedReturnValue?: Node
+        ) {
             const foundNodeKinds: SyntaxKind[] = [];
             const foundArrayKinds: SyntaxKind[][] = [];
             const returnValue = node.forEachDescendant<unknown>((child, traversal) => {
@@ -1616,13 +1663,17 @@ class MyClass {
 
         it("should iterate all the descendants when using an array callback", () => {
             const { sourceFile } = getInfoFromText("export class Test { prop; method() {} } interface Test { prop; }");
-            doNodeArrayCbSyntaxKindTest(sourceFile, [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Block,
-                    SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.EndOfFileToken], [
-                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
-                [SyntaxKind.ExportKeyword],
-                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
-                [SyntaxKind.PropertySignature]
-            ]);
+            doNodeArrayCbSyntaxKindTest(
+                sourceFile,
+                [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Block, SyntaxKind.Identifier, SyntaxKind.Identifier,
+                    SyntaxKind.EndOfFileToken],
+                [
+                    [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
+                    [SyntaxKind.ExportKeyword],
+                    [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
+                    [SyntaxKind.PropertySignature]
+                ]
+            );
         });
 
         it("should stop iteration when calling stop in an array callback at the child level", () => {
@@ -1660,29 +1711,36 @@ class MyClass {
 
         it("should skip looking at the descendants when calling skip on an array callback", () => {
             const { sourceFile } = getInfoFromText("class Test { prop: string; prop2: string; } interface Interface { prop: string; }");
-            doNodeArrayCbSyntaxKindTest(sourceFile,
+            doNodeArrayCbSyntaxKindTest(
+                sourceFile,
                 [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFileToken],
                 [
                     [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
                     [SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration],
                     [SyntaxKind.PropertySignature]
-                ], (nodes, traversal) => {
+                ],
+                (nodes, traversal) => {
                     if (nodes.some(n => n.getKind() === SyntaxKind.PropertyDeclaration))
                         traversal.skip();
-                });
+                }
+            );
         });
 
         it("should go up to the parent when calling up", () => {
             const { sourceFile } = getInfoFromText("class Test { prop: string; prop2: string; } interface Interface { prop: string; }");
-            doNodeArrayCbSyntaxKindTest(sourceFile,
+            doNodeArrayCbSyntaxKindTest(
+                sourceFile,
                 [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFileToken],
                 [
                     [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
                     [SyntaxKind.PropertySignature]
-                ], undefined, (node, traversal) => {
+                ],
+                undefined,
+                (node, traversal) => {
                     if (node.getText() === "Test")
                         traversal.up();
-                });
+                }
+            );
         });
 
         it("should be able to modify nodes midway through", () => {
@@ -1752,21 +1810,27 @@ class MyClass {
         }
 
         it("should iterate over all the children of a source file", () => {
-            runTest("class T {} interface I {}",
+            runTest(
+                "class T {} interface I {}",
                 sourceFile => sourceFile,
-                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]);
+                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]
+            );
         });
 
         it("should not return comment nodes", () => {
-            runTest("// testing\nclass T {}",
+            runTest(
+                "// testing\nclass T {}",
                 sourceFile => sourceFile,
-                [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken]);
+                [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken]
+            );
         });
 
         it("should iterate over all the children of a class declaration", () => {
-            runTest("class T { prop1: string; prop2: number; }",
+            runTest(
+                "class T { prop1: string; prop2: number; }",
                 sourceFile => sourceFile.getClassOrThrow("T"),
-                [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration]);
+                [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration]
+            );
         });
     });
 
@@ -2048,10 +2112,12 @@ class MyClass {
         }
 
         it("should get all the symbols in the provided scope filtered by meaning", () => {
-            doTest("const var = 5; function a() { function b() {} const c = ''; function e() { function f() {} } }",
+            doTest(
+                "const var = 5; function a() { function b() {} const c = ''; function e() { function f() {} } }",
                 sourceFile => sourceFile.getFunctionOrThrow("a").getVariableDeclarationOrThrow("c"),
                 SymbolFlags.BlockScopedVariable,
-                ["c"]);
+                ["c"]
+            );
         });
     });
 });

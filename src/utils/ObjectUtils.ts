@@ -1,4 +1,4 @@
-﻿export class ObjectUtils {
+export class ObjectUtils {
     private constructor() {
     }
 

@@ -65,8 +65,9 @@ export function ExclamationTokenableNode<T extends Constructor<ExclamationTokena
                     newText: "!"
                 });
             }
-            else
+            else {
                 removeChildren({ children: [exclamationTokenNode!] });
+            }
 
             return this;
         }

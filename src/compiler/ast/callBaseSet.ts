@@ -1,4 +1,4 @@
-﻿/* barrel:ignore */
+/* barrel:ignore */
 import { Node } from "./common";
 
 /** @internal */

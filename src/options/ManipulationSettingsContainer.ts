@@ -81,7 +81,7 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
             fillDefaultEditorSettings(this._editorSettings, this);
         }
 
-        return {...this._editorSettings};
+        return { ...this._editorSettings };
     }
 
     /**
@@ -95,7 +95,7 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
             };
         }
 
-        return {...this._formatCodeSettings};
+        return { ...this._formatCodeSettings };
     }
 
     /**

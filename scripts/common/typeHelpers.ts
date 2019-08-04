@@ -1,4 +1,4 @@
-﻿import { Type } from "ts-morph";
+import { Type } from "ts-morph";
 
 export function isNodeType(type: Type) {
     return type.getText().endsWith("Node<NodeType>");
@@ -34,9 +34,9 @@ export function getDescendantBaseType(type: Type, isMatch: (type: Type) => boole
         allBaseTypes.push(...targetType.getBaseTypes());
 
     for (const baseType of allBaseTypes) {
-            const descendantType = getDescendantBaseType(baseType, isMatch);
-            if (descendantType != null)
-                return descendantType;
+        const descendantType = getDescendantBaseType(baseType, isMatch);
+        if (descendantType != null)
+            return descendantType;
     }
 
     return undefined;

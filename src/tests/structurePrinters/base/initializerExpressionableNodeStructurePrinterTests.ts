@@ -29,8 +29,10 @@ describe(nameof(InitializerExpressionableNodeStructurePrinter), () => {
         });
 
         it("should with indentation on multiple lines", () => {
-            doTest({ initializer: writer => writer.writeLine("string |").write("number") },
-                ` = string |\n    number`);
+            doTest(
+                { initializer: writer => writer.writeLine("string |").write("number") },
+                ` = string |\n    number`
+            );
         });
     });
 });

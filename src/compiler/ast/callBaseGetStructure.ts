@@ -1,4 +1,4 @@
-﻿/* barrel:ignore */
+/* barrel:ignore */
 import { ObjectUtils } from "../../utils";
 import { Node } from "./common/Node";
 

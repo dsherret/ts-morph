@@ -33,7 +33,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * Gets the module specifier.
      */
     getModuleSpecifier(): StringLiteral {
-        const moduleSpecifier =  this._getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
+        const moduleSpecifier = this._getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
         if (!TypeGuards.isStringLiteral(moduleSpecifier))
             throw new errors.InvalidOperationError("Expected the module specifier to be a string literal.");
         return moduleSpecifier;
@@ -215,18 +215,20 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
             return this;
 
         const hasOnlyDefaultImport = importClause.getChildCount() === 1;
-        if (hasOnlyDefaultImport)
+        if (hasOnlyDefaultImport) {
             removeChildren({
                 children: [importClause, importClause.getNextSiblingIfKindOrThrow(SyntaxKind.FromKeyword)],
                 removePrecedingSpaces: true,
                 removePrecedingNewLines: true
             });
-        else
+        }
+        else {
             removeChildren({
                 children: [defaultImport, defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken)],
                 removePrecedingSpaces: true,
                 removePrecedingNewLines: true
             });
+        }
 
         return this;
     }
@@ -280,7 +282,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      */
     insertNamedImports(index: number, namedImports: ReadonlyArray<OptionalKind<ImportSpecifierStructure> | string | WriterFunction> | WriterFunction) {
         if (!(namedImports instanceof Function) && ArrayUtils.isNullOrEmpty(namedImports))
-                return [];
+            return [];
 
         const originalNamedImports = this.getNamedImports();
         const writer = this._getWriterWithQueuedIndentation();
@@ -290,12 +292,13 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
 
         if (originalNamedImports.length === 0) {
             namedImportStructurePrinter.printTextsWithBraces(writer, namedImports);
-            if (importClause == null)
+            if (importClause == null) {
                 insertIntoParentTextRange({
                     insertPos: this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
                     parent: this,
                     newText: ` ${writer.toString()} from`
                 });
+            }
             else if (this.getNamespaceImport() != null)
                 throw getErrorWhenNamespaceImportsExist();
             else if (importClause.getNamedBindings() != null) {
@@ -309,12 +312,13 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
                     newText: writer.toString()
                 });
             }
-            else
+            else {
                 insertIntoParentTextRange({
                     insertPos: this.getDefaultImport()!.getEnd(),
                     parent: importClause,
                     newText: `, ${writer.toString()}`
                 });
+            }
         }
         else {
             if (importClause == null)

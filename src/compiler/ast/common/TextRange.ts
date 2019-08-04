@@ -82,9 +82,9 @@ export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
     private _throwIfForgotten() {
         if (this._compilerObject != null)
             return;
-        const message = "Attempted to get a text range that was forgotten. " +
-            "Text ranges are forgotten after a manipulation has occurred. " +
-            "Please re-request the text range after manipulations.";
+        const message = "Attempted to get a text range that was forgotten. "
+            + "Text ranges are forgotten after a manipulation has occurred. "
+            + "Please re-request the text range after manipulations.";
         throw new errors.InvalidOperationError(message);
     }
 }

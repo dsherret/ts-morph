@@ -1,4 +1,4 @@
-﻿import { MarkDownFile } from "./MarkDownFile";
+import { MarkDownFile } from "./MarkDownFile";
 
 export interface CodeBlockConstructorOptions {
     codeType: string | undefined;

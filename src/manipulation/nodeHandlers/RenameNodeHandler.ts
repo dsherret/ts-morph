@@ -23,14 +23,14 @@ export class RenameNodeHandler extends StraightReplacementNodeHandler {
             return;
         }
         else if (currentNodeKind === SyntaxKind.ExportSpecifier && newNodeKind === SyntaxKind.ExportSpecifier
-            && (currentNode.compilerNode as ts.ExportSpecifier).propertyName == null && (newNode as ts.ExportSpecifier).propertyName != null
-        ) {
+            && (currentNode.compilerNode as ts.ExportSpecifier).propertyName == null && (newNode as ts.ExportSpecifier).propertyName != null)
+        {
             handleImportOrExportSpecifier(this.compilerFactory);
             return;
         }
         else if (currentNodeKind === SyntaxKind.ImportSpecifier && newNodeKind === SyntaxKind.ImportSpecifier
-            && (currentNode.compilerNode as ts.ImportSpecifier).propertyName == null && (newNode as ts.ImportSpecifier).propertyName != null
-        ) {
+            && (currentNode.compilerNode as ts.ImportSpecifier).propertyName == null && (newNode as ts.ImportSpecifier).propertyName != null)
+        {
             handleImportOrExportSpecifier(this.compilerFactory);
             return;
         }

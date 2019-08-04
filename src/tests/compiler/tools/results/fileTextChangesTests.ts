@@ -22,8 +22,7 @@ describe(nameof(FileTextChanges), () => {
             // ensure this is using the more descriptive error message
             expect(() => change.applyChanges()).to.throw(errors.InvalidOperationError,
                 "Cannot apply file text change for creating a new file when the file exists "
-                + "at path test.ts. Did you mean to provide the overwrite option?"
-            );
+                    + "at path test.ts. Did you mean to provide the overwrite option?");
         });
 
         it("should not throw if a file text change instruct to create a new file that already exists and the overwrite option is provided", () => {
@@ -71,15 +70,14 @@ describe(nameof(FileTextChanges), () => {
         });
 
         it("should apply file text change that first inserts and then removes ('move to a new file' refactor edits changes)", () => {
-          const project = setup();
-          const change = new FileTextChanges(project._context, {
-              fileName: "test.ts",
-              isNewFile: false,
-              textChanges: [{ newText: "text; ", span: { start: 0, length: 0 } }, {newText: "", span: {start: 0, length: 9}}]
-          });
-          change.applyChanges();
-          expect(change.getSourceFile()!.getText()).to.equal("text; const u;");
-      });
-
+            const project = setup();
+            const change = new FileTextChanges(project._context, {
+                fileName: "test.ts",
+                isNewFile: false,
+                textChanges: [{ newText: "text; ", span: { start: 0, length: 0 } }, { newText: "", span: { start: 0, length: 9 } }]
+            });
+            change.applyChanges();
+            expect(change.getSourceFile()!.getText()).to.equal("text; const u;");
+        });
     });
 });

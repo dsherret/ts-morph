@@ -92,8 +92,9 @@ function addNewFunctions(sourceFile: SourceFile, structureInfos: StructureInfo[]
                         else
                             addExpression(`forAllIfStructure(structure.${member.name}, callback, StructureKind.${member.syntaxKind})`);
                     }
-                    else
+                    else {
                         addExpression(`forAllUnknownKindIfStructure(structure.${member.name}, callback)`);
+                    }
                 }
 
                 writer.write(";");

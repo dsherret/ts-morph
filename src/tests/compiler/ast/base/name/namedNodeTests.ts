@@ -1,6 +1,6 @@
-﻿import { expect } from "chai";
-import { InterfaceDeclaration, EnumDeclaration, FunctionDeclaration, Identifier, NamedNode, RenameOptions, VariableStatement,
-    ObjectLiteralExpression, ShorthandPropertyAssignment} from "../../../../../compiler";
+import { expect } from "chai";
+import { InterfaceDeclaration, EnumDeclaration, FunctionDeclaration, Identifier, NamedNode, RenameOptions, VariableStatement, ObjectLiteralExpression,
+    ShorthandPropertyAssignment } from "../../../../../compiler";
 import { TypeScriptVersionChecker } from "../../../../../utils";
 import { getInfoFromText } from "../../../testHelpers";
 
@@ -31,7 +31,7 @@ describe(nameof(NamedNode), () => {
         });
 
         it("should not rename in comments when specified", () => {
-            optionsTest("// MyEnum\nenum MyEnum {}\n", { }, "// MyEnum\nenum MyNewEnum {}\n");
+            optionsTest("// MyEnum\nenum MyEnum {}\n", {}, "// MyEnum\nenum MyNewEnum {}\n");
         });
 
         it("should rename in both comments and strings when specified", () => {

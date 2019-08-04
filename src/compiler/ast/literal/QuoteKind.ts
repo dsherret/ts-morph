@@ -1,4 +1,4 @@
-﻿/** Quote type for a string literal. */
+/** Quote type for a string literal. */
 export enum QuoteKind {
     /** Single quote */
     Single = "'",

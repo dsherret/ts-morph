@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { Program } from "../../../compiler";
 import * as errors from "../../../errors";
 import { getFileSystemHostWithFiles } from "../../testHelpers";
@@ -59,7 +59,8 @@ describe(nameof(Program), () => {
                 { filePath: "package.json", text: `{ "name": "testing", "version": "0.0.1" }` },
                 {
                     filePath: "node_modules/library/package.json",
-                    text: `{ "name": "library", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`
+                    text: `{ "name": "library", "version": "0.0.1", "main": "index.js", `
+                        + `"typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`
                 },
                 { filePath: "node_modules/library/index.js", text: "export class Test {}" },
                 { filePath: "node_modules/library/index.d.ts", text: "export class Test {}" }

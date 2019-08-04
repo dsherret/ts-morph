@@ -1,12 +1,19 @@
-﻿import { expect } from "chai";
-import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration, ExportAssignment, ExportedDeclarations } from "../../../../compiler";
+import { expect } from "chai";
+import { SourceFile, NamespaceDeclaration, ModuledNode, QuoteKind, ImportDeclaration, ExportDeclaration, ExportAssignment,
+    ExportedDeclarations } from "../../../../compiler";
 import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../../structures";
 import { Project } from "../../../../Project";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ModuledNode), () => {
     describe(nameof<ModuledNode>(n => n.insertImportDeclarations), () => {
-        function doTest(startCode: string, index: number, structures: OptionalKind<ImportDeclarationStructure>[], expectedCode: string, useSingleQuotes = false) {
+        function doTest(
+            startCode: string,
+            index: number,
+            structures: OptionalKind<ImportDeclarationStructure>[],
+            expectedCode: string,
+            useSingleQuotes = false
+        ) {
             const { sourceFile, project } = getInfoFromText(startCode);
             if (useSingleQuotes)
                 project.manipulationSettings.set({ quoteKind: QuoteKind.Single });
@@ -101,8 +108,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should add at the start if no imports exists", () => {
-            doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" },
-                `import "./file";\n\nexport class MyClass {}\n`);
+            doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" }, `import "./file";\n\nexport class MyClass {}\n`);
         });
 
         it("should insert after any comments at the start of a file", () => {
@@ -228,8 +234,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should support writing named imports with a writer", () => {
-            doTest(``, 0, [{ namedExports: writer => writer.newLine().writeLine("test,").writeLine("test2") }],
-                `export {\n    test,\n    test2\n};\n`);
+            doTest(``, 0, [{ namedExports: writer => writer.newLine().writeLine("test,").writeLine("test2") }], `export {\n    test,\n    test2\n};\n`);
         });
 
         it("should insert after any comments at the start of a file", () => {
@@ -275,8 +280,7 @@ describe(nameof(ModuledNode), () => {
         }
 
         it("should always add at the end of the file", () => {
-            doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" },
-                `export class MyClass {}\n\nexport * from "./file";\n`);
+            doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" }, `export class MyClass {}\n\nexport * from "./file";\n`);
         });
     });
 
@@ -378,8 +382,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should insert in the middle", () => {
-            doTest(`export * from "./file1";\nexport = 6;\n`, 1, [{ expression: "5" }],
-                `export * from "./file1";\n\nexport = 5;\nexport = 6;\n`);
+            doTest(`export * from "./file1";\nexport = 6;\n`, 1, [{ expression: "5" }], `export * from "./file1";\n\nexport = 5;\nexport = 6;\n`);
         });
 
         it("should insert at the end", () => {
@@ -416,8 +419,7 @@ describe(nameof(ModuledNode), () => {
         }
 
         it("should insert at the specified position", () => {
-            doTest(`export * from "./file1";\nexport = 6;\n`, 1, { expression: "5" },
-                `export * from "./file1";\n\nexport = 5;\nexport = 6;\n`);
+            doTest(`export * from "./file1";\nexport = 6;\n`, 1, { expression: "5" }, `export * from "./file1";\n\nexport = 5;\nexport = 6;\n`);
         });
     });
 
@@ -430,8 +432,7 @@ describe(nameof(ModuledNode), () => {
         }
 
         it("should always add at the end of the file", () => {
-            doTest(`export class MyClass {}\n`, { expression: "5" },
-                `export class MyClass {}\n\nexport = 5;\n`);
+            doTest(`export class MyClass {}\n`, { expression: "5" }, `export class MyClass {}\n\nexport = 5;\n`);
         });
     });
 
@@ -444,8 +445,7 @@ describe(nameof(ModuledNode), () => {
         }
 
         it("should add multiple", () => {
-            doTest(`export class MyClass {}\n`, [{ expression: "5" }, { expression: "6" }],
-                `export class MyClass {}\n\nexport = 5;\nexport = 6;\n`);
+            doTest(`export class MyClass {}\n`, [{ expression: "5" }, { expression: "6" }], `export class MyClass {}\n\nexport = 5;\nexport = 6;\n`);
         });
     });
 
@@ -485,7 +485,8 @@ describe(nameof(ModuledNode), () => {
 
     describe(nameof<ModuledNode>(n => n.getExportedDeclarations), () => {
         function assertMapsEqual(expected: [string, string[]][], actual: ReadonlyMap<string, ExportedDeclarations[]>) {
-            expect(sort(Array.from(actual.entries()).map(entry => [entry[0], entry[1].map(n => n.getText())] as [string, string[]]))).to.deep.equal(sort(expected));
+            expect(sort(Array.from(actual.entries()).map(entry => [entry[0], entry[1].map(n => n.getText())] as [string, string[]])))
+                .to.deep.equal(sort(expected));
 
             function sort(values: [string, string[]][]) {
                 values.sort((a, b) => a > b ? 1 : -1);
@@ -495,13 +496,19 @@ describe(nameof(ModuledNode), () => {
 
         it("should get from a file", () => {
             const project = new Project({ useVirtualFileSystem: true });
-            const mainSourceFile = project.createSourceFile("main.ts", `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n` +
-                "export class MainFileClass {}\nexport default MainFileClass;");
+            const mainSourceFile = project.createSourceFile(
+                "main.ts",
+                `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n`
+                    + "export class MainFileClass {}\nexport default MainFileClass;"
+            );
             project.createSourceFile("class.ts", `export class Class {} export class MyClass {}`);
             project.createSourceFile("otherClass.ts", `export class OtherClass {}\nexport class InnerClass {}`);
             project.createSourceFile("barrel.ts", `export * from "./subBarrel";`);
-            project.createSourceFile("subBarrel.ts", `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n` +
-                `export {default as SubClass3} from "./subFile3"`);
+            project.createSourceFile(
+                "subBarrel.ts",
+                `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n`
+                    + `export {default as SubClass3} from "./subFile3"`
+            );
             project.createSourceFile("subFile.ts", `export class SubClass {}`);
             project.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
             project.createSourceFile("subFile3.ts", `class SubClass3 {}\nexport default SubClass3;`);

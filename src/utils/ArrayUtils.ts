@@ -49,9 +49,8 @@ export class ArrayUtils {
     }
 
     static *toIterator<T>(items: ReadonlyArray<T>) {
-        for (const item of items) {
+        for (const item of items)
             yield item;
-        }
     }
 
     static sortByProperty<T>(items: T[], getProp: (item: T) => string | number) {
@@ -120,8 +119,9 @@ export class ArrayUtils {
                 if (findIndex === subArray.length)
                     return true;
             }
-            else
+            else {
                 findIndex = 0;
+            }
         }
 
         return false;

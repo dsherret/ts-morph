@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { EOL } from "os";
 import * as path from "path";
 import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile, Identifier } from "../compiler";
@@ -332,7 +332,10 @@ describe(nameof(Project), () => {
         });
 
         it(`should not get the compiler options from tsconfig.json when not providing anything and a tsconfig exists`, () => {
-            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{
+                filePath: "tsconfig.json",
+                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
+            }]);
             const project = new Project({ fileSystem });
             expect(project.getCompilerOptions()).to.deep.equal({});
         });
@@ -344,7 +347,10 @@ describe(nameof(Project), () => {
         });
 
         function doTsConfigTest(addFilesFromTsConfig: boolean) {
-            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{
+                filePath: "tsconfig.json",
+                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
+            }]);
             const project = new Project({
                 tsConfigFilePath: "tsconfig.json",
                 compilerOptions: {
@@ -830,7 +836,8 @@ describe(nameof(Project), () => {
             const enumMember = enumDef.getMembers()[0];
             enumMember.rename("myNewMemberName");
             expect(enumMember.getValue()).to.equal(0);
-            expect(sourceFile.getFullText()).to.equal("enum NewName {\n    myNewMemberName\n}\nlet myEnum: NewName;\nlet myOtherEnum: MyOtherNewName;\n\nenum MyOtherNewName {\n}\n");
+            expect(sourceFile.getFullText())
+                .to.equal("enum NewName {\n    myNewMemberName\n}\nlet myEnum: NewName;\nlet myOtherEnum: MyOtherNewName;\n\nenum MyOtherNewName {\n}\n");
         });
     });
 
@@ -1202,8 +1209,8 @@ describe(nameof(Project), () => {
             let interfaceNode4: Node;
             let interfaceNode5: Node;
             project.forgetNodesCreatedInBlock(remember => {
-                sourceFile = project.createSourceFile("test.ts", "class MyClass {} namespace MyNamespace { interface Interface1 {} interface Interface2 {} " +
-                    "interface Interface3 {} interface Interface4 {} }");
+                sourceFile = project.createSourceFile("test.ts", "class MyClass {} namespace MyNamespace { interface Interface1 {} interface Interface2 {} "
+                    + "interface Interface3 {} interface Interface4 {} }");
                 sourceFileNotNavigated = project.createSourceFile("test2.ts", "class MyClass {}");
                 classNode = sourceFile.getClassOrThrow("MyClass");
                 namespaceNode = sourceFile.getNamespaceOrThrow("MyNamespace");
@@ -1279,7 +1286,9 @@ describe(nameof(Project), () => {
             });
 
             it("should get exceptions thrown in the body", () => {
-                expect(() => project.forgetNodesCreatedInBlock(() => { throw new Error(""); })).to.throw();
+                expect(() => project.forgetNodesCreatedInBlock(() => {
+                    throw new Error("");
+                })).to.throw();
             });
         });
 

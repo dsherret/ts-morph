@@ -1,7 +1,6 @@
 import { TypeAliasDeclarationStructure, TypeAliasDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { ts } from "../../../typescript";
-import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TypedNode,
-    TypeParameteredNode } from "../base";
+import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TypedNode, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Statement } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";

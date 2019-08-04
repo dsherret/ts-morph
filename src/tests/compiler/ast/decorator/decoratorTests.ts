@@ -1,4 +1,4 @@
-﻿import { expect } from "chai";
+import { expect } from "chai";
 import { ClassDeclaration, Decorator } from "../../../../compiler";
 import { DecoratorStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
@@ -8,7 +8,7 @@ describe(nameof(Decorator), () => {
     function getFirstClassDecorator(code: string) {
         const result = getInfoFromText<ClassDeclaration>(code);
         const firstDecorator = result.firstChild.getDecorators()[0];
-        return {...result, firstDecorator};
+        return { ...result, firstDecorator };
     }
 
     describe(nameof<Decorator>(d => d.isDecoratorFactory), () => {
@@ -336,8 +336,7 @@ describe(nameof(Decorator), () => {
         });
 
         it("should remove when the only type argument", () => {
-            doRemoveTypeArgTest("@decorator<MyClass>(arg1, arg2)\nclass MyClass {}", 0,
-                "@decorator(arg1, arg2)\nclass MyClass {}");
+            doRemoveTypeArgTest("@decorator<MyClass>(arg1, arg2)\nclass MyClass {}", 0, "@decorator(arg1, arg2)\nclass MyClass {}");
         });
     });
 
@@ -449,7 +448,9 @@ describe(nameof(Decorator), () => {
 
         it("should set everything when specifying", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<DecoratorStructure>> = {
-                name: "NewName", arguments: ["1"], typeArguments: ["T"]
+                name: "NewName",
+                arguments: ["1"],
+                typeArguments: ["T"]
             };
             doTest("@dec class T {}", structure, "@NewName<T>(1) class T {}");
         });

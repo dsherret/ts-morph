@@ -5,7 +5,7 @@ import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getInfoFromTextWithExpression(text: string) {
     const info = getInfoFromTextWithDescendant<ConditionalExpression>(text, SyntaxKind.ConditionalExpression);
-    return {...info, expression: info.descendant};
+    return { ...info, expression: info.descendant };
 }
 
 describe(nameof(ConditionalExpression), () => {

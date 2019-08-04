@@ -79,9 +79,8 @@ function addNewMethods(typeGuardsClass: ClassDeclaration, structureInfos: Struct
         returnType: `structure is ${getReturnType(info)}`,
         typeParameters: getTypeParameters(info),
         statements: writer => {
-            if (info.kinds.size === 1) {
+            if (info.kinds.size === 1)
                 writer.write(`return structure.kind === StructureKind.${Array.from(info.kinds)[0]};`);
-            }
             else {
                 writer.write("switch (structure.kind)").block(() => {
                     for (const kind of info.kinds)
