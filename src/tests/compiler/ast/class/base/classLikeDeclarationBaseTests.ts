@@ -13,7 +13,9 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         const info = getInfoFromText(text);
         return {
             ...info,
-            classNode: info.sourceFile.getFirstDescendantOrThrow(d => TypeGuards.isClassExpression(d) || TypeGuards.isClassDeclaration(d)) as Node & ClassLikeDeclarationBase
+            classNode: info.sourceFile.getFirstDescendantOrThrow(
+                d => TypeGuards.isClassExpression(d) || TypeGuards.isClassDeclaration(d)
+            ) as Node & ClassLikeDeclarationBase
         };
     }
 

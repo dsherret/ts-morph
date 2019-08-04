@@ -31,7 +31,7 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
 
         return parent.getInstanceProperties()
             .find(p => p.getKind() === SyntaxKind.GetAccessor && p.getName() === thisName) as GetAccessorDeclaration
-            | undefined;
+                | undefined;
     }
 
     /**
