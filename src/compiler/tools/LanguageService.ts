@@ -262,8 +262,7 @@ export class LanguageService {
             range[0],
             range[1],
             this._getFilledSettings(formatSettings)
-        ) || [])
-            .map(e => new TextChange(e));
+        ) || []).map(e => new TextChange(e));
     }
 
     /**
@@ -457,8 +456,7 @@ export class LanguageService {
     }
 
     private _getFilledSettings(settings: FormatCodeSettings) {
-        // optimization
-        if ((settings as any)["_filled"])
+        if ((settings as any)["_filled"]) // optimization
             return settings;
 
         settings = ObjectUtils.assign(this._context.getFormatCodeSettings(), settings);

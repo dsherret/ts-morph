@@ -81,8 +81,9 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     const nextNonCommentNode = getNextNonCommentNode();
     const separator = opts.useNewLines ? parent._context.manipulationSettings.getNewLineKindAsString() : " ";
     const parentNextSibling = parent.getNextSibling();
-    const isContained = parentNextSibling != null
-        && (parentNextSibling.getKind() === SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === SyntaxKind.CloseBracketToken);
+    const isContained = parentNextSibling != null && (
+        parentNextSibling.getKind() === SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === SyntaxKind.CloseBracketToken
+    );
     let { newText } = opts;
 
     if (previousNode != null) {
