@@ -580,9 +580,9 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-dprint@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.3.0.tgz#9f1130e59dfe3df0ab949005872e8036f7072a45"
+dprint@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.3.4.tgz#39e7947914b73006f121e1e0fca173b973d10d57"
   dependencies:
     "@babel/core" "^7.5.5"
     "@babel/parser" "^7.5.5"
