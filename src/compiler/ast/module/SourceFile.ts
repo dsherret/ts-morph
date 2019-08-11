@@ -504,7 +504,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Get any source files that reference this source file.
+     * Gets any source files that reference this source file.
      */
     getReferencingSourceFiles() {
         return Array.from(this._referenceContainer.getDependentSourceFiles());

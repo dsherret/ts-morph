@@ -164,6 +164,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@dprint/core@~0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@dprint/core/-/core-0.2.0.tgz#ee80cdb388796a8c18505fd3ca7bc9b36df5fc45"
+
 "@dsherret/to-absolute-glob@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@dsherret/to-absolute-glob/-/to-absolute-glob-2.0.2.tgz#1f6475dc8bd974cea07a2daf3864b317b1dd332c"
@@ -580,15 +584,26 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-dprint@^0.3.4:
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.3.4.tgz#39e7947914b73006f121e1e0fca173b973d10d57"
+dprint-plugin-jsonc@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/dprint-plugin-jsonc/-/dprint-plugin-jsonc-0.1.1.tgz#177f05f03e94408ce96562386fcc1bf60765b44e"
+  dependencies:
+    jsonc-parser "^2.1.0"
+
+dprint-plugin-typescript@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/dprint-plugin-typescript/-/dprint-plugin-typescript-0.1.1.tgz#13b968403cd2ba930d49e6b9f2df762c38e75c09"
   dependencies:
     "@babel/core" "^7.5.5"
     "@babel/parser" "^7.5.5"
     "@babel/preset-typescript" "^7.3.3"
+
+dprint@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.4.1.tgz#a48ebdce1ae3d84b3727d702736ae1be3eebce29"
+  dependencies:
+    "@dprint/core" "~0.2.0"
     globby "^10.0.1"
-    jsonc-parser "^2.1.0"
     minimist "^1.2.0"
 
 ecc-jsbn@~0.1.1:
