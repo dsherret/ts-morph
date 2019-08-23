@@ -509,6 +509,21 @@ export class Project {
     }
 
     /**
+     * Gets the syntactic diagnostics.
+     * @param sourceFile - Optional source file to filter the results by.
+     */
+    getSyntacticDiagnostics(): Diagnostic[] {
+        return this._context.getSyntacticDiagnostics();
+    }
+
+    /**
+     * Gets the semantic diagnostics.
+     * @param sourceFile - Optional source file to filter the results by.
+     */
+    getSemanticDiagnostics(): Diagnostic[] {
+        return this._context.getSemanticDiagnostics();
+    }
+    /**
      * Gets the language service.
      */
     getLanguageService(): LanguageService {

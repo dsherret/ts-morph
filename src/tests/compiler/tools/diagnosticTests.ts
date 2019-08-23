@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Diagnostic } from "../../../compiler";
+import { Diagnostic, SourceFile } from "../../../compiler";
 import { DiagnosticCategory } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
@@ -67,4 +67,19 @@ describe(nameof(Diagnostic), () => {
             expect(constError.getSourceFile()!.getFilePath()).to.equal(sourceFile.getFilePath());
         });
     });
+
+    describe(nameof<SourceFile>(d => d.getSemanticDiagnostics), () => {
+        it("should return only semantic diagnostics of file", () => {
+            const { sourceFile } = getInfoFromText("const a: A = 1; export 1;", { disableErrorCheck: true, includeLibDts: true });
+            expect(sourceFile.getSemanticDiagnostics().map(d=>d.getMessageText())).to.deep.equal(["Cannot find name 'A'."]);
+        });
+    });
+
+    describe(nameof<SourceFile>(d => d.getSyntacticDiagnostics), () => {
+        it("should return only syntactic diagnostics of file", () => {
+            const { sourceFile } = getInfoFromText("const a: A = 1; export 1;", { disableErrorCheck: true, includeLibDts: true });
+            expect(sourceFile.getSyntacticDiagnostics().map(d=>d.getMessageText())).to.deep.equal(["Declaration or statement expected."]);
+        });
+    });
+
 });

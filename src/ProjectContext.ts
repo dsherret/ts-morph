@@ -153,6 +153,24 @@ export class ProjectContext {
         return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
     }
 
+    /**
+     * Gets the syntactic diagnostics.
+     * @param sourceFile - Optional source file to filter the results by.
+     */
+    getSyntacticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+        const compilerDiagnostics = this.program.compilerObject.getSyntacticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
+        return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
+    }
+
+    /**
+     * Gets the semantic diagnostics.
+     * @param sourceFile - Optional source file to filter the results by.
+     */
+    getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+        const compilerDiagnostics = this.program.compilerObject.getSemanticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
+        return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
+    }
+
     private getToolRequiredError(name: string) {
         return new errors.InvalidOperationError(`A ${name} is required for this operation. `
             + "This might occur when manipulating or getting type information from a node that was not added "

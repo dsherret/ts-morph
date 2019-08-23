@@ -610,10 +610,24 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the pre-emit diagnostics of the specified source file.
+     * Gets the pre-emit diagnostics.
      */
     getPreEmitDiagnostics(): Diagnostic[] {
         return this._context.getPreEmitDiagnostics(this);
+    }
+
+    /**
+     * Gets the semantic diagnostics.
+     */
+    getSemanticDiagnostics(): Diagnostic[] {
+        return this._context.getSemanticDiagnostics(this);
+    }
+
+    /**
+     * Gets the syntactic diagnostics.
+     */
+    getSyntacticDiagnostics(): Diagnostic[] {
+        return this._context.getSyntacticDiagnostics(this);
     }
 
     /**
