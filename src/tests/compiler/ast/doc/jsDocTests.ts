@@ -136,8 +136,8 @@ describe(nameof(JSDoc), () => {
         });
 
         it("should not modify content's stars", () => {
-            doTest(`/** Performs \`counter *= 2\`.*/function identifier() {}`, `Performs \`counter *= 2\`.`);
-            doTest(`/**\nPerforms \`counter *= 2\`.\n*/function identifier() {}`, `Performs \`counter *= 2\`.`);
+            doTest("/** Performs `counter *= 2`.*/function identifier() {}", "Performs `counter *= 2`.");
+            doTest("/**\nPerforms `counter *= 2`.\n*/function identifier() {}", "Performs `counter *= 2`.");
         });
     });
 
