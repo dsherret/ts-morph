@@ -134,6 +134,11 @@ describe(nameof(JSDoc), () => {
         it("should return the correct inner text when using slash r slash n", () => {
             doTest("/**\r\n * Description\r\n * @param - Test\r\n */function identifier() {}", "Description\r\n@param - Test");
         });
+
+        it("should not modify content's stars", () => {
+            doTest(`/** Performs \`counter *= 2\`.*/function identifier() {}`, `Performs \`counter *= 2\`.`);
+            doTest(`/**\nPerforms \`counter *= 2\`.\n*/function identifier() {}`, `Performs \`counter *= 2\`.`);
+        });
     });
 
     describe(nameof<JSDoc>(n => n.set), () => {
