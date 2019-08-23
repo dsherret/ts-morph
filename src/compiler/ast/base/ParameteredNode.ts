@@ -8,6 +8,7 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function/ParameterDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { UserPreferences } from "../../tools";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration>; }>;
 
@@ -58,6 +59,14 @@ export interface ParameteredNode {
      * @param structures - Parameter to insert.
      */
     insertParameter(index: number, structure: OptionalKind<ParameterDeclarationStructure>): ParameterDeclaration;
+
+    /**
+     * Convert parameters to destructured object.
+     *
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     * @param userPreferences - User preferences for refactoring.
+     */
+    convertParamsToDestructuredObject(userPreferences?: UserPreferences): void;
 }
 
 export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T {
@@ -125,6 +134,17 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             return callBaseGetStructure<ParameteredNodeStructure>(Base.prototype, this, {
                 parameters: this.getParameters().map(p => p.getStructure())
             });
+        }
+
+        convertParamsToDestructuredObject(userPreferences?: UserPreferences) {
+            const params = this.getParameters();
+            if (params.length === 0)
+                return;
+            const edits = this._context.languageService.getEditsForRefactor(this.getSourceFile().getFilePath(), {}, params[0],
+                "Convert parameters to destructured object", "Convert parameters to destructured object", userPreferences);
+            if (edits) {
+                edits.applyChanges({ overwrite: true });
+            }
         }
     };
 }
