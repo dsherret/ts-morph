@@ -71,15 +71,14 @@ describe(nameof(Diagnostic), () => {
     describe(nameof<SourceFile>(d => d.getSemanticDiagnostics), () => {
         it("should return only semantic diagnostics of file", () => {
             const { sourceFile } = getInfoFromText("const a: A = 1; export 1;", { disableErrorCheck: true, includeLibDts: true });
-            expect(sourceFile.getSemanticDiagnostics().map(d=>d.getMessageText())).to.deep.equal(["Cannot find name 'A'."]);
+            expect(sourceFile.getSemanticDiagnostics().map(d => d.getMessageText())).to.deep.equal(["Cannot find name 'A'."]);
         });
     });
 
     describe(nameof<SourceFile>(d => d.getSyntacticDiagnostics), () => {
         it("should return only syntactic diagnostics of file", () => {
             const { sourceFile } = getInfoFromText("const a: A = 1; export 1;", { disableErrorCheck: true, includeLibDts: true });
-            expect(sourceFile.getSyntacticDiagnostics().map(d=>d.getMessageText())).to.deep.equal(["Declaration or statement expected."]);
+            expect(sourceFile.getSyntacticDiagnostics().map(d => d.getMessageText())).to.deep.equal(["Declaration or statement expected."]);
         });
     });
-
 });
