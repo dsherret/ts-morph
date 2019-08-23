@@ -142,9 +142,8 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 return;
             const edits = this._context.languageService.getEditsForRefactor(this.getSourceFile().getFilePath(), {}, params[0],
                 "Convert parameters to destructured object", "Convert parameters to destructured object", userPreferences);
-            if (edits) {
+            if (edits)
                 edits.applyChanges({ overwrite: true });
-            }
         }
     };
 }
