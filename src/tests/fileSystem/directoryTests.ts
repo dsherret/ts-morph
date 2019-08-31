@@ -1539,7 +1539,6 @@ describe(nameof(Directory), () => {
         function runChecks(fileSystem: FileSystemHost & CustomFileSystemProps, result: DirectoryEmitResult, outDir: string, declarationDir: string) {
             const writeLog = fileSystem.getWriteLog();
 
-            expect(result.getEmitSkipped()).to.be.false;
             expect(result.getOutputFilePaths().sort()).to.deep.equal(writeLog.map(l => l.filePath).sort());
             expect(writeLog.map(l => l.filePath).sort()).to.deep.equal([
                 outDir + "/file1.js.map",
@@ -1599,7 +1598,6 @@ describe(nameof(Directory), () => {
             subDir.createSourceFile("file1.ts", "export class Parent extends Child {}");
             subDir.createSourceFile("file2.ts", "");
             const result = await directory.emit();
-            expect(result.getEmitSkipped()).to.be.true;
             expect(result.getSkippedFilePaths()).to.deep.equal(["/dir/sub/file1.ts"]);
 
             const writeLog = fileSystem.getWriteLog();
@@ -1625,7 +1623,6 @@ describe(nameof(Directory), () => {
         function runChecks(fileSystem: FileSystemHost & CustomFileSystemProps, result: DirectoryEmitResult, outDir: string, declarationDir: string) {
             const writeLog = fileSystem.getWriteLog();
 
-            expect(result.getEmitSkipped()).to.be.false;
             expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
             expect(writeLog[0].filePath).to.equal(outDir + "/file1.js.map");
             expect(writeLog[1].filePath).to.equal(outDir + "/file1.js");
@@ -1651,7 +1648,6 @@ describe(nameof(Directory), () => {
             const subDir2 = directory.createDirectory("sub2");
             subDir.createSourceFile("file1.ts", "");
             const result = subDir.emitSync({ outDir: "../sub2" });
-            expect(result.getEmitSkipped()).to.be.false;
 
             const writeLog = fileSystem.getWriteLog();
             expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
@@ -1667,7 +1663,6 @@ describe(nameof(Directory), () => {
             subDir.createSourceFile("file1.ts", "export class Parent extends Child {}");
             subDir.createSourceFile("file2.ts", "");
             const result = directory.emitSync();
-            expect(result.getEmitSkipped()).to.be.true;
             expect(result.getSkippedFilePaths()).to.deep.equal(["/dir/sub/file1.ts"]);
 
             const writeLog = fileSystem.getWriteLog();

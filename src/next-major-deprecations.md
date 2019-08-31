@@ -1,6 +1,6 @@
 ﻿# Deprecations in the next major
 
-* Remove DirectoryEmitResult#getSkippedFilePaths()
+* None
 
 # Future version
 

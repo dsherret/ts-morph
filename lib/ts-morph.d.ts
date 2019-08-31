@@ -289,11 +289,6 @@ export declare class DirectoryEmitResult {
     private readonly _outputFilePaths;
     private constructor();
     /**
-     * Gets if the emit was skipped.
-     * @deprecated This is being deprecated in favour of getSkippedFilePaths().
-     */
-    getEmitSkipped(): boolean;
-    /**
      * Gets a collections of skipped file paths.
      */
     getSkippedFilePaths(): string[];
