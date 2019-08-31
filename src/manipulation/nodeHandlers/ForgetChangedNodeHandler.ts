@@ -33,7 +33,7 @@ export class ForgetChangedNodeHandler implements NodeHandler {
 
         for (const currentNodeChild of currentNodeChildren) {
             const nextNodeChildResult = newNodeChildren.next();
-            if (nextNodeChildResult.done && nextNodeChildResult.value == null) {
+            if (nextNodeChildResult.done) {
                 const existingNode = this.compilerFactory.getExistingCompilerNode(currentNodeChild);
                 if (existingNode != null)
                     existingNode.forget();
