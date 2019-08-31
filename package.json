@@ -17,7 +17,7 @@
     "test:performance": "yarn build && node ./dist/tests/performance/run.js",
     "test:performance-save": "yarn test:performance --save",
     "type-check-library": "ts-node --transpile-only scripts/typeCheckLibrary",
-    "type-check-scripts": "tsc --noEmit --project tsconfig.scripts.json",
+    "type-check-scripts": "tsc --noEmit --project scripts/tsconfig.json",
     "code-generate": "ts-node --transpile-only --compiler ttypescript scripts/generation/main",
     "refactor": "ts-node --transpile-only scripts/refactor",
     "output-wrapped-nodes": "ts-node --transpile-only scripts/generation/outputWrappedNodesInfo",

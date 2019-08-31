@@ -29,7 +29,7 @@ export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends 
     : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined
     : NodeType[KeyName];
 
-export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined
+export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? undefined
     : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined
     : CompilerNodeToWrappedType<NodeType["parent"]>;
 
@@ -1094,15 +1094,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Get the node's parent.
      */
-    getParent<T extends Node | undefined = NodeParentType<NodeType>>(): T {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.parent) as T;
+    getParent() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.parent);
     }
 
     /**
      * Gets the parent or throws an error if it doesn't exist.
      */
-    getParentOrThrow<T extends Node | undefined = NodeParentType<NodeType>>(): NonNullable<T> {
-        return errors.throwIfNullOrUndefined(this.getParent<T>(), "Expected to find a parent.") as NonNullable<T>;
+    getParentOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getParent(), "Expected to find a parent.");
     }
 
     /**
