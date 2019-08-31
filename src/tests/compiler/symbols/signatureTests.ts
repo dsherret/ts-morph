@@ -52,18 +52,13 @@ interface MyInterface {
     /**
      * Docs
      */
-    /**
-     * Docs 2
-     */
     () => void;
 }
 let t: MyInterface;
 `);
 
             expect(signature.getDocumentationComments().map(c => ({ text: c.getText(), kind: c.getKind() }))).to.deep.equal([
-                { text: "Docs", kind: "text" },
-                { text: "\n", kind: "lineBreak" }, // not sure why the compiler returns this...
-                { text: "Docs 2", kind: "text" }
+                { text: "Docs", kind: "text" }
             ]);
         });
     });

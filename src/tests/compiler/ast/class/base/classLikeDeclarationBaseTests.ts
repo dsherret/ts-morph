@@ -1051,8 +1051,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
 
         describe("has static methods", () => {
-            const { firstChild
-            } = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
 
             it("should get the right number of static methods", () => {
                 expect(firstChild.getStaticMethods().length).to.equal(1);
@@ -1109,8 +1108,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMembers), () => {
-        const { firstChild
-        } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
+        const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
             + "prop2: number;method1() {}\n}\n");
         it("should get the right number of instance members", () => {
             expect(firstChild.getInstanceMembers().length).to.equal(4);
@@ -1167,8 +1165,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     });
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMembers), () => {
-        const { firstChild
-        } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
+        const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
             + "prop2: number;method1() {}\n}\n");
         it("should get the right number of static members", () => {
             expect(firstChild.getStaticMembers().length).to.equal(2);
