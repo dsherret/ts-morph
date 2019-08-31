@@ -1,6 +1,6 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter, CommentStatement,
-    CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerExtendedComment, CommentEnumMember } from "../compiler";
+    CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerCommentNode, CommentEnumMember } from "../compiler";
 import { CommentNodeParser } from "../compiler/ast/utils";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
@@ -294,8 +294,8 @@ export class CompilerFactory {
             return new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
         }
 
-        function isCommentNode(node: ts.Node): node is CompilerExtendedComment {
-            return (node as CompilerExtendedComment)._commentKind != null;
+        function isCommentNode(node: ts.Node): node is CompilerCommentNode {
+            return (node as CompilerCommentNode)._commentKind != null;
         }
 
         function initializeNode(this: CompilerFactory, node: Node<NodeType>) {
