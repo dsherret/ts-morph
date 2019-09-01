@@ -39,7 +39,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
 
         return innerTextWithStars.split(/\n/).map(line => {
             const starPos = line.indexOf("*");
-            if (starPos === -1)
+            if (starPos === -1 || line.substring(0, starPos).trim() !== "")
                 return line;
             const substringStart = line[starPos + 1] === " " ? starPos + 2 : starPos + 1;
             return line.substring(substringStart);
