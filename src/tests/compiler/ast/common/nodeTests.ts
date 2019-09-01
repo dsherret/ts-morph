@@ -564,6 +564,13 @@ class MyClass {
             expect(result).to.be.instanceOf(PropertyAccessExpression);
             expect(result!.getText()).to.equal("Test.Test2.Test3.Test4");
         });
+
+        it("should work with the second parameter", () => {
+            const { sourceFile } = getInfoFromText("const t = Test.Test2.Test3.Test4;");
+            const node = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test2");
+            const result = node.getParentWhile((parent, child) => parent.getText() !== "Test.Test2.Test3.Test4" && child.getText() !== "Test.Test2.Test3");
+            expect(result!.getText()).to.equal("Test.Test2.Test3");
+        });
     });
 
     describe(nameof<Node>(n => n.getParentWhileOrThrow), () => {

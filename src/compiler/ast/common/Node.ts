@@ -1126,22 +1126,21 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Returns undefined if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhile<T extends Node>(condition: (parent: Node, node: Node) => parent is T): T | undefined;
+    getParentWhile<T extends Node>(condition: (parent: Node, child: Node) => parent is T): T | undefined;
     /**
      * Goes up the parents (ancestors) of the node while a condition is true.
      * Returns undefined if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhile(condition: (parent: Node, node: Node) => boolean): Node | undefined;
-    getParentWhile(condition: (parent: Node, node: Node) => boolean) {
-        let node: Node | undefined;
+    getParentWhile(condition: (parent: Node, child: Node) => boolean): Node | undefined;
+    getParentWhile(condition: (parent: Node, child: Node) => boolean) {
+        let node: Node | undefined = undefined;
         let parent: Node | undefined = this.getParent();
 
-        if (parent && condition(parent, this))
-                do {
-                        node = parent;
-                        parent = node.getParent();
-                } while (parent && condition(parent, node));
+        while (parent && condition(parent, node || this)) {
+            node = parent;
+            parent = node.getParent();
+        }
 
         return node;
     }

@@ -4643,25 +4643,25 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Throws if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhileOrThrow<T extends Node>(condition: (node: Node) => node is T): T;
+    getParentWhileOrThrow<T extends Node>(condition: (parent: Node, node: Node) => parent is T): T;
     /**
      * Goes up the parents (ancestors) of the node while a condition is true.
      * Throws if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhileOrThrow(condition: (node: Node) => boolean): Node;
+    getParentWhileOrThrow(condition: (parent: Node, node: Node) => boolean): Node;
     /**
      * Goes up the parents (ancestors) of the node while a condition is true.
      * Returns undefined if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhile<T extends Node>(condition: (node: Node) => node is T): T | undefined;
+    getParentWhile<T extends Node>(condition: (parent: Node, child: Node) => parent is T): T | undefined;
     /**
      * Goes up the parents (ancestors) of the node while a condition is true.
      * Returns undefined if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhile(condition: (node: Node) => boolean): Node | undefined;
+    getParentWhile(condition: (parent: Node, child: Node) => boolean): Node | undefined;
     /**
      * Goes up the parents (ancestors) of the node while the parent is the specified syntax kind.
      * Throws if the initial parent is not the specified syntax kind.
