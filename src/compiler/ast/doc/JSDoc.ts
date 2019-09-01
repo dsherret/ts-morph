@@ -2,7 +2,7 @@ import { removeChildren, replaceTextPossiblyCreatingChildNodes } from "../../../
 import { getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { WriterFunction } from "../../../types";
 import { ts } from "../../../typescript";
-import { getTextFromStringOrWriter } from "../../../utils";
+import { getTextFromStringOrWriter, StringUtils } from "../../../utils";
 import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
 import { JSDocStructure, JSDocSpecificStructure, StructureKind } from "../../../structures";
@@ -38,12 +38,24 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
         const innerTextWithStars = this.getText().replace(/^\/\*\*[^\S\n]*\n?/, "").replace(/(\r?\n)?[^\S\n]*\*\/$/, "");
 
         return innerTextWithStars.split(/\n/).map(line => {
-            const starPos = line.indexOf("*");
-            if (starPos === -1 || line.substring(0, starPos).trim() !== "")
+            const starPos = getStarPosIfFirstNonWhitespaceChar(line);
+            if (starPos === -1)
                 return line;
             const substringStart = line[starPos + 1] === " " ? starPos + 2 : starPos + 1;
             return line.substring(substringStart);
         }).join("\n");
+
+        function getStarPosIfFirstNonWhitespaceChar(text: string) {
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === "*")
+                    return i;
+                else if (!StringUtils.isWhitespaceChar(char))
+                    break;
+            }
+
+            return -1;
+        }
     }
 
     /**
