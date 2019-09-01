@@ -148,7 +148,7 @@ export class CompilerFactory {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         if (options.overwrite === true)
             return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
-        this.throwIfFileExists(filePath);
+        this.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
         return this.createSourceFileFromTextInternal(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
     }
 
