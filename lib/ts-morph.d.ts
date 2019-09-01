@@ -10818,11 +10818,24 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      */
     getProperties(): Symbol[];
     /**
-     * Gets a property.
+     * Gets a property or throws if it doesn't exist.
      * @param name - By a name.
+     */
+    getPropertyOrThrow(name: string): Symbol;
+    /**
+     * Gets a property or throws if it doesn't exist.
      * @param findFunction - Function for searching for a property.
      */
+    getPropertyOrThrow(findFunction: (declaration: Symbol) => boolean): Symbol;
+    /**
+     * Gets a property or returns undefined if it does not exist.
+     * @param name - By a name.
+     */
     getProperty(name: string): Symbol | undefined;
+    /**
+     * Gets a property or returns undefined if it does not exist.
+     * @param findFunction - Function for searching for a property.
+     */
     getProperty(findFunction: (declaration: Symbol) => boolean): Symbol | undefined;
     /**
      * Gets the apparent properties of the type.
