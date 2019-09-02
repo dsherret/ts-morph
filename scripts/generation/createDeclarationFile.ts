@@ -7,7 +7,7 @@
  */
 import * as os from "os";
 import { Node, TypeGuards, Scope, ClassDeclaration, StructureKind, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
-    VariableStatementStructure, Type} from "ts-morph";
+    VariableStatementStructure, Type } from "ts-morph";
 import { createDeclarationProject, forEachTypeText } from "../common";
 import { getDeclarationFileStatements, getCodeBlockWriterStatements } from "./declarationFile";
 

@@ -601,9 +601,9 @@ dprint-plugin-jsonc@^0.2.1:
   dependencies:
     jsonc-parser "^2.1.0"
 
-dprint-plugin-typescript@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/dprint-plugin-typescript/-/dprint-plugin-typescript-0.5.0.tgz#0fe2e6a7aace265d92d01ea872de79f679a6f0e3"
+dprint-plugin-typescript@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/dprint-plugin-typescript/-/dprint-plugin-typescript-0.5.2.tgz#7cb368e8ed94c1ddc7f2a702a7a0e58e312a3ffe"
   dependencies:
     "@babel/core" "^7.5.5"
     "@babel/parser" "^7.5.5"

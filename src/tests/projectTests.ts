@@ -751,7 +751,8 @@ describe(nameof(Project), () => {
             project.createSourceFile("file.ts", "");
             expect(() => {
                 project.createSourceFile("file.ts", "");
-            }).to.throw(errors.InvalidOperationError, `Did you mean to provide the overwrite option? A source file already exists at the provided file path: /file.ts`);
+            }).to.throw(errors.InvalidOperationError,
+                `Did you mean to provide the overwrite option? A source file already exists at the provided file path: /file.ts`);
         });
 
         it("should not throw an exception if creating a source file at an existing path when providing the overwrite option", () => {

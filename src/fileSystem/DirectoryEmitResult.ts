@@ -1,4 +1,4 @@
-﻿export class DirectoryEmitResult {
+export class DirectoryEmitResult {
     /** @private */
     constructor(private readonly _skippedFilePaths: ReadonlyArray<string>, private readonly _outputFilePaths: ReadonlyArray<string>) {
     }

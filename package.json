@@ -97,7 +97,7 @@
     "diff": "^4.0.1",
     "dprint": "^0.6.1",
     "dprint-plugin-jsonc": "^0.2.1",
-    "dprint-plugin-typescript": "^0.5.0",
+    "dprint-plugin-typescript": "^0.5.2",
     "mocha": "6.2.0",
     "nyc": "14.1.1",
     "rimraf": "^3.0.0",
