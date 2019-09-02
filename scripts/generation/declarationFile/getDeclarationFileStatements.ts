@@ -1,7 +1,7 @@
 import { SourceFile, TypeGuards, SyntaxKind, Node, StatementStructures, StructureKind } from "ts-morph";
 import { ArrayUtils } from "../../../src/utils";
 
-export function getDeclarationFileStatements(mainFile: SourceFile, codeBlockWriterFile: SourceFile) {
+export function getDeclarationFileStatements(mainFile: SourceFile) {
     const exportedDeclarations = ArrayUtils.flatten(Array.from(mainFile.getExportedDeclarations()
         .entries())
         .filter(entry => entry[0] !== "ts") // ignore ts namespace export
@@ -36,15 +36,10 @@ export function getDeclarationFileStatements(mainFile: SourceFile, codeBlockWrit
         namedImports: flattenedCompilerApiExports,
         moduleSpecifier: "typescript"
     });
-    statements.push({
-        kind: StructureKind.ImportDeclaration,
-        namedImports: ["CodeBlockWriter"],
-        moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(codeBlockWriterFile)
-    });
 
     for (let declaration of exportedDeclarations) {
         const sourceFile = declaration.getSourceFile();
-        if (sourceFile === codeBlockWriterFile || sourceFile.getBaseName() === "typescript.d.ts")
+        if (sourceFile.getBaseName() === "code-block-writer.d.ts" || sourceFile.getBaseName() === "typescript.d.ts")
             continue;
         if (TypeGuards.isVariableDeclaration(declaration))
             declaration = declaration.getFirstAncestorByKindOrThrow(SyntaxKind.VariableStatement);
@@ -56,7 +51,6 @@ export function getDeclarationFileStatements(mainFile: SourceFile, codeBlockWrit
     }
 
     statements.push({ kind: StructureKind.ExportDeclaration, namedExports: ["ts", ...flattenedCompilerApiExports] });
-    statements.push({ kind: StructureKind.ExportDeclaration, moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(codeBlockWriterFile) });
 
     return statements;
 }

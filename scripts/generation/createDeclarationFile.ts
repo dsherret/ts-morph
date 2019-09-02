@@ -7,10 +7,9 @@
  */
 import * as os from "os";
 import { Node, TypeGuards, Scope, ClassDeclaration, StructureKind, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
-    VariableStatementStructure,
-    Type} from "ts-morph";
+    VariableStatementStructure, Type} from "ts-morph";
 import { createDeclarationProject, forEachTypeText } from "../common";
-import { getDeclarationFileStatements } from "./declarationFile";
+import { getDeclarationFileStatements, getCodeBlockWriterStatements } from "./declarationFile";
 
 // todo: remove this once this code's performance is improved.
 // Basic idea here is to change this code to modify the structures rather than the source file
@@ -33,11 +32,12 @@ export async function createDeclarationFile() {
     log("Emitting declaration files...");
     const project = createDeclarationProject();
     const mainFile = project.getSourceFileOrThrow("main.d.ts");
-    const codeBlockWriterFile = project.getSourceFileOrThrow("dist-declarations/codeBlockWriter/code-block-writer.d.ts");
-    codeBlockWriterFile.moveToDirectory(project.getDirectoryOrThrow("dist-declarations"));
 
     log("Getting statements...");
-    const statements = getDeclarationFileStatements(mainFile, codeBlockWriterFile);
+    const statements = [
+        ...getDeclarationFileStatements(mainFile),
+        ...getCodeBlockWriterStatements(project)
+    ];
     log("Hiding specific structures...");
     hideSpecificStructures();
     log("Hiding extension types...");
@@ -71,7 +71,7 @@ export async function createDeclarationFile() {
     mainFile.move("ts-morph.d.ts");
     finishLog(lastDateTime!);
 
-    await Promise.all([codeBlockWriterFile.save(), mainFile.save()]);
+    await Promise.all([mainFile.save()]);
 
     function hideSpecificStructures() {
         const specificStructures = statements

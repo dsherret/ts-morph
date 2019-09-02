@@ -217,8 +217,8 @@ export class CompilerFactory {
      * @param filePath - File path to check.
      */
     containsSourceFileAtPath(filePath: string) {
-        const absoluteFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        return this.sourceFileCacheByFilePath.has(absoluteFilePath);
+        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        return this.sourceFileCacheByFilePath.has(filePath);
     }
 
     /**
@@ -226,8 +226,8 @@ export class CompilerFactory {
      * @param dirPath - Directory path to check.
      */
     containsDirectoryAtPath(dirPath: string) {
-        const normalizedDirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.directoryCache.has(normalizedDirPath);
+        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        return this.directoryCache.has(dirPath);
     }
 
     /**
