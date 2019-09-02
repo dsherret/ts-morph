@@ -17,7 +17,7 @@ export class ReturnTypedNodeStructurePrinter extends Printer<ReturnTypedNodeStru
 
         const returnTypeText = this.getText(writer, returnType);
         if (!StringUtils.isNullOrWhitespace(returnTypeText)) {
-            writer.withHangingIndentation(() => {
+            writer.hangingIndent(() => {
                 writer.write(`: ${returnTypeText}`);
             });
         }

@@ -43,7 +43,7 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.space();
 
-        writer.withHangingIndentation(() => {
+        writer.hangingIndent(() => {
             if (structure.extends != null) {
                 const extendsText = this.getText(writer, structure.extends);
                 if (!StringUtils.isNullOrWhitespace(extendsText))

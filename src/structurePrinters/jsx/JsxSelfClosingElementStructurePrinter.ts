@@ -4,7 +4,7 @@ import { NodePrinter } from "../NodePrinter";
 
 export class JsxSelfClosingElementStructurePrinter extends NodePrinter<OptionalKind<JsxSelfClosingElementStructure>> {
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<JsxSelfClosingElementStructure>) {
-        writer.withHangingIndentation(() => {
+        writer.hangingIndent(() => {
             writer.write(`<${structure.name}`);
             if (structure.attributes)
                 this.printAttributes(writer, structure.attributes);

@@ -12200,12 +12200,12 @@ export declare class CodeBlockWriter {
      * Writes the text within the provided action with hanging indentation.
      * @param action - Action to perform with hanging indentation.
      */
-    withHangingIndentation(action: () => void): this;
+    hangingIndent(action: () => void): this;
     /**
      * Writes the text within the provided action with hanging indentation unless writing a block.
      * @param action - Action to perform with hanging indentation unless a block is written.
      */
-    withHangingIndentationUnlessBlock(action: () => void): this;
+    hangingIndentUnlessBlock(action: () => void): this;
     /**
      * Sets the current indentation level.
      * @param indentationLevel - Indentation level to be at.
@@ -12246,10 +12246,14 @@ export declare class CodeBlockWriter {
      */
     inlineBlock(block?: () => void): this;
     /**
+     * Indents the code one level for the current line.
+     */
+    indent(times?: number): this;
+    /**
      * Indents a block of code.
      * @param block - Block to indent.
      */
-    indentBlock(block: () => void): this;
+    indent(block: () => void): this;
     /**
      * Conditionally writes a line of text.
      * @param condition - Condition to evaluate.
@@ -12284,10 +12288,6 @@ export declare class CodeBlockWriter {
      * Writes a blank line.
      */
     blankLine(): this;
-    /**
-     * Indents the code one level for the current line.
-     */
-    indent(times?: number): this;
     /**
      * Writes a newline if the condition is true.
      * @param condition - Condition to evaluate.

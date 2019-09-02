@@ -14,7 +14,7 @@ export class VariableStatementStructurePrinter extends NodePrinter<OptionalKind<
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<VariableStatementStructure>) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
 
-        writer.withHangingIndentation(() => {
+        writer.hangingIndent(() => {
             this.factory.forModifierableNode().printText(writer, structure);
             writer.write(`${structure.declarationKind || VariableDeclarationKind.Let} `);
             this.factory.forVariableDeclaration().printTexts(writer, structure.declarations);

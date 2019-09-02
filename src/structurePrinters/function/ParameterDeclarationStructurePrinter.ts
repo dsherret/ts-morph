@@ -17,7 +17,7 @@ export class ParameterDeclarationStructurePrinter extends NodePrinter<OptionalKi
     printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<ParameterDeclarationStructure>> | undefined) {
         if (structures == null || structures.length === 0)
             return;
-        writer.withHangingIndentation(() => {
+        writer.hangingIndent(() => {
             this.multipleWriter.printText(writer, structures);
         });
     }
