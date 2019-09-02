@@ -138,7 +138,7 @@ sourceFile.moveImmediatelySync("NewFile2.ts");
 Refresh the source file from the file system:
 
 ```ts
-import {FileSystemRefreshResult} from "ts-morph";
+import { FileSystemRefreshResult } from "ts-morph";
 
  // returns: FileSystemRefreshResult (NoChange, Updated, Deleted)
 const result = await sourceFile.refreshFromFileSystem(); // or refreshFromFileSystemSync()
@@ -151,21 +151,25 @@ If the file was _deleted_: The source file will be removed and all its nodes for
 
 ### Remove
 
-Remove a source file from the AST by calling:
+Remove a source file from the project by calling:
 
 ```ts
-project.removeSourceFile(sourceFile); // returns: boolean (if was removed)
+sourceFile.forget();
 ```
 
-Note: This does not delete the file from the file system. To do delete it, call `.delete()`.
+Or alternatively:
+
+```ts
+project.removeSourceFile(sourceFile); // returns: boolean (true if was removed)
+```
+
+Note: This does not delete the file from the file system. To do delete it, call `#delete()`.
 
 ### Reference comments
 
-This returns any files that are referenced via :
-
 ```ts
 // gets `/// <reference path="..." />` comments
-const referencedFiles = sourceFile.getReferencedFiles();
+const pathReferenceDirectives = sourceFile.getPathReferenceDirectives();
 // gets `/// <reference types="..." />` comments
 const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
 // gets `/// <reference lib="..." />` comments

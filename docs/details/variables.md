@@ -59,7 +59,7 @@ const declarationKind = variableStatement.getDeclarationKind();
 It will return one of the following values:
 
 ```ts
-import {VariableDeclarationKind} from "ts-morph";
+import { VariableDeclarationKind } from "ts-morph";
 
 VariableDeclarationKind.Let;
 VariableDeclarationKind.Const;

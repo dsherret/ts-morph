@@ -473,7 +473,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets any `/// <reference path="..." />` comments.
      */
-    getReferencedFiles() {
+    getPathReferenceDirectives() {
         if (this._referencedFiles == null) {
             this._referencedFiles = (this.compilerNode.referencedFiles || [])
                 .map(f => new FileReference(f, this));

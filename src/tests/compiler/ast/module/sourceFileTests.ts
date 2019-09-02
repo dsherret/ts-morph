@@ -1396,19 +1396,19 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getReferencedFiles), () => {
+    describe(nameof<SourceFile>(s => s.getPathReferenceDirectives), () => {
         it("should get when they exist", () => {
             const { sourceFile } = getInfoFromText("/// <reference path='file.d.ts' />");
-            const referencedFiles = sourceFile.getReferencedFiles();
+            const referencedFiles = sourceFile.getPathReferenceDirectives();
             expect(referencedFiles.map(f => f.getFileName())).to.deep.equal(["file.d.ts"]);
         });
 
         it("should forget them after a manipulation", () => {
             const { sourceFile } = getInfoFromText("/// <reference path='file.d.ts' />");
-            const referencedFiles = sourceFile.getReferencedFiles();
+            const referencedFiles = sourceFile.getPathReferenceDirectives();
             sourceFile.replaceWithText("");
             expect(referencedFiles[0].wasForgotten()).to.be.true;
-            expect(sourceFile.getReferencedFiles().length).to.equal(0);
+            expect(sourceFile.getPathReferenceDirectives().length).to.equal(0);
         });
     });
 

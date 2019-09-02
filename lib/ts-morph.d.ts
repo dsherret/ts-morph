@@ -477,7 +477,7 @@ export declare class Project {
      */
     createSourceFile(filePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions): SourceFile;
     /**
-     * Removes a source file from the AST.
+     * Removes a source file from the project.
      * @param sourceFile - Source file to remove.
      * @returns True if removed.
      */
@@ -8199,7 +8199,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets any `/// <reference path="..." />` comments.
      */
-    getReferencedFiles(): FileReference[];
+    getPathReferenceDirectives(): FileReference[];
     /**
      * Gets any `/// <reference types="..." />` comments.
      */
