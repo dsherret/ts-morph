@@ -31,17 +31,6 @@ export class SourceFileReferenceContainer {
         return this.nodesInOther.getKeys();
     }
 
-    *getReferencingNodesInOtherSourceFiles() {
-        for (const literal of this.getReferencingLiteralsInOtherSourceFiles()) {
-            const parent = literal.getParentOrThrow();
-            const grandParent = parent.getParent();
-            if (grandParent != null && TypeGuards.isImportEqualsDeclaration(grandParent))
-                yield grandParent;
-            else
-                yield literal.getParentOrThrow() as SourceFileReferencingNodes;
-        }
-    }
-
     refresh() {
         if (this.unresolvedLiterals.length > 0)
             this.sourceFile._context.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);

@@ -8221,7 +8221,22 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getReferencingLiteralsInOtherSourceFiles(): StringLiteral[];
     /**
-     * Gets all the descendant string literals that reference a source file.
+     * Gets the source files this source file references in string literals.
+     */
+    getReferencedSourceFiles(): SourceFile[];
+    /**
+     * Gets the nodes that reference other source files in string literals.
+     */
+    getNodesReferencingOtherSourceFiles(): SourceFileReferencingNodes[];
+    /**
+     * Gets the string literals in this source file that references other source files.
+     * @remarks This is similar to `getImportStringLiterals()`, but `getImportStringLiterals()`
+     * will return import string literals that may not be referencing another source file
+     * or have not been able to be resolved.
+     */
+    getLiteralsReferencingOtherSourceFiles(): StringLiteral[];
+    /**
+     * Gets all the descendant string literals that reference a module.
      */
     getImportStringLiterals(): StringLiteral[];
     /**

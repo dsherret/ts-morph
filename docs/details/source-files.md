@@ -209,10 +209,38 @@ Getting the source files that reference this source file in nodes like import de
 const referencingSourceFiles = sourceFile.getReferencingSourceFiles();
 ```
 
-To get the nodes that reference the source file in other source files, use:
+To get the nodes that reference the source file in other source files:
 
 ```ts
 const referencingNodes = sourceFile.getReferencingNodesInOtherSourceFiles();
+```
+
+To get the string literals that reference this source file in other source files:
+
+```ts
+const referencingLiterals = sourceFile.getReferencingLiteralsInOtherSourceFiles();
+```
+
+### Getting referenced files
+
+The opposite of the referencing files, is the referenced files—files that are referenced in nodes within the current file.
+
+```ts
+const referencedSourceFiles = sourceFile.getReferencedSourceFiles();
+```
+
+To get the nodes that reference other source files:
+
+```ts
+const nodesReferencingOtherSourceFiles = sourceFile.getNodesReferencingOtherSourceFiles();
+```
+
+To get the string literals that reference other source files:
+
+```ts
+const literalsReferencingOtherSourceFiles = sourceFile.getLiteralsReferencingOtherSourceFiles();
+// or to get all the literals that reference a module (and may not have been resolved to a source file)
+const importLiterals = sourceFile.getImportStringLiterals();
 ```
 
 ### Relative File Paths
