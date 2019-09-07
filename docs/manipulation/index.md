@@ -33,8 +33,8 @@ await sourceFile.moveImmediately("movedFile.ts");
 await directory.save();
 await directory.deleteImmediately();
 // todo: these are coming soon
-await sourceFile.copyImmediately("CopiedDir");
-await sourceFile.moveImmediately("MovedDir");
+await directory.copyImmediately("CopiedDir");
+await directory.moveImmediately("MovedDir");
 ```
 
 ### Replacing any node with new text
