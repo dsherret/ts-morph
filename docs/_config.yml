@@ -1,5 +1,5 @@
 repository: dsherret/ts-morph
 port: 4001
 title: ts-morph
-description: Simple way to navigate and manipulate the TypeScript AST.
+description: TypeScript Compiler API wrapper for static analysis and programmatic code changes.
 markdown: GFM
