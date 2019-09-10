@@ -28,7 +28,7 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
         writer.write(structure.name);
         if (typeof structure.value === "string") {
             const { value } = structure;
-            writer.withHangingIndentation(() => writer.write(` = `).quote(value));
+            writer.hangingIndent(() => writer.write(` = `).quote(value));
         }
         else if (typeof structure.value === "number")
             writer.write(` = ${structure.value}`);

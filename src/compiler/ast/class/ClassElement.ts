@@ -9,7 +9,7 @@ export class ClassElement<T extends ts.ClassElement = ts.ClassElement> extends N
      * Removes the class member.
      */
     remove() {
-        const parent = this.getParent();
+        const parent = this.getParentOrThrow();
         if (TypeGuards.isClassDeclaration(parent) || TypeGuards.isClassExpression(parent))
             removeClassMember(this);
         else if (TypeGuards.isObjectLiteralExpression(parent))

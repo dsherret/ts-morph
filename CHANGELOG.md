@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.0.0"></a>
+# [4.0.0](https://github.com/dsherret/ts-morph/compare/3.1.3...4.0.0) (2019-09-02)
+
+
+### Bug Fixes
+
+* [#667](https://github.com/dsherret/ts-morph/issues/667) - Fix typo in adding-source-files.md ([d635f69](https://github.com/dsherret/ts-morph/commit/d635f69))
+* [#691](https://github.com/dsherret/ts-morph/issues/691) - JSDoc.getInnerText would sometimes get the wrong text if the first line content contained an asterisk. ([0661508](https://github.com/dsherret/ts-morph/commit/0661508)) - Thanks [@cancerberoSgx](https://github.com/cancerberoSgx)!
+* [#692](https://github.com/dsherret/ts-morph/issues/692) - Fix getParent() for TS 3.6. ([37476f8](https://github.com/dsherret/ts-morph/commit/37476f8))
+
+
+### Code Refactoring
+
+* [#680](https://github.com/dsherret/ts-morph/issues/680) - Rename `SourceFile#getReferencedFiles()` to `getPathReferenceDirectives()`. ([578adc7](https://github.com/dsherret/ts-morph/commit/578adc7))
+* `DiagnosticMessageChain#getNext()` now returns an array to match TS 3.6. ([4943196](https://github.com/dsherret/ts-morph/commit/4943196))
+* Remove getEmitSkipped() from DirectoryEmitResult because it was not accurate. ([f42ff74](https://github.com/dsherret/ts-morph/commit/f42ff74))
+* Rename CompilerExtendedComment to CompilerCommentNode. ([e3db1db](https://github.com/dsherret/ts-morph/commit/e3db1db))
+
+
+### Features
+
+* [#666](https://github.com/dsherret/ts-morph/issues/666) - Calling `Project#createSourceFile` with an existing file name now suggests to add the overwrite option. ([3022bb8](https://github.com/dsherret/ts-morph/commit/3022bb8))
+* [#669](https://github.com/dsherret/ts-morph/issues/669) - Add past parent as second parameter to getParentWhile ([287158e](https://github.com/dsherret/ts-morph/commit/287158e)) - Thanks [@Validark](https://github.com/Validark)!
+* [#672](https://github.com/dsherret/ts-morph/issues/672) - Add `Type#getPropertyOrThrow` ([c929c6c](https://github.com/dsherret/ts-morph/commit/c929c6c))
+* [#680](https://github.com/dsherret/ts-morph/issues/680) - Add `SourceFile#getReferencedSourceFiles()`, `#getNodesReferencingOtherSourceFiles()`, and `#getLiteralsReferencingOtherSourceFiles()`. ([c245acc](https://github.com/dsherret/ts-morph/commit/c245acc))
+* Upgrade to code-block-writer 10.0.0. ([5708865](https://github.com/dsherret/ts-morph/commit/5708865))
+
+
+### Performance Improvements
+
+* [#661](https://github.com/dsherret/ts-morph/issues/661) - Bundle scripts ([6efa96d](https://github.com/dsherret/ts-morph/commit/6efa96d))
+
+
+### BREAKING CHANGES
+
+* `SourceFile#getReferencedFiles()` is now `getPathReferenceDirectives()`.
+
+This was done to prevent confusion with upcoming methods in #680. The name was chosen because it is similar to the methods `getTypeReferenceDirectives()` and `getLibReferenceDirectives()`.
+* `CodeBlockWriter#indentBlock` is now `indent`. `withHangingIndentation` is now `hangingIndent`. `withHangingIndentationUnlessBlock` is now `hangingIndentUnlessBlock`.
+* `DiagnosticMessageChain#getNext()` now returns an array to match TS 3.6.
+* `DirectoryEmitResult#getEmitSkipped()` was removed. Check the output file paths and skipped file paths instead as that's more accurate.
+* `CompilerExtendedComment` is now called `CompilerCommentNode`.
+
+
+
 <a name="3.1.3"></a>
 ## [3.1.3](https://github.com/dsherret/ts-morph/compare/3.1.2...3.1.3) (2019-07-18)
 

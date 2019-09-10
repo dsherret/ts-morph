@@ -1,3 +1,4 @@
+import { IsExact, AssertTrue } from "conditional-type-checks";
 import { DiagnosticCategory, ts } from "../../../typescript";
 
 /**
@@ -27,14 +28,19 @@ export class DiagnosticMessageChain {
     }
 
     /**
-     * Gets th enext diagnostic message chain in the chain.
+     * Gets the next diagnostic message chains in the chain.
      */
-    getNext(): DiagnosticMessageChain | undefined {
-        const next = this.compilerObject.next;
+    getNext(): DiagnosticMessageChain[] | undefined {
+        // pre-TS 3.6 this was not an array
+        type _assertType = AssertTrue<IsExact<ts.DiagnosticMessageChain["next"], ts.DiagnosticMessageChain[] | undefined>>;
+        const next = this.compilerObject.next as ts.DiagnosticMessageChain | ts.DiagnosticMessageChain[] | undefined;
         if (next == null)
             return undefined;
 
-        return new DiagnosticMessageChain(next);
+        if (next instanceof Array)
+            return next.map(n => new DiagnosticMessageChain(n));
+
+        return [new DiagnosticMessageChain(next)];
     }
 
     /**

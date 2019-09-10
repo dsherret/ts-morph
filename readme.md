@@ -10,9 +10,9 @@
 
 Formerly `ts-simple-ast`.
 
-## Library Development - Progress Update (29 June 2019)
+## Library Development - Progress Update (03 September 2019)
 
-v3.0 is now released! Always review [breaking-changes.md](breaking-changes.md) before upgrading and see the [changelog](CHANGELOG.md) for information on new features.
+v4.0 is now released! Always review [breaking-changes.md](breaking-changes.md) before upgrading and see the [changelog](CHANGELOG.md) for information on new features.
 
 This library is still under active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 

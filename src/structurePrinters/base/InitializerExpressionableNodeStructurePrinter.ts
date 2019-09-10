@@ -11,7 +11,7 @@ export class InitializerExpressionableNodeStructurePrinter extends Printer<Initi
 
         const initializerText = this.getText(writer, initializer);
         if (!StringUtils.isNullOrWhitespace(initializerText)) {
-            writer.withHangingIndentation(() => {
+            writer.hangingIndent(() => {
                 writer.spaceIfLastNot();
                 writer.write(`= ${initializerText}`);
             });

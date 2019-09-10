@@ -1,6 +1,6 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter, CommentStatement,
-    CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerExtendedComment, CommentEnumMember } from "../compiler";
+    CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerCommentNode, CommentEnumMember } from "../compiler";
 import { CommentNodeParser } from "../compiler/ast/utils";
 import * as errors from "../errors";
 import { Directory } from "../fileSystem";
@@ -148,7 +148,7 @@ export class CompilerFactory {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         if (options.overwrite === true)
             return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
-        this.throwIfFileExists(filePath);
+        this.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
         return this.createSourceFileFromTextInternal(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
     }
 
@@ -217,8 +217,8 @@ export class CompilerFactory {
      * @param filePath - File path to check.
      */
     containsSourceFileAtPath(filePath: string) {
-        const absoluteFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        return this.sourceFileCacheByFilePath.has(absoluteFilePath);
+        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        return this.sourceFileCacheByFilePath.has(filePath);
     }
 
     /**
@@ -226,8 +226,8 @@ export class CompilerFactory {
      * @param dirPath - Directory path to check.
      */
     containsDirectoryAtPath(dirPath: string) {
-        const normalizedDirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.directoryCache.has(normalizedDirPath);
+        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        return this.directoryCache.has(dirPath);
     }
 
     /**
@@ -294,8 +294,8 @@ export class CompilerFactory {
             return new ctor(this.context, compilerNode, sourceFile) as Node<NodeType>;
         }
 
-        function isCommentNode(node: ts.Node): node is CompilerExtendedComment {
-            return (node as CompilerExtendedComment)._commentKind != null;
+        function isCommentNode(node: ts.Node): node is CompilerCommentNode {
+            return (node as CompilerCommentNode)._commentKind != null;
         }
 
         function initializeNode(this: CompilerFactory, node: Node<NodeType>) {

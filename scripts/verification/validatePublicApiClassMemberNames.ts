@@ -11,8 +11,6 @@ import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
 
 export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
-    const codeBlockWriterClass = inspector.getCodeBlockWriterClass();
-
     for (const classDec of inspector.getPublicClasses().filter(c => isClassToAllow(c))) {
         for (const member of classDec.getMembers())
             validateNode(member);
@@ -43,10 +41,8 @@ export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, a
     }
 
     function isClassToAllow(classDec: ClassDeclaration) {
-        if (classDec === codeBlockWriterClass)
-            return false;
-
         switch (classDec.getName()) {
+            case "CodeBlockWriter":
             case "CompilerCommentStatement":
             case "CompilerCommentClassElement":
             case "CompilerCommentTypeElement":

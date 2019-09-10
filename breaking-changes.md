@@ -2,6 +2,16 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 4
+
+Mostly renames:
+
+* `SourceFile#getReferencedFiles()` is now `getPathReferenceDirectives()`. This was done to prevent confusion with upcoming methods in #680. The name was chosen because it is similar to the methods `getTypeReferenceDirectives()` and `getLibReferenceDirectives()`.
+* `CodeBlockWriter#indentBlock` is now `indent`. `withHangingIndentation` is now `hangingIndent`. `withHangingIndentationUnlessBlock` is now `hangingIndentUnlessBlock`.
+* `DiagnosticMessageChain#getNext()` now returns an array to match TS 3.6.
+* `DirectoryEmitResult#getEmitSkipped()` was removed. Check the output file paths and skipped file paths instead as that's more accurate.
+* `CompilerExtendedComment` is now called `CompilerCommentNode`.
+
 ## Version 3
 
 ### `Node#forEachChild` is now aligned with the compiler API

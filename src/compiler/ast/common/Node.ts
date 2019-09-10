@@ -29,7 +29,7 @@ export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends 
     : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined
     : NodeType[KeyName];
 
-export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined
+export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? undefined
     : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined
     : CompilerNodeToWrappedType<NodeType["parent"]>;
 
@@ -1094,15 +1094,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Get the node's parent.
      */
-    getParent<T extends Node | undefined = NodeParentType<NodeType>>(): T {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.parent) as T;
+    getParent() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.parent);
     }
 
     /**
      * Gets the parent or throws an error if it doesn't exist.
      */
-    getParentOrThrow<T extends Node | undefined = NodeParentType<NodeType>>(): NonNullable<T> {
-        return errors.throwIfNullOrUndefined(this.getParent<T>(), "Expected to find a parent.") as NonNullable<T>;
+    getParentOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getParent(), "Expected to find a parent.");
     }
 
     /**
@@ -1110,14 +1110,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Throws if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhileOrThrow<T extends Node>(condition: (node: Node) => node is T): T;
+    getParentWhileOrThrow<T extends Node>(condition: (parent: Node, node: Node) => parent is T): T;
     /**
      * Goes up the parents (ancestors) of the node while a condition is true.
      * Throws if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhileOrThrow(condition: (node: Node) => boolean): Node;
-    getParentWhileOrThrow(condition: (node: Node) => boolean) {
+    getParentWhileOrThrow(condition: (parent: Node, node: Node) => boolean): Node;
+    getParentWhileOrThrow(condition: (parent: Node, node: Node) => boolean) {
         return errors.throwIfNullOrUndefined(this.getParentWhile(condition), "The initial parent did not match the provided condition.");
     }
 
@@ -1126,19 +1126,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Returns undefined if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhile<T extends Node>(condition: (node: Node) => node is T): T | undefined;
+    getParentWhile<T extends Node>(condition: (parent: Node, child: Node) => parent is T): T | undefined;
     /**
      * Goes up the parents (ancestors) of the node while a condition is true.
      * Returns undefined if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhile(condition: (node: Node) => boolean): Node | undefined;
-    getParentWhile(condition: (node: Node) => boolean) {
+    getParentWhile(condition: (parent: Node, child: Node) => boolean): Node | undefined;
+    getParentWhile(condition: (parent: Node, child: Node) => boolean) {
         let node: Node | undefined = undefined;
-        let nextParent: Node | undefined = this.getParent();
-        while (nextParent != null && condition(nextParent)) {
-            node = nextParent;
-            nextParent = nextParent.getParent();
+        let parent: Node | undefined = this.getParent();
+
+        while (parent && condition(parent, node || this)) {
+            node = parent;
+            parent = node.getParent();
         }
 
         return node;

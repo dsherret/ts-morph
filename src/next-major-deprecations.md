@@ -1,7 +1,6 @@
 ﻿# Deprecations in the next major
 
-* Rename ExtendedComment to CommentNode
-* Remove DirectoryEmitResult#getSkippedFilePaths()
+* None
 
 # Future version
 

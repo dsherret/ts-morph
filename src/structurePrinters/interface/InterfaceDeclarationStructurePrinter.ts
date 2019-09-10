@@ -25,7 +25,7 @@ export class InterfaceDeclarationStructurePrinter extends NodePrinter<OptionalKi
                 : this.getText(writer, structure.extends);
 
             if (!StringUtils.isNullOrWhitespace(extendsText))
-                writer.withHangingIndentation(() => writer.write(`extends ${extendsText} `));
+                writer.hangingIndent(() => writer.write(`extends ${extendsText} `));
         }
 
         writer.inlineBlock(() => {

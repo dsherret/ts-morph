@@ -1,7 +1,7 @@
 import * as errors from "../../errors";
 import { ProjectContext } from "../../ProjectContext";
 import { ObjectFlags, ts, TypeFlags, TypeFormatFlags } from "../../typescript";
-import { getSymbolByNameOrFindFunction, TypeGuards } from "../../utils";
+import { getSymbolByNameOrFindFunction, TypeGuards, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
 import { Signature, Symbol } from "../symbols";
 import { Node } from "../ast";
 import { TypeParameter } from "./TypeParameter";
@@ -153,12 +153,34 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
-     * Gets a property.
+     * Gets a property or throws if it doesn't exist.
      * @param name - By a name.
+     */
+    getPropertyOrThrow(name: string): Symbol;
+    /**
+     * Gets a property or throws if it doesn't exist.
      * @param findFunction - Function for searching for a property.
      */
+    getPropertyOrThrow(findFunction: (declaration: Symbol) => boolean): Symbol;
+    /** @internal */
+    getPropertyOrThrow(nameOrFindFunction: string | ((declaration: Symbol) => boolean)): Symbol;
+    getPropertyOrThrow(nameOrFindFunction: string | ((declaration: Symbol) => boolean)): Symbol {
+        return errors.throwIfNullOrUndefined(this.getProperty(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("symbol property", nameOrFindFunction));
+    }
+
+    /**
+     * Gets a property or returns undefined if it does not exist.
+     * @param name - By a name.
+     */
     getProperty(name: string): Symbol | undefined;
+    /**
+     * Gets a property or returns undefined if it does not exist.
+     * @param findFunction - Function for searching for a property.
+     */
     getProperty(findFunction: (declaration: Symbol) => boolean): Symbol | undefined;
+    /** @internal */
+    getProperty(nameOrFindFunction: string | ((declaration: Symbol) => boolean)): Symbol | undefined;
     getProperty(nameOrFindFunction: string | ((declaration: Symbol) => boolean)): Symbol | undefined {
         return getSymbolByNameOrFindFunction(this.getProperties(), nameOrFindFunction);
     }

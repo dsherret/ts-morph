@@ -302,7 +302,7 @@ export class Project {
     }
 
     /**
-     * Removes a source file from the AST.
+     * Removes a source file from the project.
      * @param sourceFile - Source file to remove.
      * @returns True if removed.
      */

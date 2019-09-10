@@ -1,6 +1,6 @@
 import * as compiler from "./index";
 import { ts } from "../../typescript";
-import { CompilerExtendedComment, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentObjectLiteralElement, CompilerCommentTypeElement,
+import { CompilerCommentNode, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentObjectLiteralElement, CompilerCommentTypeElement,
     CompilerCommentEnumMember } from "./comment";
 import { ImplementedKindToNodeMappings } from "./kindToNodeMappings";
 

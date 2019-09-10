@@ -1,7 +1,7 @@
 import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
 import { StringUtils, getSyntaxKindName } from "../../../utils";
-import { CompilerExtendedComment, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement, CompilerCommentObjectLiteralElement,
+import { CompilerCommentNode, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement, CompilerCommentObjectLiteralElement,
     CompilerCommentEnumMember, CommentNodeKind } from "../comment/CompilerComments";
 
 enum CommentKind {
@@ -25,8 +25,8 @@ export type ContainerNodes = StatementContainerNodes
     | ts.ObjectLiteralExpression;
 
 type CommentSyntaxKinds = SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
-const childrenSaver = new WeakMap<ContainerNodes, (ts.Node | CompilerExtendedComment)[]>();
-const extendedCommentParserKinds = new Set<SyntaxKind>([
+const childrenSaver = new WeakMap<ContainerNodes, (ts.Node | CompilerCommentNode)[]>();
+const commentNodeParserKinds = new Set<SyntaxKind>([
     SyntaxKind.SourceFile,
     SyntaxKind.Block,
     SyntaxKind.ModuleBlock,
@@ -61,7 +61,7 @@ export class CommentNodeParser {
 
     static shouldParseChildren(container: ts.Node): container is ContainerNodes {
         // this needs to be really fast because it's used whenever getting the children, so use a map
-        return extendedCommentParserKinds.has(container.kind)
+        return commentNodeParserKinds.has(container.kind)
             // Ignore zero length nodes... for some reason this might happen when parsing
             // jsx in non-jsx files.
             && container.pos !== container.end;
@@ -75,23 +75,23 @@ export class CommentNodeParser {
     }
 
     static isCommentStatement(node: ts.Node): node is CompilerCommentStatement {
-        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.Statement;
+        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.Statement;
     }
 
     static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement {
-        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.ClassElement;
+        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.ClassElement;
     }
 
     static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement {
-        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.TypeElement;
+        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.TypeElement;
     }
 
     static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement {
-        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.ObjectLiteralElement;
+        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.ObjectLiteralElement;
     }
 
     static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember {
-        return (node as CompilerExtendedComment)._commentKind === CommentNodeKind.EnumMember;
+        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.EnumMember;
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {
@@ -126,27 +126,27 @@ export class CommentNodeParser {
     }
 }
 
-function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): IterableIterator<ts.Node | CompilerExtendedComment> {
+function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): IterableIterator<ts.Node | CompilerCommentNode> {
     const sourceFileText = sourceFile.text;
     const childNodes = getContainerChildren();
     const createComment = getCreationFunction();
 
     if (childNodes.length === 0) {
         const bodyStartPos = CommentNodeParser.getContainerBodyPos(container, sourceFile);
-        yield* getExtendedComments(bodyStartPos, false); // do not skip js docs because they won't have a node to be attached to
+        yield* getCommentNodes(bodyStartPos, false); // do not skip js docs because they won't have a node to be attached to
     }
     else {
         for (const childNode of childNodes) {
-            yield* getExtendedComments(childNode.pos, true);
+            yield* getCommentNodes(childNode.pos, true);
             yield childNode;
         }
 
         // get the comments on a newline after the last node
         const lastChild = childNodes[childNodes.length - 1];
-        yield* getExtendedComments(lastChild.end, false); // parse any jsdocs afterwards
+        yield* getCommentNodes(lastChild.end, false); // parse any jsdocs afterwards
     }
 
-    function* getExtendedComments(pos: number, stopAtJsDoc: boolean) {
+    function* getCommentNodes(pos: number, stopAtJsDoc: boolean) {
         const fullStart = pos;
         skipTrailingLine();
 
@@ -287,7 +287,7 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
         return errors.throwNotImplementedForNeverValueError(container);
     }
 
-    function getCreationFunction(): (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => CompilerExtendedComment {
+    function getCreationFunction(): (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => CompilerCommentNode {
         const ctor = getCtor();
         return (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => new ctor(fullStart, pos, end, kind, sourceFile, container);
 

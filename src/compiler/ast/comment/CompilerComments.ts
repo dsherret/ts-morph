@@ -9,7 +9,7 @@ export enum CommentNodeKind {
     EnumMember
 }
 
-export abstract class CompilerExtendedComment implements ts.Node {
+export abstract class CompilerCommentNode implements ts.Node {
     private _fullStart: number;
     private _start: number;
     private _sourceFile: ts.SourceFile;
@@ -105,27 +105,27 @@ export abstract class CompilerExtendedComment implements ts.Node {
     }
 }
 
-export class CompilerCommentStatement extends CompilerExtendedComment implements ts.Statement {
+export class CompilerCommentStatement extends CompilerCommentNode implements ts.Statement {
     _statementBrand: any;
     /** @internal */
     _commentKind = CommentNodeKind.Statement;
 }
 
-export class CompilerCommentClassElement extends CompilerExtendedComment implements ts.ClassElement {
+export class CompilerCommentClassElement extends CompilerCommentNode implements ts.ClassElement {
     _classElementBrand: any;
     _declarationBrand: any;
     /** @internal */
     _commentKind = CommentNodeKind.ClassElement;
 }
 
-export class CompilerCommentTypeElement extends CompilerExtendedComment implements ts.TypeElement {
+export class CompilerCommentTypeElement extends CompilerCommentNode implements ts.TypeElement {
     _typeElementBrand: any;
     _declarationBrand: any;
     /** @internal */
     _commentKind = CommentNodeKind.TypeElement;
 }
 
-export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment implements ts.ObjectLiteralElement {
+export class CompilerCommentObjectLiteralElement extends CompilerCommentNode implements ts.ObjectLiteralElement {
     _declarationBrand: any;
     _objectLiteralBrandBrand: any; // ts < 3.4
     _objectLiteralBrand: any; // ts >= 3.5
@@ -134,7 +134,7 @@ export class CompilerCommentObjectLiteralElement extends CompilerExtendedComment
     _commentKind = CommentNodeKind.ObjectLiteralElement;
 }
 
-export class CompilerCommentEnumMember extends CompilerExtendedComment implements ts.Node {
+export class CompilerCommentEnumMember extends CompilerCommentNode implements ts.Node {
     /** @internal */
     _commentKind = CommentNodeKind.EnumMember;
 }

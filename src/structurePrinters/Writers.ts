@@ -27,7 +27,7 @@ export class Writers {
             const keyNames = Object.keys(obj);
             writer.write("{");
             if (keyNames.length > 0) {
-                writer.indentBlock(() => {
+                writer.indent(() => {
                     writeObject();
                 });
             }
@@ -57,7 +57,7 @@ export class Writers {
         return (writer: CodeBlockWriter) => {
             writer.write("{");
             if (anyPropertyHasValue(structure)) {
-                writer.indentBlock(() => {
+                writer.indent(() => {
                     structurePrinterFactory.forTypeElementMemberedNode().printText(writer, structure);
                 });
             }
@@ -91,7 +91,7 @@ export class Writers {
     static returnStatement(value: WriterFunctionOrValue): WriterFunction {
         return (writer: CodeBlockWriter) => {
             writer.write("return ");
-            writer.withHangingIndentationUnlessBlock(() => {
+            writer.hangingIndentUnlessBlock(() => {
                 writeValue(writer, value);
                 writer.write(";");
             });

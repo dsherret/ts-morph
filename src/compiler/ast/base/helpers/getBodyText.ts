@@ -8,7 +8,7 @@ import { printTextFromStringOrWriter } from "../../../../utils";
 export function getBodyText(writer: CodeBlockWriter, textOrWriterFunction: string | WriterFunction) {
     writer.newLineIfLastNot();
     if (typeof textOrWriterFunction !== "string" || textOrWriterFunction.length > 0) {
-        writer.indentBlock(() => {
+        writer.indent(() => {
             printTextFromStringOrWriter(writer, textOrWriterFunction);
         });
     }

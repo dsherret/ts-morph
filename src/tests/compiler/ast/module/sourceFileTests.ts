@@ -1246,6 +1246,72 @@ function myFunction(param: MyClass) {
         });
     });
 
+    describe(nameof<SourceFile>(s => s.getReferencedSourceFiles), () => {
+        function expectResult(file: SourceFile, expectedSourceFiles: SourceFile[]) {
+            expect(file.getReferencedSourceFiles().map(r => r.getFilePath()).sort())
+                .to.deep.equal(expectedSourceFiles.map(s => s.getFilePath()).sort());
+        }
+
+        it("should get the source files that this source file references", () => {
+            const fileText = "export interface MyInterface {}";
+            const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface"; export * from "../MyInterface";`);
+            const file2 = project.createSourceFile("/file2.ts", `import {MyInterface} from "./MyInterface";`);
+            const file3 = project.createSourceFile("/file3.ts", `export * from "./MyInterface";`);
+            const file4 = project.createSourceFile("/file4.ts", `const t = import("./MyInterface");`);
+
+            expectResult(sourceFile, []);
+            expectResult(file1, [sourceFile]);
+            expectResult(file2, [sourceFile]);
+            expectResult(file3, [sourceFile]);
+            expectResult(file4, [sourceFile]);
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.getNodesReferencingOtherSourceFiles), () => {
+        function expectResult(file: SourceFile, expectedNodes: string[]) {
+            expect(file.getNodesReferencingOtherSourceFiles().map(n => n.getText()).sort())
+                .to.deep.equal(expectedNodes.sort());
+        }
+
+        it("should get the nodes in this source file that reference other source files", () => {
+            const fileText = "export interface MyInterface {}";
+            const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface"; export * from "../MyInterface";`);
+            const file2 = project.createSourceFile("/file2.ts", `import {MyInterface} from "./MyInterface";`);
+            const file3 = project.createSourceFile("/file3.ts", `export * from "./MyInterface";`);
+            const file4 = project.createSourceFile("/file4.ts", `const t = import("./MyInterface");`);
+
+            expectResult(sourceFile, []);
+            expectResult(file1, [`import {MyInterface} from "./MyInterface";`, `export * from "../MyInterface";`]);
+            expectResult(file2, [`import {MyInterface} from "./MyInterface";`]);
+            expectResult(file3, [`export * from "./MyInterface";`]);
+            expectResult(file4, [`import("./MyInterface")`]);
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.getLiteralsReferencingOtherSourceFiles), () => {
+        function expectResult(file: SourceFile, expectedNodes: string[]) {
+            expect(file.getLiteralsReferencingOtherSourceFiles().map(n => n.getText()).sort())
+                .to.deep.equal(expectedNodes.sort());
+        }
+
+        it("should get the nodes in this source file that reference other source files", () => {
+            const fileText = "export interface MyInterface {}";
+            const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface"; export * from "../MyInterface";`);
+            const file2 = project.createSourceFile("/file2.ts", `import {MyInterface} from "./MyInterface";`);
+            const file3 = project.createSourceFile("/file3.ts", `export * from "./MyInterface";`);
+            const file4 = project.createSourceFile("/file4.ts", `const t = import("./MyInterface");`);
+
+            expectResult(sourceFile, []);
+            expectResult(file1, [`"./MyInterface"`, `"../MyInterface"`]);
+            expectResult(file2, [`"./MyInterface"`]);
+            expectResult(file3, [`"./MyInterface"`]);
+            expectResult(file4, [`"./MyInterface"`]);
+        });
+    });
+
     describe(nameof<SourceFile>(s => s.getExtension), () => {
         function doTest(filePath: string, extension: string) {
             const { sourceFile } = getInfoFromText("", { filePath });
@@ -1396,19 +1462,19 @@ function myFunction(param: MyClass) {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.getReferencedFiles), () => {
+    describe(nameof<SourceFile>(s => s.getPathReferenceDirectives), () => {
         it("should get when they exist", () => {
             const { sourceFile } = getInfoFromText("/// <reference path='file.d.ts' />");
-            const referencedFiles = sourceFile.getReferencedFiles();
+            const referencedFiles = sourceFile.getPathReferenceDirectives();
             expect(referencedFiles.map(f => f.getFileName())).to.deep.equal(["file.d.ts"]);
         });
 
         it("should forget them after a manipulation", () => {
             const { sourceFile } = getInfoFromText("/// <reference path='file.d.ts' />");
-            const referencedFiles = sourceFile.getReferencedFiles();
+            const referencedFiles = sourceFile.getPathReferenceDirectives();
             sourceFile.replaceWithText("");
             expect(referencedFiles[0].wasForgotten()).to.be.true;
-            expect(sourceFile.getReferencedFiles().length).to.equal(0);
+            expect(sourceFile.getPathReferenceDirectives().length).to.equal(0);
         });
     });
 

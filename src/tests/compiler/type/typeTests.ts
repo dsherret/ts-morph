@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { FunctionDeclaration, Node, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
+import { FunctionDeclaration, Node, Type, TypeAliasDeclaration, VariableStatement, Symbol } from "../../../compiler";
 import { VirtualFileSystemHost } from "../../../fileSystem";
 import { ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
@@ -24,7 +24,8 @@ describe(nameof(Type), () => {
         const text = `
 enum EmptyEnum { }
 enum MyEnum { value, value2, value3 }
-interface MyInterface {}
+interface MyInterface { prop: string; }
+interface MyInterface2 { prop2: string; }
 class MyClass {}
 
 let anonymousType: { str: string; };
@@ -41,7 +42,7 @@ let enumIncompleteUnionType: MyEnum.value | MyEnum.value2;
 let enumCompleteUnionType: MyEnum.value | MyEnum.value2 | MyEnum.value3;
 let enumLiteralType: MyEnum.value;
 let interfaceType: MyInterface;
-let intersectionType: string & number;
+let intersectionType: MyInterface & MyInterface2;
 let unionType: string | number;
 let objectType: { prop: string; };
 let tupleType: [string];
@@ -96,8 +97,8 @@ let unknownType: unknown;
             it("should get them when they exist", () => {
                 const firstType = typesByName["intersectionType"];
                 expect(firstType.getIntersectionTypes().length).to.equal(2);
-                expect(firstType.getIntersectionTypes()[0].getFlags()).to.equal(TypeFlags.String);
-                expect(firstType.getIntersectionTypes()[1].getFlags()).to.equal(TypeFlags.Number);
+                expect(firstType.getIntersectionTypes()[0].getText()).to.equal("MyInterface");
+                expect(firstType.getIntersectionTypes()[1].getText()).to.equal("MyInterface2");
             });
 
             it("should not return anything for a union type", () => {
@@ -719,17 +720,48 @@ let unknownType: unknown;
         });
     });
 
-    describe(nameof<Type>(t => t.getProperty), () => {
+    describe(nameof<Type>(t => t.getPropertyOrThrow), () => {
+        function doTest(text: string, nameOrFindFunction: string | ((declaration: Symbol) => boolean), expected: string | undefined) {
+            const { firstType } = getTypeFromText(text);
+            if (expected == null)
+                expect(() => firstType.getPropertyOrThrow(nameOrFindFunction)).to.throw();
+            else
+                expect(firstType.getPropertyOrThrow(nameOrFindFunction).getName()).to.equal(expected);
+        }
+
         it("should get the property by name", () => {
-            const { firstType } = getTypeFromText("let myType: { str: string; other: number; };");
-            const prop = firstType.getProperty("other")!;
-            expect(prop.getName()).to.equal("other");
+            doTest("let myType: { str: string; other: number; };", "other", "other");
         });
 
         it("should get the property by function", () => {
-            const { firstType } = getTypeFromText("let myType: { str: string; other: number; };");
-            const prop = firstType.getProperty(p => p.getName() === "other")!;
-            expect(prop.getName()).to.equal("other");
+            doTest("let myType: { str: string; other: number; };", p => p.getName() === "other", "other");
+        });
+
+        it("should throw when not exists", () => {
+            doTest("let myType: { str: string; other: number; };", "test", undefined);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getProperty), () => {
+        function doTest(text: string, nameOrFindFunction: string | ((declaration: Symbol) => boolean), expected: string | undefined) {
+            const { firstType } = getTypeFromText(text);
+            const prop = firstType.getProperty(nameOrFindFunction);
+            if (expected == null)
+                expect(prop).to.be.undefined;
+            else
+                expect(prop!.getName()).to.equal(expected);
+        }
+
+        it("should get the property by name", () => {
+            doTest("let myType: { str: string; other: number; };", "other", "other");
+        });
+
+        it("should get the property by function", () => {
+            doTest("let myType: { str: string; other: number; };", p => p.getName() === "other", "other");
+        });
+
+        it("should return undefined when not exists", () => {
+            doTest("let myType: { str: string; other: number; };", "test", undefined);
         });
     });
 

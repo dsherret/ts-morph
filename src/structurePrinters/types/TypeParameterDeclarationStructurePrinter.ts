@@ -25,7 +25,7 @@ export class TypeParameterDeclarationStructurePrinter extends NodePrinter<Option
             return;
         }
 
-        writer.withHangingIndentation(() => {
+        writer.hangingIndent(() => {
             writer.write(structure.name);
             if (structure.constraint != null) {
                 const constraintText = this.getText(writer, structure.constraint);

@@ -7,7 +7,8 @@ import { ProjectContext } from "../../../ProjectContext";
 import { SourceFileSpecificStructure, SourceFileStructure, StructureKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { LanguageVariant, ScriptTarget, ts, ScriptKind } from "../../../typescript";
-import { ArrayUtils, EventContainer, FileUtils, Memoize, ModuleUtils, SourceFileReferenceContainer, StringUtils } from "../../../utils";
+import { ArrayUtils, EventContainer, FileUtils, Memoize, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards,
+    SourceFileReferencingNodes } from "../../../utils";
 import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, TextChange, UserPreferences } from "../../tools";
 import { ModuledNode, TextInsertableNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -473,7 +474,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets any `/// <reference path="..." />` comments.
      */
-    getReferencedFiles() {
+    getPathReferenceDirectives() {
         if (this._referencedFiles == null) {
             this._referencedFiles = (this.compilerNode.referencedFiles || [])
                 .map(f => new FileReference(f, this));
@@ -514,7 +515,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the import and exports in other source files that reference this source file.
      */
     getReferencingNodesInOtherSourceFiles() {
-        return Array.from(this._referenceContainer.getReferencingNodesInOtherSourceFiles());
+        const literals = this.getReferencingLiteralsInOtherSourceFiles();
+        return Array.from(getNodes());
+
+        function* getNodes(): Iterable<SourceFileReferencingNodes> {
+            for (const literal of literals)
+                yield getReferencingNodeFromStringLiteral(literal);
+        }
     }
 
     /**
@@ -525,7 +532,49 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets all the descendant string literals that reference a source file.
+     * Gets the source files this source file references in string literals.
+     */
+    getReferencedSourceFiles() {
+        const entries = this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries();
+        return Array.from(new Set<SourceFile>(getSourceFilesFromEntries()).values());
+
+        function* getSourceFilesFromEntries(): Iterable<SourceFile> {
+            for (const [, sourceFile] of entries)
+                yield sourceFile;
+        }
+    }
+
+    /**
+     * Gets the nodes that reference other source files in string literals.
+     */
+    getNodesReferencingOtherSourceFiles() {
+        const entries = this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries();
+        return Array.from(getNodes());
+
+        function* getNodes(): Iterable<SourceFileReferencingNodes> {
+            for (const [literal] of entries)
+                yield getReferencingNodeFromStringLiteral(literal);
+        }
+    }
+
+    /**
+     * Gets the string literals in this source file that references other source files.
+     * @remarks This is similar to `getImportStringLiterals()`, but `getImportStringLiterals()`
+     * will return import string literals that may not be referencing another source file
+     * or have not been able to be resolved.
+     */
+    getLiteralsReferencingOtherSourceFiles() {
+        const entries = this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries();
+        return Array.from(getLiteralsFromEntries());
+
+        function* getLiteralsFromEntries(): Iterable<StringLiteral> {
+            for (const [literal] of entries)
+                yield literal;
+        }
+    }
+
+    /**
+     * Gets all the descendant string literals that reference a module.
      */
     getImportStringLiterals() {
         this._ensureBound();
@@ -937,4 +986,13 @@ function updateStringLiteralReferences(nodeReferences: ReadonlyArray<[StringLite
         if (ModuleUtils.isModuleSpecifierRelative(stringLiteral.getLiteralText()))
             stringLiteral.setLiteralValue(stringLiteral._sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile));
     }
+}
+
+function getReferencingNodeFromStringLiteral(literal: StringLiteral) {
+    const parent = literal.getParentOrThrow();
+    const grandParent = parent.getParent();
+    if (grandParent != null && TypeGuards.isImportEqualsDeclaration(grandParent))
+        return grandParent;
+    else
+        return parent as SourceFileReferencingNodes;
 }

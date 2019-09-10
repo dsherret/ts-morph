@@ -1,9 +1,9 @@
 import { expect } from "chai";
-import { CompilerExtendedComment, CompilerCommentStatement } from "../../../../compiler";
+import { CompilerCommentNode, CompilerCommentStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 import { SyntaxKind, ts } from "../../../../typescript";
 
-describe(nameof(CompilerExtendedComment), () => {
+describe(nameof(CompilerCommentNode), () => {
     interface ExpectedResult {
         pos: number;
         end: number;
@@ -20,7 +20,7 @@ describe(nameof(CompilerExtendedComment), () => {
         text: string;
     }
 
-    function runTests(comment: CompilerExtendedComment, expected: ExpectedResult) {
+    function runTests(comment: CompilerCommentNode, expected: ExpectedResult) {
         it("should have the correct pos", () => {
             expect(comment.pos).to.equal(expected.pos);
         });
@@ -104,7 +104,7 @@ describe(nameof(CompilerExtendedComment), () => {
 
     describe("single line comment", () => {
         const sourceFile = getInfoFromText("  //a ").sourceFile;
-        const comment = sourceFile.getStatementsWithComments()[0].compilerNode as CompilerCommentStatement as CompilerExtendedComment;
+        const comment = sourceFile.getStatementsWithComments()[0].compilerNode as CompilerCommentStatement as CompilerCommentNode;
 
         runTests(comment, {
             pos: 2,
@@ -125,7 +125,7 @@ describe(nameof(CompilerExtendedComment), () => {
 
     describe("multi line comment", () => {
         const sourceFile = getInfoFromText("  /*1*/ ").sourceFile;
-        const comment = sourceFile.getStatementsWithComments()[0].compilerNode as CompilerCommentStatement as CompilerExtendedComment;
+        const comment = sourceFile.getStatementsWithComments()[0].compilerNode as CompilerCommentStatement as CompilerCommentNode;
 
         runTests(comment, {
             pos: 2,

@@ -7,9 +7,9 @@
  */
 import * as os from "os";
 import { Node, TypeGuards, Scope, ClassDeclaration, StructureKind, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
-    VariableStatementStructure } from "ts-morph";
+    VariableStatementStructure, Type } from "ts-morph";
 import { createDeclarationProject, forEachTypeText } from "../common";
-import { getDeclarationFileStatements } from "./declarationFile";
+import { getDeclarationFileStatements, getCodeBlockWriterStatements } from "./declarationFile";
 
 // todo: remove this once this code's performance is improved.
 // Basic idea here is to change this code to modify the structures rather than the source file
@@ -32,11 +32,12 @@ export async function createDeclarationFile() {
     log("Emitting declaration files...");
     const project = createDeclarationProject();
     const mainFile = project.getSourceFileOrThrow("main.d.ts");
-    const codeBlockWriterFile = project.getSourceFileOrThrow("dist-declarations/codeBlockWriter/code-block-writer.d.ts");
-    codeBlockWriterFile.moveToDirectory(project.getDirectoryOrThrow("dist-declarations"));
 
     log("Getting statements...");
-    const statements = getDeclarationFileStatements(mainFile, codeBlockWriterFile);
+    const statements = [
+        ...getDeclarationFileStatements(mainFile),
+        ...getCodeBlockWriterStatements(project)
+    ];
     log("Hiding specific structures...");
     hideSpecificStructures();
     log("Hiding extension types...");
@@ -64,11 +65,13 @@ export async function createDeclarationFile() {
     makeConstructorsPrivate();
     log("Removing @skipOrThrowCheck...");
     removeSkipOrThrowCheck();
+    log("Adding getParent methods...");
+    addGetParentMethods();
     log("Moving file...");
     mainFile.move("ts-morph.d.ts");
     finishLog(lastDateTime!);
 
-    await Promise.all([codeBlockWriterFile.save(), mainFile.save()]);
+    await Promise.all([mainFile.save()]);
 
     function hideSpecificStructures() {
         const specificStructures = statements
@@ -131,6 +134,40 @@ export async function createDeclarationFile() {
                     }
                 }
             }
+        }
+    }
+
+    function addGetParentMethods() {
+        for (const classDec of mainFile.getClasses()) {
+            const type = classDec.getType();
+            if (type.getProperty("compilerNode") == null)
+                continue;
+            const nodeType = type.getBaseTypes()[0];
+            if (nodeType == null)
+                continue;
+            const typeArgName = getTypeScriptTypeName(nodeType, classDec);
+            if (typeArgName == null)
+                continue;
+
+            classDec.addMembers(writer => {
+                writer.writeLine("/** @inheritdoc **/");
+                writer.writeLine(`getParent(): NodeParentType<${typeArgName}>;`);
+                writer.writeLine("/** @inheritdoc **/");
+                writer.writeLine(`getParentOrThrow(): NonNullable<NodeParentType<${typeArgName}>>;`);
+            });
+        }
+
+        function getTypeScriptTypeName(nodeType: Type, classDec: ClassDeclaration) {
+            const types = [nodeType, ...nodeType.getIntersectionTypes()];
+            for (const type of types) {
+                for (const typeArg of type.getTypeArguments()) {
+                    const typeArgName = typeArg.getText(classDec);
+                    if (typeArgName.startsWith("ts."))
+                        return typeArgName;
+                }
+            }
+
+            return undefined;
         }
     }
 

@@ -1,7 +1,6 @@
 import { ts } from "ts-morph";
 import { createGetStructureFunctions } from "./createGetStructureFunctions";
 import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
-import { createCodeBlockWriterFile } from "./createCodeBlockWriterFile";
 import { createKindToNodeMappings } from "./createKindToNodeMappings";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
 import { createDeclarationFile } from "./createDeclarationFile";
@@ -29,10 +28,6 @@ const tsInspector = factory.getTsInspector();
     if (checkHasArg("create-structure-printer-factory")) {
         console.log("Creating structure printer factory...");
         createStructurePrinterFactory(inspector);
-    }
-    if (checkHasArg("create-code-block-writer-file")) {
-        console.log("Creating code block writer file...");
-        createCodeBlockWriterFile(inspector);
     }
     if (checkHasArg("create-kind-to-node-mappings")) {
         console.log("Creating kind to node mappings...");

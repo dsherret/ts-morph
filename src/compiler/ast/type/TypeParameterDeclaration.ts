@@ -31,7 +31,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      * @param text - Text to set as the constraint.
      */
     setConstraint(text: string | WriterFunction) {
-        text = this.getParent()._getTextWithQueuedChildIndentation(text);
+        text = this.getParentOrThrow()._getTextWithQueuedChildIndentation(text);
         if (StringUtils.isNullOrWhitespace(text)) {
             this.removeConstraint();
             return this;
@@ -80,7 +80,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      * @param text - Text to set as the default type node.
      */
     setDefault(text: string | WriterFunction) {
-        text = this.getParent()._getTextWithQueuedChildIndentation(text);
+        text = this.getParentOrThrow()._getTextWithQueuedChildIndentation(text);
         if (StringUtils.isNullOrWhitespace(text)) {
             this.removeDefault();
             return this;

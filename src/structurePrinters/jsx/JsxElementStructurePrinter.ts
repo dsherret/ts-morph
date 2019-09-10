@@ -4,7 +4,7 @@ import { NodePrinter } from "../NodePrinter";
 
 export class JsxElementStructurePrinter extends NodePrinter<OptionalKind<JsxElementStructure>> {
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<JsxElementStructure>) {
-        writer.withHangingIndentation(() => {
+        writer.hangingIndent(() => {
             writer.write(`<${structure.name}`);
             if (structure.attributes)
                 this.printAttributes(writer, structure.attributes);
@@ -29,7 +29,7 @@ export class JsxElementStructurePrinter extends NodePrinter<OptionalKind<JsxElem
             return;
 
         writer.newLine();
-        writer.indentBlock(() => {
+        writer.indent(() => {
             for (const child of children) {
                 this.factory.forJsxChildDecider().printText(writer, child);
                 writer.newLine();

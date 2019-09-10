@@ -1,4 +1,4 @@
-/* dprint:ignoreFile */
+// dprint-ignore-file
 import { ArrayUtils } from "../../utils";
 import { StructureKind } from "../StructureKind";
 import { Structures } from "../aliases";

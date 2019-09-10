@@ -176,7 +176,7 @@ function getStructureInfos(inspector: TsMorphInspector) {
             const kinds: string[] = [];
             let allStructure = true;
             for (const arrayType of arrayTypes) {
-                const arrayElementType = arrayType.getArrayElementType();
+                const arrayElementType = arrayType.getArrayElementTypeOrThrow();
                 for (const unionElementType of getTypeOrUnionElementTypes(arrayElementType)) {
                     const kindProperty = getTypeKindProperty(unionElementType);
                     if (kindProperty != null)

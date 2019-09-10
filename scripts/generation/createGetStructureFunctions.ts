@@ -18,7 +18,7 @@ import { Structure } from "../inspectors";
 export function createGetStructureFunctions(structures: Structure[]) {
     const writer = new CodeBlockWriter({ newLine: "\r\n" });
 
-    writer.writeLine("/* dprint:ignoreFile */");
+    writer.writeLine("// dprint-ignore-file");
     writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: yarn code-generate").newLine();
     writer.writeLine(`import * as compiler from "../../compiler";`);
     writer.writeLine(`import * as structures from "../../structures";`);
