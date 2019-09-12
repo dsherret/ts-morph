@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.0.1"></a>
+## [4.0.1](https://github.com/dsherret/ts-morph/compare/4.0.0...4.0.1) (2019-09-12)
+
+Thanks to [@cancerberoSgx](https://github.com/cancerberoSgx) for discovering this was a node >= 11 issue.
+
+### Bug Fixes
+
+* [#685](https://github.com/dsherret/ts-morph/issues/685) - Fix `applyTextChanges` in node 11 and 12. ([e72b124](https://github.com/dsherret/ts-morph/commit/e72b124))
+
+
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/dsherret/ts-morph/compare/3.1.3...4.0.0) (2019-09-02)
 
