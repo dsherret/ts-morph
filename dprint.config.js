@@ -15,5 +15,12 @@ module.exports.config = {
         new JsoncPlugin({
             indentWidth: 2
         })
+    ],
+    includes: [
+        "**/*{.ts,.json,.js}"
+    ],
+    excludes: [
+        "dist/**/*.*",
+        "lib/*.ts"
     ]
 };
