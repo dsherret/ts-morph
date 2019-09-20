@@ -26,7 +26,8 @@ breaking-changes.md
 CHANGELOG.md
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
-dprint.json
+dprint.config.js
+rollup.config.js
 gulpfile.js
 tsconfig.json
 tsconfig.*.json
