@@ -52,7 +52,9 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
                 ...common,
                 kind: StructureKind.Property,
                 docs: [{ description }],
-                initializer: `TypeGuards.is(SyntaxKind.${method.name})`
+                initializer: `TypeGuards.is(SyntaxKind.${method.name})`,
+                type: `(node: compiler.Node) => node is compiler.${method.wrapperName}`,
+                isReadonly: true
             };
             methodsAndProperties.push(propertyStructure);
         }
