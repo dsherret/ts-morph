@@ -11,9 +11,9 @@
  * 3. Forward support: Features we add in the future will be auto-implemented.
  * ------------------------------------------
  */
-import { CodeBlockWriter, OptionalKind, MethodDeclarationStructure } from "ts-morph";
+import { CodeBlockWriter, MethodDeclarationStructure, PropertyDeclarationStructure, StructureKind, OptionalKind } from "ts-morph";
 import { ArrayUtils, KeyValueCache } from "../../src/utils";
-import { TsMorphInspector, WrappedNode, Mixin } from "../inspectors";
+import { Mixin, TsMorphInspector, WrappedNode } from "../inspectors";
 
 interface MethodInfo {
     name: string;
@@ -26,31 +26,64 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     const file = inspector.getProject().getSourceFileOrThrow("./src/utils/TypeGuards.ts");
     const typeGuardsClass = file.getClassOrThrow("TypeGuards");
     const kindToWrapperMappings = inspector.getKindToWrapperMappings();
+    const implementedNodeNames = inspector.getImplementedKindToNodeMappingsNames();
 
-    // remove all the static methods that start with "is"
-    typeGuardsClass.getStaticMethods()
+    // remove all the static methods/properties that start with "is"
+    [...typeGuardsClass.getStaticMethods(), ...typeGuardsClass.getStaticProperties()]
         .filter(m => m.getName().startsWith("is"))
         .forEach(m => m.remove());
 
+    createIs();
     createIsNode();
     createIsCommentMethods();
-    typeGuardsClass.addMethods(getMethodInfos().filter(n => isAllowedClass(n.name.replace(/^is/, ""))).map(method => ({
-        name: `is${method.name}`,
-        isStatic: true,
-        docs: [{
-            description: `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.\r\n`
-                + "@param node - Node to check."
-        }],
-        typeParameters: method.isMixin ? [{ name: "T", constraint: "compiler.Node" }] : [],
-        parameters: [{ name: "node", type: method.isMixin ? "T" : "compiler.Node" }],
-        returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType & T` : ""),
-        statements: [(writer: CodeBlockWriter) => {
-            if (method.syntaxKinds.length === 0)
-                throw new Error(`For some reason ${method.name} had no syntax kinds.`);
 
-            writeSyntaxKinds(writer, method.syntaxKinds);
-        }]
-    })));
+    const methodsAndProperties: Array<MethodDeclarationStructure | PropertyDeclarationStructure> = [];
+    getMethodInfos().filter(n => isAllowedClass(n.name.replace(/^is/, ""))).forEach(method => {
+        const description = `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.`;
+        const common = {
+            name: `is${method.name}`,
+            isStatic: true
+        };
+        const isImplementedNodeName = implementedNodeNames.has(method.name);
+        const hasSingleSyntaxKind = method.syntaxKinds.length == 1;
+        if (isImplementedNodeName && !method.isMixin && hasSingleSyntaxKind) {
+            const propertyStructure: PropertyDeclarationStructure = {
+                ...common,
+                kind: StructureKind.Property,
+                docs: [{ description }],
+                initializer: `TypeGuards.is(SyntaxKind.${method.name})`
+            };
+            methodsAndProperties.push(propertyStructure);
+        }
+        else {
+            const methodStructure: MethodDeclarationStructure = {
+                ...common,
+                kind: StructureKind.Method,
+                docs: [{
+                    description: description + "\r\n@param node - Node to check."
+                }],
+                typeParameters: method.isMixin ? [{ name: "T", constraint: "compiler.Node" }] : [],
+                parameters: [{ name: "node", type: method.isMixin ? "T" : "compiler.Node" }],
+                returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType & T` : ""),
+                statements: [writer => {
+                    if (method.syntaxKinds.length === 0)
+                        throw new Error(`For some reason ${method.name} had no syntax kinds.`);
+
+                    writeSyntaxKinds(writer, method.syntaxKinds);
+                }]
+            };
+            methodsAndProperties.push(methodStructure);
+        }
+    });
+
+    for (const methodOrProp of methodsAndProperties) {
+        if (methodOrProp.kind == StructureKind.Method)
+            typeGuardsClass.addMethod(methodOrProp);
+        else if (methodOrProp.kind == StructureKind.Property)
+            typeGuardsClass.addProperty(methodOrProp);
+        else
+            throw new Error(`Expected only properties and methods.`);
+    }
     typeGuardsClass.forgetDescendants();
     updateHasStructure();
 
@@ -156,6 +189,27 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
 
     // todo: remove these from the code generation and instead add some kind of tag to them
     // so they aren't deleted (maybe in the function body as a comment)
+
+    function createIs() {
+        typeGuardsClass.addMethod({
+            docs: [`Creates a type guard for syntax kinds.`],
+            isStatic: true,
+            name: "is",
+            typeParameters: [
+                { name: `TKind`, constraint: `keyof ImplementedKindToNodeMappings` }
+            ],
+            parameters: [{ name: `kind`, type: `TKind` }],
+            returnType: `(node: compiler.Node) => node is ImplementedKindToNodeMappings[TKind]`,
+            statements: [
+                writer => writer
+                    .writeLine(`return (node: compiler.Node): node is ImplementedKindToNodeMappings[TKind] => {`)
+                    .indent(() => {
+                        writer.writeLine(`return node.getKind() == kind`);
+                    })
+                    .writeLine(`}`)
+            ]
+        });
+    }
 
     function createIsNode() {
         typeGuardsClass.addMethod({

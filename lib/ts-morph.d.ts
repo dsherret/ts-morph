@@ -730,6 +730,530 @@ export declare function getCompilerOptionsFromTsConfig(filePath: string, options
  * Type guards for checking the type of a node.
  */
 export declare class TypeGuards {
+    /**
+     * Gets if the node is an AnyKeyword.
+     */
+    static isAnyKeyword: (node: Node<Node>) => node is Expression<Expression>;
+    /**
+     * Gets if the node is an ArrayBindingPattern.
+     */
+    static isArrayBindingPattern: (node: Node<Node>) => node is ArrayBindingPattern;
+    /**
+     * Gets if the node is an ArrayLiteralExpression.
+     */
+    static isArrayLiteralExpression: (node: Node<Node>) => node is ArrayLiteralExpression;
+    /**
+     * Gets if the node is an ArrowFunction.
+     */
+    static isArrowFunction: (node: Node<Node>) => node is ArrowFunction;
+    /**
+     * Gets if the node is an AsExpression.
+     */
+    static isAsExpression: (node: Node<Node>) => node is AsExpression;
+    /**
+     * Gets if the node is an AwaitExpression.
+     */
+    static isAwaitExpression: (node: Node<Node>) => node is AwaitExpression;
+    /**
+     * Gets if the node is a BinaryExpression.
+     */
+    static isBinaryExpression: (node: Node<Node>) => node is BinaryExpression<BinaryExpression>;
+    /**
+     * Gets if the node is a BindingElement.
+     */
+    static isBindingElement: (node: Node<Node>) => node is BindingElement;
+    /**
+     * Gets if the node is a Block.
+     */
+    static isBlock: (node: Node<Node>) => node is Block;
+    /**
+     * Gets if the node is a BooleanKeyword.
+     */
+    static isBooleanKeyword: (node: Node<Node>) => node is Expression<Expression>;
+    /**
+     * Gets if the node is a BreakStatement.
+     */
+    static isBreakStatement: (node: Node<Node>) => node is BreakStatement;
+    /**
+     * Gets if the node is a CallExpression.
+     */
+    static isCallExpression: (node: Node<Node>) => node is CallExpression<CallExpression>;
+    /**
+     * Gets if the node is a CaseBlock.
+     */
+    static isCaseBlock: (node: Node<Node>) => node is CaseBlock;
+    /**
+     * Gets if the node is a CaseClause.
+     */
+    static isCaseClause: (node: Node<Node>) => node is CaseClause;
+    /**
+     * Gets if the node is a CatchClause.
+     */
+    static isCatchClause: (node: Node<Node>) => node is CatchClause;
+    /**
+     * Gets if the node is a ClassDeclaration.
+     */
+    static isClassDeclaration: (node: Node<Node>) => node is ClassDeclaration;
+    /**
+     * Gets if the node is a ClassExpression.
+     */
+    static isClassExpression: (node: Node<Node>) => node is ClassExpression;
+    /**
+     * Gets if the node is a CommaListExpression.
+     */
+    static isCommaListExpression: (node: Node<Node>) => node is CommaListExpression;
+    /**
+     * Gets if the node is a ComputedPropertyName.
+     */
+    static isComputedPropertyName: (node: Node<Node>) => node is ComputedPropertyName;
+    /**
+     * Gets if the node is a ConditionalExpression.
+     */
+    static isConditionalExpression: (node: Node<Node>) => node is ConditionalExpression;
+    /**
+     * Gets if the node is a ContinueStatement.
+     */
+    static isContinueStatement: (node: Node<Node>) => node is ContinueStatement;
+    /**
+     * Gets if the node is a DebuggerStatement.
+     */
+    static isDebuggerStatement: (node: Node<Node>) => node is DebuggerStatement;
+    /**
+     * Gets if the node is a Decorator.
+     */
+    static isDecorator: (node: Node<Node>) => node is Decorator;
+    /**
+     * Gets if the node is a DefaultClause.
+     */
+    static isDefaultClause: (node: Node<Node>) => node is DefaultClause;
+    /**
+     * Gets if the node is a DeleteExpression.
+     */
+    static isDeleteExpression: (node: Node<Node>) => node is DeleteExpression;
+    /**
+     * Gets if the node is a DoStatement.
+     */
+    static isDoStatement: (node: Node<Node>) => node is DoStatement;
+    /**
+     * Gets if the node is an ElementAccessExpression.
+     */
+    static isElementAccessExpression: (node: Node<Node>) => node is ElementAccessExpression<ElementAccessExpression>;
+    /**
+     * Gets if the node is an EmptyStatement.
+     */
+    static isEmptyStatement: (node: Node<Node>) => node is EmptyStatement;
+    /**
+     * Gets if the node is an EnumDeclaration.
+     */
+    static isEnumDeclaration: (node: Node<Node>) => node is EnumDeclaration;
+    /**
+     * Gets if the node is an EnumMember.
+     */
+    static isEnumMember: (node: Node<Node>) => node is EnumMember;
+    /**
+     * Gets if the node is an ExportAssignment.
+     */
+    static isExportAssignment: (node: Node<Node>) => node is ExportAssignment;
+    /**
+     * Gets if the node is an ExportDeclaration.
+     */
+    static isExportDeclaration: (node: Node<Node>) => node is ExportDeclaration;
+    /**
+     * Gets if the node is an ExportSpecifier.
+     */
+    static isExportSpecifier: (node: Node<Node>) => node is ExportSpecifier;
+    /**
+     * Gets if the node is an ExpressionStatement.
+     */
+    static isExpressionStatement: (node: Node<Node>) => node is ExpressionStatement;
+    /**
+     * Gets if the node is an ExpressionWithTypeArguments.
+     */
+    static isExpressionWithTypeArguments: (node: Node<Node>) => node is ExpressionWithTypeArguments;
+    /**
+     * Gets if the node is an ExternalModuleReference.
+     */
+    static isExternalModuleReference: (node: Node<Node>) => node is ExternalModuleReference;
+    /**
+     * Gets if the node is a FalseKeyword.
+     */
+    static isFalseKeyword: (node: Node<Node>) => node is BooleanLiteral;
+    /**
+     * Gets if the node is a ForInStatement.
+     */
+    static isForInStatement: (node: Node<Node>) => node is ForInStatement;
+    /**
+     * Gets if the node is a ForOfStatement.
+     */
+    static isForOfStatement: (node: Node<Node>) => node is ForOfStatement;
+    /**
+     * Gets if the node is a ForStatement.
+     */
+    static isForStatement: (node: Node<Node>) => node is ForStatement;
+    /**
+     * Gets if the node is a FunctionDeclaration.
+     */
+    static isFunctionDeclaration: (node: Node<Node>) => node is FunctionDeclaration;
+    /**
+     * Gets if the node is a FunctionExpression.
+     */
+    static isFunctionExpression: (node: Node<Node>) => node is FunctionExpression;
+    /**
+     * Gets if the node is a HeritageClause.
+     */
+    static isHeritageClause: (node: Node<Node>) => node is HeritageClause;
+    /**
+     * Gets if the node is a Identifier.
+     */
+    static isIdentifier: (node: Node<Node>) => node is Identifier;
+    /**
+     * Gets if the node is a IfStatement.
+     */
+    static isIfStatement: (node: Node<Node>) => node is IfStatement;
+    /**
+     * Gets if the node is a ImportClause.
+     */
+    static isImportClause: (node: Node<Node>) => node is ImportClause;
+    /**
+     * Gets if the node is a ImportDeclaration.
+     */
+    static isImportDeclaration: (node: Node<Node>) => node is ImportDeclaration;
+    /**
+     * Gets if the node is a ImportEqualsDeclaration.
+     */
+    static isImportEqualsDeclaration: (node: Node<Node>) => node is ImportEqualsDeclaration;
+    /**
+     * Gets if the node is a ImportSpecifier.
+     */
+    static isImportSpecifier: (node: Node<Node>) => node is ImportSpecifier;
+    /**
+     * Gets if the node is a InferKeyword.
+     */
+    static isInferKeyword: (node: Node<Node>) => node is Node<Node>;
+    /**
+     * Gets if the node is a InterfaceDeclaration.
+     */
+    static isInterfaceDeclaration: (node: Node<Node>) => node is InterfaceDeclaration;
+    /**
+     * Gets if the node is a JSDocAugmentsTag.
+     */
+    static isJSDocAugmentsTag: (node: Node<Node>) => node is JSDocAugmentsTag;
+    /**
+     * Gets if the node is a JSDocClassTag.
+     */
+    static isJSDocClassTag: (node: Node<Node>) => node is JSDocClassTag;
+    /**
+     * Gets if the node is a JSDocFunctionType.
+     */
+    static isJSDocFunctionType: (node: Node<Node>) => node is JSDocFunctionType;
+    /**
+     * Gets if the node is a JSDocParameterTag.
+     */
+    static isJSDocParameterTag: (node: Node<Node>) => node is JSDocParameterTag;
+    /**
+     * Gets if the node is a JSDocPropertyTag.
+     */
+    static isJSDocPropertyTag: (node: Node<Node>) => node is JSDocPropertyTag;
+    /**
+     * Gets if the node is a JSDocReturnTag.
+     */
+    static isJSDocReturnTag: (node: Node<Node>) => node is JSDocReturnTag;
+    /**
+     * Gets if the node is a JSDocSignature.
+     */
+    static isJSDocSignature: (node: Node<Node>) => node is JSDocSignature;
+    /**
+     * Gets if the node is a JSDocTypeExpression.
+     */
+    static isJSDocTypeExpression: (node: Node<Node>) => node is JSDocTypeExpression;
+    /**
+     * Gets if the node is a JSDocTypeTag.
+     */
+    static isJSDocTypeTag: (node: Node<Node>) => node is JSDocTypeTag;
+    /**
+     * Gets if the node is a JSDocTypedefTag.
+     */
+    static isJSDocTypedefTag: (node: Node<Node>) => node is JSDocTypedefTag;
+    /**
+     * Gets if the node is a JsxAttribute.
+     */
+    static isJsxAttribute: (node: Node<Node>) => node is JsxAttribute;
+    /**
+     * Gets if the node is a JsxClosingElement.
+     */
+    static isJsxClosingElement: (node: Node<Node>) => node is JsxClosingElement;
+    /**
+     * Gets if the node is a JsxClosingFragment.
+     */
+    static isJsxClosingFragment: (node: Node<Node>) => node is JsxClosingFragment;
+    /**
+     * Gets if the node is a JsxElement.
+     */
+    static isJsxElement: (node: Node<Node>) => node is JsxElement;
+    /**
+     * Gets if the node is a JsxExpression.
+     */
+    static isJsxExpression: (node: Node<Node>) => node is JsxExpression;
+    /**
+     * Gets if the node is a JsxFragment.
+     */
+    static isJsxFragment: (node: Node<Node>) => node is JsxFragment;
+    /**
+     * Gets if the node is a JsxOpeningElement.
+     */
+    static isJsxOpeningElement: (node: Node<Node>) => node is JsxOpeningElement;
+    /**
+     * Gets if the node is a JsxOpeningFragment.
+     */
+    static isJsxOpeningFragment: (node: Node<Node>) => node is JsxOpeningFragment;
+    /**
+     * Gets if the node is a JsxSelfClosingElement.
+     */
+    static isJsxSelfClosingElement: (node: Node<Node>) => node is JsxSelfClosingElement;
+    /**
+     * Gets if the node is a JsxSpreadAttribute.
+     */
+    static isJsxSpreadAttribute: (node: Node<Node>) => node is JsxSpreadAttribute;
+    /**
+     * Gets if the node is a JsxText.
+     */
+    static isJsxText: (node: Node<Node>) => node is JsxText;
+    /**
+     * Gets if the node is a LabeledStatement.
+     */
+    static isLabeledStatement: (node: Node<Node>) => node is LabeledStatement;
+    /**
+     * Gets if the node is a MetaProperty.
+     */
+    static isMetaProperty: (node: Node<Node>) => node is MetaProperty;
+    /**
+     * Gets if the node is a MethodDeclaration.
+     */
+    static isMethodDeclaration: (node: Node<Node>) => node is MethodDeclaration;
+    /**
+     * Gets if the node is a MethodSignature.
+     */
+    static isMethodSignature: (node: Node<Node>) => node is MethodSignature;
+    /**
+     * Gets if the node is a ModuleBlock.
+     */
+    static isModuleBlock: (node: Node<Node>) => node is ModuleBlock;
+    /**
+     * Gets if the node is a NamedExports.
+     */
+    static isNamedExports: (node: Node<Node>) => node is NamedExports;
+    /**
+     * Gets if the node is a NamedImports.
+     */
+    static isNamedImports: (node: Node<Node>) => node is NamedImports;
+    /**
+     * Gets if the node is a NamespaceImport.
+     */
+    static isNamespaceImport: (node: Node<Node>) => node is NamespaceImport;
+    /**
+     * Gets if the node is a NeverKeyword.
+     */
+    static isNeverKeyword: (node: Node<Node>) => node is Expression<Expression>;
+    /**
+     * Gets if the node is a NewExpression.
+     */
+    static isNewExpression: (node: Node<Node>) => node is NewExpression;
+    /**
+     * Gets if the node is a NoSubstitutionTemplateLiteral.
+     */
+    static isNoSubstitutionTemplateLiteral: (node: Node<Node>) => node is NoSubstitutionTemplateLiteral;
+    /**
+     * Gets if the node is a NonNullExpression.
+     */
+    static isNonNullExpression: (node: Node<Node>) => node is NonNullExpression;
+    /**
+     * Gets if the node is a NotEmittedStatement.
+     */
+    static isNotEmittedStatement: (node: Node<Node>) => node is NotEmittedStatement;
+    /**
+     * Gets if the node is a NumberKeyword.
+     */
+    static isNumberKeyword: (node: Node<Node>) => node is Expression<Expression>;
+    /**
+     * Gets if the node is a NumericLiteral.
+     */
+    static isNumericLiteral: (node: Node<Node>) => node is NumericLiteral;
+    /**
+     * Gets if the node is a ObjectBindingPattern.
+     */
+    static isObjectBindingPattern: (node: Node<Node>) => node is ObjectBindingPattern;
+    /**
+     * Gets if the node is a ObjectKeyword.
+     */
+    static isObjectKeyword: (node: Node<Node>) => node is Expression<Expression>;
+    /**
+     * Gets if the node is a ObjectLiteralExpression.
+     */
+    static isObjectLiteralExpression: (node: Node<Node>) => node is ObjectLiteralExpression;
+    /**
+     * Gets if the node is a OmittedExpression.
+     */
+    static isOmittedExpression: (node: Node<Node>) => node is OmittedExpression;
+    /**
+     * Gets if the node is a ParenthesizedExpression.
+     */
+    static isParenthesizedExpression: (node: Node<Node>) => node is ParenthesizedExpression;
+    /**
+     * Gets if the node is a PartiallyEmittedExpression.
+     */
+    static isPartiallyEmittedExpression: (node: Node<Node>) => node is PartiallyEmittedExpression;
+    /**
+     * Gets if the node is a PostfixUnaryExpression.
+     */
+    static isPostfixUnaryExpression: (node: Node<Node>) => node is PostfixUnaryExpression;
+    /**
+     * Gets if the node is a PrefixUnaryExpression.
+     */
+    static isPrefixUnaryExpression: (node: Node<Node>) => node is PrefixUnaryExpression;
+    /**
+     * Gets if the node is a PropertyAccessExpression.
+     */
+    static isPropertyAccessExpression: (node: Node<Node>) => node is PropertyAccessExpression<PropertyAccessExpression>;
+    /**
+     * Gets if the node is a PropertyAssignment.
+     */
+    static isPropertyAssignment: (node: Node<Node>) => node is PropertyAssignment;
+    /**
+     * Gets if the node is a PropertyDeclaration.
+     */
+    static isPropertyDeclaration: (node: Node<Node>) => node is PropertyDeclaration;
+    /**
+     * Gets if the node is a PropertySignature.
+     */
+    static isPropertySignature: (node: Node<Node>) => node is PropertySignature;
+    /**
+     * Gets if the node is a QualifiedName.
+     */
+    static isQualifiedName: (node: Node<Node>) => node is QualifiedName;
+    /**
+     * Gets if the node is a RegularExpressionLiteral.
+     */
+    static isRegularExpressionLiteral: (node: Node<Node>) => node is RegularExpressionLiteral;
+    /**
+     * Gets if the node is a ReturnStatement.
+     */
+    static isReturnStatement: (node: Node<Node>) => node is ReturnStatement;
+    /**
+     * Gets if the node is a SemicolonToken.
+     */
+    static isSemicolonToken: (node: Node<Node>) => node is Node<Node>;
+    /**
+     * Gets if the node is a ShorthandPropertyAssignment.
+     */
+    static isShorthandPropertyAssignment: (node: Node<Node>) => node is ShorthandPropertyAssignment;
+    /**
+     * Gets if the node is a SourceFile.
+     */
+    static isSourceFile: (node: Node<Node>) => node is SourceFile;
+    /**
+     * Gets if the node is a SpreadAssignment.
+     */
+    static isSpreadAssignment: (node: Node<Node>) => node is SpreadAssignment;
+    /**
+     * Gets if the node is a SpreadElement.
+     */
+    static isSpreadElement: (node: Node<Node>) => node is SpreadElement;
+    /**
+     * Gets if the node is a StringKeyword.
+     */
+    static isStringKeyword: (node: Node<Node>) => node is Expression<Expression>;
+    /**
+     * Gets if the node is a StringLiteral.
+     */
+    static isStringLiteral: (node: Node<Node>) => node is StringLiteral;
+    /**
+     * Gets if the node is a SwitchStatement.
+     */
+    static isSwitchStatement: (node: Node<Node>) => node is SwitchStatement;
+    /**
+     * Gets if the node is a SymbolKeyword.
+     */
+    static isSymbolKeyword: (node: Node<Node>) => node is Expression<Expression>;
+    /**
+     * Gets if the node is a SyntaxList.
+     */
+    static isSyntaxList: (node: Node<Node>) => node is SyntaxList;
+    /**
+     * Gets if the node is a TaggedTemplateExpression.
+     */
+    static isTaggedTemplateExpression: (node: Node<Node>) => node is TaggedTemplateExpression;
+    /**
+     * Gets if the node is a TemplateExpression.
+     */
+    static isTemplateExpression: (node: Node<Node>) => node is TemplateExpression;
+    /**
+     * Gets if the node is a TemplateHead.
+     */
+    static isTemplateHead: (node: Node<Node>) => node is TemplateHead;
+    /**
+     * Gets if the node is a TemplateMiddle.
+     */
+    static isTemplateMiddle: (node: Node<Node>) => node is TemplateMiddle;
+    /**
+     * Gets if the node is a TemplateSpan.
+     */
+    static isTemplateSpan: (node: Node<Node>) => node is TemplateSpan;
+    /**
+     * Gets if the node is a TemplateTail.
+     */
+    static isTemplateTail: (node: Node<Node>) => node is TemplateTail;
+    /**
+     * Gets if the node is a ThrowStatement.
+     */
+    static isThrowStatement: (node: Node<Node>) => node is ThrowStatement;
+    /**
+     * Gets if the node is a TrueKeyword.
+     */
+    static isTrueKeyword: (node: Node<Node>) => node is BooleanLiteral;
+    /**
+     * Gets if the node is a TryStatement.
+     */
+    static isTryStatement: (node: Node<Node>) => node is TryStatement;
+    /**
+     * Gets if the node is a TypeAliasDeclaration.
+     */
+    static isTypeAliasDeclaration: (node: Node<Node>) => node is TypeAliasDeclaration;
+    /**
+     * Gets if the node is a TypeOfExpression.
+     */
+    static isTypeOfExpression: (node: Node<Node>) => node is TypeOfExpression;
+    /**
+     * Gets if the node is a UndefinedKeyword.
+     */
+    static isUndefinedKeyword: (node: Node<Node>) => node is Expression<Expression>;
+    /**
+     * Gets if the node is a VariableDeclaration.
+     */
+    static isVariableDeclaration: (node: Node<Node>) => node is VariableDeclaration;
+    /**
+     * Gets if the node is a VariableDeclarationList.
+     */
+    static isVariableDeclarationList: (node: Node<Node>) => node is VariableDeclarationList;
+    /**
+     * Gets if the node is a VariableStatement.
+     */
+    static isVariableStatement: (node: Node<Node>) => node is VariableStatement;
+    /**
+     * Gets if the node is a VoidExpression.
+     */
+    static isVoidExpression: (node: Node<Node>) => node is VoidExpression;
+    /**
+     * Gets if the node is a WhileStatement.
+     */
+    static isWhileStatement: (node: Node<Node>) => node is WhileStatement;
+    /**
+     * Gets if the node is a WithStatement.
+     */
+    static isWithStatement: (node: Node<Node>) => node is WithStatement;
+    /**
+     * Gets if the node is a YieldExpression.
+     */
+    static isYieldExpression: (node: Node<Node>) => node is YieldExpression;
     private constructor();
     /**
      * Gets if the node has an expression.
@@ -753,6 +1277,10 @@ export declare class TypeGuards {
     static hasBody<T extends Node>(node: T): node is T & {
             getBody(): Node;
         };
+    /**
+     * Creates a type guard for syntax kinds.
+     */
+    static is<TKind extends keyof ImplementedKindToNodeMappings>(kind: TKind): (node: Node) => node is ImplementedKindToNodeMappings[TKind];
     /**
      * Gets if the provided value is a Node.
      */
@@ -792,75 +1320,30 @@ export declare class TypeGuards {
      */
     static isAmbientableNode<T extends Node>(node: T): node is AmbientableNode & AmbientableNodeExtensionType & T;
     /**
-     * Gets if the node is an AnyKeyword.
-     * @param node - Node to check.
-     */
-    static isAnyKeyword(node: Node): node is Expression;
-    /**
      * Gets if the node is an ArgumentedNode.
      * @param node - Node to check.
      */
     static isArgumentedNode<T extends Node>(node: T): node is ArgumentedNode & ArgumentedNodeExtensionType & T;
-    /**
-     * Gets if the node is an ArrayBindingPattern.
-     * @param node - Node to check.
-     */
-    static isArrayBindingPattern(node: Node): node is ArrayBindingPattern;
-    /**
-     * Gets if the node is an ArrayLiteralExpression.
-     * @param node - Node to check.
-     */
-    static isArrayLiteralExpression(node: Node): node is ArrayLiteralExpression;
     /**
      * Gets if the node is an ArrayTypeNode.
      * @param node - Node to check.
      */
     static isArrayTypeNode(node: Node): node is ArrayTypeNode;
     /**
-     * Gets if the node is an ArrowFunction.
-     * @param node - Node to check.
-     */
-    static isArrowFunction(node: Node): node is ArrowFunction;
-    /**
-     * Gets if the node is an AsExpression.
-     * @param node - Node to check.
-     */
-    static isAsExpression(node: Node): node is AsExpression;
-    /**
      * Gets if the node is an AsyncableNode.
      * @param node - Node to check.
      */
     static isAsyncableNode<T extends Node>(node: T): node is AsyncableNode & AsyncableNodeExtensionType & T;
-    /**
-     * Gets if the node is an AwaitExpression.
-     * @param node - Node to check.
-     */
-    static isAwaitExpression(node: Node): node is AwaitExpression;
     /**
      * Gets if the node is an AwaitableNode.
      * @param node - Node to check.
      */
     static isAwaitableNode<T extends Node>(node: T): node is AwaitableNode & AwaitableNodeExtensionType & T;
     /**
-     * Gets if the node is a BinaryExpression.
-     * @param node - Node to check.
-     */
-    static isBinaryExpression(node: Node): node is BinaryExpression;
-    /**
-     * Gets if the node is a BindingElement.
-     * @param node - Node to check.
-     */
-    static isBindingElement(node: Node): node is BindingElement;
-    /**
      * Gets if the node is a BindingNamedNode.
      * @param node - Node to check.
      */
     static isBindingNamedNode<T extends Node>(node: T): node is BindingNamedNode & BindingNamedNodeExtensionType & T;
-    /**
-     * Gets if the node is a Block.
-     * @param node - Node to check.
-     */
-    static isBlock(node: Node): node is Block;
     /**
      * Gets if the node is a BodiedNode.
      * @param node - Node to check.
@@ -872,80 +1355,25 @@ export declare class TypeGuards {
      */
     static isBodyableNode<T extends Node>(node: T): node is BodyableNode & BodyableNodeExtensionType & T;
     /**
-     * Gets if the node is a BooleanKeyword.
-     * @param node - Node to check.
-     */
-    static isBooleanKeyword(node: Node): node is Expression;
-    /**
      * Gets if the node is a BooleanLiteral.
      * @param node - Node to check.
      */
     static isBooleanLiteral(node: Node): node is BooleanLiteral;
-    /**
-     * Gets if the node is a BreakStatement.
-     * @param node - Node to check.
-     */
-    static isBreakStatement(node: Node): node is BreakStatement;
-    /**
-     * Gets if the node is a CallExpression.
-     * @param node - Node to check.
-     */
-    static isCallExpression(node: Node): node is CallExpression;
     /**
      * Gets if the node is a CallSignatureDeclaration.
      * @param node - Node to check.
      */
     static isCallSignatureDeclaration(node: Node): node is CallSignatureDeclaration;
     /**
-     * Gets if the node is a CaseBlock.
-     * @param node - Node to check.
-     */
-    static isCaseBlock(node: Node): node is CaseBlock;
-    /**
-     * Gets if the node is a CaseClause.
-     * @param node - Node to check.
-     */
-    static isCaseClause(node: Node): node is CaseClause;
-    /**
-     * Gets if the node is a CatchClause.
-     * @param node - Node to check.
-     */
-    static isCatchClause(node: Node): node is CatchClause;
-    /**
      * Gets if the node is a ChildOrderableNode.
      * @param node - Node to check.
      */
     static isChildOrderableNode<T extends Node>(node: T): node is ChildOrderableNode & ChildOrderableNodeExtensionType & T;
     /**
-     * Gets if the node is a ClassDeclaration.
-     * @param node - Node to check.
-     */
-    static isClassDeclaration(node: Node): node is ClassDeclaration;
-    /**
-     * Gets if the node is a ClassExpression.
-     * @param node - Node to check.
-     */
-    static isClassExpression(node: Node): node is ClassExpression;
-    /**
      * Gets if the node is a ClassLikeDeclarationBase.
      * @param node - Node to check.
      */
     static isClassLikeDeclarationBase<T extends Node>(node: T): node is ClassLikeDeclarationBase & ClassLikeDeclarationBaseExtensionType & T;
-    /**
-     * Gets if the node is a CommaListExpression.
-     * @param node - Node to check.
-     */
-    static isCommaListExpression(node: Node): node is CommaListExpression;
-    /**
-     * Gets if the node is a ComputedPropertyName.
-     * @param node - Node to check.
-     */
-    static isComputedPropertyName(node: Node): node is ComputedPropertyName;
-    /**
-     * Gets if the node is a ConditionalExpression.
-     * @param node - Node to check.
-     */
-    static isConditionalExpression(node: Node): node is ConditionalExpression;
     /**
      * Gets if the node is a ConditionalTypeNode.
      * @param node - Node to check.
@@ -967,85 +1395,20 @@ export declare class TypeGuards {
      */
     static isConstructorTypeNode(node: Node): node is ConstructorTypeNode;
     /**
-     * Gets if the node is a ContinueStatement.
-     * @param node - Node to check.
-     */
-    static isContinueStatement(node: Node): node is ContinueStatement;
-    /**
-     * Gets if the node is a DebuggerStatement.
-     * @param node - Node to check.
-     */
-    static isDebuggerStatement(node: Node): node is DebuggerStatement;
-    /**
      * Gets if the node is a DecoratableNode.
      * @param node - Node to check.
      */
     static isDecoratableNode<T extends Node>(node: T): node is DecoratableNode & DecoratableNodeExtensionType & T;
-    /**
-     * Gets if the node is a Decorator.
-     * @param node - Node to check.
-     */
-    static isDecorator(node: Node): node is Decorator;
-    /**
-     * Gets if the node is a DefaultClause.
-     * @param node - Node to check.
-     */
-    static isDefaultClause(node: Node): node is DefaultClause;
-    /**
-     * Gets if the node is a DeleteExpression.
-     * @param node - Node to check.
-     */
-    static isDeleteExpression(node: Node): node is DeleteExpression;
-    /**
-     * Gets if the node is a DoStatement.
-     * @param node - Node to check.
-     */
-    static isDoStatement(node: Node): node is DoStatement;
-    /**
-     * Gets if the node is an ElementAccessExpression.
-     * @param node - Node to check.
-     */
-    static isElementAccessExpression(node: Node): node is ElementAccessExpression;
-    /**
-     * Gets if the node is an EmptyStatement.
-     * @param node - Node to check.
-     */
-    static isEmptyStatement(node: Node): node is EmptyStatement;
-    /**
-     * Gets if the node is an EnumDeclaration.
-     * @param node - Node to check.
-     */
-    static isEnumDeclaration(node: Node): node is EnumDeclaration;
-    /**
-     * Gets if the node is an EnumMember.
-     * @param node - Node to check.
-     */
-    static isEnumMember(node: Node): node is EnumMember;
     /**
      * Gets if the node is an ExclamationTokenableNode.
      * @param node - Node to check.
      */
     static isExclamationTokenableNode<T extends Node>(node: T): node is ExclamationTokenableNode & ExclamationTokenableNodeExtensionType & T;
     /**
-     * Gets if the node is an ExportAssignment.
-     * @param node - Node to check.
-     */
-    static isExportAssignment(node: Node): node is ExportAssignment;
-    /**
-     * Gets if the node is an ExportDeclaration.
-     * @param node - Node to check.
-     */
-    static isExportDeclaration(node: Node): node is ExportDeclaration;
-    /**
      * Gets if the node is an ExportGetableNode.
      * @param node - Node to check.
      */
     static isExportGetableNode<T extends Node>(node: T): node is ExportGetableNode & ExportGetableNodeExtensionType & T;
-    /**
-     * Gets if the node is an ExportSpecifier.
-     * @param node - Node to check.
-     */
-    static isExportSpecifier(node: Node): node is ExportSpecifier;
     /**
      * Gets if the node is an ExportableNode.
      * @param node - Node to check.
@@ -1057,16 +1420,6 @@ export declare class TypeGuards {
      */
     static isExpression(node: Node): node is Expression;
     /**
-     * Gets if the node is an ExpressionStatement.
-     * @param node - Node to check.
-     */
-    static isExpressionStatement(node: Node): node is ExpressionStatement;
-    /**
-     * Gets if the node is an ExpressionWithTypeArguments.
-     * @param node - Node to check.
-     */
-    static isExpressionWithTypeArguments(node: Node): node is ExpressionWithTypeArguments;
-    /**
      * Gets if the node is an ExpressionedNode.
      * @param node - Node to check.
      */
@@ -1076,41 +1429,6 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isExtendsClauseableNode<T extends Node>(node: T): node is ExtendsClauseableNode & ExtendsClauseableNodeExtensionType & T;
-    /**
-     * Gets if the node is an ExternalModuleReference.
-     * @param node - Node to check.
-     */
-    static isExternalModuleReference(node: Node): node is ExternalModuleReference;
-    /**
-     * Gets if the node is a FalseKeyword.
-     * @param node - Node to check.
-     */
-    static isFalseKeyword(node: Node): node is BooleanLiteral;
-    /**
-     * Gets if the node is a ForInStatement.
-     * @param node - Node to check.
-     */
-    static isForInStatement(node: Node): node is ForInStatement;
-    /**
-     * Gets if the node is a ForOfStatement.
-     * @param node - Node to check.
-     */
-    static isForOfStatement(node: Node): node is ForOfStatement;
-    /**
-     * Gets if the node is a ForStatement.
-     * @param node - Node to check.
-     */
-    static isForStatement(node: Node): node is ForStatement;
-    /**
-     * Gets if the node is a FunctionDeclaration.
-     * @param node - Node to check.
-     */
-    static isFunctionDeclaration(node: Node): node is FunctionDeclaration;
-    /**
-     * Gets if the node is a FunctionExpression.
-     * @param node - Node to check.
-     */
-    static isFunctionExpression(node: Node): node is FunctionExpression;
     /**
      * Gets if the node is a FunctionLikeDeclaration.
      * @param node - Node to check.
@@ -1132,55 +1450,20 @@ export declare class TypeGuards {
      */
     static isGetAccessorDeclaration(node: Node): node is GetAccessorDeclaration;
     /**
-     * Gets if the node is a HeritageClause.
-     * @param node - Node to check.
-     */
-    static isHeritageClause(node: Node): node is HeritageClause;
-    /**
      * Gets if the node is a HeritageClauseableNode.
      * @param node - Node to check.
      */
     static isHeritageClauseableNode<T extends Node>(node: T): node is HeritageClauseableNode & HeritageClauseableNodeExtensionType & T;
-    /**
-     * Gets if the node is a Identifier.
-     * @param node - Node to check.
-     */
-    static isIdentifier(node: Node): node is Identifier;
-    /**
-     * Gets if the node is a IfStatement.
-     * @param node - Node to check.
-     */
-    static isIfStatement(node: Node): node is IfStatement;
     /**
      * Gets if the node is a ImplementsClauseableNode.
      * @param node - Node to check.
      */
     static isImplementsClauseableNode<T extends Node>(node: T): node is ImplementsClauseableNode & ImplementsClauseableNodeExtensionType & T;
     /**
-     * Gets if the node is a ImportClause.
-     * @param node - Node to check.
-     */
-    static isImportClause(node: Node): node is ImportClause;
-    /**
-     * Gets if the node is a ImportDeclaration.
-     * @param node - Node to check.
-     */
-    static isImportDeclaration(node: Node): node is ImportDeclaration;
-    /**
-     * Gets if the node is a ImportEqualsDeclaration.
-     * @param node - Node to check.
-     */
-    static isImportEqualsDeclaration(node: Node): node is ImportEqualsDeclaration;
-    /**
      * Gets if the node is a ImportExpression.
      * @param node - Node to check.
      */
     static isImportExpression(node: Node): node is ImportExpression;
-    /**
-     * Gets if the node is a ImportSpecifier.
-     * @param node - Node to check.
-     */
-    static isImportSpecifier(node: Node): node is ImportSpecifier;
     /**
      * Gets if the node is a ImportTypeNode.
      * @param node - Node to check.
@@ -1197,11 +1480,6 @@ export declare class TypeGuards {
      */
     static isIndexedAccessTypeNode(node: Node): node is IndexedAccessTypeNode;
     /**
-     * Gets if the node is a InferKeyword.
-     * @param node - Node to check.
-     */
-    static isInferKeyword(node: Node): node is Node;
-    /**
      * Gets if the node is a InferTypeNode.
      * @param node - Node to check.
      */
@@ -1216,11 +1494,6 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isInitializerExpressionableNode<T extends Node>(node: T): node is InitializerExpressionableNode & InitializerExpressionableNodeExtensionType & T;
-    /**
-     * Gets if the node is a InterfaceDeclaration.
-     * @param node - Node to check.
-     */
-    static isInterfaceDeclaration(node: Node): node is InterfaceDeclaration;
     /**
      * Gets if the node is a IntersectionTypeNode.
      * @param node - Node to check.
@@ -1237,45 +1510,10 @@ export declare class TypeGuards {
      */
     static isJSDoc(node: Node): node is JSDoc;
     /**
-     * Gets if the node is a JSDocAugmentsTag.
-     * @param node - Node to check.
-     */
-    static isJSDocAugmentsTag(node: Node): node is JSDocAugmentsTag;
-    /**
-     * Gets if the node is a JSDocClassTag.
-     * @param node - Node to check.
-     */
-    static isJSDocClassTag(node: Node): node is JSDocClassTag;
-    /**
-     * Gets if the node is a JSDocFunctionType.
-     * @param node - Node to check.
-     */
-    static isJSDocFunctionType(node: Node): node is JSDocFunctionType;
-    /**
-     * Gets if the node is a JSDocParameterTag.
-     * @param node - Node to check.
-     */
-    static isJSDocParameterTag(node: Node): node is JSDocParameterTag;
-    /**
      * Gets if the node is a JSDocPropertyLikeTag.
      * @param node - Node to check.
      */
     static isJSDocPropertyLikeTag<T extends Node>(node: T): node is JSDocPropertyLikeTag & JSDocPropertyLikeTagExtensionType & T;
-    /**
-     * Gets if the node is a JSDocPropertyTag.
-     * @param node - Node to check.
-     */
-    static isJSDocPropertyTag(node: Node): node is JSDocPropertyTag;
-    /**
-     * Gets if the node is a JSDocReturnTag.
-     * @param node - Node to check.
-     */
-    static isJSDocReturnTag(node: Node): node is JSDocReturnTag;
-    /**
-     * Gets if the node is a JSDocSignature.
-     * @param node - Node to check.
-     */
-    static isJSDocSignature(node: Node): node is JSDocSignature;
     /**
      * Gets if the node is a JSDocTag.
      * @param node - Node to check.
@@ -1287,21 +1525,6 @@ export declare class TypeGuards {
      */
     static isJSDocType(node: Node): node is JSDocType;
     /**
-     * Gets if the node is a JSDocTypeExpression.
-     * @param node - Node to check.
-     */
-    static isJSDocTypeExpression(node: Node): node is JSDocTypeExpression;
-    /**
-     * Gets if the node is a JSDocTypeTag.
-     * @param node - Node to check.
-     */
-    static isJSDocTypeTag(node: Node): node is JSDocTypeTag;
-    /**
-     * Gets if the node is a JSDocTypedefTag.
-     * @param node - Node to check.
-     */
-    static isJSDocTypedefTag(node: Node): node is JSDocTypedefTag;
-    /**
      * Gets if the node is a JSDocUnknownTag.
      * @param node - Node to check.
      */
@@ -1312,75 +1535,15 @@ export declare class TypeGuards {
      */
     static isJSDocableNode<T extends Node>(node: T): node is JSDocableNode & JSDocableNodeExtensionType & T;
     /**
-     * Gets if the node is a JsxAttribute.
-     * @param node - Node to check.
-     */
-    static isJsxAttribute(node: Node): node is JsxAttribute;
-    /**
      * Gets if the node is a JsxAttributedNode.
      * @param node - Node to check.
      */
     static isJsxAttributedNode<T extends Node>(node: T): node is JsxAttributedNode & JsxAttributedNodeExtensionType & T;
     /**
-     * Gets if the node is a JsxClosingElement.
-     * @param node - Node to check.
-     */
-    static isJsxClosingElement(node: Node): node is JsxClosingElement;
-    /**
-     * Gets if the node is a JsxClosingFragment.
-     * @param node - Node to check.
-     */
-    static isJsxClosingFragment(node: Node): node is JsxClosingFragment;
-    /**
-     * Gets if the node is a JsxElement.
-     * @param node - Node to check.
-     */
-    static isJsxElement(node: Node): node is JsxElement;
-    /**
-     * Gets if the node is a JsxExpression.
-     * @param node - Node to check.
-     */
-    static isJsxExpression(node: Node): node is JsxExpression;
-    /**
-     * Gets if the node is a JsxFragment.
-     * @param node - Node to check.
-     */
-    static isJsxFragment(node: Node): node is JsxFragment;
-    /**
-     * Gets if the node is a JsxOpeningElement.
-     * @param node - Node to check.
-     */
-    static isJsxOpeningElement(node: Node): node is JsxOpeningElement;
-    /**
-     * Gets if the node is a JsxOpeningFragment.
-     * @param node - Node to check.
-     */
-    static isJsxOpeningFragment(node: Node): node is JsxOpeningFragment;
-    /**
-     * Gets if the node is a JsxSelfClosingElement.
-     * @param node - Node to check.
-     */
-    static isJsxSelfClosingElement(node: Node): node is JsxSelfClosingElement;
-    /**
-     * Gets if the node is a JsxSpreadAttribute.
-     * @param node - Node to check.
-     */
-    static isJsxSpreadAttribute(node: Node): node is JsxSpreadAttribute;
-    /**
      * Gets if the node is a JsxTagNamedNode.
      * @param node - Node to check.
      */
     static isJsxTagNamedNode<T extends Node>(node: T): node is JsxTagNamedNode & JsxTagNamedNodeExtensionType & T;
-    /**
-     * Gets if the node is a JsxText.
-     * @param node - Node to check.
-     */
-    static isJsxText(node: Node): node is JsxText;
-    /**
-     * Gets if the node is a LabeledStatement.
-     * @param node - Node to check.
-     */
-    static isLabeledStatement(node: Node): node is LabeledStatement;
     /**
      * Gets if the node is a LeftHandSideExpression.
      * @param node - Node to check.
@@ -1412,30 +1575,10 @@ export declare class TypeGuards {
      */
     static isMemberExpression(node: Node): node is MemberExpression;
     /**
-     * Gets if the node is a MetaProperty.
-     * @param node - Node to check.
-     */
-    static isMetaProperty(node: Node): node is MetaProperty;
-    /**
-     * Gets if the node is a MethodDeclaration.
-     * @param node - Node to check.
-     */
-    static isMethodDeclaration(node: Node): node is MethodDeclaration;
-    /**
-     * Gets if the node is a MethodSignature.
-     * @param node - Node to check.
-     */
-    static isMethodSignature(node: Node): node is MethodSignature;
-    /**
      * Gets if the node is a ModifierableNode.
      * @param node - Node to check.
      */
     static isModifierableNode<T extends Node>(node: T): node is ModifierableNode & ModifierableNodeExtensionType & T;
-    /**
-     * Gets if the node is a ModuleBlock.
-     * @param node - Node to check.
-     */
-    static isModuleBlock(node: Node): node is ModuleBlock;
     /**
      * Gets if the node is a ModuledNode.
      * @param node - Node to check.
@@ -1446,16 +1589,6 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isNameableNode<T extends Node>(node: T): node is NameableNode & NameableNodeExtensionType & T;
-    /**
-     * Gets if the node is a NamedExports.
-     * @param node - Node to check.
-     */
-    static isNamedExports(node: Node): node is NamedExports;
-    /**
-     * Gets if the node is a NamedImports.
-     * @param node - Node to check.
-     */
-    static isNamedImports(node: Node): node is NamedImports;
     /**
      * Gets if the node is a NamedNode.
      * @param node - Node to check.
@@ -1472,70 +1605,10 @@ export declare class TypeGuards {
      */
     static isNamespaceDeclaration(node: Node): node is NamespaceDeclaration;
     /**
-     * Gets if the node is a NamespaceImport.
-     * @param node - Node to check.
-     */
-    static isNamespaceImport(node: Node): node is NamespaceImport;
-    /**
-     * Gets if the node is a NeverKeyword.
-     * @param node - Node to check.
-     */
-    static isNeverKeyword(node: Node): node is Expression;
-    /**
-     * Gets if the node is a NewExpression.
-     * @param node - Node to check.
-     */
-    static isNewExpression(node: Node): node is NewExpression;
-    /**
-     * Gets if the node is a NoSubstitutionTemplateLiteral.
-     * @param node - Node to check.
-     */
-    static isNoSubstitutionTemplateLiteral(node: Node): node is NoSubstitutionTemplateLiteral;
-    /**
-     * Gets if the node is a NonNullExpression.
-     * @param node - Node to check.
-     */
-    static isNonNullExpression(node: Node): node is NonNullExpression;
-    /**
-     * Gets if the node is a NotEmittedStatement.
-     * @param node - Node to check.
-     */
-    static isNotEmittedStatement(node: Node): node is NotEmittedStatement;
-    /**
      * Gets if the node is a NullLiteral.
      * @param node - Node to check.
      */
     static isNullLiteral(node: Node): node is NullLiteral;
-    /**
-     * Gets if the node is a NumberKeyword.
-     * @param node - Node to check.
-     */
-    static isNumberKeyword(node: Node): node is Expression;
-    /**
-     * Gets if the node is a NumericLiteral.
-     * @param node - Node to check.
-     */
-    static isNumericLiteral(node: Node): node is NumericLiteral;
-    /**
-     * Gets if the node is a ObjectBindingPattern.
-     * @param node - Node to check.
-     */
-    static isObjectBindingPattern(node: Node): node is ObjectBindingPattern;
-    /**
-     * Gets if the node is a ObjectKeyword.
-     * @param node - Node to check.
-     */
-    static isObjectKeyword(node: Node): node is Expression;
-    /**
-     * Gets if the node is a ObjectLiteralExpression.
-     * @param node - Node to check.
-     */
-    static isObjectLiteralExpression(node: Node): node is ObjectLiteralExpression;
-    /**
-     * Gets if the node is a OmittedExpression.
-     * @param node - Node to check.
-     */
-    static isOmittedExpression(node: Node): node is OmittedExpression;
     /**
      * Gets if the node is a OverloadableNode.
      * @param node - Node to check.
@@ -1552,65 +1625,20 @@ export declare class TypeGuards {
      */
     static isParameteredNode<T extends Node>(node: T): node is ParameteredNode & ParameteredNodeExtensionType & T;
     /**
-     * Gets if the node is a ParenthesizedExpression.
-     * @param node - Node to check.
-     */
-    static isParenthesizedExpression(node: Node): node is ParenthesizedExpression;
-    /**
      * Gets if the node is a ParenthesizedTypeNode.
      * @param node - Node to check.
      */
     static isParenthesizedTypeNode(node: Node): node is ParenthesizedTypeNode;
-    /**
-     * Gets if the node is a PartiallyEmittedExpression.
-     * @param node - Node to check.
-     */
-    static isPartiallyEmittedExpression(node: Node): node is PartiallyEmittedExpression;
-    /**
-     * Gets if the node is a PostfixUnaryExpression.
-     * @param node - Node to check.
-     */
-    static isPostfixUnaryExpression(node: Node): node is PostfixUnaryExpression;
-    /**
-     * Gets if the node is a PrefixUnaryExpression.
-     * @param node - Node to check.
-     */
-    static isPrefixUnaryExpression(node: Node): node is PrefixUnaryExpression;
     /**
      * Gets if the node is a PrimaryExpression.
      * @param node - Node to check.
      */
     static isPrimaryExpression(node: Node): node is PrimaryExpression;
     /**
-     * Gets if the node is a PropertyAccessExpression.
-     * @param node - Node to check.
-     */
-    static isPropertyAccessExpression(node: Node): node is PropertyAccessExpression;
-    /**
-     * Gets if the node is a PropertyAssignment.
-     * @param node - Node to check.
-     */
-    static isPropertyAssignment(node: Node): node is PropertyAssignment;
-    /**
-     * Gets if the node is a PropertyDeclaration.
-     * @param node - Node to check.
-     */
-    static isPropertyDeclaration(node: Node): node is PropertyDeclaration;
-    /**
      * Gets if the node is a PropertyNamedNode.
      * @param node - Node to check.
      */
     static isPropertyNamedNode<T extends Node>(node: T): node is PropertyNamedNode & PropertyNamedNodeExtensionType & T;
-    /**
-     * Gets if the node is a PropertySignature.
-     * @param node - Node to check.
-     */
-    static isPropertySignature(node: Node): node is PropertySignature;
-    /**
-     * Gets if the node is a QualifiedName.
-     * @param node - Node to check.
-     */
-    static isQualifiedName(node: Node): node is QualifiedName;
     /**
      * Gets if the node is a QuestionTokenableNode.
      * @param node - Node to check.
@@ -1627,20 +1655,10 @@ export declare class TypeGuards {
      */
     static isReferenceFindableNode<T extends Node>(node: T): node is ReferenceFindableNode & ReferenceFindableNodeExtensionType & T;
     /**
-     * Gets if the node is a RegularExpressionLiteral.
-     * @param node - Node to check.
-     */
-    static isRegularExpressionLiteral(node: Node): node is RegularExpressionLiteral;
-    /**
      * Gets if the node is a RenameableNode.
      * @param node - Node to check.
      */
     static isRenameableNode<T extends Node>(node: T): node is RenameableNode & RenameableNodeExtensionType & T;
-    /**
-     * Gets if the node is a ReturnStatement.
-     * @param node - Node to check.
-     */
-    static isReturnStatement(node: Node): node is ReturnStatement;
     /**
      * Gets if the node is a ReturnTypedNode.
      * @param node - Node to check.
@@ -1657,40 +1675,15 @@ export declare class TypeGuards {
      */
     static isScopedNode<T extends Node>(node: T): node is ScopedNode & ScopedNodeExtensionType & T;
     /**
-     * Gets if the node is a SemicolonToken.
-     * @param node - Node to check.
-     */
-    static isSemicolonToken(node: Node): node is Node;
-    /**
      * Gets if the node is a SetAccessorDeclaration.
      * @param node - Node to check.
      */
     static isSetAccessorDeclaration(node: Node): node is SetAccessorDeclaration;
     /**
-     * Gets if the node is a ShorthandPropertyAssignment.
-     * @param node - Node to check.
-     */
-    static isShorthandPropertyAssignment(node: Node): node is ShorthandPropertyAssignment;
-    /**
      * Gets if the node is a SignaturedDeclaration.
      * @param node - Node to check.
      */
     static isSignaturedDeclaration<T extends Node>(node: T): node is SignaturedDeclaration & SignaturedDeclarationExtensionType & T;
-    /**
-     * Gets if the node is a SourceFile.
-     * @param node - Node to check.
-     */
-    static isSourceFile(node: Node): node is SourceFile;
-    /**
-     * Gets if the node is a SpreadAssignment.
-     * @param node - Node to check.
-     */
-    static isSpreadAssignment(node: Node): node is SpreadAssignment;
-    /**
-     * Gets if the node is a SpreadElement.
-     * @param node - Node to check.
-     */
-    static isSpreadElement(node: Node): node is SpreadElement;
     /**
      * Gets if the node is a Statement.
      * @param node - Node to check.
@@ -1707,65 +1700,10 @@ export declare class TypeGuards {
      */
     static isStaticableNode<T extends Node>(node: T): node is StaticableNode & StaticableNodeExtensionType & T;
     /**
-     * Gets if the node is a StringKeyword.
-     * @param node - Node to check.
-     */
-    static isStringKeyword(node: Node): node is Expression;
-    /**
-     * Gets if the node is a StringLiteral.
-     * @param node - Node to check.
-     */
-    static isStringLiteral(node: Node): node is StringLiteral;
-    /**
      * Gets if the node is a SuperExpression.
      * @param node - Node to check.
      */
     static isSuperExpression(node: Node): node is SuperExpression;
-    /**
-     * Gets if the node is a SwitchStatement.
-     * @param node - Node to check.
-     */
-    static isSwitchStatement(node: Node): node is SwitchStatement;
-    /**
-     * Gets if the node is a SymbolKeyword.
-     * @param node - Node to check.
-     */
-    static isSymbolKeyword(node: Node): node is Expression;
-    /**
-     * Gets if the node is a SyntaxList.
-     * @param node - Node to check.
-     */
-    static isSyntaxList(node: Node): node is SyntaxList;
-    /**
-     * Gets if the node is a TaggedTemplateExpression.
-     * @param node - Node to check.
-     */
-    static isTaggedTemplateExpression(node: Node): node is TaggedTemplateExpression;
-    /**
-     * Gets if the node is a TemplateExpression.
-     * @param node - Node to check.
-     */
-    static isTemplateExpression(node: Node): node is TemplateExpression;
-    /**
-     * Gets if the node is a TemplateHead.
-     * @param node - Node to check.
-     */
-    static isTemplateHead(node: Node): node is TemplateHead;
-    /**
-     * Gets if the node is a TemplateMiddle.
-     * @param node - Node to check.
-     */
-    static isTemplateMiddle(node: Node): node is TemplateMiddle;
-    /**
-     * Gets if the node is a TemplateSpan.
-     * @param node - Node to check.
-     */
-    static isTemplateSpan(node: Node): node is TemplateSpan;
-    /**
-     * Gets if the node is a TemplateTail.
-     * @param node - Node to check.
-     */
-    static isTemplateTail(node: Node): node is TemplateTail;
     /**
      * Gets if the node is a TextInsertableNode.
      * @param node - Node to check.
@@ -1782,30 +1720,10 @@ export declare class TypeGuards {
      */
     static isThisTypeNode(node: Node): node is ThisTypeNode;
     /**
-     * Gets if the node is a ThrowStatement.
-     * @param node - Node to check.
-     */
-    static isThrowStatement(node: Node): node is ThrowStatement;
-    /**
-     * Gets if the node is a TrueKeyword.
-     * @param node - Node to check.
-     */
-    static isTrueKeyword(node: Node): node is BooleanLiteral;
-    /**
-     * Gets if the node is a TryStatement.
-     * @param node - Node to check.
-     */
-    static isTryStatement(node: Node): node is TryStatement;
-    /**
      * Gets if the node is a TupleTypeNode.
      * @param node - Node to check.
      */
     static isTupleTypeNode(node: Node): node is TupleTypeNode;
-    /**
-     * Gets if the node is a TypeAliasDeclaration.
-     * @param node - Node to check.
-     */
-    static isTypeAliasDeclaration(node: Node): node is TypeAliasDeclaration;
     /**
      * Gets if the node is a TypeArgumentedNode.
      * @param node - Node to check.
@@ -1837,11 +1755,6 @@ export declare class TypeGuards {
      */
     static isTypeNode(node: Node): node is TypeNode;
     /**
-     * Gets if the node is a TypeOfExpression.
-     * @param node - Node to check.
-     */
-    static isTypeOfExpression(node: Node): node is TypeOfExpression;
-    /**
      * Gets if the node is a TypeParameterDeclaration.
      * @param node - Node to check.
      */
@@ -1872,11 +1785,6 @@ export declare class TypeGuards {
      */
     static isUnaryExpressionedNode<T extends Node>(node: T): node is UnaryExpressionedNode & UnaryExpressionedNodeExtensionType & T;
     /**
-     * Gets if the node is a UndefinedKeyword.
-     * @param node - Node to check.
-     */
-    static isUndefinedKeyword(node: Node): node is Expression;
-    /**
      * Gets if the node is a UnionTypeNode.
      * @param node - Node to check.
      */
@@ -1891,41 +1799,6 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isUpdateExpression(node: Node): node is UpdateExpression;
-    /**
-     * Gets if the node is a VariableDeclaration.
-     * @param node - Node to check.
-     */
-    static isVariableDeclaration(node: Node): node is VariableDeclaration;
-    /**
-     * Gets if the node is a VariableDeclarationList.
-     * @param node - Node to check.
-     */
-    static isVariableDeclarationList(node: Node): node is VariableDeclarationList;
-    /**
-     * Gets if the node is a VariableStatement.
-     * @param node - Node to check.
-     */
-    static isVariableStatement(node: Node): node is VariableStatement;
-    /**
-     * Gets if the node is a VoidExpression.
-     * @param node - Node to check.
-     */
-    static isVoidExpression(node: Node): node is VoidExpression;
-    /**
-     * Gets if the node is a WhileStatement.
-     * @param node - Node to check.
-     */
-    static isWhileStatement(node: Node): node is WhileStatement;
-    /**
-     * Gets if the node is a WithStatement.
-     * @param node - Node to check.
-     */
-    static isWithStatement(node: Node): node is WithStatement;
-    /**
-     * Gets if the node is a YieldExpression.
-     * @param node - Node to check.
-     */
-    static isYieldExpression(node: Node): node is YieldExpression;
 }
 
 /**

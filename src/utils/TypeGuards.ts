@@ -8,6 +8,7 @@
 import * as compiler from "../compiler";
 import { SyntaxKind } from "../typescript";
 import { Structure } from "../structures";
+import { ImplementedKindToNodeMappings } from '../compiler';
 
 /**
  * Type guards for checking the type of a node.
@@ -47,6 +48,15 @@ export class TypeGuards {
         if ((node as any).getBody == null)
             return false;
         return (node as any).getBody() != null;
+    }
+
+    /**
+     * Creates a type guard for syntax kinds.
+     */
+    static is<TKind extends keyof ImplementedKindToNodeMappings>(kind: TKind): (node: compiler.Node) => node is ImplementedKindToNodeMappings[TKind] {
+        return (node: compiler.Node): node is ImplementedKindToNodeMappings[TKind] => {
+            return node.getKind() == kind
+        }
     }
 
     /**
@@ -138,11 +148,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is an AnyKeyword.
-     * @param node - Node to check.
      */
-    static isAnyKeyword(node: compiler.Node): node is compiler.Expression {
-        return node.getKind() === SyntaxKind.AnyKeyword;
-    }
+    static isAnyKeyword = TypeGuards.is(SyntaxKind.AnyKeyword);
 
     /**
      * Gets if the node is an ArgumentedNode.
@@ -160,19 +167,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is an ArrayBindingPattern.
-     * @param node - Node to check.
      */
-    static isArrayBindingPattern(node: compiler.Node): node is compiler.ArrayBindingPattern {
-        return node.getKind() === SyntaxKind.ArrayBindingPattern;
-    }
-
+    static isArrayBindingPattern = TypeGuards.is(SyntaxKind.ArrayBindingPattern);
     /**
      * Gets if the node is an ArrayLiteralExpression.
-     * @param node - Node to check.
      */
-    static isArrayLiteralExpression(node: compiler.Node): node is compiler.ArrayLiteralExpression {
-        return node.getKind() === SyntaxKind.ArrayLiteralExpression;
-    }
+    static isArrayLiteralExpression = TypeGuards.is(SyntaxKind.ArrayLiteralExpression);
 
     /**
      * Gets if the node is an ArrayTypeNode.
@@ -184,19 +184,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is an ArrowFunction.
-     * @param node - Node to check.
      */
-    static isArrowFunction(node: compiler.Node): node is compiler.ArrowFunction {
-        return node.getKind() === SyntaxKind.ArrowFunction;
-    }
-
+    static isArrowFunction = TypeGuards.is(SyntaxKind.ArrowFunction);
     /**
      * Gets if the node is an AsExpression.
-     * @param node - Node to check.
      */
-    static isAsExpression(node: compiler.Node): node is compiler.AsExpression {
-        return node.getKind() === SyntaxKind.AsExpression;
-    }
+    static isAsExpression = TypeGuards.is(SyntaxKind.AsExpression);
 
     /**
      * Gets if the node is an AsyncableNode.
@@ -216,11 +209,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is an AwaitExpression.
-     * @param node - Node to check.
      */
-    static isAwaitExpression(node: compiler.Node): node is compiler.AwaitExpression {
-        return node.getKind() === SyntaxKind.AwaitExpression;
-    }
+    static isAwaitExpression = TypeGuards.is(SyntaxKind.AwaitExpression);
 
     /**
      * Gets if the node is an AwaitableNode.
@@ -232,19 +222,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a BinaryExpression.
-     * @param node - Node to check.
      */
-    static isBinaryExpression(node: compiler.Node): node is compiler.BinaryExpression {
-        return node.getKind() === SyntaxKind.BinaryExpression;
-    }
-
+    static isBinaryExpression = TypeGuards.is(SyntaxKind.BinaryExpression);
     /**
      * Gets if the node is a BindingElement.
-     * @param node - Node to check.
      */
-    static isBindingElement(node: compiler.Node): node is compiler.BindingElement {
-        return node.getKind() === SyntaxKind.BindingElement;
-    }
+    static isBindingElement = TypeGuards.is(SyntaxKind.BindingElement);
 
     /**
      * Gets if the node is a BindingNamedNode.
@@ -263,11 +246,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a Block.
-     * @param node - Node to check.
      */
-    static isBlock(node: compiler.Node): node is compiler.Block {
-        return node.getKind() === SyntaxKind.Block;
-    }
+    static isBlock = TypeGuards.is(SyntaxKind.Block);
 
     /**
      * Gets if the node is a BodiedNode.
@@ -303,11 +283,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a BooleanKeyword.
-     * @param node - Node to check.
      */
-    static isBooleanKeyword(node: compiler.Node): node is compiler.Expression {
-        return node.getKind() === SyntaxKind.BooleanKeyword;
-    }
+    static isBooleanKeyword = TypeGuards.is(SyntaxKind.BooleanKeyword);
 
     /**
      * Gets if the node is a BooleanLiteral.
@@ -325,19 +302,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a BreakStatement.
-     * @param node - Node to check.
      */
-    static isBreakStatement(node: compiler.Node): node is compiler.BreakStatement {
-        return node.getKind() === SyntaxKind.BreakStatement;
-    }
-
+    static isBreakStatement = TypeGuards.is(SyntaxKind.BreakStatement);
     /**
      * Gets if the node is a CallExpression.
-     * @param node - Node to check.
      */
-    static isCallExpression(node: compiler.Node): node is compiler.CallExpression {
-        return node.getKind() === SyntaxKind.CallExpression;
-    }
+    static isCallExpression = TypeGuards.is(SyntaxKind.CallExpression);
 
     /**
      * Gets if the node is a CallSignatureDeclaration.
@@ -349,27 +319,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a CaseBlock.
-     * @param node - Node to check.
      */
-    static isCaseBlock(node: compiler.Node): node is compiler.CaseBlock {
-        return node.getKind() === SyntaxKind.CaseBlock;
-    }
-
+    static isCaseBlock = TypeGuards.is(SyntaxKind.CaseBlock);
     /**
      * Gets if the node is a CaseClause.
-     * @param node - Node to check.
      */
-    static isCaseClause(node: compiler.Node): node is compiler.CaseClause {
-        return node.getKind() === SyntaxKind.CaseClause;
-    }
-
+    static isCaseClause = TypeGuards.is(SyntaxKind.CaseClause);
     /**
      * Gets if the node is a CatchClause.
-     * @param node - Node to check.
      */
-    static isCatchClause(node: compiler.Node): node is compiler.CatchClause {
-        return node.getKind() === SyntaxKind.CatchClause;
-    }
+    static isCatchClause = TypeGuards.is(SyntaxKind.CatchClause);
 
     /**
      * Gets if the node is a ChildOrderableNode.
@@ -426,19 +385,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a ClassDeclaration.
-     * @param node - Node to check.
      */
-    static isClassDeclaration(node: compiler.Node): node is compiler.ClassDeclaration {
-        return node.getKind() === SyntaxKind.ClassDeclaration;
-    }
-
+    static isClassDeclaration = TypeGuards.is(SyntaxKind.ClassDeclaration);
     /**
      * Gets if the node is a ClassExpression.
-     * @param node - Node to check.
      */
-    static isClassExpression(node: compiler.Node): node is compiler.ClassExpression {
-        return node.getKind() === SyntaxKind.ClassExpression;
-    }
+    static isClassExpression = TypeGuards.is(SyntaxKind.ClassExpression);
 
     /**
      * Gets if the node is a ClassLikeDeclarationBase.
@@ -456,27 +408,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a CommaListExpression.
-     * @param node - Node to check.
      */
-    static isCommaListExpression(node: compiler.Node): node is compiler.CommaListExpression {
-        return node.getKind() === SyntaxKind.CommaListExpression;
-    }
-
+    static isCommaListExpression = TypeGuards.is(SyntaxKind.CommaListExpression);
     /**
      * Gets if the node is a ComputedPropertyName.
-     * @param node - Node to check.
      */
-    static isComputedPropertyName(node: compiler.Node): node is compiler.ComputedPropertyName {
-        return node.getKind() === SyntaxKind.ComputedPropertyName;
-    }
-
+    static isComputedPropertyName = TypeGuards.is(SyntaxKind.ComputedPropertyName);
     /**
      * Gets if the node is a ConditionalExpression.
-     * @param node - Node to check.
      */
-    static isConditionalExpression(node: compiler.Node): node is compiler.ConditionalExpression {
-        return node.getKind() === SyntaxKind.ConditionalExpression;
-    }
+    static isConditionalExpression = TypeGuards.is(SyntaxKind.ConditionalExpression);
 
     /**
      * Gets if the node is a ConditionalTypeNode.
@@ -512,19 +453,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a ContinueStatement.
-     * @param node - Node to check.
      */
-    static isContinueStatement(node: compiler.Node): node is compiler.ContinueStatement {
-        return node.getKind() === SyntaxKind.ContinueStatement;
-    }
-
+    static isContinueStatement = TypeGuards.is(SyntaxKind.ContinueStatement);
     /**
      * Gets if the node is a DebuggerStatement.
-     * @param node - Node to check.
      */
-    static isDebuggerStatement(node: compiler.Node): node is compiler.DebuggerStatement {
-        return node.getKind() === SyntaxKind.DebuggerStatement;
-    }
+    static isDebuggerStatement = TypeGuards.is(SyntaxKind.DebuggerStatement);
 
     /**
      * Gets if the node is a DecoratableNode.
@@ -547,67 +481,36 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a Decorator.
-     * @param node - Node to check.
      */
-    static isDecorator(node: compiler.Node): node is compiler.Decorator {
-        return node.getKind() === SyntaxKind.Decorator;
-    }
-
+    static isDecorator = TypeGuards.is(SyntaxKind.Decorator);
     /**
      * Gets if the node is a DefaultClause.
-     * @param node - Node to check.
      */
-    static isDefaultClause(node: compiler.Node): node is compiler.DefaultClause {
-        return node.getKind() === SyntaxKind.DefaultClause;
-    }
-
+    static isDefaultClause = TypeGuards.is(SyntaxKind.DefaultClause);
     /**
      * Gets if the node is a DeleteExpression.
-     * @param node - Node to check.
      */
-    static isDeleteExpression(node: compiler.Node): node is compiler.DeleteExpression {
-        return node.getKind() === SyntaxKind.DeleteExpression;
-    }
-
+    static isDeleteExpression = TypeGuards.is(SyntaxKind.DeleteExpression);
     /**
      * Gets if the node is a DoStatement.
-     * @param node - Node to check.
      */
-    static isDoStatement(node: compiler.Node): node is compiler.DoStatement {
-        return node.getKind() === SyntaxKind.DoStatement;
-    }
-
+    static isDoStatement = TypeGuards.is(SyntaxKind.DoStatement);
     /**
      * Gets if the node is an ElementAccessExpression.
-     * @param node - Node to check.
      */
-    static isElementAccessExpression(node: compiler.Node): node is compiler.ElementAccessExpression {
-        return node.getKind() === SyntaxKind.ElementAccessExpression;
-    }
-
+    static isElementAccessExpression = TypeGuards.is(SyntaxKind.ElementAccessExpression);
     /**
      * Gets if the node is an EmptyStatement.
-     * @param node - Node to check.
      */
-    static isEmptyStatement(node: compiler.Node): node is compiler.EmptyStatement {
-        return node.getKind() === SyntaxKind.EmptyStatement;
-    }
-
+    static isEmptyStatement = TypeGuards.is(SyntaxKind.EmptyStatement);
     /**
      * Gets if the node is an EnumDeclaration.
-     * @param node - Node to check.
      */
-    static isEnumDeclaration(node: compiler.Node): node is compiler.EnumDeclaration {
-        return node.getKind() === SyntaxKind.EnumDeclaration;
-    }
-
+    static isEnumDeclaration = TypeGuards.is(SyntaxKind.EnumDeclaration);
     /**
      * Gets if the node is an EnumMember.
-     * @param node - Node to check.
      */
-    static isEnumMember(node: compiler.Node): node is compiler.EnumMember {
-        return node.getKind() === SyntaxKind.EnumMember;
-    }
+    static isEnumMember = TypeGuards.is(SyntaxKind.EnumMember);
 
     /**
      * Gets if the node is an ExclamationTokenableNode.
@@ -625,19 +528,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is an ExportAssignment.
-     * @param node - Node to check.
      */
-    static isExportAssignment(node: compiler.Node): node is compiler.ExportAssignment {
-        return node.getKind() === SyntaxKind.ExportAssignment;
-    }
-
+    static isExportAssignment = TypeGuards.is(SyntaxKind.ExportAssignment);
     /**
      * Gets if the node is an ExportDeclaration.
-     * @param node - Node to check.
      */
-    static isExportDeclaration(node: compiler.Node): node is compiler.ExportDeclaration {
-        return node.getKind() === SyntaxKind.ExportDeclaration;
-    }
+    static isExportDeclaration = TypeGuards.is(SyntaxKind.ExportDeclaration);
 
     /**
      * Gets if the node is an ExportGetableNode.
@@ -661,11 +557,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is an ExportSpecifier.
-     * @param node - Node to check.
      */
-    static isExportSpecifier(node: compiler.Node): node is compiler.ExportSpecifier {
-        return node.getKind() === SyntaxKind.ExportSpecifier;
-    }
+    static isExportSpecifier = TypeGuards.is(SyntaxKind.ExportSpecifier);
 
     /**
      * Gets if the node is an ExportableNode.
@@ -755,19 +648,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is an ExpressionStatement.
-     * @param node - Node to check.
      */
-    static isExpressionStatement(node: compiler.Node): node is compiler.ExpressionStatement {
-        return node.getKind() === SyntaxKind.ExpressionStatement;
-    }
-
+    static isExpressionStatement = TypeGuards.is(SyntaxKind.ExpressionStatement);
     /**
      * Gets if the node is an ExpressionWithTypeArguments.
-     * @param node - Node to check.
      */
-    static isExpressionWithTypeArguments(node: compiler.Node): node is compiler.ExpressionWithTypeArguments {
-        return node.getKind() === SyntaxKind.ExpressionWithTypeArguments;
-    }
+    static isExpressionWithTypeArguments = TypeGuards.is(SyntaxKind.ExpressionWithTypeArguments);
 
     /**
      * Gets if the node is an ExpressionedNode.
@@ -798,59 +684,32 @@ export class TypeGuards {
 
     /**
      * Gets if the node is an ExternalModuleReference.
-     * @param node - Node to check.
      */
-    static isExternalModuleReference(node: compiler.Node): node is compiler.ExternalModuleReference {
-        return node.getKind() === SyntaxKind.ExternalModuleReference;
-    }
-
+    static isExternalModuleReference = TypeGuards.is(SyntaxKind.ExternalModuleReference);
     /**
      * Gets if the node is a FalseKeyword.
-     * @param node - Node to check.
      */
-    static isFalseKeyword(node: compiler.Node): node is compiler.BooleanLiteral {
-        return node.getKind() === SyntaxKind.FalseKeyword;
-    }
-
+    static isFalseKeyword = TypeGuards.is(SyntaxKind.FalseKeyword);
     /**
      * Gets if the node is a ForInStatement.
-     * @param node - Node to check.
      */
-    static isForInStatement(node: compiler.Node): node is compiler.ForInStatement {
-        return node.getKind() === SyntaxKind.ForInStatement;
-    }
-
+    static isForInStatement = TypeGuards.is(SyntaxKind.ForInStatement);
     /**
      * Gets if the node is a ForOfStatement.
-     * @param node - Node to check.
      */
-    static isForOfStatement(node: compiler.Node): node is compiler.ForOfStatement {
-        return node.getKind() === SyntaxKind.ForOfStatement;
-    }
-
+    static isForOfStatement = TypeGuards.is(SyntaxKind.ForOfStatement);
     /**
      * Gets if the node is a ForStatement.
-     * @param node - Node to check.
      */
-    static isForStatement(node: compiler.Node): node is compiler.ForStatement {
-        return node.getKind() === SyntaxKind.ForStatement;
-    }
-
+    static isForStatement = TypeGuards.is(SyntaxKind.ForStatement);
     /**
      * Gets if the node is a FunctionDeclaration.
-     * @param node - Node to check.
      */
-    static isFunctionDeclaration(node: compiler.Node): node is compiler.FunctionDeclaration {
-        return node.getKind() === SyntaxKind.FunctionDeclaration;
-    }
-
+    static isFunctionDeclaration = TypeGuards.is(SyntaxKind.FunctionDeclaration);
     /**
      * Gets if the node is a FunctionExpression.
-     * @param node - Node to check.
      */
-    static isFunctionExpression(node: compiler.Node): node is compiler.FunctionExpression {
-        return node.getKind() === SyntaxKind.FunctionExpression;
-    }
+    static isFunctionExpression = TypeGuards.is(SyntaxKind.FunctionExpression);
 
     /**
      * Gets if the node is a FunctionLikeDeclaration.
@@ -904,11 +763,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a HeritageClause.
-     * @param node - Node to check.
      */
-    static isHeritageClause(node: compiler.Node): node is compiler.HeritageClause {
-        return node.getKind() === SyntaxKind.HeritageClause;
-    }
+    static isHeritageClause = TypeGuards.is(SyntaxKind.HeritageClause);
 
     /**
      * Gets if the node is a HeritageClauseableNode.
@@ -927,19 +783,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a Identifier.
-     * @param node - Node to check.
      */
-    static isIdentifier(node: compiler.Node): node is compiler.Identifier {
-        return node.getKind() === SyntaxKind.Identifier;
-    }
-
+    static isIdentifier = TypeGuards.is(SyntaxKind.Identifier);
     /**
      * Gets if the node is a IfStatement.
-     * @param node - Node to check.
      */
-    static isIfStatement(node: compiler.Node): node is compiler.IfStatement {
-        return node.getKind() === SyntaxKind.IfStatement;
-    }
+    static isIfStatement = TypeGuards.is(SyntaxKind.IfStatement);
 
     /**
      * Gets if the node is a ImplementsClauseableNode.
@@ -957,27 +806,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a ImportClause.
-     * @param node - Node to check.
      */
-    static isImportClause(node: compiler.Node): node is compiler.ImportClause {
-        return node.getKind() === SyntaxKind.ImportClause;
-    }
-
+    static isImportClause = TypeGuards.is(SyntaxKind.ImportClause);
     /**
      * Gets if the node is a ImportDeclaration.
-     * @param node - Node to check.
      */
-    static isImportDeclaration(node: compiler.Node): node is compiler.ImportDeclaration {
-        return node.getKind() === SyntaxKind.ImportDeclaration;
-    }
-
+    static isImportDeclaration = TypeGuards.is(SyntaxKind.ImportDeclaration);
     /**
      * Gets if the node is a ImportEqualsDeclaration.
-     * @param node - Node to check.
      */
-    static isImportEqualsDeclaration(node: compiler.Node): node is compiler.ImportEqualsDeclaration {
-        return node.getKind() === SyntaxKind.ImportEqualsDeclaration;
-    }
+    static isImportEqualsDeclaration = TypeGuards.is(SyntaxKind.ImportEqualsDeclaration);
 
     /**
      * Gets if the node is a ImportExpression.
@@ -989,11 +827,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a ImportSpecifier.
-     * @param node - Node to check.
      */
-    static isImportSpecifier(node: compiler.Node): node is compiler.ImportSpecifier {
-        return node.getKind() === SyntaxKind.ImportSpecifier;
-    }
+    static isImportSpecifier = TypeGuards.is(SyntaxKind.ImportSpecifier);
 
     /**
      * Gets if the node is a ImportTypeNode.
@@ -1021,11 +856,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a InferKeyword.
-     * @param node - Node to check.
      */
-    static isInferKeyword(node: compiler.Node): node is compiler.Node {
-        return node.getKind() === SyntaxKind.InferKeyword;
-    }
+    static isInferKeyword = TypeGuards.is(SyntaxKind.InferKeyword);
 
     /**
      * Gets if the node is a InferTypeNode.
@@ -1075,11 +907,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a InterfaceDeclaration.
-     * @param node - Node to check.
      */
-    static isInterfaceDeclaration(node: compiler.Node): node is compiler.InterfaceDeclaration {
-        return node.getKind() === SyntaxKind.InterfaceDeclaration;
-    }
+    static isInterfaceDeclaration = TypeGuards.is(SyntaxKind.InterfaceDeclaration);
 
     /**
      * Gets if the node is a IntersectionTypeNode.
@@ -1116,35 +945,20 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a JSDocAugmentsTag.
-     * @param node - Node to check.
      */
-    static isJSDocAugmentsTag(node: compiler.Node): node is compiler.JSDocAugmentsTag {
-        return node.getKind() === SyntaxKind.JSDocAugmentsTag;
-    }
-
+    static isJSDocAugmentsTag = TypeGuards.is(SyntaxKind.JSDocAugmentsTag);
     /**
      * Gets if the node is a JSDocClassTag.
-     * @param node - Node to check.
      */
-    static isJSDocClassTag(node: compiler.Node): node is compiler.JSDocClassTag {
-        return node.getKind() === SyntaxKind.JSDocClassTag;
-    }
-
+    static isJSDocClassTag = TypeGuards.is(SyntaxKind.JSDocClassTag);
     /**
      * Gets if the node is a JSDocFunctionType.
-     * @param node - Node to check.
      */
-    static isJSDocFunctionType(node: compiler.Node): node is compiler.JSDocFunctionType {
-        return node.getKind() === SyntaxKind.JSDocFunctionType;
-    }
-
+    static isJSDocFunctionType = TypeGuards.is(SyntaxKind.JSDocFunctionType);
     /**
      * Gets if the node is a JSDocParameterTag.
-     * @param node - Node to check.
      */
-    static isJSDocParameterTag(node: compiler.Node): node is compiler.JSDocParameterTag {
-        return node.getKind() === SyntaxKind.JSDocParameterTag;
-    }
+    static isJSDocParameterTag = TypeGuards.is(SyntaxKind.JSDocParameterTag);
 
     /**
      * Gets if the node is a JSDocPropertyLikeTag.
@@ -1162,27 +976,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a JSDocPropertyTag.
-     * @param node - Node to check.
      */
-    static isJSDocPropertyTag(node: compiler.Node): node is compiler.JSDocPropertyTag {
-        return node.getKind() === SyntaxKind.JSDocPropertyTag;
-    }
-
+    static isJSDocPropertyTag = TypeGuards.is(SyntaxKind.JSDocPropertyTag);
     /**
      * Gets if the node is a JSDocReturnTag.
-     * @param node - Node to check.
      */
-    static isJSDocReturnTag(node: compiler.Node): node is compiler.JSDocReturnTag {
-        return node.getKind() === SyntaxKind.JSDocReturnTag;
-    }
-
+    static isJSDocReturnTag = TypeGuards.is(SyntaxKind.JSDocReturnTag);
     /**
      * Gets if the node is a JSDocSignature.
-     * @param node - Node to check.
      */
-    static isJSDocSignature(node: compiler.Node): node is compiler.JSDocSignature {
-        return node.getKind() === SyntaxKind.JSDocSignature;
-    }
+    static isJSDocSignature = TypeGuards.is(SyntaxKind.JSDocSignature);
 
     /**
      * Gets if the node is a JSDocTag.
@@ -1220,27 +1023,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a JSDocTypeExpression.
-     * @param node - Node to check.
      */
-    static isJSDocTypeExpression(node: compiler.Node): node is compiler.JSDocTypeExpression {
-        return node.getKind() === SyntaxKind.JSDocTypeExpression;
-    }
-
+    static isJSDocTypeExpression = TypeGuards.is(SyntaxKind.JSDocTypeExpression);
     /**
      * Gets if the node is a JSDocTypeTag.
-     * @param node - Node to check.
      */
-    static isJSDocTypeTag(node: compiler.Node): node is compiler.JSDocTypeTag {
-        return node.getKind() === SyntaxKind.JSDocTypeTag;
-    }
-
+    static isJSDocTypeTag = TypeGuards.is(SyntaxKind.JSDocTypeTag);
     /**
      * Gets if the node is a JSDocTypedefTag.
-     * @param node - Node to check.
      */
-    static isJSDocTypedefTag(node: compiler.Node): node is compiler.JSDocTypedefTag {
-        return node.getKind() === SyntaxKind.JSDocTypedefTag;
-    }
+    static isJSDocTypedefTag = TypeGuards.is(SyntaxKind.JSDocTypedefTag);
 
     /**
      * Gets if the node is a JSDocUnknownTag.
@@ -1288,11 +1080,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a JsxAttribute.
-     * @param node - Node to check.
      */
-    static isJsxAttribute(node: compiler.Node): node is compiler.JsxAttribute {
-        return node.getKind() === SyntaxKind.JsxAttribute;
-    }
+    static isJsxAttribute = TypeGuards.is(SyntaxKind.JsxAttribute);
 
     /**
      * Gets if the node is a JsxAttributedNode.
@@ -1310,75 +1099,40 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a JsxClosingElement.
-     * @param node - Node to check.
      */
-    static isJsxClosingElement(node: compiler.Node): node is compiler.JsxClosingElement {
-        return node.getKind() === SyntaxKind.JsxClosingElement;
-    }
-
+    static isJsxClosingElement = TypeGuards.is(SyntaxKind.JsxClosingElement);
     /**
      * Gets if the node is a JsxClosingFragment.
-     * @param node - Node to check.
      */
-    static isJsxClosingFragment(node: compiler.Node): node is compiler.JsxClosingFragment {
-        return node.getKind() === SyntaxKind.JsxClosingFragment;
-    }
-
+    static isJsxClosingFragment = TypeGuards.is(SyntaxKind.JsxClosingFragment);
     /**
      * Gets if the node is a JsxElement.
-     * @param node - Node to check.
      */
-    static isJsxElement(node: compiler.Node): node is compiler.JsxElement {
-        return node.getKind() === SyntaxKind.JsxElement;
-    }
-
+    static isJsxElement = TypeGuards.is(SyntaxKind.JsxElement);
     /**
      * Gets if the node is a JsxExpression.
-     * @param node - Node to check.
      */
-    static isJsxExpression(node: compiler.Node): node is compiler.JsxExpression {
-        return node.getKind() === SyntaxKind.JsxExpression;
-    }
-
+    static isJsxExpression = TypeGuards.is(SyntaxKind.JsxExpression);
     /**
      * Gets if the node is a JsxFragment.
-     * @param node - Node to check.
      */
-    static isJsxFragment(node: compiler.Node): node is compiler.JsxFragment {
-        return node.getKind() === SyntaxKind.JsxFragment;
-    }
-
+    static isJsxFragment = TypeGuards.is(SyntaxKind.JsxFragment);
     /**
      * Gets if the node is a JsxOpeningElement.
-     * @param node - Node to check.
      */
-    static isJsxOpeningElement(node: compiler.Node): node is compiler.JsxOpeningElement {
-        return node.getKind() === SyntaxKind.JsxOpeningElement;
-    }
-
+    static isJsxOpeningElement = TypeGuards.is(SyntaxKind.JsxOpeningElement);
     /**
      * Gets if the node is a JsxOpeningFragment.
-     * @param node - Node to check.
      */
-    static isJsxOpeningFragment(node: compiler.Node): node is compiler.JsxOpeningFragment {
-        return node.getKind() === SyntaxKind.JsxOpeningFragment;
-    }
-
+    static isJsxOpeningFragment = TypeGuards.is(SyntaxKind.JsxOpeningFragment);
     /**
      * Gets if the node is a JsxSelfClosingElement.
-     * @param node - Node to check.
      */
-    static isJsxSelfClosingElement(node: compiler.Node): node is compiler.JsxSelfClosingElement {
-        return node.getKind() === SyntaxKind.JsxSelfClosingElement;
-    }
-
+    static isJsxSelfClosingElement = TypeGuards.is(SyntaxKind.JsxSelfClosingElement);
     /**
      * Gets if the node is a JsxSpreadAttribute.
-     * @param node - Node to check.
      */
-    static isJsxSpreadAttribute(node: compiler.Node): node is compiler.JsxSpreadAttribute {
-        return node.getKind() === SyntaxKind.JsxSpreadAttribute;
-    }
+    static isJsxSpreadAttribute = TypeGuards.is(SyntaxKind.JsxSpreadAttribute);
 
     /**
      * Gets if the node is a JsxTagNamedNode.
@@ -1397,19 +1151,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a JsxText.
-     * @param node - Node to check.
      */
-    static isJsxText(node: compiler.Node): node is compiler.JsxText {
-        return node.getKind() === SyntaxKind.JsxText;
-    }
-
+    static isJsxText = TypeGuards.is(SyntaxKind.JsxText);
     /**
      * Gets if the node is a LabeledStatement.
-     * @param node - Node to check.
      */
-    static isLabeledStatement(node: compiler.Node): node is compiler.LabeledStatement {
-        return node.getKind() === SyntaxKind.LabeledStatement;
-    }
+    static isLabeledStatement = TypeGuards.is(SyntaxKind.LabeledStatement);
 
     /**
      * Gets if the node is a LeftHandSideExpression.
@@ -1548,27 +1295,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a MetaProperty.
-     * @param node - Node to check.
      */
-    static isMetaProperty(node: compiler.Node): node is compiler.MetaProperty {
-        return node.getKind() === SyntaxKind.MetaProperty;
-    }
-
+    static isMetaProperty = TypeGuards.is(SyntaxKind.MetaProperty);
     /**
      * Gets if the node is a MethodDeclaration.
-     * @param node - Node to check.
      */
-    static isMethodDeclaration(node: compiler.Node): node is compiler.MethodDeclaration {
-        return node.getKind() === SyntaxKind.MethodDeclaration;
-    }
-
+    static isMethodDeclaration = TypeGuards.is(SyntaxKind.MethodDeclaration);
     /**
      * Gets if the node is a MethodSignature.
-     * @param node - Node to check.
      */
-    static isMethodSignature(node: compiler.Node): node is compiler.MethodSignature {
-        return node.getKind() === SyntaxKind.MethodSignature;
-    }
+    static isMethodSignature = TypeGuards.is(SyntaxKind.MethodSignature);
 
     /**
      * Gets if the node is a ModifierableNode.
@@ -1603,11 +1339,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a ModuleBlock.
-     * @param node - Node to check.
      */
-    static isModuleBlock(node: compiler.Node): node is compiler.ModuleBlock {
-        return node.getKind() === SyntaxKind.ModuleBlock;
-    }
+    static isModuleBlock = TypeGuards.is(SyntaxKind.ModuleBlock);
 
     /**
      * Gets if the node is a ModuledNode.
@@ -1641,19 +1374,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a NamedExports.
-     * @param node - Node to check.
      */
-    static isNamedExports(node: compiler.Node): node is compiler.NamedExports {
-        return node.getKind() === SyntaxKind.NamedExports;
-    }
-
+    static isNamedExports = TypeGuards.is(SyntaxKind.NamedExports);
     /**
      * Gets if the node is a NamedImports.
-     * @param node - Node to check.
      */
-    static isNamedImports(node: compiler.Node): node is compiler.NamedImports {
-        return node.getKind() === SyntaxKind.NamedImports;
-    }
+    static isNamedImports = TypeGuards.is(SyntaxKind.NamedImports);
 
     /**
      * Gets if the node is a NamedNode.
@@ -1705,51 +1431,28 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a NamespaceImport.
-     * @param node - Node to check.
      */
-    static isNamespaceImport(node: compiler.Node): node is compiler.NamespaceImport {
-        return node.getKind() === SyntaxKind.NamespaceImport;
-    }
-
+    static isNamespaceImport = TypeGuards.is(SyntaxKind.NamespaceImport);
     /**
      * Gets if the node is a NeverKeyword.
-     * @param node - Node to check.
      */
-    static isNeverKeyword(node: compiler.Node): node is compiler.Expression {
-        return node.getKind() === SyntaxKind.NeverKeyword;
-    }
-
+    static isNeverKeyword = TypeGuards.is(SyntaxKind.NeverKeyword);
     /**
      * Gets if the node is a NewExpression.
-     * @param node - Node to check.
      */
-    static isNewExpression(node: compiler.Node): node is compiler.NewExpression {
-        return node.getKind() === SyntaxKind.NewExpression;
-    }
-
+    static isNewExpression = TypeGuards.is(SyntaxKind.NewExpression);
     /**
      * Gets if the node is a NoSubstitutionTemplateLiteral.
-     * @param node - Node to check.
      */
-    static isNoSubstitutionTemplateLiteral(node: compiler.Node): node is compiler.NoSubstitutionTemplateLiteral {
-        return node.getKind() === SyntaxKind.NoSubstitutionTemplateLiteral;
-    }
-
+    static isNoSubstitutionTemplateLiteral = TypeGuards.is(SyntaxKind.NoSubstitutionTemplateLiteral);
     /**
      * Gets if the node is a NonNullExpression.
-     * @param node - Node to check.
      */
-    static isNonNullExpression(node: compiler.Node): node is compiler.NonNullExpression {
-        return node.getKind() === SyntaxKind.NonNullExpression;
-    }
-
+    static isNonNullExpression = TypeGuards.is(SyntaxKind.NonNullExpression);
     /**
      * Gets if the node is a NotEmittedStatement.
-     * @param node - Node to check.
      */
-    static isNotEmittedStatement(node: compiler.Node): node is compiler.NotEmittedStatement {
-        return node.getKind() === SyntaxKind.NotEmittedStatement;
-    }
+    static isNotEmittedStatement = TypeGuards.is(SyntaxKind.NotEmittedStatement);
 
     /**
      * Gets if the node is a NullLiteral.
@@ -1761,51 +1464,28 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a NumberKeyword.
-     * @param node - Node to check.
      */
-    static isNumberKeyword(node: compiler.Node): node is compiler.Expression {
-        return node.getKind() === SyntaxKind.NumberKeyword;
-    }
-
+    static isNumberKeyword = TypeGuards.is(SyntaxKind.NumberKeyword);
     /**
      * Gets if the node is a NumericLiteral.
-     * @param node - Node to check.
      */
-    static isNumericLiteral(node: compiler.Node): node is compiler.NumericLiteral {
-        return node.getKind() === SyntaxKind.NumericLiteral;
-    }
-
+    static isNumericLiteral = TypeGuards.is(SyntaxKind.NumericLiteral);
     /**
      * Gets if the node is a ObjectBindingPattern.
-     * @param node - Node to check.
      */
-    static isObjectBindingPattern(node: compiler.Node): node is compiler.ObjectBindingPattern {
-        return node.getKind() === SyntaxKind.ObjectBindingPattern;
-    }
-
+    static isObjectBindingPattern = TypeGuards.is(SyntaxKind.ObjectBindingPattern);
     /**
      * Gets if the node is a ObjectKeyword.
-     * @param node - Node to check.
      */
-    static isObjectKeyword(node: compiler.Node): node is compiler.Expression {
-        return node.getKind() === SyntaxKind.ObjectKeyword;
-    }
-
+    static isObjectKeyword = TypeGuards.is(SyntaxKind.ObjectKeyword);
     /**
      * Gets if the node is a ObjectLiteralExpression.
-     * @param node - Node to check.
      */
-    static isObjectLiteralExpression(node: compiler.Node): node is compiler.ObjectLiteralExpression {
-        return node.getKind() === SyntaxKind.ObjectLiteralExpression;
-    }
-
+    static isObjectLiteralExpression = TypeGuards.is(SyntaxKind.ObjectLiteralExpression);
     /**
      * Gets if the node is a OmittedExpression.
-     * @param node - Node to check.
      */
-    static isOmittedExpression(node: compiler.Node): node is compiler.OmittedExpression {
-        return node.getKind() === SyntaxKind.OmittedExpression;
-    }
+    static isOmittedExpression = TypeGuards.is(SyntaxKind.OmittedExpression);
 
     /**
      * Gets if the node is a OverloadableNode.
@@ -1857,11 +1537,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a ParenthesizedExpression.
-     * @param node - Node to check.
      */
-    static isParenthesizedExpression(node: compiler.Node): node is compiler.ParenthesizedExpression {
-        return node.getKind() === SyntaxKind.ParenthesizedExpression;
-    }
+    static isParenthesizedExpression = TypeGuards.is(SyntaxKind.ParenthesizedExpression);
 
     /**
      * Gets if the node is a ParenthesizedTypeNode.
@@ -1873,27 +1550,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a PartiallyEmittedExpression.
-     * @param node - Node to check.
      */
-    static isPartiallyEmittedExpression(node: compiler.Node): node is compiler.PartiallyEmittedExpression {
-        return node.getKind() === SyntaxKind.PartiallyEmittedExpression;
-    }
-
+    static isPartiallyEmittedExpression = TypeGuards.is(SyntaxKind.PartiallyEmittedExpression);
     /**
      * Gets if the node is a PostfixUnaryExpression.
-     * @param node - Node to check.
      */
-    static isPostfixUnaryExpression(node: compiler.Node): node is compiler.PostfixUnaryExpression {
-        return node.getKind() === SyntaxKind.PostfixUnaryExpression;
-    }
-
+    static isPostfixUnaryExpression = TypeGuards.is(SyntaxKind.PostfixUnaryExpression);
     /**
      * Gets if the node is a PrefixUnaryExpression.
-     * @param node - Node to check.
      */
-    static isPrefixUnaryExpression(node: compiler.Node): node is compiler.PrefixUnaryExpression {
-        return node.getKind() === SyntaxKind.PrefixUnaryExpression;
-    }
+    static isPrefixUnaryExpression = TypeGuards.is(SyntaxKind.PrefixUnaryExpression);
 
     /**
      * Gets if the node is a PrimaryExpression.
@@ -1930,27 +1596,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a PropertyAccessExpression.
-     * @param node - Node to check.
      */
-    static isPropertyAccessExpression(node: compiler.Node): node is compiler.PropertyAccessExpression {
-        return node.getKind() === SyntaxKind.PropertyAccessExpression;
-    }
-
+    static isPropertyAccessExpression = TypeGuards.is(SyntaxKind.PropertyAccessExpression);
     /**
      * Gets if the node is a PropertyAssignment.
-     * @param node - Node to check.
      */
-    static isPropertyAssignment(node: compiler.Node): node is compiler.PropertyAssignment {
-        return node.getKind() === SyntaxKind.PropertyAssignment;
-    }
-
+    static isPropertyAssignment = TypeGuards.is(SyntaxKind.PropertyAssignment);
     /**
      * Gets if the node is a PropertyDeclaration.
-     * @param node - Node to check.
      */
-    static isPropertyDeclaration(node: compiler.Node): node is compiler.PropertyDeclaration {
-        return node.getKind() === SyntaxKind.PropertyDeclaration;
-    }
+    static isPropertyDeclaration = TypeGuards.is(SyntaxKind.PropertyDeclaration);
 
     /**
      * Gets if the node is a PropertyNamedNode.
@@ -1974,19 +1629,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a PropertySignature.
-     * @param node - Node to check.
      */
-    static isPropertySignature(node: compiler.Node): node is compiler.PropertySignature {
-        return node.getKind() === SyntaxKind.PropertySignature;
-    }
-
+    static isPropertySignature = TypeGuards.is(SyntaxKind.PropertySignature);
     /**
      * Gets if the node is a QualifiedName.
-     * @param node - Node to check.
      */
-    static isQualifiedName(node: compiler.Node): node is compiler.QualifiedName {
-        return node.getKind() === SyntaxKind.QualifiedName;
-    }
+    static isQualifiedName = TypeGuards.is(SyntaxKind.QualifiedName);
 
     /**
      * Gets if the node is a QuestionTokenableNode.
@@ -2063,11 +1711,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a RegularExpressionLiteral.
-     * @param node - Node to check.
      */
-    static isRegularExpressionLiteral(node: compiler.Node): node is compiler.RegularExpressionLiteral {
-        return node.getKind() === SyntaxKind.RegularExpressionLiteral;
-    }
+    static isRegularExpressionLiteral = TypeGuards.is(SyntaxKind.RegularExpressionLiteral);
 
     /**
      * Gets if the node is a RenameableNode.
@@ -2110,11 +1755,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a ReturnStatement.
-     * @param node - Node to check.
      */
-    static isReturnStatement(node: compiler.Node): node is compiler.ReturnStatement {
-        return node.getKind() === SyntaxKind.ReturnStatement;
-    }
+    static isReturnStatement = TypeGuards.is(SyntaxKind.ReturnStatement);
 
     /**
      * Gets if the node is a ReturnTypedNode.
@@ -2169,11 +1811,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a SemicolonToken.
-     * @param node - Node to check.
      */
-    static isSemicolonToken(node: compiler.Node): node is compiler.Node {
-        return node.getKind() === SyntaxKind.SemicolonToken;
-    }
+    static isSemicolonToken = TypeGuards.is(SyntaxKind.SemicolonToken);
 
     /**
      * Gets if the node is a SetAccessorDeclaration.
@@ -2185,11 +1824,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a ShorthandPropertyAssignment.
-     * @param node - Node to check.
      */
-    static isShorthandPropertyAssignment(node: compiler.Node): node is compiler.ShorthandPropertyAssignment {
-        return node.getKind() === SyntaxKind.ShorthandPropertyAssignment;
-    }
+    static isShorthandPropertyAssignment = TypeGuards.is(SyntaxKind.ShorthandPropertyAssignment);
 
     /**
      * Gets if the node is a SignaturedDeclaration.
@@ -2218,27 +1854,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a SourceFile.
-     * @param node - Node to check.
      */
-    static isSourceFile(node: compiler.Node): node is compiler.SourceFile {
-        return node.getKind() === SyntaxKind.SourceFile;
-    }
-
+    static isSourceFile = TypeGuards.is(SyntaxKind.SourceFile);
     /**
      * Gets if the node is a SpreadAssignment.
-     * @param node - Node to check.
      */
-    static isSpreadAssignment(node: compiler.Node): node is compiler.SpreadAssignment {
-        return node.getKind() === SyntaxKind.SpreadAssignment;
-    }
-
+    static isSpreadAssignment = TypeGuards.is(SyntaxKind.SpreadAssignment);
     /**
      * Gets if the node is a SpreadElement.
-     * @param node - Node to check.
      */
-    static isSpreadElement(node: compiler.Node): node is compiler.SpreadElement {
-        return node.getKind() === SyntaxKind.SpreadElement;
-    }
+    static isSpreadElement = TypeGuards.is(SyntaxKind.SpreadElement);
 
     /**
      * Gets if the node is a Statement.
@@ -2326,19 +1951,12 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a StringKeyword.
-     * @param node - Node to check.
      */
-    static isStringKeyword(node: compiler.Node): node is compiler.Expression {
-        return node.getKind() === SyntaxKind.StringKeyword;
-    }
-
+    static isStringKeyword = TypeGuards.is(SyntaxKind.StringKeyword);
     /**
      * Gets if the node is a StringLiteral.
-     * @param node - Node to check.
      */
-    static isStringLiteral(node: compiler.Node): node is compiler.StringLiteral {
-        return node.getKind() === SyntaxKind.StringLiteral;
-    }
+    static isStringLiteral = TypeGuards.is(SyntaxKind.StringLiteral);
 
     /**
      * Gets if the node is a SuperExpression.
@@ -2350,75 +1968,40 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a SwitchStatement.
-     * @param node - Node to check.
      */
-    static isSwitchStatement(node: compiler.Node): node is compiler.SwitchStatement {
-        return node.getKind() === SyntaxKind.SwitchStatement;
-    }
-
+    static isSwitchStatement = TypeGuards.is(SyntaxKind.SwitchStatement);
     /**
      * Gets if the node is a SymbolKeyword.
-     * @param node - Node to check.
      */
-    static isSymbolKeyword(node: compiler.Node): node is compiler.Expression {
-        return node.getKind() === SyntaxKind.SymbolKeyword;
-    }
-
+    static isSymbolKeyword = TypeGuards.is(SyntaxKind.SymbolKeyword);
     /**
      * Gets if the node is a SyntaxList.
-     * @param node - Node to check.
      */
-    static isSyntaxList(node: compiler.Node): node is compiler.SyntaxList {
-        return node.getKind() === SyntaxKind.SyntaxList;
-    }
-
+    static isSyntaxList = TypeGuards.is(SyntaxKind.SyntaxList);
     /**
      * Gets if the node is a TaggedTemplateExpression.
-     * @param node - Node to check.
      */
-    static isTaggedTemplateExpression(node: compiler.Node): node is compiler.TaggedTemplateExpression {
-        return node.getKind() === SyntaxKind.TaggedTemplateExpression;
-    }
-
+    static isTaggedTemplateExpression = TypeGuards.is(SyntaxKind.TaggedTemplateExpression);
     /**
      * Gets if the node is a TemplateExpression.
-     * @param node - Node to check.
      */
-    static isTemplateExpression(node: compiler.Node): node is compiler.TemplateExpression {
-        return node.getKind() === SyntaxKind.TemplateExpression;
-    }
-
+    static isTemplateExpression = TypeGuards.is(SyntaxKind.TemplateExpression);
     /**
      * Gets if the node is a TemplateHead.
-     * @param node - Node to check.
      */
-    static isTemplateHead(node: compiler.Node): node is compiler.TemplateHead {
-        return node.getKind() === SyntaxKind.TemplateHead;
-    }
-
+    static isTemplateHead = TypeGuards.is(SyntaxKind.TemplateHead);
     /**
      * Gets if the node is a TemplateMiddle.
-     * @param node - Node to check.
      */
-    static isTemplateMiddle(node: compiler.Node): node is compiler.TemplateMiddle {
-        return node.getKind() === SyntaxKind.TemplateMiddle;
-    }
-
+    static isTemplateMiddle = TypeGuards.is(SyntaxKind.TemplateMiddle);
     /**
      * Gets if the node is a TemplateSpan.
-     * @param node - Node to check.
      */
-    static isTemplateSpan(node: compiler.Node): node is compiler.TemplateSpan {
-        return node.getKind() === SyntaxKind.TemplateSpan;
-    }
-
+    static isTemplateSpan = TypeGuards.is(SyntaxKind.TemplateSpan);
     /**
      * Gets if the node is a TemplateTail.
-     * @param node - Node to check.
      */
-    static isTemplateTail(node: compiler.Node): node is compiler.TemplateTail {
-        return node.getKind() === SyntaxKind.TemplateTail;
-    }
+    static isTemplateTail = TypeGuards.is(SyntaxKind.TemplateTail);
 
     /**
      * Gets if the node is a TextInsertableNode.
@@ -2467,27 +2050,16 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a ThrowStatement.
-     * @param node - Node to check.
      */
-    static isThrowStatement(node: compiler.Node): node is compiler.ThrowStatement {
-        return node.getKind() === SyntaxKind.ThrowStatement;
-    }
-
+    static isThrowStatement = TypeGuards.is(SyntaxKind.ThrowStatement);
     /**
      * Gets if the node is a TrueKeyword.
-     * @param node - Node to check.
      */
-    static isTrueKeyword(node: compiler.Node): node is compiler.BooleanLiteral {
-        return node.getKind() === SyntaxKind.TrueKeyword;
-    }
-
+    static isTrueKeyword = TypeGuards.is(SyntaxKind.TrueKeyword);
     /**
      * Gets if the node is a TryStatement.
-     * @param node - Node to check.
      */
-    static isTryStatement(node: compiler.Node): node is compiler.TryStatement {
-        return node.getKind() === SyntaxKind.TryStatement;
-    }
+    static isTryStatement = TypeGuards.is(SyntaxKind.TryStatement);
 
     /**
      * Gets if the node is a TupleTypeNode.
@@ -2499,11 +2071,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a TypeAliasDeclaration.
-     * @param node - Node to check.
      */
-    static isTypeAliasDeclaration(node: compiler.Node): node is compiler.TypeAliasDeclaration {
-        return node.getKind() === SyntaxKind.TypeAliasDeclaration;
-    }
+    static isTypeAliasDeclaration = TypeGuards.is(SyntaxKind.TypeAliasDeclaration);
 
     /**
      * Gets if the node is a TypeArgumentedNode.
@@ -2601,11 +2170,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a TypeOfExpression.
-     * @param node - Node to check.
      */
-    static isTypeOfExpression(node: compiler.Node): node is compiler.TypeOfExpression {
-        return node.getKind() === SyntaxKind.TypeOfExpression;
-    }
+    static isTypeOfExpression = TypeGuards.is(SyntaxKind.TypeOfExpression);
 
     /**
      * Gets if the node is a TypeParameterDeclaration.
@@ -2733,11 +2299,8 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a UndefinedKeyword.
-     * @param node - Node to check.
      */
-    static isUndefinedKeyword(node: compiler.Node): node is compiler.Expression {
-        return node.getKind() === SyntaxKind.UndefinedKeyword;
-    }
+    static isUndefinedKeyword = TypeGuards.is(SyntaxKind.UndefinedKeyword);
 
     /**
      * Gets if the node is a UnionTypeNode.
@@ -2801,59 +2364,32 @@ export class TypeGuards {
 
     /**
      * Gets if the node is a VariableDeclaration.
-     * @param node - Node to check.
      */
-    static isVariableDeclaration(node: compiler.Node): node is compiler.VariableDeclaration {
-        return node.getKind() === SyntaxKind.VariableDeclaration;
-    }
-
+    static isVariableDeclaration = TypeGuards.is(SyntaxKind.VariableDeclaration);
     /**
      * Gets if the node is a VariableDeclarationList.
-     * @param node - Node to check.
      */
-    static isVariableDeclarationList(node: compiler.Node): node is compiler.VariableDeclarationList {
-        return node.getKind() === SyntaxKind.VariableDeclarationList;
-    }
-
+    static isVariableDeclarationList = TypeGuards.is(SyntaxKind.VariableDeclarationList);
     /**
      * Gets if the node is a VariableStatement.
-     * @param node - Node to check.
      */
-    static isVariableStatement(node: compiler.Node): node is compiler.VariableStatement {
-        return node.getKind() === SyntaxKind.VariableStatement;
-    }
-
+    static isVariableStatement = TypeGuards.is(SyntaxKind.VariableStatement);
     /**
      * Gets if the node is a VoidExpression.
-     * @param node - Node to check.
      */
-    static isVoidExpression(node: compiler.Node): node is compiler.VoidExpression {
-        return node.getKind() === SyntaxKind.VoidExpression;
-    }
-
+    static isVoidExpression = TypeGuards.is(SyntaxKind.VoidExpression);
     /**
      * Gets if the node is a WhileStatement.
-     * @param node - Node to check.
      */
-    static isWhileStatement(node: compiler.Node): node is compiler.WhileStatement {
-        return node.getKind() === SyntaxKind.WhileStatement;
-    }
-
+    static isWhileStatement = TypeGuards.is(SyntaxKind.WhileStatement);
     /**
      * Gets if the node is a WithStatement.
-     * @param node - Node to check.
      */
-    static isWithStatement(node: compiler.Node): node is compiler.WithStatement {
-        return node.getKind() === SyntaxKind.WithStatement;
-    }
-
+    static isWithStatement = TypeGuards.is(SyntaxKind.WithStatement);
     /**
      * Gets if the node is a YieldExpression.
-     * @param node - Node to check.
      */
-    static isYieldExpression(node: compiler.Node): node is compiler.YieldExpression {
-        return node.getKind() === SyntaxKind.YieldExpression;
-    }
+    static isYieldExpression = TypeGuards.is(SyntaxKind.YieldExpression);
 
     /**
      * @internal

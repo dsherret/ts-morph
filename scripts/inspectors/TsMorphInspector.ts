@@ -137,4 +137,37 @@ export class TsMorphInspector {
             return propAccessExpr.getNameNode().getText();
         }
     }
+
+    @Memoize
+    getImplementedKindToNodeMappingsNames(): Map<string, string> {
+        const sourceFile = this.project.getSourceFileOrThrow("kindToNodeMappings.ts");
+        const mappings = sourceFile.getInterfaceOrThrow("ImplementedKindToNodeMappings");
+        const result = new Map<string, string>();
+
+        const error = `Exepcted all ImplementedKindToNodeMappings members to be [SyntaxKind.xxx]: compiler.yyy.`;
+
+        mappings.getMembers().forEach(member => {
+            if (!TypeGuards.isPropertySignature(member))
+                throw new Error(error);
+
+            const nameNode = member.getNameNode();
+            if (!TypeGuards.isComputedPropertyName(nameNode))
+                throw new Error(error);
+            const nameNodeExpression = nameNode.getExpression();
+            if (!TypeGuards.isPropertyAccessExpression(nameNodeExpression))
+                throw new Error(error);
+            const syntaxKind = nameNodeExpression.getName();
+
+            const typeNode = member.getTypeNodeOrThrow();
+            if (!TypeGuards.isTypeReferenceNode(typeNode))
+                throw new Error(error);
+            const typeNodeName = typeNode.getTypeName();
+            if (!TypeGuards.isQualifiedName(typeNodeName))
+                throw new Error(error);
+            const compilerNodeName = typeNodeName.getRight().getText();
+
+            result.set(syntaxKind, compilerNodeName);
+        });
+        return result;
+    }
 }
