@@ -32,7 +32,6 @@ await sourceFile.moveImmediately("movedFile.ts");
 
 await directory.save();
 await directory.deleteImmediately();
-// todo: these are coming soon
 await directory.copyImmediately("CopiedDir");
 await directory.moveImmediately("MovedDir");
 ```
