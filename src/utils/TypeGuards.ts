@@ -8,7 +8,7 @@
 import * as compiler from "../compiler";
 import { SyntaxKind } from "../typescript";
 import { Structure } from "../structures";
-import { ImplementedKindToNodeMappings } from '../compiler';
+import { KindToNodeMappings } from "../compiler";
 
 /**
  * Type guards for checking the type of a node.
@@ -53,10 +53,10 @@ export class TypeGuards {
     /**
      * Creates a type guard for syntax kinds.
      */
-    static is<TKind extends keyof ImplementedKindToNodeMappings>(kind: TKind): (node: compiler.Node) => node is ImplementedKindToNodeMappings[TKind] {
-        return (node: compiler.Node): node is ImplementedKindToNodeMappings[TKind] => {
-            return node.getKind() == kind
-        }
+    static is<TKind extends keyof KindToNodeMappings>(kind: TKind): (node: compiler.Node) => node is KindToNodeMappings[TKind] {
+        return (node: compiler.Node): node is KindToNodeMappings[TKind] => {
+            return node.getKind() == kind;
+        };
     }
 
     /**

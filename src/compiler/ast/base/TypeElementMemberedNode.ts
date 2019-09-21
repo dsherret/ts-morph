@@ -269,8 +269,8 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.addMembers([member])[0];
         }
 
-        addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>
-        ): (TypeElementTypes | CommentTypeElement)[] {
+        addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes
+        | CommentTypeElement)[] {
             return this.insertMembers(getEndIndexFromArray(this.getMembersWithComments()), members);
         }
 

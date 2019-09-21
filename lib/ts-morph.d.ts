@@ -1280,7 +1280,7 @@ export declare class TypeGuards {
     /**
      * Creates a type guard for syntax kinds.
      */
-    static is<TKind extends keyof ImplementedKindToNodeMappings>(kind: TKind): (node: Node) => node is ImplementedKindToNodeMappings[TKind];
+    static is<TKind extends keyof KindToNodeMappings>(kind: TKind): (node: Node) => node is KindToNodeMappings[TKind];
     /**
      * Gets if the provided value is a Node.
      */
