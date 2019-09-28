@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.1.0"></a>
+# [4.1.0](https://github.com/dsherret/ts-morph/compare/4.0.1...4.1.0) (2019-09-28)
+
+
+### Features
+
+* [#709](https://github.com/dsherret/ts-morph/issues/709) - Check and display syntax diagnostics when a manipulation error occurs. ([07c42b1](https://github.com/dsherret/ts-morph/commit/07c42b1))
+* [#703](https://github.com/dsherret/ts-morph/issues/703) - Expand TypeGuards.is implementation to include all node kinds. ([ae82879](https://github.com/dsherret/ts-morph/commit/ae82879)) ([@lazarljubenovic](https://github.com/lazarljubenovic))
+
+
+
 <a name="4.0.1"></a>
 ## [4.0.1](https://github.com/dsherret/ts-morph/compare/4.0.0...4.0.1) (2019-09-12)
 
