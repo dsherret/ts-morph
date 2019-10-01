@@ -4,7 +4,7 @@ import { IfStatement } from "../../compiler";
 import { TypeGuards } from "../../utils/TypeGuards";
 
 describe("tests for issue #706", () => {
-    it.skip("should not error when removing a else if", () => {
+    it("should not error when removing a else if", () => {
         const project = new Project({ useVirtualFileSystem: true });
         const file = project.createSourceFile("test.ts", `if (true) {
     statement;
@@ -20,8 +20,7 @@ describe("tests for issue #706", () => {
 }`);
     });
 
-
-    it("should not error", () => {
+    it("should not error when removing node with trailing trivia", () => {
         const project = new Project({ useVirtualFileSystem: true });
         const file = project.createSourceFile("test.ts", `// comment1
 
@@ -32,5 +31,5 @@ test;`);
 
         const ifStatement = file.getStatementOrThrow(TypeGuards.isIfStatement);
         ifStatement.remove();
-    })
+    });
 });
