@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.1.1"></a>
+## [4.1.1](https://github.com/dsherret/ts-morph/compare/4.1.0...4.1.1) (2019-10-01)
+
+
+### Bug Fixes
+
+* [#708](https://github.com/dsherret/ts-morph/issues/708) - `getNonWhitespaceStart()` should not include the previous node's trailing comment. ([380c39b](https://github.com/dsherret/ts-morph/commit/380c39b))
+* [#708](https://github.com/dsherret/ts-morph/issues/708) - Removing an IfStatement with a preceding else keyword will no longer error. ([f886605](https://github.com/dsherret/ts-morph/commit/f886605))
+
+
+
 <a name="4.1.0"></a>
 # [4.1.0](https://github.com/dsherret/ts-morph/compare/4.0.1...4.1.0) (2019-09-28)
 
