@@ -8516,6 +8516,10 @@ export declare class IfStatement extends Statement<ts.IfStatement> {
      * Gets this if statement's else statement.
      */
     getElseStatement(): Statement | undefined;
+    /**
+     * @inheritdoc
+     */
+    remove(): void;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.IfStatement>;
     /** @inheritdoc **/
