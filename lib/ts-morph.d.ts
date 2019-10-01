@@ -4445,7 +4445,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     getFullStart(): number;
     /**
-     * Gets the first source file text position that is not whitespace taking into account comment nodes.
+     * Gets the first source file text position that is not whitespace taking into account comment nodes and a previous node's trailing trivia.
      */
     getNonWhitespaceStart(): number;
     /**

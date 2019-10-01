@@ -2,7 +2,7 @@ import { CodeBlockWriter } from "../../../codeBlockWriter";
 import * as errors from "../../../errors";
 import { ProjectContext } from "../../../ProjectContext";
 import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits,
-    insertIntoParentTextRange, replaceSourceFileTextForFormatting, replaceSourceFileTextStraight } from "../../../manipulation";
+    insertIntoParentTextRange, replaceSourceFileTextForFormatting, replaceSourceFileTextStraight, hasNewLineInRange } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { ts, SyntaxKind, SymbolFlags } from "../../../typescript";
 import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils, TypeGuards,
@@ -10,7 +10,7 @@ import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOr
 import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
 import { Type } from "../../types";
-import { ExtendedParser, hasParsedTokens, isComment } from "../utils";
+import { ExtendedParser, hasParsedTokens } from "../utils";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { Expression } from "../expression";
 import { KindToNodeMappings } from "../kindToNodeMappings";
@@ -911,25 +911,36 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the first source file text position that is not whitespace taking into account comment nodes.
+     * Gets the first source file text position that is not whitespace taking into account comment nodes and a previous node's trailing trivia.
      */
     getNonWhitespaceStart(): number {
+        // todo: use forgetNodesCreatedInBlock here
         const parent = this.getParent() as Node | undefined;
+        const pos = this.getPos();
         const parentTakesPrecedence = parent != null
             && !TypeGuards.isSourceFile(parent)
-            && parent.getPos() === this.getPos();
+            && parent.getPos() === pos;
 
         if (parentTakesPrecedence)
             return this.getStart(true);
 
         let startSearchPos: number;
-        const previousSibling = this._getCompilerPreviousSibling();
-        if (previousSibling != null && isComment(previousSibling))
-            startSearchPos = previousSibling.getEnd();
-        else
-            startSearchPos = this.getPos();
+        const sourceFileFullText = this._sourceFile.getFullText();
+        const previousSibling = this.getPreviousSibling();
 
-        return getNextNonWhitespacePos(this._sourceFile.getFullText(), startSearchPos);
+        if (previousSibling != null && TypeGuards.isCommentNode(previousSibling))
+            startSearchPos = previousSibling.getEnd();
+        else if (previousSibling != null) {
+            if (hasNewLineInRange(sourceFileFullText, [pos, this.getStart(true)]))
+                startSearchPos = previousSibling.getTrailingTriviaEnd();
+            else
+                startSearchPos = pos;
+        }
+        else {
+            startSearchPos = this.getPos();
+        }
+
+        return getNextNonWhitespacePos(sourceFileFullText, startSearchPos);
     }
 
     /**

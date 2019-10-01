@@ -21,7 +21,7 @@ describe("tests for issue #706", () => {
     });
 
 
-    it.skip("should not error", () => {
+    it("should not error", () => {
         const project = new Project({ useVirtualFileSystem: true });
         const file = project.createSourceFile("test.ts", `// comment1
 

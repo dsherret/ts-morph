@@ -1,4 +1,4 @@
-import { SourceFile } from "../../compiler";
+import { SourceFile } from "../compiler";
 
 export function isBlankLineAtPos(sourceFile: SourceFile, pos: number) {
     const fullText = sourceFile.getFullText();
@@ -22,5 +22,17 @@ export function isBlankLineAtPos(sourceFile: SourceFile, pos: number) {
         return false;
     }
 
+    return false;
+}
+
+export function isNewLineAtPos(fullText: string, pos: number) {
+    return fullText[pos] === "\n" || (fullText[pos] === "\r" && fullText[pos + 1] === "\n");
+}
+
+export function hasNewLineInRange(fullText: string, range: [number, number]) {
+    for (let i = range[0]; i < range[1]; i++) {
+        if (fullText[i] === "\n")
+            return true;
+    }
     return false;
 }

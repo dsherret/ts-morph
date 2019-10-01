@@ -19,12 +19,14 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
 
     getNewText(inputText: string) {
         const { children, getSiblingFormatting } = this.opts;
-        const parent = children[0].getParentOrThrow() as TNode;
+        const firstChild = children[0];
+        const lastChild = children[children.length - 1];
+        const parent = firstChild.getParentOrThrow() as TNode;
         const sourceFile = parent.getSourceFile();
         const fullText = sourceFile.getFullText();
         const newLineKind = sourceFile._context.manipulationSettings.getNewLineKindAsString();
-        const previousSibling = children[0].getPreviousSibling();
-        const nextSibling = children[children.length - 1].getNextSibling();
+        const previousSibling = firstChild.getPreviousSibling();
+        const nextSibling = lastChild.getNextSibling();
         const removalPos = getRemovalPos();
         this.removalPos = removalPos;
 
@@ -57,14 +59,15 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
                 return isNewLineAtPos(fullText, trailingEnd) ? trailingEnd : previousSibling.getEnd();
             }
 
-            const firstPos = getPreviousNonWhitespacePos(fullText, children[0].getPos());
+            const firstPos = getPreviousNonWhitespacePos(fullText, firstChild.getPos());
             if (parent.getPos() === firstPos)
-                return children[0].getNonWhitespaceStart(); // do not shift the parent
+                return firstChild.getNonWhitespaceStart(); // do not shift the parent
 
-            return children[0].isFirstNodeOnLine() ? firstPos : children[0].getNonWhitespaceStart();
+            return firstChild.isFirstNodeOnLine() ? firstPos : firstChild.getNonWhitespaceStart();
         }
 
         function getRemovalEnd() {
+            const triviaEnd = lastChild.getTrailingTriviaEnd();
             if (previousSibling != null && nextSibling != null) {
                 const nextSiblingFormatting = getSiblingFormatting(parent as TNode, nextSibling);
                 if (nextSiblingFormatting === FormattingKind.Blankline || nextSiblingFormatting === FormattingKind.Newline)
@@ -73,12 +76,11 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
                 return nextSibling.getNonWhitespaceStart();
             }
 
-            if (parent.getEnd() === children[children.length - 1].getEnd())
-                return children[children.length - 1].getEnd(); // do not shift the parent
+            if (parent.getEnd() === lastChild.getEnd())
+                return lastChild.getEnd(); // do not shift the parent
 
-            const triviaEnd = children[children.length - 1].getTrailingTriviaEnd();
             if (isNewLineAtPos(fullText, triviaEnd)) {
-                if (previousSibling == null && children[0].getPos() === 0)
+                if (previousSibling == null && firstChild.getPos() === 0)
                     return getPosAtNextNonBlankLine(fullText, triviaEnd);
                 return getPosAtEndOfPreviousLine(fullText, getPosAtNextNonBlankLine(fullText, triviaEnd));
             }
@@ -86,7 +88,7 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
             if (previousSibling == null)
                 return triviaEnd;
             else
-                return children[children.length - 1].getEnd();
+                return lastChild.getEnd();
         }
     }
 
