@@ -38,7 +38,9 @@ await directory.moveImmediately("MovedDir");
 
 ### Replacing any node with new text
 
-This can be achieved with the `.replaceWithText(...)` method that exists on any node.
+Use the `.replaceWithText(...)` method that exists on any node.
+
+This will replace the text from the `Node#getStart(true)` position (start position with js docs) to `Node#getEnd()`. Use `Node#getText(true)` to get all the text that will be replaced.
 
 #### Example
 

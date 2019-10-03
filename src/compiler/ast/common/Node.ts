@@ -1329,6 +1329,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
      * @param textOrWriterFunction - Text or writer function to replace with.
      * @returns The new node.
+     * @remarks This will replace the text from the `Node#getStart(true)` position (start position with js docs) to `Node#getEnd()`.
+     * Use `Node#getText(true)` to get all the text that will be replaced.
      */
     replaceWithText(textOrWriterFunction: string | WriterFunction): Node;
     /** @internal */
