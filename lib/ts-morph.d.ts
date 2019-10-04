@@ -1765,6 +1765,11 @@ export declare class TypeGuards {
      */
     static isTypeParameteredNode<T extends Node>(node: T): node is TypeParameteredNode & TypeParameteredNodeExtensionType & T;
     /**
+     * Gets if the node is a TypePredicateNode.
+     * @param node - Node to check.
+     */
+    static isTypePredicateNode(node: Node): node is TypePredicateNode;
+    /**
      * Gets if the node is a TypeReferenceNode.
      * @param node - Node to check.
      */
@@ -6976,14 +6981,14 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypeAssertionExpression]: TypeAssertion;
     [SyntaxKind.TypeLiteral]: TypeLiteralNode;
     [SyntaxKind.TypeParameter]: TypeParameterDeclaration;
+    [SyntaxKind.TypePredicate]: TypePredicateNode;
+    [SyntaxKind.FirstTypeNode]: TypePredicateNode;
     [SyntaxKind.TypeReference]: TypeReferenceNode;
     [SyntaxKind.UnionType]: UnionTypeNode;
     [SyntaxKind.VariableDeclaration]: VariableDeclaration;
     [SyntaxKind.VariableDeclarationList]: VariableDeclarationList;
     [SyntaxKind.VariableStatement]: VariableStatement;
     [SyntaxKind.JSDocComment]: JSDoc;
-    [SyntaxKind.TypePredicate]: TypeNode;
-    [SyntaxKind.FirstTypeNode]: TypeNode;
     [SyntaxKind.SemicolonToken]: Node;
     [SyntaxKind.InferKeyword]: Node;
     [SyntaxKind.TypeOfExpression]: TypeOfExpression;
@@ -9463,6 +9468,26 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
     getParent(): NodeParentType<ts.TypeParameterDeclaration>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.TypeParameterDeclaration>>;
+}
+
+/**
+ * A type predicate node which says the specified parameter name is a specific type if the function returns true.
+ *
+ * For example, `param is string` in `declare function isString(param: unknown): param is string;`.
+ */
+export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
+    /**
+     * Gets the parameter name node
+     */
+    getParameterNameNode(): Identifier | ThisTypeNode;
+    /**
+     * Gets the type name.
+     */
+    getTypeNode(): TypeNode;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.TypePredicateNode>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.TypePredicateNode>>;
 }
 
 export declare class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {

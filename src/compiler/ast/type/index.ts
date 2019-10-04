@@ -16,5 +16,6 @@ export * from "./TypeAliasDeclaration";
 export * from "./TypeLiteralNode";
 export * from "./TypeNode";
 export * from "./TypeParameterDeclaration";
+export * from "./TypePredicateNode";
 export * from "./TypeReferenceNode";
 export * from "./UnionTypeNode";

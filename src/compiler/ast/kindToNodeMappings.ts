@@ -148,14 +148,14 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypeAssertionExpression]: compiler.TypeAssertion;
     [SyntaxKind.TypeLiteral]: compiler.TypeLiteralNode;
     [SyntaxKind.TypeParameter]: compiler.TypeParameterDeclaration;
+    [SyntaxKind.TypePredicate]: compiler.TypePredicateNode;
+    [SyntaxKind.FirstTypeNode]: compiler.TypePredicateNode;
     [SyntaxKind.TypeReference]: compiler.TypeReferenceNode;
     [SyntaxKind.UnionType]: compiler.UnionTypeNode;
     [SyntaxKind.VariableDeclaration]: compiler.VariableDeclaration;
     [SyntaxKind.VariableDeclarationList]: compiler.VariableDeclarationList;
     [SyntaxKind.VariableStatement]: compiler.VariableStatement;
     [SyntaxKind.JSDocComment]: compiler.JSDoc;
-    [SyntaxKind.TypePredicate]: compiler.TypeNode;
-    [SyntaxKind.FirstTypeNode]: compiler.TypeNode;
     [SyntaxKind.SemicolonToken]: compiler.Node;
     [SyntaxKind.InferKeyword]: compiler.Node;
     [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression;

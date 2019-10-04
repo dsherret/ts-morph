@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 176
+**Total:** 177
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -414,6 +414,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: constraint
     * :heavy_check_mark: default
     * :x: expression
+* [TypePredicateNode](src/compiler/ast/type/TypePredicateNode.ts)
+    * :heavy_check_mark: parameterName
+    * :heavy_check_mark: type
 * [TypeReferenceNode](src/compiler/ast/type/TypeReferenceNode.ts)
     * :heavy_check_mark: typeName
 * [UnaryExpression](src/compiler/ast/expression/UnaryExpression.ts)
@@ -442,7 +445,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 52
+**Total:** 54
 
 * BigIntLiteral
 * Bundle
@@ -452,8 +455,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ImportCall
 * InputFiles
 * JSDocAllType
+* JSDocAuthorTag
 * JSDocCallbackTag
 * JSDocEnumTag
+* JSDocNamepathType
 * JSDocNamespaceDeclaration
 * JSDocNonNullableType
 * JSDocNullableType
@@ -484,11 +489,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * SemicolonClassElement
 * SuperCall
 * SyntheticExpression
+* TemplateLiteralLikeNode
 * Token
 * TransientIdentifier
 * TsConfigSourceFile
 * TypeOperatorNode
-* TypePredicateNode
 * TypeQueryNode
 * UnparsedPrepend
 * UnparsedPrologue
