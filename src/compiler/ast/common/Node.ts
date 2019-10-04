@@ -1656,20 +1656,43 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const nextSibling = this._getCompilerNextSibling();
         return nextSibling != null && nextSibling.kind === kind ? (this._getNodeFromCompilerNode(nextSibling) as KindToNodeMappings[TKind]) : undefined;
     }
+    
+    /**
+     * Gets the parent if it matches a certain condition or throws
+     */
+    getParentIfOrThrow<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T;
+    /**
+     * Gets the parent if it matches a certain condition or throws
+     */
+    getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean): Node;
+    getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean) {
+        return errors.throwIfNullOrUndefined(this.getParentIf(condition), "The parent did not match the provided condition.");
+    }
+
+    /**
+     * Gets the parent if it matches a certain condition.
+     */
+    getParentIf<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T | undefined;
+    /**
+     * Gets the parent if it matches a certain condition.
+     */
+    getParentIf(condition: (parent: Node | undefined, node: Node) => boolean): Node | undefined;
+    getParentIf(condition: (parent: Node | undefined, node: Node) => boolean) {
+        return condition(this.getParent(), this) ? this.getParent() : undefined;
+    }
+
+    /**
+     * Gets the parent if it's a certain syntax kind or throws.
+     */
+    getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`);
+    }
 
     /**
      * Gets the parent if it's a certain syntax kind.
      */
     getParentIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const parentNode = this.getParent();
-        return parentNode == null || parentNode.getKind() !== kind ? undefined : (parentNode as KindToNodeMappings[TKind]);
-    }
-
-    /**
-     * Gets the parent if it's a certain syntax kind of throws.
-     */
-    getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
-        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `Expected a parent with a syntax kind of ${getSyntaxKindName(kind)}.`);
+        return this.getParentIf(n => n !== undefined && n.getKind() === kind) as KindToNodeMappings[TKind] | undefined;
     }
 
     /**
