@@ -180,6 +180,15 @@ project.forgetNodesCreatedInBlock(remember => {
 namespaceDeclaration.getText(); // ok, child was marked to remember
 interfaceDeclaration.getText(); // ok, was explicitly marked to remember
 classDeclaration.getText();     // throws, was forgotten
+
+// alternatively, return the node to remember it
+const node = project.forgetNodesCreatedInBlock(() => {
+    const classDec = sourceFile.getClassOrThrow("MyClass");
+    // ...do a lot of stuff...
+    return classDec;
+});
+
+node.getText(); // ok
 ```
 
 Also, do not be concerned about nesting forget blocks. That is perfectly fine to do:

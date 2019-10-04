@@ -914,33 +914,34 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first source file text position that is not whitespace taking into account comment nodes and a previous node's trailing trivia.
      */
     getNonWhitespaceStart(): number {
-        // todo: use forgetNodesCreatedInBlock here
-        const parent = this.getParent() as Node | undefined;
-        const pos = this.getPos();
-        const parentTakesPrecedence = parent != null
-            && !TypeGuards.isSourceFile(parent)
-            && parent.getPos() === pos;
+        return this._context.compilerFactory.forgetNodesCreatedInBlock(() => {
+            const parent = this.getParent() as Node | undefined;
+            const pos = this.getPos();
+            const parentTakesPrecedence = parent != null
+                && !TypeGuards.isSourceFile(parent)
+                && parent.getPos() === pos;
 
-        if (parentTakesPrecedence)
-            return this.getStart(true);
+            if (parentTakesPrecedence)
+                return this.getStart(true);
 
-        let startSearchPos: number;
-        const sourceFileFullText = this._sourceFile.getFullText();
-        const previousSibling = this.getPreviousSibling();
+            let startSearchPos: number;
+            const sourceFileFullText = this._sourceFile.getFullText();
+            const previousSibling = this.getPreviousSibling();
 
-        if (previousSibling != null && TypeGuards.isCommentNode(previousSibling))
-            startSearchPos = previousSibling.getEnd();
-        else if (previousSibling != null) {
-            if (hasNewLineInRange(sourceFileFullText, [pos, this.getStart(true)]))
-                startSearchPos = previousSibling.getTrailingTriviaEnd();
-            else
-                startSearchPos = pos;
-        }
-        else {
-            startSearchPos = this.getPos();
-        }
+            if (previousSibling != null && TypeGuards.isCommentNode(previousSibling))
+                startSearchPos = previousSibling.getEnd();
+            else if (previousSibling != null) {
+                if (hasNewLineInRange(sourceFileFullText, [pos, this.getStart(true)]))
+                    startSearchPos = previousSibling.getTrailingTriviaEnd();
+                else
+                    startSearchPos = pos;
+            }
+            else {
+                startSearchPos = this.getPos();
+            }
 
-        return getNextNonWhitespacePos(sourceFileFullText, startSearchPos);
+            return getNextNonWhitespacePos(sourceFileFullText, startSearchPos);
+        });
     }
 
     /**

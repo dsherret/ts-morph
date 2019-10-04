@@ -594,16 +594,16 @@ export declare class Project {
      * Forgets the nodes created in the scope of the passed in block.
      *
      * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
-     * @param block - Block of code to run.
+     * @param block - Block of code to run. Use the `remember` callback or return a node to remember it.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => void): void;
+    forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => T): T;
     /**
      * Forgets the nodes created in the scope of the passed in block asynchronously.
      *
      * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
-     * @param block - Block of code to run.
+     * @param block - Block of code to run. Use the `remember` callback or return a node to remember it.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
+    forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => Promise<T>): Promise<T>;
     /**
      * Formats an array of diagnostics with their color and context into a string.
      * @param diagnostics - Diagnostics to get a string of.
