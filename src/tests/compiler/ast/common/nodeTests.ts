@@ -514,9 +514,9 @@ class MyClass {
         it("should have the correct type when it's a source file", () => {
             assert<IsExact<NodeParentType<ts.SourceFile>, undefined>>(true);
         });
-	});
+    });
 
-	describe(nameof<Node>(n => n.getParentIf), () => {
+    describe(nameof<Node>(n => n.getParentIf), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
         const child = firstChild.getInstanceProperty("prop")!;
 
@@ -540,7 +540,7 @@ class MyClass {
         it("should throw when the parent doesn't match the condition", () => {
             expect(() => child.getParentIfOrThrow(n => n !== undefined && n.getKind() === SyntaxKind.InterfaceDeclaration)).to.throw();
         });
-	});
+    });
 
     describe(nameof<Node>(n => n.getParentIfKind), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
@@ -566,7 +566,7 @@ class MyClass {
         it("should throw when the parent is not the right kind", () => {
             expect(() => child.getParentIfKindOrThrow(SyntaxKind.InterfaceDeclaration)).to.throw();
         });
-	});
+    });
 
     describe(nameof<Node>(n => n.getParentWhile), () => {
         it("should keep getting the parent until a condition is no longer matched", () => {

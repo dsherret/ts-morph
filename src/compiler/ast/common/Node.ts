@@ -1656,13 +1656,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const nextSibling = this._getCompilerNextSibling();
         return nextSibling != null && nextSibling.kind === kind ? (this._getNodeFromCompilerNode(nextSibling) as KindToNodeMappings[TKind]) : undefined;
     }
-    
+
     /**
-     * Gets the parent if it matches a certain condition or throws
+     * Gets the parent if it matches a certain condition or throws.
      */
     getParentIfOrThrow<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T;
     /**
-     * Gets the parent if it matches a certain condition or throws
+     * Gets the parent if it matches a certain condition or throws.
      */
     getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean): Node;
     getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean) {

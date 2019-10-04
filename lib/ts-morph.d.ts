@@ -4736,13 +4736,29 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     getNextSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
     /**
+     * Gets the parent if it matches a certain condition or throws.
+     */
+    getParentIfOrThrow<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T;
+    /**
+     * Gets the parent if it matches a certain condition or throws.
+     */
+    getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean): Node;
+    /**
+     * Gets the parent if it matches a certain condition.
+     */
+    getParentIf<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T | undefined;
+    /**
+     * Gets the parent if it matches a certain condition.
+     */
+    getParentIf(condition: (parent: Node | undefined, node: Node) => boolean): Node | undefined;
+    /**
+     * Gets the parent if it's a certain syntax kind or throws.
+     */
+    getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+    /**
      * Gets the parent if it's a certain syntax kind.
      */
     getParentIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
-    /**
-     * Gets the parent if it's a certain syntax kind of throws.
-     */
-    getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
     /**
      * Gets the first ancestor by syntax kind or throws if not found.
      * @param kind - Syntax kind.
