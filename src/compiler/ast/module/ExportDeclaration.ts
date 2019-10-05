@@ -199,7 +199,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 currentNodes: originalNamedExports,
                 insertIndex: index,
                 newText: writer.toString(),
-                surroundWithSpaces: this._context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+                surroundWithSpaces: this._context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,
+                useTrailingCommas: false
             });
         }
 

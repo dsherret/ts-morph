@@ -104,7 +104,8 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 parent: syntaxList,
                 currentNodes: parameters,
                 insertIndex: index,
-                newText: writer.toString()
+                newText: writer.toString(),
+                useTrailingCommas: false
             });
 
             return getNodesToReturn(parameters, this.getParameters(), index, false);

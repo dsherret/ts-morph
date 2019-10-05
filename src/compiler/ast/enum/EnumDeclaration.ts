@@ -114,7 +114,8 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
             currentNodes: members,
             insertIndex: index,
             newText: writer.toString(),
-            useNewLines: true
+            useNewLines: true,
+            useTrailingCommas: this._context.manipulationSettings.getUseTrailingCommas()
         });
 
         // get the members

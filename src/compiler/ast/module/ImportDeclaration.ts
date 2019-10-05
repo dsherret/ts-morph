@@ -330,7 +330,8 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
                 currentNodes: originalNamedImports,
                 insertIndex: index,
                 newText: writer.toString(),
-                surroundWithSpaces: this._context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+                surroundWithSpaces: this._context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,
+                useTrailingCommas: false
             });
         }
 

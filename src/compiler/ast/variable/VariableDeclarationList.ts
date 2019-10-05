@@ -112,7 +112,8 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
             parent: this.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
             currentNodes: this.getDeclarations(),
             insertIndex: index,
-            newText: writer.toString()
+            newText: writer.toString(),
+            useTrailingCommas: false
         });
 
         return getNodesToReturn(originalChildrenCount, this.getDeclarations(), index, false);

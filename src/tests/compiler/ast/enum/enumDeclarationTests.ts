@@ -135,8 +135,10 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         type WriterStructureType = (OptionalKind<EnumMemberStructure> | WriterFunction | string)[] | string | WriterFunction;
-        function doWriterTest(startCode: string, index: number, structures: WriterStructureType, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
+        function doWriterTest(startCode: string, index: number, structures: WriterStructureType, expectedCode: string, options?: { useTrailingCommas?: boolean; }) {
+            const { firstChild, sourceFile, project } = getInfoFromText<EnumDeclaration>(startCode);
+            if (options && options.useTrailingCommas)
+                project.manipulationSettings.set({ useTrailingCommas: true });
             const result = firstChild.insertMembers(index, structures);
             assert<IsExact<typeof result, (EnumMember | CommentEnumMember)[]>>(true);
 
@@ -165,6 +167,16 @@ describe(nameof(EnumDeclaration), () => {
                 0,
                 "// testing",
                 "enum MyEnum {\n    // testing\n}\n"
+            );
+        });
+
+        it("should support trailing commas", () => {
+            doWriterTest(
+                "enum MyEnum {\n}\n",
+                0,
+                "member",
+                "enum MyEnum {\n    member,\n}\n",
+                { useTrailingCommas: true }
             );
         });
     });

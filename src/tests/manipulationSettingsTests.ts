@@ -35,7 +35,8 @@ describe(nameof(ManipulationSettingsContainer), () => {
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
-            usePrefixAndSuffixTextForRename: false
+            usePrefixAndSuffixTextForRename: false,
+            useTrailingCommas: false
         });
     });
 
@@ -50,7 +51,8 @@ describe(nameof(ManipulationSettingsContainer), () => {
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
-            usePrefixAndSuffixTextForRename: false
+            usePrefixAndSuffixTextForRename: false,
+            useTrailingCommas: false
         });
     });
 
@@ -69,7 +71,8 @@ describe(nameof(ManipulationSettingsContainer), () => {
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false,
-            usePrefixAndSuffixTextForRename: true
+            usePrefixAndSuffixTextForRename: true,
+            useTrailingCommas: false
         });
     });
 

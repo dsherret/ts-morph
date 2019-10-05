@@ -85,8 +85,10 @@ describe(nameof(ObjectLiteralExpression), () => {
 
     describe(nameof<ObjectLiteralExpression>(e => e.insertProperties), () => {
         type StructuresType = string | WriterFunction | (string | WriterFunction | ObjectLiteralExpressionPropertyStructures)[];
-        function doTest(text: string, index: number, structures: StructuresType, expectedText: string) {
-            const { sourceFile, objectLiteralExpression } = getObjectLiteralExpression(text);
+        function doTest(text: string, index: number, structures: StructuresType, expectedText: string, options?: { useTrailingCommas: boolean; }) {
+            const { sourceFile, objectLiteralExpression, project } = getObjectLiteralExpression(text);
+            if (options && options.useTrailingCommas)
+                project.manipulationSettings.set({ useTrailingCommas: true });
             const result = objectLiteralExpression.insertProperties(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
             expect(result.length).to.deep.equal(structures.length);
@@ -116,6 +118,20 @@ describe(nameof(ObjectLiteralExpression), () => {
                 kind: StructureKind.SetAccessor,
                 name: "s1"
             }, "//1", writer => writer.write("//2")], expectedText);
+        });
+
+        it("should support trailing commas when inserting a single node", () => {
+            doTest("const o = {\n};", 0, [{
+                kind: StructureKind.ShorthandPropertyAssignment,
+                name: "p1"
+            }], "const o = {\n    p1,\n};", { useTrailingCommas: true });
+        });
+
+        it("should support trailing when inserting after another node", () => {
+            doTest("const o = {\n    p1,\n};", 1, [{
+                kind: StructureKind.ShorthandPropertyAssignment,
+                name: "p2"
+            }], "const o = {\n    p1,\n    p2,\n};", { useTrailingCommas: true });
         });
     });
 

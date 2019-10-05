@@ -136,7 +136,8 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
             currentNodes: properties,
             insertIndex: index,
             newText: writer.toString(),
-            useNewLines: true
+            useNewLines: true,
+            useTrailingCommas: this._context.manipulationSettings.getUseTrailingCommas()
         });
 
         // get the properties
@@ -391,7 +392,8 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
             currentNodes: oldProperties,
             insertIndex: index,
             newText: writer.toString(),
-            useNewLines: true
+            useNewLines: true,
+            useTrailingCommas: this._context.manipulationSettings.getUseTrailingCommas()
         });
 
         return getNodesToReturn(oldProperties, this.getPropertiesWithComments(), index, false);

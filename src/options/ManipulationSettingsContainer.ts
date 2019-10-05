@@ -33,6 +33,8 @@ export interface ManipulationSettings extends SupportedFormatCodeSettingsOnly {
      * This setting is only available when using TypeScript 3.4+.
      */
     usePrefixAndSuffixTextForRename: boolean;
+    /** Whether to use trailing commas when inserting or removing nodes. */
+    useTrailingCommas: boolean;
 }
 
 /**
@@ -68,7 +70,8 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
             newLineKind: NewLineKind.LineFeed,
             quoteKind: QuoteKind.Double,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
-            usePrefixAndSuffixTextForRename: false
+            usePrefixAndSuffixTextForRename: false,
+            useTrailingCommas: false
         });
     }
 
@@ -144,6 +147,13 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
      */
     getUsePrefixAndSuffixTextForRename() {
         return this._settings.usePrefixAndSuffixTextForRename;
+    }
+
+    /**
+     * Gets whether trailing commas should be used.
+     */
+    getUseTrailingCommas() {
+        return this._settings.useTrailingCommas;
     }
 
     /**

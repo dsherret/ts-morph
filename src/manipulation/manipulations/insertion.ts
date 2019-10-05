@@ -68,6 +68,7 @@ export interface InsertIntoCommaSeparatedNodesOptions {
     insertIndex: number;
     newText: string;
     parent: Node;
+    useTrailingCommas: boolean;
     useNewLines?: boolean;
     surroundWithSpaces?: boolean;
 }
@@ -89,7 +90,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     if (previousNode != null) {
         prependCommaAndSeparator();
 
-        if (nextNonCommentNode != null)
+        if (nextNonCommentNode != null || opts.useTrailingCommas)
             appendCommaAndSeparator();
         else if (opts.useNewLines || opts.surroundWithSpaces)
             appendSeparator();
@@ -109,10 +110,10 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         if (opts.useNewLines || opts.surroundWithSpaces)
             prependSeparator();
 
-        if (nextNonCommentNode == null)
-            appendSeparator();
-        else
+        if (nextNonCommentNode != null || opts.useTrailingCommas)
             appendCommaAndSeparator();
+        else
+            appendSeparator();
 
         const insertPos = isContained ? parent.getPos() : parent.getStart(true);
         insertIntoParentTextRange({
@@ -125,7 +126,11 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     else {
         if (opts.useNewLines || opts.surroundWithSpaces) {
             prependSeparator();
-            appendSeparator();
+
+            if (opts.useTrailingCommas)
+                appendCommaAndSeparator();
+            else
+                appendSeparator();
         }
         else {
             appendIndentation();

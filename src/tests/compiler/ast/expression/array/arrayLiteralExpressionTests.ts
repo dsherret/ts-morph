@@ -30,8 +30,11 @@ describe(nameof(ArrayLiteralExpression), () => {
     });
 
     describe(nameof<ArrayLiteralExpression>(e => e.insertElements), () => {
-        function doTest(text: string, index: number, elementTexts: string[], expectedText: string, options?: { useNewLines?: boolean; }) {
-            const { arrayLiteralExpression, sourceFile } = getArrayLiteralExpression(text);
+        type Options = { useNewLines?: boolean; useTrailingCommas?: boolean; };
+        function doTest(text: string, index: number, elementTexts: string[], expectedText: string, options?: Options) {
+            const { arrayLiteralExpression, sourceFile, project } = getArrayLiteralExpression(text);
+            if (options && options.useTrailingCommas)
+                project.manipulationSettings.set({ useTrailingCommas: true });
             const result = arrayLiteralExpression.insertElements(index, elementTexts, options);
             expect(result.map(r => r.getText())).to.deep.equal(elementTexts);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -71,6 +74,14 @@ describe(nameof(ArrayLiteralExpression), () => {
 
         it("should insert first element on new lines specifying to", () => {
             doTest("var t = [2, 3, 4]", 0, ["1"], `var t = [\n    1,\n    2, 3, 4]`, { useNewLines: true });
+        });
+
+        it("should not use trailing commas when single line", () => {
+            doTest("var t = [1, 2, 3]", 3, ["4"], `var t = [1, 2, 3, 4]`, { useNewLines: false, useTrailingCommas: true });
+        });
+
+        it("should use trailing commas when multi-line", () => {
+            doTest("var t = [\n    1,\n    2\n]", 2, ["3"], `var t = [\n    1,\n    2,\n    3,\n]`, { useNewLines: true, useTrailingCommas: true });
         });
 
         function doWriterTest(text: string, index: number, elements: WriterFunction | ReadonlyArray<string | WriterFunction>, expectedText: string,

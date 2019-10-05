@@ -92,7 +92,8 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                     parent: implementsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: originalImplements,
                     insertIndex: index,
-                    newText: writer.toString()
+                    newText: writer.toString(),
+                    useTrailingCommas: false
                 });
             }
             else {

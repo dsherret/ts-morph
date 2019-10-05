@@ -4403,6 +4403,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     forEachChildAsArray(): Node<ts.Node>[];
     /**
+     * Gets the descendant nodes passed to the delegate of `node.forEachDescendant(descendant => {})` as an array.
+     */
+    forEachDescendantAsArray(): Node<ts.Node>[];
+    /**
      * Gets the node's descendants.
      */
     getDescendants(): Node[];
@@ -11072,6 +11076,10 @@ export interface ManipulationSettings extends SupportedFormatCodeSettingsOnly {
      * This setting is only available when using TypeScript 3.4+.
      */
     usePrefixAndSuffixTextForRename: boolean;
+    /**
+     * Whether to use trailing commas when inserting or removing nodes.
+     */
+    useTrailingCommas: boolean;
 }
 
 /**
@@ -11133,6 +11141,10 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
      * Gets whether to use prefix and suffix text when renaming.
      */
     getUsePrefixAndSuffixTextForRename(): boolean;
+    /**
+     * Gets whether trailing commas should be used.
+     */
+    getUseTrailingCommas(): boolean;
     /**
      * Sets one or all of the settings.
      * @param settings - Settings to set.

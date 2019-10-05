@@ -21,7 +21,10 @@ const project = new Project({
         // Whether to change shorthand property assignments to property assignments
         // and add aliases to import & export specifiers (see more information in
         // the renaming section of the documentation).
-        usePrefixAndSuffixTextForRename: false
+        usePrefixAndSuffixTextForRename: false,
+        // Whether to use trailing commas in multi-line scenarios where trailing
+        // commas would be used.
+        useTrailingCommas: false
     }
 });
 ```

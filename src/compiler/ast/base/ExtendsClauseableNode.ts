@@ -91,7 +91,8 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                     parent: extendsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: originalExtends,
                     insertIndex: index,
-                    newText: writer.toString()
+                    newText: writer.toString(),
+                    useTrailingCommas: false
                 });
             }
             else {

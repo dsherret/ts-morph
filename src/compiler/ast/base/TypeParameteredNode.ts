@@ -114,7 +114,8 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                     parent: this.getFirstChildByKindOrThrow(SyntaxKind.LessThanToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: typeParameters,
                     insertIndex: index,
-                    newText: writer.toString()
+                    newText: writer.toString(),
+                    useTrailingCommas: false
                 });
             }
 
