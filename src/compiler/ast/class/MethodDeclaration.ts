@@ -2,6 +2,7 @@ import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFu
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure, StructureKind, OptionalKind,
     MethodDeclarationOverloadSpecificStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
+import { isNodeAmbientOrInAmbientContext } from "../../../utils";
 import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode,
     TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode, QuestionTokenableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -65,15 +66,18 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
      */
     insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>>) {
         const thisName = this.getName();
-        const childCodes = structures.map(_ => `${thisName}();`);
+        const printer = this._context.structurePrinterFactory.forMethodDeclaration({
+            isAmbient: isNodeAmbientOrInAmbientContext(this)
+        });
 
         return insertOverloads<MethodDeclaration, OptionalKind<MethodDeclarationOverloadStructure>>({
             node: this,
             index,
             structures,
-            childCodes,
+            printStructure: (writer, structure) => {
+                printer.printOverload(writer, thisName, structure);
+            },
             getThisStructure: getStructureFuncs.fromMethodDeclarationOverload,
-            setNodeFromStructure: (node, structure) => node.set(structure),
             expectedSyntaxKind: SyntaxKind.MethodDeclaration
         });
     }

@@ -32,4 +32,17 @@ test;`);
         const ifStatement = file.getStatementOrThrow(TypeGuards.isIfStatement);
         ifStatement.remove();
     });
+
+    it("should support removing an if block via a transform", () => {
+        const project = new Project({ useVirtualFileSystem: true });
+        const file = project.createSourceFile("test.ts", `if (true) {
+} else if (false) {
+}`);
+        const ifStatement = file.getStatementOrThrow(TypeGuards.isIfStatement);
+        ifStatement.transform(() => {
+            return ifStatement.compilerNode.elseStatement!;
+        });
+        expect(file.getFullText()).to.equal(`if (false) {
+}`);
+    });
 });

@@ -914,33 +914,34 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first source file text position that is not whitespace taking into account comment nodes and a previous node's trailing trivia.
      */
     getNonWhitespaceStart(): number {
-        // todo: use forgetNodesCreatedInBlock here
-        const parent = this.getParent() as Node | undefined;
-        const pos = this.getPos();
-        const parentTakesPrecedence = parent != null
-            && !TypeGuards.isSourceFile(parent)
-            && parent.getPos() === pos;
+        return this._context.compilerFactory.forgetNodesCreatedInBlock(() => {
+            const parent = this.getParent() as Node | undefined;
+            const pos = this.getPos();
+            const parentTakesPrecedence = parent != null
+                && !TypeGuards.isSourceFile(parent)
+                && parent.getPos() === pos;
 
-        if (parentTakesPrecedence)
-            return this.getStart(true);
+            if (parentTakesPrecedence)
+                return this.getStart(true);
 
-        let startSearchPos: number;
-        const sourceFileFullText = this._sourceFile.getFullText();
-        const previousSibling = this.getPreviousSibling();
+            let startSearchPos: number;
+            const sourceFileFullText = this._sourceFile.getFullText();
+            const previousSibling = this.getPreviousSibling();
 
-        if (previousSibling != null && TypeGuards.isCommentNode(previousSibling))
-            startSearchPos = previousSibling.getEnd();
-        else if (previousSibling != null) {
-            if (hasNewLineInRange(sourceFileFullText, [pos, this.getStart(true)]))
-                startSearchPos = previousSibling.getTrailingTriviaEnd();
-            else
-                startSearchPos = pos;
-        }
-        else {
-            startSearchPos = this.getPos();
-        }
+            if (previousSibling != null && TypeGuards.isCommentNode(previousSibling))
+                startSearchPos = previousSibling.getEnd();
+            else if (previousSibling != null) {
+                if (hasNewLineInRange(sourceFileFullText, [pos, this.getStart(true)]))
+                    startSearchPos = previousSibling.getTrailingTriviaEnd();
+                else
+                    startSearchPos = pos;
+            }
+            else {
+                startSearchPos = this.getPos();
+            }
 
-        return getNextNonWhitespacePos(sourceFileFullText, startSearchPos);
+            return getNextNonWhitespacePos(sourceFileFullText, startSearchPos);
+        });
     }
 
     /**
@@ -1329,6 +1330,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
      * @param textOrWriterFunction - Text or writer function to replace with.
      * @returns The new node.
+     * @remarks This will replace the text from the `Node#getStart(true)` position (start position with js docs) to `Node#getEnd()`.
+     * Use `Node#getText(true)` to get all the text that will be replaced.
      */
     replaceWithText(textOrWriterFunction: string | WriterFunction): Node;
     /** @internal */
@@ -1656,18 +1659,41 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the parent if it's a certain syntax kind.
+     * Gets the parent if it matches a certain condition or throws.
      */
-    getParentIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        const parentNode = this.getParent();
-        return parentNode == null || parentNode.getKind() !== kind ? undefined : (parentNode as KindToNodeMappings[TKind]);
+    getParentIfOrThrow<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T;
+    /**
+     * Gets the parent if it matches a certain condition or throws.
+     */
+    getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean): Node;
+    getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean) {
+        return errors.throwIfNullOrUndefined(this.getParentIf(condition), "The parent did not match the provided condition.");
     }
 
     /**
-     * Gets the parent if it's a certain syntax kind of throws.
+     * Gets the parent if it matches a certain condition.
+     */
+    getParentIf<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T | undefined;
+    /**
+     * Gets the parent if it matches a certain condition.
+     */
+    getParentIf(condition: (parent: Node | undefined, node: Node) => boolean): Node | undefined;
+    getParentIf(condition: (parent: Node | undefined, node: Node) => boolean) {
+        return condition(this.getParent(), this) ? this.getParent() : undefined;
+    }
+
+    /**
+     * Gets the parent if it's a certain syntax kind or throws.
      */
     getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
-        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `Expected a parent with a syntax kind of ${getSyntaxKindName(kind)}.`);
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `The parent was not a syntax kind of ${getSyntaxKindName(kind)}.`);
+    }
+
+    /**
+     * Gets the parent if it's a certain syntax kind.
+     */
+    getParentIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
+        return this.getParentIf(n => n !== undefined && n.getKind() === kind) as KindToNodeMappings[TKind] | undefined;
     }
 
     /**

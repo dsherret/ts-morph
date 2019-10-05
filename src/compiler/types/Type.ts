@@ -134,7 +134,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the default type or throws if it doesn't exist.
      */
     getDefaultOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getDefault(), "Expected to find a constraint.");
+        return errors.throwIfNullOrUndefined(this.getDefault(), "Expected to find a default type.");
     }
 
     /**

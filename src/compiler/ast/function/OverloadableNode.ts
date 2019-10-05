@@ -1,8 +1,10 @@
 import * as errors from "../../../errors";
 import { getRangeWithoutCommentsFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
+import { Structure } from "../../../structures";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { Constructor } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
-import { TypeGuards, ObjectUtils } from "../../../utils";
+import { ObjectUtils } from "../../../utils";
 import { BodyableNode, NamedNode } from "../base";
 import { Node } from "../common";
 
@@ -81,13 +83,12 @@ function getNameIfNamedNode(node: Node) {
 /**
  * @internal
  */
-export interface InsertOverloadsOptions<TNode extends OverloadableNode & Node, TStructure> {
+export interface InsertOverloadsOptions<TNode extends OverloadableNode & Node, TStructure extends Structure> {
     node: TNode;
     index: number;
     structures: ReadonlyArray<TStructure>;
-    childCodes: string[];
+    printStructure: (writer: CodeBlockWriter, structure: TStructure) => void;
     getThisStructure: (node: TNode) => TStructure;
-    setNodeFromStructure: (node: TNode, structure: TStructure) => void;
     expectedSyntaxKind: SyntaxKind;
 }
 
@@ -98,34 +99,32 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     if (opts.structures.length === 0)
         return [];
 
+    const parentSyntaxList = opts.node.getParentSyntaxListOrThrow();
+    const implementationNode = opts.node.getImplementation() || opts.node;
     const overloads = opts.node.getOverloads();
     const overloadsCount = overloads.length;
-    const parentSyntaxList = opts.node.getParentSyntaxListOrThrow();
-    const firstIndex = overloads.length > 0 ? overloads[0].getChildIndex() : opts.node.getChildIndex();
+    const firstIndex = overloads.length > 0 ? overloads[0].getChildIndex() : implementationNode.getChildIndex();
     const index = verifyAndGetIndex(opts.index, overloadsCount);
     const mainIndex = firstIndex + index;
 
-    const thisStructure = opts.getThisStructure(opts.node.getImplementation() || opts.node);
-    const structures = [...opts.structures];
+    const thisStructure = opts.getThisStructure(implementationNode);
+    const structures = opts.structures.map(structure => ObjectUtils.assign(ObjectUtils.assign({}, thisStructure), structure));
+    const writer = implementationNode._getWriterWithQueuedIndentation();
 
-    for (let i = 0; i < structures.length; i++) {
-        structures[i] = ObjectUtils.assign(ObjectUtils.assign({}, thisStructure), structures[i]);
-        // structures[i] = {...thisStructure, ...structures[i]}; // not supported by TS as of 2.4.1
+    // write text
+    for (const structure of structures) {
+        if (writer.getLength() > 0)
+            writer.newLine();
+        opts.printStructure(writer, structure);
     }
-
-    const indentationText = opts.node.getIndentationText();
-    const newLineKind = opts.node._context.manipulationSettings.getNewLineKindAsString();
+    writer.newLine();
+    writer.write(""); // force final indentation
 
     insertIntoParentTextRange({
         parent: parentSyntaxList,
-        insertPos: opts.node.getNonWhitespaceStart(),
-        newText: opts.childCodes.map((c, i) => (i > 0 ? indentationText : "") + c).join(newLineKind) + newLineKind + indentationText
+        insertPos: (overloads[index] || implementationNode).getNonWhitespaceStart(),
+        newText: writer.toString()
     });
 
-    const children = getRangeWithoutCommentsFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);
-    // todo: Do not set here... this should be printed
-    children.forEach((child, i) => {
-        opts.setNodeFromStructure(child, structures[i]);
-    });
-    return children;
+    return getRangeWithoutCommentsFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);
 }

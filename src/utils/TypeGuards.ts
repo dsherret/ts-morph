@@ -2142,7 +2142,6 @@ export class TypeGuards {
      */
     static isTypeNode(node: compiler.Node): node is compiler.TypeNode {
         switch (node.getKind()) {
-            case SyntaxKind.TypePredicate:
             case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.JSDocSignature:
             case SyntaxKind.JSDocTypeExpression:
@@ -2160,6 +2159,7 @@ export class TypeGuards {
             case SyntaxKind.ThisType:
             case SyntaxKind.TupleType:
             case SyntaxKind.TypeLiteral:
+            case SyntaxKind.TypePredicate:
             case SyntaxKind.TypeReference:
             case SyntaxKind.UnionType:
                 return true;
@@ -2206,6 +2206,14 @@ export class TypeGuards {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Gets if the node is a TypePredicateNode.
+     * @param node - Node to check.
+     */
+    static isTypePredicateNode(node: compiler.Node): node is compiler.TypePredicateNode {
+        return node.getKind() === SyntaxKind.TypePredicate;
     }
 
     /**

@@ -10,7 +10,7 @@ import { SourceFileStructure, OptionalKind } from "../structures";
 import { WriterFunction } from "../types";
 import { SyntaxKind, ts, TypeFlags, ScriptKind } from "../typescript";
 import { replaceSourceFileForCacheUpdate } from "../manipulation";
-import { EventContainer, FileUtils, KeyValueCache, WeakCache, StringUtils, getTextFromStringOrWriter } from "../utils";
+import { EventContainer, FileUtils, KeyValueCache, WeakCache, StringUtils, getTextFromStringOrWriter, TypeGuards } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
 import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
 import { kindToWrapperMappings } from "./kindToWrapperMappings";
@@ -615,24 +615,44 @@ export class CompilerFactory {
      * Forgets the nodes created in the block.
      * @param block - Block of code to run.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => (void | Promise<void>)): Promise<void> {
+    forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => T): T;
+    /**
+     * Asynchronously forgets the nodes created in the block.
+     * @param block - Block of code to run.
+     */
+    forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => Promise<T>): Promise<T>;
+    forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => (T | Promise<T>)): Promise<T> | T {
         // can't use the async keyword here because exceptions that happen when doing this synchronously need to be thrown
         this.nodeCache.setForgetPoint();
         let wasPromise = false;
+        let result: T | Promise<T>;
         try {
-            const result = block((...nodes) => {
+            result = block((...nodes) => {
                 for (const node of nodes)
                     this.nodeCache.rememberNode(node);
             });
 
-            if (result != null && typeof result.then === "function") {
+            if (TypeGuards.isNode(result))
+                this.nodeCache.rememberNode(result);
+
+            if (isPromise(result)) {
                 wasPromise = true;
-                return result.then(() => this.nodeCache.forgetLastPoint());
+                return result.then(value => {
+                    if (TypeGuards.isNode(value))
+                        this.nodeCache.rememberNode(value);
+
+                    this.nodeCache.forgetLastPoint();
+                    return value;
+                });
             }
         } finally {
             if (!wasPromise)
                 this.nodeCache.forgetLastPoint();
         }
-        return Promise.resolve();
+        return result;
+
+        function isPromise<TValue>(value: unknown): value is Promise<TValue> {
+            return value != null && typeof (value as any).then === "function";
+        }
     }
 }

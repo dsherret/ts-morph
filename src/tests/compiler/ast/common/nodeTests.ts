@@ -516,6 +516,32 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.getParentIf), () => {
+        const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
+        const child = firstChild.getInstanceProperty("prop")!;
+
+        it("should get the parent when it matches the condition", () => {
+            expect(child.getParentIf(n => n !== undefined && n.getKind() === SyntaxKind.ClassDeclaration)).to.not.be.undefined;
+        });
+
+        it("should not get the parent when doesn't match the condition", () => {
+            expect(child.getParentIf(n => n !== undefined && n.getKind() === SyntaxKind.InterfaceDeclaration)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getParentIfOrThrow), () => {
+        const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
+        const child = firstChild.getInstanceProperty("prop")!;
+
+        it("should get the parent when it matches the condition", () => {
+            expect(child.getParentIfOrThrow(n => n !== undefined && n.getKind() === SyntaxKind.ClassDeclaration)).to.not.be.undefined;
+        });
+
+        it("should throw when the parent doesn't match the condition", () => {
+            expect(() => child.getParentIfOrThrow(n => n !== undefined && n.getKind() === SyntaxKind.InterfaceDeclaration)).to.throw();
+        });
+    });
+
     describe(nameof<Node>(n => n.getParentIfKind), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
         const child = firstChild.getInstanceProperty("prop")!;
@@ -537,7 +563,7 @@ class MyClass {
             expect(child.getParentIfKindOrThrow(SyntaxKind.ClassDeclaration)).to.not.be.undefined;
         });
 
-        it("should throw when it's not the right kind", () => {
+        it("should throw when the parent is not the right kind", () => {
             expect(() => child.getParentIfKindOrThrow(SyntaxKind.InterfaceDeclaration)).to.throw();
         });
     });

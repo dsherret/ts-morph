@@ -52,15 +52,18 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      */
     insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>>) {
         const thisName = this.getName();
-        const childCodes = structures.map(structure => `function ${thisName}();`);
+        const printer = this._context.structurePrinterFactory.forFunctionDeclaration({
+            isAmbient: this.isAmbient()
+        });
 
         return insertOverloads<FunctionDeclaration, OptionalKind<FunctionDeclarationOverloadStructure>>({
             node: this,
             index,
             structures,
-            childCodes,
+            printStructure: (writer, structure) => {
+                printer.printOverload(writer, thisName, structure);
+            },
             getThisStructure: getStructureFuncs.fromFunctionDeclarationOverload,
-            setNodeFromStructure: (node, structure) => node.set(structure),
             expectedSyntaxKind: SyntaxKind.FunctionDeclaration
         });
     }

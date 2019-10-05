@@ -2,6 +2,7 @@ import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFu
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationOverloadSpecificStructure, ConstructorDeclarationStructure,
     ConstructorDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
+import { isNodeAmbientOrInAmbientContext } from "../../../utils";
 import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode,
     TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -61,15 +62,18 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * @param structures - Structures to insert.
      */
     insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<ConstructorDeclarationOverloadStructure>>) {
-        const childCodes = structures.map(structure => `constructor();`);
+        const printer = this._context.structurePrinterFactory.forConstructorDeclaration({
+            isAmbient: isNodeAmbientOrInAmbientContext(this)
+        });
 
         return insertOverloads<ConstructorDeclaration, OptionalKind<ConstructorDeclarationOverloadStructure>>({
             node: this,
             index,
             structures,
-            childCodes,
+            printStructure: (writer, structure) => {
+                printer.printOverload(writer, structure);
+            },
             getThisStructure: getStructureFuncs.fromConstructorDeclarationOverload,
-            setNodeFromStructure: (node, structure) => node.set(structure),
             expectedSyntaxKind: SyntaxKind.Constructor
         });
     }

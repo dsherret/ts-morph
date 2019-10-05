@@ -15,6 +15,43 @@ describe(nameof(ExpressionedNode), () => {
         });
     });
 
+    describe(nameof<ExpressionedNode>(n => n.getExpressionIfKind), () => {
+        function doTest(text: string, kind: SyntaxKind, expectedText: string | undefined) {
+            const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
+            const result = descendant.getExpressionIfKind(kind);
+            if (expectedText == null)
+                expect(result).to.be.undefined;
+            else
+                expect(result!.getText()).to.equal(expectedText);
+        }
+
+        it("should get the expression when providing the expected value", () => {
+            doTest("(x + 1)", SyntaxKind.BinaryExpression, "x + 1");
+        });
+
+        it("should not get the expression when providing something else", () => {
+            doTest("(x + 1)", SyntaxKind.CallExpression, undefined);
+        });
+    });
+
+    describe(nameof<ExpressionedNode>(n => n.getExpressionIfKindOrThrow), () => {
+        function doTest(text: string, kind: SyntaxKind, expectedText: string | undefined) {
+            const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
+            if (expectedText == null)
+                expect(() => descendant.getExpressionIfKindOrThrow(kind)).to.throw();
+            else
+                expect(descendant.getExpressionIfKindOrThrow(kind).getText()).to.equal(expectedText);
+        }
+
+        it("should get the expression when providing the expected value", () => {
+            doTest("(x + 1)", SyntaxKind.BinaryExpression, "x + 1");
+        });
+
+        it("should not get the expression when providing something else", () => {
+            doTest("(x + 1)", SyntaxKind.CallExpression, undefined);
+        });
+    });
+
     describe(nameof<ExpressionedNode>(n => n.setExpression), () => {
         function doTest(text: string, newText: string, expected: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);

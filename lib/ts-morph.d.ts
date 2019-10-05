@@ -594,16 +594,16 @@ export declare class Project {
      * Forgets the nodes created in the scope of the passed in block.
      *
      * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
-     * @param block - Block of code to run.
+     * @param block - Block of code to run. Use the `remember` callback or return a node to remember it.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => void): void;
+    forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => T): T;
     /**
      * Forgets the nodes created in the scope of the passed in block asynchronously.
      *
      * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
-     * @param block - Block of code to run.
+     * @param block - Block of code to run. Use the `remember` callback or return a node to remember it.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
+    forgetNodesCreatedInBlock<T = void>(block: (remember: (...node: Node[]) => void) => Promise<T>): Promise<T>;
     /**
      * Formats an array of diagnostics with their color and context into a string.
      * @param diagnostics - Diagnostics to get a string of.
@@ -1764,6 +1764,11 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isTypeParameteredNode<T extends Node>(node: T): node is TypeParameteredNode & TypeParameteredNodeExtensionType & T;
+    /**
+     * Gets if the node is a TypePredicateNode.
+     * @param node - Node to check.
+     */
+    static isTypePredicateNode(node: Node): node is TypePredicateNode;
     /**
      * Gets if the node is a TypeReferenceNode.
      * @param node - Node to check.
@@ -4608,6 +4613,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
      * @param textOrWriterFunction - Text or writer function to replace with.
      * @returns The new node.
+     * @remarks This will replace the text from the `Node#getStart(true)` position (start position with js docs) to `Node#getEnd()`.
+     * Use `Node#getText(true)` to get all the text that will be replaced.
      */
     replaceWithText(textOrWriterFunction: string | WriterFunction): Node;
     /**
@@ -4734,13 +4741,29 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     getNextSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
     /**
+     * Gets the parent if it matches a certain condition or throws.
+     */
+    getParentIfOrThrow<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T;
+    /**
+     * Gets the parent if it matches a certain condition or throws.
+     */
+    getParentIfOrThrow(condition: (parent: Node | undefined, node: Node) => boolean): Node;
+    /**
+     * Gets the parent if it matches a certain condition.
+     */
+    getParentIf<T extends Node>(condition: (parent: Node | undefined, node: Node) => parent is T): T | undefined;
+    /**
+     * Gets the parent if it matches a certain condition.
+     */
+    getParentIf(condition: (parent: Node | undefined, node: Node) => boolean): Node | undefined;
+    /**
+     * Gets the parent if it's a certain syntax kind or throws.
+     */
+    getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+    /**
      * Gets the parent if it's a certain syntax kind.
      */
     getParentIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
-    /**
-     * Gets the parent if it's a certain syntax kind of throws.
-     */
-    getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
     /**
      * Gets the first ancestor by syntax kind or throws if not found.
      * @param kind - Syntax kind.
@@ -5600,6 +5623,16 @@ export interface ExpressionedNode {
      * Gets the expression.
      */
     getExpression(): Expression;
+    /**
+     * Gets the expression if its of a certain kind or returns undefined.
+     * @param kind - Syntax kind of the expression.
+     */
+    getExpressionIfKind<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] | undefined;
+    /**
+     * Gets the expression if its of a certain kind or throws.
+     * @param kind - Syntax kind of the expression.
+     */
+    getExpressionIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind];
     /**
      * Sets the expression.
      * @param textOrWriterFunction - Text to set the expression with.
@@ -6958,14 +6991,14 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypeAssertionExpression]: TypeAssertion;
     [SyntaxKind.TypeLiteral]: TypeLiteralNode;
     [SyntaxKind.TypeParameter]: TypeParameterDeclaration;
+    [SyntaxKind.TypePredicate]: TypePredicateNode;
+    [SyntaxKind.FirstTypeNode]: TypePredicateNode;
     [SyntaxKind.TypeReference]: TypeReferenceNode;
     [SyntaxKind.UnionType]: UnionTypeNode;
     [SyntaxKind.VariableDeclaration]: VariableDeclaration;
     [SyntaxKind.VariableDeclarationList]: VariableDeclarationList;
     [SyntaxKind.VariableStatement]: VariableStatement;
     [SyntaxKind.JSDocComment]: JSDoc;
-    [SyntaxKind.TypePredicate]: TypeNode;
-    [SyntaxKind.FirstTypeNode]: TypeNode;
     [SyntaxKind.SemicolonToken]: Node;
     [SyntaxKind.InferKeyword]: Node;
     [SyntaxKind.TypeOfExpression]: TypeOfExpression;
@@ -9445,6 +9478,26 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
     getParent(): NodeParentType<ts.TypeParameterDeclaration>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.TypeParameterDeclaration>>;
+}
+
+/**
+ * A type predicate node which says the specified parameter name is a specific type if the function returns true.
+ *
+ * For example, `param is string` in `declare function isString(param: unknown): param is string;`.
+ */
+export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
+    /**
+     * Gets the parameter name node
+     */
+    getParameterNameNode(): Identifier | ThisTypeNode;
+    /**
+     * Gets the type name.
+     */
+    getTypeNode(): TypeNode;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.TypePredicateNode>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.TypePredicateNode>>;
 }
 
 export declare class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {

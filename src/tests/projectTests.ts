@@ -10,6 +10,7 @@ import { SourceFileStructure, StructureKind } from "../structures";
 import { CompilerOptions, ScriptTarget, SyntaxKind, ts, ScriptKind } from "../typescript";
 import { OptionalKindAndTrivia } from "./compiler/testHelpers";
 import * as testHelpers from "./testHelpers";
+import { assert, IsExact } from "conditional-type-checks";
 
 console.log("");
 console.log("TypeScript version: " + ts.version);
@@ -1209,7 +1210,7 @@ describe(nameof(Project), () => {
             let interfaceNode3: Node;
             let interfaceNode4: Node;
             let interfaceNode5: Node;
-            project.forgetNodesCreatedInBlock(remember => {
+            const returnedNode = project.forgetNodesCreatedInBlock(remember => {
                 sourceFile = project.createSourceFile("test.ts", "class MyClass {} namespace MyNamespace { interface Interface1 {} interface Interface2 {} "
                     + "interface Interface3 {} interface Interface4 {} }");
                 sourceFileNotNavigated = project.createSourceFile("test2.ts", "class MyClass {}");
@@ -1227,6 +1228,8 @@ describe(nameof(Project), () => {
                 namespaceKeywordNode = namespaceNode.getFirstChildByKindOrThrow(SyntaxKind.NamespaceKeyword);
                 interfaceNode1 = namespaceNode.getInterfaceOrThrow("Interface1");
                 remember(interfaceNode1);
+
+                return namespaceNode.addInterface({ name: "Interface6" });
             });
 
             it("should not have forgotten the source file", () => {
@@ -1269,6 +1272,10 @@ describe(nameof(Project), () => {
                 expect(interfaceNode5.wasForgotten()).to.be.true;
             });
 
+            it("should not have forgotten the returned node", () => {
+                expect(returnedNode.wasForgotten()).to.be.false;
+            });
+
             it("should not throw if removing a created node in a block", () => {
                 const newSourceFile = project.createSourceFile("file3.ts", "class MyClass {}");
                 project.forgetNodesCreatedInBlock(remember => {
@@ -1291,6 +1298,12 @@ describe(nameof(Project), () => {
                     throw new Error("");
                 })).to.throw();
             });
+
+            it("should get the return value", () => {
+                const result = project.forgetNodesCreatedInBlock(() => 5);
+                assert<IsExact<typeof result, number>>(true);
+                expect(result).to.equal(5);
+            });
         });
 
         describe("asynchronous", () => {
@@ -1299,17 +1312,27 @@ describe(nameof(Project), () => {
                 const sourceFile = project.createSourceFile("file.ts");
                 let interfaceDec: InterfaceDeclaration;
                 let classDec: ClassDeclaration;
-                await project.forgetNodesCreatedInBlock(async remember => {
+                const returnedNode = await project.forgetNodesCreatedInBlock(async remember => {
                     // do something to cause this code to be added to the end of the execution queue
                     await new Promise((resolve, reject) => resolve());
 
                     classDec = sourceFile.addClass({ name: "Class" });
                     interfaceDec = sourceFile.addInterface({ name: "Interface" });
                     remember(interfaceDec);
+                    return sourceFile.addInterface({ name: "ReturnedInterface" });
                 });
 
                 expect(classDec!.wasForgotten()).to.be.true;
                 expect(interfaceDec!.wasForgotten()).to.be.false;
+                expect(returnedNode.wasForgotten()).to.be.false;
+            });
+
+            it("should get the return value", async () => {
+                const project = new Project({ useVirtualFileSystem: true });
+                const resultPromise = project.forgetNodesCreatedInBlock(() => Promise.resolve(5));
+                assert<IsExact<typeof resultPromise, Promise<number>>>(true);
+                const result = await resultPromise;
+                expect(result).to.equal(5);
             });
         });
     });
