@@ -20,6 +20,7 @@ mocha.opts
 *.csproj
 *.csproj.user
 *.sln
+.editorconfig
 .travis.yml
 .npmignore
 breaking-changes.md
