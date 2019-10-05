@@ -15,10 +15,10 @@ export class ModifierableNodeStructurePrinter extends Printer<ModifierableNodeSt
             writer.write("export ");
         if ((structure as AmbientableNodeStructure).hasDeclareKeyword)
             writer.write("declare ");
-        if ((structure as AbstractableNodeStructure).isAbstract)
-            writer.write("abstract ");
         if (scope != null)
             writer.write(`${scope} `);
+        if ((structure as AbstractableNodeStructure).isAbstract)
+            writer.write("abstract ");
         if ((structure as StaticableNodeStructure).isStatic)
             writer.write("static ");
         if ((structure as AsyncableNodeStructure).isAsync)
