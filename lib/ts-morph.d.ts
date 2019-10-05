@@ -5624,6 +5624,16 @@ export interface ExpressionedNode {
      */
     getExpression(): Expression;
     /**
+     * Gets the expression if its of a certain kind or returns undefined.
+     * @param kind - Syntax kind of the expression.
+     */
+    getExpressionIfKind<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] | undefined;
+    /**
+     * Gets the expression if its of a certain kind or throws.
+     * @param kind - Syntax kind of the expression.
+     */
+    getExpressionIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind];
+    /**
      * Sets the expression.
      * @param textOrWriterFunction - Text to set the expression with.
      */
