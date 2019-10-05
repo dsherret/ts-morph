@@ -752,6 +752,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the descendant nodes passed to the delegate of `node.forEachDescendant(descendant => {})` as an array.
+     */
+    forEachDescendantAsArray() {
+        const descendants: Node[] = [];
+        this.forEachDescendant(descendant => {
+            descendants.push(descendant);
+        });
+        return descendants;
+    }
+
+    /**
      * Gets the node's descendants.
      */
     getDescendants(): Node[] {

@@ -1853,6 +1853,23 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.forEachDescendantAsArray), () => {
+        function runTest(startText: string, selectNode: (sourceFile: SourceFile) => Node, expectedKinds: SyntaxKind[]) {
+            const { sourceFile } = getInfoFromText(startText);
+            const node = selectNode(sourceFile);
+            const foundKinds = node.forEachDescendantAsArray().map(c => c.getKind());
+            expect(foundKinds).to.deep.equal(expectedKinds);
+        }
+
+        it("should iterate over all the descendants of a source file", () => {
+            runTest(
+                "class T {} interface I {}",
+                sourceFile => sourceFile,
+                [SyntaxKind.ClassDeclaration, SyntaxKind.Identifier, SyntaxKind.InterfaceDeclaration, SyntaxKind.Identifier, SyntaxKind.EndOfFileToken]
+            );
+        });
+    });
+
     describe(nameof<Node>(n => n.getNodeProperty), () => {
         const fileText = "class MyClass<T, U> { prop: string; otherProp: number; } interface MyInterface {} export default class { prop: Date; }";
         const { firstChild: classDec, sourceFile } = getInfoFromText<ClassDeclaration>(fileText);
