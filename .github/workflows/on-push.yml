@@ -11,13 +11,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Format and overwrite declaration files
+      shell: pwsh
       run: |
-        lastCommit = git log -1 --oneline
-        if [[ $lastCommit != *"[skip-on-push]"* ]]; then
-          yarn install
-          yarn format
-          yarn overwrite-declaration-files
-          git add .
-          git commit -m "chore: Update last commit.\n\n[skip-on-push]"
-          git push
-        fi
+        $lastCommit = git log -1 --oneline
+        if ($lastCommit.Contains("[skip-on-push]")) { Exit }
+        yarn install
+        yarn format
+        yarn overwrite-declaration-files
+        git add .
+        git commit -m "chore: Update last commit.\n\n[skip-on-push]"
+        git push
