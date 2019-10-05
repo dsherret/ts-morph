@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.2.0"></a>
+# [4.2.0](https://github.com/dsherret/ts-morph/compare/4.1.1...4.2.0) (2019-10-05)
+
+
+### Bug Fixes
+
+* Fix abstract keyword accidentally being printed before scope. ([c7734dc](https://github.com/dsherret/ts-morph/commit/c7734dc))
+* Fix message for Type#getDefaultOrThrow() ([ed1ced7](https://github.com/dsherret/ts-morph/commit/ed1ced7))
+
+
+### Features
+
+* [#655](https://github.com/dsherret/ts-morph/issues/655) - ExpressionNode - Add `getExpressionIfKind` methods. ([332fb7e](https://github.com/dsherret/ts-morph/commit/332fb7e))
+* [#707](https://github.com/dsherret/ts-morph/issues/707) - Add `useTrailingCommas` manipulation setting option. ([938c05c](https://github.com/dsherret/ts-morph/commit/938c05c))
+* [#712](https://github.com/dsherret/ts-morph/issues/712) - Add getParentIf and getParentIfOrThrow ([9e037b6](https://github.com/dsherret/ts-morph/commit/9e037b6)) ([@HoldYourWaffle](https://github.com/HoldYourWaffle))
+* [#717](https://github.com/dsherret/ts-morph/issues/717) - Update `forgetNodesCreatedInBlock` to allow returning a value. ([fda5970](https://github.com/dsherret/ts-morph/commit/fda5970))
+* [#722](https://github.com/dsherret/ts-morph/issues/722) - Wrap TypePredicateNode. ([9af7b34](https://github.com/dsherret/ts-morph/commit/9af7b34))
+* Add `Node#forEachDescendantAsArray` ([2043ccb](https://github.com/dsherret/ts-morph/commit/2043ccb))
+
+
+### Performance Improvements
+
+* [#612](https://github.com/dsherret/ts-morph/issues/612) - insertOverloads should only print. ([8777007](https://github.com/dsherret/ts-morph/commit/8777007))
+
+
+
 <a name="4.1.1"></a>
 ## [4.1.1](https://github.com/dsherret/ts-morph/compare/4.1.0...4.1.1) (2019-10-01)
 
