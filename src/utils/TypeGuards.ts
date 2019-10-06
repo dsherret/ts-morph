@@ -854,7 +854,7 @@ export class TypeGuards {
     static isIndexedAccessTypeNode(node: compiler.Node): node is compiler.IndexedAccessTypeNode {
         return node.getKind() === SyntaxKind.IndexedAccessType;
     }
-    
+
     /**
      * Gets if the node is a InferKeyword.
      */
