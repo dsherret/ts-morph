@@ -135,7 +135,9 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         type WriterStructureType = (OptionalKind<EnumMemberStructure> | WriterFunction | string)[] | string | WriterFunction;
-        function doWriterTest(startCode: string, index: number, structures: WriterStructureType, expectedCode: string, options?: { useTrailingCommas?: boolean; }) {
+        function doWriterTest(startCode: string, index: number, structures: WriterStructureType, expectedCode: string,
+            options?: { useTrailingCommas?: boolean; })
+        {
             const { firstChild, sourceFile, project } = getInfoFromText<EnumDeclaration>(startCode);
             if (options && options.useTrailingCommas)
                 project.manipulationSettings.set({ useTrailingCommas: true });

@@ -9,6 +9,7 @@ import * as compiler from "../compiler";
 import { SyntaxKind } from "../typescript";
 import { Structure } from "../structures";
 import { KindToNodeMappings } from "../compiler";
+import { Token } from 'typescript';
 
 /**
  * Type guards for checking the type of a node.
@@ -853,11 +854,13 @@ export class TypeGuards {
     static isIndexedAccessTypeNode(node: compiler.Node): node is compiler.IndexedAccessTypeNode {
         return node.getKind() === SyntaxKind.IndexedAccessType;
     }
-
+    
     /**
      * Gets if the node is a InferKeyword.
      */
-    static readonly isInferKeyword: (node: compiler.Node) => node is compiler.Node = TypeGuards.is(SyntaxKind.InferKeyword);
+    static isInferKeyword(node: compiler.Node): node is compiler.Node<Token<SyntaxKind.InferKeyword>> { 
+        return node.getKind() === SyntaxKind.InferKeyword;
+    }
 
     /**
      * Gets if the node is a InferTypeNode.
@@ -1812,7 +1815,9 @@ export class TypeGuards {
     /**
      * Gets if the node is a SemicolonToken.
      */
-    static readonly isSemicolonToken: (node: compiler.Node) => node is compiler.Node = TypeGuards.is(SyntaxKind.SemicolonToken);
+    static isSemicolonToken(node: compiler.Node): node is compiler.Node<Token<SyntaxKind.SemicolonToken>> { 
+        return node.getKind() === SyntaxKind.SemicolonToken;
+    }
 
     /**
      * Gets if the node is a SetAccessorDeclaration.

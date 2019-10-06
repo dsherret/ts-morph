@@ -1299,7 +1299,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the line number at the start of the node.
+     * Gets the line number (1-indexed) of the start of the node in the *full* text of its source file. 
      * @param includeJsDocComments - Whether to include the JS doc comments or not.
      */
     getStartLineNumber(includeJsDocComments?: boolean) {
@@ -1307,7 +1307,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the line number of the end of the node.
+     * Gets the line number (1-indexed) of the end of the node in the *full* text of its source file. 
+     * Example: `node.getSourceFile().getFullText().split('\n')[node.getEndLineNumber() - 1]`
      */
     getEndLineNumber() {
         const sourceFileText = this._sourceFile.getFullText();
