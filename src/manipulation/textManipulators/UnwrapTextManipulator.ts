@@ -1,36 +1,25 @@
 import { Node } from "../../compiler";
+import { StringUtils } from "../../utils";
 import { InsertionTextManipulator } from "./InsertionTextManipulator";
 
 export class UnwrapTextManipulator extends InsertionTextManipulator {
     constructor(node: Node) {
         super({
-            insertPos: node.getPos(),
+            insertPos: node.getStart(true),
             newText: getReplacementText(node),
-            replacingLength: node.getFullWidth()
+            replacingLength: node.getWidth(true)
         });
     }
 }
 
 function getReplacementText(node: Node) {
     const childSyntaxList = node.getChildSyntaxListOrThrow();
-    const indentationText = node.getIndentationText();
-    const childIndentationText = node.getChildIndentationText();
-    const indentationDifference = childIndentationText.replace(indentationText, "");
-    const replaceRegex = new RegExp("^" + indentationDifference);
-    const originalText = childSyntaxList.getFullText();
     const sourceFile = node._sourceFile;
-    const lines = originalText.split("\n");
+    const startPos = childSyntaxList.getPos();
 
-    let pos = childSyntaxList.getPos();
-    const newLines: string[] = [];
-    for (const line of lines) {
-        if (sourceFile.isInStringAtPos(pos))
-            newLines.push(line);
-        else
-            newLines.push(line.replace(replaceRegex, ""));
-
-        pos += line.length + 1;
-    }
-
-    return newLines.join("\n").replace(/^\r?\n/, "");
+    return StringUtils.indent(childSyntaxList.getFullText(), -1, {
+        indentText: sourceFile._context.manipulationSettings.getIndentationText(),
+        indentSizeInSpaces: sourceFile._context.manipulationSettings._getIndentSizeInSpaces(),
+        isInStringAtPos: pos => sourceFile.isInStringAtPos(startPos + pos)
+    }).trimLeft();
 }

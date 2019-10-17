@@ -27,11 +27,11 @@ var v: string;
 }`, `var t: string;`);
         });
 
-        it("should unwrap a with the correct indentation", () => {
+        it("should unwrap with the correct indentation", () => {
             doTest(`
     namespace Test {
         var t: string;
-    }`, `    var t: string;`);
+    }`, `\n    var t: string;`);
         });
 
         it("should not unindent any string literals", () => {
