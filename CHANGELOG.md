@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.3.0"></a>
+# [4.3.0](https://github.com/dsherret/ts-morph/compare/4.2.0...4.3.0) (2019-10-17)
+
+
+### Bug Fixes
+
+* [#735](https://github.com/dsherret/ts-morph/issues/735) - An unwrappable node would throw an error on unwrap if it had a leading comment. ([2cc4796](https://github.com/dsherret/ts-morph/commit/2cc4796))
+
+
+### Features
+
+* Add `Node#getWidth(true)` for including js docs in the width (similar to `Node#getStart(true)` in the compiler api). ([03dda0b](https://github.com/dsherret/ts-morph/commit/03dda0b))
+
+
+
 <a name="4.2.0"></a>
 # [4.2.0](https://github.com/dsherret/ts-morph/compare/4.1.1...4.2.0) (2019-10-05)
 

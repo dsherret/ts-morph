@@ -4459,8 +4459,9 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     getNonWhitespaceStart(): number;
     /**
      * Gets the text length of the node without trivia.
+     * @param includeJsDocComments - Whether to include the JS doc comments in the width or not.
      */
-    getWidth(): number;
+    getWidth(includeJsDocComments?: boolean): number;
     /**
      * Gets the text length of the node with trivia.
      */
