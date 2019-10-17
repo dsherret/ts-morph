@@ -965,9 +965,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the text length of the node without trivia.
+     * @param includeJsDocComments - Whether to include the JS doc comments in the width or not.
      */
-    getWidth() {
-        return this.compilerNode.getWidth(this._sourceFile.compilerNode);
+    getWidth(includeJsDocComments?: boolean) {
+        // Compiler code is this.getEnd() - this.getStart(sourceFile), but this
+        // takes into account js doc comments as well.
+        return this.getEnd() - this.getStart(includeJsDocComments);
     }
 
     /**

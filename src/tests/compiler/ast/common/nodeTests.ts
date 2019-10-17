@@ -495,6 +495,22 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.getWidth), () => {
+        function doTest(text: string, expectedWidth: number, includeJsDocComment?: boolean) {
+            const { firstChild } = getInfoFromText(text);
+            expect(firstChild.getWidth(includeJsDocComment)).to.equal(expectedWidth);
+        }
+
+        it("should return the width without trivia", () => {
+            doTest("\n  \t  /* comment */ //comment  \r\n  \t enum MyEnum {\n}\n", 15);
+        });
+
+        it("should return the width at the start of the js doc comment if specified", () => {
+            const text = "/**\n * Test\n */\nenum MyEnum {\n}\n";
+            doTest(text, text.length - 1, true);
+        });
+    });
+
     describe(nameof<Node>(n => n.getCombinedModifierFlags), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should get the combined modifier flags", () => {
