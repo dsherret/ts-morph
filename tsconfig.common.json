@@ -11,11 +11,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "stripInternal": true,
-    "typeRoots": ["node_modules/@types"],
-    "types": ["node", "mocha", "ts-nameof"],
-    "downlevelIteration": true,
-    "importHelpers": false,
-    "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
+    "importHelpers": false
   },
   "compileOnSave": false
 }

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "strict": true,
+    "sourceMap": false,
+    "removeComments": false,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "stripInternal": true,
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node", "mocha", "ts-nameof"],
+    "downlevelIteration": true,
+    "importHelpers": false,
+    "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
+  },
+  "compileOnSave": false
+}

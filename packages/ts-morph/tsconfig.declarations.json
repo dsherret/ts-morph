@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.common.json",
+  "compilerOptions": {
+    "declaration": true,
+    "rootDir": "./src",
+    "outDir": "./dist-declarations",
+    "emitDeclarationOnly": true
+  },
+  "exclude": [
+    "./src/tests"
+  ]
+}

@@ -2,10 +2,11 @@ language: node_js
 node_js:
     - "8"
 before_script:
-    - yarn run ensure-no-project-compile-errors
-    - travis_wait 20 yarn run build:declarations
+    - yarn bootstrap
+    - yarn build
+    - lerna run ensure-no-project-compile-errors
 script:
-    - yarn run test:coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-    - yarn run test:ts-versions
+    - lerna run test:ci
+    - lerna run test:ts-versions
 after_script:
-    - yarn run code-verification
+    - lerna run code-verification

@@ -20,7 +20,7 @@ module.exports.config = {
         "**/*{.ts,.json,.js}"
     ],
     excludes: [
-        "dist/**/*.*",
-        "lib/*.ts"
+        "packages/*/dist/**/*.*",
+        "packages/*/lib/*.ts"
     ]
 };

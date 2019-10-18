@@ -9,7 +9,7 @@ It is possible to transform the AST using the compiler API, though this is not a
 For example:
 
 ```ts
-import * as ts from "typescript";
+import { ts } from "ts-morph";
 
 const project = new Project();
 const sourceFile = project.createSourceFile("Example.ts", "1; 2; 3;");
@@ -35,7 +35,7 @@ Doing this is more performant, but you won't have type checking, symbols, and yo
 ### Conditionally visiting children
 
 ```ts
-import * as ts from "typescript";
+import { ts } from "ts-morph";
 
 const project = new Project();
 const sourceFile = project.createSourceFile("Example.ts", `

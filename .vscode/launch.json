@@ -7,9 +7,27 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Run Tests",
+            "name": "Run ts-morph tests",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "test:debug"],
+            "runtimeArgs": ["run", "--prefix", "packages/ts-morph", "test:debug"],
+            "port": 9229,
+            "stopOnEntry": false
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run common tests",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "--prefix", "packages/common", "test:debug"],
+            "port": 9229,
+            "stopOnEntry": false
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run bootstrap tests",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "--prefix", "packages/bootstrap", "test:debug"],
             "port": 9229,
             "stopOnEntry": false
         },
