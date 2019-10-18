@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "@ts-morph/common";
-import { CommentNodeParser, ContainerNodes } from "./CommentNodeParser";
+import { CommentNodeParser, ContainerNodes } from "@ts-morph/comment-parser";
 import { hasParsedTokens } from "./hasParsedTokens";
 
 const forEachChildSaver = new WeakMap<ts.Node, ts.Node[]>();

@@ -1,10 +1,9 @@
 import { errors, KeyValueCache, WeakCache, StringUtils, EventContainer, FileUtils, DocumentRegistry, SyntaxKind, ts, TypeFlags,
     ScriptKind } from "@ts-morph/common";
-import { CompilerCommentNode } from "@ts-morph/comment-parser";
+import { CompilerCommentNode, CommentNodeParser } from "@ts-morph/comment-parser";
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter, CommentStatement,
     CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CommentEnumMember } from "../compiler";
-import { CommentNodeParser } from "../compiler/ast/utils";
 import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";

@@ -1,10 +1,10 @@
-import { errors, ArrayUtils, ts, SyntaxKind } from "@ts-morph/common";
+import { errors, ts, SyntaxKind } from "@ts-morph/common";
+import { isComment } from "@ts-morph/comment-parser";
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
 import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { TypeGuards } from "../../../utils";
 import { Symbol } from "../../symbols";
-import { isComment } from "../utils";
 import { ExportedDeclarations } from "../aliases";
 import { Node } from "../common";
 import { ImportDeclaration, ExportDeclaration, ExportAssignment } from "../module";

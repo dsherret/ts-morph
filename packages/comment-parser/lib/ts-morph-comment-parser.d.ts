@@ -1,5 +1,22 @@
 import { ts, SyntaxKind } from "@ts-morph/common";
 
+export declare type StatementContainerNodes = ts.SourceFile | ts.Block | ts.ModuleBlock | ts.CaseClause | ts.DefaultClause;
+
+export declare type ContainerNodes = StatementContainerNodes | ts.ClassDeclaration | ts.InterfaceDeclaration | ts.EnumDeclaration | ts.ClassExpression | ts.TypeLiteralNode | ts.ObjectLiteralExpression;
+
+export declare class CommentNodeParser {
+    private constructor();
+    static getOrParseChildren(container: ContainerNodes | ts.SyntaxList, sourceFile: ts.SourceFile): (ts.Node | CompilerCommentNode)[];
+    static shouldParseChildren(container: ts.Node): container is ContainerNodes;
+    static hasParsedChildren(container: ContainerNodes | ts.SyntaxList): boolean;
+    static isCommentStatement(node: ts.Node): node is CompilerCommentStatement;
+    static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement;
+    static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement;
+    static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement;
+    static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember;
+    static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile): number;
+}
+
 export declare enum CommentNodeKind {
     Statement = 0,
     ClassElement = 1,
@@ -63,3 +80,7 @@ export declare class CompilerCommentObjectLiteralElement extends CompilerComment
 export declare class CompilerCommentEnumMember extends CompilerCommentNode implements ts.Node {
     commentKind: CommentNodeKind;
 }
+
+export declare function isComment(node: {
+    kind: ts.SyntaxKind;
+}): boolean;

@@ -1,6 +1,8 @@
 import { ts, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { CommentNodeParser, ContainerNodes, isComment } from "../../../../compiler/ast/utils";
+import { CommentNodeParser, ContainerNodes } from "../CommentNodeParser";
+import { isComment } from "../isComment";
+
 describe(nameof(CommentNodeParser), () => {
     function createSourceFile(text: string) {
         return ts.createSourceFile("test.ts", text, ts.ScriptTarget.Latest, false);
