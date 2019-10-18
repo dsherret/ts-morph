@@ -1,5 +1,5 @@
+import { CompilerCommentEnumMember } from "@ts-morph/comment-parser";
 import { removeChildrenWithFormatting, FormattingKind } from "../../../manipulation";
-import { CompilerCommentEnumMember } from "../comment";
 import { Node } from "../common";
 
 export class CommentEnumMember extends Node<CompilerCommentEnumMember> {

@@ -1,7 +1,8 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
+import { CompilerCommentNode, CompilerCommentStatement } from "@ts-morph/comment-parser";
 import { expect } from "chai";
-import { CompilerCommentNode, CompilerCommentStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+
 describe(nameof(CompilerCommentNode), () => {
     interface ExpectedResult {
         pos: number;

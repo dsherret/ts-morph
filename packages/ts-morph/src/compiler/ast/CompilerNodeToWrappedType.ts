@@ -1,7 +1,7 @@
 import { ts } from "@ts-morph/common";
-import * as compiler from "./index";
 import { CompilerCommentNode, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentObjectLiteralElement, CompilerCommentTypeElement,
-    CompilerCommentEnumMember } from "./comment";
+    CompilerCommentEnumMember } from "@ts-morph/comment-parser";
+import * as compiler from "./index";
 import { ImplementedKindToNodeMappings } from "./kindToNodeMappings";
 
 export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? compiler.ObjectDestructuringAssignment

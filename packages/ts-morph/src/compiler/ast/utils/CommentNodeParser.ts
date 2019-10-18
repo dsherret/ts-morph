@@ -1,6 +1,6 @@
 import { errors, getSyntaxKindName, StringUtils, ts, SyntaxKind } from "@ts-morph/common";
 import { CompilerCommentNode, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement, CompilerCommentObjectLiteralElement,
-    CompilerCommentEnumMember, CommentNodeKind } from "../comment/CompilerComments";
+    CompilerCommentEnumMember, CommentNodeKind } from "@ts-morph/comment-parser";
 
 enum CommentKind {
     SingleLine,
@@ -73,23 +73,23 @@ export class CommentNodeParser {
     }
 
     static isCommentStatement(node: ts.Node): node is CompilerCommentStatement {
-        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.Statement;
+        return (node as CompilerCommentNode).commentKind === CommentNodeKind.Statement;
     }
 
     static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement {
-        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.ClassElement;
+        return (node as CompilerCommentNode).commentKind === CommentNodeKind.ClassElement;
     }
 
     static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement {
-        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.TypeElement;
+        return (node as CompilerCommentNode).commentKind === CommentNodeKind.TypeElement;
     }
 
     static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement {
-        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.ObjectLiteralElement;
+        return (node as CompilerCommentNode).commentKind === CommentNodeKind.ObjectLiteralElement;
     }
 
     static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember {
-        return (node as CompilerCommentNode)._commentKind === CommentNodeKind.EnumMember;
+        return (node as CompilerCommentNode).commentKind === CommentNodeKind.EnumMember;
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {

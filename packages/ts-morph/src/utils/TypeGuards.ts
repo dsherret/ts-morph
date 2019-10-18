@@ -6,6 +6,7 @@
 // -----------------------
 
 import { SyntaxKind } from "@ts-morph/common";
+import { CompilerCommentNode, CommentNodeKind } from "@ts-morph/comment-parser";
 import * as compiler from "../compiler";
 import { Structure } from "../structures";
 import { KindToNodeMappings } from "../compiler";
@@ -78,35 +79,35 @@ export class TypeGuards {
      * Gets if the provided node is a CommentStatement.
      */
     static isCommentStatement(node: compiler.Node): node is compiler.CommentStatement {
-        return (node.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.CommentNodeKind.Statement;
+        return (node.compilerNode as CompilerCommentNode).commentKind === CommentNodeKind.Statement;
     }
 
     /**
      * Gets if the provided node is a CommentClassElement.
      */
     static isCommentClassElement(node: compiler.Node): node is compiler.CommentClassElement {
-        return (node.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.CommentNodeKind.ClassElement;
+        return (node.compilerNode as CompilerCommentNode).commentKind === CommentNodeKind.ClassElement;
     }
 
     /**
      * Gets if the provided value is a CommentTypeElement.
      */
     static isCommentTypeElement(node: compiler.Node): node is compiler.CommentTypeElement {
-        return (node.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.CommentNodeKind.TypeElement;
+        return (node.compilerNode as CompilerCommentNode).commentKind === CommentNodeKind.TypeElement;
     }
 
     /**
      * Gets if the provided node is a CommentObjectLiteralElement.
      */
     static isCommentObjectLiteralElement(node: compiler.Node): node is compiler.CommentObjectLiteralElement {
-        return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;
+        return (node.compilerNode as CompilerCommentNode).commentKind === CommentNodeKind.ObjectLiteralElement;
     }
 
     /**
      * Gets if the provided node is a CommentEnumMember.
      */
     static isCommentEnumMember(node: compiler.Node): node is compiler.CommentEnumMember {
-        return (node.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.CommentNodeKind.EnumMember;
+        return (node.compilerNode as CompilerCommentNode).commentKind == CommentNodeKind.EnumMember;
     }
 
     /**

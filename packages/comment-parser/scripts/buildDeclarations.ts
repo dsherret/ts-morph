@@ -15,6 +15,8 @@ const declarationFile = writeProject.addExistingSourceFile("lib/ts-morph-comment
 
 const writer = declarationProject.createWriter();
 
+writer.writeLine(`import { ts, SyntaxKind } from "@ts-morph/common";`);
+
 for (const [_, declarations] of emitMainFile.getExportedDeclarations()) {
     for (const declaration of declarations) {
         if (writer.getLength() > 0)
