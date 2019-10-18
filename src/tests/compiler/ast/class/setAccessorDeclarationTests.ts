@@ -1,12 +1,12 @@
 import { expect } from "chai";
 import { ClassDeclaration, SetAccessorDeclaration, Scope } from "../../../../compiler";
-import { SetAccessorDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { SetAccessorDeclarationStructure, StructureKind } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 function getSetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
-    const setAccessor = result.firstChild.getInstanceProperties().find(f => f.getKind() === SyntaxKind.SetAccessor) as SetAccessorDeclaration;
+    const setAccessor = result.firstChild.getFirstDescendantByKindOrThrow(SyntaxKind.SetAccessor);
     return { ...result, setAccessor };
 }
 
@@ -20,6 +20,24 @@ describe(nameof(SetAccessorDeclaration), () => {
         it("should return the set accessor if a corresponding one exists", () => {
             const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n`
                 + `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
+            const { setAccessor } = getSetAccessorInfo(code);
+            expect(setAccessor.getGetAccessor()!.getText()).to.equal(`get identifier() { return ""; }`);
+        });
+
+        it("should return the static set accessor if a corresponding one exists", () => {
+            const code = `class Identifier { static get identifier() { return ""; } static set identifier(val: string) {}\n}`;
+            const { setAccessor } = getSetAccessorInfo(code);
+            expect(setAccessor.getGetAccessor()!.getText()).to.equal(`static get identifier() { return ""; }`);
+        });
+
+        it("should return undefined if a set accessor with the same name doesn't have the same staticness", () => {
+            const code = `class Identifier { static get identifier() { return ""; } set identifier(val: string) {}\n}`;
+            const { setAccessor } = getSetAccessorInfo(code);
+            expect(setAccessor.getGetAccessor()).to.be.undefined;
+        });
+
+        it("should get the set accessor in an object literal", () => {
+            const code = `const obj = { get identifier() { return ""; }, set identifier(val: string) {}\n};`;
             const { setAccessor } = getSetAccessorInfo(code);
             expect(setAccessor.getGetAccessor()!.getText()).to.equal(`get identifier() { return ""; }`);
         });

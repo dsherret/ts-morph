@@ -6,7 +6,7 @@ import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures 
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
-    const getAccessor = result.firstChild.getInstanceProperties().find(f => f.getKind() === SyntaxKind.GetAccessor) as GetAccessorDeclaration;
+    const getAccessor = result.firstChild.getFirstDescendantByKindOrThrow(SyntaxKind.GetAccessor);
     return { ...result, getAccessor };
 }
 
@@ -20,6 +20,24 @@ describe(nameof(GetAccessorDeclaration), () => {
         it("should return the set accessor if a corresponding one exists", () => {
             const code = `class Identifier { get identifier() { return ""; } set identifier(val: string) {}\n`
                 + `get identifier2(): string { return "" }\nset identifier2(value: string) {} }`;
+            const { getAccessor } = getGetAccessorInfo(code);
+            expect(getAccessor.getSetAccessor()!.getText()).to.equal("set identifier(val: string) {}");
+        });
+
+        it("should return the static set accessor if a corresponding one exists", () => {
+            const code = `class Identifier { static get identifier() { return ""; } static set identifier(val: string) {}\n}`;
+            const { getAccessor } = getGetAccessorInfo(code);
+            expect(getAccessor.getSetAccessor()!.getText()).to.equal("static set identifier(val: string) {}");
+        });
+
+        it("should return undefined if a set accessor with the same name doesn't have the same staticness", () => {
+            const code = `class Identifier { static get identifier() { return ""; } set identifier(val: string) {}\n}`;
+            const { getAccessor } = getGetAccessorInfo(code);
+            expect(getAccessor.getSetAccessor()).to.be.undefined;
+        });
+
+        it("should get the set accessor in an object literal", () => {
+            const code = `const obj = { get identifier() { return ""; }, set identifier(val: string) {}\n};`;
             const { getAccessor } = getGetAccessorInfo(code);
             expect(getAccessor.getSetAccessor()!.getText()).to.equal("set identifier(val: string) {}");
         });

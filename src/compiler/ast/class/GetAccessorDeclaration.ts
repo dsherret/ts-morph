@@ -1,12 +1,13 @@
 import * as errors from "../../../errors";
 import { GetAccessorDeclarationStructure, GetAccessorDeclarationSpecificStructure, StructureKind } from "../../../structures";
-import { SyntaxKind, ts } from "../../../typescript";
+import { ts } from "../../../typescript";
+import { TypeGuards } from "../../../utils";
 import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration } from "../function";
-import { AbstractableNode } from "./base";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
 
 export const GetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
@@ -26,14 +27,14 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      * Gets the corresponding set accessor if one exists.
      */
     getSetAccessor(): SetAccessorDeclaration | undefined {
-        const parent = this.getParentIfKindOrThrow(SyntaxKind.ClassDeclaration);
         const thisName = this.getName();
-        for (const prop of parent.getInstanceProperties()) {
-            if (prop.getName() === thisName && prop.getKind() === SyntaxKind.SetAccessor)
-                return prop as SetAccessorDeclaration;
-        }
+        const isStatic = this.isStatic();
 
-        return undefined;
+        return this.getParentOrThrow().forEachChild(sibling => {
+            if (TypeGuards.isSetAccessorDeclaration(sibling) && sibling.getName() === thisName && sibling.isStatic() === isStatic)
+                return sibling;
+            return undefined;
+        });
     }
 
     /**
