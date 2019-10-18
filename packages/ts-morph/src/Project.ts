@@ -229,9 +229,31 @@ export class Project {
      * Adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
+     * @deprecated Use `addSourceFilesAtPaths`.
      */
     addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
-        return this._context.directoryCoordinator.addExistingSourceFiles(fileGlobs, { markInProject: true });
+        return this.addSourceFilesAtPaths(fileGlobs);
+    }
+
+    /**
+     * Adds source files based on file globs.
+     * @param fileGlobs - File glob or globs to add files based on.
+     * @returns The matched source files.
+     */
+    addSourceFilesAtPaths(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
+        return this._context.directoryCoordinator.addSourceFilesAtPaths(fileGlobs, { markInProject: true });
+    }
+
+    /**
+     * Adds a source file from a file path if it exists or returns undefined.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @skipOrThrowCheck
+     * @deprecated Use `addSourceFileAtPathIfExists`.
+     */
+    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
+        return this.addSourceFileAtPathIfExists(filePath);
     }
 
     /**
@@ -241,8 +263,20 @@ export class Project {
      * @param filePath - File path to get the file from.
      * @skipOrThrowCheck
      */
-    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
-        return this._context.directoryCoordinator.addExistingSourceFileIfExists(filePath, { markInProject: true });
+    addSourceFileAtPathIfExists(filePath: string): SourceFile | undefined {
+        return this._context.directoryCoordinator.addSourceFileAtPathIfExists(filePath, { markInProject: true });
+    }
+
+    /**
+     * Adds an existing source file from a file path or throws if it doesn't exist.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @throws FileNotFoundError when the file is not found.
+     * @deprecated Use `addSourceFileAtPath`.
+     */
+    addExistingSourceFile(filePath: string): SourceFile {
+        return this.addSourceFileAtPath(filePath);
     }
 
     /**
@@ -252,8 +286,8 @@ export class Project {
      * @param filePath - File path to get the file from.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string): SourceFile {
-        return this._context.directoryCoordinator.addExistingSourceFile(filePath, { markInProject: true });
+    addSourceFileAtPath(filePath: string): SourceFile {
+        return this._context.directoryCoordinator.addSourceFileAtPath(filePath, { markInProject: true });
     }
 
     /**
