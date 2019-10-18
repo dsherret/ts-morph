@@ -307,7 +307,7 @@ export class Project {
     private _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: CompilerOptions) {
         const paths = tsConfigResolver.getPaths(compilerOptions);
 
-        const addedSourceFiles = paths.filePaths.map(p => this.addExistingSourceFile(p));
+        const addedSourceFiles = paths.filePaths.map(p => this.addSourceFileAtPath(p));
         for (const dirPath of paths.directoryPaths)
             this.addExistingDirectoryIfExists(dirPath);
         return addedSourceFiles;

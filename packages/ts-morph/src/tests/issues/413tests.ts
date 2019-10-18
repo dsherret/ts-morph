@@ -12,7 +12,7 @@ describe("tests for issue #413", () => {
         fs.writeFileSync("/dir2/foo.ts", "");
         fs.writeFileSync("/dir2/bar.ts", "");
 
-        const sourceFiles = project.addExistingSourceFiles(["*.ts", "dir/*.ts"]);
+        const sourceFiles = project.addSourceFilesAtPaths(["*.ts", "dir/*.ts"]);
         expect(sourceFiles.length).to.equal(3); // won't get in dir2 directory
     });
 });
