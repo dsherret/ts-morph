@@ -1,0 +1,40 @@
+{
+  "name": "@ts-morph/comment-parser",
+  "version": "0.1.0",
+  "description": "Parser on top of the TypeScript Compiler API used by ts-morph for parsing comments.",
+  "keywords": ["typescript", "compiler", "comment", "parser"],
+  "main": "dist/ts-morph-comment-parser.js",
+  "typings": "lib/ts-morph-comment-parser.d.ts",
+  "author": "David Sherret",
+  "license": "MIT",
+  "repository": "git+https://github.com/dsherret/ts-morph.git",
+  "scripts": {
+    "build": "rimraf dist && yarn rollup && yarn build:declarations",
+    "build:declarations": "ts-node --compiler ttypescript --project scripts/tsconfig.json --transpile-only scripts/buildDeclarations.ts",
+    "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha --opts mocha.opts",
+    "test:ci": "yarn test",
+    "test:debug": "yarn test --inspect-brk",
+    "test:ts-versions": "ts-node --transpile-only scripts/test/testTypeScriptVersions",
+    "rollup": "rollup --config"
+  },
+  "dependencies": {
+    "@ts-morph/common": "~0.1.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.3",
+    "@types/mocha": "^5.2.7",
+    "@types/ts-nameof": "^4.0.0",
+    "@ts-morph/common": "~0.1.0",
+    "@ts-morph/scripts": "~0.1.0",
+    "chai": "^4.2.0",
+    "cross-env": "^6.0.3",
+    "mocha": "^6.2.1",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.23.1",
+    "rollup-plugin-typescript2": "^0.24.3",
+    "ts-morph": "npm:ts-morph@4.2.0",
+    "ts-nameof": "^4.0.3",
+    "ts-node": "^8.4.1",
+    "ttypescript": "^1.5.7"
+  }
+}
