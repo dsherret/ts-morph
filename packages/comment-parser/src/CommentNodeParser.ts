@@ -1,6 +1,6 @@
 import { errors, getSyntaxKindName, StringUtils, ts, SyntaxKind } from "@ts-morph/common";
-import { CompilerCommentNode, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement, CompilerCommentObjectLiteralElement,
-    CompilerCommentEnumMember, CommentNodeKind } from "./CompilerComments";
+import { CompilerCommentNode, CompilerCommentList, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement, CompilerCommentObjectLiteralElement,
+    CompilerCommentEnumMember, CommentListKind } from "./CompilerComments";
 
 enum CommentKind {
     SingleLine,
@@ -73,23 +73,23 @@ export class CommentNodeParser {
     }
 
     static isCommentStatement(node: ts.Node): node is CompilerCommentStatement {
-        return (node as CompilerCommentNode).commentKind === CommentNodeKind.Statement;
+        return (node as CompilerCommentList).commentListKind === CommentListKind.Statement;
     }
 
     static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement {
-        return (node as CompilerCommentNode).commentKind === CommentNodeKind.ClassElement;
+        return (node as CompilerCommentList).commentListKind === CommentListKind.ClassElement;
     }
 
     static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement {
-        return (node as CompilerCommentNode).commentKind === CommentNodeKind.TypeElement;
+        return (node as CompilerCommentList).commentListKind === CommentListKind.TypeElement;
     }
 
     static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement {
-        return (node as CompilerCommentNode).commentKind === CommentNodeKind.ObjectLiteralElement;
+        return (node as CompilerCommentList).commentListKind === CommentListKind.ObjectLiteralElement;
     }
 
     static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember {
-        return (node as CompilerCommentNode).commentKind === CommentNodeKind.EnumMember;
+        return (node as CompilerCommentList).commentListKind === CommentListKind.EnumMember;
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {
@@ -285,7 +285,7 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
         return errors.throwNotImplementedForNeverValueError(container);
     }
 
-    function getCreationFunction(): (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => CompilerCommentNode {
+    function getCreationFunction(): (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => CompilerCommentList {
         const ctor = getCtor();
         return (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => new ctor(fullStart, pos, end, kind, sourceFile, container);
 
