@@ -42,7 +42,7 @@ export function getEndPosFromIndex(index: number, parent: Node, children: Node[]
             if (closeBraceToken == null)
                 endPos = parent.getEnd();
             else
-                endPos = closeBraceToken.getNonWhitespaceStart();
+                endPos = closeBraceToken.getStart();
         }
     }
     else {

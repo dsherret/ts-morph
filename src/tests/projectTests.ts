@@ -1199,6 +1199,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(t => t.forgetNodesCreatedInBlock), () => {
         describe("synchronous", () => {
+            // todo: this should be moved into an "it" block
             const project = new Project({ useVirtualFileSystem: true });
             let sourceFile: SourceFile;
             let sourceFileNotNavigated: SourceFile;
