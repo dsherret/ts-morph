@@ -1,13 +1,14 @@
-# Changelog
+# Change Log
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [4.3.1](https://github.com/dsherret/ts-morph/compare/4.3.0...4.3.1) (2019-10-18)
+<a name="4.3.2"></a>
+## [4.3.2](https://github.com/dsherret/ts-morph/compare/4.3.1...4.3.2) (2019-10-22)
 
 
 ### Bug Fixes
 
-* Fix getGetAccessor() and getSetAccessor() to respect the static modifier and work on object literal declarations. ([525b83c](https://github.com/dsherret/ts-morph/commit/525b83c))
+* [#745](https://github.com/dsherret/ts-morph/issues/745) - Inserting a member when a comment was the last member would throw. ([d83c031](https://github.com/dsherret/ts-morph/commit/d83c031))
 
 
 
