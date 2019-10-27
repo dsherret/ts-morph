@@ -279,7 +279,7 @@ describe(nameof(Project), () => {
                 "/// <reference path='node_modules/first.d.ts' />\n/// <reference path='node_modules/library/node_modules/second.d.ts' />");
 
             const project = new Project({ fileSystem });
-            project.addExistingSourceFile("/main.ts");
+            project.addSourceFileAtPath("/main.ts");
             project.resolveSourceFileDependencies();
             assertHasSourceFiles(project, ["/main.ts"]);
             assertHasDirectories(project, ["/"]);
@@ -663,47 +663,47 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addExistingSourceFile), () => {
+    describe(nameof<Project>(project => project.addSourceFileAtPath), () => {
         it("should throw an exception if adding a source file at a non-existent path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
             expect(() => {
-                project.addExistingSourceFile("non-existent-file.ts");
+                project.addSourceFileAtPath("non-existent-file.ts");
             }).to.throw(errors.FileNotFoundError, `File not found: /non-existent-file.ts`);
         });
 
         it("should add a source file that exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
             const project = new Project({ fileSystem });
-            const sourceFile = project.addExistingSourceFile("file.ts");
+            const sourceFile = project.addSourceFileAtPath("file.ts");
             expect(sourceFile).to.not.be.undefined;
             expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.Latest);
         });
     });
 
-    describe(nameof<Project>(project => project.addExistingSourceFileIfExists), () => {
+    describe(nameof<Project>(project => project.addSourceFileAtPathIfExists), () => {
         it("should return undefined if adding a source file at a non-existent path", () => {
             const project = new Project({ useVirtualFileSystem: true });
-            expect(project.addExistingSourceFileIfExists("non-existent-file.ts")).to.be.undefined;
+            expect(project.addSourceFileAtPathIfExists("non-existent-file.ts")).to.be.undefined;
         });
 
         it("should add a source file that exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
             const project = new Project({ fileSystem });
-            const sourceFile = project.addExistingSourceFileIfExists("file.ts");
+            const sourceFile = project.addSourceFileAtPathIfExists("file.ts");
             expect(sourceFile).to.not.be.undefined;
             expect(sourceFile!.getLanguageVersion()).to.equal(ScriptTarget.Latest);
         });
     });
 
-    describe(nameof<Project>(project => project.addExistingSourceFiles), () => {
+    describe(nameof<Project>(project => project.addSourceFilesAtPaths), () => {
         it("should add based on a string file glob", () => {
             const project = new Project({ useVirtualFileSystem: true });
             const fs = project.getFileSystem();
             fs.writeFileSync("file1.ts", "");
             fs.writeFileSync("dir/file.ts", "");
             fs.writeFileSync("dir/subDir/file.ts", "");
-            const result = project.addExistingSourceFiles("/dir/**/*.ts");
+            const result = project.addSourceFilesAtPaths("/dir/**/*.ts");
             const sourceFiles = project.getSourceFiles();
             expect(sourceFiles.length).to.equal(2);
             expect(result).to.deep.equal(sourceFiles);
@@ -720,7 +720,7 @@ describe(nameof(Project), () => {
             fs.writeFileSync("dir/file.ts", "");
             fs.writeFileSync("dir/file.d.ts", "");
             fs.writeFileSync("dir/subDir/file.ts", "");
-            const result = project.addExistingSourceFiles(["/dir/**/*.ts", "!/dir/**/*.d.ts"]);
+            const result = project.addSourceFilesAtPaths(["/dir/**/*.ts", "!/dir/**/*.d.ts"]);
             const sourceFiles = project.getSourceFiles();
             expect(sourceFiles.length).to.equal(2);
             expect(result).to.deep.equal(sourceFiles);
@@ -733,7 +733,7 @@ describe(nameof(Project), () => {
             const project = new Project({ useVirtualFileSystem: true });
             const fs = project.getFileSystem();
             ["/dir", "/dir2", "/dir/child", "/dir/child/grandChild", "/dir3"].forEach(d => fs.mkdir(d));
-            const result = project.addExistingSourceFiles(["/dir/**/*.ts", "!/dir2", "/dir3/**/*.ts"]);
+            const result = project.addSourceFilesAtPaths(["/dir/**/*.ts", "!/dir2", "/dir3/**/*.ts"]);
             testHelpers.testDirectoryTree(project.getDirectoryOrThrow("/dir"), {
                 directory: project.getDirectoryOrThrow("/dir"),
                 children: [{
@@ -850,7 +850,7 @@ describe(nameof(Project), () => {
         function createProject() {
             const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles");
             const project = new Project();
-            project.addExistingSourceFiles(`${testFilesDirPath}/**/*.ts`);
+            project.addSourceFilesAtPaths(`${testFilesDirPath}/**/*.ts`);
             project.createSourceFile(
                 path.join(testFilesDirPath, "variableTestFile.ts"),
                 `import * as testClasses from "./testClasses";\n\nlet myVar = new testClasses.TestClass().name;\n`

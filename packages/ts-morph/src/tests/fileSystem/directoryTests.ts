@@ -361,31 +361,31 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.addExistingSourceFileIfExists), () => {
+    describe(nameof<Directory>(d => d.addSourceFileAtPathIfExists), () => {
         it("should return undefined if adding a source file at a non-existent path", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
             const directory = project.createDirectory("dir");
-            expect(directory.addExistingSourceFileIfExists("non-existent-file.ts")).to.be.undefined;
+            expect(directory.addSourceFileAtPathIfExists("non-existent-file.ts")).to.be.undefined;
         });
 
         it("should add a source file that exists", () => {
             const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
             const project = new Project({ fileSystem });
             const directory = project.addExistingDirectory("dir");
-            const sourceFile = directory.addExistingSourceFileIfExists("file.ts");
+            const sourceFile = directory.addSourceFileAtPathIfExists("file.ts");
             expect(sourceFile).to.not.be.undefined;
             expect(sourceFile!.getLanguageVersion()).to.equal(ScriptTarget.Latest);
         });
     });
 
-    describe(nameof<Directory>(d => d.addExistingSourceFile), () => {
+    describe(nameof<Directory>(d => d.addSourceFileAtPath), () => {
         it("should throw an exception if adding a source file at a non-existent path", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
             const directory = project.createDirectory("dir");
             expect(() => {
-                directory.addExistingSourceFile("non-existent-file.ts");
+                directory.addSourceFileAtPath("non-existent-file.ts");
             }).to.throw(errors.FileNotFoundError, `File not found: /dir/non-existent-file.ts`);
         });
 
@@ -393,34 +393,34 @@ describe(nameof(Directory), () => {
             const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
             const project = new Project({ fileSystem });
             const directory = project.addExistingDirectory("dir");
-            const sourceFile = directory.addExistingSourceFile("file.ts");
+            const sourceFile = directory.addSourceFileAtPath("file.ts");
             expect(sourceFile).to.not.be.undefined;
             expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.Latest);
         });
     });
 
-    describe(nameof<Directory>(d => d.addExistingSourceFiles), () => {
+    describe(nameof<Directory>(d => d.addSourceFilesAtPaths), () => {
         const fileSystem = getFileSystemHostWithFiles([{ filePath: "otherDir/file.ts", text: "" }, { filePath: "dir/dir1/dir1/file.ts", text: "" }],
             ["dir", "dir/dir1", "dir/dir2", "dir/dir1/dir1", "otherDir"]);
 
         it("should add source files by a relative file glob", () => {
             const project = new Project({ fileSystem });
             const directory = project.addExistingDirectory("dir");
-            const sourceFiles = directory.addExistingSourceFiles("**/*.ts");
+            const sourceFiles = directory.addSourceFilesAtPaths("**/*.ts");
             expect(sourceFiles.map(s => s.getFilePath())).to.deep.equal(["/dir/dir1/dir1/file.ts"]);
         });
 
         it("should add source files by multiple file globs", () => {
             const project = new Project({ fileSystem });
             const directory = project.addExistingDirectory("dir");
-            const sourceFiles = directory.addExistingSourceFiles(["**/*.ts", "../**/*.ts"]);
+            const sourceFiles = directory.addSourceFilesAtPaths(["**/*.ts", "../**/*.ts"]);
             expect(sourceFiles.map(s => s.getFilePath())).to.deep.equal(["/dir/dir1/dir1/file.ts", "/otherDir/file.ts"]);
         });
 
         it("should add source files by an absolute file glob", () => {
             const project = new Project({ fileSystem });
             const directory = project.addExistingDirectory("dir");
-            const sourceFiles = directory.addExistingSourceFiles("/otherDir/**/*.ts");
+            const sourceFiles = directory.addSourceFilesAtPaths("/otherDir/**/*.ts");
             expect(sourceFiles.map(s => s.getFilePath())).to.deep.equal(["/otherDir/file.ts"]);
         });
     });
@@ -1440,7 +1440,7 @@ describe(nameof(Directory), () => {
                 const project = new Project({ fileSystem });
                 const directory = project.addExistingDirectory("dir");
                 const childDir = directory.createDirectory("childDir");
-                const sourceFile = directory.addExistingSourceFile("file.ts");
+                const sourceFile = directory.addSourceFileAtPath("file.ts");
                 const otherSourceFile = project.createSourceFile("otherFile.ts");
 
                 deleteImmediately(directory, () => {

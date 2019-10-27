@@ -240,8 +240,18 @@ export class Directory {
      * Add source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
+     * @deprecated Use `addSourceFilesAtPaths`.
      */
     addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
+        return this.addSourceFilesAtPaths(fileGlobs);
+    }
+
+    /**
+     * Add source files based on file globs.
+     * @param fileGlobs - File glob or globs to add files based on.
+     * @returns The matched source files.
+     */
+    addSourceFilesAtPaths(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
         fileGlobs = typeof fileGlobs === "string" ? [fileGlobs] : fileGlobs;
         fileGlobs = fileGlobs.map(g => {
             if (FileUtils.pathIsAbsolute(g))
@@ -250,7 +260,7 @@ export class Directory {
             return FileUtils.pathJoin(this.getPath(), g);
         });
 
-        return this._context.directoryCoordinator.addExistingSourceFiles(fileGlobs, { markInProject: this._isInProject() });
+        return this._context.directoryCoordinator.addSourceFilesAtPaths(fileGlobs, { markInProject: this._isInProject() });
     }
 
     /**
@@ -317,10 +327,34 @@ export class Directory {
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
      * @skipOrThrowCheck
+     * @deprecated Use `addSourceFileAtPathIfExists`.
      */
     addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
+        return this.addSourceFileAtPathIfExists(relativeFilePath);
+    }
+
+    /**
+     * Adds an existing source file, relative to this directory, or returns undefined.
+     *
+     * Will return the source file if it was already added.
+     * @param relativeFilePath - Relative file path to add.
+     * @skipOrThrowCheck
+     */
+    addSourceFileAtPathIfExists(relativeFilePath: string): SourceFile | undefined {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this._context.directoryCoordinator.addExistingSourceFileIfExists(filePath, { markInProject: this._isInProject() });
+        return this._context.directoryCoordinator.addSourceFileAtPathIfExists(filePath, { markInProject: this._isInProject() });
+    }
+
+    /**
+     * Adds an existing source file, relative to this directory, or throws if it doesn't exist.
+     *
+     * Will return the source file if it was already added.
+     * @param relativeFilePath - Relative file path to add.
+     * @throws FileNotFoundError when the file doesn't exist.
+     * @deprecated Use `addSourceFileAtPath`.
+     */
+    addExistingSourceFile(relativeFilePath: string): SourceFile {
+        return this.addSourceFileAtPath(relativeFilePath);
     }
 
     /**
@@ -330,9 +364,9 @@ export class Directory {
      * @param relativeFilePath - Relative file path to add.
      * @throws FileNotFoundError when the file doesn't exist.
      */
-    addExistingSourceFile(relativeFilePath: string): SourceFile {
+    addSourceFileAtPath(relativeFilePath: string): SourceFile {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this._context.directoryCoordinator.addExistingSourceFile(filePath, { markInProject: this._isInProject() });
+        return this._context.directoryCoordinator.addSourceFileAtPath(filePath, { markInProject: this._isInProject() });
     }
 
     /**
