@@ -252,11 +252,19 @@ export declare class Directory {
      */
     getDescendantDirectories(): Directory[];
     /**
+     * @deprecated Use `addSourceFilesAtPaths`.
+     */
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    /**
      * Add source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    addSourceFilesAtPaths(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    /**
+     * @deprecated Use `addDirectoryAtPathIfExists`
+     */
+    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
     /**
      * Adds an existing directory from the relative path or directory name, or returns undefined if it doesn't exist.
      *
@@ -264,7 +272,11 @@ export declare class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @param options - Options.
      */
-    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    addDirectoryAtPathIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    /**
+     * @deprecated Use `addDirectoryAtPath`.
+     */
+    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Adds an existing directory from the relative path or directory name, or throws if it doesn't exist.
      *
@@ -272,7 +284,7 @@ export declare class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
+    addDirectoryAtPath(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Creates a directory if it doesn't exist.
      * @param dirPath - Relative or absolute path to the directory that should be created.
@@ -289,12 +301,20 @@ export declare class Directory {
      */
     createSourceFile(relativeFilePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions): SourceFile;
     /**
+     * @deprecated Use `addSourceFileAtPathIfExists`.
+     */
+    addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined;
+    /**
      * Adds an existing source file, relative to this directory, or returns undefined.
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
      */
-    addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined;
+    addSourceFileAtPathIfExists(relativeFilePath: string): SourceFile | undefined;
+    /**
+     * @deprecated Use `addSourceFileAtPath`.
+     */
+    addExistingSourceFile(relativeFilePath: string): SourceFile;
     /**
      * Adds an existing source file, relative to this directory, or throws if it doesn't exist.
      *
@@ -302,7 +322,7 @@ export declare class Directory {
      * @param relativeFilePath - Relative file path to add.
      * @throws FileNotFoundError when the file doesn't exist.
      */
-    addExistingSourceFile(relativeFilePath: string): SourceFile;
+    addSourceFileAtPath(relativeFilePath: string): SourceFile;
     /**
      * Emits the files in the directory.
      * @param options - Options for emitting.
@@ -530,13 +550,21 @@ export declare class Project {
      */
     resolveSourceFileDependencies(): SourceFile[];
     /**
+     * @deprecated Use `addDirectoryAtPathIfExists`
+     */
+    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    /**
      * Adds an existing directory from the path or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
      * @param dirPath - Path to add the directory at.
      * @param options - Options.
      */
-    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    addDirectoryAtPathIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    /**
+     * @deprecated Use `addDirectoryAtPath`.
+     */
+    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Adds an existing directory from the path or throws if it doesn't exist.
      *
@@ -545,7 +573,7 @@ export declare class Project {
      * @param options - Options.
      * @throws DirectoryNotFoundError when the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
+    addDirectoryAtPath(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Creates a directory at the specified path.
      * @param dirPath - Path to create the directory at.
@@ -570,18 +598,30 @@ export declare class Project {
      */
     getRootDirectories(): Directory[];
     /**
+     * @deprecated Use `addSourceFilesAtPaths`.
+     */
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    /**
      * Adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    addSourceFilesAtPaths(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    /**
+     * @deprecated Use `addSourceFileAtPathIfExists`.
+     */
+    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined;
     /**
      * Adds a source file from a file path if it exists or returns undefined.
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
      */
-    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined;
+    addSourceFileAtPathIfExists(filePath: string): SourceFile | undefined;
+    /**
+     * @deprecated Use `addSourceFileAtPath`.
+     */
+    addExistingSourceFile(filePath: string): SourceFile;
     /**
      * Adds an existing source file from a file path or throws if it doesn't exist.
      *
@@ -589,7 +629,7 @@ export declare class Project {
      * @param filePath - File path to get the file from.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string): SourceFile;
+    addSourceFileAtPath(filePath: string): SourceFile;
     /**
      * Adds all the source files from the specified tsconfig.json.
      *
@@ -4591,8 +4631,9 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     getNonWhitespaceStart(): number;
     /**
      * Gets the text length of the node without trivia.
+     * @param includeJsDocComments - Whether to include the JS doc comments in the width or not.
      */
-    getWidth(): number;
+    getWidth(includeJsDocComments?: boolean): number;
     /**
      * Gets the text length of the node with trivia.
      */

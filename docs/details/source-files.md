@@ -63,7 +63,7 @@ import { Project } from "ts-morph";
 
 // queue up all the source files to be deleted
 const project = new Project();
-project.addExistingSourceFiles("folder/**/*.ts")
+project.addSourceFilesAtPaths("folder/**/*.ts")
 
 project.getSourceFileOrThrow("someFile.ts").delete();
 project.getSourceFileOrThrow("someOtherFile.ts").delete();

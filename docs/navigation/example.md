@@ -25,7 +25,7 @@ And setup:
 import { Project } from "ts-morph";
 
 const project = new Project();
-project.addExistingSourceFiles("**/*.ts");
+project.addSourceFilesAtPaths("**/*.ts");
 ```
 
 ### Use

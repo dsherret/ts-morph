@@ -237,9 +237,6 @@ export class Directory {
     }
 
     /**
-     * Add source files based on file globs.
-     * @param fileGlobs - File glob or globs to add files based on.
-     * @returns The matched source files.
      * @deprecated Use `addSourceFilesAtPaths`.
      */
     addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
@@ -263,6 +260,11 @@ export class Directory {
         return this._context.directoryCoordinator.addSourceFilesAtPaths(fileGlobs, { markInProject: this._isInProject() });
     }
 
+    /** @deprecated Use `addDirectoryAtPathIfExists` */
+    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}) {
+        return this.addDirectoryAtPathIfExists(dirPath, options);
+    }
+
     /**
      * Adds an existing directory from the relative path or directory name, or returns undefined if it doesn't exist.
      *
@@ -271,12 +273,19 @@ export class Directory {
      * @param options - Options.
      * @skipOrThrowCheck
      */
-    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}) {
+    addDirectoryAtPathIfExists(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this._context.directoryCoordinator.addExistingDirectoryIfExists(
+        return this._context.directoryCoordinator.addDirectoryAtPathIfExists(
             dirPath,
             { ...options, markInProject: this._isInProject() }
         );
+    }
+
+    /**
+     * @deprecated Use `addDirectoryAtPath`.
+     */
+    addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}) {
+        return this.addDirectoryAtPath(dirPath, options);
     }
 
     /**
@@ -286,9 +295,9 @@ export class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}) {
+    addDirectoryAtPath(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this._context.directoryCoordinator.addExistingDirectory(
+        return this._context.directoryCoordinator.addDirectoryAtPath(
             dirPath,
             { ...options, markInProject: this._isInProject() }
         );
@@ -322,11 +331,6 @@ export class Directory {
     }
 
     /**
-     * Adds an existing source file, relative to this directory, or returns undefined.
-     *
-     * Will return the source file if it was already added.
-     * @param relativeFilePath - Relative file path to add.
-     * @skipOrThrowCheck
      * @deprecated Use `addSourceFileAtPathIfExists`.
      */
     addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
@@ -346,11 +350,6 @@ export class Directory {
     }
 
     /**
-     * Adds an existing source file, relative to this directory, or throws if it doesn't exist.
-     *
-     * Will return the source file if it was already added.
-     * @param relativeFilePath - Relative file path to add.
-     * @throws FileNotFoundError when the file doesn't exist.
      * @deprecated Use `addSourceFileAtPath`.
      */
     addExistingSourceFile(relativeFilePath: string): SourceFile {

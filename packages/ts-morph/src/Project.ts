@@ -156,6 +156,11 @@ export class Project {
         return Array.from(sourceFiles.values());
     }
 
+    /** @deprecated Use `addDirectoryAtPathIfExists` */
+    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
+        return this.addDirectoryAtPathIfExists(dirPath, options);
+    }
+
     /**
      * Adds an existing directory from the path or returns undefined if it doesn't exist.
      *
@@ -164,9 +169,14 @@ export class Project {
      * @param options - Options.
      * @skipOrThrowCheck
      */
-    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
+    addDirectoryAtPathIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath, { ...options, markInProject: true });
+        return this._context.directoryCoordinator.addDirectoryAtPathIfExists(dirPath, { ...options, markInProject: true });
+    }
+
+    /** @deprecated Use `addDirectoryAtPath`. */
+    addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}): Directory {
+        return this.addDirectoryAtPath(dirPath, options);
     }
 
     /**
@@ -177,9 +187,9 @@ export class Project {
      * @param options - Options.
      * @throws DirectoryNotFoundError when the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}): Directory {
+    addDirectoryAtPath(dirPath: string, options: DirectoryAddOptions = {}): Directory {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addExistingDirectory(dirPath, { ...options, markInProject: true });
+        return this._context.directoryCoordinator.addDirectoryAtPath(dirPath, { ...options, markInProject: true });
     }
 
     /**
@@ -226,9 +236,6 @@ export class Project {
     }
 
     /**
-     * Adds source files based on file globs.
-     * @param fileGlobs - File glob or globs to add files based on.
-     * @returns The matched source files.
      * @deprecated Use `addSourceFilesAtPaths`.
      */
     addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
@@ -245,11 +252,6 @@ export class Project {
     }
 
     /**
-     * Adds a source file from a file path if it exists or returns undefined.
-     *
-     * Will return the source file if it was already added.
-     * @param filePath - File path to get the file from.
-     * @skipOrThrowCheck
      * @deprecated Use `addSourceFileAtPathIfExists`.
      */
     addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
@@ -268,11 +270,6 @@ export class Project {
     }
 
     /**
-     * Adds an existing source file from a file path or throws if it doesn't exist.
-     *
-     * Will return the source file if it was already added.
-     * @param filePath - File path to get the file from.
-     * @throws FileNotFoundError when the file is not found.
      * @deprecated Use `addSourceFileAtPath`.
      */
     addExistingSourceFile(filePath: string): SourceFile {

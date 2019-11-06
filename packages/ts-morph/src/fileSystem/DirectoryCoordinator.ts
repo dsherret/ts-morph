@@ -12,7 +12,7 @@ export class DirectoryCoordinator {
     constructor(private readonly compilerFactory: CompilerFactory, private readonly fileSystemWrapper: TransactionalFileSystem) {
     }
 
-    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions & { markInProject: boolean; }) {
+    addDirectoryAtPathIfExists(dirPath: string, options: DirectoryAddOptions & { markInProject: boolean; }) {
         const directory = this.compilerFactory.getDirectoryFromPath(dirPath, options);
         if (directory == null)
             return undefined;
@@ -25,8 +25,8 @@ export class DirectoryCoordinator {
         return directory;
     }
 
-    addExistingDirectory(dirPath: string, options: DirectoryAddOptions & { markInProject: boolean; }) {
-        const directory = this.addExistingDirectoryIfExists(dirPath, options);
+    addDirectoryAtPath(dirPath: string, options: DirectoryAddOptions & { markInProject: boolean; }) {
+        const directory = this.addDirectoryAtPathIfExists(dirPath, options);
         if (directory == null)
             throw new errors.DirectoryNotFoundError(dirPath);
         return directory;
@@ -64,7 +64,7 @@ export class DirectoryCoordinator {
         }
 
         for (const dirPath of globbedDirectories)
-            this.addExistingDirectoryIfExists(dirPath, { recursive: true, markInProject: options.markInProject });
+            this.addDirectoryAtPathIfExists(dirPath, { recursive: true, markInProject: options.markInProject });
 
         return sourceFiles;
     }

@@ -42,13 +42,13 @@ project.getDirectoryOrThrow("path/to/directory");
 On a directory:
 
 ```ts
-const childDirectory = directory.addExistingDirectory("childDir"); // or addExistingDirectoryIfExists
+const childDirectory = directory.addDirectoryAtPath("childDir"); // or addDirectoryAtPathIfExists
 ```
 
 Or main `project` object:
 
 ```ts
-const directory = project.addExistingDirectory("path/to/dir"); // or addExistingDirectoryIfExists
+const directory = project.addDirectoryAtPath("path/to/dir"); // or addDirectoryAtPathIfExists
 ```
 
 ### Creating
@@ -110,7 +110,7 @@ parentDir.isAncestorOf(childSourceFile);      // true
 ```ts
 const sourceFiles = directory.getSourceFiles();
 const sourceFile = directory.getSourceFile("someFile.ts"); // or getSourceFileOrThrow
-const indexFile = directory.addExistingSourceFile("index.ts"); // or addExistingSourceFileIfExists
+const indexFile = directory.addSourceFileAtPath("index.ts"); // or addSourceFileAtPathIfExists
 const descendantSourceFiles = directory.getDescendantSourceFiles();
 
 directory.createSourceFile("someFile.ts");

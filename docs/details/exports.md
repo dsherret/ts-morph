@@ -109,7 +109,7 @@ The following code:
 import { Project, TypeGuards, ExportedDeclarations } from "ts-morph";
 
 const project = new Project();
-project.addExistingSourceFiles("**/*.ts");
+project.addSourceFilesAtPaths("**/*.ts");
 const mainFile = project.getSourceFileOrThrow("main.ts");
 
 for (const [name, declarations] of mainFile.getExportedDeclarations()) {
