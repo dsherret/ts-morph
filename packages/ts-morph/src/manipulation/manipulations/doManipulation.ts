@@ -1,5 +1,4 @@
 /* barrel:ignore */
-import chalk from "chalk";
 import { SourceFile, Diagnostic } from "../../compiler";
 import { Project, ProjectOptions } from "../../Project";
 import { errors } from "@ts-morph/common";
@@ -18,21 +17,21 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
         nodeHandler.handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
     } catch (err) {
         const diagnostics = getSyntacticDiagnostics(sourceFile, newFileText);
-        const errorDetails = chalk.yellow(err.message) + "\n\n"
-            + chalk.blue(`-- Details --\n`)
-            + chalk.gray("Path: ") + sourceFile.getFilePath() + "\n"
-            + chalk.gray("Text: ") + JSON.stringify(textManipulator.getTextForError(newFileText)) + "\n"
-            + chalk.gray("Stack: ") + err.stack;
+        const errorDetails = err.message + "\n\n"
+            + `-- Details --\n`
+            + "Path: " + sourceFile.getFilePath() + "\n"
+            + "Text: " + JSON.stringify(textManipulator.getTextForError(newFileText)) + "\n"
+            + "Stack: " + err.stack;
 
         if (diagnostics.length > 0) {
             throw new errors.InvalidOperationError(
-                chalk.red("Manipulation error: ") + chalk.yellow("A syntax error was inserted.") + "\n\n"
+                "Manipulation error: " + "A syntax error was inserted." + "\n\n"
                     + sourceFile._context.project.formatDiagnosticsWithColorAndContext(diagnostics, { newLineChar: "\n" })
                     + "\n" + errorDetails
             );
         }
 
-        throw new errors.InvalidOperationError(chalk.red("Manipulation error: ") + errorDetails);
+        throw new errors.InvalidOperationError("Manipulation error: " + errorDetails);
     }
 }
 

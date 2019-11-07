@@ -71,7 +71,6 @@
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
     "@ts-morph/common": "~0.1.0",
-    "chalk": "^2.4.2",
     "code-block-writer": "^10.0.0"
   },
   "devDependencies": {
