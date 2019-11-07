@@ -110,7 +110,3 @@ const firstProperty = classDec.getProperties()[0];
 
 // ... do more stuff here ...
 ```
-
-## Resources
-
-* [TypeScript AST Viewer](https://ts-ast-viewer.com)
