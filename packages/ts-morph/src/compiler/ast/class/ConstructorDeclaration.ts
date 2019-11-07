@@ -10,11 +10,14 @@ import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../f
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassElement } from "./ClassElement";
 
-export const ConstructorDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(ClassElement))))));
-export const ConstructorDeclarationOverloadBase = TypeParameteredNode(JSDocableNode(ChildOrderableNode(TextInsertableNode(ScopedNode(ModifierableNode(
-    SignaturedDeclaration(ClassElement)
-))))));
-
+const createConstructorDeclarationBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(OverloadableNode(
+    ScopedNode(FunctionLikeDeclaration(BodyableNode(ctor)))
+)));
+export const ConstructorDeclarationBase = createConstructorDeclarationBase(ClassElement);
+const createConstructorDeclarationOverloadBase = <T extends typeof ClassElement>(ctor: T) => TypeParameteredNode(JSDocableNode(
+    ChildOrderableNode(TextInsertableNode(ScopedNode(ModifierableNode(SignaturedDeclaration(ctor)))))
+));
+export const ConstructorDeclarationOverloadBase = createConstructorDeclarationOverloadBase(ClassElement);
 export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
      * Sets the node from a structure.

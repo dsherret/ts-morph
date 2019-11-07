@@ -12,7 +12,10 @@ import { ObjectLiteralElement } from "./ObjectLiteralElement";
 // This node only has a question token in order to tell the user about bad code.
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)
 
-export const PropertyAssignmentBase = InitializerExpressionGetableNode(QuestionTokenableNode(PropertyNamedNode(ObjectLiteralElement)));
+const createPropertyAssignmentBase = <T extends typeof ObjectLiteralElement>(ctor: T) => InitializerExpressionGetableNode(
+    QuestionTokenableNode(PropertyNamedNode(ctor))
+);
+export const PropertyAssignmentBase = createPropertyAssignmentBase(ObjectLiteralElement);
 export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**
      * Removes the initializer and returns the new shorthand property assignment.

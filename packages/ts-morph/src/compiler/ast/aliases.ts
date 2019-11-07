@@ -6,7 +6,7 @@ import { ComputedPropertyName, Identifier, Node, QualifiedName } from "./common"
 import { Decorator } from "./decorator";
 import { EnumDeclaration } from "./enum";
 import { Expression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ThisExpression, OmittedExpression,
-    CallExpression, NewExpression } from "./expression";
+    CallExpression, NewExpression, ElementAccessExpression } from "./expression";
 import { FunctionDeclaration } from "./function";
 import { SourceFile, ExternalModuleReference, ExportAssignment, NamespaceDeclaration } from "./module";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature,
@@ -37,8 +37,14 @@ type _BindingPatternTest = AssertTrue<IsExact<WrappedToCompilerNodeType<BindingP
 export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
 type _CallLikeExpressionTest = AssertTrue<IsExact<WrappedToCompilerNodeType<CallLikeExpression>, ts.CallLikeExpression>>;
 
-export type DeclarationName = Identifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
-type _DeclarationNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<DeclarationName>, ts.DeclarationName>>;
+export type EntityNameExpression = Identifier | PropertyAccessExpression;
+type _EntityNameExpressionTest = AssertTrue<IsExact<WrappedToCompilerNodeType<EntityNameExpression>, MapPropAccessEntityNameExpr<ts.EntityNameExpression>>>;
+// not going to support this brand at this time
+type MapPropAccessEntityNameExpr<T> = T extends ts.PropertyAccessEntityNameExpression ? ts.PropertyAccessExpression : T;
+
+export type DeclarationName = Identifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern
+    | EntityNameExpression;
+type _DeclarationNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<DeclarationName>, MapPropAccessEntityNameExpr<ts.DeclarationName>>>;
 
 export type EntityName = Identifier | QualifiedName;
 type _EntityNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<EntityName>, ts.EntityName>>;

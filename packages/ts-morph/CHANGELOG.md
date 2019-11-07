@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.3.3"></a>
+## [4.3.3](https://github.com/dsherret/ts-morph/compare/4.3.2...4.3.3) (2019-11-07)
+
+
+### Bug Fixes
+
+* Restrict 4.3 version of library to TS < 3.7 ([8ad2d5c](https://github.com/dsherret/ts-morph/commit/8ad2d5c))
+
+
+
 <a name="4.3.2"></a>
 ## [4.3.2](https://github.com/dsherret/ts-morph/compare/4.3.1...4.3.2) (2019-10-22)
 

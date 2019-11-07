@@ -4,7 +4,10 @@ import { Node } from "../common";
 import { Expression } from "../expression";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 
-export const ArrowFunctionBase = TextInsertableNode(BodiedNode(AsyncableNode(FunctionLikeDeclaration(Expression))));
+const createArrowFunctionBase = <T extends typeof Expression>(ctor: T) => TextInsertableNode(BodiedNode(AsyncableNode(
+    FunctionLikeDeclaration(ctor)
+)));
+export const ArrowFunctionBase = createArrowFunctionBase(Expression);
 export class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     /**
      * Gets the equals greater than token of the arrow function.
