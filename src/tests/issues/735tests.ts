@@ -11,6 +11,6 @@ describe("tests for issue #735", () => {
 
         sourceFile.getNamespaces().forEach(ns => ns.unwrap());
 
-        expect(sourceFile.getFullText()).to.equal("//  aaaa bbbb \n export class Bar {\n\tconstructor(){}\n\tsayHello(){return 'hello';}\n}\n")
+        expect(sourceFile.getFullText()).to.equal("//  aaaa bbbb \n export class Bar {\n\tconstructor(){}\n\tsayHello(){return 'hello';}\n}\n");
     });
 });

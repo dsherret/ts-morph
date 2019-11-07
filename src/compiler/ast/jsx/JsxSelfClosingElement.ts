@@ -5,7 +5,8 @@ import { callBaseSet } from "../callBaseSet";
 import { PrimaryExpression } from "../expression";
 import { JsxAttributedNode, JsxTagNamedNode } from "./base";
 
-export const JsxSelfClosingElementBase = JsxAttributedNode(JsxTagNamedNode(PrimaryExpression));
+const createJsxSelfClosingElementBase = <T extends typeof PrimaryExpression>(ctor: T) => JsxAttributedNode(JsxTagNamedNode(ctor));
+export const JsxSelfClosingElementBase = createJsxSelfClosingElementBase(PrimaryExpression);
 export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfClosingElement> {
     /**
      * Sets the node from a structure.

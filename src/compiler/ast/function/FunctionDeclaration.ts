@@ -12,12 +12,18 @@ import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const FunctionDeclarationBase = UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
-    AmbientableNode(ExportableNode(FunctionLikeDeclaration(NamespaceChildableNode(NameableNode(Statement)))))
-))))));
-export const FunctionDeclarationOverloadBase = UnwrappableNode(TextInsertableNode(AsyncableNode(GeneratorableNode(ModifierableNode(
-    SignaturedDeclaration(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Statement)))))))
-)))));
+const createFunctionDeclarationBase = <T extends typeof Statement>(ctor: T) => UnwrappableNode(TextInsertableNode(OverloadableNode(
+    BodyableNode(AsyncableNode(GeneratorableNode(AmbientableNode(ExportableNode(FunctionLikeDeclaration(
+        NamespaceChildableNode(NameableNode(ctor))
+    ))))))
+)));
+export const FunctionDeclarationBase = createFunctionDeclarationBase(Statement);
+const createFunctionDeclarationOverloadBase = <T extends typeof Statement>(ctor: T) => UnwrappableNode(TextInsertableNode(
+    AsyncableNode(GeneratorableNode(SignaturedDeclaration(AmbientableNode(NamespaceChildableNode(JSDocableNode(
+        TypeParameteredNode(ExportableNode(ModifierableNode(ctor)))
+    ))))))
+));
+export const FunctionDeclarationOverloadBase = createFunctionDeclarationOverloadBase(Statement);
 
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**

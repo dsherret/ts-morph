@@ -5,7 +5,8 @@ import { Node } from "../common";
 import { Expression } from "../expression";
 import { StatementedNode } from "./StatementedNode";
 
-export const CaseClauseBase = TextInsertableNode(StatementedNode(Node));
+const createCaseClauseBase = <T extends typeof Node>(ctor: T) => TextInsertableNode(StatementedNode(ctor));
+export const CaseClauseBase = createCaseClauseBase(Node);
 export class CaseClause extends CaseClauseBase<ts.CaseClause> {
     /**
      * Gets this switch statement's expression.

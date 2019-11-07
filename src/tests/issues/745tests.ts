@@ -9,7 +9,7 @@ describe("tests for issue #45", () => {
 }`);
         const classDec = sourceFile.getClasses()[0];
         classDec.addConstructor({
-            statements: "console.log('test');",
+            statements: "console.log('test');"
         });
 
         expect(sourceFile.getFullText()).to.equal("class Foo {\n//\n\n    constructor() {\n        console.log('test');\n    }\n}");
@@ -22,7 +22,7 @@ describe("tests for issue #45", () => {
 /*b*/}`);
         const classDec = sourceFile.getClasses()[0];
         classDec.insertConstructor(1, {
-            statements: "console.log('test');",
+            statements: "console.log('test');"
         });
 
         expect(sourceFile.getFullText()).to.equal("class Foo {\n//\n\n    constructor() {\n        console.log('test');\n    }\n\n/*b*/}");

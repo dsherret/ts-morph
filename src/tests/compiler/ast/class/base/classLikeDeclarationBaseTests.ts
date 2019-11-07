@@ -1369,7 +1369,9 @@ class c {
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getBaseTypes), () => {
         function doTest(text: string, className: string, expectedNames: string[]) {
-            const { sourceFile } = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text, {
+                includeLibDts: true // need to include the lib files... see TS issue #34963
+            });
             const types = sourceFile.getClassOrThrow(className).getBaseTypes();
             expect(types.map(c => c.getText())).to.deep.equal(expectedNames);
         }
@@ -1389,11 +1391,17 @@ class c {
         it("should get the mixin type", () => {
             doTest(`
 type Constructor<T> = new (...args: any[]) => T;
-class Base {}
-interface Mixin {}
+class Base { prop!: string; }
+interface Mixin {
+    getResult(): number;
+}
 
 function Mixin<T extends Constructor<{}>>(Base: T): Constructor<Mixin> & T {
-    return class extends Base implements Mixin {}
+    return class extends Base implements Mixin {
+        getResult() {
+            return 5;
+        }
+    }
 }
 
 class Child extends Mixin(Base) {}
@@ -1403,7 +1411,9 @@ class Child extends Mixin(Base) {}
 
     describe(nameof<ClassLikeDeclarationBase>(d => d.getBaseClass), () => {
         function doTest(text: string, className: string, expectedName: string | undefined) {
-            const { sourceFile } = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text, {
+                includeLibDts: true // need to include the lib files... see TS issue #34963
+            });
             const c = sourceFile.getClassOrThrow(className).getBaseClass();
             if (typeof expectedName === "undefined")
                 expect(c).to.be.undefined;

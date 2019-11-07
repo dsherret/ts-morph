@@ -4,7 +4,10 @@ import { ArgumentedNode, TypeArgumentedNode } from "../base";
 import { LeftHandSideExpressionedNode } from "./expressioned";
 import { LeftHandSideExpression } from "./LeftHandSideExpression";
 
-export const CallExpressionBase = TypeArgumentedNode(ArgumentedNode(LeftHandSideExpressionedNode(LeftHandSideExpression)));
+const createCallExpressionBase = <T extends typeof LeftHandSideExpression>(ctor: T) => TypeArgumentedNode(ArgumentedNode(
+    LeftHandSideExpressionedNode(ctor)
+));
+export const CallExpressionBase = createCallExpressionBase(LeftHandSideExpression);
 export class CallExpression<T extends ts.CallExpression = ts.CallExpression> extends CallExpressionBase<T> {
     /**
      * Gets the return type of the call expression.

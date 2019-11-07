@@ -7,7 +7,8 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const EnumMemberBase = JSDocableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
+const createEnumMemberBase = <T extends typeof Node>(ctor: T) => JSDocableNode(InitializerExpressionableNode(PropertyNamedNode(ctor)));
+export const EnumMemberBase = createEnumMemberBase(Node);
 export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     /**
      * Gets the constant value of the enum.

@@ -373,20 +373,20 @@ export interface ProjectOptions {
  * Project that holds source files.
  */
 export declare class Project {
-    /**
-     * Gets the manipulation settings.
-     */
-    readonly manipulationSettings: ManipulationSettingsContainer;
-    /**
-     * Gets the compiler options for modification.
-     */
-    readonly compilerOptions: CompilerOptionsContainer;
     private _getUnsavedSourceFiles;
     /**
      * Initializes a new instance.
      * @param options - Optional options.
      */
     constructor(options?: ProjectOptions);
+    /**
+     * Gets the manipulation settings.
+     */
+    get manipulationSettings(): ManipulationSettingsContainer;
+    /**
+     * Gets the compiler options for modification.
+     */
+    get compilerOptions(): CompilerOptionsContainer;
     /**
      * Adds the source files the project's source files depend on to the project.
      * @returns The added source files.
@@ -3339,11 +3339,11 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
     /**
      * Gets the binding element's dot dot dot token (...) if it exists or throws if not.
      */
-    getDotDotDotTokenOrThrow(): Node<ts.Token<SyntaxKind.DotDotDotToken>>;
+    getDotDotDotTokenOrThrow(): Node<ts.DotDotDotToken>;
     /**
      * Gets the binding element's dot dot dot token (...) if it exists or returns undefined.
      */
-    getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
+    getDotDotDotToken(): Node<ts.DotDotDotToken> | undefined;
     /**
      * Gets binding element's property name node or throws if not found.
      *
@@ -4114,7 +4114,6 @@ export declare class CompilerCommentTypeElement extends CompilerCommentNode impl
 
 export declare class CompilerCommentObjectLiteralElement extends CompilerCommentNode implements ts.ObjectLiteralElement {
     _declarationBrand: any;
-    _objectLiteralBrandBrand: any;
     _objectLiteralBrand: any;
     declarationBrand: any;
 }
@@ -4166,11 +4165,11 @@ export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName 
 export declare type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
 
 export declare class Node<NodeType extends ts.Node = ts.Node> {
+    protected constructor();
     /**
      * Gets the underlying compiler node.
      */
-    readonly compilerNode: NodeType;
-    protected constructor();
+    get compilerNode(): NodeType;
     /**
      * Releases the node and all its descendants from the underlying node cache and ast.
      *
@@ -4858,12 +4857,12 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
 }
 
 export declare class TextRange<TRange extends ts.TextRange = ts.TextRange> {
+    private _throwIfForgotten;
+    protected constructor();
     /**
      * Gets the underlying compiler object.
      */
-    readonly compilerObject: TRange;
-    private _throwIfForgotten;
-    protected constructor();
+    get compilerObject(): TRange;
     /**
      * Gets the source file of the text range.
      */
@@ -5217,11 +5216,11 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
  * JS doc tag info.
  */
 export declare class JSDocTagInfo {
+    private constructor();
     /**
      * Gets the compiler JS doc tag info.
      */
-    readonly compilerObject: ts.JSDocTagInfo;
-    private constructor();
+    get compilerObject(): ts.JSDocTagInfo;
     /**
      * Gets the name.
      */
@@ -5512,7 +5511,7 @@ export declare class AssignmentExpression<T extends ts.AssignmentExpression<ts.A
     /**
      * Gets the operator token of the assignment expression.
      */
-    getOperatorToken(): Node<ts.Token<ts.AssignmentOperator>>;
+    getOperatorToken(): Node<ts.AssignmentOperatorToken>;
 }
 
 declare const AwaitExpressionBase: Constructor<UnaryExpressionedNode> & typeof UnaryExpression;
@@ -5534,7 +5533,7 @@ export declare class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryE
     /**
      * Gets the operator token of the binary expression.
      */
-    getOperatorToken(): Node<ts.Token<ts.BinaryOperator>>;
+    getOperatorToken(): Node<ts.BinaryOperatorToken>;
     /**
      * Gets the right side of the binary expression.
      */
@@ -5573,7 +5572,7 @@ export declare class ConditionalExpression extends ConditionalExpressionBase<ts.
     /**
      * Gets the question token of the conditional expression.
      */
-    getQuestionToken(): Node<ts.Token<SyntaxKind.QuestionToken>>;
+    getQuestionToken(): Node<ts.QuestionToken>;
     /**
      * Gets the when true expression of the conditional expression.
      */
@@ -5581,7 +5580,7 @@ export declare class ConditionalExpression extends ConditionalExpressionBase<ts.
     /**
      * Gets the colon token of the conditional expression.
      */
-    getColonToken(): Node<ts.Token<SyntaxKind.ColonToken>>;
+    getColonToken(): Node<ts.ColonToken>;
     /**
      * Gets the when false expression of the conditional expression.
      */
@@ -6245,7 +6244,7 @@ export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
 }
 
 declare const FunctionDeclarationBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<FunctionLikeDeclaration> & Constructor<NamespaceChildableNode> & Constructor<NameableNode> & typeof Statement;
-declare const FunctionDeclarationOverloadBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Statement;
+declare const FunctionDeclarationOverloadBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
 
 export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
@@ -6339,7 +6338,7 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
     /**
      * Gets the dot dot dot token (...) if it exists, for a rest parameter.
      */
-    getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
+    getDotDotDotToken(): Node<ts.DotDotDotToken> | undefined;
     /**
      * Gets if it's a rest parameter.
      */
@@ -9498,7 +9497,7 @@ export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
     /**
      * Gets the type name.
      */
-    getTypeNode(): TypeNode;
+    getTypeNode(): TypeNode | undefined;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.TypePredicateNode>;
     /** @inheritdoc **/
@@ -9616,11 +9615,11 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
 }
 
 export declare class Signature {
+    private constructor();
     /**
      * Gets the underlying compiler signature.
      */
-    readonly compilerSignature: ts.Signature;
-    private constructor();
+    get compilerSignature(): ts.Signature;
     /**
      * Gets the type parameters.
      */
@@ -9648,11 +9647,11 @@ export declare class Signature {
 }
 
 export declare class Symbol {
+    private constructor();
     /**
      * Gets the underlying compiler symbol.
      */
-    readonly compilerSymbol: ts.Symbol;
-    private constructor();
+    get compilerSymbol(): ts.Symbol;
     /**
      * Gets the symbol name.
      */
@@ -9813,14 +9812,14 @@ export declare class LanguageService {
     private readonly _compilerObject;
     private readonly _compilerHost;
     private _program;
-    /**
-     * Gets the compiler language service.
-     */
-    readonly compilerObject: ts.LanguageService;
     private _getFilePathFromFilePathOrSourceFile;
     private _getFilledSettings;
     private _getFilledUserPreferences;
     private constructor();
+    /**
+     * Gets the compiler language service.
+     */
+    get compilerObject(): ts.LanguageService;
     /**
      * Gets the language service's program.
      */
@@ -10000,11 +9999,11 @@ export interface EmitOptionsBase {
  * Wrapper around Program.
  */
 export declare class Program {
+    private constructor();
     /**
      * Gets the underlying compiler program.
      */
-    readonly compilerObject: ts.Program;
-    private constructor();
+    get compilerObject(): ts.Program;
     /**
      * Get the program's type checker.
      */
@@ -10059,11 +10058,11 @@ export declare class Program {
  * Represents a code action.
  */
 export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
+    protected constructor();
     /**
      * Gets the compiler object.
      */
-    readonly compilerObject: TCompilerObject;
-    protected constructor();
+    get compilerObject(): TCompilerObject;
     /**
      * Description of the code action.
      */
@@ -10080,11 +10079,11 @@ export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeA
  * @remarks Commands are currently not implemented.
  */
 export declare class CombinedCodeActions {
+    private constructor();
     /**
      * Gets the compiler object.
      */
-    readonly compilerObject: ts.CombinedCodeActions;
-    private constructor();
+    get compilerObject(): ts.CombinedCodeActions;
     /**
      * Text changes to apply to each file.
      */
@@ -10148,11 +10147,11 @@ export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = 
  * Diagnostic.
  */
 export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
+    protected constructor();
     /**
      * Gets the underlying compiler diagnostic.
      */
-    readonly compilerObject: TCompilerObject;
-    protected constructor();
+    get compilerObject(): TCompilerObject;
     /**
      * Gets the source file.
      */
@@ -10191,11 +10190,11 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
  * Diagnostic message chain.
  */
 export declare class DiagnosticMessageChain {
+    private constructor();
     /**
      * Gets the underlying compiler object.
      */
-    readonly compilerObject: ts.DiagnosticMessageChain;
-    private constructor();
+    get compilerObject(): ts.DiagnosticMessageChain;
     /**
      * Gets the message text.
      */
@@ -10238,11 +10237,11 @@ export declare class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWith
  * Document span.
  */
 export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentSpan> {
+    protected constructor();
     /**
      * Gets the compiler object.
      */
-    readonly compilerObject: TCompilerObject;
-    protected constructor();
+    get compilerObject(): TCompilerObject;
     /**
      * Gets the source file this reference is in.
      */
@@ -10270,11 +10269,11 @@ export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.D
  */
 export declare class EmitOutput {
     private readonly _filePath;
+    private constructor();
     /**
      * TypeScript compiler emit result.
      */
-    readonly compilerObject: ts.EmitOutput;
-    private constructor();
+    get compilerObject(): ts.EmitOutput;
     /**
      * Gets if the emit was skipped.
      */
@@ -10289,11 +10288,11 @@ export declare class EmitOutput {
  * Result of an emit.
  */
 export declare class EmitResult {
+    protected constructor();
     /**
      * TypeScript compiler emit result.
      */
-    readonly compilerObject: ts.EmitResult;
-    protected constructor();
+    get compilerObject(): ts.EmitResult;
     /**
      * If the emit was skipped.
      */
@@ -10396,11 +10395,11 @@ export declare class MemoryEmitResult extends EmitResult {
  * Output file of an emit.
  */
 export declare class OutputFile {
+    private constructor();
     /**
      * TypeScript compiler output file.
      */
-    readonly compilerObject: ts.OutputFile;
-    private constructor();
+    get compilerObject(): ts.OutputFile;
     /**
      * Gets the file path.
      */
@@ -10419,11 +10418,11 @@ export declare class OutputFile {
  * Set of edits to make in response to a refactor action, plus an optional location where renaming should be invoked from.
  */
 export declare class RefactorEditInfo {
+    private constructor();
     /**
      * Gets the compiler refactor edit info.
      */
-    readonly compilerObject: ts.RefactorEditInfo;
-    private constructor();
+    get compilerObject(): ts.RefactorEditInfo;
     /**
      * Gets refactor file text changes
      */
@@ -10449,11 +10448,11 @@ export declare class RefactorEditInfo {
  * Referenced symbol.
  */
 export declare class ReferencedSymbol {
+    private constructor();
     /**
      * Gets the compiler referenced symbol.
      */
-    readonly compilerObject: ts.ReferencedSymbol;
-    private constructor();
+    get compilerObject(): ts.ReferencedSymbol;
     /**
      * Gets the definition.
      */
@@ -10500,11 +10499,11 @@ export declare class RenameLocation extends DocumentSpan<ts.RenameLocation> {
  * Symbol display part.
  */
 export declare class SymbolDisplayPart {
+    private constructor();
     /**
      * Gets the compiler symbol display part.
      */
-    readonly compilerObject: ts.SymbolDisplayPart;
-    private constructor();
+    get compilerObject(): ts.SymbolDisplayPart;
     /**
      * Gets the text.
      */
@@ -10521,11 +10520,11 @@ export declare class SymbolDisplayPart {
  * Represents a text change.
  */
 export declare class TextChange {
+    private constructor();
     /**
      * Gets the compiler text change.
      */
-    readonly compilerObject: ts.TextChange;
-    private constructor();
+    get compilerObject(): ts.TextChange;
     /**
      * Gets the text span.
      */
@@ -10540,11 +10539,11 @@ export declare class TextChange {
  * Represents a span of text.
  */
 export declare class TextSpan {
+    private constructor();
     /**
      * Gets the compiler text span.
      */
-    readonly compilerObject: ts.TextSpan;
-    private constructor();
+    get compilerObject(): ts.TextSpan;
     /**
      * Gets the start.
      */
@@ -10563,12 +10562,12 @@ export declare class TextSpan {
  * Wrapper around the TypeChecker.
  */
 export declare class TypeChecker {
+    private _getDefaultTypeFormatFlags;
+    private constructor();
     /**
      * Gets the compiler's TypeChecker.
      */
-    readonly compilerObject: ts.TypeChecker;
-    private _getDefaultTypeFormatFlags;
-    private constructor();
+    get compilerObject(): ts.TypeChecker;
     /**
      * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
      */
@@ -10691,13 +10690,13 @@ export declare class TypeChecker {
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {
-    /**
-     * Gets the underlying compiler type.
-     */
-    readonly compilerType: TType;
     private _hasTypeFlag;
     private _hasObjectFlag;
     protected constructor();
+    /**
+     * Gets the underlying compiler type.
+     */
+    get compilerType(): TType;
     /**
      * Gets the type text.
      * @param enclosingNode - The enclosing node.
