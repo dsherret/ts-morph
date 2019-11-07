@@ -8,10 +8,10 @@ import { Statement } from "./Statement";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../variable";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createVariableStatementBase = <T extends typeof Statement>(ctor: T) => NamespaceChildableNode(JSDocableNode(AmbientableNode(
+const createBase = <T extends typeof Statement>(ctor: T) => NamespaceChildableNode(JSDocableNode(AmbientableNode(
     ExportableNode(ModifierableNode(ctor))
 )));
-export const VariableStatementBase = createVariableStatementBase(Statement);
+export const VariableStatementBase = createBase(Statement);
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /**
      * Get variable declaration list.

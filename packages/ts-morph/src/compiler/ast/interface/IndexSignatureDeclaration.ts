@@ -7,10 +7,10 @@ import { TypeNode } from "../type";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createIndexSignatureDeclarationBase = <T extends typeof TypeElement>(ctor: T) => ReturnTypedNode(ChildOrderableNode(JSDocableNode(
+const createBase = <T extends typeof TypeElement>(ctor: T) => ReturnTypedNode(ChildOrderableNode(JSDocableNode(
     ReadonlyableNode(ModifierableNode(ctor))
 )));
-export const IndexSignatureDeclarationBase = createIndexSignatureDeclarationBase(TypeElement);
+export const IndexSignatureDeclarationBase = createBase(TypeElement);
 export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.IndexSignatureDeclaration> {
     /**
      * Gets the key name.

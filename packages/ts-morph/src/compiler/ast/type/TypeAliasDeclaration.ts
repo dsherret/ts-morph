@@ -6,10 +6,11 @@ import { Statement } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 // todo: type node should not be able to return undefined
-const createTypeAliasDeclarationBase = <T extends typeof Statement>(ctor: T) => TypeParameteredNode(TypedNode(JSDocableNode(AmbientableNode(
+
+const createBase = <T extends typeof Statement>(ctor: T) => TypeParameteredNode(TypedNode(JSDocableNode(AmbientableNode(
     ExportableNode(ModifierableNode(NamedNode(ctor)))
 ))));
-export const TypeAliasDeclarationBase = createTypeAliasDeclarationBase(Statement);
+export const TypeAliasDeclarationBase = createBase(Statement);
 export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {
     /**
      * Sets the node from a structure.

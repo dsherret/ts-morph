@@ -78,6 +78,7 @@ export class TextRange<TRange extends ts.TextRange = ts.TextRange> {
         return this._compilerObject == null;
     }
 
+    /** @internal */
     private _throwIfForgotten() {
         if (this._compilerObject != null)
             return;

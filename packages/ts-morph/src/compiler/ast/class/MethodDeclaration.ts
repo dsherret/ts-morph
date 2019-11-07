@@ -11,18 +11,18 @@ import { AbstractableNode } from "./base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassElement } from "./ClassElement";
 
-const createMethodDeclarationBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(OverloadableNode(
+const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(OverloadableNode(
     BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(QuestionTokenableNode(StaticableNode(AsyncableNode(
         GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(ctor)))
     )))))))
 )));
-export const MethodDeclarationBase = createMethodDeclarationBase(ClassElement);
-const createMethodDeclarationOverloadBase = <T extends typeof ClassElement>(ctor: T) => JSDocableNode(ChildOrderableNode(
+export const MethodDeclarationBase = createBase(ClassElement);
+const createOverloadBase = <T extends typeof ClassElement>(ctor: T) => JSDocableNode(ChildOrderableNode(
     TextInsertableNode(ScopedNode(TypeParameteredNode(AbstractableNode(QuestionTokenableNode(StaticableNode(AsyncableNode(
         ModifierableNode(GeneratorableNode(SignaturedDeclaration(ctor)))
     )))))))
 ));
-export const MethodDeclarationOverloadBase = createMethodDeclarationOverloadBase(ClassElement);
+export const MethodDeclarationOverloadBase = createOverloadBase(ClassElement);
 
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**

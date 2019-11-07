@@ -1,5 +1,4 @@
-import { ts } from "@ts-morph/common";
-import * as errors from "../../../errors";
+import { ts, errors } from "@ts-morph/common";
 import { TypeNode } from "./TypeNode";
 
 /**

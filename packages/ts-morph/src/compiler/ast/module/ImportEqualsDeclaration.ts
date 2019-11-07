@@ -5,8 +5,8 @@ import { JSDocableNode, NamedNode } from "../base";
 import { Statement } from "../statement";
 import { SourceFile } from "./SourceFile";
 
-const createImportEqualsDeclarationBase = <T extends typeof Statement>(ctor: T) => JSDocableNode(NamedNode(ctor));
-export const ImportEqualsDeclarationBase = createImportEqualsDeclarationBase(Statement);
+const createBase = <T extends typeof Statement>(ctor: T) => JSDocableNode(NamedNode(ctor));
+export const ImportEqualsDeclarationBase = createBase(Statement);
 export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {
     /**
      * Gets the module reference of the import equals declaration.

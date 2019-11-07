@@ -236,6 +236,7 @@ export class TypeChecker {
             .map(s => this._context.compilerFactory.getSymbol(s));
     }
 
+    /** @internal */
     private _getDefaultTypeFormatFlags(enclosingNode?: Node) {
         let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType
             | TypeFormatFlags.WriteTypeArgumentsOfSignature) as TypeFormatFlags;

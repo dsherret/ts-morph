@@ -5,10 +5,10 @@ import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createCallSignatureDeclarationBase = <T extends typeof TypeElement>(ctor: T) => TypeParameteredNode(ChildOrderableNode(JSDocableNode(
+const createBase = <T extends typeof TypeElement>(ctor: T) => TypeParameteredNode(ChildOrderableNode(JSDocableNode(
     SignaturedDeclaration(ctor)
 )));
-export const CallSignatureDeclarationBase = createCallSignatureDeclarationBase(TypeElement);
+export const CallSignatureDeclarationBase = createBase(TypeElement);
 export class CallSignatureDeclaration extends CallSignatureDeclarationBase<ts.CallSignatureDeclaration> {
     /**
      * Sets the node from a structure.

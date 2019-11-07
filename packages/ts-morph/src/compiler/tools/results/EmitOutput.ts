@@ -14,7 +14,7 @@ export class EmitOutput {
     /**
      * @private
      */
-    constructor(context: ProjectContext, private readonly _filePath: string, compilerObject: ts.EmitOutput) {
+    constructor(context: ProjectContext, compilerObject: ts.EmitOutput) {
         this._context = context;
         this._compilerObject = compilerObject;
     }

@@ -3,7 +3,7 @@ import { TypedNode } from "../base";
 import { UnaryExpressionedNode } from "./expressioned";
 import { UnaryExpression } from "./UnaryExpression";
 
-const createTypeAssertionBase = <T extends typeof UnaryExpression>(ctor: T) => TypedNode(UnaryExpressionedNode(ctor));
-export const TypeAssertionBase = createTypeAssertionBase(UnaryExpression);
+const createBase = <T extends typeof UnaryExpression>(ctor: T) => TypedNode(UnaryExpressionedNode(ctor));
+export const TypeAssertionBase = createBase(UnaryExpression);
 export class TypeAssertion extends TypeAssertionBase<ts.TypeAssertion> {
 }

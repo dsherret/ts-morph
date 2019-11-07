@@ -11,12 +11,12 @@ import { ImplementationLocation } from "../../tools";
 import { TypeAliasDeclaration } from "../type";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createInterfaceDeclarationBase = <T extends typeof Statement>(ctor: T) => TypeElementMemberedNode(TextInsertableNode(
+const createBase = <T extends typeof Statement>(ctor: T) => TypeElementMemberedNode(TextInsertableNode(
     ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(JSDocableNode(AmbientableNode(
         NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(ctor))))
     )))))
 ));
-export const InterfaceDeclarationBase = createInterfaceDeclarationBase(Statement);
+export const InterfaceDeclarationBase = createBase(Statement);
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**
      * Gets the base types.

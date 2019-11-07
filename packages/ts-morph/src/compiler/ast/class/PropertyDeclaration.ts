@@ -7,12 +7,12 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
 
-const createPropertyDeclarationBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(
+const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(
     StaticableNode(JSDocableNode(ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(
         TypedNode(PropertyNamedNode(ModifierableNode(ctor)))
     ))))))
 ))));
-export const PropertyDeclarationBase = createPropertyDeclarationBase(ClassElement);
+export const PropertyDeclarationBase = createBase(ClassElement);
 export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
     /**
      * Sets the node from a structure.

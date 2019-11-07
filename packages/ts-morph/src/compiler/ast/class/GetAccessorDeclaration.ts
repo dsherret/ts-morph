@@ -9,10 +9,10 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
 
-const createGetAccessorDeclarationBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(DecoratableNode(
+const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(DecoratableNode(
     AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor))))))
 )));
-export const GetAccessorDeclarationBase = createGetAccessorDeclarationBase(ClassElement);
+export const GetAccessorDeclarationBase = createBase(ClassElement);
 export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAccessorDeclaration> {
     /**
      * Sets the node from a structure.

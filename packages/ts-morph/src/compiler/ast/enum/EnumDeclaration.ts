@@ -12,10 +12,10 @@ import { CommentEnumMember } from "./CommentEnumMember";
 import { ExtendedParser } from "../utils";
 import { WriterFunction } from "../../../types";
 
-const createEnumDeclarationBase = <T extends typeof Statement>(ctor: T) => TextInsertableNode(NamespaceChildableNode(JSDocableNode(
+const createBase = <T extends typeof Statement>(ctor: T) => TextInsertableNode(NamespaceChildableNode(JSDocableNode(
     AmbientableNode(ExportableNode(ModifierableNode(NamedNode(ctor))))
 )));
-export const EnumDeclarationBase = createEnumDeclarationBase(Statement);
+export const EnumDeclarationBase = createBase(Statement);
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Sets the node from a structure.

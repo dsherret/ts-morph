@@ -11,12 +11,12 @@ import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
 import { NamespaceDeclarationKind } from "./NamespaceDeclarationKind";
 
-const createNamespaceDeclarationBase = <T extends typeof Statement>(ctor: T) => ModuledNode(UnwrappableNode(
+const createBase = <T extends typeof Statement>(ctor: T) => ModuledNode(UnwrappableNode(
     TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(AmbientableNode(
         ExportableNode(ModifierableNode(NamedNode(ctor)))
     ))))))
 ));
-export const NamespaceDeclarationBase = createNamespaceDeclarationBase(Statement);
+export const NamespaceDeclarationBase = createBase(Statement);
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
      * Gets the full name of the namespace.

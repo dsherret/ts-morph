@@ -516,6 +516,7 @@ export class Project {
         this._context.logger.setEnabled(enabled);
     }
 
+    /** @internal */
     private _getUnsavedSourceFiles() {
         return Array.from(getUnsavedIterator(this._context.compilerFactory.getSourceFilesByDirectoryDepth()));
 

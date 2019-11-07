@@ -6,10 +6,10 @@ import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createPropertySignatureBase = <T extends typeof TypeElement>(ctor: T) => ChildOrderableNode(JSDocableNode(ReadonlyableNode(
+const createBase = <T extends typeof TypeElement>(ctor: T) => ChildOrderableNode(JSDocableNode(ReadonlyableNode(
     QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(ctor)))))
 )));
-export const PropertySignatureBase = createPropertySignatureBase(TypeElement);
+export const PropertySignatureBase = createBase(TypeElement);
 export class PropertySignature extends PropertySignatureBase<ts.PropertySignature> {
     /**
      * Sets the node from a structure.

@@ -7,10 +7,10 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createVariableDeclarationBase = <T extends typeof Node>(ctor: T) => ExportGetableNode(ExclamationTokenableNode(
+const createBase = <T extends typeof Node>(ctor: T) => ExportGetableNode(ExclamationTokenableNode(
     TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor)))
 ));
-export const VariableDeclarationBase = createVariableDeclarationBase(Node);
+export const VariableDeclarationBase = createBase(Node);
 export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
     /**
      * Removes this variable declaration.
