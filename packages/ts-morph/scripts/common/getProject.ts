@@ -11,7 +11,7 @@ export function getProject() {
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
         }
     });
-    project.addExistingSourceFiles(path.join(rootFolder, "src/**/*{.d.ts,.ts}"));
-    project.addExistingSourceFile(path.join(rootFolder, "node_modules/typescript/lib/typescript.d.ts"));
+    project.addSourceFilesAtPaths(path.join(rootFolder, "src/**/*{.d.ts,.ts}"));
+    project.addSourceFileAtPath(path.join(rootFolder, "node_modules/typescript/lib/typescript.d.ts"));
     return project;
 }

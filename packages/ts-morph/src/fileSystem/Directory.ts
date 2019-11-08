@@ -101,7 +101,7 @@ export class Directory {
     getParent() {
         if (FileUtils.isRootDirPath(this.getPath()))
             return undefined;
-        return this.addExistingDirectoryIfExists(FileUtils.getDirPath(this.getPath()));
+        return this.addDirectoryAtPathIfExists(FileUtils.getDirPath(this.getPath()));
     }
 
     /**

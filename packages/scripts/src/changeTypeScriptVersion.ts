@@ -11,8 +11,8 @@ export function resetTypeScriptVersion() {
 
 function setModuleSpecifierValue(value: string) {
     const project = new Project();
-    const declarationFile = project.addExistingSourceFile(path.join(__dirname, "../../common/lib/ts-morph-common.d.ts"));
-    const jsFile = project.addExistingSourceFile(path.join(__dirname, "../../common/dist/ts-morph-common.js"));
+    const declarationFile = project.addSourceFileAtPath(path.join(__dirname, "../../common/lib/ts-morph-common.d.ts"));
+    const jsFile = project.addSourceFileAtPath(path.join(__dirname, "../../common/dist/ts-morph-common.js"));
 
     for (const importDec of declarationFile.getImportDeclarations()) {
         const moduleSpecifierValue = importDec.getModuleSpecifierValue();

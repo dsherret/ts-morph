@@ -1,0 +1,13 @@
+/scripts
+/src
+azure-pipelines.yml
+mocha.opts
+.npmignore
+CHANGELOG.md
+rollup.config.js
+tsconfig.json
+tsconfig.*.json
+yarn-error.log
+# do not include lock files in order to not restrict the typescript version
+yarn.lock
+package-lock.json

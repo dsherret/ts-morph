@@ -11,7 +11,7 @@ const writeProject = new Project({
         newLineKind: NewLineKind.CarriageReturnLineFeed
     }
 });
-const declarationFile = writeProject.addExistingSourceFile("lib/ts-morph-bootstrap.d.ts");
+const declarationFile = writeProject.addSourceFileAtPath("lib/ts-morph-bootstrap.d.ts");
 
 const writer = declarationProject.createWriter();
 writer.writeLine(`import { ts } from "@ts-morph/common";`);

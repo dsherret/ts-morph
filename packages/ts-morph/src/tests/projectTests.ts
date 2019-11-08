@@ -247,7 +247,7 @@ describe(nameof(Project), () => {
             } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
 
             expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles], "initial");
-            project.addExistingDirectory("/node_modules");
+            project.addDirectoryAtPath("/node_modules");
             const result = project.resolveSourceFileDependencies();
             expect(result.map(s => s.getFilePath())).to.deep.equal([...resolvedFiles, ...nodeModuleFiles]);
             assertHasSourceFiles(project, [...initialFiles, ...resolvedFiles, ...nodeModuleFiles]);
@@ -263,7 +263,7 @@ describe(nameof(Project), () => {
                 initialDirectories,
                 resolvedDirectories
             } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
-            project.addExistingDirectory("/node_modules/library");
+            project.addDirectoryAtPath("/node_modules/library");
             const result = project.resolveSourceFileDependencies();
 
             expect(result.map(s => s.getFilePath())).to.deep.equal([...resolvedFiles, ...nodeModuleFiles]);
@@ -284,7 +284,7 @@ describe(nameof(Project), () => {
             assertHasSourceFiles(project, ["/main.ts"]);
             assertHasDirectories(project, ["/"]);
 
-            project.addExistingDirectory("node_modules");
+            project.addDirectoryAtPath("node_modules");
             assertHasSourceFiles(project, ["/main.ts"]);
             assertHasDirectories(project, ["/", "/node_modules"]);
 
@@ -292,7 +292,7 @@ describe(nameof(Project), () => {
             assertHasSourceFiles(project, ["/main.ts", "/node_modules/first.d.ts"]);
             assertHasDirectories(project, ["/", "/node_modules"]);
 
-            project.addExistingDirectory("/node_modules/library/node_modules");
+            project.addDirectoryAtPath("/node_modules/library/node_modules");
             project.resolveSourceFileDependencies();
             assertHasSourceFiles(project, ["/main.ts", "/node_modules/first.d.ts", "/node_modules/library/node_modules/second.d.ts"]);
             assertHasDirectories(project, ["/", "/node_modules", "/node_modules/library", "/node_modules/library/node_modules"]);
@@ -376,17 +376,17 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addExistingDirectoryIfExists), () => {
+    describe(nameof<Project>(project => project.addDirectoryAtPathIfExists), () => {
         it("should throw if the directory doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
-            expect(project.addExistingDirectoryIfExists("someDir")).to.be.undefined;
+            expect(project.addDirectoryAtPathIfExists("someDir")).to.be.undefined;
         });
 
         it("should add the directory if it exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["someDir"]);
             const project = new Project({ fileSystem });
-            const dir = project.addExistingDirectoryIfExists("someDir");
+            const dir = project.addDirectoryAtPathIfExists("someDir");
             expect(dir).to.not.be.undefined;
         });
 
@@ -394,7 +394,7 @@ describe(nameof(Project), () => {
             const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
             const project = new Project({ useVirtualFileSystem: true });
             directories.forEach(d => project.getFileSystem().mkdirSync(d));
-            expect(project.addExistingDirectoryIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
+            expect(project.addDirectoryAtPathIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
 
             testHelpers.testDirectoryTree(project.getDirectoryOrThrow("dir"), {
                 directory: project.getDirectoryOrThrow("dir"),
@@ -410,7 +410,7 @@ describe(nameof(Project), () => {
         it("should add the directory to the project", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "/dir/file.ts", text: "" }]);
             const project = new Project({ fileSystem });
-            const dir = project.addExistingDirectoryIfExists("/dir")!;
+            const dir = project.addDirectoryAtPathIfExists("/dir")!;
 
             expect(dir._isInProject()).to.be.true;
         });
@@ -420,24 +420,24 @@ describe(nameof(Project), () => {
             const dir = project.createDirectory("/dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             expect(dir._isInProject()).to.be.false;
-            project.addExistingDirectoryIfExists("/dir");
+            project.addDirectoryAtPathIfExists("/dir");
             expect(dir._isInProject()).to.be.true;
         });
     });
 
-    describe(nameof<Project>(project => project.addExistingDirectory), () => {
+    describe(nameof<Project>(project => project.addDirectoryAtPath), () => {
         it("should throw if the directory doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project({ fileSystem });
             expect(() => {
-                project.addExistingDirectory("someDir");
+                project.addDirectoryAtPath("someDir");
             }).to.throw(errors.DirectoryNotFoundError);
         });
 
         it("should add the directory if it exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["someDir"]);
             const project = new Project({ fileSystem });
-            const dir = project.addExistingDirectory("someDir");
+            const dir = project.addDirectoryAtPath("someDir");
             expect(dir).to.not.be.undefined;
         });
 
@@ -445,7 +445,7 @@ describe(nameof(Project), () => {
             const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
             const project = new Project({ useVirtualFileSystem: true });
             directories.forEach(d => project.getFileSystem().mkdirSync(d));
-            expect(project.addExistingDirectory("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
+            expect(project.addDirectoryAtPath("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
 
             testHelpers.testDirectoryTree(project.getDirectoryOrThrow("dir"), {
                 directory: project.getDirectoryOrThrow("dir"),
@@ -461,7 +461,7 @@ describe(nameof(Project), () => {
         it("should add the directory to the project", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "/dir/file.ts", text: "" }]);
             const project = new Project({ fileSystem });
-            const dir = project.addExistingDirectory("/dir");
+            const dir = project.addDirectoryAtPath("/dir");
 
             expect(dir._isInProject()).to.be.true;
         });
@@ -471,7 +471,7 @@ describe(nameof(Project), () => {
             const dir = project.createDirectory("/dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             expect(dir._isInProject()).to.be.false;
-            project.addExistingDirectory("/dir");
+            project.addDirectoryAtPath("/dir");
             expect(dir._isInProject()).to.be.true;
         });
     });

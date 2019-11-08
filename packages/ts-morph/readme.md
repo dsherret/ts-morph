@@ -53,7 +53,7 @@ const project = new Project({
 });
 
 // add source files
-project.addExistingSourceFiles("src/**/*.ts");
+project.addSourceFilesAtPaths("src/**/*.ts");
 const myClassFile = project.createSourceFile("src/MyClass.ts", "export class MyClass {}");
 const myEnumFile = project.createSourceFile("src/MyEnum.ts", {
     statements: [{

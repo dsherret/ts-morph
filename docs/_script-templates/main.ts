@@ -6,7 +6,7 @@ import { Project, FunctionDeclaration, ClassDeclaration, Node, SourceFile, Metho
     IndexSignatureDeclaration, MethodSignature, PropertySignature, TypeAliasDeclaration, NumericLiteral, VariableStatement, VariableDeclarationKind,
     IndentationText, QuoteKind, ts, createWrappedNode, PropertyAccessExpression, LanguageService, Program, TypeChecker, FileSystemHost,
     TypeParameterDeclaration, NamespaceDeclarationKind, CallLikeExpression, StructureKind, forEachStructureChild, StructureTypeGuards,
-    ClassDeclarationStructure, SourceFileStructure, Structures } from "../../src/main";
+    ClassDeclarationStructure, SourceFileStructure, Structures } from "../../packages/ts-morph/src/main";
 
 let project: Project, node: Node, classDeclaration: ClassDeclaration, functionDeclaration: FunctionDeclaration, sourceFile: SourceFile,
     method: MethodDeclaration, decorator: Decorator, enumDeclaration: EnumDeclaration, enumMember: EnumMember, exportDeclaration: ExportDeclaration,

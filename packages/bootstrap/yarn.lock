@@ -27,6 +27,18 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
+"@ts-morph/common@~0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@ts-morph/common/-/common-0.1.0.tgz#72e5fdc90fdb12715cd0468ab633f27d5c112490"
+  dependencies:
+    "@dsherret/to-absolute-glob" "^2.0.2"
+    fs-extra "^8.1.0"
+    glob-parent "^5.1.0"
+    globby "^10.0.1"
+    is-negated-glob "^1.0.0"
+    multimatch "^4.0.0"
+    typescript "~3.7.2"
+
 "@ts-nameof/common@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@ts-nameof/common/-/common-4.1.0.tgz#ea47b2996589b653d16db336d37dd8e78d099514"
@@ -170,7 +182,7 @@ chai@^4.2.0:
     pathval "^1.1.0"
     type-detect "^4.0.5"
 
-chalk@^2.0.1, chalk@^2.4.2:
+chalk@^2.0.1:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.4.2.tgz#cd42541677a54333cf541a49108c1432b44c9424"
   dependencies:
@@ -901,19 +913,13 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-"ts-morph@npm:ts-morph@4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-4.2.0.tgz#1e87cd02d2b2956fdd8e7fa5e7c1209c28200747"
+"ts-morph@npm:ts-morph@5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-5.0.0.tgz#1f0992580be3bff2aaa948d3d76d508972e57a89"
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
-    chalk "^2.4.2"
+    "@ts-morph/common" "~0.1.0"
     code-block-writer "^10.0.0"
-    fs-extra "^8.1.0"
-    glob-parent "^5.1.0"
-    globby "^10.0.1"
-    is-negated-glob "^1.0.0"
-    multimatch "^4.0.0"
-    typescript "^3.0.1"
 
 ts-nameof@^4.1.0:
   version "4.1.0"
@@ -947,7 +953,7 @@ type-detect@^4.0.0, type-detect@^4.0.5:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
 
-typescript@^3.0.1, typescript@^3.5.3:
+typescript@^3.5.3, typescript@~3.7.2:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.2.tgz#27e489b95fa5909445e9fef5ee48d81697ad18fb"
 

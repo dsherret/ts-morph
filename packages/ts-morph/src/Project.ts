@@ -306,7 +306,7 @@ export class Project {
 
         const addedSourceFiles = paths.filePaths.map(p => this.addSourceFileAtPath(p));
         for (const dirPath of paths.directoryPaths)
-            this.addExistingDirectoryIfExists(dirPath);
+            this.addDirectoryAtPathIfExists(dirPath);
         return addedSourceFiles;
     }
 
