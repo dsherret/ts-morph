@@ -2506,7 +2506,7 @@ export declare function InitializerExpressionableNode<T extends Constructor<Init
 
 export interface InitializerExpressionableNode extends InitializerExpressionGetableNode {
     /**
-     * Removes the initailizer.
+     * Removes the initializer.
      */
     removeInitializer(): this;
     /**
