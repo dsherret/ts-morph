@@ -22,3 +22,30 @@
     1. Wait for discussion and green light from [@dsherret](https://github.com/dsherret) (who will try to reply as soon as possible, but it might take a few days).
         * Note: If the change is small and you think it wouldn't take you too much time, then feel free to start working on it and even submit a PR. Just beware that you're taking the risk that it could be denied.
 1. After approval, start working on the change in a branch of `master` and submit a PR.
+
+# Getting Started
+
+Run in root of repo:
+
+```bash
+# installs, sets up, and builds all the packages for development
+yarn setup
+```
+
+Then there's the following projects:
+
+* [packages/ts-morph](packages/ts-morph)
+* [packages/bootstrap](packages/bootstrap)
+* [packages/common](packages/common) - Contains the common code used by both of the packages above.
+* [packages/scripts](packages/scripts) - Common scripts used at development time by both packages.
+
+# Commands
+
+```bash
+# build (run in root dir or per package)
+yarn build
+# run tests (run in root dir or per package)
+yarn test
+# format (this is kind of experimental as it's using a formatter I wrote... let me know if it does anything strange)
+yarn format
+```
