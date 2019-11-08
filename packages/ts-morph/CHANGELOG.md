@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* [#733](https://github.com/dsherret/ts-morph/issues/733) - Soft rename addExistingSourceFile(s)(IfExists) ([59fc2d5](https://github.com/dsherret/ts-morph/commit/59fc2d5))
+* [#733](https://github.com/dsherret/ts-morph/issues/733) - Soft rename addExistingSourceFile-like methods to addSourceFileAtPath-like. ([59fc2d5](https://github.com/dsherret/ts-morph/commit/59fc2d5)) - Thanks [@ChristianIvicevic](https://github.com/ChristianIvicevic)!
 * Support TypeScript 3.7. ([d86d034](https://github.com/dsherret/ts-morph/commit/d86d034))
 * TS 3.7 - Add TypeChecker#getTypeArguments and use that in Type#getTypeArguments. ([616ea3e](https://github.com/dsherret/ts-morph/commit/616ea3e))
 * Update implementation for [#733](https://github.com/dsherret/ts-morph/issues/733). ([3613233](https://github.com/dsherret/ts-morph/commit/3613233))
@@ -17,7 +17,8 @@ All notable changes to this project will be documented in this file. See [standa
 ### BREAKING CHANGES
 
 * TypePredicateNode#getTypeNode() now possible returns undefined.
-
+* Recommended to use the new `Project#addSourceFileAtPath(path)` methods instead of the ones like `Project#addExistingSourceFile(path)`. The old way will be deprecated in Version 6.
+* TypeScript 3.7.x support only.
 
 
 <a name="4.3.3"></a>
