@@ -1,6 +1,6 @@
 {
   "name": "ts-morph",
-  "version": "4.3.2",
+  "version": "5.0.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/ts-morph.js",
   "typings": "dist-declarations/ts-morph.d.ts",
@@ -100,7 +100,11 @@
     "typescript": "3.7.2"
   },
   "standard-version": {
-    "tagPrefix": ""
+    "tagPrefix": "",
+    "skip": {
+      "tag": true,
+      "commit": true
+    }
   },
   "browser": {
     "fs": false,

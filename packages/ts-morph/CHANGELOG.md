@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.0.0"></a>
+# [5.0.0](https://github.com/dsherret/ts-morph/compare/4.3.3...5.0.0) (2019-11-08)
+
+
+### Features
+
+* [#733](https://github.com/dsherret/ts-morph/issues/733) - Soft rename addExistingSourceFile(s)(IfExists) ([59fc2d5](https://github.com/dsherret/ts-morph/commit/59fc2d5))
+* Support TypeScript 3.7. ([d86d034](https://github.com/dsherret/ts-morph/commit/d86d034))
+* TS 3.7 - Add TypeChecker#getTypeArguments and use that in Type#getTypeArguments. ([616ea3e](https://github.com/dsherret/ts-morph/commit/616ea3e))
+* Update implementation for [#733](https://github.com/dsherret/ts-morph/issues/733). ([3613233](https://github.com/dsherret/ts-morph/commit/3613233))
+
+
+### BREAKING CHANGES
+
+* TypePredicateNode#getTypeNode() now possible returns undefined.
+
+
+
 <a name="4.3.3"></a>
 ## [4.3.3](https://github.com/dsherret/ts-morph/compare/4.3.2...4.3.3) (2019-11-07)
 
