@@ -17,13 +17,23 @@ import { Project, ts } from "@ts-morph/bootstrap";
 const project = new Project();
 
 // these are typed as ts.SourceFile
-const myClassFile = project.createSourceFile("MyClass.ts", "export class MyClass { prop: string; }");
-const mainFile = project.createSourceFile("main.ts", "import { MyClass } from './MyClass.ts'");
+const myClassFile = project.createSourceFile(
+    "MyClass.ts",
+    "export class MyClass { prop: string; }"
+);
+const mainFile = project.createSourceFile(
+    "main.ts",
+    "import { MyClass } from './MyClass.ts'"
+);
 
-const program = project.createProgram();                        // ts.Program
-const typeChecker = program.getTypeChecker();                   // ts.TypeChecker
-const languageService = project.getLanguageService();           // ts.LanguageService
-const moduleResolutionHost = project.getModuleResolutionHost(); // ts.ModuleResolutionHost
+// ts.Program
+const program = project.createProgram();
+// ts.TypeChecker
+const typeChecker = program.getTypeChecker();
+// ts.LanguageService
+const languageService = project.getLanguageService();
+// ts.ModuleResolutionHost
+const moduleResolutionHost = project.getModuleResolutionHost();
 ```
 
 ## Setup
@@ -97,7 +107,8 @@ For example:
 ```ts
 import { Project, ts } from "ts-morph";
 
-// this is deno style module resolution (ex. `import { MyClass } from "./MyClass.ts"`)
+// This is deno style module resolution.
+// Ex. `import { MyClass } from "./MyClass.ts"`;
 const project = new Project({
     resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
         return {
@@ -106,7 +117,13 @@ const project = new Project({
                 const resolvedModules: ts.ResolvedModule[] = [];
 
                 for (const moduleName of moduleNames.map(removeTsExtension)) {
-                    const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
+                    const result = ts.resolveModuleName(
+                        moduleName,
+                        containingFile,
+                        compilerOptions,
+                        moduleResolutionHost
+                    );
+
                     if (result.resolvedModule)
                         resolvedModules.push(result.resolvedModule);
                 }
@@ -128,7 +145,7 @@ const project = new Project({
 
 Use the following methods:
 
-* `const sourceFiles = project.addSourceFiles("**/*.ts");` or provide an array of file globs.
+* `const sourceFiles = project.addSourceFilesByPaths("**/*.ts");` or provide an array of file globs.
 * `const sourceFile = project.addSourceFileAtPath("src/my-file.ts");` or use `addSourceFileAtPathIfExists(filePath)`
 * `const sourceFiles = project.addSourceFilesFromTsConfig("path/to/tsconfig.json")`
 

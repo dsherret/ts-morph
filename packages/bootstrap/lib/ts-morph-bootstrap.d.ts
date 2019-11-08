@@ -170,7 +170,7 @@ export declare class Project {
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addSourceFiles(fileGlobs: string | ReadonlyArray<string>): ts.SourceFile[];
+    addSourceFilesByPaths(fileGlobs: string | ReadonlyArray<string>): ts.SourceFile[];
     /**
      * Adds all the source files from the specified tsconfig.json.
      *
