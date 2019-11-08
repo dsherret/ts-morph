@@ -36,7 +36,7 @@ Then there's the following projects:
 
 * [packages/ts-morph](packages/ts-morph)
 * [packages/bootstrap](packages/bootstrap)
-* [packages/common](packages/common) - Contains the common code used by both of the packages above.
+* [packages/common](packages/common) - Common code used by both of the packages above.
 * [packages/scripts](packages/scripts) - Common scripts used at development time by both packages.
 
 # Commands
