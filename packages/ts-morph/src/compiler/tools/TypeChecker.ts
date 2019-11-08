@@ -236,6 +236,15 @@ export class TypeChecker {
             .map(s => this._context.compilerFactory.getSymbol(s));
     }
 
+    /**
+     * Gets the type arguments from a type reference.
+     * @param typeReference - Type reference.
+     */
+    getTypeArguments(typeReference: Type) {
+        return this.compilerObject.getTypeArguments(typeReference.compilerType as ts.TypeReference)
+            .map(arg => this._context.compilerFactory.getType(arg));
+    }
+
     /** @internal */
     private _getDefaultTypeFormatFlags(enclosingNode?: Node) {
         let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType

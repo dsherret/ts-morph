@@ -251,8 +251,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets type arguments.
      */
     getTypeArguments(): Type[] {
-        const typeArguments = (this.compilerType as any as ts.TypeReference).typeArguments || [];
-        return typeArguments.map(t => this._context.compilerFactory.getType(t));
+        return this._context.typeChecker.getTypeArguments(this);
     }
 
     /**

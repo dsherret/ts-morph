@@ -9678,7 +9678,7 @@ export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
     /**
      * Gets the asserts modifier if it exists or throws otherwise.
      */
-    getAssertsModifierOrThrow(): any;
+    getAssertsModifierOrThrow(): Node<ts.AssertsToken>;
     /**
      * Gets the type name if it exists or returns undefined when it asserts a condition.
      */
@@ -10853,6 +10853,11 @@ export declare class TypeChecker {
      * @param meaning - Meaning of symbol to filter by.
      */
     getSymbolsInScope(node: Node, meaning: SymbolFlags): Symbol[];
+    /**
+     * Gets the type arguments from a type reference.
+     * @param typeReference - Type reference.
+     */
+    getTypeArguments(typeReference: Type): Type<ts.Type>[];
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {
