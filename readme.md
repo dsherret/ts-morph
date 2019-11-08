@@ -1,7 +1,7 @@
 ts-morph
 ========
 
-[![Build Status](https://travis-ci.org/dsherret/ts-morph.svg?branch=master)](https://travis-ci.org/dsherret/ts-morph)
+[![Build Status](https://travis-ci.org/dsherret/ts-morph.svg?branch=latest)](https://travis-ci.org/dsherret/ts-morph)
 
 Monorepo for [ts-morph](packages/ts-morph) and related projects.
 
