@@ -133,10 +133,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * Gets the default import or returns undefined if it doesn't exist.
      */
     getDefaultImport() {
-        const importClause = this.getImportClause();
-        if (importClause == null)
-            return undefined;
-        return importClause.getDefaultImport();
+        return this.getImportClause()?.getDefaultImport() ?? undefined; // bug in compiler, shouldn't need this null coalescing
     }
 
     /**
@@ -243,10 +240,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * Gets the namespace import identifier, if it exists.
      */
     getNamespaceImport() {
-        const importClause = this.getImportClause();
-        if (importClause == null)
-            return undefined;
-        return importClause.getNamespaceImport();
+        return this.getImportClause()?.getNamespaceImport() ?? undefined; // bug in compiler, shouldn't need the ??
     }
 
     /**
@@ -342,10 +336,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      * Gets the named imports.
      */
     getNamedImports(): ImportSpecifier[] {
-        const importClause = this.getImportClause();
-        if (importClause == null)
-            return [];
-        return importClause.getNamedImports();
+        return this.getImportClause()?.getNamedImports() ?? [];
     }
 
     /**

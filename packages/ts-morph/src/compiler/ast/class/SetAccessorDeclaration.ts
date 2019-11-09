@@ -9,9 +9,10 @@ import { TypeGuards } from "../../../utils";
 import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
 
-export const SetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
-    FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ClassElement)))
-))))));
+const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(
+    DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor)))))))
+));
+export const SetAccessorDeclarationBase = createBase(ClassElement);
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**
      * Sets the node from a structure.

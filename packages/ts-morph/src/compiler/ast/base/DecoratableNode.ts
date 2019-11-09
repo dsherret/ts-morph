@@ -71,9 +71,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
         }
 
         getDecorators(): Decorator[] {
-            if (this.compilerNode.decorators == null)
-                return [];
-            return this.compilerNode.decorators.map(d => this._getNodeFromCompilerNode(d));
+            return this.compilerNode.decorators?.map(d => this._getNodeFromCompilerNode(d)) ?? [];
         }
 
         addDecorator(structure: OptionalKind<DecoratorStructure>) {

@@ -153,10 +153,7 @@ describe(nameof(ImportSpecifier), () => {
         function doTest(text: string, alias: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const namedImport = firstChild.getNamedImports()[0];
-            if (alias == null)
-                expect(namedImport.getAliasNode()).to.equal(undefined);
-            else
-                expect(namedImport.getAliasNode()!.getText()).to.equal(alias);
+            expect(namedImport.getAliasNode()?.getText()).to.equal(alias);
         }
 
         it("should be undefined there is no alias", () => {

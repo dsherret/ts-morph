@@ -11,7 +11,7 @@ const writeProject = new Project({
         newLineKind: NewLineKind.CarriageReturnLineFeed
     }
 });
-const declarationFile = writeProject.addExistingSourceFile("lib/ts-morph-common.d.ts");
+const declarationFile = writeProject.addSourceFileAtPath("lib/ts-morph-common.d.ts");
 
 const writer = declarationProject.createWriter();
 writer.write(`import * as ts from `).quote("typescript").write(";").newLine();

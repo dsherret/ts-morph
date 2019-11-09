@@ -97,20 +97,18 @@ export class Project {
         function getCompilerOptions(): CompilerOptions {
             return {
                 ...getTsConfigCompilerOptions(),
-                ...(options.compilerOptions || {}) as CompilerOptions
+                ...(options.compilerOptions ?? {}) as CompilerOptions
             };
         }
 
         function getTsConfigCompilerOptions() {
-            if (tsConfigResolver == null)
-                return {};
-            return tsConfigResolver.getCompilerOptions();
+            return tsConfigResolver?.getCompilerOptions() ?? {};
         }
 
         function getEncoding() {
             const defaultEncoding = "utf-8";
             if (options.compilerOptions != null)
-                return options.compilerOptions.charset || defaultEncoding;
+                return options.compilerOptions.charset ?? defaultEncoding;
             return defaultEncoding;
         }
     }
@@ -156,6 +154,11 @@ export class Project {
         return Array.from(sourceFiles.values());
     }
 
+    /** @deprecated Use `addDirectoryAtPathIfExists` */
+    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
+        return this.addDirectoryAtPathIfExists(dirPath, options);
+    }
+
     /**
      * Adds an existing directory from the path or returns undefined if it doesn't exist.
      *
@@ -164,9 +167,14 @@ export class Project {
      * @param options - Options.
      * @skipOrThrowCheck
      */
-    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
+    addDirectoryAtPathIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addExistingDirectoryIfExists(dirPath, { ...options, markInProject: true });
+        return this._context.directoryCoordinator.addDirectoryAtPathIfExists(dirPath, { ...options, markInProject: true });
+    }
+
+    /** @deprecated Use `addDirectoryAtPath`. */
+    addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}): Directory {
+        return this.addDirectoryAtPath(dirPath, options);
     }
 
     /**
@@ -177,9 +185,9 @@ export class Project {
      * @param options - Options.
      * @throws DirectoryNotFoundError when the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}): Directory {
+    addDirectoryAtPath(dirPath: string, options: DirectoryAddOptions = {}): Directory {
         dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addExistingDirectory(dirPath, { ...options, markInProject: true });
+        return this._context.directoryCoordinator.addDirectoryAtPath(dirPath, { ...options, markInProject: true });
     }
 
     /**
@@ -226,12 +234,26 @@ export class Project {
     }
 
     /**
+     * @deprecated Use `addSourceFilesAtPaths`.
+     */
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
+        return this.addSourceFilesAtPaths(fileGlobs);
+    }
+
+    /**
      * Adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
-        return this._context.directoryCoordinator.addExistingSourceFiles(fileGlobs, { markInProject: true });
+    addSourceFilesAtPaths(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
+        return this._context.directoryCoordinator.addSourceFilesAtPaths(fileGlobs, { markInProject: true });
+    }
+
+    /**
+     * @deprecated Use `addSourceFileAtPathIfExists`.
+     */
+    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
+        return this.addSourceFileAtPathIfExists(filePath);
     }
 
     /**
@@ -241,8 +263,15 @@ export class Project {
      * @param filePath - File path to get the file from.
      * @skipOrThrowCheck
      */
-    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
-        return this._context.directoryCoordinator.addExistingSourceFileIfExists(filePath, { markInProject: true });
+    addSourceFileAtPathIfExists(filePath: string): SourceFile | undefined {
+        return this._context.directoryCoordinator.addSourceFileAtPathIfExists(filePath, { markInProject: true });
+    }
+
+    /**
+     * @deprecated Use `addSourceFileAtPath`.
+     */
+    addExistingSourceFile(filePath: string): SourceFile {
+        return this.addSourceFileAtPath(filePath);
     }
 
     /**
@@ -252,8 +281,8 @@ export class Project {
      * @param filePath - File path to get the file from.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string): SourceFile {
-        return this._context.directoryCoordinator.addExistingSourceFile(filePath, { markInProject: true });
+    addSourceFileAtPath(filePath: string): SourceFile {
+        return this._context.directoryCoordinator.addSourceFileAtPath(filePath, { markInProject: true });
     }
 
     /**
@@ -273,9 +302,9 @@ export class Project {
     private _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: CompilerOptions) {
         const paths = tsConfigResolver.getPaths(compilerOptions);
 
-        const addedSourceFiles = paths.filePaths.map(p => this.addExistingSourceFile(p));
+        const addedSourceFiles = paths.filePaths.map(p => this.addSourceFileAtPath(p));
         for (const dirPath of paths.directoryPaths)
-            this.addExistingDirectoryIfExists(dirPath);
+            this.addDirectoryAtPathIfExists(dirPath);
         return addedSourceFiles;
     }
 
@@ -293,7 +322,7 @@ export class Project {
         sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
         options?: SourceFileCreateOptions
     ): SourceFile {
-        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", { ...(options || {}), markInProject: true });
+        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText ?? "", { ...(options ?? {}), markInProject: true });
     }
 
     /**
@@ -485,6 +514,7 @@ export class Project {
         this._context.logger.setEnabled(enabled);
     }
 
+    /** @internal */
     private _getUnsavedSourceFiles() {
         return Array.from(getUnsavedIterator(this._context.compilerFactory.getSourceFilesByDirectoryDepth()));
 
@@ -597,7 +627,7 @@ export class Project {
         return ts.formatDiagnosticsWithColorAndContext(diagnostics.map(d => d.compilerObject), {
             getCurrentDirectory: () => this._context.fileSystemWrapper.getCurrentDirectory(),
             getCanonicalFileName: fileName => fileName,
-            getNewLine: () => opts.newLineChar || require("os").EOL
+            getNewLine: () => opts.newLineChar ?? require("os").EOL
         });
     }
 

@@ -220,8 +220,7 @@ export class CompilerCommentTypeElement extends CompilerCommentList implements t
 
 export class CompilerCommentObjectLiteralElement extends CompilerCommentList implements ts.ObjectLiteralElement {
     _declarationBrand: any;
-    _objectLiteralBrandBrand: any; // ts < 3.4
-    _objectLiteralBrand: any; // ts >= 3.5
+    _objectLiteralBrand: any;
     declarationBrand: any;
     commentListKind = CommentListKind.ObjectLiteralElement;
 }

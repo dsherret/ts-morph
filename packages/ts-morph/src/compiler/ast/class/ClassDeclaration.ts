@@ -17,7 +17,10 @@ import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { MethodDeclaration } from "./MethodDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
-export const ClassDeclarationBase = NamespaceChildableNode(AmbientableNode(ExportableNode(ClassLikeDeclarationBase(Statement))));
+const createBase = <T extends typeof Statement>(ctor: T) => NamespaceChildableNode(AmbientableNode(ExportableNode(
+    ClassLikeDeclarationBase(ctor)
+)));
+export const ClassDeclarationBase = createBase(Statement);
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
      * Sets the node from a structure.

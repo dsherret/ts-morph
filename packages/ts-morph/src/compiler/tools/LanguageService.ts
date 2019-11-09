@@ -16,8 +16,11 @@ export interface LanguageServiceOptions {
 }
 
 export class LanguageService {
+    /** @internal */
     private readonly _compilerObject: ts.LanguageService;
+    /** @internal */
     private readonly _compilerHost: ts.CompilerHost;
+    /** @internal */
     private _program: Program;
     /** @internal */
     private _context: ProjectContext;
@@ -233,7 +236,7 @@ export class LanguageService {
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const compilerObject = this.compilerObject;
-        return new EmitOutput(this._context, filePath, getCompilerEmitOutput());
+        return new EmitOutput(this._context, getCompilerEmitOutput());
 
         function getCompilerEmitOutput(): ts.EmitOutput {
             const program = compilerObject.getProgram();
@@ -367,6 +370,7 @@ export class LanguageService {
         return compilerResult.map(compilerObject => new CodeFixAction(this._context, compilerObject));
     }
 
+    /** @internal */
     private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {
         const filePath = typeof filePathOrSourceFile === "string"
             ? this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePathOrSourceFile)
@@ -376,6 +380,7 @@ export class LanguageService {
         return filePath;
     }
 
+    /** @internal */
     private _getFilledSettings(settings: FormatCodeSettings) {
         if ((settings as any)["_filled"]) // optimization
             return settings;
@@ -386,6 +391,7 @@ export class LanguageService {
         return settings;
     }
 
+    /** @internal */
     private _getFilledUserPreferences(userPreferences: UserPreferences) {
         return ObjectUtils.assign(this._context.getUserPreferences(), userPreferences);
     }

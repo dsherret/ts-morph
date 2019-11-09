@@ -9,7 +9,7 @@ describe("tests for issue #394", () => {
         fileSystem.fileExistsSync = filePath => sourceFiles.some(s => s.getFilePath().toLowerCase() === filePath.toLowerCase());
         fileSystem.readFileSync = filePath => {
             const searchingFile = sourceFiles.find(s => s.getFilePath().toLowerCase() === filePath.toLowerCase());
-            return searchingFile == null ? "" : searchingFile.getFullText();
+            return searchingFile?.getFullText() ?? "";
         };
         fileSystem.isCaseSensitive = () => false;
 

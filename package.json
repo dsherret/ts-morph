@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "description": "Main github repo for ts-morph packages.",
   "scripts": {
+    "setup": "yarn install && yarn bootstrap && yarn build",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
     "clean": "lerna clean",
@@ -24,6 +25,6 @@
     "dprint": "^0.7.3",
     "dprint-plugin-jsonc": "^0.2.4",
     "dprint-plugin-typescript": "^0.10.0",
-    "lerna": "^3.16.4"
+    "lerna": "^3.18.3"
   }
 }

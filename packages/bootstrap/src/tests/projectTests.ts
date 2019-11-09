@@ -329,7 +329,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.addSourceFiles), () => {
+    describe(nameof<Project>(p => p.addSourceFilesByPaths), () => {
         it("should add the source files based on a file glob", () => {
             const fileSystem = new InMemoryFileSystemHost();
             fileSystem.writeFileSync("/otherFile.ts", "");
@@ -338,7 +338,7 @@ describe(nameof(Project), () => {
             fileSystem.writeFileSync("/test/other/file.ts", "");
             const project = new Project({ fileSystem });
             expect(project.getSourceFiles()).to.deep.equal([]);
-            const returnedFiles = project.addSourceFiles("/test/**/*.ts");
+            const returnedFiles = project.addSourceFilesByPaths("/test/**/*.ts");
             const expectedFiles = ["/test/file.ts", "/test/test2/file2.ts", "/test/other/file.ts"].sort();
             expect(project.getSourceFiles().map(s => s.fileName).sort()).to.deep.equal(expectedFiles);
             expect(returnedFiles.map(s => s.fileName).sort()).to.deep.equal(expectedFiles);

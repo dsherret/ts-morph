@@ -252,11 +252,19 @@ export declare class Directory {
      */
     getDescendantDirectories(): Directory[];
     /**
+     * @deprecated Use `addSourceFilesAtPaths`.
+     */
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    /**
      * Add source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    addSourceFilesAtPaths(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    /**
+     * @deprecated Use `addDirectoryAtPathIfExists`
+     */
+    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
     /**
      * Adds an existing directory from the relative path or directory name, or returns undefined if it doesn't exist.
      *
@@ -264,7 +272,11 @@ export declare class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @param options - Options.
      */
-    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    addDirectoryAtPathIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    /**
+     * @deprecated Use `addDirectoryAtPath`.
+     */
+    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Adds an existing directory from the relative path or directory name, or throws if it doesn't exist.
      *
@@ -272,7 +284,7 @@ export declare class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
+    addDirectoryAtPath(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Creates a directory if it doesn't exist.
      * @param dirPath - Relative or absolute path to the directory that should be created.
@@ -289,12 +301,20 @@ export declare class Directory {
      */
     createSourceFile(relativeFilePath: string, sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction, options?: SourceFileCreateOptions): SourceFile;
     /**
+     * @deprecated Use `addSourceFileAtPathIfExists`.
+     */
+    addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined;
+    /**
      * Adds an existing source file, relative to this directory, or returns undefined.
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
      */
-    addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined;
+    addSourceFileAtPathIfExists(relativeFilePath: string): SourceFile | undefined;
+    /**
+     * @deprecated Use `addSourceFileAtPath`.
+     */
+    addExistingSourceFile(relativeFilePath: string): SourceFile;
     /**
      * Adds an existing source file, relative to this directory, or throws if it doesn't exist.
      *
@@ -302,7 +322,7 @@ export declare class Directory {
      * @param relativeFilePath - Relative file path to add.
      * @throws FileNotFoundError when the file doesn't exist.
      */
-    addExistingSourceFile(relativeFilePath: string): SourceFile;
+    addSourceFileAtPath(relativeFilePath: string): SourceFile;
     /**
      * Emits the files in the directory.
      * @param options - Options for emitting.
@@ -506,19 +526,18 @@ export interface ProjectOptions {
  */
 export declare class Project {
     /**
-     * Gets the manipulation settings.
-     */
-    readonly manipulationSettings: ManipulationSettingsContainer;
-    /**
-     * Gets the compiler options for modification.
-     */
-    readonly compilerOptions: CompilerOptionsContainer;
-    private _getUnsavedSourceFiles;
-    /**
      * Initializes a new instance.
      * @param options - Optional options.
      */
     constructor(options?: ProjectOptions);
+    /**
+     * Gets the manipulation settings.
+     */
+    get manipulationSettings(): ManipulationSettingsContainer;
+    /**
+     * Gets the compiler options for modification.
+     */
+    get compilerOptions(): CompilerOptionsContainer;
     /**
      * Adds the source files the project's source files depend on to the project.
      * @returns The added source files.
@@ -530,13 +549,21 @@ export declare class Project {
      */
     resolveSourceFileDependencies(): SourceFile[];
     /**
+     * @deprecated Use `addDirectoryAtPathIfExists`
+     */
+    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    /**
      * Adds an existing directory from the path or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
      * @param dirPath - Path to add the directory at.
      * @param options - Options.
      */
-    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    addDirectoryAtPathIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    /**
+     * @deprecated Use `addDirectoryAtPath`.
+     */
+    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Adds an existing directory from the path or throws if it doesn't exist.
      *
@@ -545,7 +572,7 @@ export declare class Project {
      * @param options - Options.
      * @throws DirectoryNotFoundError when the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
+    addDirectoryAtPath(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Creates a directory at the specified path.
      * @param dirPath - Path to create the directory at.
@@ -570,18 +597,30 @@ export declare class Project {
      */
     getRootDirectories(): Directory[];
     /**
+     * @deprecated Use `addSourceFilesAtPaths`.
+     */
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    /**
      * Adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    addSourceFilesAtPaths(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
+    /**
+     * @deprecated Use `addSourceFileAtPathIfExists`.
+     */
+    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined;
     /**
      * Adds a source file from a file path if it exists or returns undefined.
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
      */
-    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined;
+    addSourceFileAtPathIfExists(filePath: string): SourceFile | undefined;
+    /**
+     * @deprecated Use `addSourceFileAtPath`.
+     */
+    addExistingSourceFile(filePath: string): SourceFile;
     /**
      * Adds an existing source file from a file path or throws if it doesn't exist.
      *
@@ -589,7 +628,7 @@ export declare class Project {
      * @param filePath - File path to get the file from.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string): SourceFile;
+    addSourceFileAtPath(filePath: string): SourceFile;
     /**
      * Adds all the source files from the specified tsconfig.json.
      *
@@ -1984,7 +2023,8 @@ export declare type ArrayBindingElement = BindingElement | OmittedExpression;
 export declare type BindingName = Identifier | BindingPattern;
 export declare type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 export declare type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
-export declare type DeclarationName = Identifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
+export declare type EntityNameExpression = Identifier | PropertyAccessExpression;
+export declare type DeclarationName = Identifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern | EntityNameExpression;
 export declare type EntityName = Identifier | QualifiedName;
 export declare type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
 export declare type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
@@ -2466,7 +2506,7 @@ export declare function InitializerExpressionableNode<T extends Constructor<Init
 
 export interface InitializerExpressionableNode extends InitializerExpressionGetableNode {
     /**
-     * Removes the initailizer.
+     * Removes the initializer.
      */
     removeInitializer(): this;
     /**
@@ -3471,11 +3511,11 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
     /**
      * Gets the binding element's dot dot dot token (...) if it exists or throws if not.
      */
-    getDotDotDotTokenOrThrow(): Node<ts.Token<SyntaxKind.DotDotDotToken>>;
+    getDotDotDotTokenOrThrow(): Node<ts.DotDotDotToken>;
     /**
      * Gets the binding element's dot dot dot token (...) if it exists or returns undefined.
      */
-    getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
+    getDotDotDotToken(): Node<ts.DotDotDotToken> | undefined;
     /**
      * Gets binding element's property name node or throws if not found.
      *
@@ -4246,7 +4286,6 @@ export declare class CompilerCommentTypeElement extends CompilerCommentNode impl
 
 export declare class CompilerCommentObjectLiteralElement extends CompilerCommentNode implements ts.ObjectLiteralElement {
     _declarationBrand: any;
-    _objectLiteralBrandBrand: any;
     _objectLiteralBrand: any;
     declarationBrand: any;
 }
@@ -4298,11 +4337,11 @@ export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName 
 export declare type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
 
 export declare class Node<NodeType extends ts.Node = ts.Node> {
+    protected constructor();
     /**
      * Gets the underlying compiler node.
      */
-    readonly compilerNode: NodeType;
-    protected constructor();
+    get compilerNode(): NodeType;
     /**
      * Releases the node and all its descendants from the underlying node cache and ast.
      *
@@ -4591,8 +4630,9 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     getNonWhitespaceStart(): number;
     /**
      * Gets the text length of the node without trivia.
+     * @param includeJsDocComments - Whether to include the JS doc comments in the width or not.
      */
-    getWidth(): number;
+    getWidth(includeJsDocComments?: boolean): number;
     /**
      * Gets the text length of the node with trivia.
      */
@@ -4989,12 +5029,11 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
 }
 
 export declare class TextRange<TRange extends ts.TextRange = ts.TextRange> {
+    protected constructor();
     /**
      * Gets the underlying compiler object.
      */
-    readonly compilerObject: TRange;
-    private _throwIfForgotten;
-    protected constructor();
+    get compilerObject(): TRange;
     /**
      * Gets the source file of the text range.
      */
@@ -5182,9 +5221,13 @@ export declare function JSDocPropertyLikeTag<T extends Constructor<JSDocProperty
 
 export interface JSDocPropertyLikeTag {
     /**
-     * Gets the type expression node of the JS doc property like tag.
+     * Gets the type expression node of the JS doc tag if it exists.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
+    /**
+     * Gets the type expression node of the JS doc tag or throws if it doesn't exist.
+     */
+    getTypeExpressionOrThrow(): JSDocTypeExpression;
     /**
      * Gets the name of the JS doc property like tag.
      */
@@ -5303,9 +5346,13 @@ export declare class JSDocPropertyTag extends JSDocPropertyTagBase<ts.JSDocPrope
  */
 export declare class JSDocReturnTag extends JSDocTag<ts.JSDocReturnTag> {
     /**
-     * Gets the type expression node of the JS doc property return tag.
+     * Gets the type expression node of the JS doc return tag if it exists.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
+    /**
+     * Gets the type expression node of the JS doc return tag or throws if it doesn't exist.
+     */
+    getTypeExpressionOrThrow(): JSDocTypeExpression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.JSDocReturnTag>;
     /** @inheritdoc **/
@@ -5348,11 +5395,11 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
  * JS doc tag info.
  */
 export declare class JSDocTagInfo {
+    private constructor();
     /**
      * Gets the compiler JS doc tag info.
      */
-    readonly compilerObject: ts.JSDocTagInfo;
-    private constructor();
+    get compilerObject(): ts.JSDocTagInfo;
     /**
      * Gets the name.
      */
@@ -5643,7 +5690,7 @@ export declare class AssignmentExpression<T extends ts.AssignmentExpression<ts.A
     /**
      * Gets the operator token of the assignment expression.
      */
-    getOperatorToken(): Node<ts.Token<ts.AssignmentOperator>>;
+    getOperatorToken(): Node<ts.AssignmentOperatorToken>;
 }
 
 declare const AwaitExpressionBase: Constructor<UnaryExpressionedNode> & typeof UnaryExpression;
@@ -5665,7 +5712,7 @@ export declare class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryE
     /**
      * Gets the operator token of the binary expression.
      */
-    getOperatorToken(): Node<ts.Token<ts.BinaryOperator>>;
+    getOperatorToken(): Node<ts.BinaryOperatorToken>;
     /**
      * Gets the right side of the binary expression.
      */
@@ -5704,7 +5751,7 @@ export declare class ConditionalExpression extends ConditionalExpressionBase<ts.
     /**
      * Gets the question token of the conditional expression.
      */
-    getQuestionToken(): Node<ts.Token<SyntaxKind.QuestionToken>>;
+    getQuestionToken(): Node<ts.QuestionToken>;
     /**
      * Gets the when true expression of the conditional expression.
      */
@@ -5712,7 +5759,7 @@ export declare class ConditionalExpression extends ConditionalExpressionBase<ts.
     /**
      * Gets the colon token of the conditional expression.
      */
-    getColonToken(): Node<ts.Token<SyntaxKind.ColonToken>>;
+    getColonToken(): Node<ts.ColonToken>;
     /**
      * Gets the when false expression of the conditional expression.
      */
@@ -6376,7 +6423,7 @@ export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
 }
 
 declare const FunctionDeclarationBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<FunctionLikeDeclaration> & Constructor<NamespaceChildableNode> & Constructor<NameableNode> & typeof Statement;
-declare const FunctionDeclarationOverloadBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Statement;
+declare const FunctionDeclarationOverloadBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
 
 export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
@@ -6470,7 +6517,7 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
     /**
      * Gets the dot dot dot token (...) if it exists, for a rest parameter.
      */
-    getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
+    getDotDotDotToken(): Node<ts.DotDotDotToken> | undefined;
     /**
      * Gets if it's a rest parameter.
      */
@@ -9619,7 +9666,9 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
 /**
  * A type predicate node which says the specified parameter name is a specific type if the function returns true.
  *
- * For example, `param is string` in `declare function isString(param: unknown): param is string;`.
+ * Examples:
+ * * `param is string` in `declare function isString(param: unknown): param is string;`.
+ * * `asserts condition` in `declare function assert(condition: any): asserts condition;`.
  */
 export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
     /**
@@ -9627,9 +9676,25 @@ export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
      */
     getParameterNameNode(): Identifier | ThisTypeNode;
     /**
-     * Gets the type name.
+     * Gets if the type predicate has an `asserts` modifier (ex. `asserts condition`).
      */
-    getTypeNode(): TypeNode;
+    hasAssertsModifier(): boolean;
+    /**
+     * Gets the asserts modifier if it exists.
+     */
+    getAssertsModifier(): Node<ts.AssertsToken> | undefined;
+    /**
+     * Gets the asserts modifier if it exists or throws otherwise.
+     */
+    getAssertsModifierOrThrow(): Node<ts.AssertsToken>;
+    /**
+     * Gets the type name if it exists or returns undefined when it asserts a condition.
+     */
+    getTypeNode(): TypeNode | undefined;
+    /**
+     * Gets the type name if it exists or throws when it asserts a condition.
+     */
+    getTypeNodeOrThrow(): TypeNode;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.TypePredicateNode>;
     /** @inheritdoc **/
@@ -9747,11 +9812,11 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
 }
 
 export declare class Signature {
+    private constructor();
     /**
      * Gets the underlying compiler signature.
      */
-    readonly compilerSignature: ts.Signature;
-    private constructor();
+    get compilerSignature(): ts.Signature;
     /**
      * Gets the type parameters.
      */
@@ -9779,11 +9844,11 @@ export declare class Signature {
 }
 
 export declare class Symbol {
+    private constructor();
     /**
      * Gets the underlying compiler symbol.
      */
-    readonly compilerSymbol: ts.Symbol;
-    private constructor();
+    get compilerSymbol(): ts.Symbol;
     /**
      * Gets the symbol name.
      */
@@ -9926,17 +9991,11 @@ export interface UserPreferences extends ts.UserPreferences {
 }
 
 export declare class LanguageService {
-    private readonly _compilerObject;
-    private readonly _compilerHost;
-    private _program;
+    private constructor();
     /**
      * Gets the compiler language service.
      */
-    readonly compilerObject: ts.LanguageService;
-    private _getFilePathFromFilePathOrSourceFile;
-    private _getFilledSettings;
-    private _getFilledUserPreferences;
-    private constructor();
+    get compilerObject(): ts.LanguageService;
     /**
      * Gets the language service's program.
      */
@@ -10116,11 +10175,11 @@ export interface EmitOptionsBase {
  * Wrapper around Program.
  */
 export declare class Program {
+    private constructor();
     /**
      * Gets the underlying compiler program.
      */
-    readonly compilerObject: ts.Program;
-    private constructor();
+    get compilerObject(): ts.Program;
     /**
      * Get the program's type checker.
      */
@@ -10175,11 +10234,11 @@ export declare class Program {
  * Represents a code action.
  */
 export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeAction> {
+    protected constructor();
     /**
      * Gets the compiler object.
      */
-    readonly compilerObject: TCompilerObject;
-    protected constructor();
+    get compilerObject(): TCompilerObject;
     /**
      * Description of the code action.
      */
@@ -10196,11 +10255,11 @@ export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeA
  * @remarks Commands are currently not implemented.
  */
 export declare class CombinedCodeActions {
+    private constructor();
     /**
      * Gets the compiler object.
      */
-    readonly compilerObject: ts.CombinedCodeActions;
-    private constructor();
+    get compilerObject(): ts.CombinedCodeActions;
     /**
      * Text changes to apply to each file.
      */
@@ -10264,11 +10323,11 @@ export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = 
  * Diagnostic.
  */
 export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
+    protected constructor();
     /**
      * Gets the underlying compiler diagnostic.
      */
-    readonly compilerObject: TCompilerObject;
-    protected constructor();
+    get compilerObject(): TCompilerObject;
     /**
      * Gets the source file.
      */
@@ -10307,11 +10366,11 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
  * Diagnostic message chain.
  */
 export declare class DiagnosticMessageChain {
+    private constructor();
     /**
      * Gets the underlying compiler object.
      */
-    readonly compilerObject: ts.DiagnosticMessageChain;
-    private constructor();
+    get compilerObject(): ts.DiagnosticMessageChain;
     /**
      * Gets the message text.
      */
@@ -10354,11 +10413,11 @@ export declare class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWith
  * Document span.
  */
 export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentSpan> {
+    protected constructor();
     /**
      * Gets the compiler object.
      */
-    readonly compilerObject: TCompilerObject;
-    protected constructor();
+    get compilerObject(): TCompilerObject;
     /**
      * Gets the source file this reference is in.
      */
@@ -10385,12 +10444,11 @@ export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.D
  * Output of an emit on a single file.
  */
 export declare class EmitOutput {
-    private readonly _filePath;
+    private constructor();
     /**
      * TypeScript compiler emit result.
      */
-    readonly compilerObject: ts.EmitOutput;
-    private constructor();
+    get compilerObject(): ts.EmitOutput;
     /**
      * Gets if the emit was skipped.
      */
@@ -10405,11 +10463,11 @@ export declare class EmitOutput {
  * Result of an emit.
  */
 export declare class EmitResult {
+    protected constructor();
     /**
      * TypeScript compiler emit result.
      */
-    readonly compilerObject: ts.EmitResult;
-    protected constructor();
+    get compilerObject(): ts.EmitResult;
     /**
      * If the emit was skipped.
      */
@@ -10512,11 +10570,11 @@ export declare class MemoryEmitResult extends EmitResult {
  * Output file of an emit.
  */
 export declare class OutputFile {
+    private constructor();
     /**
      * TypeScript compiler output file.
      */
-    readonly compilerObject: ts.OutputFile;
-    private constructor();
+    get compilerObject(): ts.OutputFile;
     /**
      * Gets the file path.
      */
@@ -10535,11 +10593,11 @@ export declare class OutputFile {
  * Set of edits to make in response to a refactor action, plus an optional location where renaming should be invoked from.
  */
 export declare class RefactorEditInfo {
+    private constructor();
     /**
      * Gets the compiler refactor edit info.
      */
-    readonly compilerObject: ts.RefactorEditInfo;
-    private constructor();
+    get compilerObject(): ts.RefactorEditInfo;
     /**
      * Gets refactor file text changes
      */
@@ -10565,11 +10623,11 @@ export declare class RefactorEditInfo {
  * Referenced symbol.
  */
 export declare class ReferencedSymbol {
+    private constructor();
     /**
      * Gets the compiler referenced symbol.
      */
-    readonly compilerObject: ts.ReferencedSymbol;
-    private constructor();
+    get compilerObject(): ts.ReferencedSymbol;
     /**
      * Gets the definition.
      */
@@ -10616,11 +10674,11 @@ export declare class RenameLocation extends DocumentSpan<ts.RenameLocation> {
  * Symbol display part.
  */
 export declare class SymbolDisplayPart {
+    private constructor();
     /**
      * Gets the compiler symbol display part.
      */
-    readonly compilerObject: ts.SymbolDisplayPart;
-    private constructor();
+    get compilerObject(): ts.SymbolDisplayPart;
     /**
      * Gets the text.
      */
@@ -10637,11 +10695,11 @@ export declare class SymbolDisplayPart {
  * Represents a text change.
  */
 export declare class TextChange {
+    private constructor();
     /**
      * Gets the compiler text change.
      */
-    readonly compilerObject: ts.TextChange;
-    private constructor();
+    get compilerObject(): ts.TextChange;
     /**
      * Gets the text span.
      */
@@ -10656,11 +10714,11 @@ export declare class TextChange {
  * Represents a span of text.
  */
 export declare class TextSpan {
+    private constructor();
     /**
      * Gets the compiler text span.
      */
-    readonly compilerObject: ts.TextSpan;
-    private constructor();
+    get compilerObject(): ts.TextSpan;
     /**
      * Gets the start.
      */
@@ -10679,12 +10737,11 @@ export declare class TextSpan {
  * Wrapper around the TypeChecker.
  */
 export declare class TypeChecker {
+    private constructor();
     /**
      * Gets the compiler's TypeChecker.
      */
-    readonly compilerObject: ts.TypeChecker;
-    private _getDefaultTypeFormatFlags;
-    private constructor();
+    get compilerObject(): ts.TypeChecker;
     /**
      * Gets the ambient module symbols (ex. modules in the @types folder or node_modules).
      */
@@ -10804,16 +10861,19 @@ export declare class TypeChecker {
      * @param meaning - Meaning of symbol to filter by.
      */
     getSymbolsInScope(node: Node, meaning: SymbolFlags): Symbol[];
+    /**
+     * Gets the type arguments from a type reference.
+     * @param typeReference - Type reference.
+     */
+    getTypeArguments(typeReference: Type): Type<ts.Type>[];
 }
 
 export declare class Type<TType extends ts.Type = ts.Type> {
+    protected constructor();
     /**
      * Gets the underlying compiler type.
      */
-    readonly compilerType: TType;
-    private _hasTypeFlag;
-    private _hasObjectFlag;
-    protected constructor();
+    get compilerType(): TType;
     /**
      * Gets the type text.
      * @param enclosingNode - The enclosing node.

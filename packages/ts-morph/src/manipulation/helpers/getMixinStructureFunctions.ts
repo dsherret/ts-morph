@@ -41,7 +41,7 @@ export function fromGeneratorableNode(node: compiler.GeneratorableNode): MakeReq
 export function fromReturnTypedNode(node: compiler.ReturnTypedNode): MakeRequired<structures.ReturnTypedNodeStructure> {
     const returnTypeNode = node.getReturnTypeNode();
     return {
-        returnType: returnTypeNode == null ? undefined : returnTypeNode.getText()
+        returnType: returnTypeNode?.getText()
     };
 }
 
@@ -92,7 +92,7 @@ export function fromReadonlyableNode(node: compiler.ReadonlyableNode): MakeRequi
 export function fromTypedNode(node: compiler.TypedNode): MakeRequired<structures.TypedNodeStructure> {
     const typeNode = node.getTypeNode();
     return {
-        type: typeNode == null ? undefined : typeNode.getText()
+        type: typeNode?.getText()
     };
 }
 
@@ -101,7 +101,7 @@ export function fromInitializerExpressionableNode(
 ): MakeRequired<structures.InitializerExpressionableNodeStructure> {
     const initializer = node.getInitializer();
     return {
-        initializer: initializer == null ? undefined : initializer.getText()
+        initializer: initializer?.getText()
     };
 }
 

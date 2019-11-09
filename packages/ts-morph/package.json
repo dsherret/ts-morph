@@ -1,6 +1,6 @@
 {
   "name": "ts-morph",
-  "version": "4.3.1",
+  "version": "5.0.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/ts-morph.js",
   "typings": "dist-declarations/ts-morph.d.ts",
@@ -71,38 +71,41 @@
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
     "@ts-morph/common": "~0.1.0",
-    "chalk": "^2.4.2",
     "code-block-writer": "^10.0.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.3",
+    "@types/chai": "^4.2.4",
     "@types/diff": "^4.0.2",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.8",
-    "@types/ts-nameof": "^3.2.0",
+    "@types/node": "^12.12.6",
+    "@types/ts-nameof": "^4.0.0",
     "@ts-morph/comment-parser": "~0.1.0",
     "@ts-morph/scripts": "~0.1.0",
     "chai": "^4.2.0",
-    "conditional-type-checks": "^1.0.1",
-    "coveralls": "^3.0.6",
-    "cross-env": "^6.0.0",
+    "conditional-type-checks": "^1.0.4",
+    "coveralls": "^3.0.7",
+    "cross-env": "^6.0.3",
     "diff": "^4.0.1",
-    "mocha": "6.2.1",
+    "mocha": "6.2.2",
     "nyc": "14.1.1",
     "rimraf": "^3.0.0",
-    "rollup": "^1.22.0",
-    "rollup-plugin-typescript2": "^0.24.3",
+    "rollup": "^1.26.3",
+    "rollup-plugin-typescript2": "^0.25.2",
     "shelljs": "^0.8.3",
     "shx": "^0.3.2",
-    "source-map-support": "^0.5.13",
-    "ts-morph": "npm:ts-morph@4.2.0",
-    "ts-nameof": "^4.0.3",
+    "source-map-support": "^0.5.16",
+    "ts-morph": "npm:ts-morph@5.0.0",
+    "ts-nameof": "^4.1.0",
     "ts-node": "8.4.1",
-    "ttypescript": "1.5.7",
-    "typescript": "3.6.3"
+    "ttypescript": "1.5.8",
+    "typescript": "3.7.2"
   },
   "standard-version": {
-    "tagPrefix": ""
+    "tagPrefix": "",
+    "skip": {
+      "tag": true,
+      "commit": true
+    }
   },
   "browser": {
     "fs": false,

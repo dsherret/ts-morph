@@ -51,8 +51,7 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
         }
 
         getName() {
-            const identifier = this.getNameNode();
-            return identifier == null ? undefined : identifier.getText();
+            return this.getNameNode()?.getText() ?? undefined; // huh? why was this necessary? bug in optional chaining?
         }
 
         getNameOrThrow() {

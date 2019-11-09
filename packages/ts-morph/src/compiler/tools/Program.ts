@@ -175,7 +175,7 @@ export class Program {
      * @param sourceFile - Optional source file to filter by.
      */
     getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
-        const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
+        const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile?.compilerNode);
         return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
     }
 
@@ -184,7 +184,7 @@ export class Program {
      * @param sourceFile - Optional source file to filter by.
      */
     getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
-        const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
+        const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile?.compilerNode);
         return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnosticWithLocation(d));
     }
 

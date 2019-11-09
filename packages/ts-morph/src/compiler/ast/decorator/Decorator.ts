@@ -139,16 +139,14 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the decorator's arguments from its call expression.
      */
     getArguments(): Node[] {
-        const callExpression = this.getCallExpression();
-        return callExpression == null ? [] : callExpression.getArguments();
+        return this.getCallExpression()?.getArguments() ?? [];
     }
 
     /**
      * Gets the decorator's type arguments from its call expression.
      */
     getTypeArguments(): TypeNode[] {
-        const callExpression = this.getCallExpression();
-        return callExpression == null ? [] : callExpression.getTypeArguments();
+        return this.getCallExpression()?.getTypeArguments() ?? [];
     }
 
     /**

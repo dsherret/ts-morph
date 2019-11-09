@@ -11,9 +11,12 @@ import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
 import { NamespaceDeclarationKind } from "./NamespaceDeclarationKind";
 
-export const NamespaceDeclarationBase = ModuledNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(
-    StatementedNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))))
-)))));
+const createBase = <T extends typeof Statement>(ctor: T) => ModuledNode(UnwrappableNode(
+    TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(AmbientableNode(
+        ExportableNode(ModifierableNode(NamedNode(ctor)))
+    ))))))
+));
+export const NamespaceDeclarationBase = createBase(Statement);
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
      * Gets the full name of the namespace.
@@ -137,12 +140,8 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets the namespace or module keyword or returns undefined if it's global.
      */
     getDeclarationKindKeyword() {
-        const keyword = this.getFirstChild(child => child.getKind() === SyntaxKind.NamespaceKeyword
+        return this.getFirstChild(child => child.getKind() === SyntaxKind.NamespaceKeyword
             || child.getKind() === SyntaxKind.ModuleKeyword);
-        /* istanbul ignore if */
-        if (keyword == null)
-            return undefined;
-        return keyword;
     }
 
     /**

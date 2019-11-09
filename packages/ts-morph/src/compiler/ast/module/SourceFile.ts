@@ -104,9 +104,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         delete this._libReferenceDirectives;
 
         function clearTextRanges(textRanges: ReadonlyArray<TextRange> | undefined) {
-            if (textRanges == null)
-                return;
-            textRanges.forEach(r => r._forget());
+            textRanges?.forEach(r => r._forget());
         }
     }
 

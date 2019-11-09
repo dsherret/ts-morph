@@ -941,10 +941,7 @@ class MyClass {
             const { sourceFile } = getInfoFromText(text);
             const node = selectNode(sourceFile);
             const descendant = node.getFirstDescendantByKind(kind);
-            if (descendantText == null)
-                expect(descendant).to.be.undefined;
-            else
-                expect(descendant!.getText()).to.equal(descendantText);
+            expect(descendant?.getText()).to.equal(descendantText);
 
             if (additionalChecks)
                 additionalChecks(sourceFile);

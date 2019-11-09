@@ -28,10 +28,7 @@ describe(nameof(JsxAttributedNode), () => {
         function doNameTest(text: string, name: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             const attrib = descendant.getAttribute(name);
-            if (expected == null)
-                expect(attrib).to.be.undefined;
-            else
-                expect(attrib!.getText()).to.equal(expected);
+            expect(attrib?.getText()).to.equal(expected);
         }
 
         it("should get the correct attribute", () => {
@@ -45,10 +42,7 @@ describe(nameof(JsxAttributedNode), () => {
         function doFindFunctionTest(text: string, findFunc: (attrib: JsxAttributeLike) => boolean, expected: string | undefined) {
             const { descendant } = getInfo(text);
             const attrib = descendant.getAttribute(findFunc);
-            if (expected == null)
-                expect(attrib).to.be.undefined;
-            else
-                expect(attrib!.getText()).to.equal(expected);
+            expect(attrib?.getText()).to.equal(expected);
         }
 
         it("should get the correct attribute using a find function", () => {

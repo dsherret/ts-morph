@@ -138,10 +138,7 @@ describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.getVariableStatement), () => {
         function doTest(nameOrFindFunction: string | ((declaration: VariableStatement) => boolean), expectedFirstDeclarationName: string | undefined) {
             const statement = variablesSourceFile.getVariableStatement(nameOrFindFunction);
-            if (expectedFirstDeclarationName == null)
-                expect(statement).to.be.undefined;
-            else
-                expect(statement!.getDeclarations()[0].getName()).to.equal(expectedFirstDeclarationName);
+            expect(statement?.getDeclarations()[0].getName()).to.equal(expectedFirstDeclarationName);
         }
 
         it("should get a variable statement when something matches the provided identifier", () => {
@@ -167,10 +164,7 @@ describe(nameof(StatementedNode), () => {
         function doContainedTest(text: string, searchName: string, expectedStatement: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const variableStatement = sourceFile.getVariableStatement(searchName);
-            if (expectedStatement == null)
-                expect(variableStatement).to.be.undefined;
-            else
-                expect(variableStatement!.getText()).to.equal(expectedStatement);
+            expect(variableStatement?.getText()).to.equal(expectedStatement);
         }
 
         it("should get the statement when doing object destructuring", () => {
@@ -243,10 +237,7 @@ describe(nameof(StatementedNode), () => {
         function doTest(text: string, searchName: string, expectedDeclaration: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const variableDec = sourceFile.getVariableDeclaration(searchName);
-            if (expectedDeclaration == null)
-                expect(variableDec).to.be.undefined;
-            else
-                expect(variableDec!.getText()).to.equal(expectedDeclaration);
+            expect(variableDec?.getText()).to.equal(expectedDeclaration);
         }
 
         it("should get when using object destructuring", () => {

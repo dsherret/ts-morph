@@ -54,7 +54,7 @@ const project = new Project();
 // add everything to the project
 project.addSourceFilesFromTsConfig("dir1/tsconfig.json");
 project.addSourceFilesFromTsConfig("dir2/tsconfig.json");
-project.addExistingSourceFiles("dir3/**/*{.d.ts,.ts}");
+project.addSourceFilesAtPaths("dir3/**/*{.d.ts,.ts}");
 
 // optionally call this when complete to resolve and
 // add the dependent source files to the project
@@ -66,15 +66,15 @@ project.resolveSourceFileDependencies();
 Specify as many file globs or file paths as you wish:
 
 ```ts
-project.addExistingSourceFiles("folder/**/*{.d.ts,.ts}");
-project.addExistingSourceFiles(["folder/file.ts", "folder/otherFile.ts"]);
-project.addExistingSourceFiles(["**/*.ts", "!**/*.d.ts"]);
+project.addSourceFilesAtPaths("folder/**/*{.d.ts,.ts}");
+project.addSourceFilesAtPaths(["folder/file.ts", "folder/otherFile.ts"]);
+project.addSourceFilesAtPaths(["**/*.ts", "!**/*.d.ts"]);
 ```
 
 ### By file path
 
 ```ts
-const sourceFile = project.addExistingSourceFile("path/to/file.ts"); // or addExistingSourceFileIfExists
+const sourceFile = project.addSourceFileAtPath("path/to/file.ts"); // or addSourceFileAtPathIfExists
 ```
 
 ### By structure

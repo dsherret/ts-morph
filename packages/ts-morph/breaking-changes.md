@@ -2,6 +2,13 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 5
+
+* TypeScript 3.7.x support only.
+* New `@ts-morph/common` base package. This was done to support `@ts-morph/bootstrap`.
+* `TypePredicateNode#getTypeNode()` now possible returns undefined. This was a change done in the compiler api to support the new `asserts` modifier on type predicates.
+* Recommended to use the new `Project#addSourceFileAtPath(path)` methods instead of the ones like `Project#addExistingSourceFile(path)`. The old way will be deprecated in Version 6. Special thanks to [@ChristianIvicevic](https://github.com/ChristianIvicevic) for helping out with this one.
+
 ## Version 4
 
 Mostly renames:

@@ -81,10 +81,7 @@ describe(nameof(ExportSpecifier), () => {
         function doTest(text: string, alias: string | undefined) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedExport = firstChild.getNamedExports()[0];
-            if (alias == null)
-                expect(namedExport.getAliasNode()).to.equal(undefined);
-            else
-                expect(namedExport.getAliasNode()!.getText()).to.equal(alias);
+            expect(namedExport.getAliasNode()?.getText()).to.equal(alias);
         }
 
         it("should be undefined there is no alias", () => {

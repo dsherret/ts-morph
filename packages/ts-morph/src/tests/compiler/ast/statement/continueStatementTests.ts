@@ -16,7 +16,7 @@ describe(nameof(ContinueStatement), () => {
         function doTest(text: string, expectedText?: string) {
             const continueStatement = getStatement(text);
             const value = continueStatement.getLabel();
-            expect(value == null ? value : value.getText()).to.equal(expectedText);
+            expect(value?.getText()).to.equal(expectedText);
         }
 
         it("should get the correct label", () => {

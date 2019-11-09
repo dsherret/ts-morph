@@ -2,7 +2,8 @@ import { errors, ts } from "@ts-morph/common";
 import { BindingNamedNode, InitializerExpressionableNode } from "../base";
 import { Node } from "../common";
 
-export const BindingElementBase = InitializerExpressionableNode(BindingNamedNode(Node));
+const createBase = <T extends typeof Node>(ctor: T) => InitializerExpressionableNode(BindingNamedNode(ctor));
+export const BindingElementBase = createBase(Node);
 export class BindingElement extends BindingElementBase<ts.BindingElement> {
     /**
      * Gets the binding element's dot dot dot token (...) if it exists or throws if not.

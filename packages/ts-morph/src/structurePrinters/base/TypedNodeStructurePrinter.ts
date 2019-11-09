@@ -13,7 +13,7 @@ export class TypedNodeStructurePrinter extends Printer<TypedNodeStructure> {
         if (type == null && this.alwaysWrite === false)
             return;
 
-        type = type || "any";
+        type = type ?? "any";
 
         const typeText = this.getText(writer, type);
         if (!StringUtils.isNullOrWhitespace(typeText)) {

@@ -474,9 +474,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /* General */
         getStatements() {
             const statementsContainer = this._getCompilerStatementsContainer();
-            const statements = statementsContainer == null
-                ? [] as any as ts.Statement[]
-                : statementsContainer.statements as any as ts.Statement[];
+            const statements = (statementsContainer?.statements as any as ts.Statement[]) ?? [] as ts.Statement[];
             return statements.map(s => this._getNodeFromCompilerNode(s));
         }
 
@@ -966,14 +964,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 // need to get the inner-most body for namespaces
                 return (this._getInnerBody().compilerNode as ts.Block);
             }
-            else if (TypeGuards.isBodyableNode(this)) {
-                const body = this.getBody();
-                if (body == null)
-                    return undefined;
-                return body.compilerNode as any;
-            }
-            else if (TypeGuards.isBodiedNode(this))
-                return this.getBody().compilerNode as any;
+            else if (TypeGuards.isBodyableNode(this) || TypeGuards.isBodiedNode(this))
+                return (this.getBody()?.compilerNode as any);
             else if (TypeGuards.isBlock(this) || TypeGuards.isModuleBlock(this))
                 return this.compilerNode;
             else

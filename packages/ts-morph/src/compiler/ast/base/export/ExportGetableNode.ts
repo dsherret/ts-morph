@@ -54,7 +54,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
         getExportKeyword() {
             if (TypeGuards.isVariableDeclaration(this)) {
                 const variableStatement = this.getVariableStatement();
-                return variableStatement == null ? undefined : variableStatement.getExportKeyword();
+                return variableStatement?.getExportKeyword();
             }
             if (!TypeGuards.isModifierableNode(this))
                 return throwForNotModifierableNode();
@@ -72,7 +72,7 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
         getDefaultKeyword() {
             if (TypeGuards.isVariableDeclaration(this)) {
                 const variableStatement = this.getVariableStatement();
-                return variableStatement == null ? undefined : variableStatement.getDefaultKeyword();
+                return variableStatement?.getDefaultKeyword();
             }
             if (!TypeGuards.isModifierableNode(this))
                 return throwForNotModifierableNode();

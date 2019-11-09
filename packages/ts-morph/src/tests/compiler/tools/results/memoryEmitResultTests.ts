@@ -7,7 +7,7 @@ describe(nameof(MemoryEmitResult), () => {
         const project = new Project({ compilerOptions, useVirtualFileSystem: true });
         const fileSystem = project.getFileSystem();
         fileSystem.writeFileSync("file1.ts", "\uFEFFconst num1 = 1;"); // has BOM
-        project.addExistingSourceFile("file1.ts");
+        project.addSourceFileAtPath("file1.ts");
         project.createSourceFile("file2.ts", "const num2 = 2;");
         return { project, fileSystem };
     }

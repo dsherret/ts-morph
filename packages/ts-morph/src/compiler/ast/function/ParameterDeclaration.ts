@@ -9,9 +9,12 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const ParameterDeclarationBase = QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
-    TypedNode(InitializerExpressionableNode(BindingNamedNode(Node)))
+const createBase = <T
+    extends typeof Node>(ctor: T) =>
+QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
+    TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor)))
 )))));
+export const ParameterDeclarationBase = createBase(Node);
 export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
     /**
      * Gets the dot dot dot token (...) if it exists, for a rest parameter.

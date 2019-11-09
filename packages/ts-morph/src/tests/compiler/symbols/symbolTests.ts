@@ -32,10 +32,7 @@ describe(nameof(Symbol), () => {
         function doTest(code: string, exportName: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(code);
             const exportSymbol = sourceFile.getSymbolOrThrow().getExport(exportName);
-            if (expectedName == null)
-                expect(exportSymbol).to.be.undefined;
-            else
-                expect(exportSymbol!.getName()).to.equal(expectedName);
+            expect(exportSymbol?.getName()).to.equal(expectedName);
         }
 
         it("should get the export when it exists", () => {
@@ -84,10 +81,7 @@ describe(nameof(Symbol), () => {
         function doTest(code: string, exportName: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(code, { isDefinitionFile: true });
             const exportSymbol = sourceFile.getSymbolOrThrow().getGlobalExport(exportName);
-            if (expectedName == null)
-                expect(exportSymbol).to.be.undefined;
-            else
-                expect(exportSymbol!.getName()).to.equal(expectedName);
+            expect(exportSymbol?.getName()).to.equal(expectedName);
         }
 
         it("should get the global export when it exists", () => {
@@ -144,10 +138,7 @@ describe(nameof(Symbol), () => {
             const { sourceFile } = getInfoFromText(code);
             const typeAlias = sourceFile.getTypeAliasOrThrow("myType");
             const symbol = typeAlias.getType().getSymbolOrThrow();
-            if (expectedName == null)
-                expect(symbol.getMember(name)).to.be.undefined;
-            else
-                expect(symbol.getMember(name)!.getName()).to.equal(expectedName);
+            expect(symbol.getMember(name)?.getName()).to.equal(expectedName);
         }
 
         it("should get the member when it exists", () => {

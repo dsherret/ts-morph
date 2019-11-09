@@ -50,8 +50,8 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
         const methods: MethodDeclarationStructure[] = [];
 
         for (const structurePrinter of structurePrinters) {
-            const ctor = structurePrinter.getConstructors()[0] || structurePrinter.getBaseClassOrThrow().getConstructors()[0];
-            const ctorParams = ctor == null ? [] : ctor.getParameters();
+            const ctor = structurePrinter.getConstructors()[0] ?? structurePrinter.getBaseClassOrThrow().getConstructors()[0];
+            const ctorParams = ctor?.getParameters() ?? [];
             const exposedCtorParams = ctorParams.filter(exposeCtorParam);
             const name = structurePrinter.getNameOrThrow();
             methods.push({
@@ -86,7 +86,7 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
 
         function getTypeText(param: ParameterDeclaration) {
             const typeNode = param.getTypeNode();
-            return typeNode == null ? param.getType().getText() : typeNode.getText();
+            return typeNode?.getText() ?? param.getType().getText();
         }
     }
 

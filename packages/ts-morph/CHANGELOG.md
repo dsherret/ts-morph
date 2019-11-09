@@ -1,13 +1,43 @@
-# Changelog
+# Change Log
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [4.3.1](https://github.com/dsherret/ts-morph/compare/4.3.0...4.3.1) (2019-10-18)
+<a name="5.0.0"></a>
+# [5.0.0](https://github.com/dsherret/ts-morph/compare/4.3.3...5.0.0) (2019-11-08)
+
+
+### Features
+
+* [#733](https://github.com/dsherret/ts-morph/issues/733) - Soft rename addExistingSourceFile-like methods to addSourceFileAtPath-like. ([59fc2d5](https://github.com/dsherret/ts-morph/commit/59fc2d5)) - Thanks [@ChristianIvicevic](https://github.com/ChristianIvicevic)!
+* Support TypeScript 3.7. ([d86d034](https://github.com/dsherret/ts-morph/commit/d86d034))
+* TS 3.7 - Add TypeChecker#getTypeArguments and use that in Type#getTypeArguments. ([616ea3e](https://github.com/dsherret/ts-morph/commit/616ea3e))
+* Update implementation for [#733](https://github.com/dsherret/ts-morph/issues/733). ([3613233](https://github.com/dsherret/ts-morph/commit/3613233))
+
+
+### BREAKING CHANGES
+
+* TypePredicateNode#getTypeNode() now possible returns undefined.
+* Recommended to use the new `Project#addSourceFileAtPath(path)` methods instead of the ones like `Project#addExistingSourceFile(path)`. The old way will be deprecated in Version 6.
+* TypeScript 3.7.x support only.
+
+
+<a name="4.3.3"></a>
+## [4.3.3](https://github.com/dsherret/ts-morph/compare/4.3.2...4.3.3) (2019-11-07)
 
 
 ### Bug Fixes
 
-* Fix getGetAccessor() and getSetAccessor() to respect the static modifier and work on object literal declarations. ([525b83c](https://github.com/dsherret/ts-morph/commit/525b83c))
+* Restrict 4.3 version of library to TS < 3.7 ([8ad2d5c](https://github.com/dsherret/ts-morph/commit/8ad2d5c))
+
+
+
+<a name="4.3.2"></a>
+## [4.3.2](https://github.com/dsherret/ts-morph/compare/4.3.1...4.3.2) (2019-10-22)
+
+
+### Bug Fixes
+
+* [#745](https://github.com/dsherret/ts-morph/issues/745) - Inserting a member when a comment was the last member would throw. ([d83c031](https://github.com/dsherret/ts-morph/commit/d83c031))
 
 
 

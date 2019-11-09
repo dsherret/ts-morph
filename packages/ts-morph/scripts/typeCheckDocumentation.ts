@@ -16,14 +16,14 @@ const errorCodesToIgnore = [errorCodes.CannotRedeclareVariable, errorCodes.Canno
     errorCodes.AwaitOnlyAllowedInAsyncFunc, errorCodes.NoMultipleExportAssignments, errorCodes.ImportDeclarationConflictsWithLocalDeclaration,
     errorCodes.ExportAssignmentCannotBeUsedTargetingESModules, errorCodes.FileNotUnderRootDir];
 const project = getProject();
-const docsDir = project.addExistingDirectory("./docs");
+const docsDir = project.addDirectoryAtPath("../../docs");
 const fileSystem = project.getFileSystem();
-const templatesDir = docsDir.addExistingDirectory("_script-templates");
-project.addExistingSourceFiles("./docs/_script-templates/**/*.ts");
+const templatesDir = docsDir.addDirectoryAtPath("_script-templates");
+project.addSourceFilesAtPaths("../../docs/_script-templates/**/*.ts");
 const mainTemplate = templatesDir.getSourceFileOrThrow("main.ts");
 addAnyInitializers(mainTemplate);
 
-const markDownFiles = fileSystem.glob(["./docs/**/*.md", "./README.md"]).map(filePath => new MarkDownFile(filePath, fileSystem.readFileSync(filePath)));
+const markDownFiles = fileSystem.glob(["../../docs/**/*.md", "./README.md"]).map(filePath => new MarkDownFile(filePath, fileSystem.readFileSync(filePath)));
 
 console.log("Checking documentation for compile errors...");
 const errors: { diagnostic: Diagnostic; codeBlock: CodeBlock; }[] = [];

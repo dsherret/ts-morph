@@ -8,10 +8,6 @@ export class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase
      * Gets the type arguments.
      */
     getTypeArguments(): TypeNode[] {
-        const typeArguments = this.compilerNode.typeArguments;
-        if (typeArguments == null)
-            return [];
-
-        return typeArguments.map(a => this._getNodeFromCompilerNode(a));
+        return this.compilerNode.typeArguments?.map(a => this._getNodeFromCompilerNode(a)) ?? [];
     }
 }

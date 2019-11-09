@@ -12,7 +12,10 @@ import { ObjectLiteralElement } from "./ObjectLiteralElement";
 // This node only has an object assignment initializer, equals token, and question token, in order to tell the user about bad code
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)
 
-export const ShorthandPropertyAssignmentBase = InitializerExpressionGetableNode(QuestionTokenableNode(NamedNode(ObjectLiteralElement)));
+const createBase = <T extends typeof ObjectLiteralElement>(ctor: T) => InitializerExpressionGetableNode(
+    QuestionTokenableNode(NamedNode(ctor))
+);
+export const ShorthandPropertyAssignmentBase = createBase(ObjectLiteralElement);
 export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase<ts.ShorthandPropertyAssignment> {
     /**
      * Gets if the shorthand property assignment has an object assignment initializer.

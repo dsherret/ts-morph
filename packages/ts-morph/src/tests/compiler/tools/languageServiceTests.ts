@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import { EmitOutput, FileTextChanges, LanguageService, SourceFile, TextChange, TextSpan } from "../../../compiler";
-import { TypeScriptVersionChecker } from "../../../utils";
 import { errors, ScriptTarget, ts } from "@ts-morph/common";
 import { getInfoFromText } from "../testHelpers";
 
@@ -57,11 +56,7 @@ describe(nameof(LanguageService), () => {
 
             checkOutput(output, {
                 emitSkipped: true,
-                outputFiles: [{
-                    fileName: "/" + sourceFile.getBaseName().replace(".ts", ".d.ts"),
-                    text: "export declare class Test extends MyClass {\n}\n",
-                    writeByteOrderMark: false
-                }]
+                outputFiles: []
             });
         });
 
@@ -142,7 +137,7 @@ describe(nameof(LanguageService), () => {
             checkFileTextChanges(edit2!, {
                 fileName: "/A.ts",
                 textChanges: [{
-                    newText: "export class A {\n}" + (TypeScriptVersionChecker.isGreaterThanOrEqual(3, 2, 0) ? "\n" : ""),
+                    newText: "export class A {\n}\n",
                     span: { start: 0, length: 0 }
                 }]
             });
@@ -236,8 +231,8 @@ function checkOutput(
     output: EmitOutput,
     expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; }
 ) {
-    expect(output.getEmitSkipped()).to.equal(expected.emitSkipped);
-    expect(output.getOutputFiles().length).to.equal(expected.outputFiles.length);
+    expect(output.getEmitSkipped()).to.equal(expected.emitSkipped, "emit skipped");
+    expect(output.getOutputFiles().length).to.equal(expected.outputFiles.length, "output files length");
     for (let i = 0; i < expected.outputFiles.length; i++) {
         const actualFile = output.getOutputFiles()[i];
         const expectedFile = expected.outputFiles[i];

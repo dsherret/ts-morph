@@ -49,10 +49,7 @@ describe(nameof(VariableDeclaration), () => {
             const { descendant } = getInfoFromTextWithDescendant<VariableDeclaration>(startCode, SyntaxKind.VariableDeclaration);
             const statement = descendant.getVariableStatement();
 
-            if (expectedText == null)
-                expect(statement).to.be.undefined;
-            else
-                expect(statement!.getText()).to.equal(expectedText);
+            expect(statement?.getText()).to.equal(expectedText);
         }
 
         it("should get the variable statement when it exists", () => {

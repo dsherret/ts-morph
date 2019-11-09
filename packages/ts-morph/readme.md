@@ -2,8 +2,8 @@
 ========
 
 [![npm version](https://badge.fury.io/js/ts-morph.svg)](https://badge.fury.io/js/ts-morph)
-[![Build Status](https://travis-ci.org/dsherret/ts-morph.svg?branch=master)](https://travis-ci.org/dsherret/ts-morph)
-[![Coverage Status](https://coveralls.io/repos/dsherret/ts-morph/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-morph?branch=master)
+[![Build Status](https://travis-ci.org/dsherret/ts-morph.svg?branch=latest)](https://travis-ci.org/dsherret/ts-morph)
+[![Coverage Status](https://coveralls.io/repos/dsherret/ts-morph/badge.svg?branch=latest&service=github)](https://coveralls.io/github/dsherret/ts-morph?branch=latest)
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 [TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides an easier way to programmatically navigate and manipulate TypeScript and JavaScript code.
@@ -53,7 +53,7 @@ const project = new Project({
 });
 
 // add source files
-project.addExistingSourceFiles("src/**/*.ts");
+project.addSourceFilesAtPaths("src/**/*.ts");
 const myClassFile = project.createSourceFile("src/MyClass.ts", "export class MyClass {}");
 const myEnumFile = project.createSourceFile("src/MyEnum.ts", {
     statements: [{
@@ -110,7 +110,3 @@ const firstProperty = classDec.getProperties()[0];
 
 // ... do more stuff here ...
 ```
-
-## Resources
-
-* [TypeScript AST Viewer](https://ts-ast-viewer.com)

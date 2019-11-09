@@ -30,13 +30,13 @@ export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions
     doManipulation(parent._sourceFile, new InsertionTextManipulator({
         insertPos,
         newText,
-        replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
+        replacingLength: opts.replacing?.textLength
     }), new NodeHandlerFactory().getForParentRange({
         parent,
         start: insertPos,
         end: insertPos + newText.length,
-        replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength,
-        replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes,
+        replacingLength: opts.replacing?.textLength,
+        replacingNodes: opts.replacing?.nodes,
         customMappings: opts.customMappings
     }));
 }
@@ -187,7 +187,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         function getLastCommentRangeEnd(node: Node) {
             const commentRanges = node.getTrailingCommentRanges();
             const lastCommentRange = commentRanges[commentRanges.length - 1];
-            return lastCommentRange == null ? undefined : lastCommentRange.getEnd();
+            return lastCommentRange?.getEnd();
         }
     }
 
@@ -252,13 +252,14 @@ export interface InsertIntoBracesOrSourceFileOptions {
 export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileOptions) {
     const { parent, index, children } = opts;
     const fullText = parent._sourceFile.getFullText();
-    const insertPos = getInsertPosFromIndex(index, parent.getChildSyntaxListOrThrow(), children);
+    const childSyntaxList = parent.getChildSyntaxListOrThrow();
+    const insertPos = getInsertPosFromIndex(index, childSyntaxList, children);
     const endPos = getEndPosFromIndex(index, parent, children, fullText);
     const replacingLength = endPos - insertPos;
     const newText = getNewText();
 
     doManipulation(parent._sourceFile, new InsertionTextManipulator({ insertPos, replacingLength, newText }), new NodeHandlerFactory().getForParentRange({
-        parent: parent.getChildSyntaxListOrThrow(),
+        parent: childSyntaxList,
         start: insertPos,
         end: insertPos + newText.length,
         replacingLength

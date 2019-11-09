@@ -31,7 +31,7 @@ export class RangeParentHandler implements NodeHandler {
         this.start = opts.start;
         this.end = opts.end;
         this.replacingLength = opts.replacingLength;
-        this.replacingNodes = opts.replacingNodes == null ? undefined : opts.replacingNodes.map(n => n.compilerNode);
+        this.replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
         this.customMappings = opts.customMappings;
     }
 

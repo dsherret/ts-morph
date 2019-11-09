@@ -12,7 +12,7 @@ export type InitializerExpressionableNodeExtensionType = Node<ts.Node & { initia
 
 export interface InitializerExpressionableNode extends InitializerExpressionGetableNode {
     /**
-     * Removes the initailizer.
+     * Removes the initializer.
      */
     removeInitializer(): this;
     /**

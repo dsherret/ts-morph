@@ -12,16 +12,19 @@
     "rollup": "rollup --config"
   },
   "peerDependencies": {
-    "ts-morph": "npm:ts-morph@4.2.0"
+    "ts-morph": "npm:ts-morph@5.0.0"
   },
   "devDependencies": {
     "@types/ts-nameof": "^4.0.0",
-    "ts-morph": "npm:ts-morph@4.2.0",
+    "ts-morph": "npm:ts-morph@5.0.0",
     "rimraf": "^3.0.0",
-    "rollup": "^1.23.1",
-    "rollup-plugin-typescript2": "^0.24.3",
-    "ts-nameof": "^4.0.3",
-    "ttypescript": "^1.5.7",
-    "typescript": "^3.6.3"
+    "rollup": "^1.26.3",
+    "rollup-plugin-typescript2": "^0.25.2",
+    "ts-nameof": "^4.1.0",
+    "ttypescript": "^1.5.8",
+    "typescript": "^3.7.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

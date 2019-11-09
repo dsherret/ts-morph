@@ -35,10 +35,7 @@ describe(nameof(TypeChecker), () => {
         function doTest(text: string, declarationName: string | undefined) {
             const { descendant, project } = getInfoFromTextWithDescendant<CallExpression>(text, SyntaxKind.CallExpression);
             const result = project.getTypeChecker().getResolvedSignature(descendant);
-            if (declarationName == null)
-                expect(result).to.be.undefined;
-            else
-                expect((result!.getDeclaration() as NamedNode).getName()).to.equal(declarationName);
+            expect((result?.getDeclaration() as NamedNode)?.getName()).to.equal(declarationName);
         }
 
         it("should not resolve unknown signature", () => {

@@ -11,9 +11,12 @@ import { ImplementationLocation } from "../../tools";
 import { TypeAliasDeclaration } from "../type";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const InterfaceDeclarationBase = TypeElementMemberedNode(TextInsertableNode(ExtendsClauseableNode(HeritageClauseableNode(
-    TypeParameteredNode(JSDocableNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Statement)))))))
-))));
+const createBase = <T extends typeof Statement>(ctor: T) => TypeElementMemberedNode(TextInsertableNode(
+    ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(JSDocableNode(AmbientableNode(
+        NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(ctor))))
+    )))))
+));
+export const InterfaceDeclarationBase = createBase(Statement);
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**
      * Gets the base types.
@@ -27,8 +30,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getBaseDeclarations(): (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[] {
         return ArrayUtils.flatten(this.getType().getBaseTypes().map(t => {
-            const symbol = t.getSymbol();
-            return symbol == null ? [] : (symbol.getDeclarations() as (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[]);
+            return (t.getSymbol()?.getDeclarations() as (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[]) ?? [];
         }));
     }
 

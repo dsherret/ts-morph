@@ -66,7 +66,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      */
     getModuleSpecifierValue() {
         const moduleSpecifier = this.getModuleSpecifier();
-        return moduleSpecifier == null ? undefined : moduleSpecifier.getLiteralValue();
+        return moduleSpecifier?.getLiteralValue();
     }
 
     /**

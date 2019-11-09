@@ -3,7 +3,7 @@ node_js:
     - "8"
 before_script:
     - yarn bootstrap
-    - yarn build
+    - travis_wait yarn build
     - lerna run ensure-no-project-compile-errors
 script:
     - lerna run test:ci

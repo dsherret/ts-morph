@@ -116,10 +116,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
         function doTest(code: string, expectedName: string | undefined) {
             const { firstIndexSignature } = getFirstIndexSignatureWithInfo(code);
             const returnTypeNode = firstIndexSignature.getReturnTypeNode();
-            if (expectedName == null)
-                expect(returnTypeNode).to.be.undefined;
-            else
-                expect(returnTypeNode!.getText()).to.equal(expectedName);
+            expect(returnTypeNode?.getText()).to.equal(expectedName);
         }
 
         it("should get when exists", () => {

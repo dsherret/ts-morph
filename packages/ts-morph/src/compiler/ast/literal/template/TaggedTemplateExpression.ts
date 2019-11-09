@@ -23,7 +23,7 @@ export class TaggedTemplateExpression extends MemberExpression<ts.TaggedTemplate
      * @returns The new template expression.
      */
     removeTag(): TemplateLiteral {
-        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        const parent = this.getParentSyntaxList() ?? this.getParentOrThrow();
         const index = this.getChildIndex();
         const template = this.getTemplate();
         insertIntoParentTextRange({
