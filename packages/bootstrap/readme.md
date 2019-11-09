@@ -23,7 +23,7 @@ const myClassFile = project.createSourceFile(
 );
 const mainFile = project.createSourceFile(
     "main.ts",
-    "import { MyClass } from './MyClass.ts'"
+    "import { MyClass } from './MyClass'"
 );
 
 // ts.Program
