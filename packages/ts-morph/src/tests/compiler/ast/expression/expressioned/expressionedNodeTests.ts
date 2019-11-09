@@ -19,10 +19,7 @@ describe(nameof(ExpressionedNode), () => {
         function doTest(text: string, kind: SyntaxKind, expectedText: string | undefined) {
             const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
             const result = descendant.getExpressionIfKind(kind);
-            if (expectedText == null)
-                expect(result).to.be.undefined;
-            else
-                expect(result!.getText()).to.equal(expectedText);
+            expect(result?.getText()).to.equal(expectedText);
         }
 
         it("should get the expression when providing the expected value", () => {

@@ -1391,7 +1391,7 @@ describe(nameof(Project), () => {
             function doTest(moduleName: string, expectedName: string | undefined) {
                 const project = getProject();
                 const ambientModule = project.getAmbientModule(moduleName);
-                expect(ambientModule == null ? undefined : ambientModule.getName()).to.equal(expectedName);
+                expect(ambientModule?.getName()).to.equal(expectedName);
             }
 
             it("should find when using single quotes", () => doTest(`'jquery'`, `"jquery"`));

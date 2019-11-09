@@ -18,10 +18,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
      * Gets the tags of the JSDoc.
      */
     getTags(): JSDocTag[] {
-        const tags = this.compilerNode.tags;
-        if (tags == null)
-            return [];
-        return tags.map(t => this._getNodeFromCompilerNode(t));
+        return this.compilerNode.tags?.map(t => this._getNodeFromCompilerNode(t)) ?? [];
     }
 
     /**

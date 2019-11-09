@@ -8,10 +8,7 @@ export class HeritageClause extends Node<ts.HeritageClause> {
      * Gets all the type nodes for the heritage clause.
      */
     getTypeNodes(): ExpressionWithTypeArguments[] {
-        if (this.compilerNode.types == null)
-            return [];
-
-        return this.compilerNode.types.map(t => this._getNodeFromCompilerNode(t));
+        return this.compilerNode.types?.map(t => this._getNodeFromCompilerNode(t)) ?? [];
     }
 
     /**

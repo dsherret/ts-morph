@@ -28,7 +28,7 @@ export class DefaultParentHandler implements NodeHandler {
         this.helper = new NodeHandlerHelper(compilerFactory);
         this.childCount = opts.childCount;
         this.isFirstChild = opts.isFirstChild;
-        this.replacingNodes = opts.replacingNodes == null ? undefined : opts.replacingNodes.map(n => n.compilerNode);
+        this.replacingNodes = opts.replacingNodes?.map(n => n.compilerNode);
         this.customMappings = opts.customMappings;
     }
 

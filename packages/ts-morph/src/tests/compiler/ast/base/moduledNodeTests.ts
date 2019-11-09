@@ -157,10 +157,7 @@ describe(nameof(ModuledNode), () => {
         function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean), expected: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const result = sourceFile.getImportDeclaration(conditionOrModuleSpecifier);
-            if (expected == null)
-                expect(result).to.be.undefined;
-            else
-                expect(result!.getText()).to.equal(expected);
+            expect(result?.getText()).to.equal(expected);
         }
 
         it("should get the import declaration", () => {
@@ -316,10 +313,7 @@ describe(nameof(ModuledNode), () => {
         function doTest(text: string, conditionOrModuleSpecifier: string | ((importDeclaration: ExportDeclaration) => boolean), expected: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const result = sourceFile.getExportDeclaration(conditionOrModuleSpecifier);
-            if (expected == null)
-                expect(result).to.be.undefined;
-            else
-                expect(result!.getText()).to.equal(expected);
+            expect(result?.getText()).to.equal(expected);
         }
 
         it("should get when exists", () => {
@@ -657,10 +651,7 @@ export = ts;`);
         function doTest(text: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const defaultSymbol = sourceFile.getDefaultExportSymbol();
-            if (expectedName == null)
-                expect(defaultSymbol).to.be.undefined;
-            else
-                expect(defaultSymbol!.getName()).to.equal(expectedName);
+            expect(defaultSymbol?.getName()).to.equal(expectedName);
         }
 
         it("should return undefined when there's no default export", () => {

@@ -41,12 +41,7 @@ describe(nameof(JsxAttribute), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             const initializer = descendant.getInitializer();
-            if (expected == null)
-                expect(initializer).to.be.undefined;
-            else {
-                expect(initializer).to.not.be.undefined;
-                expect(initializer!.getText()).to.equal(expected);
-            }
+            expect(initializer?.getText()).to.equal(expected);
         }
 
         it("should get the initializer when it exists and is a string literal", () => {

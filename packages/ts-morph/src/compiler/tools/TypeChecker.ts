@@ -155,8 +155,7 @@ export class TypeChecker {
         if (typeFormatFlags == null)
             typeFormatFlags = this._getDefaultTypeFormatFlags(enclosingNode);
 
-        const compilerNode = enclosingNode == null ? undefined : enclosingNode.compilerNode;
-        return this.compilerObject.typeToString(type.compilerType, compilerNode, typeFormatFlags);
+        return this.compilerObject.typeToString(type.compilerType, enclosingNode?.compilerNode, typeFormatFlags);
     }
 
     /**

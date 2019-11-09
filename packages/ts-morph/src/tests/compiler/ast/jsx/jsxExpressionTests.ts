@@ -11,10 +11,7 @@ describe(nameof(JsxExpression), () => {
     describe(nameof<JsxExpression>(n => n.getExpression), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
-            if (expected == null)
-                expect(descendant.getExpression()).to.be.undefined;
-            else
-                expect(descendant.getExpression()!.getText()).to.equal(expected);
+            expect(descendant.getExpression()?.getText()).to.equal(expected);
         }
 
         it("should get the expression", () => {
@@ -47,10 +44,7 @@ describe(nameof(JsxExpression), () => {
     describe(nameof<JsxExpression>(n => n.getDotDotDotToken), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
-            if (expected == null)
-                expect(descendant.getDotDotDotToken()).to.be.undefined;
-            else
-                expect(descendant.getDotDotDotToken()!.getText()).to.equal(expected);
+            expect(descendant.getDotDotDotToken()?.getText()).to.equal(expected);
         }
 
         it("should get the dot dot dot token", () => {

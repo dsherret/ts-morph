@@ -17,6 +17,6 @@ export function testDirectoryTree(dir: Directory, tree: TreeNode, parent?: Direc
         testDirectoryTree(child.directory, child, dir);
 
     function getDirPath(directory: Directory | undefined) {
-        return directory == null ? undefined : directory.getPath();
+        return directory?.getPath();
     }
 }

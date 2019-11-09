@@ -30,13 +30,13 @@ export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions
     doManipulation(parent._sourceFile, new InsertionTextManipulator({
         insertPos,
         newText,
-        replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
+        replacingLength: opts.replacing?.textLength
     }), new NodeHandlerFactory().getForParentRange({
         parent,
         start: insertPos,
         end: insertPos + newText.length,
-        replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength,
-        replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes,
+        replacingLength: opts.replacing?.textLength,
+        replacingNodes: opts.replacing?.nodes,
         customMappings: opts.customMappings
     }));
 }
@@ -187,7 +187,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         function getLastCommentRangeEnd(node: Node) {
             const commentRanges = node.getTrailingCommentRanges();
             const lastCommentRange = commentRanges[commentRanges.length - 1];
-            return lastCommentRange == null ? undefined : lastCommentRange.getEnd();
+            return lastCommentRange?.getEnd();
         }
     }
 

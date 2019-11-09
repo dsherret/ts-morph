@@ -81,7 +81,7 @@ describe(nameof(NameableNode), () => {
         function doTest(startCode: string, expectedName: string | undefined) {
             const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             const identifier = funcExpr.getNameNode();
-            expect(identifier == null ? undefined : identifier.getText()).to.equal(expectedName);
+            expect(identifier?.getText()).to.equal(expectedName);
         }
 
         it("should get the name when it exists", () => {

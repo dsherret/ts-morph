@@ -30,8 +30,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getBaseDeclarations(): (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[] {
         return ArrayUtils.flatten(this.getType().getBaseTypes().map(t => {
-            const symbol = t.getSymbol();
-            return symbol == null ? [] : (symbol.getDeclarations() as (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[]);
+            return (t.getSymbol()?.getDeclarations() as (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[]) ?? [];
         }));
     }
 

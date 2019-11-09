@@ -14,7 +14,7 @@ export interface GetNewInsertCodeOptions<TNode extends Node, TStructure> {
 // todo: seems like this should be renamed or removed?
 export function getNewInsertCode<TNode extends Node, TStructure>(opts: GetNewInsertCodeOptions<TNode, TStructure>) {
     const { structures, newCodes, parent, getSeparator, previousFormattingKind, nextFormattingKind } = opts;
-    const indentationText = opts.indentationText == null ? parent.getChildIndentationText() : opts.indentationText;
+    const indentationText = opts.indentationText ?? parent.getChildIndentationText();
     const newLineKind = parent._context.manipulationSettings.getNewLineKindAsString();
 
     return getFormattingKindTextWithIndent(previousFormattingKind) + getChildCode() + getFormattingKindTextWithIndent(nextFormattingKind);

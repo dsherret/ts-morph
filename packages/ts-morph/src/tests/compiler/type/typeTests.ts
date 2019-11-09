@@ -664,10 +664,7 @@ let unknownType: unknown;
         describe(nameof<Type>(t => t.getArrayElementType), () => {
             function doTest(typeName: string, expected: string | undefined) {
                 const type = typesByName[typeName].getArrayElementType();
-                if (expected == null)
-                    expect(type).to.be.undefined;
-                else
-                    expect(type!.getText()).to.equal(expected);
+                expect(type?.getText()).to.equal(expected);
             }
 
             it("should get when exists", () => {
@@ -745,10 +742,7 @@ let unknownType: unknown;
         function doTest(text: string, nameOrFindFunction: string | ((declaration: Symbol) => boolean), expected: string | undefined) {
             const { firstType } = getTypeFromText(text);
             const prop = firstType.getProperty(nameOrFindFunction);
-            if (expected == null)
-                expect(prop).to.be.undefined;
-            else
-                expect(prop!.getName()).to.equal(expected);
+            expect(prop?.getName()).to.equal(expected);
         }
 
         it("should get the property by name", () => {
@@ -788,10 +782,7 @@ let unknownType: unknown;
     describe(nameof<Type>(t => t.getConstraint), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstType } = getTypeAliasTypeFromText(text);
-            if (expected == null)
-                expect(firstType.getConstraint()).to.be.undefined;
-            else
-                expect(firstType.getConstraint()!.getText()).to.equal(expected);
+            expect(firstType.getConstraint()?.getText()).to.equal(expected);
         }
 
         it("should get the constraint when it exists", () => {
@@ -824,10 +815,7 @@ let unknownType: unknown;
     describe(nameof<Type>(t => t.getDefault), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstType } = getTypeAliasTypeFromText(text);
-            if (expected == null)
-                expect(firstType.getDefault()).to.be.undefined;
-            else
-                expect(firstType.getDefault()!.getText()).to.equal(expected);
+            expect(firstType.getDefault()?.getText()).to.equal(expected);
         }
 
         it("should get the default when it exists", () => {

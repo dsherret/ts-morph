@@ -55,14 +55,14 @@ export function printNode(node: ts.Node, sourceFileOrOptions?: PrintNodeOptions 
     const sourceFile = getSourceFile();
 
     const printer = ts.createPrinter({
-        newLine: options.newLineKind == null ? NewLineKind.LineFeed : options.newLineKind,
+        newLine: options.newLineKind ?? NewLineKind.LineFeed,
         removeComments: options.removeComments || false
     });
 
     if (sourceFile == null)
         return printer.printFile(node as ts.SourceFile);
     else
-        return printer.printNode(options.emitHint == null ? EmitHint.Unspecified : options.emitHint, node, sourceFile);
+        return printer.printNode(options.emitHint ?? EmitHint.Unspecified, node, sourceFile);
 
     function getSourceFile() {
         if (isFirstOverload) {
@@ -80,7 +80,7 @@ export function printNode(node: ts.Node, sourceFileOrOptions?: PrintNodeOptions 
         return sourceFileOrOptions as ts.SourceFile;
 
         function getScriptKind() {
-            return options.scriptKind == null ? ScriptKind.TSX : options.scriptKind;
+            return options.scriptKind ?? ScriptKind.TSX;
         }
 
         function getFileExt(scriptKind: ScriptKind) {

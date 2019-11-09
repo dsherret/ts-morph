@@ -153,7 +153,7 @@ export class ProjectContext {
      * @param sourceFile - Optional source file to filter the results by.
      */
     getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.program.compilerObject, sourceFile == null ? undefined : sourceFile.compilerNode);
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.program.compilerObject, sourceFile?.compilerNode);
         return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
     }
 
@@ -165,13 +165,13 @@ export class ProjectContext {
         return {
             addOrGetSourceFileFromFilePath: (filePath, opts) => {
                 const sourceFile = this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts);
-                return sourceFile == null ? undefined : sourceFile.compilerNode;
+                return sourceFile?.compilerNode;
             },
             containsDirectoryAtPath: dirPath => this.compilerFactory.containsDirectoryAtPath(dirPath),
             containsSourceFileAtPath: filePath => this.compilerFactory.containsSourceFileAtPath(filePath),
             getSourceFileFromCacheFromFilePath: filePath => {
                 const sourceFile = this.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
-                return sourceFile == null ? undefined : sourceFile.compilerNode;
+                return sourceFile?.compilerNode;
             },
             getSourceFilePaths: () => this.compilerFactory.getSourceFilePaths(),
             getSourceFileVersion: sourceFile => this.compilerFactory.documentRegistry.getSourceFileVersion(sourceFile),

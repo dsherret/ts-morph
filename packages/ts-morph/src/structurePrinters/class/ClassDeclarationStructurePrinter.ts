@@ -72,8 +72,8 @@ export class ClassDeclarationStructurePrinter extends NodePrinter<OptionalKind<C
     }
 
     private printGetAndSet(writer: CodeBlockWriter, structure: OptionalKind<ClassDeclarationStructure>, isAmbient: boolean) {
-        const getAccessors = [...structure.getAccessors || []];
-        const setAccessors = [...structure.setAccessors || []];
+        const getAccessors = [...structure.getAccessors ?? []];
+        const setAccessors = [...structure.setAccessors ?? []];
         const getAccessorWriter = this.factory.forGetAccessorDeclaration({ isAmbient });
         const setAccessorWriter = this.factory.forSetAccessorDeclaration({ isAmbient });
 

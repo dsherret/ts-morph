@@ -23,9 +23,7 @@ export class TypeGuards {
      */
     static hasExpression<T extends compiler.Node>(node: T): node is T & { getExpression(): compiler.Expression; } {
         // this method is manually maintained
-        if ((node as any).getExpression == null)
-            return false;
-        return (node as any).getExpression() != null;
+        return (node as any).getExpression?.() != null;
     }
 
     /**
@@ -34,9 +32,7 @@ export class TypeGuards {
      */
     static hasName<T extends compiler.Node>(node: T): node is T & { getName(): string; getNameNode(): compiler.Node; } {
         // this method is manually maintained
-        if ((node as any).getName == null)
-            return false;
-        return typeof (node as any).getName() === "string";
+        return typeof (node as any).getName?.() === "string";
     }
 
     /**
@@ -45,9 +41,7 @@ export class TypeGuards {
      */
     static hasBody<T extends compiler.Node>(node: T): node is T & { getBody(): compiler.Node; } {
         // this method is manually maintained
-        if ((node as any).getBody == null)
-            return false;
-        return (node as any).getBody() != null;
+        return (node as any).getBody?.() != null;
     }
 
     /**

@@ -89,10 +89,7 @@ describe(nameof(BindingElement), () => {
     describe(nameof<BindingElement>(n => n.getPropertyNameNode), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { bindingElement } = getInfoFromTextWithBindingElement(text);
-            if (expectedName == null)
-                expect(bindingElement.getPropertyNameNode()).to.be.undefined;
-            else
-                expect(bindingElement.getPropertyNameNode()!.getText()).to.equal(expectedName);
+            expect(bindingElement.getPropertyNameNode()?.getText()).to.equal(expectedName);
         }
 
         it("should get when it exists", () => {

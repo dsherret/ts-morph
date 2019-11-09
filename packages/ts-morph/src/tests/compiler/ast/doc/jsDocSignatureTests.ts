@@ -11,10 +11,7 @@ describe(nameof(JSDocSignature), () => {
     describe(nameof<JSDocSignature>(d => d.getTypeNode), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
-            if (expected == null)
-                expect(descendant.getTypeNode()).to.be.undefined;
-            else
-                expect(descendant.getTypeNode()!.getText()).to.equal(expected);
+            expect(descendant.getTypeNode()?.getText()).to.equal(expected);
         }
 
         it("should get when it exists", () => {

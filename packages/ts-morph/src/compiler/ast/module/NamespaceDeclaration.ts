@@ -140,12 +140,8 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets the namespace or module keyword or returns undefined if it's global.
      */
     getDeclarationKindKeyword() {
-        const keyword = this.getFirstChild(child => child.getKind() === SyntaxKind.NamespaceKeyword
+        return this.getFirstChild(child => child.getKind() === SyntaxKind.NamespaceKeyword
             || child.getKind() === SyntaxKind.ModuleKeyword);
-        /* istanbul ignore if */
-        if (keyword == null)
-            return undefined;
-        return keyword;
     }
 
     /**

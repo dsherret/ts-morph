@@ -149,8 +149,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
      * Gets all the declarations referenced by the export specifier.
      */
     getLocalTargetDeclarations(): LocalTargetDeclarations[] {
-        const symbol = this.getLocalTargetSymbol();
-        return symbol == null ? [] : symbol.getDeclarations() as LocalTargetDeclarations[];
+        return this.getLocalTargetSymbol()?.getDeclarations() as LocalTargetDeclarations[] ?? [];
     }
 
     /**

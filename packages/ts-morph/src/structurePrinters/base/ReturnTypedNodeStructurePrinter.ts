@@ -13,7 +13,7 @@ export class ReturnTypedNodeStructurePrinter extends Printer<ReturnTypedNodeStru
         if (returnType == null && this.alwaysWrite === false)
             return;
 
-        returnType = returnType || "void";
+        returnType = returnType ?? "void";
 
         const returnTypeText = this.getText(writer, returnType);
         if (!StringUtils.isNullOrWhitespace(returnTypeText)) {

@@ -29,7 +29,7 @@ export class TemplateExpression extends TemplateExpressionBase<ts.TemplateExpres
      */
     setLiteralValue(value: string) {
         const childIndex = this.getChildIndex();
-        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        const parent = this.getParentSyntaxList() ?? this.getParentOrThrow();
         replaceNodeText({
             sourceFile: this._sourceFile,
             start: this.getStart() + 1,

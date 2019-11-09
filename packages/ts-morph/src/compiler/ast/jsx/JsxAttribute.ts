@@ -104,7 +104,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
         const initializer = this.getInitializer();
         return callBaseGetStructure<JsxAttributeSpecificStructure>(JsxAttributeBase.prototype, this, {
             kind: StructureKind.JsxAttribute,
-            initializer: initializer == null ? undefined : initializer.getText()
+            initializer: initializer?.getText()
         });
     }
 }

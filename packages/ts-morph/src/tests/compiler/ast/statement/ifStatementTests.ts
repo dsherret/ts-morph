@@ -39,7 +39,7 @@ describe(nameof(IfStatement), () => {
         function doTest(text: string, expectedText: string | undefined) {
             const ifStatement = getStatement(text);
             const value = ifStatement.getElseStatement();
-            expect(value == null ? value : value.getText()).to.equal(expectedText);
+            expect(value?.getText()).to.equal(expectedText);
         }
 
         it("should get the correct else statement", () => {

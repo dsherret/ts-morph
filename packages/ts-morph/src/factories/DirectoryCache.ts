@@ -74,16 +74,12 @@ export class DirectoryCache {
 
     getChildDirectoriesOfDirectory(dirPath: string) {
         const directories = this.directoriesByDirPath.get(dirPath);
-        if (directories == null)
-            return [];
-        return directories.getArrayCopy();
+        return directories?.getArrayCopy() ?? [];
     }
 
     getChildSourceFilesOfDirectory(dirPath: string) {
         const sourceFiles = this.sourceFilesByDirPath.get(dirPath);
-        if (sourceFiles == null)
-            return [];
-        return sourceFiles.getArrayCopy();
+        return sourceFiles?.getArrayCopy() ?? [];
     }
 
     addSourceFile(sourceFile: SourceFile) {

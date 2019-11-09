@@ -197,10 +197,7 @@ describe(nameof(ImportDeclaration), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const defaultImport = firstChild.getDefaultImport();
-            if (expectedName == null)
-                expect(defaultImport).to.be.undefined;
-            else
-                expect(defaultImport!.getText()).to.equal(expectedName);
+            expect(defaultImport?.getText()).to.equal(expectedName);
         }
 
         it("should get the default import when it exists", () => {
@@ -329,10 +326,7 @@ describe(nameof(ImportDeclaration), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const identifier = firstChild.getNamespaceImport();
-            if (expectedName == null)
-                expect(identifier).to.be.undefined;
-            else
-                expect(identifier!.getText()).to.equal(expectedName);
+            expect(identifier?.getText()).to.equal(expectedName);
         }
 
         it("should get the namespace import when it exists", () => {
@@ -563,10 +557,7 @@ describe(nameof(ImportDeclaration), () => {
     describe(nameof<ImportDeclaration>(n => n.getImportClause), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
-            if (expectedName == null)
-                expect(firstChild.getImportClause()).to.be.undefined;
-            else
-                expect(firstChild.getImportClause()!.getText()).to.equal(expectedName);
+            expect(firstChild.getImportClause()?.getText()).to.equal(expectedName);
         }
 
         it("should get the import clause when it exists", () => {

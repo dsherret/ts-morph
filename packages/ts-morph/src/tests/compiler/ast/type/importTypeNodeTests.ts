@@ -38,10 +38,7 @@ describe(nameof(ImportTypeNode), () => {
     describe(nameof<ImportTypeNode>(d => d.getQualifier), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getNode(text);
-            if (expected == null)
-                expect(descendant.getQualifier()).to.be.undefined;
-            else
-                expect(descendant.getQualifier()!.getText()).to.equal(expected);
+            expect(descendant.getQualifier()?.getText()).to.equal(expected);
         }
 
         it("should get the qualifier when it exists", () => {

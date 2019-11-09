@@ -157,10 +157,7 @@ describe(nameof(NamespaceDeclaration), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
             const keyword = firstChild.getDeclarationKindKeyword();
-            if (expected == null)
-                expect(keyword).to.be.undefined;
-            else
-                expect(keyword!.getText()).equals(expected);
+            expect(keyword?.getText()).equals(expected);
         }
 
         it("should get the declaration kind keyword for a namespace", () => {

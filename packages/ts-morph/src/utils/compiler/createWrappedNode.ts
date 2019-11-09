@@ -37,7 +37,7 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: Cr
     return projectContext.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile);
 
     function getSourceFileNode() {
-        return sourceFile == null ? getSourceFileFromNode(node) : sourceFile;
+        return sourceFile ?? getSourceFileFromNode(node);
     }
 
     function getSourceFileFromNode(compilerNode: ts.Node) {

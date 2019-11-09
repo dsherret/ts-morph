@@ -97,20 +97,18 @@ export class Project {
         function getCompilerOptions(): CompilerOptions {
             return {
                 ...getTsConfigCompilerOptions(),
-                ...(options.compilerOptions || {}) as CompilerOptions
+                ...(options.compilerOptions ?? {}) as CompilerOptions
             };
         }
 
         function getTsConfigCompilerOptions() {
-            if (tsConfigResolver == null)
-                return {};
-            return tsConfigResolver.getCompilerOptions();
+            return tsConfigResolver?.getCompilerOptions() ?? {};
         }
 
         function getEncoding() {
             const defaultEncoding = "utf-8";
             if (options.compilerOptions != null)
-                return options.compilerOptions.charset || defaultEncoding;
+                return options.compilerOptions.charset ?? defaultEncoding;
             return defaultEncoding;
         }
     }
@@ -324,7 +322,7 @@ export class Project {
         sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
         options?: SourceFileCreateOptions
     ): SourceFile {
-        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", { ...(options || {}), markInProject: true });
+        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText ?? "", { ...(options ?? {}), markInProject: true });
     }
 
     /**
@@ -629,7 +627,7 @@ export class Project {
         return ts.formatDiagnosticsWithColorAndContext(diagnostics.map(d => d.compilerObject), {
             getCurrentDirectory: () => this._context.fileSystemWrapper.getCurrentDirectory(),
             getCanonicalFileName: fileName => fileName,
-            getNewLine: () => opts.newLineChar || require("os").EOL
+            getNewLine: () => opts.newLineChar ?? require("os").EOL
         });
     }
 

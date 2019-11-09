@@ -79,10 +79,7 @@ describe(nameof(ExportDeclaration), () => {
     describe(nameof<ExportDeclaration>(n => n.getModuleSpecifier), () => {
         function doTest(text: string, expected: string | undefined) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
-            if (expected == null)
-                expect(firstChild.getModuleSpecifier()).to.equal(undefined);
-            else
-                expect(firstChild.getModuleSpecifier()!.getText()).to.equal(expected);
+            expect(firstChild.getModuleSpecifier()?.getText()).to.equal(expected);
         }
 
         it("should get the module specifier text", () => {

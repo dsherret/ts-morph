@@ -94,10 +94,7 @@ describe(nameof(StatementedNode), () => {
         function doTest(text: string, kind: SyntaxKind, expectedNodeText: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const node = sourceFile.getStatementByKind(kind);
-            if (expectedNodeText == null)
-                expect(node).to.be.undefined;
-            else
-                expect(node!.getText()).to.equal(expectedNodeText);
+            expect(node?.getText()).to.equal(expectedNodeText);
         }
 
         it("should get the statement when it exists", () => {
