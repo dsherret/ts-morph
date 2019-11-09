@@ -5221,9 +5221,13 @@ export declare function JSDocPropertyLikeTag<T extends Constructor<JSDocProperty
 
 export interface JSDocPropertyLikeTag {
     /**
-     * Gets the type expression node of the JS doc property like tag.
+     * Gets the type expression node of the JS doc tag if it exists.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
+    /**
+     * Gets the type expression node of the JS doc tag or throws if it doesn't exist.
+     */
+    getTypeExpressionOrThrow(): JSDocTypeExpression;
     /**
      * Gets the name of the JS doc property like tag.
      */
@@ -5342,9 +5346,13 @@ export declare class JSDocPropertyTag extends JSDocPropertyTagBase<ts.JSDocPrope
  */
 export declare class JSDocReturnTag extends JSDocTag<ts.JSDocReturnTag> {
     /**
-     * Gets the type expression node of the JS doc property return tag.
+     * Gets the type expression node of the JS doc return tag if it exists.
      */
     getTypeExpression(): JSDocTypeExpression | undefined;
+    /**
+     * Gets the type expression node of the JS doc return tag or throws if it doesn't exist.
+     */
+    getTypeExpressionOrThrow(): JSDocTypeExpression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.JSDocReturnTag>;
     /** @inheritdoc **/
