@@ -10,9 +10,14 @@ describe(nameof(createCommentScanner), () => {
         scanner.setPos(0);
         const secondScan = Array.from(scanner.scanUntilToken());
         expect(firstScan).to.deep.equal(secondScan);
+        expect(firstScan[0]).to.equal(secondScan[0]);
     });
 
     describe(nameof<CommentScanner>(s => s.scanForNewLines), () => {
+        function checkScanResult(scanner: CommentScanner, expectedTexts: string[]) {
+            expect(Array.from(scanner.scanForNewLines()).map(n => n.getText())).to.deep.equal(expectedTexts);
+        }
+
         it("should parse the comments on each line", () => {
             const sourceFile = createFile(`// 1
 /* 2 */ /* 3 */    // 4
@@ -47,13 +52,13 @@ describe(nameof(createCommentScanner), () => {
             checkScanResult(scanner, ["/*2*/", "//3"]);
             checkScanResult(scanner, []);
         });
-
-        function checkScanResult(scanner: CommentScanner, expectedTexts: string[]) {
-            expect(Array.from(scanner.scanForNewLines()).map(n => n.getText())).to.deep.equal(expectedTexts);
-        }
     });
 
     describe(nameof<CommentScanner>(s => s.scanUntilToken), () => {
+        function checkScanResult(scanner: CommentScanner, expectedTexts: string[]) {
+            expect(Array.from(scanner.scanUntilToken()).map(n => n.getText())).to.deep.equal(expectedTexts);
+        }
+
         it("should parse until hitting the token", () => {
             const sourceFile = createFile(`// 1
 /* 2 */ /* 3 */    // 4
@@ -62,13 +67,13 @@ describe(nameof(createCommentScanner), () => {
             checkScanResult(scanner, ["// 1", "/* 2 */", "/* 3 */", "// 4", "/* 5 */"]);
             checkScanResult(scanner, []);
         });
-
-        function checkScanResult(scanner: CommentScanner, expectedTexts: string[]) {
-            expect(Array.from(scanner.scanUntilToken()).map(n => n.getText())).to.deep.equal(expectedTexts);
-        }
     });
 
     describe(nameof<CommentScanner>(s => s.scanUntilNewLineOrToken), () => {
+        function checkScanResult(scanner: CommentScanner, expectedTexts: string[]) {
+            expect(Array.from(scanner.scanUntilNewLineOrToken()).map(n => n.getText())).to.deep.equal(expectedTexts);
+        }
+
         it("should parse until hitting a newline", () => {
             const sourceFile = createFile(`// 1
 /* 2 */ /* 3 */    // 4
@@ -83,10 +88,6 @@ describe(nameof(createCommentScanner), () => {
             checkScanResult(scanner, ["//5"]);
             checkScanResult(scanner, []);
         });
-
-        function checkScanResult(scanner: CommentScanner, expectedTexts: string[]) {
-            expect(Array.from(scanner.scanUntilNewLineOrToken()).map(n => n.getText())).to.deep.equal(expectedTexts);
-        }
     });
 
     function createFile(text: string) {

@@ -9,7 +9,7 @@ enum CommentKind {
 
 export interface CommentScanner {
     setParent(parent: ts.Node): void;
-    setFullStart(pos: number): void;
+    setFullStartAndPos(pos: number): void;
     setPos(newPos: number): void;
     getPos(): number;
     scanForNewLines(): Iterable<CompilerCommentNode>;
@@ -28,8 +28,9 @@ export function createCommentScanner(sourceFile: ts.SourceFile): CommentScanner 
         setParent(newParent: ts.Node) {
             parent = newParent;
         },
-        setFullStart(newFullStart: number) {
-            fullStart = newFullStart;
+        setFullStartAndPos(newPos: number) {
+            pos = newPos;
+            fullStart = newPos;
         },
         setPos(newPos: number) {
             pos = newPos;

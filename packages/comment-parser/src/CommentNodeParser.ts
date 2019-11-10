@@ -1,12 +1,7 @@
 import { errors, getSyntaxKindName, StringUtils, ts, SyntaxKind } from "@ts-morph/common";
 import { CompilerCommentNode, CompilerCommentList, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement, CompilerCommentObjectLiteralElement,
     CompilerCommentEnumMember, CommentListKind } from "./CompilerComments";
-
-enum CommentKind {
-    SingleLine,
-    MultiLine,
-    JsDoc
-}
+import { createCommentScanner, CommentScanner } from "./createCommentScanner";
 
 export type StatementContainerNodes = ts.SourceFile
     | ts.Block
@@ -22,8 +17,7 @@ export type ContainerNodes = StatementContainerNodes
     | ts.TypeLiteralNode
     | ts.ObjectLiteralExpression;
 
-type CommentSyntaxKinds = SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
-const childrenSaver = new WeakMap<ContainerNodes, (ts.Node | CompilerCommentNode)[]>();
+const childrenSaver = new WeakMap<ContainerNodes, (ts.Node | CompilerCommentList)[]>();
 const commentNodeParserKinds = new Set<SyntaxKind>([
     SyntaxKind.SourceFile,
     SyntaxKind.Block,
@@ -40,6 +34,63 @@ const commentNodeParserKinds = new Set<SyntaxKind>([
 
 export class CommentNodeParser {
     private constructor() {
+    }
+
+    static getOrParseTokens(node: ts.Node, sourceFile: ts.SourceFile) {
+        // todo cache
+        if (isSyntaxList(node) && isChildSyntaxList(node, sourceFile))
+            return parseChildSyntaxList(node);
+        return parseNode();
+
+        function parseChildSyntaxList(syntaxList: ts.SyntaxList) {
+            const result: ts.Node[] = [];
+            const children = CommentNodeParser.getOrParseChildren(syntaxList, sourceFile)
+            const commentScanner = getScannerForSourceFile(sourceFile);
+
+            commentScanner.setParent(syntaxList.parent); // not the syntax list (similar to other nodes)
+            commentScanner.setFullStartAndPos(syntaxList.pos);
+
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
+                const isCommentList = child.kind === CompilerCommentList.kind;
+                for (const comment of commentScanner.scanUntilToken()) {
+                    // we stumbled upon the comment list... break
+                    if (isCommentList && comment.pos === child.pos)
+                        break;
+                    result.push(comment);
+                }
+
+                result.push(child);
+
+                commentScanner.setFullStartAndPos(child.end);
+            }
+
+            for (const comment of commentScanner.scanUntilToken()) {
+                if (comment.pos > syntaxList.end)
+                    break;
+
+                result.push(comment);
+            }
+
+            return result;
+        }
+
+        function parseNode() {
+            const children = node.getChildren(sourceFile);
+            if (children.length === 1)
+                return children;
+            const result: ts.Node[] = [children[0]];
+            const commentScanner = getScannerForSourceFile(sourceFile);
+            commentScanner.setParent(node);
+            for (let i = 1; i < children.length; i++) {
+                const child = children[i];
+                commentScanner.setFullStartAndPos(child.pos);
+                for (const comment of commentScanner.scanUntilToken())
+                    result.push(comment);
+                result.push(child);
+            }
+            return result;
+        }
     }
 
     static getOrParseChildren(container: ContainerNodes | ts.SyntaxList, sourceFile: ts.SourceFile) {
@@ -124,33 +175,39 @@ export class CommentNodeParser {
     }
 }
 
-function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): IterableIterator<ts.Node | CompilerCommentNode> {
+function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): IterableIterator<ts.Node | CompilerCommentList> {
+    const scanner = getScannerForSourceFile(sourceFile);
     const sourceFileText = sourceFile.text;
     const childNodes = getContainerChildren();
-    const createComment = getCreationFunction();
+    const createCommentList = getCreationFunction();
+
+    scanner.setParent(container);
 
     if (childNodes.length === 0) {
         const bodyStartPos = CommentNodeParser.getContainerBodyPos(container, sourceFile);
-        yield* getCommentNodes(bodyStartPos, false); // do not skip js docs because they won't have a node to be attached to
+        scanner.setFullStartAndPos(bodyStartPos);
+        yield* getCommentNodes(false); // do not skip js docs because they won't have a node to be attached to
     }
     else {
         for (const childNode of childNodes) {
-            yield* getCommentNodes(childNode.pos, true);
+            scanner.setFullStartAndPos(childNode.pos);
+            yield* getCommentNodes(true);
             yield childNode;
         }
 
         // get the comments on a newline after the last node
         const lastChild = childNodes[childNodes.length - 1];
-        yield* getCommentNodes(lastChild.end, false); // parse any jsdocs afterwards
+        scanner.setFullStartAndPos(lastChild.end);
+        yield* getCommentNodes(false); // parse any jsdocs afterwards
     }
 
-    function* getCommentNodes(pos: number, stopAtJsDoc: boolean) {
-        const fullStart = pos;
+    function* getCommentNodes(stopAtJsDoc: boolean) {
         skipTrailingLine();
 
         const leadingComments = Array.from(getLeadingComments());
         // `pos` will be at the first significant token of the next node or at the source file length.
         // At this point, allow comments that end at the end of the source file or on the same line as the close brace token
+        const pos = scanner.getPos();
         const maxEnd = sourceFileText.length === pos || sourceFileText[pos] === "}" ? pos : StringUtils.getLineStartFromPos(sourceFileText, pos);
 
         for (const leadingComment of leadingComments) {
@@ -160,107 +217,34 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
 
         function skipTrailingLine() {
             // skip first line of the block as the comment there is likely to describe the header
-            if (pos === 0)
+            if (scanner.getPos() === 0)
                 return;
 
-            let lineEnd = StringUtils.getLineEndFromPos(sourceFileText, pos);
-
-            while (pos < lineEnd) {
-                const commentKind = getCommentKind();
-                if (commentKind != null) {
-                    const comment = parseForComment(commentKind);
-                    if (comment.kind === SyntaxKind.SingleLineCommentTrivia)
-                        return;
-                    else
-                        lineEnd = StringUtils.getLineEndFromPos(sourceFileText, pos);
+            // todo: clean this up
+            while (true) {
+                for (const _ of scanner.scanUntilNewLineOrToken()) {
+                    // do nothing, drain the iterator
                 }
-                // skip any trailing comments too
-                else if (!StringUtils.isWhitespace(sourceFileText[pos]) && sourceFileText[pos] !== ",")
-                    return;
-                else
-                    pos++;
-            }
 
-            while (StringUtils.startsWithNewLine(sourceFileText[pos]))
-                pos++;
+                // skip any trailing commas too
+                if (sourceFileText[scanner.getPos()] !== ",")
+                    return;
+                scanner.setPos(scanner.getPos() + 1);
+            }
         }
 
         function* getLeadingComments() {
-            while (pos < sourceFileText.length) {
-                const commentKind = getCommentKind();
-                if (commentKind != null) {
-                    const isJsDoc = commentKind === CommentKind.JsDoc;
-                    if (isJsDoc && stopAtJsDoc)
-                        return;
-                    else
-                        yield parseForComment(commentKind);
-
-                    // treat comments on same line as trailing
-                    skipTrailingLine();
-                }
-                else if (!StringUtils.isWhitespace(sourceFileText[pos]))
+            while (true) {
+                const comments = Array.from(scanner.scanForNewLines());
+                if (comments.length === 0)
                     return;
-                else
-                    pos++;
-            }
-        }
 
-        function parseForComment(commentKind: CommentKind) {
-            if (commentKind === CommentKind.SingleLine)
-                return parseSingleLineComment();
+                if (stopAtJsDoc && comments.some(c => c.getText().startsWith("/**")))
+                    return;
 
-            const isJsDoc = commentKind === CommentKind.JsDoc;
-            return parseMultiLineComment(isJsDoc);
-        }
-
-        function getCommentKind() {
-            const currentChar = sourceFileText[pos];
-            if (currentChar !== "/")
-                return undefined;
-
-            const nextChar = sourceFileText[pos + 1];
-            if (nextChar === "/")
-                return CommentKind.SingleLine;
-
-            if (nextChar !== "*")
-                return undefined;
-
-            const nextNextChar = sourceFileText[pos + 2];
-            return nextNextChar === "*" ? CommentKind.JsDoc : CommentKind.MultiLine;
-        }
-
-        function parseSingleLineComment() {
-            const start = pos;
-            skipSingleLineComment();
-            const end = pos;
-
-            return createComment(fullStart, start, end, SyntaxKind.SingleLineCommentTrivia);
-        }
-
-        function skipSingleLineComment() {
-            pos += 2; // skip the slash slash
-
-            while (pos < sourceFileText.length && sourceFileText[pos] !== "\n" && sourceFileText[pos] !== "\r")
-                pos++;
-        }
-
-        function parseMultiLineComment(isJsDoc: boolean) {
-            const start = pos;
-            skipSlashStarComment(isJsDoc);
-            const end = pos;
-
-            return createComment(fullStart, start, end, SyntaxKind.MultiLineCommentTrivia);
-        }
-
-        function skipSlashStarComment(isJsDoc: boolean) {
-            pos += isJsDoc ? 3 : 2; // skip slash star star or slash star
-
-            while (pos < sourceFileText.length) {
-                if (sourceFileText[pos] === "*" && sourceFileText[pos + 1] === "/") {
-                    pos += 2; // skip star slash
-                    break;
-                }
-                pos++;
+                const firstComment = comments[0];
+                const lastComment = comments[comments.length - 1];
+                yield createCommentList(firstComment.getFullStart(), firstComment.pos, lastComment.end, comments);
             }
         }
     }
@@ -285,9 +269,16 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
         return errors.throwNotImplementedForNeverValueError(container);
     }
 
-    function getCreationFunction(): (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => CompilerCommentList {
+    function getCreationFunction(): (
+        fullStart: number,
+        pos: number,
+        end: number,
+        comments: CompilerCommentNode[]
+    ) => CompilerCommentList {
         const ctor = getCtor();
-        return (fullStart: number, pos: number, end: number, kind: CommentSyntaxKinds) => new ctor(fullStart, pos, end, kind, sourceFile, container);
+        return (fullStart: number, pos: number, end: number, comments: CompilerCommentNode[]) => {
+            return new ctor(fullStart, pos, end, sourceFile, container, comments);
+        }
 
         function getCtor() {
             if (isStatementContainerNode(container))
@@ -310,6 +301,41 @@ function isSyntaxList(node: ts.Node): node is ts.SyntaxList {
     return node.kind === SyntaxKind.SyntaxList;
 }
 
+const singleSyntaxListParents = new Set<SyntaxKind>([
+    SyntaxKind.SourceFile,
+    SyntaxKind.Block,
+    SyntaxKind.ModuleBlock,
+    SyntaxKind.CaseClause,
+    SyntaxKind.DefaultClause,
+    SyntaxKind.JsxElement
+]);
+const openBraceSyntaxListParents = new Set<SyntaxKind>([
+    SyntaxKind.ClassDeclaration,
+    SyntaxKind.InterfaceDeclaration,
+    SyntaxKind.EnumDeclaration,
+    SyntaxKind.ClassExpression,
+    SyntaxKind.TypeLiteral,
+    SyntaxKind.ObjectLiteralExpression
+]);
+function isChildSyntaxList(node: ts.SyntaxList, sourceFile: ts.SourceFile) {
+    const parent = node.parent;
+    if (singleSyntaxListParents.has(parent.kind))
+        return true;
+    if (!openBraceSyntaxListParents.has(parent.kind))
+        return false;
+
+    // search for the syntax list after the open brace token
+    let passedBrace = false;
+    for (const child of parent.getChildren(sourceFile)) {
+        if (passedBrace)
+            return child === node;
+        if (child.kind === SyntaxKind.OpenBraceToken)
+            passedBrace = true;
+    }
+
+    return false;
+}
+
 function isStatementContainerNode(node: ts.Node) {
     return getStatementContainerNode() != null;
 
@@ -328,4 +354,14 @@ function isStatementContainerNode(node: ts.Node) {
         const assertNever: never = container;
         return undefined;
     }
+}
+
+const cachedScanners = new WeakMap<ts.SourceFile, CommentScanner>();
+function getScannerForSourceFile(sourceFile: ts.SourceFile) {
+    let scanner = cachedScanners.get(sourceFile);
+    if (scanner == null) {
+        scanner = createCommentScanner(sourceFile);
+        cachedScanners.set(sourceFile, scanner);
+    }
+    return scanner;
 }

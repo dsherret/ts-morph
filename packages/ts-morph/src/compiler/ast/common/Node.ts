@@ -591,10 +591,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
         let passedBrace = false;
         for (const child of node._getCompilerChildren()) {
-            if (!passedBrace)
-                passedBrace = child.kind === SyntaxKind.OpenBraceToken;
-            else if (child.kind === SyntaxKind.SyntaxList)
-                return this._getNodeFromCompilerNode(child) as SyntaxList;
+            if (passedBrace) {
+                if (child.kind === SyntaxKind.SyntaxList)
+                    return this._getNodeFromCompilerNode(child) as SyntaxList;
+                return undefined;
+            }
+
+            if (child.kind === SyntaxKind.OpenBraceToken)
+                passedBrace = true;
         }
 
         return undefined;

@@ -33,6 +33,15 @@
         },
         {
             "type": "node",
+            "request": "launch",
+            "name": "Run comment parser tests",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "--prefix", "packages/comment-parser", "test:debug"],
+            "port": 9229,
+            "stopOnEntry": false
+        },
+        {
+            "type": "node",
             "request": "attach",
             "name": "Attach",
             "port": 9229,

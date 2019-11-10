@@ -129,6 +129,8 @@ export abstract class CompilerCommentList implements ts.Node {
         this.comments = comments as CompilerCommentNode[];
     }
 
+    static kind = -100 as ts.SyntaxKind;
+
     abstract commentListKind: CommentListKind;
 
     pos: number;
@@ -138,7 +140,7 @@ export abstract class CompilerCommentList implements ts.Node {
     modifiers?: ts.NodeArray<ts.Modifier> | undefined;
     parent: ts.Node;
     comments: CompilerCommentNode[];
-    kind = -100 as ts.SyntaxKind;
+    kind = CompilerCommentList.kind;
 
     getSourceFile() {
         return this._sourceFile;
