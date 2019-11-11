@@ -6,9 +6,11 @@ export declare type ContainerNodes = StatementContainerNodes | ts.ClassDeclarati
 
 export declare class CommentNodeParser {
     private constructor();
-    static getOrParseChildren(container: ContainerNodes | ts.SyntaxList, sourceFile: ts.SourceFile): (ts.Node | CompilerCommentNode)[];
+    static getOrParseTokens(node: ts.Node, sourceFile: ts.SourceFile): (ts.Node | CompilerCommentList)[];
+    static getOrParseChildren(container: ContainerNodes | ts.SyntaxList, sourceFile: ts.SourceFile): (ts.Node | CompilerCommentList)[];
     static shouldParseChildren(container: ts.Node): container is ContainerNodes;
     static hasParsedChildren(container: ContainerNodes | ts.SyntaxList): boolean;
+    static hasParsedTokens(node: ts.Node): boolean;
     static isCommentStatement(node: ts.Node): node is CompilerCommentStatement;
     static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement;
     static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement;
@@ -17,7 +19,7 @@ export declare class CommentNodeParser {
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile): number;
 }
 
-export declare enum CommentNodeKind {
+export declare enum CommentListKind {
     Statement = 0,
     ClassElement = 1,
     TypeElement = 2,
@@ -25,9 +27,8 @@ export declare enum CommentNodeKind {
     EnumMember = 4
 }
 
-export declare abstract class CompilerCommentNode implements ts.Node {
+export declare class CompilerCommentNode implements ts.Node {
     constructor(fullStart: number, pos: number, end: number, kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia, sourceFile: ts.SourceFile, parent: ts.Node);
-    abstract commentKind: CommentNodeKind;
     pos: number;
     end: number;
     kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia;
@@ -52,33 +53,61 @@ export declare abstract class CompilerCommentNode implements ts.Node {
     forEachChild<T>(cbNode: (node: ts.Node) => T | undefined, cbNodeArray?: ((nodes: ts.NodeArray<ts.Node>) => T | undefined) | undefined): T | undefined;
 }
 
-export declare class CompilerCommentStatement extends CompilerCommentNode implements ts.Statement {
-    _statementBrand: any;
-    commentKind: CommentNodeKind;
+export declare abstract class CompilerCommentList implements ts.Node {
+    constructor(fullStart: number, pos: number, end: number, sourceFile: ts.SourceFile, parent: ts.Node, comments: ReadonlyArray<CompilerCommentNode>);
+    static kind: ts.SyntaxKind;
+    abstract commentListKind: CommentListKind;
+    pos: number;
+    end: number;
+    flags: ts.NodeFlags;
+    decorators?: ts.NodeArray<ts.Decorator> | undefined;
+    modifiers?: ts.NodeArray<ts.Modifier> | undefined;
+    parent: ts.Node;
+    comments: CompilerCommentNode[];
+    kind: ts.SyntaxKind;
+    getSourceFile(): ts.SourceFile;
+    getChildCount(sourceFile?: ts.SourceFile | undefined): number;
+    getChildAt(index: number, sourceFile?: ts.SourceFile | undefined): CompilerCommentNode;
+    getChildren(sourceFile?: ts.SourceFile | undefined): ts.Node[];
+    getStart(sourceFile?: ts.SourceFile | undefined, includeJsDocComment?: boolean | undefined): number;
+    getFullStart(): number;
+    getEnd(): number;
+    getWidth(sourceFile?: ts.SourceFileLike | undefined): number;
+    getFullWidth(): number;
+    getLeadingTriviaWidth(sourceFile?: ts.SourceFile | undefined): number;
+    getFullText(sourceFile?: ts.SourceFile | undefined): string;
+    getText(sourceFile?: ts.SourceFile | undefined): string;
+    getFirstToken(sourceFile?: ts.SourceFile | undefined): ts.Node | undefined;
+    getLastToken(sourceFile?: ts.SourceFile | undefined): ts.Node | undefined;
+    forEachChild<T>(cbNode: (node: ts.Node) => T | undefined, cbNodeArray?: ((nodes: ts.NodeArray<ts.Node>) => T | undefined) | undefined): T | undefined;
 }
 
-export declare class CompilerCommentClassElement extends CompilerCommentNode implements ts.ClassElement {
+export declare class CompilerCommentStatement extends CompilerCommentList implements ts.Statement {
+    _statementBrand: any;
+    commentListKind: CommentListKind;
+}
+
+export declare class CompilerCommentClassElement extends CompilerCommentList implements ts.ClassElement {
     _classElementBrand: any;
     _declarationBrand: any;
-    commentKind: CommentNodeKind;
+    commentListKind: CommentListKind;
 }
 
-export declare class CompilerCommentTypeElement extends CompilerCommentNode implements ts.TypeElement {
+export declare class CompilerCommentTypeElement extends CompilerCommentList implements ts.TypeElement {
     _typeElementBrand: any;
     _declarationBrand: any;
-    commentKind: CommentNodeKind;
+    commentListKind: CommentListKind;
 }
 
-export declare class CompilerCommentObjectLiteralElement extends CompilerCommentNode implements ts.ObjectLiteralElement {
+export declare class CompilerCommentObjectLiteralElement extends CompilerCommentList implements ts.ObjectLiteralElement {
     _declarationBrand: any;
-    _objectLiteralBrandBrand: any;
     _objectLiteralBrand: any;
     declarationBrand: any;
-    commentKind: CommentNodeKind;
+    commentListKind: CommentListKind;
 }
 
-export declare class CompilerCommentEnumMember extends CompilerCommentNode implements ts.Node {
-    commentKind: CommentNodeKind;
+export declare class CompilerCommentEnumMember extends CompilerCommentList implements ts.Node {
+    commentListKind: CommentListKind;
 }
 
 export declare function isComment(node: {

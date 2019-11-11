@@ -79,7 +79,7 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.6",
     "@types/ts-nameof": "^4.0.0",
-    "@ts-morph/comment-parser": "~0.1.0",
+    "@ts-morph/comment-parser": "~0.0.1",
     "@ts-morph/scripts": "~0.1.0",
     "chai": "^4.2.0",
     "conditional-type-checks": "^1.0.4",

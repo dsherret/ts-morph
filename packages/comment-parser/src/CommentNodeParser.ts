@@ -18,6 +18,7 @@ export type ContainerNodes = StatementContainerNodes
     | ts.ObjectLiteralExpression;
 
 const childrenSaver = new WeakMap<ContainerNodes, (ts.Node | CompilerCommentList)[]>();
+const tokenSaver = new WeakMap<ts.Node, (ts.Node | CompilerCommentList)[]>();
 const commentNodeParserKinds = new Set<SyntaxKind>([
     SyntaxKind.SourceFile,
     SyntaxKind.Block,
@@ -37,10 +38,18 @@ export class CommentNodeParser {
     }
 
     static getOrParseTokens(node: ts.Node, sourceFile: ts.SourceFile) {
-        // todo cache
-        if (isSyntaxList(node) && isChildSyntaxList(node, sourceFile))
-            return parseChildSyntaxList(node);
-        return parseNode();
+        let tokens = tokenSaver.get(node);
+        if (tokens == null) {
+            tokens = getTokens();
+            tokenSaver.set(node, tokens);
+        }
+        return tokens;
+
+        function getTokens() {
+            if (isSyntaxList(node) && isChildSyntaxList(node, sourceFile))
+                return parseChildSyntaxList(node);
+            return parseNode();
+        }
 
         function parseChildSyntaxList(syntaxList: ts.SyntaxList) {
             const result: ts.Node[] = [];
@@ -84,12 +93,16 @@ export class CommentNodeParser {
             const commentScanner = getScannerForSourceFile(sourceFile);
             commentScanner.setParent(node);
             for (let i = 1; i < children.length; i++) {
-                // Use the past end because the current pos might be before the
-                // last child (ex. if the previous child was a JSDocComment and the
-                // current child is not).
-                commentScanner.setFullStartAndPos(children[i - 1].end);
-                for (const comment of commentScanner.scanUntilToken())
-                    result.push(comment);
+                // Skip checking for comments before an EndOfFileToken since that may accidentally capture comments.
+                // It will always be: (SourceFile -> [SyntaxList, EndOfFileToken])
+                if (children[i].kind !== ts.SyntaxKind.EndOfFileToken) {
+                    // Use the past end because the current pos might be before the
+                    // last child (ex. if the previous child was a JSDocComment and the
+                    // current child is not).
+                    commentScanner.setFullStartAndPos(children[i - 1].end);
+                    for (const comment of commentScanner.scanUntilToken())
+                        result.push(comment);
+                }
                 result.push(children[i]);
             }
             return result;
@@ -124,6 +137,10 @@ export class CommentNodeParser {
             container = container.parent as ContainerNodes;
 
         return childrenSaver.has(container);
+    }
+
+    static hasParsedTokens(node: ts.Node) {
+        return tokenSaver.has(node);
     }
 
     static isCommentStatement(node: ts.Node): node is CompilerCommentStatement {
@@ -169,7 +186,6 @@ export class CommentNodeParser {
         return errors.throwNotImplementedForNeverValueError(container);
 
         function getTokenEnd(node: ts.Node, kind: SyntaxKind.OpenBraceToken | SyntaxKind.ColonToken) {
-            // @code-fence-allow(getChildren): Ok, not searching for comments.
             const token = node.getChildren(sourceFile).find(c => c.kind === kind);
             if (token == null)
                 throw new errors.NotImplementedError(`Unexpected scenario where a(n) ${getSyntaxKindName(kind)} was not found.`);

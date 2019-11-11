@@ -82,6 +82,19 @@ describe(nameof(CommentNodeParser), () => {
                 }
             }
 
+            it("should get a lone comment with no newline after it", () => {
+                doStatementedTests("//a", [{
+                    kind: commentListSyntaxKind,
+                    pos: 0,
+                    end: 3,
+                    comments: [{
+                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                        pos: 0,
+                        end: 3
+                    }]
+                }]);
+            });
+
             it("should get single line comments that are before and after on a separate line", () => {
                 doStatementedTests("// a\nlet a;\n//b", [{
                     kind: commentListSyntaxKind,
@@ -487,6 +500,13 @@ describe(nameof(CommentNodeParser), () => {
     });
 
     describe(nameof(CommentNodeParser.getOrParseTokens), () => {
+        describe("general tests", () => {
+            const sourceFile = createSourceFile("//2\nconst t;");
+            const getTokens = () => CommentNodeParser.getOrParseTokens(sourceFile.getChildren(sourceFile)[0], sourceFile);
+            // it should be the same reference
+            expect(getTokens()).to.equal(getTokens());
+        });
+
         describe("statemented tests", () => {
             function doStatementedTests(text: string, expectedNodes: Node[]) {
                 // source file
@@ -697,6 +717,57 @@ describe(nameof(CommentNodeParser), () => {
                     kind: ts.SyntaxKind.Block,
                     pos: 27,
                     end: 46
+                }]);
+            });
+
+            it("should only return the SyntaxList and EndOfFileToken for a source file", () => {
+                doTest("//1\n", file => file, [{
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 0,
+                    end: 0
+                }, {
+                    kind: ts.SyntaxKind.EndOfFileToken,
+                    pos: 0,
+                    end: 4
+                }]);
+            });
+
+            it("should get the comments for a source file's syntax list", () => {
+                doTest("//1\n/*2*///3\n/**4*/const t;\n//5", file => file.getChildren().find(c => c.kind === ts.SyntaxKind.SyntaxList)!, [{
+                    kind: commentListSyntaxKind,
+                    pos: 0,
+                    end: 3,
+                    comments: [{
+                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                        pos: 0,
+                        end: 3
+                    }]
+                }, {
+                    kind: commentListSyntaxKind,
+                    pos: 4,
+                    end: 12,
+                    comments: [{
+                        kind: ts.SyntaxKind.MultiLineCommentTrivia,
+                        pos: 4,
+                        end: 9
+                    }, {
+                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                        pos: 9,
+                        end: 12
+                    }]
+                }, {
+                    kind: ts.SyntaxKind.VariableStatement,
+                    pos: 0,
+                    end: 27
+                }, {
+                    kind: commentListSyntaxKind,
+                    pos: 28,
+                    end: 31,
+                    comments: [{
+                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                        pos: 28,
+                        end: 31
+                    }]
                 }]);
             });
         });
