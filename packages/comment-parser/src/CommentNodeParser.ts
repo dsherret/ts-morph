@@ -52,10 +52,11 @@ export class CommentNodeParser {
 
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
-                const isCommentList = child.kind === CompilerCommentList.kind;
+                // getStart(sourceFile, true) is broken in ts <= 3.7.2 (see PR #35029 in typescript repo)
+                const childStart = ((child as any).jsDoc?.[0] || child).getStart(sourceFile);
                 for (const comment of commentScanner.scanUntilToken()) {
-                    // we stumbled upon the comment list... break
-                    if (isCommentList && comment.pos === child.pos)
+                    // we stumbled upon the comment list or jsdoc... break
+                    if (comment.pos === childStart)
                         break;
                     result.push(comment);
                 }
@@ -83,11 +84,13 @@ export class CommentNodeParser {
             const commentScanner = getScannerForSourceFile(sourceFile);
             commentScanner.setParent(node);
             for (let i = 1; i < children.length; i++) {
-                const child = children[i];
-                commentScanner.setFullStartAndPos(child.pos);
+                // Use the past end because the current pos might be before the
+                // last child (ex. if the previous child was a JSDocComment and the
+                // current child is not).
+                commentScanner.setFullStartAndPos(children[i - 1].end);
                 for (const comment of commentScanner.scanUntilToken())
                     result.push(comment);
-                result.push(child);
+                result.push(children[i]);
             }
             return result;
         }

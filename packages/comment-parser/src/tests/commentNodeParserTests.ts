@@ -564,9 +564,14 @@ describe(nameof(CommentNodeParser), () => {
                     }]
                 }]);
             });
-        });
 
-        describe("js docs", () => {
+            it("should not get the comments between a js doc and the declaration—they're part of the declaration", () => {
+                doStatementedTests("/** test */ //test\nfunction test() {}", [{
+                    kind: ts.SyntaxKind.FunctionDeclaration,
+                    pos: 0,
+                    end: 37
+                }]);
+            });
         });
 
         describe("member tests", () => {
@@ -642,6 +647,56 @@ describe(nameof(CommentNodeParser), () => {
                         pos: 51,
                         end: 56,
                     }]
+                }]);
+            });
+        });
+
+        describe("node tests", () => {
+            function doTest(text: string, selectNode: (sourceFile: ts.SourceFile) => ts.Node, expectedNodes: Node[]) {
+                const sourceFile = createSourceFile(text);
+                const node = selectNode(sourceFile);
+                const result = CommentNodeParser.getOrParseTokens(node, sourceFile);
+
+                assertEqual(expectedNodes, result);
+            }
+
+            it("should get the comments after the first js doc for a declaration", () => {
+                doTest("//1\n/**a*/ //2\nfunction f() /*3*/ {/*ignore*/} // ignore", file => file.statements[0], [{
+                    kind: ts.SyntaxKind.JSDocComment,
+                    pos: 4,
+                    end: 10
+                }, {
+                    kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                    pos: 11,
+                    end: 14
+                }, {
+                    kind: ts.SyntaxKind.FunctionKeyword,
+                    pos: 0,
+                    end: 23
+                }, {
+                    kind: ts.SyntaxKind.Identifier,
+                    pos: 23,
+                    end: 25
+                }, {
+                    kind: ts.SyntaxKind.OpenParenToken,
+                    pos: 25,
+                    end: 26
+                }, {
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 26,
+                    end: 26
+                }, {
+                    kind: ts.SyntaxKind.CloseParenToken,
+                    pos: 26,
+                    end: 27
+                }, {
+                    kind: ts.SyntaxKind.MultiLineCommentTrivia,
+                    pos: 28,
+                    end: 33
+                }, {
+                    kind: ts.SyntaxKind.Block,
+                    pos: 27,
+                    end: 46
                 }]);
             });
         });
