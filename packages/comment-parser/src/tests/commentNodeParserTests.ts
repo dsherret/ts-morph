@@ -849,6 +849,18 @@ describe(nameof(CommentNodeParser), () => {
                     end: 8
                 }]);
             });
+
+            it("should not error if there is no close brace on a block", () => {
+                doTest("{\na;    ", file => file.statements[0], [{
+                    kind: ts.SyntaxKind.OpenBraceToken,
+                    pos: 0,
+                    end: 1
+                }, {
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 1,
+                    end: 4
+                }]);
+            });
         });
     });
 });

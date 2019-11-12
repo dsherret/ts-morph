@@ -112,8 +112,9 @@ export class CommentNodeParser {
 
                 // Child syntax lists will have an end at the last token, but we don't want
                 // to include comments that may come afterwards as part of this node's children.
-                if (isSyntaxList(child) && isChildSyntaxList(child, sourceFile))
-                    lastEnd = children[i + 1].getStart(sourceFile); // there will always be a next child
+                const nextChild = children[i + 1];
+                if (nextChild != null && isSyntaxList(child) && isChildSyntaxList(child, sourceFile))
+                    lastEnd = nextChild.getStart(sourceFile);
                 else
                     lastEnd = child.end;
             }
