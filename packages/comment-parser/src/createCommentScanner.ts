@@ -61,9 +61,6 @@ export function createCommentScanner(sourceFile: ts.SourceFile): CommentScanner 
                 if (foundComment)
                     foundNewLineAfterComment = true;
             }
-            else {
-                pos++;
-            }
         }
     }
 
@@ -117,8 +114,7 @@ export function createCommentScanner(sourceFile: ts.SourceFile): CommentScanner 
         if (nextChar !== "*")
             return undefined;
 
-        const nextNextChar = sourceFileText[pos + 2];
-        return nextNextChar === "*" ? CommentKind.JsDoc : CommentKind.MultiLine;
+        return CommentKind.MultiLine;
     }
 
     function parseForComment(commentKind: CommentKind) {
@@ -127,10 +123,8 @@ export function createCommentScanner(sourceFile: ts.SourceFile): CommentScanner 
         if (comment == null) {
             if (commentKind === CommentKind.SingleLine)
                 comment = parseSingleLineComment();
-            else {
-                const isJsDoc = commentKind === CommentKind.JsDoc;
-                comment = parseMultiLineComment(isJsDoc);
-            }
+            else
+                comment = parseMultiLineComment();
             commentCache.set(start, comment);
         }
         else {
@@ -154,16 +148,16 @@ export function createCommentScanner(sourceFile: ts.SourceFile): CommentScanner 
             pos++;
     }
 
-    function parseMultiLineComment(isJsDoc: boolean) {
+    function parseMultiLineComment() {
         const start = pos;
-        skipSlashStarComment(isJsDoc);
+        skipSlashStarComment();
         const end = pos;
 
         return new CompilerCommentNode(fullStart, start, end, ts.SyntaxKind.MultiLineCommentTrivia, sourceFile, parent);
     }
 
-    function skipSlashStarComment(isJsDoc: boolean) {
-        pos += isJsDoc ? 3 : 2; // skip slash star star or slash star
+    function skipSlashStarComment() {
+        pos += 2; // skip slash star star
 
         while (pos < sourceFileText.length) {
             if (sourceFileText[pos] === "*" && sourceFileText[pos + 1] === "/") {

@@ -258,13 +258,18 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
                 if (comments.length === 0)
                     return;
 
-                if (stopAtJsDoc && comments.some(c => c.getText().startsWith("/**")))
+                if (stopAtJsDoc && comments.some(isJsDocComment))
                     return;
 
                 const firstComment = comments[0];
                 const lastComment = comments[comments.length - 1];
                 yield createCommentList(firstComment.getFullStart(), firstComment.pos, lastComment.end, comments);
             }
+        }
+
+        function isJsDocComment(comment: CompilerCommentNode) {
+            const text = comment.getText();
+            return text.startsWith("/**") && text !== "/***/";
         }
     }
 

@@ -13,6 +13,13 @@ describe(nameof(createCommentScanner), () => {
         expect(firstScan[0]).to.equal(secondScan[0]);
     });
 
+    it("should scan an empty multi-line comment", () => {
+        const sourceFile = createFile(`/**/`);
+        const scanner = createCommentScanner(sourceFile)
+        const result = Array.from(scanner.scanUntilNewLineOrToken());
+        expect(result.map(r => r.getText())).to.deep.equal(["/**/"]);
+    });
+
     describe(nameof<CommentScanner>(s => s.scanForNewLines), () => {
         function checkScanResult(scanner: CommentScanner, expectedTexts: string[]) {
             expect(Array.from(scanner.scanForNewLines()).map(n => n.getText())).to.deep.equal(expectedTexts);
@@ -51,6 +58,13 @@ describe(nameof(createCommentScanner), () => {
             checkScanResult(scanner, ["// 1"]);
             checkScanResult(scanner, ["/*2*/", "//3"]);
             checkScanResult(scanner, []);
+        });
+
+        it("should be in the right position after scanning a multi-line comment", () => {
+            const sourceFile = createFile(`/*a*/ `);
+            const scanner = createCommentScanner(sourceFile);
+            checkScanResult(scanner, ["/*a*/"]);
+            expect(scanner.getPos()).to.equal(6);
         });
     });
 

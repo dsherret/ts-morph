@@ -279,6 +279,23 @@ describe(nameof(CommentNodeParser), () => {
                     }]);
                 });
 
+                it("should not count a /**/ as a jsdoc", () => {
+                    doStatementedTests("/***/\nlet a;", [{
+                        kind: commentListSyntaxKind,
+                        pos: 0,
+                        end: 5,
+                        comments: [{
+                            kind: ts.SyntaxKind.MultiLineCommentTrivia,
+                            pos: 0,
+                            end: 5
+                        }]
+                    }, {
+                        kind: ts.SyntaxKind.VariableStatement,
+                        pos: 0,
+                        end: 12
+                    }]);
+                });
+
                 it("should get js docs when there are no nodes", () => {
                     doStatementedTests("/** a */", [{
                         kind: commentListSyntaxKind,
