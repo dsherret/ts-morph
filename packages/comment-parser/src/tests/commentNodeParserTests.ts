@@ -790,7 +790,23 @@ describe(nameof(CommentNodeParser), () => {
 
             it("should not return any children for an end of file token", () => {
                 // bug where this was returning [undefined] because it had no children
-                doTest("", file => file.getChildren().find(c => c.kind === ts.SyntaxKind.EndOfFileToken)!, []);0
+                doTest("", file => file.getChildren().find(c => c.kind === ts.SyntaxKind.EndOfFileToken)!, []);
+            });
+
+            it("should return only the child comments for a comment list", () => {
+                doTest("/*1*///1", file => {
+                    const syntaxList = file.getChildren().find(c => c.kind === ts.SyntaxKind.SyntaxList)!;
+                    const commentList = CommentNodeParser.getOrParseTokens(syntaxList, file)[0];
+                    return commentList;
+                }, [{
+                    kind: SyntaxKind.MultiLineCommentTrivia,
+                    pos: 0,
+                    end: 5
+                }, {
+                    kind: SyntaxKind.SingleLineCommentTrivia,
+                    pos: 5,
+                    end: 8
+                }]);
             });
         });
     });

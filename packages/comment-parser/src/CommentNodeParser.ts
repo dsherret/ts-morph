@@ -46,6 +46,8 @@ export class CommentNodeParser {
         return tokens;
 
         function getTokens() {
+            if (CommentNodeParser.isCommentList(node))
+                return node.comments;
             if (isSyntaxList(node) && isChildSyntaxList(node, sourceFile))
                 return parseChildSyntaxList(node);
             return parseNode();
@@ -161,6 +163,10 @@ export class CommentNodeParser {
 
     static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember {
         return (node as CompilerCommentList).commentListKind === CommentListKind.EnumMember;
+    }
+
+    static isCommentList(node: ts.Node): node is CompilerCommentList {
+        return typeof (node as CompilerCommentList).commentListKind === "number";
     }
 
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile) {

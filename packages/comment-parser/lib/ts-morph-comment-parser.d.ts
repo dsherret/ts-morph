@@ -16,6 +16,7 @@ export declare class CommentNodeParser {
     static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement;
     static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement;
     static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember;
+    static isCommentList(node: ts.Node): node is CompilerCommentList;
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile): number;
 }
 
