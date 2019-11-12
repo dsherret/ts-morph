@@ -770,6 +770,11 @@ describe(nameof(CommentNodeParser), () => {
                     }]
                 }]);
             });
+
+            it("should not return any children for an end of file token", () => {
+                // bug where this was returning [undefined] because it had no children
+                doTest("", file => file.getChildren().find(c => c.kind === ts.SyntaxKind.EndOfFileToken)!, []);0
+            });
         });
     });
 });

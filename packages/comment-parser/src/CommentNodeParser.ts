@@ -87,7 +87,7 @@ export class CommentNodeParser {
 
         function parseNode() {
             const children = node.getChildren(sourceFile);
-            if (children.length === 1)
+            if (children.length <= 1)
                 return children;
             const result: ts.Node[] = [children[0]];
             const commentScanner = getScannerForSourceFile(sourceFile);
