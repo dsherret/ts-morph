@@ -1,6 +1,6 @@
 {
   "name": "@ts-morph/comment-parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Parser on top of the TypeScript Compiler API used by ts-morph for parsing comments.",
   "keywords": ["typescript", "compiler", "comment", "parser"],
   "main": "dist/ts-morph-comment-parser.js",
@@ -18,7 +18,7 @@
     "rollup": "rollup --config"
   },
   "dependencies": {
-    "@ts-morph/common": "~0.1.0"
+    "@ts-morph/common": "~0.1.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.3",
