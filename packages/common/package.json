@@ -1,6 +1,6 @@
 {
   "name": "@ts-morph/common",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Common functionality for ts-morph packages.",
   "main": "dist/ts-morph-common.js",
   "author": "David Sherret",
@@ -48,5 +48,18 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "fs.realpath": false,
+    "fs-extra": false,
+    "dir-glob": false,
+    "graceful-fs": false,
+    "fast-glob": false,
+    "source-map-support": false,
+    "globby": false,
+    "glob-parent": false,
+    "glob": false
   }
 }
