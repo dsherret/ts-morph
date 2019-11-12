@@ -105,6 +105,6 @@ describe(nameof(createCommentScanner), () => {
     });
 
     function createFile(text: string) {
-        return ts.createSourceFile("./test.ts", text, ts.ScriptTarget.Latest);
+        return ts.createSourceFile("./test.ts", text, ts.ScriptTarget.Latest, false);
     }
 });

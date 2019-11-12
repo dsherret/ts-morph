@@ -61,8 +61,7 @@ export class CommentNodeParser {
             commentScanner.setParent(syntaxList.parent); // not the syntax list (similar to other nodes)
             commentScanner.setFullStartAndPos(syntaxList.pos);
 
-            for (let i = 0; i < children.length; i++) {
-                const child = children[i];
+            for (const child of children) {
                 // getStart(sourceFile, true) is broken in ts <= 3.7.2 (see PR #35029 in typescript repo)
                 const childStart = ((child as any).jsDoc?.[0] || child).getStart(sourceFile);
                 for (const comment of commentScanner.scanUntilToken()) {
@@ -78,7 +77,7 @@ export class CommentNodeParser {
             }
 
             for (const comment of commentScanner.scanUntilToken()) {
-                if (comment.pos > syntaxList.end)
+                if (comment.pos > syntaxList.parent.end)
                     break;
 
                 result.push(comment);
@@ -93,20 +92,32 @@ export class CommentNodeParser {
                 return children;
             const result: ts.Node[] = [children[0]];
             const commentScanner = getScannerForSourceFile(sourceFile);
+            let lastEnd = children[0].end;
+
             commentScanner.setParent(node);
+
             for (let i = 1; i < children.length; i++) {
+                const child = children[i];
                 // Skip checking for comments before an EndOfFileToken since that may accidentally capture comments.
                 // It will always be: (SourceFile -> [SyntaxList, EndOfFileToken])
-                if (children[i].kind !== ts.SyntaxKind.EndOfFileToken) {
+                if (child.kind !== ts.SyntaxKind.EndOfFileToken) {
                     // Use the past end because the current pos might be before the
                     // last child (ex. if the previous child was a JSDocComment and the
                     // current child is not).
-                    commentScanner.setFullStartAndPos(children[i - 1].end);
+                    commentScanner.setFullStartAndPos(lastEnd);
                     for (const comment of commentScanner.scanUntilToken())
                         result.push(comment);
                 }
-                result.push(children[i]);
+                result.push(child);
+
+                // Child syntax lists will have an end at the last token, but we don't want
+                // to include comments that may come afterwards as part of this node's children.
+                if (isSyntaxList(child) && isChildSyntaxList(child, sourceFile))
+                    lastEnd = children[i + 1].getStart(sourceFile); // there will always be a next child
+                else
+                    lastEnd = child.end;
             }
+
             return result;
         }
     }

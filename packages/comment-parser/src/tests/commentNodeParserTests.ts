@@ -808,6 +808,47 @@ describe(nameof(CommentNodeParser), () => {
                     end: 8
                 }]);
             });
+
+            it("should get the comment after a syntax list child when no token exists after and there is a space", () => {
+                // the space is necessary to reproduce this bug
+                doTest("a; //5", file => file.getChildren().find(c => c.kind === ts.SyntaxKind.SyntaxList)!, [{
+                    kind: ts.SyntaxKind.ExpressionStatement,
+                    pos: 0,
+                    end: 2
+                }, {
+                    kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                    pos: 3,
+                    end: 6
+                }]);
+            });
+
+            it("should count the last comment as not a child of the block (syntax lists end at the last node pos)", () => {
+                doTest("{\na; //5\n}", file => file.statements[0], [{
+                    kind: ts.SyntaxKind.OpenBraceToken,
+                    pos: 0,
+                    end: 1
+                }, {
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 1,
+                    end: 4
+                }, {
+                    kind: ts.SyntaxKind.CloseBraceToken,
+                    pos: 4,
+                    end: 10
+                }]);
+            });
+
+            it("should count the last comment as a child of the syntax list within the block (syntax lists end at the last node pos)", () => {
+                doTest("{\na; //5\n}", file => file.statements[0].getChildren(file).find(c => c.kind === ts.SyntaxKind.SyntaxList)!, [{
+                    kind: ts.SyntaxKind.ExpressionStatement,
+                    pos: 1,
+                    end: 4
+                }, {
+                    kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                    pos: 5,
+                    end: 8
+                }]);
+            });
         });
     });
 });
