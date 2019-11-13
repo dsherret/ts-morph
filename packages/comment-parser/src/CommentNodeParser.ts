@@ -390,8 +390,7 @@ const singleSyntaxListParents = new Set<SyntaxKind>([
     SyntaxKind.Block,
     SyntaxKind.ModuleBlock,
     SyntaxKind.CaseClause,
-    SyntaxKind.DefaultClause,
-    SyntaxKind.JsxElement
+    SyntaxKind.DefaultClause
 ]);
 const openBraceSyntaxListParents = new Set<SyntaxKind>([
     SyntaxKind.ClassDeclaration,
