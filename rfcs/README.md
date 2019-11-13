@@ -10,4 +10,4 @@ This is a very loose RFC process. The implementation may slightly differ.
 
 ## In Progress
 
-* None
+* [RFC-0002](RFC-0002 - Comment Nodes For All Comments.md) - Comment nodes for all comments.
