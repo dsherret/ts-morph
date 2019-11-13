@@ -113,6 +113,7 @@ export class CommentNodeParser {
 
             for (let i = 1; i < children.length; i++) {
                 const child = children[i];
+                const childIsSyntaxList = isSyntaxList(child) && isChildSyntaxList(child, sourceFile);
                 // Skip checking for comments before an EndOfFileToken since that may accidentally capture comments.
                 // It will always be: (SourceFile -> [SyntaxList, EndOfFileToken])
                 if (child.kind !== ts.SyntaxKind.EndOfFileToken) {
@@ -121,7 +122,7 @@ export class CommentNodeParser {
                     // current child is not).
                     commentScanner.setFullStartAndPos(lastEnd);
 
-                    const stopPos = child.getStart(sourceFile);
+                    const stopPos = childIsSyntaxList ? child.pos : child.getStart(sourceFile);
                     for (const comment of commentScanner.scanUntilToken()) {
                         if (comment.pos > stopPos)
                             break;
@@ -135,7 +136,7 @@ export class CommentNodeParser {
                 // Child syntax lists will have an end at the last token, but we don't want
                 // to include comments that may come afterwards as part of this node's children.
                 const nextChild = children[i + 1];
-                if (nextChild != null && isSyntaxList(child) && isChildSyntaxList(child, sourceFile))
+                if (nextChild != null && childIsSyntaxList)
                     lastEnd = nextChild.getStart(sourceFile);
                 else
                     lastEnd = child.end;

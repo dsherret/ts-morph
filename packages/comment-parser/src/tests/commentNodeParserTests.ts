@@ -983,6 +983,31 @@ describe(nameof(CommentNodeParser), () => {
                     end: 7
                 }]);
             });
+
+            it("should not include syntax list comment in class declaration children", () => {
+                const text = "class c{\n//5\na;\n}";
+                doTest(text, file => file.statements[0], [{
+                    kind: ts.SyntaxKind.ClassKeyword,
+                    pos: 0,
+                    end: 5
+                }, {
+                    kind: ts.SyntaxKind.Identifier,
+                    pos: 5,
+                    end: 7
+                }, {
+                    kind: ts.SyntaxKind.OpenBraceToken,
+                    pos: 7,
+                    end: 8
+                }, {
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 8,
+                    end: 15
+                }, {
+                    kind: ts.SyntaxKind.CloseBraceToken,
+                    pos: 15,
+                    end: 17
+                }]);
+            });
         });
     });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@ts-morph/comment-parser",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Parser on top of the TypeScript Compiler API used by ts-morph for parsing comments.",
   "keywords": ["typescript", "compiler", "comment", "parser"],
   "main": "dist/ts-morph-comment-parser.js",

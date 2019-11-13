@@ -129,7 +129,7 @@ export abstract class CompilerCommentList implements ts.Node {
         this.comments = comments as CompilerCommentNode[];
     }
 
-    static kind = -100 as ts.SyntaxKind;
+    static kind = ts.SyntaxKind.Unknown;
 
     abstract commentListKind: CommentListKind;
 
