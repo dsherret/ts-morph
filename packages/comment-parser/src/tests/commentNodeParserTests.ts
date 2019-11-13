@@ -517,10 +517,9 @@ describe(nameof(CommentNodeParser), () => {
     });
 
     describe(nameof(CommentNodeParser.getOrParseTokens), () => {
-        describe("general tests", () => {
+        it("should use the same reference", () => {
             const sourceFile = createSourceFile("//2\nconst t;");
             const getTokens = () => CommentNodeParser.getOrParseTokens(sourceFile.getChildren(sourceFile)[0], sourceFile);
-            // it should be the same reference
             expect(getTokens()).to.equal(getTokens());
         });
 
@@ -607,83 +606,6 @@ describe(nameof(CommentNodeParser), () => {
                     kind: ts.SyntaxKind.FunctionDeclaration,
                     pos: 0,
                     end: 37
-                }]);
-            });
-        });
-
-        describe("member tests", () => {
-            function doTest(text: string, expectedNodes: Node[]) {
-                const sourceFile = createSourceFile(text);
-                const syntaxList = getContainer(sourceFile)!.getChildren(sourceFile).find(c => c.kind === ts.SyntaxKind.SyntaxList)!;
-                const result = CommentNodeParser.getOrParseTokens(syntaxList, sourceFile);
-
-                assertEqual(expectedNodes, result);
-
-                function getContainer(node: ts.Node): ts.Node | undefined {
-                    if (ts.isClassDeclaration(node)
-                        || ts.isEnumDeclaration(node)
-                        || ts.isInterfaceDeclaration(node)
-                        || ts.isClassExpression(node)
-                        || ts.isTypeLiteralNode(node)
-                        || ts.isObjectLiteralExpression(node)
-                        || ts.isCaseClause(node)
-                        || ts.isDefaultClause(node))
-                    {
-                        return node;
-                    }
-
-                    return ts.forEachChild(node, getContainer);
-                }
-            }
-
-            it("should get all comments and ignore ones inside the inner declarations", () => {
-                doTest("interface i{ //1\n//2\n/*3*/p/*ignore*/;/*4*///5\n//6\n/*7*/}", [{
-                    kind: ts.SyntaxKind.SingleLineCommentTrivia,
-                    pos: 13,
-                    end: 16
-                }, {
-                    kind: commentListSyntaxKind,
-                    pos: 17,
-                    end: 20,
-                    comments: [{
-                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
-                        pos: 17,
-                        end: 20
-                    }]
-                }, {
-                    kind: ts.SyntaxKind.MultiLineCommentTrivia,
-                    pos: 21,
-                    end: 26
-                }, {
-                    kind: ts.SyntaxKind.PropertySignature,
-                    pos: 12,
-                    end: 38
-                }, {
-                    kind: ts.SyntaxKind.MultiLineCommentTrivia,
-                    pos: 38,
-                    end: 43
-                }, {
-                    kind: ts.SyntaxKind.SingleLineCommentTrivia,
-                    pos: 43,
-                    end: 46
-                }, {
-                    kind: commentListSyntaxKind,
-                    pos: 47,
-                    end: 50,
-                    comments: [{
-                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
-                        pos: 47,
-                        end: 50
-                    }]
-                }, {
-                    kind: commentListSyntaxKind,
-                    pos: 51,
-                    end: 56,
-                    comments: [{
-                        kind: ts.SyntaxKind.MultiLineCommentTrivia,
-                        pos: 51,
-                        end: 56,
-                    }]
                 }]);
             });
         });
@@ -859,6 +781,206 @@ describe(nameof(CommentNodeParser), () => {
                     kind: ts.SyntaxKind.SyntaxList,
                     pos: 1,
                     end: 4
+                }]);
+            });
+
+            it("should get all comments and ignore ones inside the inner declarations for an interface", () => {
+                const text = "interface i{ //1\n//2\n/*3*/p/*ignore*/;/*4*///5\n//6\n/*7*/}";
+                doTest(text, file => file.statements[0].getChildren(file).find(c => c.kind === ts.SyntaxKind.SyntaxList)!, [{
+                    kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                    pos: 13,
+                    end: 16
+                }, {
+                    kind: commentListSyntaxKind,
+                    pos: 17,
+                    end: 20,
+                    comments: [{
+                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                        pos: 17,
+                        end: 20
+                    }]
+                }, {
+                    kind: ts.SyntaxKind.MultiLineCommentTrivia,
+                    pos: 21,
+                    end: 26
+                }, {
+                    kind: ts.SyntaxKind.PropertySignature,
+                    pos: 12,
+                    end: 38
+                }, {
+                    kind: ts.SyntaxKind.MultiLineCommentTrivia,
+                    pos: 38,
+                    end: 43
+                }, {
+                    kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                    pos: 43,
+                    end: 46
+                }, {
+                    kind: commentListSyntaxKind,
+                    pos: 47,
+                    end: 50,
+                    comments: [{
+                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                        pos: 47,
+                        end: 50
+                    }]
+                }, {
+                    kind: commentListSyntaxKind,
+                    pos: 51,
+                    end: 56,
+                    comments: [{
+                        kind: ts.SyntaxKind.MultiLineCommentTrivia,
+                        pos: 51,
+                        end: 56,
+                    }]
+                }]);
+            });
+
+            it("should not get the comments for interface dec with a body with only comments", () => {
+                const text = "interface i {\n//1\n}";
+                doTest(text, file => file.statements[0], [{
+                    kind: ts.SyntaxKind.InterfaceKeyword,
+                    pos: 0,
+                    end: 9
+                }, {
+                    kind: ts.SyntaxKind.Identifier,
+                    pos: 9,
+                    end: 11
+                }, {
+                    kind: ts.SyntaxKind.OpenBraceToken,
+                    pos: 11,
+                    end: 13
+                }, {
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 13,
+                    end: 13
+                }, {
+                    kind: ts.SyntaxKind.CloseBraceToken,
+                    pos: 13,
+                    end: 19
+                }]);
+            });
+
+            it("should get the comments for interface dec syntax list with a body with only comments", () => {
+                const text = "interface i {\n//1\n}";
+                doTest(text, file => file.statements[0].getChildren(file).find(c => c.kind === ts.SyntaxKind.SyntaxList)!, [{
+                    kind: commentListSyntaxKind,
+                    pos: 14,
+                    end: 17,
+                    comments: [{
+                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                        pos: 14,
+                        end: 17
+                    }]
+                }]);
+            });
+
+            it("should not get the comments for interface dec with a body with only comments and no close brace", () => {
+                const text = "interface i {\n//1\n";
+                doTest(text, file => file.statements[0], [{
+                    kind: ts.SyntaxKind.InterfaceKeyword,
+                    pos: 0,
+                    end: 9
+                }, {
+                    kind: ts.SyntaxKind.Identifier,
+                    pos: 9,
+                    end: 11
+                }, {
+                    kind: ts.SyntaxKind.OpenBraceToken,
+                    pos: 11,
+                    end: 13
+                }, {
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 13,
+                    end: 13
+                }]);
+            });
+
+            it("should get the comments for interface dec syntax list with a body with only comments and no close brace", () => {
+                const text = "interface i {\n//1\n";
+                doTest(text, file => file.statements[0].getChildren(file).find(c => c.kind === ts.SyntaxKind.SyntaxList)!, [{
+                    kind: commentListSyntaxKind,
+                    pos: 14,
+                    end: 17,
+                    comments: [{
+                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                        pos: 14,
+                        end: 17
+                    }]
+                }]);
+            });
+
+            it("should not error when the module block does not have any braces", () => {
+                const text = "module t";
+                doTest(text, file => (file.statements[0] as ts.NamespaceDeclaration).body.getChildren(file)[0], []);
+            });
+
+            it("should get comments in switch case clause syntax list without colon", () => {
+                const text = "switch(){\ncase 5\n//1\n}";
+                doTest(text, file => {
+                    return (file.statements[0] as ts.SwitchStatement).caseBlock
+                        .clauses[0].getChildren(file)
+                        .find(c => c.kind === ts.SyntaxKind.SyntaxList)!;
+                }, [{
+                    kind: commentListSyntaxKind,
+                    pos: 17,
+                    end: 20,
+                    comments: [{
+                        kind: ts.SyntaxKind.SingleLineCommentTrivia,
+                        pos: 17,
+                        end: 20
+                    }]
+                }]);
+            });
+
+            it("should not get comments in switch case clause without colon", () => {
+                const text = "switch(){\ncase 5\n//1\n}";
+                doTest(text, file => (file.statements[0] as ts.SwitchStatement).caseBlock.clauses[0], [{
+                    kind: ts.SyntaxKind.CaseKeyword,
+                    pos: 9,
+                    end: 14
+                }, {
+                    kind: ts.SyntaxKind.NumericLiteral,
+                    pos: 14,
+                    end: 16
+                }, {
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 16,
+                    end: 16
+                }]);
+            });
+
+            it("should not get comments in class declaration without braces", () => {
+                const text = "class c\n//5";
+                doTest(text, file => file.statements[0], [{
+                    kind: ts.SyntaxKind.ClassKeyword,
+                    pos: 0,
+                    end: 5
+                }, {
+                    kind: ts.SyntaxKind.Identifier,
+                    pos: 5,
+                    end: 7
+                }, {
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 7,
+                    end: 7
+                }]);
+            });
+
+            it("should get comments in class declaration syntax list without braces", () => {
+                const text = "class c\n//5";
+                doTest(text, file => file.statements[0], [{
+                    kind: ts.SyntaxKind.ClassKeyword,
+                    pos: 0,
+                    end: 5
+                }, {
+                    kind: ts.SyntaxKind.Identifier,
+                    pos: 5,
+                    end: 7
+                }, {
+                    kind: ts.SyntaxKind.SyntaxList,
+                    pos: 7,
+                    end: 7
                 }]);
             });
         });

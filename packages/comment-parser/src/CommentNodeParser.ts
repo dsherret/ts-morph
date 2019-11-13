@@ -57,6 +57,7 @@ export class CommentNodeParser {
             const result: ts.Node[] = [];
             const children = CommentNodeParser.getOrParseChildren(syntaxList, sourceFile)
             const commentScanner = getScannerForSourceFile(sourceFile);
+            const searchEnd = getSearchEnd();
 
             commentScanner.setParent(syntaxList.parent); // not the syntax list (similar to other nodes)
             commentScanner.setFullStartAndPos(syntaxList.pos);
@@ -77,13 +78,27 @@ export class CommentNodeParser {
             }
 
             for (const comment of commentScanner.scanUntilToken()) {
-                if (comment.pos > syntaxList.parent.end)
+                if (comment.pos > searchEnd)
                     break;
 
                 result.push(comment);
             }
 
             return result;
+
+            function getSearchEnd() {
+                const parent = syntaxList.parent;
+                if (ts.isSourceFile(parent)) {
+                    return parent.end;
+                }
+                else {
+                    const children = parent.getChildren(sourceFile);
+                    const nextChild = children[children.indexOf(syntaxList) + 1];
+                    if (nextChild != null && nextChild.kind === ts.SyntaxKind.CloseBraceToken)
+                        return nextChild.end - 1; // start position
+                    return sourceFile.end;
+                }
+            }
         }
 
         function parseNode() {
@@ -105,9 +120,16 @@ export class CommentNodeParser {
                     // last child (ex. if the previous child was a JSDocComment and the
                     // current child is not).
                     commentScanner.setFullStartAndPos(lastEnd);
-                    for (const comment of commentScanner.scanUntilToken())
+
+                    const stopPos = child.getStart(sourceFile);
+                    for (const comment of commentScanner.scanUntilToken()) {
+                        if (comment.pos > stopPos)
+                            break;
+
                         result.push(comment);
+                    }
                 }
+
                 result.push(child);
 
                 // Child syntax lists will have an end at the last token, but we don't want
@@ -190,24 +212,43 @@ export class CommentNodeParser {
             || ts.isInterfaceDeclaration(container)
             || ts.isTypeLiteralNode(container)
             || ts.isClassExpression(container)
-            || ts.isBlock(container)
-            || ts.isModuleBlock(container)
             || ts.isObjectLiteralExpression(container))
         {
             // this function is only used when there are no statements or members, so only do this
-            return getTokenEnd(container, SyntaxKind.OpenBraceToken);
+            return getTokenEnd(container, SyntaxKind.OpenBraceToken) ?? getLastSyntaxListPos(container);
+        }
+
+        if (ts.isModuleBlock(container) || ts.isBlock(container)) {
+            // skip the open brace token
+            return Math.min(container.getStart(sourceFile) + 1, sourceFile.end);
         }
 
         if (ts.isCaseClause(container) || ts.isDefaultClause(container))
-            return getTokenEnd(container, SyntaxKind.ColonToken);
+            return getTokenEnd(container, SyntaxKind.ColonToken) ?? getLastSyntaxListPos(container);
 
         return errors.throwNotImplementedForNeverValueError(container);
 
         function getTokenEnd(node: ts.Node, kind: SyntaxKind.OpenBraceToken | SyntaxKind.ColonToken) {
             const token = node.getChildren(sourceFile).find(c => c.kind === kind);
             if (token == null)
-                throw new errors.NotImplementedError(`Unexpected scenario where a(n) ${getSyntaxKindName(kind)} was not found.`);
+                return undefined;
             return token.end;
+        }
+
+        function getLastSyntaxListPos(node: ts.Node) {
+            const syntaxList = findLastSyntaxList();
+            if (syntaxList == null)
+                throw new Error("Unexpected scenario where a syntax list could not be found.");
+            return syntaxList.pos;
+
+            function findLastSyntaxList() {
+                const children = node.getChildren(sourceFile);
+                for (let i = children.length - 1; i >= 0; i--) {
+                    if (children[i].kind === ts.SyntaxKind.SyntaxList)
+                        return children[i];
+                }
+                return undefined;
+            }
         }
     }
 }
