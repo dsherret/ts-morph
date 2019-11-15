@@ -192,7 +192,7 @@ interface CompilerCommentList implements ts.Node {
 Example comment list type:
 
 ```ts
-export declare class CompilerCommentStatement extends CompilerCommentList implements ts.Statement {
+export declare class CompilerCommentListStatement extends CompilerCommentList implements ts.Statement {
     _statementBrand: any; // this brand is from ts.Statement
     commentListKind: CommentListKind;
 }
