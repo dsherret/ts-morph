@@ -117,7 +117,7 @@ export abstract class CompilerCommentList implements ts.Node {
         end: number,
         sourceFile: ts.SourceFile,
         parent: ts.Node,
-        comments: ReadonlyArray<CompilerCommentNode>
+        comments: ReadonlyArray<CompilerCommentNode | ts.JSDoc>
     ) {
         this._fullStart = fullStart;
         this._start = pos; // pos and start are the same for comments
@@ -126,7 +126,7 @@ export abstract class CompilerCommentList implements ts.Node {
         this.end = end;
         this.flags = ts.NodeFlags.None;
         this.parent = parent;
-        this.comments = comments as CompilerCommentNode[];
+        this.comments = comments as (CompilerCommentNode | ts.JSDoc)[];
     }
 
     static kind = ts.SyntaxKind.Unknown;
@@ -139,7 +139,7 @@ export abstract class CompilerCommentList implements ts.Node {
     decorators?: ts.NodeArray<ts.Decorator> | undefined;
     modifiers?: ts.NodeArray<ts.Modifier> | undefined;
     parent: ts.Node;
-    comments: CompilerCommentNode[];
+    comments: (CompilerCommentNode | ts.JSDoc)[];
     kind = CompilerCommentList.kind;
 
     getSourceFile() {

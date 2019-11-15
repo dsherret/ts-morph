@@ -327,7 +327,10 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
             }
         }
 
-        function isJsDocComment(comment: CompilerCommentNode) {
+        function isJsDocComment(comment: CompilerCommentNode | ts.JSDoc) {
+            if (comment.kind === ts.SyntaxKind.JSDocComment)
+                return true;
+
             const text = comment.getText();
             return text.startsWith("/**") && text !== "/***/";
         }
@@ -357,10 +360,10 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
         fullStart: number,
         pos: number,
         end: number,
-        comments: CompilerCommentNode[]
+        comments: (CompilerCommentNode | ts.JSDoc)[]
     ) => CompilerCommentList {
         const ctor = getCtor();
-        return (fullStart: number, pos: number, end: number, comments: CompilerCommentNode[]) => {
+        return (fullStart: number, pos: number, end: number, comments: (CompilerCommentNode | ts.JSDoc)[]) => {
             return new ctor(fullStart, pos, end, sourceFile, container, comments);
         }
 

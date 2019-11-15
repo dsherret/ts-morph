@@ -55,7 +55,7 @@ export declare class CompilerCommentNode implements ts.Node {
 }
 
 export declare abstract class CompilerCommentList implements ts.Node {
-    constructor(fullStart: number, pos: number, end: number, sourceFile: ts.SourceFile, parent: ts.Node, comments: ReadonlyArray<CompilerCommentNode>);
+    constructor(fullStart: number, pos: number, end: number, sourceFile: ts.SourceFile, parent: ts.Node, comments: ReadonlyArray<CompilerCommentNode | ts.JSDoc>);
     static kind: ts.SyntaxKind;
     abstract commentListKind: CommentListKind;
     pos: number;
@@ -64,11 +64,11 @@ export declare abstract class CompilerCommentList implements ts.Node {
     decorators?: ts.NodeArray<ts.Decorator> | undefined;
     modifiers?: ts.NodeArray<ts.Modifier> | undefined;
     parent: ts.Node;
-    comments: CompilerCommentNode[];
+    comments: (CompilerCommentNode | ts.JSDoc)[];
     kind: ts.SyntaxKind;
     getSourceFile(): ts.SourceFile;
     getChildCount(sourceFile?: ts.SourceFile | undefined): number;
-    getChildAt(index: number, sourceFile?: ts.SourceFile | undefined): CompilerCommentNode;
+    getChildAt(index: number, sourceFile?: ts.SourceFile | undefined): ts.JSDoc | CompilerCommentNode;
     getChildren(sourceFile?: ts.SourceFile | undefined): ts.Node[];
     getStart(sourceFile?: ts.SourceFile | undefined, includeJsDocComment?: boolean | undefined): number;
     getFullStart(): number;
@@ -110,7 +110,3 @@ export declare class CompilerCommentListObjectLiteralElement extends CompilerCom
 export declare class CompilerCommentListEnumMember extends CompilerCommentList implements ts.Node {
     commentListKind: CommentListKind;
 }
-
-export declare function isComment(node: {
-    kind: ts.SyntaxKind;
-}): boolean;

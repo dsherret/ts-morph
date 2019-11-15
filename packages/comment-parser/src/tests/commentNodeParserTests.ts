@@ -1,7 +1,6 @@
 import { ts, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CommentNodeParser, ContainerNodes } from "../CommentNodeParser";
-import { isComment } from "../isComment";
 import { CompilerCommentList } from "../CompilerComments";
 
 const commentListSyntaxKind = CompilerCommentList.kind;
@@ -71,7 +70,8 @@ describe(nameof(CommentNodeParser), () => {
                             ? leadingText.length - 1
                             : leadingText.length;
                         const obj: Node = {
-                            kind: node.kind,
+                            // it won't be a js doc comment inside a namespace or function (only on the end of file token)
+                            kind: node.kind === ts.SyntaxKind.JSDocComment ? ts.SyntaxKind.MultiLineCommentTrivia : node.kind,
                             pos: adjustmentPos + node.pos,
                             end: node.end + leadingText.length
                         };
@@ -302,7 +302,7 @@ describe(nameof(CommentNodeParser), () => {
                         pos: 0,
                         end: 8,
                         comments: [{
-                            kind: ts.SyntaxKind.MultiLineCommentTrivia,
+                            kind: ts.SyntaxKind.JSDocComment,
                             pos: 0,
                             end: 8
                         }]
@@ -548,7 +548,8 @@ describe(nameof(CommentNodeParser), () => {
                             ? leadingText.length - 1
                             : leadingText.length;
                         const obj: Node = {
-                            kind: node.kind,
+                            // it won't be a js doc comment inside a namespace or function (only on the end of file token)
+                            kind: node.kind === ts.SyntaxKind.JSDocComment ? ts.SyntaxKind.MultiLineCommentTrivia : node.kind,
                             pos: adjustmentPos + node.pos,
                             end: node.end + leadingText.length
                         };
@@ -1008,6 +1009,22 @@ describe(nameof(CommentNodeParser), () => {
                     end: 17
                 }]);
             });
+
+            it("should get js docs on the end of file token", () => {
+                // this is just the way it is in the compiler api
+                doTest("/** a */", file => file.endOfFileToken, [{
+                    kind: ts.SyntaxKind.JSDocComment,
+                    pos: 0,
+                    end: 8
+                }]);
+            });
         });
     });
 });
+
+
+function isComment(node: { kind: ts.SyntaxKind; }) {
+    return node.kind === ts.SyntaxKind.SingleLineCommentTrivia
+        || node.kind === ts.SyntaxKind.MultiLineCommentTrivia
+        || node.kind === ts.SyntaxKind.JSDocComment;
+}

@@ -12,14 +12,14 @@ export interface CommentScanner {
     setFullStartAndPos(pos: number): void;
     setPos(newPos: number): void;
     getPos(): number;
-    scanForNewLines(): Iterable<CompilerCommentNode>;
-    scanUntilToken(): Iterable<CompilerCommentNode>;
-    scanUntilNewLineOrToken(): Iterable<CompilerCommentNode>;
+    scanForNewLines(): Iterable<CompilerCommentNode | ts.JSDoc>;
+    scanUntilToken(): Iterable<CompilerCommentNode | ts.JSDoc>;
+    scanUntilNewLineOrToken(): Iterable<CompilerCommentNode | ts.JSDoc>;
 }
 
 export function createCommentScanner(sourceFile: ts.SourceFile): CommentScanner {
     const sourceFileText = sourceFile.text;
-    const commentCache = new Map<number, CompilerCommentNode>();
+    const commentCache = new Map<number, CompilerCommentNode | ts.JSDoc>();
     let parent: ts.Node = sourceFile;
     let fullStart = 0;
     let pos = 0;
@@ -123,8 +123,14 @@ export function createCommentScanner(sourceFile: ts.SourceFile): CommentScanner 
         if (comment == null) {
             if (commentKind === CommentKind.SingleLine)
                 comment = parseSingleLineComment();
-            else
+            else if (sourceFile.endOfFileToken.pos >= start) {
+                const jsDocs = (sourceFile.endOfFileToken as any).jsDoc as ts.JSDoc[] | undefined;
+                comment = jsDocs?.find(d => d.pos === start) ?? parseMultiLineComment();
+                pos = comment.end;
+            }
+            else {
                 comment = parseMultiLineComment();
+            }
             commentCache.set(start, comment);
         }
         else {
