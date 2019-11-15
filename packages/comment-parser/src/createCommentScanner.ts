@@ -123,7 +123,7 @@ export function createCommentScanner(sourceFile: ts.SourceFile): CommentScanner 
         if (comment == null) {
             if (commentKind === CommentKind.SingleLine)
                 comment = parseSingleLineComment();
-            else if (sourceFile.endOfFileToken.pos >= start) {
+            else if (sourceFile.endOfFileToken.pos <= start) {
                 const jsDocs = (sourceFile.endOfFileToken as any).jsDoc as ts.JSDoc[] | undefined;
                 comment = jsDocs?.find(d => d.pos === start) ?? parseMultiLineComment();
                 pos = comment.end;

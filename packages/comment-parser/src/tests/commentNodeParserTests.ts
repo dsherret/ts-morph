@@ -319,7 +319,7 @@ describe(nameof(CommentNodeParser), () => {
                         pos: 7,
                         end: 15,
                         comments: [{
-                            kind: ts.SyntaxKind.MultiLineCommentTrivia,
+                            kind: ts.SyntaxKind.JSDocComment,
                             pos: 7,
                             end: 15
                         }]
