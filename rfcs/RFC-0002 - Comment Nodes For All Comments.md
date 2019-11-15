@@ -233,6 +233,37 @@ For example:
 
 The syntax list of the block ends at the semi-colon of `a;`, but when calling `#getChildrenWithComments()` on the syntax list, it should return all the comments up to the close brace token.
 
+## JSDocs at end of file
+
+In the compiler api, the following code:
+
+```ts
+/** js doc */
+// test
+```
+
+Returns the following when calling `#getChildren()` on the nodes:
+
+```ts
+SourceFile
+  SyntaxList
+  EndOfFileToken
+    JSDocComment
+```
+
+In this case though, it is still useful to insert around jsdocs at the end of the file so `#getChildrenWithComments()` will return the following:
+
+```ts
+SourceFile
+  SyntaxList
+    CommentListStatement
+      JSDocComment - Same reference
+    CommentListStatement
+      SingleLineCommentTrivia
+  EndOfFileToken
+    JSDocComment - Same reference
+```
+
 ## Comment children ownership
 
 Child comments are any comment that is found within `Node#.getStart(true)` (`true` meaning the start pos including js docs) and `Node#end` where no descendant node is true for that condition. The only exception to this is syntax lists with statements or members as described above.
