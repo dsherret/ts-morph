@@ -12,14 +12,16 @@
 
 ## Problem
 
-It is difficult to deal with comments in ts-morph. RFC-0001 made it somewhat easier by introducing the concept of "comment nodes", which had "comment statement" and "comment member" implementations, but it didn't go far enough. There are still many comments that need to be parsed out each time from the compiler.
+For programmatic refactoring, it is very important to know about comments. In the past, all comments had to be requested via `Node#getLeadingCommentRanges()` and `Node#getTrailingCommentRanges()`. These returned objects would be forgotten after each manipulation and it was difficult to tell how these comments fit together with the nodes around them.
+
+RFC-0001 made it somewhat easier by introducing the concept of "comment nodes", which had "comment statement" and "comment member" implementations, but it didn't go far enough. There are still many comments that need to be requested on demand from `#getLeading/TrailingCommentRanges()`.
 
 ## `Node#getChildrenWithComments()`
 
 This RFC proposes the following:
 
 1. Comment statements & members will be changed to "comment list statements" and "comment list members".
-2. `Node#getChildren()` will return these comment lists instead of just a single comment node (which was the first comment on the line).
+2. `Node#getChildren()` will return these comment lists instead of just a single comment statement/member.
 3. Add new `Node#getChildrenWithComments()` method that works the same as `Node#getChildren()`, but additionally parses out and returns comments as objects that implement the `ts.Node` interface.
 
 ### Example
@@ -111,6 +113,19 @@ CommentListStatement
   SingleLineCommentTrivia (//3)
 ```
 
+...and the following lines are all not comment lists:
+
+```ts
+/*1*/ a; // these two lines have tokens, so not comment lists
+test/*3*/; /*4*/ // 5
+class test
+// not comment lists because these comments do not appear
+// in the position of a statement or member
+{
+
+}
+```
+
 As described in RFC-0001 about comment statements & members, this is done to allow inserting before and after certain comments.
 
 ### JS Docs
@@ -167,16 +182,27 @@ Base type:
 
 ```ts
 interface CompilerCommentList implements ts.Node {
+    kind: ts.SyntaxKind.Unknown;
     commentListKind: CommentListKind;
     comments: CompilerCommentNode[];
+    // ...etc..
 }
 ```
 
-### `ts.SyntaxKind` choise
+Example comment list type:
+
+```ts
+export declare class CompilerCommentStatement extends CompilerCommentList implements ts.Statement {
+    _statementBrand: any; // this brand is from ts.Statement
+    commentListKind: CommentListKind;
+}
+```
+
+### `kind` property value
 
 The major downside here is that unlike comment nodes which use either `ts.SyntaxKind.MultiLineCommentTrivia` or `ts.SyntaxKind.SingleLineCommentTrivia`, there is no existing `ts.SyntaxKind` that works well for comment lists. The only available option seems to be to use a custom number or `ts.SyntaxKind.Unknown` (`0`), which I think is what I'm going to go with because that is in the set of `ts.SyntaxKind`.
 
-## Comments Inside Syntax Lists With Statements or Members
+## Comments inside syntax lists with statements or members
 
 For example:
 
