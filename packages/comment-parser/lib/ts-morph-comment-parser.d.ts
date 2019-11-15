@@ -11,11 +11,11 @@ export declare class CommentNodeParser {
     static shouldParseChildren(container: ts.Node): container is ContainerNodes;
     static hasParsedChildren(container: ContainerNodes | ts.SyntaxList): boolean;
     static hasParsedTokens(node: ts.Node): boolean;
-    static isCommentStatement(node: ts.Node): node is CompilerCommentStatement;
-    static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement;
-    static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement;
-    static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement;
-    static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember;
+    static isCommentListStatement(node: ts.Node): node is CompilerCommentListStatement;
+    static isCommentListClassElement(node: ts.Node): node is CompilerCommentListClassElement;
+    static isCommentListTypeElement(node: ts.Node): node is CompilerCommentListTypeElement;
+    static isCommentListObjectLiteralElement(node: ts.Node): node is CompilerCommentListObjectLiteralElement;
+    static isCommentListEnumMember(node: ts.Node): node is CompilerCommentListEnumMember;
     static isCommentList(node: ts.Node): node is CompilerCommentList;
     static getContainerBodyPos(container: ContainerNodes, sourceFile: ts.SourceFile): number;
 }
@@ -83,31 +83,31 @@ export declare abstract class CompilerCommentList implements ts.Node {
     forEachChild<T>(cbNode: (node: ts.Node) => T | undefined, cbNodeArray?: ((nodes: ts.NodeArray<ts.Node>) => T | undefined) | undefined): T | undefined;
 }
 
-export declare class CompilerCommentStatement extends CompilerCommentList implements ts.Statement {
+export declare class CompilerCommentListStatement extends CompilerCommentList implements ts.Statement {
     _statementBrand: any;
     commentListKind: CommentListKind;
 }
 
-export declare class CompilerCommentClassElement extends CompilerCommentList implements ts.ClassElement {
+export declare class CompilerCommentListClassElement extends CompilerCommentList implements ts.ClassElement {
     _classElementBrand: any;
     _declarationBrand: any;
     commentListKind: CommentListKind;
 }
 
-export declare class CompilerCommentTypeElement extends CompilerCommentList implements ts.TypeElement {
+export declare class CompilerCommentListTypeElement extends CompilerCommentList implements ts.TypeElement {
     _typeElementBrand: any;
     _declarationBrand: any;
     commentListKind: CommentListKind;
 }
 
-export declare class CompilerCommentObjectLiteralElement extends CompilerCommentList implements ts.ObjectLiteralElement {
+export declare class CompilerCommentListObjectLiteralElement extends CompilerCommentList implements ts.ObjectLiteralElement {
     _declarationBrand: any;
     _objectLiteralBrand: any;
     declarationBrand: any;
     commentListKind: CommentListKind;
 }
 
-export declare class CompilerCommentEnumMember extends CompilerCommentList implements ts.Node {
+export declare class CompilerCommentListEnumMember extends CompilerCommentList implements ts.Node {
     commentListKind: CommentListKind;
 }
 

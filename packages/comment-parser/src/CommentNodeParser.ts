@@ -1,6 +1,6 @@
 import { errors, getSyntaxKindName, StringUtils, ts, SyntaxKind } from "@ts-morph/common";
-import { CompilerCommentNode, CompilerCommentList, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement, CompilerCommentObjectLiteralElement,
-    CompilerCommentEnumMember, CommentListKind } from "./CompilerComments";
+import { CompilerCommentNode, CompilerCommentList, CompilerCommentListStatement, CompilerCommentListClassElement, CompilerCommentListTypeElement, CompilerCommentListObjectLiteralElement,
+    CompilerCommentListEnumMember, CommentListKind } from "./CompilerComments";
 import { createCommentScanner, CommentScanner } from "./createCommentScanner";
 
 export type StatementContainerNodes = ts.SourceFile
@@ -180,23 +180,23 @@ export class CommentNodeParser {
         return tokenSaver.has(node);
     }
 
-    static isCommentStatement(node: ts.Node): node is CompilerCommentStatement {
+    static isCommentListStatement(node: ts.Node): node is CompilerCommentListStatement {
         return (node as CompilerCommentList).commentListKind === CommentListKind.Statement;
     }
 
-    static isCommentClassElement(node: ts.Node): node is CompilerCommentClassElement {
+    static isCommentListClassElement(node: ts.Node): node is CompilerCommentListClassElement {
         return (node as CompilerCommentList).commentListKind === CommentListKind.ClassElement;
     }
 
-    static isCommentTypeElement(node: ts.Node): node is CompilerCommentTypeElement {
+    static isCommentListTypeElement(node: ts.Node): node is CompilerCommentListTypeElement {
         return (node as CompilerCommentList).commentListKind === CommentListKind.TypeElement;
     }
 
-    static isCommentObjectLiteralElement(node: ts.Node): node is CompilerCommentObjectLiteralElement {
+    static isCommentListObjectLiteralElement(node: ts.Node): node is CompilerCommentListObjectLiteralElement {
         return (node as CompilerCommentList).commentListKind === CommentListKind.ObjectLiteralElement;
     }
 
-    static isCommentEnumMember(node: ts.Node): node is CompilerCommentEnumMember {
+    static isCommentListEnumMember(node: ts.Node): node is CompilerCommentListEnumMember {
         return (node as CompilerCommentList).commentListKind === CommentListKind.EnumMember;
     }
 
@@ -366,15 +366,15 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
 
         function getCtor() {
             if (isStatementContainerNode(container))
-                return CompilerCommentStatement;
+                return CompilerCommentListStatement;
             if (ts.isClassLike(container))
-                return CompilerCommentClassElement;
+                return CompilerCommentListClassElement;
             if (ts.isInterfaceDeclaration(container) || ts.isTypeLiteralNode(container))
-                return CompilerCommentTypeElement;
+                return CompilerCommentListTypeElement;
             if (ts.isObjectLiteralExpression(container))
-                return CompilerCommentObjectLiteralElement;
+                return CompilerCommentListObjectLiteralElement;
             if (ts.isEnumDeclaration(container))
-                return CompilerCommentEnumMember;
+                return CompilerCommentListEnumMember;
 
             throw new errors.NotImplementedError(`Not implemented comment node container type: ${getSyntaxKindName(container.kind)}`);
         }

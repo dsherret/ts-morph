@@ -203,30 +203,30 @@ export abstract class CompilerCommentList implements ts.Node {
     }
 }
 
-export class CompilerCommentStatement extends CompilerCommentList implements ts.Statement {
+export class CompilerCommentListStatement extends CompilerCommentList implements ts.Statement {
     _statementBrand: any;
     commentListKind = CommentListKind.Statement;
 }
 
-export class CompilerCommentClassElement extends CompilerCommentList implements ts.ClassElement {
+export class CompilerCommentListClassElement extends CompilerCommentList implements ts.ClassElement {
     _classElementBrand: any;
     _declarationBrand: any;
     commentListKind = CommentListKind.ClassElement;
 }
 
-export class CompilerCommentTypeElement extends CompilerCommentList implements ts.TypeElement {
+export class CompilerCommentListTypeElement extends CompilerCommentList implements ts.TypeElement {
     _typeElementBrand: any;
     _declarationBrand: any;
     commentListKind = CommentListKind.TypeElement;
 }
 
-export class CompilerCommentObjectLiteralElement extends CompilerCommentList implements ts.ObjectLiteralElement {
+export class CompilerCommentListObjectLiteralElement extends CompilerCommentList implements ts.ObjectLiteralElement {
     _declarationBrand: any;
     _objectLiteralBrand: any;
     declarationBrand: any;
     commentListKind = CommentListKind.ObjectLiteralElement;
 }
 
-export class CompilerCommentEnumMember extends CompilerCommentList implements ts.Node {
+export class CompilerCommentListEnumMember extends CompilerCommentList implements ts.Node {
     commentListKind = CommentListKind.EnumMember;
 }
