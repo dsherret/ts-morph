@@ -96,7 +96,7 @@ Comment nodes are any single line or multi-line comment in the file. They will w
 
 ## Comment Lists
 
-Comment lists are a collection of comments located in the statements of a node or members of nodes like interfaces/classes/etc. that are on one line without any other tokens on that line.
+Comment lists are a collection of comments located in the statements of a node or members of interfaces, class declarations & expressions, type elements, object literals, and enums. They must be on one line without any other tokens on that line. The exception is when a close brace token directly follows them and no token preceeds them. Additionally, comments that are between a jsdoc and the declaration it describes are children of the class declaration and therefore not comment lists.
 
 They show up in methods like `#getStatementsWithComments()`, `#getChildren()`, and the new `#getChildrenWithComments()`. For example, the following is a comment list:
 
@@ -113,7 +113,21 @@ CommentListStatement
   SingleLineCommentTrivia (//3)
 ```
 
-...and the following lines are all not comment lists:
+**Examples of comment lists**
+
+There is one comment list per line with a comment:
+
+```ts
+// 1
+/* 2 */ // 3
+class Test {
+  // 4
+  prop;
+  // 5
+/* 6 */ }
+```
+
+**Examples of comments that aren't comment lists**
 
 ```ts
 /*1*/ a; // these two lines have tokens, so not comment lists
@@ -124,6 +138,9 @@ class test
 {
 
 }
+
+/* not a comment list because it ends
+on the same line as a token */ b;
 ```
 
 As described in RFC-0001 about comment statements & members, this is done to allow inserting before and after certain comments.
