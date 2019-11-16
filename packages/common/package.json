@@ -17,24 +17,23 @@
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
+    "fast-glob": "^3.1.0",
     "fs-extra": "^8.1.0",
     "glob-parent": "^5.1.0",
-    "globby": "^10.0.1",
     "is-negated-glob": "^1.0.0",
     "multimatch": "^4.0.0",
     "typescript": "~3.7.2"
   },
   "devDependencies": {
+    "@ts-morph/scripts": "~0.1.0",
     "@types/chai": "^4.2.4",
     "@types/fs-extra": "^8.0.1",
     "@types/glob-parent": "^5.1.0",
-    "@types/globby": "^9.1.0",
     "@types/is-negated-glob": "^1.0.0",
     "@types/mocha": "^5.2.7",
     "@types/multimatch": "^4.0.0",
     "@types/node": "^12.12.6",
     "@types/ts-nameof": "^4.0.0",
-    "@ts-morph/scripts": "~0.1.0",
     "chai": "^4.2.0",
     "cross-env": "^6.0.3",
     "mocha": "^6.2.2",
@@ -58,7 +57,6 @@
     "graceful-fs": false,
     "fast-glob": false,
     "source-map-support": false,
-    "globby": false,
     "glob-parent": false,
     "glob": false
   }

@@ -115,7 +115,6 @@
     "graceful-fs": false,
     "fast-glob": false,
     "source-map-support": false,
-    "globby": false,
     "glob-parent": false,
     "glob": false
   }

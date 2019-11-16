@@ -8,7 +8,7 @@ export class RealFileSystemHost implements FileSystemHost {
     // Prevent "fs-extra" and "globby" from being loaded in environments that don't support it (ex. browsers).
     // This means if someone specifies to use a virtual file system then it won't load this.
     private fs: typeof import("fs-extra") = require("fs-extra");
-    private globby: typeof import("globby") = require("globby");
+    private fastGlob: typeof import("fast-glob") = require("fast-glob");
 
     /** @inheritdoc */
     delete(path: string) {
@@ -176,7 +176,7 @@ export class RealFileSystemHost implements FileSystemHost {
     glob(patterns: ReadonlyArray<string>) {
         // convert backslashes to foward
         patterns = patterns.map(p => p.replace(/\\/g, "/")); // maybe this isn't full-proof?
-        return this.globby.sync(patterns, {
+        return this.fastGlob.sync<string>(patterns as string[], {
             cwd: this.getCurrentDirectory(),
             absolute: true
         });
