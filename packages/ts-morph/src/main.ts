@@ -20,6 +20,7 @@ export { SourceFileReferencingNodes } from "./utils/references/SourceFileReferen
 export { CompilerOptionsFromTsConfigOptions, CompilerOptionsFromTsConfigResult,
     getCompilerOptionsFromTsConfig } from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
 export { TypeGuards } from "./utils";
+export { ManipulationError } from "./manipulation";
 import { Writers } from "./structurePrinters/Writers";
 /** @deprecated Use `Writers`. */
 const WriterFunctions = Writers;

@@ -1978,6 +1978,16 @@ export declare class TypeGuards {
 }
 
 /**
+ * Occurs when there is a problem doing a manipulation.
+ */
+export declare class ManipulationError extends errors.InvalidOperationError {
+    readonly filePath: string;
+    readonly oldText: string;
+    readonly newText: string;
+    constructor(filePath: string, oldText: string, newText: string, errorMessage: string);
+}
+
+/**
  * Functions for writing code.
  */
 export declare class Writers {

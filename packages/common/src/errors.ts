@@ -6,48 +6,45 @@ export namespace errors {
     /** Base error class. */
     export abstract class BaseError extends Error {
         /** @private */
-        constructor(public readonly message: string, prototype: any) {
+        constructor(public readonly message: string) {
             super(message);
 
             this.message = message;
-
-            // workaround for extending error to work in ES5 :(
-            Object.setPrototypeOf(this, prototype);
         }
     }
 
     /** Thrown when there is a problem with a provided argument. */
     export class ArgumentError extends BaseError {
-        constructor(argName: string, message: string, prototype: any = ArgumentError.prototype) {
-            super(`Argument Error (${argName}): ${message}`, prototype);
+        constructor(argName: string, message: string) {
+            super(`Argument Error (${argName}): ${message}`);
         }
     }
 
     /** Thrown when an argument is null or whitespace. */
     export class ArgumentNullOrWhitespaceError extends ArgumentError {
         constructor(argName: string) {
-            super(argName, "Cannot be null or whitespace.", ArgumentNullOrWhitespaceError.prototype);
+            super(argName, "Cannot be null or whitespace.");
         }
     }
 
     /** Thrown when an argument is out of range. */
     export class ArgumentOutOfRangeError extends ArgumentError {
         constructor(argName: string, value: number, range: [number, number]) {
-            super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`, ArgumentOutOfRangeError.prototype);
+            super(argName, `Range is ${range[0]} to ${range[1]}, but ${value} was provided.`);
         }
     }
 
     /** Thrown when an argument does not match an expected type. */
     export class ArgumentTypeError extends ArgumentError {
         constructor(argName: string, expectedType: string, actualType: string) {
-            super(argName, `Expected type '${expectedType}', but was '${actualType}'.`, ArgumentTypeError.prototype);
+            super(argName, `Expected type '${expectedType}', but was '${actualType}'.`);
         }
     }
 
     /** Thrown when a file or directory path was not found. */
     export class PathNotFoundError extends BaseError {
-        constructor(public readonly path: string, prefix = "Path", prototype: any = PathNotFoundError.prototype) {
-            super(`${prefix} not found: ${path}`, prototype);
+        constructor(public readonly path: string, prefix = "Path") {
+            super(`${prefix} not found: ${path}`);
         }
 
         readonly code: "ENOENT" = "ENOENT";
@@ -56,35 +53,35 @@ export namespace errors {
     /** Thrown when a directory was not found. */
     export class DirectoryNotFoundError extends PathNotFoundError {
         constructor(dirPath: string) {
-            super(dirPath, "Directory", DirectoryNotFoundError.prototype);
+            super(dirPath, "Directory");
         }
     }
 
     /** Thrown when a file was not found. */
     export class FileNotFoundError extends PathNotFoundError {
         constructor(filePath: string) {
-            super(filePath, "File", FileNotFoundError.prototype);
+            super(filePath, "File");
         }
     }
 
     /** Thrown when an action was taken that is not allowed. */
     export class InvalidOperationError extends BaseError {
         constructor(message: string) {
-            super(message, InvalidOperationError.prototype);
+            super(message);
         }
     }
 
     /** Thrown when a certain behaviour or feature has not been implemented. */
     export class NotImplementedError extends BaseError {
         constructor(message = "Not implemented.") {
-            super(message, NotImplementedError.prototype);
+            super(message);
         }
     }
 
     /** Thrown when an operation is not supported. */
     export class NotSupportedError extends BaseError {
         constructor(message: string) {
-            super(message, NotSupportedError.prototype);
+            super(message);
         }
     }
 

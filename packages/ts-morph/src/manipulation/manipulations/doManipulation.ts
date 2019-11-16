@@ -1,13 +1,15 @@
 /* barrel:ignore */
+import { errors } from "@ts-morph/common";
 import { SourceFile, Diagnostic } from "../../compiler";
 import { Project, ProjectOptions } from "../../Project";
-import { errors } from "@ts-morph/common";
 import { NodeHandler } from "../nodeHandlers";
 import { TextManipulator } from "../textManipulators";
+import { ManipulationError } from "./ManipulationError";
 
 export function doManipulation(sourceFile: SourceFile, textManipulator: TextManipulator, nodeHandler: NodeHandler, newFilePath?: string) {
     sourceFile._firePreModified();
-    const newFileText = textManipulator.getNewText(sourceFile.getFullText());
+    const oldFileText = sourceFile.getFullText();
+    const newFileText = textManipulator.getNewText(oldFileText);
     try {
         const replacementSourceFile = sourceFile._context.compilerFactory.createCompilerSourceFileFromText(
             newFilePath || sourceFile.getFilePath(),
@@ -24,14 +26,23 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
             + "Stack: " + err.stack;
 
         if (diagnostics.length > 0) {
-            throw new errors.InvalidOperationError(
+            throwError(
                 "Manipulation error: " + "A syntax error was inserted." + "\n\n"
                     + sourceFile._context.project.formatDiagnosticsWithColorAndContext(diagnostics, { newLineChar: "\n" })
                     + "\n" + errorDetails
             );
         }
 
-        throw new errors.InvalidOperationError("Manipulation error: " + errorDetails);
+        throwError("Manipulation error: " + errorDetails);
+
+        function throwError(message: string): never {
+            throw new ManipulationError(
+                sourceFile.getFilePath(),
+                oldFileText,
+                newFileText,
+                message
+            );
+        }
     }
 }
 

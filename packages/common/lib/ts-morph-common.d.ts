@@ -326,7 +326,7 @@ export declare namespace errors {
     }
     /** Thrown when there is a problem with a provided argument. */
     class ArgumentError extends BaseError {
-        constructor(argName: string, message: string, prototype?: any);
+        constructor(argName: string, message: string);
     }
     /** Thrown when an argument is null or whitespace. */
     class ArgumentNullOrWhitespaceError extends ArgumentError {
@@ -343,7 +343,7 @@ export declare namespace errors {
     /** Thrown when a file or directory path was not found. */
     class PathNotFoundError extends BaseError {
         readonly path: string;
-        constructor(path: string, prefix?: string, prototype?: any);
+        constructor(path: string, prefix?: string);
         readonly code: "ENOENT";
     }
     /** Thrown when a directory was not found. */
