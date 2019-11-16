@@ -136,7 +136,7 @@ export class Symbol {
         if (this.compilerSymbol.exports == null)
             return undefined;
 
-        const tsSymbol = this.compilerSymbol.exports.get(name as ts.__String);
+        const tsSymbol = this.compilerSymbol.exports.get(ts.escapeLeadingUnderscores(name));
         return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
     }
 
@@ -165,7 +165,7 @@ export class Symbol {
         if (this.compilerSymbol.globalExports == null)
             return undefined;
 
-        const tsSymbol = this.compilerSymbol.globalExports.get(name as ts.__String);
+        const tsSymbol = this.compilerSymbol.globalExports.get(ts.escapeLeadingUnderscores(name));
         return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
     }
 
@@ -194,7 +194,7 @@ export class Symbol {
         if (this.compilerSymbol.members == null)
             return undefined;
 
-        const tsSymbol = this.compilerSymbol.members.get(name as ts.__String);
+        const tsSymbol = this.compilerSymbol.members.get(ts.escapeLeadingUnderscores(name));
         return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
     }
 

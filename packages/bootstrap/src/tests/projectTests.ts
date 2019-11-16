@@ -526,7 +526,7 @@ describe(nameof(Project), () => {
             const program = project.createProgram();
             const typeChecker = program.getTypeChecker();
             const symbol = typeChecker.getSymbolAtLocation(sourceFile)!;
-            const tExport = symbol.exports!.get("t" as ts.__String)!;
+            const tExport = symbol.exports!.get(ts.escapeLeadingUnderscores("t"))!;
             expect(tExport.getName()).to.equal("t");
         });
     });

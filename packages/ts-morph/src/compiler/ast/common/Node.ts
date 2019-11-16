@@ -287,7 +287,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (locals == null)
             return undefined;
 
-        const tsSymbol = locals.get(name as ts.__String);
+        const tsSymbol = locals.get(ts.escapeLeadingUnderscores(name));
         return tsSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsSymbol);
     }
 
