@@ -441,7 +441,7 @@ export declare namespace errors {
 /** An implementation of a file host that interacts with the actual file system. */
 export declare class RealFileSystemHost implements FileSystemHost {
     private fs;
-    private globby;
+    private fastGlob;
     /** @inheritdoc */
     delete(path: string): Promise<void>;
     /** @inheritdoc */
@@ -481,7 +481,9 @@ export declare class RealFileSystemHost implements FileSystemHost {
     /** @inheritdoc */
     getCurrentDirectory(): string;
     /** @inheritdoc */
-    glob(patterns: ReadonlyArray<string>): string[];
+    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
+    /** @inheritdoc */
+    globSync(patterns: ReadonlyArray<string>): string[];
     /** @inheritdoc */
     isCaseSensitive(): boolean;
     private getDirectoryNotFoundErrorIfNecessary;
@@ -536,7 +538,9 @@ export interface FileSystemHost {
     /** Gets the current directory of the environment. */
     getCurrentDirectory(): string;
     /** Uses pattern matching to find files or directories. */
-    glob(patterns: ReadonlyArray<string>): string[];
+    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
+    /** Synchronously uses pattern matching to find files or directories. */
+    globSync(patterns: ReadonlyArray<string>): string[];
 }
 
 /**
@@ -581,7 +585,8 @@ export declare class TransactionalFileSystem {
     directoryExistsSync(dirPath: string): boolean;
     readFileSync(filePath: string, encoding: string | undefined): string;
     readDirSync(dirPath: string): string[];
-    glob(patterns: ReadonlyArray<string>): string[];
+    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
+    globSync(patterns: ReadonlyArray<string>): string[];
     getFileSystem(): FileSystemHost;
     getCurrentDirectory(): string;
     getDirectories(dirPath: string): string[];
@@ -705,7 +710,7 @@ export declare class FileUtils {
      * Gets the descendant directories of the specified directory.
      * @param dirPath - Directory path.
      */
-    static getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: string): string[];
+    static getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: string): IterableIterator<string>;
     /**
      * Gets the glob as absolute.
      * @param glob - Glob.
@@ -773,7 +778,9 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     /** @inheritdoc */
     getCurrentDirectory(): string;
     /** @inheritdoc */
-    glob(patterns: ReadonlyArray<string>): string[];
+    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
+    /** @inheritdoc */
+    globSync(patterns: ReadonlyArray<string>): string[];
     private getOrCreateDir;
 }
 

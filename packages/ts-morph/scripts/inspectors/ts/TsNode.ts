@@ -1,11 +1,11 @@
-import { InterfaceDeclaration, SyntaxKind, ClassDeclaration, TypeGuards, PropertyDeclaration, PropertySignature } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { Memoize } from "@ts-morph/common";
 import { WrapperFactory } from "../WrapperFactory";
 import { WrappedNode } from "../tsMorph";
 import { TsNodeProperty } from "./TsNodeProperty";
 
 export class TsNode {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: InterfaceDeclaration | ClassDeclaration) {
+    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: tsMorph.InterfaceDeclaration | tsMorph.ClassDeclaration) {
     }
 
     getName() {
@@ -35,7 +35,7 @@ export class TsNode {
             if (sourceFile.getFilePath().indexOf("compiler") === -1)
                 continue;
 
-            const classDec = node.getFirstAncestorByKind(SyntaxKind.ClassDeclaration);
+            const classDec = node.getFirstAncestorByKind(tsMorph.SyntaxKind.ClassDeclaration);
             if (classDec != null && classDec.getName() === this.getName())
                 return this.wrapperFactory.getWrappedNode(classDec);
         }
@@ -46,11 +46,11 @@ export class TsNode {
         const node = this.node;
         return getProperties().map(p => this.wrapperFactory.getTsNodeProperty(p));
 
-        function getProperties(): (PropertyDeclaration | PropertySignature)[] {
-            if (TypeGuards.isClassDeclaration(node)) {
-                const result: (PropertyDeclaration | PropertySignature)[] = [];
+        function getProperties(): (tsMorph.PropertyDeclaration | tsMorph.PropertySignature)[] {
+            if (tsMorph.TypeGuards.isClassDeclaration(node)) {
+                const result: (tsMorph.PropertyDeclaration | tsMorph.PropertySignature)[] = [];
                 for (const prop of node.getInstanceProperties()) {
-                    if (TypeGuards.isPropertyDeclaration(prop))
+                    if (tsMorph.TypeGuards.isPropertyDeclaration(prop))
                         result.push(prop);
                     else
                         throw new Error("Unhandled scenario where node was: " + prop.getKindName());

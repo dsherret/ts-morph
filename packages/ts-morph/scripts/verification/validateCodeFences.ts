@@ -6,7 +6,7 @@
  * comment in the form `// @code-fence-allow(name): <reason>`
  * ------------------------------------------------------
  */
-import { Node, MethodSignature } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector, TsInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
@@ -44,12 +44,12 @@ export function validateCodeFences(
                 .getMemberOrThrow("getChildren");
 
             // wish it were possible to get the references from a symbol
-            const methodSignature = getChildrenSymbol.getValueDeclarationOrThrow() as MethodSignature;
+            const methodSignature = getChildrenSymbol.getValueDeclarationOrThrow() as tsMorph.MethodSignature;
             return methodSignature.findReferencesAsNodes();
         }
     }
 
-    function getLeadingCommentRanges(node: Node) {
+    function getLeadingCommentRanges(node: tsMorph.Node) {
         return getTopMostNodeOnSameLine().getLeadingCommentRanges();
 
         function getTopMostNodeOnSameLine() {

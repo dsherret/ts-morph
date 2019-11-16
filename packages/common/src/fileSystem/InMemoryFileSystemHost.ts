@@ -222,7 +222,16 @@ export class InMemoryFileSystemHost implements FileSystemHost {
     }
 
     /** @inheritdoc */
-    glob(patterns: ReadonlyArray<string>): string[] {
+    glob(patterns: ReadonlyArray<string>): Promise<string[]> {
+        try {
+            return Promise.resolve(this.globSync(patterns));
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+
+    /** @inheritdoc */
+    globSync(patterns: ReadonlyArray<string>): string[] {
         const allFilePaths = Array.from(getAllFilePaths(this.directories.getValues()));
         return matchGlobs(allFilePaths, patterns, this.getCurrentDirectory());
 

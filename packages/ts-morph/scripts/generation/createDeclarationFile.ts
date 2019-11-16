@@ -6,9 +6,7 @@
  * -------------------------------------------
  */
 import * as os from "os";
-import { ClassDeclaration, StructureKind, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
-    VariableStatementStructure, Type } from "ts-morph";
-import { forEachTypeText, makeConstructorsPrivate } from "@ts-morph/scripts";
+import { forEachTypeText, makeConstructorsPrivate, tsMorph } from "@ts-morph/scripts";
 import { createDeclarationProject } from "../common";
 import { getDeclarationFileStatements, getCodeBlockWriterStatements } from "./declarationFile";
 
@@ -76,28 +74,29 @@ export async function createDeclarationFile() {
 
     function hideSpecificStructures() {
         const specificStructures = statements
-            .filter(s => s.kind === StructureKind.Interface && s.name.endsWith("SpecificStructure")) as InterfaceDeclarationStructure[];
+            .filter(s => s.kind === tsMorph.StructureKind.Interface && s.name.endsWith("SpecificStructure")) as tsMorph.InterfaceDeclarationStructure[];
         for (const structure of specificStructures)
             structure.isExported = false;
     }
 
     function hideExtensionTypes() {
         const extensionTypes = statements
-            .filter(s => s.kind === StructureKind.TypeAlias && s.name.endsWith("ExtensionType")) as TypeAliasDeclarationStructure[];
+            .filter(s => s.kind === tsMorph.StructureKind.TypeAlias && s.name.endsWith("ExtensionType")) as tsMorph.TypeAliasDeclarationStructure[];
         for (const extensionType of extensionTypes)
             extensionType.isExported = false;
     }
 
     function hideSpecificDeclarations() {
-        (statements.find(s => s.kind === StructureKind.Function && s.name === "ClassLikeDeclarationBaseSpecific") as FunctionDeclarationStructure)
-            .isExported = false;
-        (statements.find(s => s.kind === StructureKind.Interface && s.name === "ClassLikeDeclarationBaseSpecific") as InterfaceDeclarationStructure)
-            .isExported = false;
+        (statements.find(s => s.kind === tsMorph.StructureKind.Function
+            && s.name === "ClassLikeDeclarationBaseSpecific") as tsMorph.FunctionDeclarationStructure).isExported = false;
+        (statements.find(s => s.kind === tsMorph.StructureKind.Interface
+            && s.name === "ClassLikeDeclarationBaseSpecific") as tsMorph.InterfaceDeclarationStructure).isExported = false;
     }
 
     function hideBaseDeclarations() {
         const baseStatements = statements
-            .filter(s => s.kind === StructureKind.VariableStatement && s.declarations.some(d => d.name.endsWith("Base"))) as VariableStatementStructure[];
+            .filter(s => s.kind === tsMorph.StructureKind.VariableStatement
+                && s.declarations.some(d => d.name.endsWith("Base"))) as tsMorph.VariableStatementStructure[];
 
         for (const statement of baseStatements) {
             if (statement.declarations.length > 1)
@@ -133,7 +132,7 @@ export async function createDeclarationFile() {
             });
         }
 
-        function getTypeScriptTypeName(nodeType: Type, classDec: ClassDeclaration) {
+        function getTypeScriptTypeName(nodeType: tsMorph.Type, classDec: tsMorph.ClassDeclaration) {
             const types = [nodeType, ...nodeType.getIntersectionTypes()];
             for (const type of types) {
                 for (const typeArg of type.getTypeArguments()) {

@@ -1,18 +1,18 @@
-import { Type } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 
-export function isNodeType(type: Type) {
+export function isNodeType(type: tsMorph.Type) {
     return type.getText().endsWith("Node<NodeType>");
 }
 
-export function hasDescendantNodeType(type: Type) {
+export function hasDescendantNodeType(type: tsMorph.Type) {
     return hasDescendantBaseType(type, isNodeType);
 }
 
-export function hasDescendantBaseType(type: Type, isMatch: (type: Type) => boolean): boolean {
+export function hasDescendantBaseType(type: tsMorph.Type, isMatch: (type: tsMorph.Type) => boolean): boolean {
     return getDescendantBaseType(type, isMatch) != null;
 }
 
-export function getDescendantBaseType(type: Type, isMatch: (type: Type) => boolean): Type | undefined {
+export function getDescendantBaseType(type: tsMorph.Type, isMatch: (type: tsMorph.Type) => boolean): tsMorph.Type | undefined {
     if (type.isIntersection()) {
         for (const intersectionType of type.getIntersectionTypes()) {
             const descendantType = getDescendantBaseType(intersectionType, isMatch);

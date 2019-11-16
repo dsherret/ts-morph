@@ -1,16 +1,16 @@
-import { Node, ClassDeclaration, InterfaceDeclaration, PropertySignature, PropertyDeclaration } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { KeyValueCache } from "@ts-morph/common";
 import { WrappedNode, Structure, Mixin } from "./tsMorph";
 import { TsNode, TsNodeProperty } from "./ts";
 
 export class WrapperFactory {
-    private readonly wrappedNodeCache = new KeyValueCache<ClassDeclaration, WrappedNode>();
-    private readonly structureNodeCache = new KeyValueCache<InterfaceDeclaration, Structure>();
-    private readonly mixinNodeCache = new KeyValueCache<Node, Mixin>();
-    private readonly tsNodeCache = new KeyValueCache<InterfaceDeclaration | ClassDeclaration, TsNode>();
-    private readonly tsNodePropertyCache = new KeyValueCache<PropertySignature | PropertyDeclaration, TsNodeProperty>();
+    private readonly wrappedNodeCache = new KeyValueCache<tsMorph.ClassDeclaration, WrappedNode>();
+    private readonly structureNodeCache = new KeyValueCache<tsMorph.InterfaceDeclaration, Structure>();
+    private readonly mixinNodeCache = new KeyValueCache<tsMorph.Node, Mixin>();
+    private readonly tsNodeCache = new KeyValueCache<tsMorph.InterfaceDeclaration | tsMorph.ClassDeclaration, TsNode>();
+    private readonly tsNodePropertyCache = new KeyValueCache<tsMorph.PropertySignature | tsMorph.PropertyDeclaration, TsNodeProperty>();
 
-    getWrappedNode(classDeclaration: ClassDeclaration) {
+    getWrappedNode(classDeclaration: tsMorph.ClassDeclaration) {
         return this.wrappedNodeCache.getOrCreate(classDeclaration, () => new WrappedNode(this, classDeclaration));
     }
 
@@ -18,19 +18,19 @@ export class WrapperFactory {
         return this.wrappedNodeCache.getValuesAsArray();
     }
 
-    getMixin(interfaceDeclaration: InterfaceDeclaration) {
+    getMixin(interfaceDeclaration: tsMorph.InterfaceDeclaration) {
         return this.mixinNodeCache.getOrCreate(interfaceDeclaration, () => new Mixin(this, interfaceDeclaration));
     }
 
-    getStructure(interfaceDeclaration: InterfaceDeclaration) {
+    getStructure(interfaceDeclaration: tsMorph.InterfaceDeclaration) {
         return this.structureNodeCache.getOrCreate(interfaceDeclaration, () => new Structure(this, interfaceDeclaration));
     }
 
-    getTsNode(tsNode: InterfaceDeclaration | ClassDeclaration) {
+    getTsNode(tsNode: tsMorph.InterfaceDeclaration | tsMorph.ClassDeclaration) {
         return this.tsNodeCache.getOrCreate(tsNode, () => new TsNode(this, tsNode));
     }
 
-    getTsNodeProperty(property: PropertySignature | PropertyDeclaration) {
+    getTsNodeProperty(property: tsMorph.PropertySignature | tsMorph.PropertyDeclaration) {
         return this.tsNodePropertyCache.getOrCreate(property, () => new TsNodeProperty(this, property));
     }
 }

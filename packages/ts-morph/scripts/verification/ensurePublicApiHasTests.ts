@@ -5,16 +5,16 @@
  * in the public api appear in the tests.
  * -----------------------------------------------
  */
-import { TypeGuards, Node, ReferenceFindableNode, Scope } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
 
 export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {
-    const nodes: (Node & ReferenceFindableNode)[] = [];
+    const nodes: (tsMorph.Node & tsMorph.ReferenceFindableNode)[] = [];
 
-    function tryAddNode(node: Node & ReferenceFindableNode) {
-        if (TypeGuards.isScopedNode(node) && node.getScope() !== Scope.Public)
+    function tryAddNode(node: tsMorph.Node & tsMorph.ReferenceFindableNode) {
+        if (tsMorph.TypeGuards.isScopedNode(node) && node.getScope() !== tsMorph.Scope.Public)
             return;
         if (hasInternalDocTag(node))
             return;
@@ -35,7 +35,7 @@ export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem:
         for (const node of dec.getProperties())
             tryAddNode(node);
         for (const node of dec.getMethods()) {
-            if (TypeGuards.isMethodDeclaration(node)) {
+            if (tsMorph.TypeGuards.isMethodDeclaration(node)) {
                 const overloads = node.getOverloads();
                 if (overloads.length > 0) {
                     for (const overload of overloads)
@@ -55,7 +55,7 @@ export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem:
             addProblem({
                 filePath: node.getSourceFile().getFilePath(),
                 lineNumber: node.getStartLineNumber(),
-                message: `Node "${TypeGuards.hasName(node) ? node.getName() : node.getText()}" is not referenced in the tests`
+                message: `Node "${tsMorph.TypeGuards.hasName(node) ? node.getName() : node.getText()}" is not referenced in the tests`
             });
         }
     }

@@ -46,5 +46,7 @@ export interface FileSystemHost {
     /** Gets the current directory of the environment. */
     getCurrentDirectory(): string;
     /** Uses pattern matching to find files or directories. */
-    glob(patterns: ReadonlyArray<string>): string[];
+    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
+    /** Synchronously uses pattern matching to find files or directories. */
+    globSync(patterns: ReadonlyArray<string>): string[];
 }

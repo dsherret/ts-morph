@@ -727,7 +727,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.glob), () => {
+    describe(nameof<TransactionalFileSystem>(w => w.globSync), () => {
         it("should not read the dir after it was deleted", () => {
             const { wrapper } = setup();
             const dirPath = "/dir";
@@ -735,11 +735,11 @@ describe(nameof(TransactionalFileSystem), () => {
             const filePaths = ["/dir/file.ts", "/dir/file2.ts"];
             for (const filePath of filePaths)
                 wrapper.writeFileSync(filePath, "");
-            expect(wrapper.glob([dirGlob])).to.deep.equal(filePaths);
+            expect(wrapper.globSync([dirGlob])).to.deep.equal(filePaths);
             wrapper.queueFileDelete(filePaths[0]);
-            expect(wrapper.glob([dirGlob])).to.deep.equal([filePaths[1]]);
+            expect(wrapper.globSync([dirGlob])).to.deep.equal([filePaths[1]]);
             wrapper.flushSync();
-            expect(wrapper.glob([dirGlob])).to.deep.equal([filePaths[1]]);
+            expect(wrapper.globSync([dirGlob])).to.deep.equal([filePaths[1]]);
         });
     });
 

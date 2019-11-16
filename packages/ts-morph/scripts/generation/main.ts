@@ -1,4 +1,4 @@
-import { ts } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { createGetStructureFunctions } from "./createGetStructureFunctions";
 import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
 import { createKindToNodeMappings } from "./createKindToNodeMappings";
@@ -15,7 +15,7 @@ const inspector = factory.getTsMorphInspector();
 const tsInspector = factory.getTsInspector();
 
 (async () => {
-    console.log(`TypeScript version: ${ts.version}`);
+    console.log(`TypeScript version: ${tsMorph.ts.version}`);
 
     if (checkHasArg("create-get-structure-functions")) {
         console.log("Creating get structure functions...");

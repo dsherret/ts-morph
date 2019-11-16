@@ -8,7 +8,7 @@
  * unexpected happens. They also work nicely with strict null checking.
  * --------------------------------------------
  */
-import { Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
@@ -46,11 +46,11 @@ export function ensureOrThrowExists(inspector: TsMorphInspector, addProblem: (pr
     }
 }
 
-function doesReturnTypeRequireOrThrow(returnType: Type) {
+function doesReturnTypeRequireOrThrow(returnType: tsMorph.Type) {
     return returnType.isNullable();
 }
 
-function isIgnoredMethod(parent: ClassDeclaration | InterfaceDeclaration, method: MethodDeclaration | MethodSignature) {
+function isIgnoredMethod(parent: tsMorph.ClassDeclaration | tsMorph.InterfaceDeclaration, method: tsMorph.MethodDeclaration | tsMorph.MethodSignature) {
     if (parent.getName() === "CodeBlockWriter")
         return true;
 

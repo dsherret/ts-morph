@@ -5,7 +5,7 @@
  * is used for iterating over a structure's structures.
  * -------------------------------------------------
  */
-import { PropertySignature, SourceFile, Type, FunctionDeclarationStructure, StructureKind } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector, Structure } from "../inspectors";
 
 // very messy first pass... needs cleanup
@@ -34,7 +34,7 @@ export function createForEachStructureChild(inspector: TsMorphInspector) {
     forEachStructureChildFile.fixMissingImports();
 }
 
-function clearPreviouslyGeneratedFunctions(sourceFile: SourceFile) {
+function clearPreviouslyGeneratedFunctions(sourceFile: tsMorph.SourceFile) {
     // remove functions with an @generated jsdoc tag
     for (const func of sourceFile.getFunctions()) {
         if (func.getJsDocs().some(d => d.getTags().some(t => t.getTagName() === "generated")))
@@ -42,7 +42,7 @@ function clearPreviouslyGeneratedFunctions(sourceFile: SourceFile) {
     }
 }
 
-function updateForEachStructureChild(sourceFile: SourceFile, structureInfos: StructureInfo[]) {
+function updateForEachStructureChild(sourceFile: tsMorph.SourceFile, structureInfos: StructureInfo[]) {
     const func = sourceFile.getFunctionOrThrow("forEachStructureChild");
     func.removeStatements([0, func.getStatementsWithComments().length - 1]);
 
@@ -68,11 +68,11 @@ function updateForEachStructureChild(sourceFile: SourceFile, structureInfos: Str
     });
 }
 
-function addNewFunctions(sourceFile: SourceFile, structureInfos: StructureInfo[]) {
-    const functions: FunctionDeclarationStructure[] = [];
+function addNewFunctions(sourceFile: tsMorph.SourceFile, structureInfos: StructureInfo[]) {
+    const functions: tsMorph.FunctionDeclarationStructure[] = [];
     for (const info of structureInfos) {
         functions.push({
-            kind: StructureKind.Function,
+            kind: tsMorph.StructureKind.Function,
             docs: ["@generated"],
             name: getInfoFunctionName(info),
             typeParameters: ["TStructure"],
@@ -167,7 +167,7 @@ function getStructureInfos(inspector: TsMorphInspector) {
             return result;
         }
 
-        function fillMemberInfo(property: PropertySignature) {
+        function fillMemberInfo(property: tsMorph.PropertySignature) {
             const propertyType = property.getType();
             const arrayTypes = getArrayTypes(propertyType.getNonNullableType());
             if (getTypeKindProperty(propertyType.getNonNullableType()) != null)
@@ -194,22 +194,22 @@ function getStructureInfos(inspector: TsMorphInspector) {
                 });
             }
 
-            function getArrayTypes(type: Type) {
+            function getArrayTypes(type: tsMorph.Type) {
                 if (type.isArray())
                     return [type];
                 return type.getUnionTypes().filter(t => t.isArray());
             }
 
-            function getTypeOrUnionElementTypes(type: Type) {
+            function getTypeOrUnionElementTypes(type: tsMorph.Type) {
                 return type.isUnion() ? type.getUnionTypes() : [type];
             }
         }
 
-        function getTypeKindProperty(type: Type) {
+        function getTypeKindProperty(type: tsMorph.Type) {
             return type.getProperty("kind");
         }
 
-        function getStructureKind(type: Type) {
+        function getStructureKind(type: tsMorph.Type) {
             return type.getNonNullableType().getText().replace(/^.*\.([^\.]+)$/, "$1");
         }
     }

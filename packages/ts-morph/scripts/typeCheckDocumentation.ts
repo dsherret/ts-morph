@@ -1,4 +1,4 @@
-import { Diagnostic, SourceFile } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { getProject } from "./common";
 import { MarkDownFile, CodeBlock } from "./markdown";
 
@@ -26,7 +26,7 @@ addAnyInitializers(mainTemplate);
 const markDownFiles = fileSystem.glob(["../../docs/**/*.md", "./README.md"]).map(filePath => new MarkDownFile(filePath, fileSystem.readFileSync(filePath)));
 
 console.log("Checking documentation for compile errors...");
-const errors: { diagnostic: Diagnostic; codeBlock: CodeBlock; }[] = [];
+const errors: { diagnostic: tsMorph.Diagnostic; codeBlock: CodeBlock; }[] = [];
 
 // much faster to get all the temporary source files first so the type checker doesn't need to be created after each manipulation
 const markDownFilesWithCodeBlocks = markDownFiles
@@ -71,7 +71,7 @@ function getInitializedSetupText(text: string) {
     });
 }
 
-function addAnyInitializers(file: SourceFile) {
+function addAnyInitializers(file: tsMorph.SourceFile) {
     // prevents errors about using an unassigned variable
     for (const dec of file.getVariableDeclarations()) {
         if (dec.getInitializer() == null)
@@ -85,14 +85,14 @@ function getInitializedFileText(text: string) {
     });
 }
 
-function changeModuleSpecifiers(file: SourceFile) {
+function changeModuleSpecifiers(file: tsMorph.SourceFile) {
     for (const importExport of [...file.getImportDeclarations(), ...file.getExportDeclarations()]) {
         if (importExport.getModuleSpecifierValue() === "ts-morph")
             importExport.setModuleSpecifier("../../src/main");
     }
 }
 
-function doActionOnText(text: string, doAction: (sourceFile: SourceFile) => void) {
+function doActionOnText(text: string, doAction: (sourceFile: tsMorph.SourceFile) => void) {
     const tempFile = docsDir.createSourceFile("tempFile.ts");
     tempFile.insertText(0, text);
     doAction(tempFile);

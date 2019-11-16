@@ -380,7 +380,7 @@ describe(nameof(InMemoryFileSystemHost), () => {
         });
     });
 
-    describe(nameof<InMemoryFileSystemHost>(h => h.glob), () => {
+    describe(nameof<InMemoryFileSystemHost>(h => h.globSync), () => {
         const fs = new InMemoryFileSystemHost();
         fs.writeFileSync("/dir/file1.ts", "");
         fs.writeFileSync("/dir/file1.d.ts", "");
@@ -391,7 +391,7 @@ describe(nameof(InMemoryFileSystemHost), () => {
         fs.writeFileSync("/dir2/file6.ts", "");
 
         it("should match all the patterns provided", () => {
-            expect(fs.glob(["/dir/**/*.ts", "/**/*.txt", "!/**/*.d.ts"])).to.deep.equal([
+            expect(fs.globSync(["/dir/**/*.ts", "/**/*.txt", "!/**/*.d.ts"])).to.deep.equal([
                 "/dir/file1.ts",
                 "/dir/subDir/file2.ts",
                 "/dir2/file5.txt"
@@ -399,13 +399,13 @@ describe(nameof(InMemoryFileSystemHost), () => {
         });
 
         it("should match all the patterns provided for a relative path", () => {
-            expect(fs.glob(["dir/subDir/**/*.ts"])).to.deep.equal([
+            expect(fs.globSync(["dir/subDir/**/*.ts"])).to.deep.equal([
                 "/dir/subDir/file2.ts"
             ]);
         });
 
         it("should match all the patterns provided for a relative path with a dot", () => {
-            expect(fs.glob(["./dir/subDir/**/*.ts"])).to.deep.equal([
+            expect(fs.globSync(["./dir/subDir/**/*.ts"])).to.deep.equal([
                 "/dir/subDir/file2.ts"
             ]);
         });

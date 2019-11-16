@@ -11,7 +11,7 @@
  * 3. Forward support: Features we add in the future will be auto-implemented.
  * ------------------------------------------
  */
-import { CodeBlockWriter, MethodDeclarationStructure, PropertyDeclarationStructure, StructureKind, OptionalKind } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, KeyValueCache } from "@ts-morph/common";
 import { Mixin, TsMorphInspector, WrappedNode } from "../inspectors";
 
@@ -38,7 +38,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     createIsNode();
     createIsCommentMethods();
 
-    const methodsAndProperties: Array<MethodDeclarationStructure | PropertyDeclarationStructure> = [];
+    const methodsAndProperties: Array<tsMorph.MethodDeclarationStructure | tsMorph.PropertyDeclarationStructure> = [];
     getMethodInfos().filter(n => isAllowedClass(n.name.replace(/^is/, ""))).forEach(method => {
         const description = `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.`;
         const common = {
@@ -48,9 +48,9 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
         const isImplementedNodeName = implementedNodeNames.has(method.name);
         const hasSingleSyntaxKind = method.syntaxKinds.length == 1;
         if (isImplementedNodeName && !method.isMixin && hasSingleSyntaxKind) {
-            const propertyStructure: PropertyDeclarationStructure = {
+            const propertyStructure: tsMorph.PropertyDeclarationStructure = {
                 ...common,
-                kind: StructureKind.Property,
+                kind: tsMorph.StructureKind.Property,
                 docs: [{ description }],
                 initializer: `TypeGuards.is(SyntaxKind.${method.name})`,
                 type: `(node: compiler.Node) => node is compiler.${method.wrapperName}`,
@@ -59,9 +59,9 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
             methodsAndProperties.push(propertyStructure);
         }
         else {
-            const methodStructure: MethodDeclarationStructure = {
+            const methodStructure: tsMorph.MethodDeclarationStructure = {
                 ...common,
-                kind: StructureKind.Method,
+                kind: tsMorph.StructureKind.Method,
                 docs: [{
                     description: description + "\r\n@param node - Node to check."
                 }],
@@ -80,9 +80,9 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     });
 
     for (const methodOrProp of methodsAndProperties) {
-        if (methodOrProp.kind == StructureKind.Method)
+        if (methodOrProp.kind == tsMorph.StructureKind.Method)
             typeGuardsClass.addMethod(methodOrProp);
-        else if (methodOrProp.kind == StructureKind.Property)
+        else if (methodOrProp.kind == tsMorph.StructureKind.Property)
             typeGuardsClass.addProperty(methodOrProp);
         else
             throw new Error(`Expected only properties and methods.`);
@@ -221,7 +221,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     }
 
     function createIsCommentMethods() {
-        const commentMethods: OptionalKind<MethodDeclarationStructure>[] = [{
+        const commentMethods: tsMorph.OptionalKind<tsMorph.MethodDeclarationStructure>[] = [{
             docs: ["Gets if the provided node is a CommentStatement."],
             isStatic: true,
             name: "isCommentStatement",
@@ -282,7 +282,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     }
 }
 
-function writeSyntaxKinds(writer: CodeBlockWriter, kinds: string[]) {
+function writeSyntaxKinds(writer: tsMorph.CodeBlockWriter, kinds: string[]) {
     if (kinds.length === 1) {
         writer.writeLine(`return node.getKind() === SyntaxKind.${kinds[0]};`);
         return;

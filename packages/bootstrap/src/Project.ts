@@ -158,7 +158,7 @@ export class Project {
 
         const sourceFiles: ts.SourceFile[] = [];
 
-        for (const filePath of this._fileSystemWrapper.glob(fileGlobs)) {
+        for (const filePath of this._fileSystemWrapper.globSync(fileGlobs)) {
             const sourceFile = this.addSourceFileAtPathIfExists(filePath);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);

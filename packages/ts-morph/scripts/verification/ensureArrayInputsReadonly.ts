@@ -5,7 +5,7 @@
  * only accept readonly arrays.
  * ------------------------------------------------
  */
-import { TypeGuards, SyntaxKind, Node } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
@@ -20,17 +20,17 @@ export function ensureArrayInputsReadonly(inspector: TsMorphInspector, addProble
 
         // could be improved, but good enough for now
         declaration.forEachDescendant(node => {
-            if (!TypeGuards.isArrayTypeNode(node))
+            if (!tsMorph.TypeGuards.isArrayTypeNode(node))
                 return;
 
             // ignore types not found in parameters, rest parameters, callbacks, and arrow functions
-            const parameter = node.getFirstAncestorByKind(SyntaxKind.Parameter);
+            const parameter = node.getFirstAncestorByKind(tsMorph.SyntaxKind.Parameter);
             if (parameter == null)
                 return;
-            const functionType = node.getFirstAncestorByKind(SyntaxKind.FunctionType);
+            const functionType = node.getFirstAncestorByKind(tsMorph.SyntaxKind.FunctionType);
             if (functionType != null
                 || (node.getParent() === parameter && parameter.isRestParameter())
-                || TypeGuards.isArrowFunction(parameter.getParent()))
+                || tsMorph.TypeGuards.isArrowFunction(parameter.getParent()))
             {
                 return;
             }
@@ -47,9 +47,9 @@ export function ensureArrayInputsReadonly(inspector: TsMorphInspector, addProble
         });
     }
 
-    function isNestedFunction(node: Node) {
-        if (!TypeGuards.isFunctionDeclaration(node))
+    function isNestedFunction(node: tsMorph.Node) {
+        if (!tsMorph.TypeGuards.isFunctionDeclaration(node))
             return false;
-        return TypeGuards.isBlock(node.getParent());
+        return tsMorph.TypeGuards.isBlock(node.getParent());
     }
 }

@@ -6,7 +6,7 @@
  * wrapped node type.
  * ------------------------------------------------------
  */
-import { TypeAliasDeclarationStructure, StructureKind } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
@@ -16,7 +16,7 @@ export function validateCompilerNodeToWrappedType(inspector: TsMorphInspector, a
     const initialText = sourceFile.getFullText();
 
     try {
-        const structures: TypeAliasDeclarationStructure[] = [];
+        const structures: tsMorph.TypeAliasDeclarationStructure[] = [];
         for (let i = 0; i < wrappedNodes.length; i++) {
             const wrapper = wrappedNodes[i];
             const nodes = wrapper.getAssociatedTsNodes();
@@ -24,7 +24,7 @@ export function validateCompilerNodeToWrappedType(inspector: TsMorphInspector, a
                 continue;
 
             structures.push({
-                kind: StructureKind.TypeAlias,
+                kind: tsMorph.StructureKind.TypeAlias,
                 name: `${wrapper.getName()}_test`,
                 type: `CompilerNodeToWrappedType<${nodes[0].isTsMorphTsNode() ? "" : "ts."}${nodes[0].getNameForType()}>`
             });

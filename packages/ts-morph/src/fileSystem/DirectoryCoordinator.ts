@@ -57,7 +57,7 @@ export class DirectoryCoordinator {
         const sourceFiles: SourceFile[] = [];
         const globbedDirectories = FileUtils.getParentMostPaths(fileGlobs.filter(g => !FileUtils.isNegatedGlob(g)).map(g => FileUtils.getGlobDir(g)));
 
-        for (const filePath of this.fileSystemWrapper.glob(fileGlobs)) {
+        for (const filePath of this.fileSystemWrapper.globSync(fileGlobs)) {
             const sourceFile = this.addSourceFileAtPathIfExists(filePath, options);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);

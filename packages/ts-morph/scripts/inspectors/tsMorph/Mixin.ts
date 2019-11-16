@@ -1,9 +1,9 @@
-import { InterfaceDeclaration, SyntaxKind, TypeGuards } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, Memoize } from "@ts-morph/common";
 import { WrapperFactory } from "../WrapperFactory";
 
 export class Mixin {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: InterfaceDeclaration) {
+    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: tsMorph.InterfaceDeclaration) {
     }
 
     getName() {
@@ -12,7 +12,7 @@ export class Mixin {
 
     @Memoize
     getMixins() {
-        const baseInterfaces = this.node.getBaseDeclarations().filter(d => TypeGuards.isInterfaceDeclaration(d)) as InterfaceDeclaration[];
+        const baseInterfaces = this.node.getBaseDeclarations().filter(d => tsMorph.TypeGuards.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
         return baseInterfaces.map(i => this.wrapperFactory.getMixin(i));
     }
 
@@ -20,13 +20,13 @@ export class Mixin {
     getCoveredTsNodePropertyNames(): string[] {
         // this is done just to be fast... there's definitely a more correct way of doing this
         const sourceFile = this.node.getSourceFile();
-        const propertyAccessExpressions = sourceFile.getDescendantsOfKind(SyntaxKind.PropertyAccessExpression);
+        const propertyAccessExpressions = sourceFile.getDescendantsOfKind(tsMorph.SyntaxKind.PropertyAccessExpression);
         const names: string[] = [];
 
         for (const expr of propertyAccessExpressions) {
             if (expr.getText() !== "this.compilerNode")
                 continue;
-            const parent = expr.getParentIfKind(SyntaxKind.PropertyAccessExpression);
+            const parent = expr.getParentIfKind(tsMorph.SyntaxKind.PropertyAccessExpression);
             if (parent == null)
                 continue;
             names.push(parent.getName());

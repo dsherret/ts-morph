@@ -614,8 +614,13 @@ export class TransactionalFileSystem {
         return Array.from(uniqueDirPaths).sort();
     }
 
-    glob(patterns: ReadonlyArray<string>) {
-        return this.fileSystem.glob(patterns).filter(path => !this.isPathQueuedForDeletion(path));
+    async glob(patterns: ReadonlyArray<string>) {
+        const filePaths = await this.fileSystem.glob(patterns);
+        return filePaths.filter(path => !this.isPathQueuedForDeletion(path));
+    }
+
+    globSync(patterns: ReadonlyArray<string>) {
+        return this.fileSystem.globSync(patterns).filter(path => !this.isPathQueuedForDeletion(path));
     }
 
     getFileSystem() {

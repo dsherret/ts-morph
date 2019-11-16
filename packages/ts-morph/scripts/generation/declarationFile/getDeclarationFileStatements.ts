@@ -1,12 +1,12 @@
-import { SourceFile, TypeGuards, SyntaxKind, Node, StatementStructures, StructureKind, VariableDeclarationKind } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 
-export function getDeclarationFileStatements(mainFile: SourceFile) {
+export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
     const tsNames: string[] = [];
-    const statements: StatementStructures[] = [];
+    const statements: tsMorph.StatementStructures[] = [];
 
     // add imports the typescript compiler api and code block writer files
     statements.push({
-        kind: StructureKind.ImportDeclaration,
+        kind: tsMorph.StructureKind.ImportDeclaration,
         namedImports: ["errors", "ts"],
         moduleSpecifier: "@ts-morph/common"
     });
@@ -27,13 +27,13 @@ export function getDeclarationFileStatements(mainFile: SourceFile) {
                     throw new Error(`Unexpected scenario where source file was from: ${filePath}`);
             }
 
-            if (TypeGuards.isVariableDeclaration(declaration)) {
+            if (tsMorph.TypeGuards.isVariableDeclaration(declaration)) {
                 statements.push({
                     ...declaration.getVariableStatementOrThrow().getStructure(),
                     declarations: [declaration.getStructure()]
                 });
             }
-            else if (TypeGuards.isStatement(declaration))
+            else if (tsMorph.TypeGuards.isStatement(declaration))
                 statements.push((declaration as any).getStructure()); // todo: improve
             else
                 throw new Error(`Not handled scenario for ${declaration.getKindName()}`);
@@ -41,12 +41,12 @@ export function getDeclarationFileStatements(mainFile: SourceFile) {
     }
 
     statements.push({
-        kind: StructureKind.ImportDeclaration,
+        kind: tsMorph.StructureKind.ImportDeclaration,
         namedImports: tsNames,
         moduleSpecifier: "@ts-morph/common"
     });
     statements.push({
-        kind: StructureKind.ExportDeclaration,
+        kind: tsMorph.StructureKind.ExportDeclaration,
         namedExports: ["ts", ...tsNames]
     });
 

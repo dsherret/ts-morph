@@ -238,16 +238,13 @@ export class FileUtils {
      * Gets the descendant directories of the specified directory.
      * @param dirPath - Directory path.
      */
-    static getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: string) {
-        // todo: unit tests...
-        return Array.from(getDescendantDirectories(dirPath));
+    static *getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: string): IterableIterator<string> {
+        for (const subDirPath of fileSystemWrapper.readDirSync(dirPath)) {
+            if (!fileSystemWrapper.directoryExistsSync(subDirPath))
+                continue;
 
-        function* getDescendantDirectories(currentDirPath: string): IterableIterator<string> {
-            const subDirPaths = fileSystemWrapper.readDirSync(currentDirPath).filter(d => fileSystemWrapper.directoryExistsSync(d));
-            for (const subDirPath of subDirPaths) {
-                yield subDirPath;
-                yield* getDescendantDirectories(subDirPath);
-            }
+            yield subDirPath;
+            yield* FileUtils.getDescendantDirectories(fileSystemWrapper, subDirPath);
         }
     }
 

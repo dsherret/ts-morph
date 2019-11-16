@@ -5,7 +5,7 @@ import { FileSystemHost } from "./FileSystemHost";
 
 /** An implementation of a file host that interacts with the actual file system. */
 export class RealFileSystemHost implements FileSystemHost {
-    // Prevent "fs-extra" and "globby" from being loaded in environments that don't support it (ex. browsers).
+    // Prevent fs-extra and fast-glob from being loaded in environments that don't support it (ex. browsers).
     // This means if someone specifies to use a virtual file system then it won't load this.
     private fs: typeof import("fs-extra") = require("fs-extra");
     private fastGlob: typeof import("fast-glob") = require("fast-glob");
@@ -174,9 +174,15 @@ export class RealFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     glob(patterns: ReadonlyArray<string>) {
-        // convert backslashes to foward
-        patterns = patterns.map(p => p.replace(/\\/g, "/")); // maybe this isn't full-proof?
-        return this.fastGlob.sync<string>(patterns as string[], {
+        return this.fastGlob(backSlashesToForward(patterns), {
+            cwd: this.getCurrentDirectory(),
+            absolute: true
+        });
+    }
+
+    /** @inheritdoc */
+    globSync(patterns: ReadonlyArray<string>) {
+        return this.fastGlob.sync(backSlashesToForward(patterns), {
             cwd: this.getCurrentDirectory(),
             absolute: true
         });
@@ -195,4 +201,8 @@ export class RealFileSystemHost implements FileSystemHost {
     private getFileNotFoundErrorIfNecessary(err: any, path: string) {
         return FileUtils.isNotExistsError(err) ? new errors.FileNotFoundError(path) : err;
     }
+}
+
+function backSlashesToForward(patterns: ReadonlyArray<string>) {
+    return patterns.map(p => p.replace(/\\/g, "/")); // maybe this isn't full-proof?
 }

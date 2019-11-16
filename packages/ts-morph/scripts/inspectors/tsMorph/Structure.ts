@@ -1,10 +1,10 @@
-import { InterfaceDeclaration, TypeGuards } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { Memoize } from "@ts-morph/common";
 import { WrapperFactory } from "../WrapperFactory";
 import { isOverloadStructure } from "../../config";
 
 export class Structure {
-    constructor(private readonly wrapperFactory: WrapperFactory, readonly node: InterfaceDeclaration) {
+    constructor(private readonly wrapperFactory: WrapperFactory, readonly node: tsMorph.InterfaceDeclaration) {
     }
 
     getName() {
@@ -49,7 +49,7 @@ export class Structure {
     @Memoize
     getBaseStructures() {
         return this.node.getBaseDeclarations().map(d => {
-            if (!TypeGuards.isInterfaceDeclaration(d))
+            if (!tsMorph.TypeGuards.isInterfaceDeclaration(d))
                 throw new Error(`Unexpected kind: ${d.getKindName()}`);
             return this.wrapperFactory.getStructure(d);
         });

@@ -1,4 +1,4 @@
-import { Project } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { getProject } from "../common";
 import { WrapperFactory } from "./WrapperFactory";
 import { TsMorphInspector } from "./TsMorphInspector";
@@ -7,7 +7,7 @@ import { TsInspector } from "./TsInspector";
 export class InspectorFactory {
     private readonly tsMorphInspector: TsMorphInspector;
     private readonly tsInspector: TsInspector;
-    private readonly project: Project;
+    private readonly project: tsMorph.Project;
 
     constructor() {
         const wrapperFactory = new WrapperFactory();

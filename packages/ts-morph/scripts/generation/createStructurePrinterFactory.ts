@@ -4,7 +4,7 @@
  * Automatically maintains this class based on changes in the application.
  * --------------------------------------------------------
  */
-import { TypeGuards, MethodDeclarationStructure, ParameterDeclaration, Scope, StructureKind } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils } from "@ts-morph/common";
 import { TsMorphInspector } from "../inspectors";
 
@@ -30,7 +30,7 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
         isExported: true,
         name: "StructurePrinterFactory",
         ctors: [{
-            parameters: [{ isReadonly: true, scope: Scope.Private, name: "_getFormatCodeSettings", type: "() => SupportedFormatCodeSettings" }]
+            parameters: [{ isReadonly: true, scope: tsMorph.Scope.Private, name: "_getFormatCodeSettings", type: "() => SupportedFormatCodeSettings" }]
         }],
         methods: [{
             name: "getFormatCodeSettings",
@@ -45,9 +45,9 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
         const structurePrinters = ArrayUtils.flatten(Array.from(project.getSourceFileOrThrow("./src/structurePrinters/index.ts")
             .getExportedDeclarations()
             .values()))
-            .filter(TypeGuards.isClassDeclaration)
+            .filter(tsMorph.TypeGuards.isClassDeclaration)
             .filter(c => isAllowedStructurePrinter(c.getNameOrThrow()));
-        const methods: MethodDeclarationStructure[] = [];
+        const methods: tsMorph.MethodDeclarationStructure[] = [];
 
         for (const structurePrinter of structurePrinters) {
             const ctor = structurePrinter.getConstructors()[0] ?? structurePrinter.getBaseClassOrThrow().getConstructors()[0];
@@ -55,7 +55,7 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
             const exposedCtorParams = ctorParams.filter(exposeCtorParam);
             const name = structurePrinter.getNameOrThrow();
             methods.push({
-                kind: StructureKind.Method,
+                kind: tsMorph.StructureKind.Method,
                 decorators: [{ name: "Memoize" }],
                 name: `for${name.replace(/StructurePrinter$/, "")}`,
                 returnType: `structurePrinters.${name}`,
@@ -70,21 +70,21 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
 
         return methods;
 
-        function exposeCtorParam(ctorParam: ParameterDeclaration) {
+        function exposeCtorParam(ctorParam: tsMorph.ParameterDeclaration) {
             const typeName = getTypeText(ctorParam);
             if (typeName === "StructurePrinterFactory")
                 return false;
             return true;
         }
 
-        function ctorParamToArgument(ctorParam: ParameterDeclaration) {
+        function ctorParamToArgument(ctorParam: tsMorph.ParameterDeclaration) {
             const typeName = getTypeText(ctorParam);
             if (typeName === "StructurePrinterFactory")
                 return "this";
             return ctorParam.getName();
         }
 
-        function getTypeText(param: ParameterDeclaration) {
+        function getTypeText(param: tsMorph.ParameterDeclaration) {
             const typeNode = param.getTypeNode();
             return typeNode?.getText() ?? param.getType().getText();
         }

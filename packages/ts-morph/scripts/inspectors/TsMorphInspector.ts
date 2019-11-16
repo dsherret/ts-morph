@@ -1,5 +1,4 @@
-import { Project, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName, Directory, TypeGuards,
-    ExportedDeclarations } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, Memoize } from "@ts-morph/common";
 import { isNodeClass } from "../common";
 import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsMorph";
@@ -12,7 +11,7 @@ export interface DependencyNode {
 }
 
 export class TsMorphInspector {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: Project) {
+    constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: tsMorph.Project) {
     }
 
     getProject() {
@@ -20,12 +19,12 @@ export class TsMorphInspector {
     }
 
     @Memoize
-    getSrcDirectory(): Directory {
+    getSrcDirectory(): tsMorph.Directory {
         return this.project.getDirectoryOrThrow("./src");
     }
 
     @Memoize
-    getTestDirectory(): Directory {
+    getTestDirectory(): tsMorph.Directory {
         return this.project.getDirectoryOrThrow("./src/tests");
     }
 
@@ -79,19 +78,19 @@ export class TsMorphInspector {
     }
 
     @Memoize
-    getPublicDeclarations(): ExportedDeclarations[] {
+    getPublicDeclarations(): tsMorph.ExportedDeclarations[] {
         const entries = Array.from(this.project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations().entries());
         return ArrayUtils.flatten(entries.filter(([name]) => name !== "ts").map(([_, value]) => value));
     }
 
     @Memoize
-    getPublicClasses(): ClassDeclaration[] {
-        return this.getPublicDeclarations().filter(d => TypeGuards.isClassDeclaration(d)) as ClassDeclaration[];
+    getPublicClasses(): tsMorph.ClassDeclaration[] {
+        return this.getPublicDeclarations().filter(d => tsMorph.TypeGuards.isClassDeclaration(d)) as tsMorph.ClassDeclaration[];
     }
 
     @Memoize
-    getPublicInterfaces(): InterfaceDeclaration[] {
-        return this.getPublicDeclarations().filter(d => TypeGuards.isInterfaceDeclaration(d)) as InterfaceDeclaration[];
+    getPublicInterfaces(): tsMorph.InterfaceDeclaration[] {
+        return this.getPublicDeclarations().filter(d => tsMorph.TypeGuards.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
     }
 
     @Memoize
@@ -113,11 +112,11 @@ export class TsMorphInspector {
         const sourceFile = this.project.getSourceFileOrThrow("kindToWrapperMappings.ts");
         const kindToWrapperMappings = sourceFile.getVariableDeclaration("kindToWrapperMappings")!;
         const initializer = kindToWrapperMappings.getInitializer()!;
-        const propertyAssignments = initializer.getDescendants().filter(d => TypeGuards.isPropertyAssignment(d)) as PropertyAssignment[];
+        const propertyAssignments = initializer.getDescendants().filter(d => tsMorph.TypeGuards.isPropertyAssignment(d)) as tsMorph.PropertyAssignment[];
         const result: { [wrapperName: string]: KindToWrapperMapping; } = {};
 
         for (const assignment of propertyAssignments) {
-            const nameNode = (assignment.getInitializerOrThrow() as PropertyAccessExpression).getNameNode();
+            const nameNode = (assignment.getInitializerOrThrow() as tsMorph.PropertyAccessExpression).getNameNode();
             const wrapperName = nameNode.getText();
             if (result[wrapperName] == null) {
                 const wrappedNode = wrappedNodes.find(n => n.getName() === wrapperName);
@@ -131,9 +130,9 @@ export class TsMorphInspector {
 
         return Object.keys(result).map(k => result[k]);
 
-        function getSyntaxKindName(assignment: PropertyAssignment) {
-            const computedPropertyName = assignment.getNameNode() as ComputedPropertyName;
-            const propAccessExpr = computedPropertyName.getExpression() as PropertyAccessExpression;
+        function getSyntaxKindName(assignment: tsMorph.PropertyAssignment) {
+            const computedPropertyName = assignment.getNameNode() as tsMorph.ComputedPropertyName;
+            const propAccessExpr = computedPropertyName.getExpression() as tsMorph.PropertyAccessExpression;
             return propAccessExpr.getNameNode().getText();
         }
     }
@@ -147,22 +146,22 @@ export class TsMorphInspector {
         const error = `Exepcted all ImplementedKindToNodeMappings members to be [SyntaxKind.xxx]: compiler.yyy.`;
 
         mappings.getMembers().forEach(member => {
-            if (!TypeGuards.isPropertySignature(member))
+            if (!tsMorph.TypeGuards.isPropertySignature(member))
                 throw new Error(error);
 
             const nameNode = member.getNameNode();
-            if (!TypeGuards.isComputedPropertyName(nameNode))
+            if (!tsMorph.TypeGuards.isComputedPropertyName(nameNode))
                 throw new Error(error);
             const nameNodeExpression = nameNode.getExpression();
-            if (!TypeGuards.isPropertyAccessExpression(nameNodeExpression))
+            if (!tsMorph.TypeGuards.isPropertyAccessExpression(nameNodeExpression))
                 throw new Error(error);
             const syntaxKind = nameNodeExpression.getName();
 
             const typeNode = member.getTypeNodeOrThrow();
-            if (!TypeGuards.isTypeReferenceNode(typeNode))
+            if (!tsMorph.TypeGuards.isTypeReferenceNode(typeNode))
                 throw new Error(error);
             const typeNodeName = typeNode.getTypeName();
-            if (!TypeGuards.isQualifiedName(typeNodeName))
+            if (!tsMorph.TypeGuards.isQualifiedName(typeNodeName))
                 throw new Error(error);
             const compilerNodeName = typeNodeName.getRight().getText();
 

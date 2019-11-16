@@ -1,10 +1,10 @@
-import { Node, PropertySignature, PropertyDeclaration, Identifier, SyntaxKind } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, Memoize } from "@ts-morph/common";
 import { WrapperFactory } from "../WrapperFactory";
 import { TsNode } from "./TsNode";
 
 export class TsNodeProperty {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: PropertySignature | PropertyDeclaration) {
+    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: tsMorph.PropertySignature | tsMorph.PropertyDeclaration) {
     }
 
     getName() {
@@ -12,7 +12,7 @@ export class TsNodeProperty {
     }
 
     getTsNode(): TsNode {
-        return this.wrapperFactory.getTsNode(this.node.getFirstAncestorByKindOrThrow(SyntaxKind.InterfaceDeclaration));
+        return this.wrapperFactory.getTsNode(this.node.getFirstAncestorByKindOrThrow(tsMorph.SyntaxKind.InterfaceDeclaration));
     }
 
     @Memoize
@@ -26,9 +26,9 @@ export class TsNodeProperty {
         return wrappedNode.getMixins().some(m => m.getCoveredTsNodePropertyNames().some(n => n === name));
     }
 
-    findReferencedNodes(): Node[] {
-        const referencedNodes: Node[] = [];
-        const references = (this.node.getNameNode() as Identifier).findReferences();
+    findReferencedNodes(): tsMorph.Node[] {
+        const referencedNodes: tsMorph.Node[] = [];
+        const references = (this.node.getNameNode() as tsMorph.Identifier).findReferences();
 
         for (const reference of ArrayUtils.flatten(references.map(r => r.getReferences()))) {
             const sourceFile = reference.getSourceFile();

@@ -1,13 +1,13 @@
 import * as path from "path";
-import { Project, NewLineKind } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { rootFolder } from "../config";
 
 export function getProject() {
-    const project = new Project({
+    const project = new tsMorph.Project({
         tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
         addFilesFromTsConfig: false,
         manipulationSettings: {
-            newLineKind: NewLineKind.CarriageReturnLineFeed,
+            newLineKind: tsMorph.NewLineKind.CarriageReturnLineFeed,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
         }
     });

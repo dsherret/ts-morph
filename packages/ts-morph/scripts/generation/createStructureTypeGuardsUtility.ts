@@ -5,7 +5,7 @@
  * is used for doing type guards on structures.
  * -------------------------------------------------
  */
-import { ClassDeclaration, TypeParameterDeclarationStructure, OptionalKind } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector, Structure } from "../inspectors";
 
 export function createStructureTypeGuardsUtility(inspector: TsMorphInspector) {
@@ -17,7 +17,7 @@ export function createStructureTypeGuardsUtility(inspector: TsMorphInspector) {
     structureTypeGuardsFile.fixMissingImports();
 }
 
-function clearPreviouslyGeneratedMethods(typeGuardsClass: ClassDeclaration) {
+function clearPreviouslyGeneratedMethods(typeGuardsClass: tsMorph.ClassDeclaration) {
     // remove all the static methods that start with "is"
     typeGuardsClass.getStaticMethods()
         .filter(m => m.getName().startsWith("is"))
@@ -70,7 +70,7 @@ function getStructureInfos(inspector: TsMorphInspector) {
     }
 }
 
-function addNewMethods(typeGuardsClass: ClassDeclaration, structureInfos: StructureInfo[]) {
+function addNewMethods(typeGuardsClass: tsMorph.ClassDeclaration, structureInfos: StructureInfo[]) {
     typeGuardsClass.addMethods(structureInfos.map(info => ({
         docs: [`Gets if the provided structure is a ${info.name}.`],
         isStatic: true,
@@ -94,7 +94,7 @@ function addNewMethods(typeGuardsClass: ClassDeclaration, structureInfos: Struct
         }
     })));
 
-    function getTypeParameters(info: StructureInfo): OptionalKind<TypeParameterDeclarationStructure>[] {
+    function getTypeParameters(info: StructureInfo): tsMorph.OptionalKind<tsMorph.TypeParameterDeclarationStructure>[] {
         if (info.kind == null)
             return [{ name: "T", constraint: "Structure & { kind: StructureKind; }" }];
         return [];

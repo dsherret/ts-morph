@@ -1,4 +1,4 @@
-import { ClassDeclaration, InterfaceDeclaration, Type, TypeGuards } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, Memoize } from "@ts-morph/common";
 import { hasDescendantNodeType } from "../../common";
 import { WrapperFactory } from "../WrapperFactory";
@@ -6,7 +6,7 @@ import { TsNode } from "../ts";
 import { Mixin } from "./Mixin";
 
 export class WrappedNode {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: ClassDeclaration) {
+    constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: tsMorph.ClassDeclaration) {
     }
 
     getName() {
@@ -31,7 +31,7 @@ export class WrappedNode {
     }
 
     @Memoize
-    getType(): Type {
+    getType(): tsMorph.Type {
         return this.node.getType();
     }
 
@@ -55,7 +55,7 @@ export class WrappedNode {
         const baseTypes = this.node.getBaseTypes();
         for (const intersectionType of ArrayUtils.flatten(baseTypes.map(t => t.getIntersectionTypes()))) {
             const interfaces = intersectionType.getSymbolOrThrow().getDeclarations()
-                .filter(d => TypeGuards.isInterfaceDeclaration(d)) as InterfaceDeclaration[];
+                .filter(d => tsMorph.TypeGuards.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
             mixins.push(...interfaces.map(i => this.wrapperFactory.getMixin(i)));
         }
         return mixins;
@@ -66,7 +66,7 @@ export class WrappedNode {
         const node = this.node;
 
         return getFromExtends().map(n => {
-            if (!TypeGuards.isInterfaceDeclaration(n) && !TypeGuards.isClassDeclaration(n))
+            if (!tsMorph.TypeGuards.isInterfaceDeclaration(n) && !tsMorph.TypeGuards.isClassDeclaration(n))
                 throw new Error(`(${node.getName()}): Unexpected node kind: ${n.getKindName()}`);
             return this.wrapperFactory.getTsNode(n);
         });
@@ -92,7 +92,7 @@ export class WrappedNode {
             return type.isTypeParameter() ? type.getDefault() : type;
         }
 
-        function getFromType(type: Type | undefined) {
+        function getFromType(type: tsMorph.Type | undefined) {
             if (type == null)
                 return [];
             const symbol = type.getSymbol();

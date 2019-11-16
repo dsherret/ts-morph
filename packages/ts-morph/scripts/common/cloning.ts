@@ -1,6 +1,6 @@
-import { StatementedNode, NamespaceDeclaration, FunctionDeclarationStructure } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 
-export function cloneNamespaces(node: StatementedNode, cloningNamespaces: NamespaceDeclaration[]) {
+export function cloneNamespaces(node: tsMorph.StatementedNode, cloningNamespaces: tsMorph.NamespaceDeclaration[]) {
     const namespaces = node.addNamespaces(cloningNamespaces.map(n => ({
         isExported: true,
         hasDeclareKeyword: true,
@@ -17,7 +17,7 @@ export function cloneNamespaces(node: StatementedNode, cloningNamespaces: Namesp
             isExported: true
         })));
         namespaces[i].addFunctions(cloningNamespaces[i].getFunctions().map(f => ({
-            ...f.getStructure() as FunctionDeclarationStructure,
+            ...f.getStructure() as tsMorph.FunctionDeclarationStructure,
             isExported: true
         })));
         namespaces[i].addEnums(cloningNamespaces[i].getEnums().map(e => ({
