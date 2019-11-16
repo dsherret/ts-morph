@@ -732,20 +732,38 @@ describe(nameof(Project), () => {
         it("should add the directory's descendant directories specified in the glob and ignore negated globs", () => {
             const project = new Project({ useVirtualFileSystem: true });
             const fs = project.getFileSystem();
-            ["/dir", "/dir2", "/dir/child", "/dir/child/grandChild", "/dir3"].forEach(d => fs.mkdir(d));
+            ["/dir", "/dir2", "/dir/child", "/dir/child/grandChild", "/dir3"].forEach(d => {
+                fs.mkdirSync(d);
+                fs.writeFileSync(d + "/test.ts", "");
+            });
             const result = project.addSourceFilesAtPaths(["/dir/**/*.ts", "!/dir2", "/dir3/**/*.ts"]);
             testHelpers.testDirectoryTree(project.getDirectoryOrThrow("/dir"), {
                 directory: project.getDirectoryOrThrow("/dir"),
+                sourceFiles: [project.getSourceFileOrThrow("/dir/test.ts")],
                 children: [{
                     directory: project.getDirectoryOrThrow("/dir/child"),
+                    sourceFiles: [project.getSourceFileOrThrow("/dir/child/test.ts")],
                     children: [{
-                        directory: project.getDirectoryOrThrow("/dir/child/grandChild")
+                        directory: project.getDirectoryOrThrow("/dir/child/grandChild"),
+                        sourceFiles: [project.getSourceFileOrThrow("/dir/child/grandChild/test.ts")]
                     }]
                 }]
             });
             testHelpers.testDirectoryTree(project.getDirectoryOrThrow("/dir3"), {
-                directory: project.getDirectoryOrThrow("/dir3")
+                directory: project.getDirectoryOrThrow("/dir3"),
+                sourceFiles: [project.getSourceFileOrThrow("/dir3/test.ts")]
             });
+        });
+
+        it("should add the directory's descendant directories specified in the glob", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const fs = project.getFileSystem();
+            ["/dir", "/dir/node_modules", "/dir/child", "/dir/child/grandChild"].forEach(d => {
+                fs.mkdirSync(d);
+                fs.writeFileSync(d + "/test.ts", "");
+            });
+            project.addSourceFilesAtPaths("/dir/*/grandChild/*.ts");
+            expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal(["/dir/child/grandChild"]);
         });
     });
 

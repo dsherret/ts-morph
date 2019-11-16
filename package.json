@@ -25,6 +25,6 @@
     "dprint": "^0.7.3",
     "dprint-plugin-jsonc": "^0.2.4",
     "dprint-plugin-typescript": "^0.10.0",
-    "lerna": "^3.18.3"
+    "lerna": "^3.18.4"
   }
 }

@@ -9,7 +9,8 @@ export class TsInspector {
 
     @Memoize
     getTsSymbol() {
-        const tsMorphCommon = this.project.getSourceFileOrThrow("src/main.ts").getExportDeclarationOrThrow("@ts-morph/common").getModuleSpecifier()!.getSymbolOrThrow();
+        const tsMorphCommon = this.project.getSourceFileOrThrow("src/main.ts").getExportDeclarationOrThrow("@ts-morph/common").getModuleSpecifier()!
+            .getSymbolOrThrow();
         return tsMorphCommon.getExportOrThrow("ts").getAliasedSymbolOrThrow();
     }
 

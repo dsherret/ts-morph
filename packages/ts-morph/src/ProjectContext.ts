@@ -54,9 +54,11 @@ export class ProjectContext {
         this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
         this.lazyReferenceCoordinator = new LazyReferenceCoordinator(this.compilerFactory);
         this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, fileSystemWrapper);
-        this._languageService = opts.createLanguageService ? new LanguageService(this, {
-            resolutionHost: opts.resolutionHost && opts.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get())
-        }) : undefined;
+        this._languageService = opts.createLanguageService
+            ? new LanguageService(this, {
+                resolutionHost: opts.resolutionHost && opts.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get())
+            })
+            : undefined;
 
         if (opts.typeChecker != null) {
             errors.throwIfTrue(opts.createLanguageService, "Cannot specify a type checker and create a language service.");

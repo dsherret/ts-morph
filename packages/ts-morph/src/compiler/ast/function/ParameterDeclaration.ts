@@ -9,9 +9,7 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createBase = <T
-    extends typeof Node>(ctor: T) =>
-QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
+const createBase = <T extends typeof Node>(ctor: T) => QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
     TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor)))
 )))));
 export const ParameterDeclarationBase = createBase(Node);

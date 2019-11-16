@@ -201,7 +201,9 @@ describe(nameof(TransactionalFileSystem), () => {
     });
 
     describe(nameof<TransactionalFileSystem>(w => w.moveFileImmediately), () => {
-        function doTests(moveFile: (wrapper: TransactionalFileSystem, fileFrom: string, fileTo: string, text: string, runChecks: (error?: any) => void) => void) {
+        function doTests(
+            moveFile: (wrapper: TransactionalFileSystem, fileFrom: string, fileTo: string, text: string, runChecks: (error?: any) => void) => void
+        ) {
             it("should move a file immediately to a new directory", () => {
                 const objs = setup();
                 const { wrapper } = objs;

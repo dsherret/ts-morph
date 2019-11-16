@@ -19,7 +19,6 @@
     "@dsherret/to-absolute-glob": "^2.0.2",
     "fast-glob": "^3.1.0",
     "fs-extra": "^8.1.0",
-    "glob-parent": "^5.1.0",
     "is-negated-glob": "^1.0.0",
     "multimatch": "^4.0.0",
     "typescript": "~3.7.2"
@@ -28,7 +27,6 @@
     "@ts-morph/scripts": "~0.2.0",
     "@types/chai": "^4.2.4",
     "@types/fs-extra": "^8.0.1",
-    "@types/glob-parent": "^5.1.0",
     "@types/is-negated-glob": "^1.0.0",
     "@types/mocha": "^5.2.7",
     "@types/multimatch": "^4.0.0",

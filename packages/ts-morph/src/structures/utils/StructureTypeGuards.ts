@@ -1,3 +1,4 @@
+// dprint-ignore-file
 import { Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { NameableNodeStructure, AsyncableNodeStructure, ImplementsClauseableNodeStructure, JSDocableNodeStructure, AbstractableNodeStructure,

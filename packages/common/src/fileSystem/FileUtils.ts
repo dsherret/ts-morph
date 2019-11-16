@@ -1,6 +1,5 @@
 import toAbsoluteGlob from "@dsherret/to-absolute-glob";
 import * as path from "path";
-import globParent from "glob-parent";
 import isNegatedGlob from "is-negated-glob";
 import { ArrayUtils, StringUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
@@ -263,13 +262,5 @@ export class FileUtils {
      */
     static isNegatedGlob(glob: string) {
         return isNegatedGlob(glob).negated;
-    }
-
-    /**
-     * Gets the glob's directory.
-     * @param glob - Glob.
-     */
-    static getGlobDir(glob: string) {
-        return globParent(glob);
     }
 }

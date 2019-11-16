@@ -722,11 +722,6 @@ export declare class FileUtils {
      * @param glob - Glob.
      */
     static isNegatedGlob(glob: string): boolean;
-    /**
-     * Gets the glob's directory.
-     * @param glob - Glob.
-     */
-    static getGlobDir(glob: string): string;
 }
 
 /** Checks the specified file paths to see if the match any of the specified patterns. */
