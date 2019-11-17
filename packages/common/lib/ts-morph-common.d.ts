@@ -939,5 +939,10 @@ export declare class StringUtils {
     }): string;
 }
 
+export declare function getLibFiles(): {
+    fileName: string;
+    text: string;
+}[];
+
 import { SyntaxKind, ScriptTarget, ScriptKind, LanguageVariant, EmitHint, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, CompilerOptions, EditorSettings } from "typescript";
 export { ts, SyntaxKind, ScriptTarget, ScriptKind, LanguageVariant, EmitHint, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, CompilerOptions, EditorSettings };

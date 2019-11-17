@@ -9,3 +9,4 @@ export * from "./options";
 export { getCompilerOptionsFromTsConfig, CompilerOptionsFromTsConfigOptions, CompilerOptionsFromTsConfigResult, TsConfigResolver } from "./tsconfig";
 export * from "./typescript";
 export * from "./utils";
+export * from "./getLibFiles";
