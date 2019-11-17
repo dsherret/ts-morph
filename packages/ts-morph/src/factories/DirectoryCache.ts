@@ -32,7 +32,7 @@ export class DirectoryCache {
     }
 
     getOrphans() {
-        return this.orphanDirs.getValuesAsArray();
+        return this.orphanDirs.getValues();
     }
 
     getAll() {
@@ -42,7 +42,8 @@ export class DirectoryCache {
     *getAllByDepth() {
         const dirLevels = new KeyValueCache<number, Directory[]>();
         let depth = 0;
-        this.getOrphans().forEach(addToDirLevels);
+        for (const orphanDir of this.getOrphans())
+            addToDirLevels(orphanDir);
         depth = Math.min(...Array.from(dirLevels.getKeys()));
 
         while (dirLevels.getSize() > 0) {

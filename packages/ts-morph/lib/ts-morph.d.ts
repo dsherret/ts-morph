@@ -88,7 +88,11 @@ export interface FileSystemHost {
     /**
      * Uses pattern matching to find files or directories.
      */
-    glob(patterns: ReadonlyArray<string>): string[];
+    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
+    /**
+     * Synchronously uses pattern matching to find files or directories.
+     */
+    globSync(patterns: ReadonlyArray<string>): string[];
 }
 
 /**
@@ -495,7 +499,7 @@ export interface ProjectOptions {
      */
     tsConfigFilePath?: string;
     /**
-     * Whether to add the source files from the specified tsconfig.json or not. Defaults to true.
+     * Whether to add the source files from the specified tsconfig.json or not. @default true
      */
     addFilesFromTsConfig?: boolean;
     /**
@@ -503,13 +507,17 @@ export interface ProjectOptions {
      */
     manipulationSettings?: Partial<ManipulationSettings>;
     /**
-     * Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig.
+     * Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false
      */
     skipFileDependencyResolution?: boolean;
     /**
-     * Whether to use an in-memory file system.
+     * Whether to use an in-memory file system. @default false
      */
     useVirtualFileSystem?: boolean;
+    /**
+     * Skip loading the lib files when using an in-memory file system. @default false
+     */
+    skipLoadingLibFiles?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
      * @remarks Consider using `useVirtualFileSystem` instead.

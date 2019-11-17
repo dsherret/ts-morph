@@ -1,5 +1,5 @@
 import { errors, FileUtils, TransactionalFileSystem, FileSystemHost, RealFileSystemHost, matchGlobs, InMemoryFileSystemHost, ResolutionHostFactory,
-    TsConfigResolver, CompilerOptionsContainer, ts, CompilerOptions, ScriptKind, IterableUtils } from "@ts-morph/common";
+    TsConfigResolver, CompilerOptionsContainer, ts, CompilerOptions, ScriptKind, IterableUtils, getLibFiles } from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import { Directory, DirectoryAddOptions } from "./fileSystem";
@@ -14,14 +14,16 @@ export interface ProjectOptions {
     compilerOptions?: CompilerOptions;
     /** File path to the tsconfig.json file. */
     tsConfigFilePath?: string;
-    /** Whether to add the source files from the specified tsconfig.json or not. Defaults to true. */
+    /** Whether to add the source files from the specified tsconfig.json or not. @default true */
     addFilesFromTsConfig?: boolean;
     /** Manipulation settings */
     manipulationSettings?: Partial<ManipulationSettings>;
-    /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. */
+    /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
     skipFileDependencyResolution?: boolean;
-    /** Whether to use an in-memory file system. */
+    /** Whether to use an in-memory file system. @default false */
     useVirtualFileSystem?: boolean;
+    /** Skip loading the lib files when using an in-memory file system. @default false */
+    skipLoadingLibFiles?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
      * @remarks Consider using `useVirtualFileSystem` instead.
@@ -56,14 +58,10 @@ export class Project {
      * @param options - Optional options.
      */
     constructor(options: ProjectOptions = {}) {
+        verifyOptions();
+
         // setup file system
-        let fileSystem = options.fileSystem;
-        if (fileSystem != null && options.useVirtualFileSystem)
-            throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use a virtual file system.");
-        else if (options.useVirtualFileSystem)
-            fileSystem = new InMemoryFileSystemHost();
-        else if (fileSystem == null)
-            fileSystem = new RealFileSystemHost();
+        const fileSystem = getFileSystem();
         const fileSystemWrapper = new TransactionalFileSystem(fileSystem);
 
         // get tsconfig info
@@ -92,6 +90,29 @@ export class Project {
 
             if (!options.skipFileDependencyResolution)
                 this.resolveSourceFileDependencies();
+        }
+
+        function verifyOptions() {
+            if (options.fileSystem != null && options.useVirtualFileSystem)
+                throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use a virtual file system.");
+            if (options.skipLoadingLibFiles && !options.useVirtualFileSystem) {
+                throw new errors.InvalidOperationError(
+                    `The ${nameof(options.skipLoadingLibFiles)} option can only be true when ${nameof(options.useVirtualFileSystem)} is true.`
+                );
+            }
+        }
+
+        function getFileSystem() {
+            if (options.useVirtualFileSystem) {
+                const fileSystem = new InMemoryFileSystemHost();
+                if (options.skipLoadingLibFiles !== true) {
+                    const libFiles = getLibFiles();
+                    for (const libFile of libFiles)
+                        fileSystem.writeFileSync(`/node_modules/typescript/lib/${libFile.fileName}`, libFile.text);
+                }
+                return fileSystem;
+            }
+            return options.fileSystem ?? new RealFileSystemHost();
         }
 
         function getCompilerOptions(): CompilerOptions {
@@ -230,7 +251,16 @@ export class Project {
      * Gets the directories without a parent.
      */
     getRootDirectories() {
-        return this._context.compilerFactory.getOrphanDirectories();
+        // todo: Uncomment to fix bug here
+        // const { inProjectCoordinator } = this._context;
+        const result: Directory[] = [];
+
+        for (const dir of this._context.compilerFactory.getOrphanDirectories()) {
+            // if (inProjectCoordinator.isDirectoryInProject(dir))
+                result.push(dir);
+        }
+
+        return result;
     }
 
     /**

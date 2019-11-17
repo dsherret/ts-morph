@@ -39,38 +39,19 @@ The current working directory on this file system will be `/`.
 
 #### `lib.d.ts` files
 
-By default, the virtual file system won't have the [`lib.d.ts` files](https://github.com/Microsoft/TypeScript/tree/master/lib). These files may be important because without them,
-you won't be able to resolve the types they define.
+Since ts-morph 6.0, the virtual file system will have the [`lib.d.ts` files](https://github.com/Microsoft/TypeScript/tree/master/lib) loaded into the `/node_modules/typescript/lib` folder by default.
 
-If you need this information, you will have to write them to the virtual file system manually using a method that works well in your environment:
+If you want the old behaviour, you can specify to skip loading them by providing a `skipLoadingLibFiles` option:
 
 ```ts ignore-error: 1109
 import { Project, FileSystemHost } from "ts-morph";
 
-function loadDtsFiles(fs: FileSystemHost) {
-    // Example that loads every single lib file. You most likely don't need all of these.
-    // Please consult your version of the compiler to see what's necessary.
-    // Note: It is best to generate this list of file names at compile time somehow based on the compiler api version
-    // used (these are the .d.ts files found in the node_modules/typescript/lib folder).
-    const libDtsFileNames = ["lib.d.ts", "lib.dom.d.ts", "lib.dom.iterable.d.ts", "lib.es2015.collection.d.ts",
-        "lib.es2015.core.d.ts", "lib.es2015.d.ts", "lib.es2015.generator.d.ts", "lib.es2015.iterable.d.ts",
-        "lib.es2015.promise.d.ts", "lib.es2015.proxy.d.ts", "lib.es2015.reflect.d.ts", "lib.es2015.symbol.d.ts",
-        "lib.es2015.symbol.wellknown.d.ts", "lib.es2016.array.include.d.ts", "lib.es2016.d.ts", "lib.es2016.full.d.ts",
-        "lib.es2017.d.ts", "lib.es2017.full.d.ts", "lib.es2017.intl.d.ts", "lib.es2017.object.d.ts",
-        "lib.es2017.sharedmemory.d.ts", "lib.es2017.string.d.ts", "lib.es2017.typedarrays.d.ts", "lib.es2018.d.ts",
-        "lib.es2018.full.d.ts", "lib.es5.d.ts", "lib.es6.d.ts", "lib.esnext.asynciterable.d.ts", "lib.esnext.d.ts",
-        "lib.esnext.full.d.ts", "lib.scripthost.d.ts", "lib.webworker.d.ts"];
+const project = new Project({
+    useVirtualFileSystem: true,
+    skipLoadingLibFiles: true
+});
 
-    for (const fileName of libDtsFileNames) {
-        const fileText = ...; // get the file text somehow
-        fs.writeFileSync(`node_modules/typescript/lib/${fileName}`, fileText);
-    }
-}
-
-const project = new Project({ useVirtualFileSystem: true });
-const fs = project.getFileSystem();
-
-loadDtsFiles(fs);
+console.log(project.getFileSystem().directoryExistsSync("/node_modules")); // false
 ```
 
 When using a non-default file system, the library will search for these files in `path.join(fs.getCurrentDirectory(), "node_modules/typescript/lib"))`.

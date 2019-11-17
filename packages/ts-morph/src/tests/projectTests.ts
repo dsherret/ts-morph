@@ -60,7 +60,7 @@ describe(nameof(Project), () => {
             expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles, ...resolvedFiles]);
         });
 
-        describe("skipFileDependencyResolution", () => {
+        describe(nameof<ProjectOptions>(o => o.skipFileDependencyResolution), () => {
             it("should not skip dependency resolution when false", () => {
                 const { project, initialFiles, resolvedFiles } = fileDependencyResolutionSetup({ skipFileDependencyResolution: false });
                 expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles, ...resolvedFiles]);
@@ -204,6 +204,24 @@ describe(nameof(Project), () => {
                 const { testIdentifier } = setup();
                 testIdentifier.rename("NewClass");
                 expect(testIdentifier.getDefinitionNodes().map(d => d.getText())).to.deep.equal(["declare class NewClass {}"]);
+            });
+        });
+
+        describe(nameof<ProjectOptions>(o => o.skipLoadingLibFiles), () => {
+            it("should not skip loading lib files when empty", () => {
+                const project = new Project({ useVirtualFileSystem: true });
+                const result = project.getFileSystem().readDirSync("/node_modules/typescript/lib");
+                expect(result.some(r => r.includes("lib.d.ts"))).to.be.true;
+            });
+
+            it("should not skip loading lib files when true", () => {
+                const project = new Project({ useVirtualFileSystem: true, skipLoadingLibFiles: true });
+                expect(project.getFileSystem().directoryExistsSync("/node_modules")).to.be.false;
+            });
+
+            it("should throw when providing skipLoadingLibFiles without using a virtual file system", () => {
+                expect(() => new Project({ skipLoadingLibFiles: true }))
+                    .to.throw("The skipLoadingLibFiles option can only be true when useVirtualFileSystem is true.");
             });
         });
     });
