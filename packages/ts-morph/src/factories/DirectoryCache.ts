@@ -73,14 +73,20 @@ export class DirectoryCache {
         this.orphanDirs.removeByKey(dirPath);
     }
 
-    getChildDirectoriesOfDirectory(dirPath: string) {
-        const directories = this.directoriesByDirPath.get(dirPath);
-        return directories?.getArrayCopy() ?? [];
+    *getChildDirectoriesOfDirectory(dirPath: string) {
+        const entries = this.directoriesByDirPath.get(dirPath)?.entries();
+        if (entries == null)
+            return;
+        for (const dir of entries)
+            yield dir;
     }
 
-    getChildSourceFilesOfDirectory(dirPath: string) {
-        const sourceFiles = this.sourceFilesByDirPath.get(dirPath);
-        return sourceFiles?.getArrayCopy() ?? [];
+    *getChildSourceFilesOfDirectory(dirPath: string) {
+        const entries = this.sourceFilesByDirPath.get(dirPath)?.entries();
+        if (entries == null)
+            return;
+        for (const sourceFile of entries)
+            yield sourceFile;
     }
 
     addSourceFile(sourceFile: SourceFile) {

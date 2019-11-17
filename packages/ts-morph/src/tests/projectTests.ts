@@ -594,20 +594,24 @@ describe(nameof(Project), () => {
             ].map(d => d.getPath()));
         });
 
-        it("should add an ancestor dir when requesting it", () => {
+        it("should not add an ancestor dir when requesting it", () => {
             const project = getProject();
             project.getDirectoryOrThrow("/dir");
             expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal([
-                project.getDirectoryOrThrow("/dir")
+                project.getDirectoryOrThrow("/dir/sub"),
+                project.getDirectoryOrThrow("/dir/sub2"),
+                project.getDirectoryOrThrow("/dir/sub3/child")
             ].map(d => d.getPath()));
         });
 
-        it("should add the root directory when requesting it", () => {
+        it("should not add the root directory when requesting it", () => {
             const project = getProject();
             expect(project.getDirectory("/otherDir")).to.be.undefined;
             project.getDirectoryOrThrow("/");
             expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal([
-                project.getDirectoryOrThrow("/")
+                project.getDirectoryOrThrow("/dir/sub"),
+                project.getDirectoryOrThrow("/dir/sub2"),
+                project.getDirectoryOrThrow("/dir/sub3/child")
             ].map(d => d.getPath()));
         });
     });
@@ -1568,7 +1572,8 @@ describe(nameof(Project), () => {
             fileSystem.mkdirSync("/dir2");
             expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
                 "/dir1",
-                "/dir2"
+                "/dir2",
+                "/node_modules"
             ]);
         });
 
@@ -1580,7 +1585,8 @@ describe(nameof(Project), () => {
             expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
                 "/dir1",
                 "/dir2",
-                "/dir3"
+                "/dir3",
+                "/node_modules"
             ]);
         });
 

@@ -183,13 +183,23 @@ export class Directory {
             return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(path);
         }
 
-        return this.getSourceFiles().find(pathOrCondition);
+        for (const sourceFile of this._getSourceFilesIterator()) {
+            if (pathOrCondition(sourceFile))
+                return sourceFile;
+        }
+
+        return undefined;
     }
 
     /**
      * Gets the child directories.
      */
     getDirectories() {
+        return Array.from(this._getDirectoriesIterator());
+    }
+
+    /** @internal */
+    _getDirectoriesIterator() {
         return this._context.compilerFactory.getChildDirectoriesOfDirectory(this.getPath());
     }
 
@@ -197,6 +207,11 @@ export class Directory {
      * Gets the source files within this directory.
      */
     getSourceFiles() {
+        return Array.from(this._getSourceFilesIterator());
+    }
+
+    /** @internal */
+    _getSourceFilesIterator() {
         return this._context.compilerFactory.getChildSourceFilesOfDirectory(this.getPath());
     }
 
@@ -212,9 +227,9 @@ export class Directory {
      * @internal
      */
     *_getDescendantSourceFilesIterator(): IterableIterator<SourceFile> {
-        for (const sourceFile of this.getSourceFiles())
+        for (const sourceFile of this._getSourceFilesIterator())
             yield sourceFile;
-        for (const directory of this.getDirectories())
+        for (const directory of this._getDirectoriesIterator())
             yield* directory._getDescendantSourceFilesIterator();
     }
 

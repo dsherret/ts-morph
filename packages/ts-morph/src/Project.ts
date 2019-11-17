@@ -251,16 +251,25 @@ export class Project {
      * Gets the directories without a parent.
      */
     getRootDirectories() {
-        // todo: Uncomment to fix bug here
-        // const { inProjectCoordinator } = this._context;
+        const { inProjectCoordinator } = this._context;
         const result: Directory[] = [];
 
         for (const dir of this._context.compilerFactory.getOrphanDirectories()) {
-            // if (inProjectCoordinator.isDirectoryInProject(dir))
-                result.push(dir);
+            for (const inProjectDir of findInProjectDirectories(dir))
+                result.push(inProjectDir);
         }
 
         return result;
+
+        function* findInProjectDirectories(dir: Directory): Iterable<Directory> {
+            if (inProjectCoordinator.isDirectoryInProject(dir)) {
+                yield dir;
+                return;
+            }
+
+            for (const childDir of dir._getDirectoriesIterator())
+                yield* findInProjectDirectories(childDir);
+        }
     }
 
     /**

@@ -177,7 +177,12 @@ export class ProjectContext {
             },
             getSourceFilePaths: () => this.compilerFactory.getSourceFilePaths(),
             getSourceFileVersion: sourceFile => this.compilerFactory.documentRegistry.getSourceFileVersion(sourceFile),
-            getChildDirectoriesOfDirectory: dirPath => this.compilerFactory.getChildDirectoriesOfDirectory(dirPath).map(d => d.getPath())
+            getChildDirectoriesOfDirectory: dirPath => {
+                const result: string[] = [];
+                for (const dir of this.compilerFactory.getChildDirectoriesOfDirectory(dirPath))
+                    result.push(dir.getPath());
+                return result;
+            }
         };
     }
 
