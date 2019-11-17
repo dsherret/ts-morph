@@ -76,10 +76,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/glob-parent@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@types/glob-parent/-/glob-parent-5.1.0.tgz#2257aa37d33cda5d79140fd6272438676da9c8d5"
-
 "@types/glob@^7.1.1":
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.1.1.tgz#aa59a1c6e3fbc421e07ccd31a944c30eba521575"
@@ -293,6 +289,10 @@ dir-glob@^3.0.1:
   resolved "https://registry.yarnpkg.com/dir-glob/-/dir-glob-3.0.1.tgz#56dbf73d992a4a93ba1584f4534063fd2e41717f"
   dependencies:
     path-type "^4.0.0"
+
+dts-minify@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/dts-minify/-/dts-minify-0.2.0.tgz#057a212d5cfd38c0375955e4c1f040b82601a1e8"
 
 emoji-regex@^7.0.1:
   version "7.0.3"
