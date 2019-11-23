@@ -1,5 +1,5 @@
 import { errors, KeyValueCache, WeakCache, StringUtils, EventContainer, FileUtils, DocumentRegistry, SyntaxKind, ts, TypeFlags,
-    ScriptKind, DocumentCache, StandardizedFilePath} from "@ts-morph/common";
+    ScriptKind, StandardizedFilePath} from "@ts-morph/common";
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter, CommentStatement,
     CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerCommentNode, CommentEnumMember } from "../compiler";
@@ -45,8 +45,8 @@ export class CompilerFactory {
      * Initializes a new instance of CompilerFactory.
      * @param context - Project context.
      */
-    constructor(private readonly context: ProjectContext, documentCaches: DocumentCache[] | undefined) {
-        this.documentRegistry = new DocumentRegistry(context.fileSystemWrapper, documentCaches);
+    constructor(private readonly context: ProjectContext) {
+        this.documentRegistry = new DocumentRegistry(context.fileSystemWrapper);
         this.directoryCache = new DirectoryCache(context);
 
         // prevent memory leaks when the document registry key changes by just resetting it

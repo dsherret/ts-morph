@@ -1,5 +1,5 @@
 import { errors, FileUtils, TransactionalFileSystem, FileSystemHost, RealFileSystemHost, matchGlobs, InMemoryFileSystemHost, ResolutionHostFactory,
-    TsConfigResolver, CompilerOptionsContainer, ts, CompilerOptions, ScriptKind, IterableUtils, getLibFiles, DocumentCache, createDocumentCache } from "@ts-morph/common";
+    TsConfigResolver, CompilerOptionsContainer, ts, CompilerOptions, ScriptKind, IterableUtils, getLibFiles } from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import { Directory, DirectoryAddOptions } from "./fileSystem";
@@ -75,7 +75,7 @@ export class Project {
         compilerOptionsContainer.set(compilerOptions);
 
         // setup context
-        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptionsContainer, getDocumentCaches(), {
+        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptionsContainer, {
             createLanguageService: true,
             resolutionHost: options.resolutionHost
         });
@@ -113,12 +113,6 @@ export class Project {
                 return fileSystem;
             }
             return options.fileSystem ?? new RealFileSystemHost();
-        }
-
-        function getDocumentCaches() {
-            return options.useVirtualFileSystem && !options.skipLoadingLibFiles
-                ? [getSingletonLibFileDocumentCache()]
-                : undefined;
         }
 
         function getCompilerOptions(): CompilerOptions {
@@ -692,19 +686,4 @@ function normalizeAmbientModuleName(moduleName: string) {
     function isQuote(char: string) {
         return char === `"` || char === "'";
     }
-}
-
-let libFileDocumentCache: DocumentCache | undefined;
-function getSingletonLibFileDocumentCache() {
-    if (libFileDocumentCache == null) {
-        const libFiles = getLibFiles();
-        libFileDocumentCache = createDocumentCache(libFiles.map(libFile => {
-            return {
-                fileName: `./node_modules/typescript/lib/${libFile.fileName}`,
-                text: libFile.text
-            };
-        }));
-    }
-
-    return libFileDocumentCache;
 }

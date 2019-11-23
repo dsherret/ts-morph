@@ -3,9 +3,13 @@ import { TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
 import { deepClone } from "../utils";
 import { createCompilerSourceFile } from "./createCompilerSourceFile";
 
+// The items in this file are temporarily internal because the implementation I came up
+// with for document caches wasn't faster than just reparsing the files each time.
+
 /**
  * A cache of reusable source files that can be used across projects.
  * @remarks Use `createDocumentCache` to create one of these.
+ * @internal - Temporarily internal.
  */
 export interface DocumentCache {
     __documentCacheBrand: undefined;
@@ -15,6 +19,7 @@ export interface DocumentCache {
 
 /**
  * An item for the document cache.
+ * @internal - Temporarily internal.
  */
 export interface DocumentCacheItem {
     /**
@@ -32,6 +37,7 @@ export interface DocumentCacheItem {
 /**
  * Creates a document cache with an initial list of files using the specified options.
  * @param files - Files to use in the cache.
+ * @internal - Temporarily internal.
  */
 export function createDocumentCache(files: DocumentCacheItem[]): DocumentCache {
     const cache = new InternalDocumentCache();
@@ -70,18 +76,6 @@ class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
             return;
 
         return this.documentCache._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
-    }
-
-    getDocumentIfExists(
-        filePath: StandardizedFilePath,
-        scriptTarget: ScriptTarget | undefined,
-        scriptKind: ScriptKind | undefined
-    ) {
-        const originalFilePath = this.absoluteToOriginalPath.get(filePath);
-        if (originalFilePath == null)
-            return;
-
-        return this.documentCache._getDocumentIfExists(originalFilePath, filePath, scriptTarget, scriptKind);
     }
 }
 

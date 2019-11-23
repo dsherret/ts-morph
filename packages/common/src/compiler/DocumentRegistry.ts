@@ -2,7 +2,6 @@ import { errors } from "../errors";
 import { TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
 import { ts, CompilerOptions, ScriptKind } from "../typescript";
 import { createCompilerSourceFile } from "./createCompilerSourceFile";
-import { DocumentCache, FileSystemSpecificDocumentCache } from "./createDocumentCache";
 
 /**
  * An implementation of a ts.DocumentRegistry that uses a transactional file system and
@@ -10,15 +9,13 @@ import { DocumentCache, FileSystemSpecificDocumentCache } from "./createDocument
  */
 export class DocumentRegistry implements ts.DocumentRegistry {
     private readonly sourceFileCacheByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();
-    private readonly documentCaches: FileSystemSpecificDocumentCache[] | undefined;
     private static readonly initialVersion = "0";
 
     /**
      * Constructor.
      * @param transactionalFileSystem - The transaction file system to use.
      */
-    constructor(private readonly transactionalFileSystem: TransactionalFileSystem, documentCaches?: DocumentCache[]) {
-        this.documentCaches = documentCaches?.map(c => c._getCacheForFileSystem(transactionalFileSystem));
+    constructor(private readonly transactionalFileSystem: TransactionalFileSystem) {
     }
 
     /**
@@ -129,18 +126,6 @@ export class DocumentRegistry implements ts.DocumentRegistry {
     private updateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string,
         scriptKind: ScriptKind | undefined): ts.SourceFile
     {
-        // see if any of the document caches have this source file
-        if (this.documentCaches) {
-            for (const cache of this.documentCaches) {
-                const document = cache.getDocumentIfMatch(fileName, scriptSnapshot, compilationSettings.target, scriptKind);
-                if (document != null) {
-                    this.sourceFileCacheByFilePath.set(fileName, document);
-                    return document;
-                }
-            }
-        }
-
-        // otherwise, create it
         const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings.target, version, true, scriptKind);
         this.sourceFileCacheByFilePath.set(fileName, newSourceFile);
         return newSourceFile;
