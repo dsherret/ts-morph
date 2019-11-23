@@ -1,5 +1,5 @@
 import { errors, KeyValueCache, WeakCache, StringUtils, EventContainer, FileUtils, DocumentRegistry, SyntaxKind, ts, TypeFlags,
-    ScriptKind } from "@ts-morph/common";
+    ScriptKind, DocumentCache, StandardizedFilePath} from "@ts-morph/common";
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter, CommentStatement,
     CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerCommentNode, CommentEnumMember } from "../compiler";
@@ -45,8 +45,8 @@ export class CompilerFactory {
      * Initializes a new instance of CompilerFactory.
      * @param context - Project context.
      */
-    constructor(private readonly context: ProjectContext) {
-        this.documentRegistry = new DocumentRegistry(context.fileSystemWrapper);
+    constructor(private readonly context: ProjectContext, documentCaches: DocumentCache[] | undefined) {
+        this.documentRegistry = new DocumentRegistry(context.fileSystemWrapper, documentCaches);
         this.directoryCache = new DirectoryCache(context);
 
         // prevent memory leaks when the document registry key changes by just resetting it
@@ -331,7 +331,8 @@ export class CompilerFactory {
     }
 
     createCompilerSourceFileFromText(filePath: string, text: string, scriptKind: ScriptKind | undefined): ts.SourceFile {
-        return this.documentRegistry.createOrUpdateSourceFile(filePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
+        //todo: REMOVE THIS ASSERTION
+        return this.documentRegistry.createOrUpdateSourceFile(filePath as StandardizedFilePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
     }
 
     /**
@@ -588,7 +589,7 @@ export class CompilerFactory {
             this.directoryCache.removeSourceFile(sourceFile.fileName);
             const wrappedSourceFile = this.sourceFileCacheByFilePath.get(sourceFile.fileName);
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
-            this.documentRegistry.removeSourceFile(sourceFile.fileName);
+            this.documentRegistry.removeSourceFile(this.context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName));
             if (wrappedSourceFile != null)
                 this.sourceFileRemovedEventContainer.fire(wrappedSourceFile);
         }

@@ -1,30 +1,32 @@
 import { KeyValueCache } from "../collections";
 import { errors } from "../errors";
-import { TransactionalFileSystem } from "../fileSystem";
+import { TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
 import { ts, CompilerOptions, ScriptKind } from "../typescript";
 import { createCompilerSourceFile } from "./createCompilerSourceFile";
-import { DocumentCache } from "./DocumentCache";
+import { DocumentCache, FileSystemSpecificDocumentCache } from "./createDocumentCache";
 
 /**
  * An implementation of a ts.DocumentRegistry that uses a transactional file system and
  * supports using cached parsed source files.
  */
 export class DocumentRegistry implements ts.DocumentRegistry {
-    private readonly sourceFileCacheByFilePath = new KeyValueCache<string, ts.SourceFile>();
+    private readonly sourceFileCacheByFilePath = new KeyValueCache<StandardizedFilePath, ts.SourceFile>();
+    private readonly documentCaches: FileSystemSpecificDocumentCache[] | undefined;
     private static readonly initialVersion = "0";
 
     /**
      * Constructor.
      * @param transactionalFileSystem - The transaction file system to use.
      */
-    constructor(private readonly transactionalFileSystem: TransactionalFileSystem, private readonly documentCaches?: DocumentCache[]) {
+    constructor(private readonly transactionalFileSystem: TransactionalFileSystem, documentCaches?: DocumentCache[]) {
+        this.documentCaches = documentCaches?.map(c => c._getCacheForFileSystem(transactionalFileSystem));
     }
 
     /**
      * Removes the source file from the document registry
      * @param fileName - File name to remove.
      */
-    removeSourceFile(fileName: string) {
+    removeSourceFile(fileName: StandardizedFilePath) {
         this.sourceFileCacheByFilePath.removeByKey(fileName);
     }
 
@@ -35,11 +37,10 @@ export class DocumentRegistry implements ts.DocumentRegistry {
      * @param scriptSnapshot - Script snapshot (text) of the file.
      * @param scriptKind - Script kind of the file.
      */
-    createOrUpdateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined) {
+    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined) {
         let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
-        if (sourceFile == null) {
+        if (sourceFile == null)
             sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.initialVersion, scriptKind);
-        }
         else
             sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.getNextSourceFileVersion(sourceFile), scriptKind);
         return sourceFile;
@@ -53,9 +54,10 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         version: string,
         scriptKind: ScriptKind | undefined
     ): ts.SourceFile {
-        let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
+        const standardizedFilePath = this.transactionalFileSystem.getStandardizedAbsolutePath(fileName);
+        let sourceFile = this.sourceFileCacheByFilePath.get(standardizedFilePath);
         if (sourceFile == null || this.getSourceFileVersion(sourceFile) !== version)
-            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
+            sourceFile = this.updateSourceFile(standardizedFilePath, compilationSettings, scriptSnapshot, version, scriptKind);
         return sourceFile;
     }
 
@@ -125,15 +127,13 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         return (currentVersion + 1).toString();
     }
 
-    private updateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string,
+    private updateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string,
         scriptKind: ScriptKind | undefined): ts.SourceFile
     {
-        fileName = this.transactionalFileSystem.getStandardizedAbsolutePath(fileName);
-
         // see if any of the document caches have this source file
         if (this.documentCaches) {
             for (const cache of this.documentCaches) {
-                const document = cache._getDocumentIfMatch(fileName, scriptSnapshot, compilationSettings.target, scriptKind);
+                const document = cache.getDocumentIfMatch(fileName, scriptSnapshot, compilationSettings.target, scriptKind);
                 if (document != null) {
                     this.sourceFileCacheByFilePath.set(fileName, document);
                     return document;

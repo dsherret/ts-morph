@@ -1,7 +1,8 @@
 import { ts, ScriptKind, ScriptTarget } from "../typescript";
+import { StandardizedFilePath } from "../fileSystem";
 
 export function createCompilerSourceFile(
-    filePath: string,
+    filePath: StandardizedFilePath,
     scriptSnapshot: ts.IScriptSnapshot,
     scriptTarget: ts.ScriptTarget | undefined,
     version: string,

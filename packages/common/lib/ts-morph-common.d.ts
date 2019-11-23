@@ -129,22 +129,54 @@ export interface CreateModuleResolutionHostOptions {
 }
 
 /**
- * An implementation of a ts.DocumentRegistry that uses a transactional file system.
+ * Creates a document cache with an initial list of files using the specified options.
+ * @param files - Files to use in the cache.
+ */
+export declare function createDocumentCache(files: DocumentCacheItem[]): DocumentCache;
+
+/**
+ * A cache of reusable source files that can be used across projects.
+ * @remarks Use `createDocumentCache` to create one of these.
+ */
+export interface DocumentCache {
+    __documentCacheBrand: undefined;
+}
+
+/**
+ * An item for the document cache.
+ */
+export interface DocumentCacheItem {
+    /**
+     * This may be a relative path (ex. `./node_modules/package/file.js`). The path
+     * will be resolved for each project based on its file system's current
+     * working directory.
+     */
+    fileName: string;
+    /**
+     * The text of the file.
+     */
+    text: string;
+}
+
+/**
+ * An implementation of a ts.DocumentRegistry that uses a transactional file system and
+ * supports using cached parsed source files.
  */
 export declare class DocumentRegistry implements ts.DocumentRegistry {
     private readonly transactionalFileSystem;
     private readonly sourceFileCacheByFilePath;
+    private readonly documentCaches;
     private static readonly initialVersion;
     /**
      * Constructor.
      * @param transactionalFileSystem - The transaction file system to use.
      */
-    constructor(transactionalFileSystem: TransactionalFileSystem);
+    constructor(transactionalFileSystem: TransactionalFileSystem, documentCaches?: DocumentCache[]);
     /**
      * Removes the source file from the document registry
      * @param fileName - File name to remove.
      */
-    removeSourceFile(fileName: string): void;
+    removeSourceFile(fileName: StandardizedFilePath): void;
     /**
      * Creates or updates a source file in the document registry.
      * @param fileName - File name to create or update.
@@ -152,7 +184,7 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
      * @param scriptSnapshot - Script snapshot (text) of the file.
      * @param scriptKind - Script kind of the file.
      */
-    createOrUpdateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
     acquireDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
@@ -173,7 +205,6 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
     getSourceFileVersion(sourceFile: ts.SourceFile): any;
     private getNextSourceFileVersion;
     private updateSourceFile;
-    private createCompilerSourceFile;
 }
 
 /** Host for implementing custom module and/or type reference directive resolution. */
@@ -543,6 +574,11 @@ export interface FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
 }
 
+/** Nominal type to denote a file path that has been standardized. */
+export declare type StandardizedFilePath = string & {
+    _standardizedFilePathBrand: undefined;
+};
+
 /**
  * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
  */
@@ -588,10 +624,10 @@ export declare class TransactionalFileSystem {
     glob(patterns: ReadonlyArray<string>): Promise<string[]>;
     globSync(patterns: ReadonlyArray<string>): string[];
     getFileSystem(): FileSystemHost;
-    getCurrentDirectory(): string;
+    getCurrentDirectory(): StandardizedFilePath;
     getDirectories(dirPath: string): string[];
-    realpathSync(path: string): string;
-    getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string): string;
+    realpathSync(path: string): StandardizedFilePath;
+    getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string): StandardizedFilePath;
     readFileOrNotExists(filePath: string, encoding: string): false | Promise<string | false>;
     readFileOrNotExistsSync(filePath: string, encoding: string): string | false;
     writeFile(filePath: string, fileText: string): Promise<void>;
@@ -939,6 +975,7 @@ export declare class StringUtils {
     }): string;
 }
 
+/** Loads the lib files that are stored in a separate module. */
 export declare function getLibFiles(): {
     fileName: string;
     text: string;

@@ -30,6 +30,7 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: Cr
         undefined,
         new TransactionalFileSystem(new RealFileSystemHost()),
         compilerOptionsContainer,
+        undefined,
         { createLanguageService: false, typeChecker }
     );
     const wrappedSourceFile = projectContext.compilerFactory.getSourceFile(getSourceFileNode(), { markInProject: true });
