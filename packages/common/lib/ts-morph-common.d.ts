@@ -141,18 +141,18 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
      */
     constructor(transactionalFileSystem: TransactionalFileSystem);
     /**
-     * Removes the source file from the document registry
-     * @param fileName - File name to remove.
-     */
-    removeSourceFile(fileName: string): void;
-    /**
      * Creates or updates a source file in the document registry.
      * @param fileName - File name to create or update.
      * @param compilationSettings - Compiler options to use.
      * @param scriptSnapshot - Script snapshot (text) of the file.
      * @param scriptKind - Script kind of the file.
      */
-    createOrUpdateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    /**
+     * Removes the source file from the document registry.
+     * @param fileName - File name to remove.
+     */
+    removeSourceFile(fileName: StandardizedFilePath): void;
     /** @inheritdoc */
     acquireDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
@@ -173,7 +173,6 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
     getSourceFileVersion(sourceFile: ts.SourceFile): any;
     private getNextSourceFileVersion;
     private updateSourceFile;
-    private createCompilerSourceFile;
 }
 
 /** Host for implementing custom module and/or type reference directive resolution. */
@@ -543,6 +542,11 @@ export interface FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
 }
 
+/** Nominal type to denote a file path that has been standardized. */
+export declare type StandardizedFilePath = string & {
+    _standardizedFilePathBrand: undefined;
+};
+
 /**
  * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
  */
@@ -588,10 +592,10 @@ export declare class TransactionalFileSystem {
     glob(patterns: ReadonlyArray<string>): Promise<string[]>;
     globSync(patterns: ReadonlyArray<string>): string[];
     getFileSystem(): FileSystemHost;
-    getCurrentDirectory(): string;
+    getCurrentDirectory(): StandardizedFilePath;
     getDirectories(dirPath: string): string[];
-    realpathSync(path: string): string;
-    getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string): string;
+    realpathSync(path: string): StandardizedFilePath;
+    getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string): StandardizedFilePath;
     readFileOrNotExists(filePath: string, encoding: string): false | Promise<string | false>;
     readFileOrNotExistsSync(filePath: string, encoding: string): string | false;
     writeFile(filePath: string, fileText: string): Promise<void>;
@@ -869,6 +873,12 @@ export declare class ArrayUtils {
 }
 
 /**
+ * Deep clones an object not maintaining references.
+ * @remarks If this has a circular reference it will go forever so be careful.
+ */
+export declare function deepClone<T extends object>(objToClone: T): T;
+
+/**
  * Event container subscription type
  */
 export declare type EventContainerSubscription<EventArgType> = (arg: EventArgType) => void;
@@ -939,6 +949,7 @@ export declare class StringUtils {
     }): string;
 }
 
+/** Loads the lib files that are stored in a separate module. */
 export declare function getLibFiles(): {
     fileName: string;
     text: string;

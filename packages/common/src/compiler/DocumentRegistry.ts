@@ -1,13 +1,13 @@
-import { KeyValueCache } from "../collections";
 import { errors } from "../errors";
-import { TransactionalFileSystem } from "../fileSystem";
-import { ts, CompilerOptions, ScriptKind, ScriptTarget } from "../typescript";
+import { TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
+import { ts, CompilerOptions, ScriptKind } from "../typescript";
+import { createCompilerSourceFile } from "./createCompilerSourceFile";
 
 /**
  * An implementation of a ts.DocumentRegistry that uses a transactional file system.
  */
 export class DocumentRegistry implements ts.DocumentRegistry {
-    private readonly sourceFileCacheByFilePath = new KeyValueCache<string, ts.SourceFile>();
+    private readonly sourceFileCacheByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();
     private static readonly initialVersion = "0";
 
     /**
@@ -18,27 +18,27 @@ export class DocumentRegistry implements ts.DocumentRegistry {
     }
 
     /**
-     * Removes the source file from the document registry
-     * @param fileName - File name to remove.
-     */
-    removeSourceFile(fileName: string) {
-        this.sourceFileCacheByFilePath.removeByKey(fileName);
-    }
-
-    /**
      * Creates or updates a source file in the document registry.
      * @param fileName - File name to create or update.
      * @param compilationSettings - Compiler options to use.
      * @param scriptSnapshot - Script snapshot (text) of the file.
      * @param scriptKind - Script kind of the file.
      */
-    createOrUpdateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined) {
+    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined) {
         let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
         if (sourceFile == null)
             sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.initialVersion, scriptKind);
         else
             sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.getNextSourceFileVersion(sourceFile), scriptKind);
         return sourceFile;
+    }
+
+    /**
+     * Removes the source file from the document registry.
+     * @param fileName - File name to remove.
+     */
+    removeSourceFile(fileName: StandardizedFilePath) {
+        this.sourceFileCacheByFilePath.delete(fileName);
     }
 
     /** @inheritdoc */
@@ -49,9 +49,10 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         version: string,
         scriptKind: ScriptKind | undefined
     ): ts.SourceFile {
-        let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
+        const standardizedFilePath = this.transactionalFileSystem.getStandardizedAbsolutePath(fileName);
+        let sourceFile = this.sourceFileCacheByFilePath.get(standardizedFilePath);
         if (sourceFile == null || this.getSourceFileVersion(sourceFile) !== version)
-            sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
+            sourceFile = this.updateSourceFile(standardizedFilePath, compilationSettings, scriptSnapshot, version, scriptKind);
         return sourceFile;
     }
 
@@ -121,19 +122,11 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         return (currentVersion + 1).toString();
     }
 
-    private updateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string,
+    private updateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string,
         scriptKind: ScriptKind | undefined): ts.SourceFile
     {
-        fileName = this.transactionalFileSystem.getStandardizedAbsolutePath(fileName);
-        const newSourceFile = this.createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings, version, scriptKind);
+        const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings.target, version, true, scriptKind);
         this.sourceFileCacheByFilePath.set(fileName, newSourceFile);
         return newSourceFile;
-    }
-
-    private createCompilerSourceFile(fileName: string, scriptSnapshot: ts.IScriptSnapshot, compilationSettings: CompilerOptions, version: string,
-        scriptKind: ScriptKind | undefined)
-    {
-        const scriptTarget = compilationSettings.target || ScriptTarget.Latest;
-        return ts.createLanguageServiceSourceFile(fileName, scriptSnapshot, scriptTarget, version, true, scriptKind);
     }
 }

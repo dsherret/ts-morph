@@ -105,7 +105,7 @@ export class Project {
         function getFileSystem() {
             if (options.useVirtualFileSystem) {
                 const fileSystem = new InMemoryFileSystemHost();
-                if (options.skipLoadingLibFiles !== true) {
+                if (!options.skipLoadingLibFiles) {
                     const libFiles = getLibFiles();
                     for (const libFile of libFiles)
                         fileSystem.writeFileSync(`/node_modules/typescript/lib/${libFile.fileName}`, libFile.text);

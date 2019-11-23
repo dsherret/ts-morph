@@ -8,7 +8,7 @@
   "repository": "git+https://github.com/dsherret/ts-morph.git",
   "typings": "lib/ts-morph-common.d.ts",
   "scripts": {
-    "build": "rimraf dist && yarn rollup && yarn build:declarations && yarn createLibFile",
+    "build": "rimraf dist && yarn createLibFile && yarn rollup && yarn build:declarations",
     "build:declarations": "ts-node --compiler ttypescript --project scripts/tsconfig.json --transpile-only scripts/buildDeclarations.ts",
     "createLibFile": "ts-node scripts/createLibFile.ts",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha --opts mocha.opts",

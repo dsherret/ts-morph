@@ -196,6 +196,9 @@ class Directory {
     }
 }
 
+/** Nominal type to denote a file path that has been standardized. */
+export type StandardizedFilePath = string & { _standardizedFilePathBrand: undefined; };
+
 /**
  * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
  */
@@ -639,9 +642,9 @@ export class TransactionalFileSystem {
         return this.getStandardizedAbsolutePath(this.fileSystem.realpathSync(path));
     }
 
-    getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string) {
+    getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string): StandardizedFilePath {
         fileOrDirPath = FileUtils.getStandardizedAbsolutePath(this.fileSystem, fileOrDirPath, relativeBase);
-        return this.pathCasingMaintainer.getPath(fileOrDirPath);
+        return this.pathCasingMaintainer.getPath(fileOrDirPath) as StandardizedFilePath;
     }
 
     readFileOrNotExists(filePath: string, encoding: string) {
