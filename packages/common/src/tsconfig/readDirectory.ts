@@ -1,4 +1,4 @@
-import { FileUtils, TransactionalFileSystem } from "../fileSystem";
+import { FileUtils, TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
 import { matchFiles, getFileMatcherPatterns, FileSystemEntries } from "../typescript";
 
 export function readDirectory(
@@ -11,7 +11,7 @@ export function readDirectory(
     depth?: number
 ) {
     const currentDir = fileSystemWrapper.getCurrentDirectory();
-    const directories: string[] = [];
+    const directories: StandardizedFilePath[] = [];
 
     // start: code from compiler api
     const regexFlag = useCaseSensitiveFileNames ? "" : "i";
@@ -31,12 +31,12 @@ export function readDirectory(
             undefined,
             path => {
                 const includeDir = dirPathMatches(path);
-                path = fileSystemWrapper.getStandardizedAbsolutePath(path);
+                const standardizedPath = fileSystemWrapper.getStandardizedAbsolutePath(path);
                 if (includeDir)
-                    directories.push(path);
-                return getFileSystemEntries(path, fileSystemWrapper);
+                    directories.push(standardizedPath);
+                return getFileSystemEntries(standardizedPath, fileSystemWrapper);
             },
-            path => fileSystemWrapper.realpathSync(path)
+            path => fileSystemWrapper.realpathSync(fileSystemWrapper.getStandardizedAbsolutePath(path))
         ),
         directories
     };
@@ -52,7 +52,7 @@ export function readDirectory(
     }
 }
 
-function getFileSystemEntries(path: string, fileSystemWrapper: TransactionalFileSystem): FileSystemEntries {
+function getFileSystemEntries(path: StandardizedFilePath, fileSystemWrapper: TransactionalFileSystem): FileSystemEntries {
     const files: string[] = [];
     const directories: string[] = [];
     try {

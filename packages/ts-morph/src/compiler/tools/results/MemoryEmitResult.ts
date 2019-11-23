@@ -1,4 +1,4 @@
-import { ts } from "@ts-morph/common";
+import { ts, StandardizedFilePath } from "@ts-morph/common";
 import { ProjectContext } from "../../../ProjectContext";
 import { EmitResult } from "./EmitResult";
 
@@ -9,7 +9,7 @@ export interface MemoryEmitResultFile {
     /**
      * File path that was emitted to.
      */
-    filePath: string;
+    filePath: StandardizedFilePath;
     /**
      * The text that was emitted.
      */

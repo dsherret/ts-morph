@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { errors } from "../../errors";
 import { TransactionalFileSystem, InMemoryFileSystemHost } from "../../fileSystem";
+import { StandardizedFilePath } from "../../../lib/ts-morph-common";
 
 describe(nameof(TransactionalFileSystem), () => {
     interface SetupObjects {
@@ -14,12 +15,12 @@ describe(nameof(TransactionalFileSystem), () => {
     }
 
     function checkState(objs: SetupObjects, filePath: string, state: [boolean, boolean]) {
-        expect(objs.wrapper.fileExistsSync(filePath)).to.equal(state[0], "wrapper");
+        expect(objs.wrapper.fileExistsSync(objs.wrapper.getStandardizedAbsolutePath(filePath))).to.equal(state[0], "wrapper");
         expect(objs.fileSystem.fileExistsSync(filePath)).to.equal(state[1], "file system");
     }
 
     function checkStateForDir(objs: SetupObjects, dirPath: string, state: [boolean, boolean]) {
-        expect(objs.wrapper.directoryExistsSync(dirPath)).to.equal(state[0], "wrapper");
+        expect(objs.wrapper.directoryExistsSync(objs.wrapper.getStandardizedAbsolutePath(dirPath))).to.equal(state[0], "wrapper");
         expect(objs.fileSystem.directoryExistsSync(dirPath)).to.equal(state[1], "file system");
     }
 
@@ -27,7 +28,7 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should queue a file for delete", () => {
             const objs = setup();
             const { wrapper } = objs;
-            const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"];
+            const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"].map(path => wrapper.getStandardizedAbsolutePath(path));
             for (const filePath of filePaths)
                 wrapper.writeFileSync(filePath, "");
             wrapper.queueFileDelete(filePaths[0]);
@@ -43,7 +44,7 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should remove a file from being deleted", async () => {
             const objs = setup();
             const { wrapper } = objs;
-            const filePath = "/file.ts";
+            const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
             wrapper.writeFileSync(filePath, "");
             wrapper.queueFileDelete(filePath);
             checkState(objs, filePath, [false, true]);
@@ -56,9 +57,9 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should not dequeue the parent folder from deletion when the file is dequeued", () => {
             const objs = setup();
             const { wrapper } = objs;
-            const dirPath = "/dir";
-            const filePath = "/dir/file.ts";
-            const filePath2 = "/dir/file2.ts";
+            const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
+            const filePath = wrapper.getStandardizedAbsolutePath("/dir/file.ts");
+            const filePath2 = wrapper.getStandardizedAbsolutePath("/dir/file2.ts");
 
             wrapper.writeFileSync(filePath, "");
             wrapper.writeFileSync(filePath2, "");
@@ -81,9 +82,9 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should queue a directory for delete", () => {
             const objs = setup();
             const { wrapper } = objs;
-            wrapper.queueMkdir("/dir");
+            wrapper.queueMkdir(wrapper.getStandardizedAbsolutePath("/dir"));
             wrapper.flushSync();
-            wrapper.queueDirectoryDelete("/dir");
+            wrapper.queueDirectoryDelete(wrapper.getStandardizedAbsolutePath("/dir"));
 
             checkStateForDir(objs, "/dir", [false, true]);
         });
@@ -93,9 +94,9 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should queue a directory for moving", () => {
             const objs = setup();
             const { wrapper } = objs;
-            wrapper.queueMkdir("/dir");
+            wrapper.queueMkdir(wrapper.getStandardizedAbsolutePath("/dir"));
             wrapper.flushSync();
-            wrapper.queueMoveDirectory("/dir", "/dir2");
+            wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
 
             checkStateForDir(objs, "/dir", [false, true]);
             checkStateForDir(objs, "/dir2", [true, false]);
@@ -106,9 +107,9 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should queue a directory for copying", () => {
             const objs = setup();
             const { wrapper } = objs;
-            wrapper.writeFileSync("/dir/file.ts", "");
+            wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "");
             wrapper.flushSync();
-            wrapper.queueCopyDirectory("/dir", "/dir2");
+            wrapper.queueCopyDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
 
             checkStateForDir(objs, "/dir", [true, true]);
             checkStateForDir(objs, "/dir2", [true, false]);
@@ -119,11 +120,11 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should queue a directory for being made", () => {
             const objs = setup();
             const { wrapper } = objs;
-            wrapper.queueMkdir("/dir");
+            wrapper.queueMkdir(wrapper.getStandardizedAbsolutePath("/dir"));
             wrapper.getFileSystem().mkdirSync("/asdf");
 
             checkStateForDir(objs, "/dir", [true, false]);
-            expect(wrapper.getDirectories("/")).to.deep.equal(["/asdf", "/dir"]);
+            expect(wrapper.getDirectories(wrapper.getStandardizedAbsolutePath("/"))).to.deep.equal(["/asdf", "/dir"]);
         });
     });
 
@@ -132,7 +133,7 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should queue files for delete then flush them", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"];
+                const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"].map(path => wrapper.getStandardizedAbsolutePath(path));
                 for (const filePath of filePaths)
                     wrapper.writeFileSync(filePath, "");
                 wrapper.queueFileDelete(filePaths[0]);
@@ -148,7 +149,7 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should not error for queued files that don't exist", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                const filePaths = ["/file.ts", "/file2.ts"];
+                const filePaths = ["/file.ts", "/file2.ts"].map(path => wrapper.getStandardizedAbsolutePath(path));
                 wrapper.queueFileDelete(filePaths[0]);
                 wrapper.queueFileDelete(filePaths[1]);
 
@@ -161,14 +162,15 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should move directories that were moved", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                const filePaths = ["/dir/file.ts", "/dir/file2.ts", "/dir/file3.ts", "/dir2/file4.ts", "/dir2/file5.ts"];
+                const filePaths = ["/dir/file.ts", "/dir/file2.ts", "/dir/file3.ts", "/dir2/file4.ts", "/dir2/file5.ts"]
+                    .map(path => wrapper.getStandardizedAbsolutePath(path));
                 for (const filePath of filePaths)
                     wrapper.writeFileSync(filePath, "");
-                wrapper.queueMoveDirectory("/dir", "/newDir");
-                wrapper.queueMoveDirectory("/dir2", "/dir3");
-                wrapper.queueFileDelete("/dir3/file4.ts");
-                wrapper.queueMkdir("/dir3/dir4");
-                wrapper.queueMoveDirectory("/dir3", "/newDir");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/newDir"));
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir2"), wrapper.getStandardizedAbsolutePath("/dir3"));
+                wrapper.queueFileDelete(wrapper.getStandardizedAbsolutePath("/dir3/file4.ts"));
+                wrapper.queueMkdir(wrapper.getStandardizedAbsolutePath("/dir3/dir4"));
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir3"), wrapper.getStandardizedAbsolutePath("/newDir"));
 
                 flush(wrapper, () => {
                     checkStateForDir(objs, "/dir", [false, false]);
@@ -207,21 +209,21 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should move a file immediately to a new directory", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/file.ts", "text");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/file.ts"), "text");
                 moveFile(wrapper, "/file.ts", "/newDir/newFile.ts", "newText", err => {
                     expect(err).to.be.undefined;
                     checkState(objs, "/file.ts", [false, false]);
                     checkStateForDir(objs, "/newDir", [true, true]);
                     checkState(objs, "/newDir/newFile.ts", [true, true]);
-                    expect(wrapper.readFileSync("/newDir/newFile.ts", "utf-8")).to.equal("newText");
+                    expect(wrapper.readFileSync(wrapper.getStandardizedAbsolutePath("/newDir/newFile.ts"), "utf-8")).to.equal("newText");
                 });
             });
 
             it("should throw when moving a file in a directory with external operations", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
-                wrapper.queueMoveDirectory("/dir", "/dir2");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
                 moveFile(wrapper, "/dir2/file.ts", "/dir2/newFile.ts", "newText", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -230,8 +232,8 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should throw when moving a file in a directory with external copy operations", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
-                wrapper.queueCopyDirectory("/dir", "/dir2");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
+                wrapper.queueCopyDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
                 moveFile(wrapper, "/dir2/file.ts", "/dir2/newFile.ts", "newText", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -240,9 +242,9 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should throw when moving a file to a directory with external operations", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
-                wrapper.writeFileSync("/dir2/file.ts", "text");
-                wrapper.queueMoveDirectory("/dir2", "/dir3");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir2/file.ts"), "text");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir2"), wrapper.getStandardizedAbsolutePath("/dir3"));
                 moveFile(wrapper, "/dir/file.ts", "/dir3/newFile.ts", "newText", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -252,7 +254,7 @@ describe(nameof(TransactionalFileSystem), () => {
         describe("async", () => {
             doTests(async (wrapper, fileFrom, fileTo, text, runChecks) => {
                 try {
-                    await wrapper.moveFileImmediately(fileFrom, fileTo, text);
+                    await wrapper.moveFileImmediately(wrapper.getStandardizedAbsolutePath(fileFrom), wrapper.getStandardizedAbsolutePath(fileTo), text);
                     runChecks();
                 } catch (err) {
                     runChecks(err);
@@ -263,7 +265,7 @@ describe(nameof(TransactionalFileSystem), () => {
         describe("sync", () => {
             doTests((wrapper, fileFrom, fileTo, text, runChecks) => {
                 try {
-                    wrapper.moveFileImmediatelySync(fileFrom, fileTo, text);
+                    wrapper.moveFileImmediatelySync(wrapper.getStandardizedAbsolutePath(fileFrom), wrapper.getStandardizedAbsolutePath(fileTo), text);
                     runChecks();
                 } catch (err) {
                     runChecks(err);
@@ -277,7 +279,7 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should delete a file immediately", async () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                const filePath = "/file.ts";
+                const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
                 wrapper.writeFileSync(filePath, "");
                 deleteFile(wrapper, filePath, err => {
                     expect(err).to.be.undefined;
@@ -295,7 +297,7 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should be able to delete a file immediately after it was queued for delete", async () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                const filePath = "/file.ts";
+                const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
                 wrapper.writeFileSync(filePath, "");
                 wrapper.queueFileDelete(filePath);
                 deleteFile(wrapper, filePath, err => {
@@ -307,8 +309,8 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should throw when deleting a file in a directory with external operations", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
-                wrapper.queueMoveDirectory("/dir", "/dir2");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
                 deleteFile(wrapper, "/dir2/file.ts", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -319,7 +321,7 @@ describe(nameof(TransactionalFileSystem), () => {
             doTests(async (wrapper, filePath, runChecks) => {
                 let thrownErr: any;
                 try {
-                    await wrapper.deleteFileImmediately(filePath);
+                    await wrapper.deleteFileImmediately(wrapper.getStandardizedAbsolutePath(filePath));
                 } catch (err) {
                     thrownErr = err;
                 }
@@ -331,7 +333,7 @@ describe(nameof(TransactionalFileSystem), () => {
             doTests((wrapper, filePath, runChecks) => {
                 let thrownErr: any;
                 try {
-                    wrapper.deleteFileImmediatelySync(filePath);
+                    wrapper.deleteFileImmediatelySync(wrapper.getStandardizedAbsolutePath(filePath));
                 } catch (err) {
                     thrownErr = err;
                 }
@@ -345,7 +347,7 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should copy a directory immediately to a new directory", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
                 copyDirectory(wrapper, "/dir", "/newDir", err => {
                     expect(err).to.be.undefined;
                     checkStateForDir(objs, "/dir", [true, true]);
@@ -358,8 +360,8 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should throw when copying a directory in a directory with external operations", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
-                wrapper.queueMoveDirectory("/dir", "/dir2");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
                 copyDirectory(wrapper, "/dir2", "/dir3", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -368,9 +370,9 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should throw when copyin a directory to a directory with external operations", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
-                wrapper.writeFileSync("/dir2/file2.ts", "text");
-                wrapper.queueMoveDirectory("/dir2", "/dir3");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir2/file2.ts"), "text");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir2"), wrapper.getStandardizedAbsolutePath("/dir3"));
                 copyDirectory(wrapper, "/dir", "/dir3", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -381,7 +383,7 @@ describe(nameof(TransactionalFileSystem), () => {
             doTests(async (wrapper, dirFrom, dirTo, runChecks) => {
                 let thrownErr: any;
                 try {
-                    await wrapper.copyDirectoryImmediately(dirFrom, dirTo);
+                    await wrapper.copyDirectoryImmediately(wrapper.getStandardizedAbsolutePath(dirFrom), wrapper.getStandardizedAbsolutePath(dirTo));
                 } catch (err) {
                     thrownErr = err;
                 }
@@ -393,7 +395,7 @@ describe(nameof(TransactionalFileSystem), () => {
             doTests((wrapper, dirFrom, dirTo, runChecks) => {
                 let thrownErr: any;
                 try {
-                    wrapper.copyDirectoryImmediatelySync(dirFrom, dirTo);
+                    wrapper.copyDirectoryImmediatelySync(wrapper.getStandardizedAbsolutePath(dirFrom), wrapper.getStandardizedAbsolutePath(dirTo));
                 } catch (err) {
                     thrownErr = err;
                 }
@@ -407,7 +409,7 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should move a directory immediately to a new directory", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
                 moveDirectory(wrapper, "/dir", "/newDir", err => {
                     expect(err).to.be.undefined;
                     checkStateForDir(objs, "/dir", [false, false]);
@@ -419,8 +421,8 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should throw when moving a directory in a directory with external operations", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
-                wrapper.queueMoveDirectory("/dir", "/dir2");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
                 moveDirectory(wrapper, "/dir2", "/dir3", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -429,9 +431,9 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should throw when moving a directory to a directory with external operations", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/file.ts", "text");
-                wrapper.writeFileSync("/dir2/file2.ts", "text");
-                wrapper.queueMoveDirectory("/dir2", "/dir3");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/file.ts"), "text");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir2/file2.ts"), "text");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir2"), wrapper.getStandardizedAbsolutePath("/dir3"));
                 moveDirectory(wrapper, "/dir", "/dir3", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -441,7 +443,7 @@ describe(nameof(TransactionalFileSystem), () => {
         describe("async", () => {
             doTests(async (wrapper, dirFrom, dirTo, runChecks) => {
                 try {
-                    await wrapper.moveDirectoryImmediately(dirFrom, dirTo);
+                    await wrapper.moveDirectoryImmediately(wrapper.getStandardizedAbsolutePath(dirFrom), wrapper.getStandardizedAbsolutePath(dirTo));
                     runChecks();
                 } catch (err) {
                     runChecks(err);
@@ -452,7 +454,7 @@ describe(nameof(TransactionalFileSystem), () => {
         describe("sync", () => {
             doTests((wrapper, dirFrom, dirTo, runChecks) => {
                 try {
-                    wrapper.moveDirectoryImmediatelySync(dirFrom, dirTo);
+                    wrapper.moveDirectoryImmediatelySync(wrapper.getStandardizedAbsolutePath(dirFrom), wrapper.getStandardizedAbsolutePath(dirTo));
                     runChecks();
                 } catch (err) {
                     runChecks(err);
@@ -467,7 +469,7 @@ describe(nameof(TransactionalFileSystem), () => {
                 const objs = setup();
                 const { wrapper } = objs;
                 const dirPath = "/dir";
-                const filePath = "/dir/file.ts";
+                const filePath = wrapper.getStandardizedAbsolutePath("/dir/file.ts");
                 wrapper.writeFileSync(filePath, "");
                 wrapper.queueFileDelete(filePath);
                 deleteDir(wrapper, dirPath, err => {
@@ -481,7 +483,7 @@ describe(nameof(TransactionalFileSystem), () => {
                 const objs = setup();
                 const { wrapper, fileSystem } = objs;
                 const dirPath = "/dir";
-                const filePath = "/dir/file.ts";
+                const filePath = wrapper.getStandardizedAbsolutePath("/dir/file.ts");
                 wrapper.writeFileSync(filePath, "");
                 wrapper.queueFileDelete(filePath);
                 fileSystem.deleteSync = (path: string) => {
@@ -497,8 +499,8 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should throw when deleting a directory in a directory with external operations", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/subDir/file.ts", "text");
-                wrapper.queueMoveDirectory("/dir", "/dir2");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"), "text");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
                 deleteDir(wrapper, "/dir2/subDir", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -507,9 +509,9 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should throw when deleting a directory in a directory whose parent was once marked for deletion", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/subDir/file.ts", "text");
-                wrapper.queueDirectoryDelete("/dir");
-                wrapper.removeFileDelete("/dir/subDir/file.ts");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"), "text");
+                wrapper.queueDirectoryDelete(wrapper.getStandardizedAbsolutePath("/dir"));
+                wrapper.removeFileDelete(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"));
                 deleteDir(wrapper, "/dir/subDir", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
@@ -518,10 +520,10 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should not throw when deleting a directory that contains queued moves that are internal", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/subDir/file.ts", "");
-                wrapper.writeFileSync("/dir/subDir2/file.ts", "");
-                wrapper.queueMoveDirectory("/dir/subDir", "/dir/newDir");
-                wrapper.queueMoveDirectory("/dir/subDir2", "/dir/newDir/subSub");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"), "");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir2/file.ts"), "");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir/subDir"), wrapper.getStandardizedAbsolutePath("/dir/newDir"));
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir/subDir2"), wrapper.getStandardizedAbsolutePath("/dir/newDir/subSub"));
                 deleteDir(wrapper, "/dir", err => {
                     expect(err).to.be.undefined;
                 });
@@ -530,10 +532,10 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should not throw when deleting a directory that contains queued deletes that are internal", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                wrapper.writeFileSync("/dir/subDir/file.ts", "");
-                wrapper.writeFileSync("/dir/subDir2/file.ts", "");
-                wrapper.queueDirectoryDelete("/dir/subDir");
-                wrapper.queueFileDelete("/dir/subDir2/file.ts");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"), "");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir2/file.ts"), "");
+                wrapper.queueDirectoryDelete(wrapper.getStandardizedAbsolutePath("/dir/subDir"));
+                wrapper.queueFileDelete(wrapper.getStandardizedAbsolutePath("/dir/subDir2/file.ts"));
                 deleteDir(wrapper, "/dir", err => {
                     expect(err).to.be.undefined;
                 });
@@ -543,7 +545,7 @@ describe(nameof(TransactionalFileSystem), () => {
         describe("async", () => {
             doTests(async (wrapper, filePath, runChecks) => {
                 try {
-                    await wrapper.deleteDirectoryImmediately(filePath);
+                    await wrapper.deleteDirectoryImmediately(wrapper.getStandardizedAbsolutePath(filePath));
                     runChecks();
                 } catch (err) {
                     runChecks(err);
@@ -554,7 +556,7 @@ describe(nameof(TransactionalFileSystem), () => {
         describe("sync", () => {
             doTests((wrapper, filePath, runChecks) => {
                 try {
-                    wrapper.deleteDirectoryImmediatelySync(filePath);
+                    wrapper.deleteDirectoryImmediatelySync(wrapper.getStandardizedAbsolutePath(filePath));
                     runChecks();
                 } catch (err) {
                     runChecks(err);
@@ -566,7 +568,7 @@ describe(nameof(TransactionalFileSystem), () => {
     describe(nameof<TransactionalFileSystem>(w => w.fileExistsSync), () => {
         it("should not exist after queued for delete", () => {
             const { wrapper } = setup();
-            const filePath = "/file.ts";
+            const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
             expect(wrapper.fileExistsSync(filePath)).to.equal(false);
             wrapper.writeFileSync(filePath, "");
             expect(wrapper.fileExistsSync(filePath)).to.equal(true);
@@ -578,7 +580,7 @@ describe(nameof(TransactionalFileSystem), () => {
 
         it("should not exist after a dequeued for delete when originally existed", () => {
             const { wrapper } = setup();
-            const filePath = "/file.ts";
+            const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
             wrapper.writeFileSync(filePath, "");
             wrapper.queueFileDelete(filePath);
             wrapper.removeFileDelete(filePath);
@@ -587,7 +589,7 @@ describe(nameof(TransactionalFileSystem), () => {
 
         it("should not exist after a dequeued for delete when not originally existed", () => {
             const { wrapper } = setup();
-            const filePath = "/file.ts";
+            const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
             wrapper.queueFileDelete(filePath);
             wrapper.removeFileDelete(filePath);
             expect(wrapper.fileExistsSync(filePath)).to.equal(false);
@@ -595,8 +597,8 @@ describe(nameof(TransactionalFileSystem), () => {
 
         it("should not exist if the parent directory was queued for delete", () => {
             const { wrapper } = setup();
-            const dirPath = "/dir";
-            const filePath = "/dir/file.ts";
+            const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
+            const filePath = wrapper.getStandardizedAbsolutePath("/dir/file.ts");
             wrapper.writeFileSync(filePath, "");
             wrapper.queueDirectoryDelete(dirPath);
             expect(wrapper.fileExistsSync(filePath)).to.equal(false);
@@ -605,22 +607,22 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should not exist after its parent directory moved", () => {
             const objs = setup();
             const { wrapper } = objs;
-            const filePath = "/dir/file.ts";
+            const filePath = wrapper.getStandardizedAbsolutePath("/dir/file.ts");
             wrapper.writeFileSync(filePath, "");
-            wrapper.queueMoveDirectory("/dir", "/dir2");
+            wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
             checkState(objs, filePath, [false, true]);
         });
 
         it("should not exist after its parent directory was once moved", () => {
             const objs = setup();
             const { wrapper } = objs;
-            const filePath = "/dir/file.ts";
-            const filePath2 = "/dir/sub/file.ts";
+            const filePath = wrapper.getStandardizedAbsolutePath("/dir/file.ts");
+            const filePath2 = wrapper.getStandardizedAbsolutePath("/dir/sub/file.ts");
             wrapper.writeFileSync(filePath, "");
             wrapper.writeFileSync(filePath2, "");
-            wrapper.queueMoveDirectory("/dir", "/dir2");
-            wrapper.queueMkdir("/dir");
-            wrapper.queueMkdir("/dir/sub");
+            wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
+            wrapper.queueMkdir(wrapper.getStandardizedAbsolutePath("/dir"));
+            wrapper.queueMkdir(wrapper.getStandardizedAbsolutePath("/dir/sub"));
             checkState(objs, filePath, [false, true]);
             checkState(objs, filePath2, [false, true]);
         });
@@ -628,13 +630,13 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should not exist after its parent directory was once removed", () => {
             const objs = setup();
             const { wrapper } = objs;
-            const filePath = "/dir/file.ts";
-            const filePath2 = "/dir/sub/file.ts";
+            const filePath = wrapper.getStandardizedAbsolutePath("/dir/file.ts");
+            const filePath2 = wrapper.getStandardizedAbsolutePath("/dir/sub/file.ts");
             wrapper.writeFileSync(filePath, "");
             wrapper.writeFileSync(filePath2, "");
-            wrapper.queueDirectoryDelete("/dir");
-            wrapper.queueMkdir("/dir");
-            wrapper.queueMkdir("/dir/sub");
+            wrapper.queueDirectoryDelete(wrapper.getStandardizedAbsolutePath("/dir"));
+            wrapper.queueMkdir(wrapper.getStandardizedAbsolutePath("/dir"));
+            wrapper.queueMkdir(wrapper.getStandardizedAbsolutePath("/dir/sub"));
             checkState(objs, filePath, [false, true]);
             checkState(objs, filePath2, [false, true]);
         });
@@ -643,7 +645,7 @@ describe(nameof(TransactionalFileSystem), () => {
     describe(nameof<TransactionalFileSystem>(w => w.directoryExistsSync), () => {
         it("should not exist after queued for delete", () => {
             const { wrapper } = setup();
-            const dirPath = "/dir";
+            const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
             expect(wrapper.directoryExistsSync(dirPath)).to.equal(false);
             wrapper.queueMkdir(dirPath);
             expect(wrapper.directoryExistsSync(dirPath)).to.equal(true);
@@ -655,8 +657,8 @@ describe(nameof(TransactionalFileSystem), () => {
 
         it("should exist after a queued for mkdir", () => {
             const { wrapper } = setup();
-            const dirPath = "/dir";
-            wrapper.writeFileSync(dirPath + "/file.ts", "");
+            const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
+            wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath(dirPath + "/file.ts"), "");
             wrapper.queueDirectoryDelete(dirPath);
             wrapper.queueMkdir(dirPath);
             expect(wrapper.directoryExistsSync(dirPath)).to.equal(true);
@@ -664,9 +666,9 @@ describe(nameof(TransactionalFileSystem), () => {
 
         it("should not exist if the parent directory was queued for delete", () => {
             const { wrapper } = setup();
-            const dirPath = "/dir";
-            const subDirPath = "/dir/sub";
-            wrapper.writeFileSync(subDirPath + "/file.ts", "");
+            const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
+            const subDirPath = wrapper.getStandardizedAbsolutePath("/dir/sub");
+            wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath(subDirPath + "/file.ts"), "");
             wrapper.queueDirectoryDelete(dirPath);
             expect(wrapper.directoryExistsSync(subDirPath)).to.equal(false);
         });
@@ -675,8 +677,8 @@ describe(nameof(TransactionalFileSystem), () => {
     describe(nameof<TransactionalFileSystem>(w => w.readFileSync), () => {
         it("should not read the file after it was deleted", () => {
             const { wrapper } = setup();
-            const filePath = "/file.ts";
-            const fileText = "test";
+            const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
+            const fileText = wrapper.getStandardizedAbsolutePath("test");
             wrapper.writeFileSync(filePath, fileText);
             expect(wrapper.readFileSync(filePath, "utf-8")).to.equal(fileText);
             wrapper.queueFileDelete(filePath);
@@ -687,11 +689,11 @@ describe(nameof(TransactionalFileSystem), () => {
 
         it("should not read the file after its parent was once deleted", () => {
             const { wrapper } = setup();
-            const filePath = "/dir/sub/file.ts";
-            const fileText = "test";
+            const filePath = wrapper.getStandardizedAbsolutePath("/dir/sub/file.ts");
+            const fileText = wrapper.getStandardizedAbsolutePath("test");
             wrapper.writeFileSync(filePath, fileText);
-            wrapper.queueDirectoryDelete("/dir");
-            wrapper.queueMkdir("/dir/sub");
+            wrapper.queueDirectoryDelete(wrapper.getStandardizedAbsolutePath("/dir"));
+            wrapper.queueMkdir(wrapper.getStandardizedAbsolutePath("/dir/sub"));
             expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.InvalidOperationError);
             wrapper.flushSync();
             expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.FileNotFoundError);
@@ -701,8 +703,8 @@ describe(nameof(TransactionalFileSystem), () => {
     describe(nameof<TransactionalFileSystem>(w => w.readDirSync), () => {
         it("should not read the dir after it was deleted", () => {
             const { wrapper } = setup();
-            const dirPath = "/dir";
-            const filePaths = ["/dir/file.ts", "/dir/file2.ts"];
+            const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
+            const filePaths = ["/dir/file.ts", "/dir/file2.ts"].map(path => wrapper.getStandardizedAbsolutePath(path));
             for (const filePath of filePaths)
                 wrapper.writeFileSync(filePath, "");
             expect(wrapper.readDirSync(dirPath)).to.deep.equal(filePaths);
@@ -718,10 +720,10 @@ describe(nameof(TransactionalFileSystem), () => {
 
         it("should not read a directory after its parent was once deleted", () => {
             const { wrapper } = setup();
-            const dirPath = "/dir/sub";
-            const filePath = `${dirPath}/file.ts`;
+            const dirPath = wrapper.getStandardizedAbsolutePath("/dir/sub");
+            const filePath = wrapper.getStandardizedAbsolutePath(`${dirPath}/file.ts`);
             wrapper.writeFileSync(filePath, "");
-            wrapper.queueDirectoryDelete("/dir");
+            wrapper.queueDirectoryDelete(wrapper.getStandardizedAbsolutePath("/dir"));
             wrapper.queueMkdir(dirPath);
             expect(() => wrapper.readDirSync(dirPath)).to.throw(errors.InvalidOperationError);
             wrapper.flushSync();
@@ -732,23 +734,22 @@ describe(nameof(TransactionalFileSystem), () => {
     describe(nameof<TransactionalFileSystem>(w => w.globSync), () => {
         it("should not read the dir after it was deleted", () => {
             const { wrapper } = setup();
-            const dirPath = "/dir";
             const dirGlob = "/dir/**/*.ts";
-            const filePaths = ["/dir/file.ts", "/dir/file2.ts"];
+            const filePaths = ["/dir/file.ts", "/dir/file2.ts"].map(path => wrapper.getStandardizedAbsolutePath(path));
             for (const filePath of filePaths)
                 wrapper.writeFileSync(filePath, "");
-            expect(wrapper.globSync([dirGlob])).to.deep.equal(filePaths);
+            expect(Array.from(wrapper.globSync([dirGlob]))).to.deep.equal(filePaths);
             wrapper.queueFileDelete(filePaths[0]);
-            expect(wrapper.globSync([dirGlob])).to.deep.equal([filePaths[1]]);
+            expect(Array.from(wrapper.globSync([dirGlob]))).to.deep.equal([filePaths[1]]);
             wrapper.flushSync();
-            expect(wrapper.globSync([dirGlob])).to.deep.equal([filePaths[1]]);
+            expect(Array.from(wrapper.globSync([dirGlob]))).to.deep.equal([filePaths[1]]);
         });
     });
 
     describe(nameof<TransactionalFileSystem>(w => w.readFileOrNotExistsSync), () => {
         it("should return false after it was deleted", () => {
             const { wrapper } = setup();
-            const filePath = "/file.ts";
+            const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
             const fileText = "test";
             wrapper.writeFileSync(filePath, fileText);
             expect(wrapper.readFileOrNotExistsSync(filePath, "utf-8")).to.equal(fileText);
@@ -762,7 +763,7 @@ describe(nameof(TransactionalFileSystem), () => {
     describe(nameof<TransactionalFileSystem>(w => w.readFileOrNotExists), () => {
         it("should return false after it was deleted", async () => {
             const { wrapper } = setup();
-            const filePath = "/file.ts";
+            const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
             const fileText = "test";
             wrapper.writeFileSync(filePath, fileText);
             expect(await wrapper.readFileOrNotExists(filePath, "utf-8")).to.equal(fileText);
@@ -778,7 +779,7 @@ describe(nameof(TransactionalFileSystem), () => {
             it("should undo the queued deletion when writing", () => {
                 const objs = setup();
                 const { wrapper } = objs;
-                const filePath = "/file.ts";
+                const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
                 const fileText = "test";
                 writeFile(wrapper, filePath, fileText, () => {
                     wrapper.queueFileDelete(filePath);
@@ -793,7 +794,7 @@ describe(nameof(TransactionalFileSystem), () => {
         describe("async", () => {
             doTests(async (wrapper, filePath, text, runChecks) => {
                 try {
-                    await wrapper.writeFile(filePath, text);
+                    await wrapper.writeFile(wrapper.getStandardizedAbsolutePath(filePath), text);
                     runChecks();
                 } catch (err) {
                     runChecks(err);
@@ -804,7 +805,7 @@ describe(nameof(TransactionalFileSystem), () => {
         describe("sync", () => {
             doTests((wrapper, filePath, text, runChecks) => {
                 try {
-                    wrapper.writeFileSync(filePath, text);
+                    wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath(filePath), text);
                     runChecks();
                 } catch (err) {
                     runChecks(err);
@@ -838,36 +839,36 @@ describe(nameof(TransactionalFileSystem), () => {
             expect(wrapper.getStandardizedAbsolutePath("randoM.ts")).to.equal("/randoM.ts");
 
             // ensure these scenarios will remove the stored standardized path
-            wrapper.queueFileDelete("test.ts");
+            wrapper.queueFileDelete(wrapper.getStandardizedAbsolutePath("test.ts"));
             expect(wrapper.getStandardizedAbsolutePath("Test.ts")).to.equal("/Test.ts");
 
             expect(wrapper.getStandardizedAbsolutePath("tesT.ts")).to.equal("/Test.ts");
-            wrapper.deleteFileImmediatelySync("Test.ts");
+            wrapper.deleteFileImmediatelySync(wrapper.getStandardizedAbsolutePath("Test.ts"));
             expect(wrapper.getStandardizedAbsolutePath("tesT.ts")).to.equal("/tesT.ts");
 
             expect(wrapper.getStandardizedAbsolutePath("TesT.ts")).to.equal("/tesT.ts");
-            await wrapper.deleteFileImmediately("test.ts");
+            await wrapper.deleteFileImmediately(wrapper.getStandardizedAbsolutePath("test.ts"));
             expect(wrapper.getStandardizedAbsolutePath("TesT.ts")).to.equal("/TesT.ts");
 
             expect(wrapper.getStandardizedAbsolutePath("TesT")).to.equal("/TesT");
             expect(wrapper.getStandardizedAbsolutePath("TEst")).to.equal("/TesT");
-            await wrapper.moveDirectoryImmediately("test", "other");
+            await wrapper.moveDirectoryImmediately(wrapper.getStandardizedAbsolutePath("test"), wrapper.getStandardizedAbsolutePath("other"));
             expect(wrapper.getStandardizedAbsolutePath("TEst")).to.equal("/TEst");
 
             expect(wrapper.getStandardizedAbsolutePath("teSt")).to.equal("/TEst");
-            await wrapper.deleteDirectoryImmediately("test");
+            await wrapper.deleteDirectoryImmediately(wrapper.getStandardizedAbsolutePath("test"));
             expect(wrapper.getStandardizedAbsolutePath("teSt")).to.equal("/teSt");
 
             expect(wrapper.getStandardizedAbsolutePath("TeSt")).to.equal("/teSt");
-            await wrapper.deleteDirectoryImmediatelySync("test");
+            await wrapper.deleteDirectoryImmediatelySync(wrapper.getStandardizedAbsolutePath("test"));
             expect(wrapper.getStandardizedAbsolutePath("TeSt")).to.equal("/TeSt");
 
             expect(wrapper.getStandardizedAbsolutePath("TeST")).to.equal("/TeSt");
-            wrapper.queueDirectoryDelete("test");
+            wrapper.queueDirectoryDelete(wrapper.getStandardizedAbsolutePath("test"));
             expect(wrapper.getStandardizedAbsolutePath("tesT")).to.equal("/tesT");
 
             expect(wrapper.getStandardizedAbsolutePath("tEST")).to.equal("/tesT");
-            wrapper.queueMoveDirectory("test", "other");
+            wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("test"), wrapper.getStandardizedAbsolutePath("other"));
             expect(wrapper.getStandardizedAbsolutePath("TEST")).to.equal("/TEST");
 
             // should have never forgotten these ones

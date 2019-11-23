@@ -1,4 +1,4 @@
-import { FileUtils, TransactionalFileSystem } from "../fileSystem";
+import { FileUtils, TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
 import { ts } from "../typescript";
 import { TsSourceFileContainer } from "./TsSourceFileContainer";
 
@@ -22,22 +22,25 @@ export function createModuleResolutionHost(options: CreateModuleResolutionHostOp
     const { transactionalFileSystem, sourceFileContainer, getEncoding } = options;
     return {
         directoryExists: dirName => {
-            if (sourceFileContainer.containsDirectoryAtPath(dirName))
+            const dirPath = transactionalFileSystem.getStandardizedAbsolutePath(dirName);
+            if (sourceFileContainer.containsDirectoryAtPath(dirPath))
                 return true;
-            return transactionalFileSystem.directoryExistsSync(dirName);
+            return transactionalFileSystem.directoryExistsSync(dirPath);
         },
         fileExists: fileName => {
-            if (sourceFileContainer.containsSourceFileAtPath(fileName))
+            const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
+            if (sourceFileContainer.containsSourceFileAtPath(filePath))
                 return true;
-            return transactionalFileSystem.fileExistsSync(fileName);
+            return transactionalFileSystem.fileExistsSync(filePath);
         },
         readFile: fileName => {
-            const sourceFile = sourceFileContainer.getSourceFileFromCacheFromFilePath(fileName);
+            const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
+            const sourceFile = sourceFileContainer.getSourceFileFromCacheFromFilePath(filePath);
             if (sourceFile != null)
                 return sourceFile.getFullText();
 
             try {
-                return transactionalFileSystem.readFileSync(fileName, getEncoding());
+                return transactionalFileSystem.readFileSync(filePath, getEncoding());
             } catch (err) {
                 // this is what the compiler api does
                 if (FileUtils.isNotExistsError(err))
@@ -46,12 +49,13 @@ export function createModuleResolutionHost(options: CreateModuleResolutionHostOp
             }
         },
         getCurrentDirectory: () => transactionalFileSystem.getCurrentDirectory(),
-        getDirectories: path => {
-            const dirs = new Set<string>(transactionalFileSystem.readDirSync(path));
-            for (const dirPath of sourceFileContainer.getChildDirectoriesOfDirectory(path))
-                dirs.add(dirPath);
+        getDirectories: dirName => {
+            const dirPath = transactionalFileSystem.getStandardizedAbsolutePath(dirName);
+            const dirs = new Set<StandardizedFilePath>(transactionalFileSystem.readDirSync(dirPath));
+            for (const childDirPath of sourceFileContainer.getChildDirectoriesOfDirectory(dirPath))
+                dirs.add(childDirPath);
             return Array.from(dirs);
         },
-        realpath: path => transactionalFileSystem.realpathSync(path)
+        realpath: path => transactionalFileSystem.realpathSync(transactionalFileSystem.getStandardizedAbsolutePath(path))
     };
 }

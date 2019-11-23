@@ -21,8 +21,8 @@ export function getTsParseConfigHost(fileSystemWrapper: TransactionalFileSystem,
             directories.push(...result.directories);
             return result.files;
         },
-        fileExists: path => fileSystemWrapper.fileExistsSync(path),
-        readFile: path => fileSystemWrapper.readFileSync(path, options.encoding),
+        fileExists: path => fileSystemWrapper.fileExistsSync(fileSystemWrapper.getStandardizedAbsolutePath(path)),
+        readFile: path => fileSystemWrapper.readFileSync(fileSystemWrapper.getStandardizedAbsolutePath(path), options.encoding),
         getDirectories: () => [...directories],
         clearDirectories: () => directories.length = 0
     };

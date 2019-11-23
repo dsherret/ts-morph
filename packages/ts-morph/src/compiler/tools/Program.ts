@@ -116,7 +116,7 @@ export class Program {
         const promises: Promise<void>[] = [];
         const emitResult = this._emit({
             writeFile: (filePath, text, writeByteOrderMark) => {
-                promises.push(fileSystemWrapper.writeFile(filePath, writeByteOrderMark ? "\uFEFF" + text : text));
+                promises.push(fileSystemWrapper.writeFile(fileSystemWrapper.getStandardizedAbsolutePath(filePath), writeByteOrderMark ? "\uFEFF" + text : text));
             },
             ...options
         });

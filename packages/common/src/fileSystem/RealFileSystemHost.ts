@@ -195,11 +195,11 @@ export class RealFileSystemHost implements FileSystemHost {
     }
 
     private getDirectoryNotFoundErrorIfNecessary(err: any, path: string) {
-        return FileUtils.isNotExistsError(err) ? new errors.DirectoryNotFoundError(path) : err;
+        return FileUtils.isNotExistsError(err) ? new errors.DirectoryNotFoundError(FileUtils.getStandardizedAbsolutePath(this, path)) : err;
     }
 
     private getFileNotFoundErrorIfNecessary(err: any, path: string) {
-        return FileUtils.isNotExistsError(err) ? new errors.FileNotFoundError(path) : err;
+        return FileUtils.isNotExistsError(err) ? new errors.FileNotFoundError(FileUtils.getStandardizedAbsolutePath(this, path)) : err;
     }
 }
 

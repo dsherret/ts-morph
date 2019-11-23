@@ -23,12 +23,12 @@ export declare class TsConfigResolver {
     private readonly host;
     private readonly tsConfigFilePath;
     private readonly tsConfigDirPath;
-    constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: string, encoding: string);
+    constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, encoding: string);
     getCompilerOptions(): ts.CompilerOptions;
     getErrors(): ts.Diagnostic[];
     getPaths(compilerOptions?: CompilerOptions): {
-        filePaths: string[];
-        directoryPaths: string[];
+        filePaths: StandardizedFilePath[];
+        directoryPaths: StandardizedFilePath[];
     };
     private parseJsonConfigFileContent;
     private getTsConfigFileJson;
@@ -196,22 +196,22 @@ export interface TsSourceFileContainer {
      * Gets if a source file exists at the specified file path.
      * @param filePath - File path to check.
      */
-    containsSourceFileAtPath(filePath: string): boolean;
+    containsSourceFileAtPath(filePath: StandardizedFilePath): boolean;
     /**
      * Gets the source file paths of all the source files in the container.
      */
-    getSourceFilePaths(): string[];
+    getSourceFilePaths(): Iterable<StandardizedFilePath>;
     /**
      * Gets a source file from a file path, but only if it exists in the container's cache.
      * @param filePath - File path to get the source file from.
      */
-    getSourceFileFromCacheFromFilePath(filePath: string): ts.SourceFile | undefined;
+    getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath): ts.SourceFile | undefined;
     /**
      * Adds or gets a source file from a file path.
      * @param filePath - File path to get.
      * @param opts - Options for adding or getting the file.
      */
-    addOrGetSourceFileFromFilePath(filePath: string, opts: {
+    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, opts: {
         markInProject: boolean;
         scriptKind: ScriptKind | undefined;
     }): ts.SourceFile | undefined;
@@ -224,12 +224,12 @@ export interface TsSourceFileContainer {
      * Gets if the container contains the specified directory.
      * @param dirPath - Path of the directory to check.
      */
-    containsDirectoryAtPath(dirPath: string): boolean;
+    containsDirectoryAtPath(dirPath: StandardizedFilePath): boolean;
     /**
      * Gets the child directories of the specified directory.
      * @param dirPath - Path of the directory to check.
      */
-    getChildDirectoriesOfDirectory(dirPath: string): string[];
+    getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath): StandardizedFilePath[];
 }
 
 /**
@@ -341,17 +341,17 @@ export declare namespace errors {
     }
     /** Thrown when a file or directory path was not found. */
     class PathNotFoundError extends BaseError {
-        readonly path: string;
-        constructor(path: string, prefix?: string);
+        readonly path: StandardizedFilePath;
+        constructor(path: StandardizedFilePath, prefix?: string);
         readonly code: "ENOENT";
     }
     /** Thrown when a directory was not found. */
     class DirectoryNotFoundError extends PathNotFoundError {
-        constructor(dirPath: string);
+        constructor(dirPath: StandardizedFilePath);
     }
     /** Thrown when a file was not found. */
     class FileNotFoundError extends PathNotFoundError {
-        constructor(filePath: string);
+        constructor(filePath: StandardizedFilePath);
     }
     /** Thrown when an action was taken that is not allowed. */
     class InvalidOperationError extends BaseError {
@@ -542,11 +542,6 @@ export interface FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
 }
 
-/** Nominal type to denote a file path that has been standardized. */
-export declare type StandardizedFilePath = string & {
-    _standardizedFilePathBrand: undefined;
-};
-
 /**
  * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
  */
@@ -559,47 +554,47 @@ export declare class TransactionalFileSystem {
      * @param fileSystem - File system host to commit the operations to.
      */
     constructor(fileSystem: FileSystemHost);
-    queueFileDelete(filePath: string): void;
-    removeFileDelete(filePath: string): void;
-    queueMkdir(dirPath: string): void;
-    queueDirectoryDelete(dirPath: string): void;
-    queueMoveDirectory(srcPath: string, destPath: string): void;
-    queueCopyDirectory(srcPath: string, destPath: string): void;
+    queueFileDelete(filePath: StandardizedFilePath): void;
+    removeFileDelete(filePath: StandardizedFilePath): void;
+    queueMkdir(dirPath: StandardizedFilePath): void;
+    queueDirectoryDelete(dirPath: StandardizedFilePath): void;
+    queueMoveDirectory(srcPath: StandardizedFilePath, destPath: StandardizedFilePath): void;
+    queueCopyDirectory(srcPath: StandardizedFilePath, destPath: StandardizedFilePath): void;
     flush(): Promise<void>;
     flushSync(): void;
-    saveForDirectory(dirPath: string): Promise<void>;
-    saveForDirectorySync(dirPath: string): void;
+    saveForDirectory(dirPath: StandardizedFilePath): Promise<void>;
+    saveForDirectorySync(dirPath: StandardizedFilePath): void;
     private getAndClearOperationsForDir;
     private executeOperation;
     private executeOperationSync;
     private getAndClearOperations;
-    moveFileImmediately(oldFilePath: string, newFilePath: string, fileText: string): Promise<void>;
-    moveFileImmediatelySync(oldFilePath: string, newFilePath: string, fileText: string): void;
-    deleteFileImmediately(filePath: string): Promise<void>;
-    deleteFileImmediatelySync(filePath: string): void;
-    copyDirectoryImmediately(srcDirPath: string, destDirPath: string): Promise<void>;
-    copyDirectoryImmediatelySync(srcDirPath: string, destDirPath: string): void;
-    moveDirectoryImmediately(srcDirPath: string, destDirPath: string): Promise<void>;
-    moveDirectoryImmediatelySync(srcDirPath: string, destDirPath: string): void;
-    deleteDirectoryImmediately(dirPath: string): Promise<void>;
-    deleteDirectoryImmediatelySync(dirPath: string): void;
+    moveFileImmediately(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): Promise<void>;
+    moveFileImmediatelySync(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): void;
+    deleteFileImmediately(filePath: StandardizedFilePath): Promise<void>;
+    deleteFileImmediatelySync(filePath: StandardizedFilePath): void;
+    copyDirectoryImmediately(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): Promise<void>;
+    copyDirectoryImmediatelySync(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): void;
+    moveDirectoryImmediately(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): Promise<void>;
+    moveDirectoryImmediatelySync(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): void;
+    deleteDirectoryImmediately(dirPath: StandardizedFilePath): Promise<void>;
+    deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
     private deleteSuppressNotFound;
     private deleteSuppressNotFoundSync;
-    fileExistsSync(filePath: string): boolean;
-    directoryExistsSync(dirPath: string): boolean;
-    readFileSync(filePath: string, encoding: string | undefined): string;
-    readDirSync(dirPath: string): string[];
-    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
-    globSync(patterns: ReadonlyArray<string>): string[];
+    fileExistsSync(filePath: StandardizedFilePath): boolean;
+    directoryExistsSync(dirPath: StandardizedFilePath): boolean;
+    readFileSync(filePath: StandardizedFilePath, encoding: string | undefined): string;
+    readDirSync(dirPath: StandardizedFilePath): StandardizedFilePath[];
+    glob(patterns: ReadonlyArray<string>): AsyncGenerator<StandardizedFilePath, void, unknown>;
+    globSync(patterns: ReadonlyArray<string>): Generator<StandardizedFilePath, void, unknown>;
     getFileSystem(): FileSystemHost;
     getCurrentDirectory(): StandardizedFilePath;
-    getDirectories(dirPath: string): string[];
-    realpathSync(path: string): StandardizedFilePath;
+    getDirectories(dirPath: StandardizedFilePath): StandardizedFilePath[];
+    realpathSync(path: StandardizedFilePath): StandardizedFilePath;
     getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string): StandardizedFilePath;
-    readFileOrNotExists(filePath: string, encoding: string): false | Promise<string | false>;
-    readFileOrNotExistsSync(filePath: string, encoding: string): string | false;
-    writeFile(filePath: string, fileText: string): Promise<void>;
-    writeFileSync(filePath: string, fileText: string): void;
+    readFileOrNotExists(filePath: StandardizedFilePath, encoding: string): false | Promise<string | false>;
+    readFileOrNotExistsSync(filePath: StandardizedFilePath, encoding: string): string | false;
+    writeFile(filePath: StandardizedFilePath, fileText: string): Promise<void>;
+    writeFileSync(filePath: StandardizedFilePath, fileText: string): void;
     private isPathDirectoryInQueueThatExists;
     private isPathQueuedForDeletion;
     private removeDirAndSubDirs;
@@ -629,7 +624,7 @@ export declare class FileUtils {
      * Joins the paths.
      * @param paths - Paths to join.
      */
-    static pathJoin(...paths: string[]): string;
+    static pathJoin<T extends string>(basePath: T, ...paths: string[]): T;
     /**
      * Gets if the path is absolute.
      * @param fileOrDirPath - File or directory path.
@@ -641,27 +636,27 @@ export declare class FileUtils {
      * @param fileOrDirPath - Path to standardize.
      * @param relativeBase - Base path to be relative from.
      */
-    static getStandardizedAbsolutePath(fileSystem: FileSystemHost, fileOrDirPath: string, relativeBase?: string): string;
+    static getStandardizedAbsolutePath(fileSystem: FileSystemHost, fileOrDirPath: string, relativeBase?: string): StandardizedFilePath;
     /**
      * Gets the directory path.
      * @param fileOrDirPath - Path to get the directory name from.
      */
-    static getDirPath(fileOrDirPath: string): string;
+    static getDirPath<T extends string>(fileOrDirPath: T): T;
     /**
-     * Gets the base name.
+     * Gets the last portion of the path.
      * @param fileOrDirPath - Path to get the base name from.
      */
-    static getBaseName(fileOrDirPath: string): string;
+    static getBaseName(fileOrDirPath: StandardizedFilePath): string;
     /**
      * Gets the extension of the file name.
      * @param fileOrDirPath - Path to get the extension from.
      */
-    static getExtension(fileOrDirPath: string): string;
+    static getExtension(fileOrDirPath: StandardizedFilePath): string;
     /**
      * Changes all back slashes to forward slashes.
      * @param fileOrDirPath - Path.
      */
-    static standardizeSlashes(fileOrDirPath: string): string;
+    static standardizeSlashes<T extends string>(fileOrDirPath: T): T;
     /**
      * Checks if a path ends with a specified search path.
      * @param fileOrDirPath - Path.
@@ -679,21 +674,21 @@ export declare class FileUtils {
      * Gets the parent most paths out of the list of paths.
      * @param paths - File or directory paths.
      */
-    static getParentMostPaths(paths: string[]): string[];
+    static getParentMostPaths(paths: StandardizedFilePath[]): StandardizedFilePath[];
     /**
      * Reads a file or returns false if the file doesn't exist.
      * @param fileSystem - File System.
      * @param filePath - Path to file.
      * @param encoding - File encoding.
      */
-    static readFileOrNotExists(fileSystem: FileSystemHost, filePath: string, encoding: string): Promise<string | false>;
+    static readFileOrNotExists(fileSystem: FileSystemHost, filePath: StandardizedFilePath, encoding: string): Promise<string | false>;
     /**
      * Reads a file synchronously or returns false if the file doesn't exist.
      * @param fileSystem - File System.
      * @param filePath - Path to file.
      * @param encoding - File encoding.
      */
-    static readFileOrNotExistsSync(fileSystem: FileSystemHost, filePath: string, encoding: string): string | false;
+    static readFileOrNotExistsSync(fileSystem: FileSystemHost, filePath: StandardizedFilePath, encoding: string): string | false;
     /**
      * Gets the text with a byte order mark.
      * @param text - Text.
@@ -704,17 +699,17 @@ export declare class FileUtils {
      * @param absoluteDirPathFrom - Absolute directory path from.
      * @param absolutePathTo - Absolute path to.
      */
-    static getRelativePathTo(absoluteDirPathFrom: string, absolutePathTo: string): string;
+    static getRelativePathTo(absoluteDirPathFrom: StandardizedFilePath, absolutePathTo: StandardizedFilePath): StandardizedFilePath;
     /**
      * Gets if the path is for the root directory.
      * @param path - Path.
      */
-    static isRootDirPath(dirOrFilePath: string): boolean;
+    static isRootDirPath(dirOrFilePath: StandardizedFilePath): boolean;
     /**
      * Gets the descendant directories of the specified directory.
      * @param dirPath - Directory path.
      */
-    static getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: string): IterableIterator<string>;
+    static getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: StandardizedFilePath): IterableIterator<StandardizedFilePath>;
     /**
      * Gets the glob as absolute.
      * @param glob - Glob.
@@ -782,6 +777,11 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
     private getOrCreateDir;
 }
+
+/** Nominal type to denote a file path that has been standardized. */
+export declare type StandardizedFilePath = string & {
+    _standardizedFilePathBrand: undefined;
+};
 
 /**
  * Gets the enum name for the specified syntax kind.

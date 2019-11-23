@@ -47,7 +47,7 @@ export class LanguageService {
 
         this._compilerHost = compilerHost;
         this._compilerObject = ts.createLanguageService(languageServiceHost, this._context.compilerFactory.documentRegistry);
-        this._program = new Program(this._context, this._context.compilerFactory.getSourceFilePaths(), this._compilerHost);
+        this._program = new Program(this._context, Array.from(this._context.compilerFactory.getSourceFilePaths()), this._compilerHost);
 
         this._context.compilerFactory.onSourceFileAdded(() => this._resetProgram());
         this._context.compilerFactory.onSourceFileRemoved(() => this._resetProgram());
@@ -58,7 +58,7 @@ export class LanguageService {
      * @internal
      */
     _resetProgram() {
-        this._program._reset(this._context.compilerFactory.getSourceFilePaths(), this._compilerHost);
+        this._program._reset(Array.from(this._context.compilerFactory.getSourceFilePaths()), this._compilerHost);
     }
 
     /**
@@ -195,7 +195,8 @@ export class LanguageService {
      * @param formatSettings - Format code settings.
      */
     getFormattingEditsForDocument(filePath: string, formatSettings: FormatCodeSettings) {
-        return (this.compilerObject.getFormattingEditsForDocument(filePath, this._getFilledSettings(formatSettings)) || []).map(e => new TextChange(e));
+        const standardizedFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        return (this.compilerObject.getFormattingEditsForDocument(standardizedFilePath, this._getFilledSettings(formatSettings)) || []).map(e => new TextChange(e));
     }
 
     /**
@@ -204,12 +205,13 @@ export class LanguageService {
      * @param formatSettings - Format code settings.
      */
     getFormattedDocumentText(filePath: string, formatSettings: FormatCodeSettings) {
-        const sourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
+        const standardizedFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        const sourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(standardizedFilePath);
         if (sourceFile == null)
-            throw new errors.FileNotFoundError(filePath);
+            throw new errors.FileNotFoundError(standardizedFilePath);
 
         formatSettings = this._getFilledSettings(formatSettings);
-        const formattingEdits = this.getFormattingEditsForDocument(filePath, formatSettings);
+        const formattingEdits = this.getFormattingEditsForDocument(standardizedFilePath, formatSettings);
         let newText = getTextFromFormattingEdits(sourceFile, formattingEdits);
         const newLineChar = formatSettings.newLineCharacter!;
 

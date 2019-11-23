@@ -1,5 +1,5 @@
 import { errors, FileUtils, TransactionalFileSystem, FileSystemHost, RealFileSystemHost, matchGlobs, InMemoryFileSystemHost, ResolutionHostFactory,
-    TsConfigResolver, CompilerOptionsContainer, ts, CompilerOptions, ScriptKind, IterableUtils, getLibFiles } from "@ts-morph/common";
+    TsConfigResolver, CompilerOptionsContainer, ts, CompilerOptions, ScriptKind, IterableUtils, getLibFiles, StandardizedFilePath } from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import { Directory, DirectoryAddOptions } from "./fileSystem";
@@ -67,7 +67,7 @@ export class Project {
         // get tsconfig info
         const tsConfigResolver = options.tsConfigFilePath == null
             ? undefined
-            : new TsConfigResolver(fileSystemWrapper, options.tsConfigFilePath, getEncoding());
+            : new TsConfigResolver(fileSystemWrapper, fileSystemWrapper.getStandardizedAbsolutePath(options.tsConfigFilePath), getEncoding());
 
         // compiler options initialization
         const compilerOptions = getCompilerOptions();
@@ -189,8 +189,10 @@ export class Project {
      * @skipOrThrowCheck
      */
     addDirectoryAtPathIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
-        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addDirectoryAtPathIfExists(dirPath, { ...options, markInProject: true });
+        return this._context.directoryCoordinator.addDirectoryAtPathIfExists(
+            this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath),
+            { ...options, markInProject: true }
+        );
     }
 
     /** @deprecated Use `addDirectoryAtPath`. */
@@ -207,8 +209,10 @@ export class Project {
      * @throws DirectoryNotFoundError when the directory does not exist.
      */
     addDirectoryAtPath(dirPath: string, options: DirectoryAddOptions = {}): Directory {
-        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.addDirectoryAtPath(dirPath, { ...options, markInProject: true });
+        return this._context.directoryCoordinator.addDirectoryAtPath(
+            this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath),
+            { ...options, markInProject: true }
+        );
     }
 
     /**
@@ -216,8 +220,10 @@ export class Project {
      * @param dirPath - Path to create the directory at.
      */
     createDirectory(dirPath: string): Directory {
-        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this._context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath, { markInProject: true });
+        return this._context.directoryCoordinator.createDirectoryOrAddIfExists(
+            this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath),
+            { markInProject: true }
+        );
     }
 
     /**
@@ -234,10 +240,9 @@ export class Project {
      * @param dirPath - Directory path.
      */
     getDirectory(dirPath: string): Directory | undefined {
-        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
         const { compilerFactory } = this._context;
         // when a directory path is specified, even return directories not in the project
-        return compilerFactory.getDirectoryFromCache(dirPath);
+        return compilerFactory.getDirectoryFromCache(this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath));
     }
 
     /**
@@ -303,7 +308,7 @@ export class Project {
      * @skipOrThrowCheck
      */
     addSourceFileAtPathIfExists(filePath: string): SourceFile | undefined {
-        return this._context.directoryCoordinator.addSourceFileAtPathIfExists(filePath, { markInProject: true });
+        return this._context.directoryCoordinator.addSourceFileAtPathIfExists(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath), { markInProject: true });
     }
 
     /**
@@ -321,7 +326,7 @@ export class Project {
      * @throws FileNotFoundError when the file is not found.
      */
     addSourceFileAtPath(filePath: string): SourceFile {
-        return this._context.directoryCoordinator.addSourceFileAtPath(filePath, { markInProject: true });
+        return this._context.directoryCoordinator.addSourceFileAtPath(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath), { markInProject: true });
     }
 
     /**
@@ -332,8 +337,11 @@ export class Project {
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
     addSourceFilesFromTsConfig(tsConfigFilePath: string): SourceFile[] {
-        tsConfigFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
-        const resolver = new TsConfigResolver(this._context.fileSystemWrapper, tsConfigFilePath, this._context.getEncoding());
+        const resolver = new TsConfigResolver(
+            this._context.fileSystemWrapper,
+            this._context.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath),
+            this._context.getEncoding()
+        );
         return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
     }
 
@@ -361,7 +369,10 @@ export class Project {
         sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
         options?: SourceFileCreateOptions
     ): SourceFile {
-        return this._context.compilerFactory.createSourceFile(filePath, sourceFileText ?? "", { ...(options ?? {}), markInProject: true });
+        return this._context.compilerFactory.createSourceFile(
+            this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath),
+            sourceFileText ?? "", { ...(options ?? {}), markInProject: true }
+        );
     }
 
     /**
@@ -423,14 +434,14 @@ export class Project {
     getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined {
         const filePathOrSearchFunction = getFilePathOrSearchFunction(this._context.fileSystemWrapper);
 
-        if (typeof filePathOrSearchFunction === "string") {
+        if (isStandardizedFilePath(filePathOrSearchFunction)) {
             // when a file path is specified, return even source files not in the project
             return this._context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
         }
 
         return IterableUtils.find(this._getProjectSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
 
-        function getFilePathOrSearchFunction(fileSystemWrapper: TransactionalFileSystem): string | ((file: SourceFile) => boolean) {
+        function getFilePathOrSearchFunction(fileSystemWrapper: TransactionalFileSystem): StandardizedFilePath | ((file: SourceFile) => boolean) {
             if (fileNameOrSearchFunction instanceof Function)
                 return fileNameOrSearchFunction;
 
@@ -439,6 +450,11 @@ export class Project {
                 return fileSystemWrapper.getStandardizedAbsolutePath(fileNameOrPath);
             else
                 return def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrPath);
+        }
+
+        // workaround to help the type checker figure this out
+        function isStandardizedFilePath(obj: any): obj is StandardizedFilePath {
+            return typeof obj === "string";
         }
     }
 
@@ -471,7 +487,7 @@ export class Project {
             const matchedPaths = matchGlobs(sourceFilePaths, globPatterns!, fileSystemWrapper.getCurrentDirectory());
 
             for (const matchedPath of matchedPaths)
-                yield compilerFactory.getSourceFileFromCacheFromFilePath(matchedPath)!;
+                yield compilerFactory.getSourceFileFromCacheFromFilePath(fileSystemWrapper.getStandardizedAbsolutePath(matchedPath))!;
 
             function* getSourceFilePaths() {
                 for (const sourceFile of sourceFiles)

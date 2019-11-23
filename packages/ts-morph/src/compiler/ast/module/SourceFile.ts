@@ -1,4 +1,4 @@
-import { errors, ArrayUtils, StringUtils, Memoize, EventContainer, FileUtils, LanguageVariant, ScriptTarget, ts, ScriptKind } from "@ts-morph/common";
+import { errors, ArrayUtils, StringUtils, Memoize, EventContainer, FileUtils, LanguageVariant, ScriptTarget, ts, ScriptKind, StandardizedFilePath } from "@ts-morph/common";
 import { Directory } from "../../../fileSystem";
 import { getTextFromFormattingEdits, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove,
     replaceSourceFileTextForFormatting } from "../../../manipulation";
@@ -112,7 +112,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the file path.
      */
     getFilePath() {
-        return this.compilerNode.fileName;
+        return this.compilerNode.fileName as StandardizedFilePath;
     }
 
     /**
@@ -148,8 +148,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the directory path that the source file is contained in.
      */
-    getDirectoryPath() {
-        return FileUtils.getDirPath(this.compilerNode.fileName);
+    getDirectoryPath(): StandardizedFilePath {
+        return this._context.fileSystemWrapper.getStandardizedAbsolutePath(FileUtils.getDirPath(this.compilerNode.fileName));
     }
 
     /**
@@ -214,19 +214,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /** @internal */
-    _copyInternal(filePath: string, options: SourceFileCopyOptions = {}) {
+    _copyInternal(fileAbsoluteOrRelativePath: string, options: SourceFileCopyOptions = {}) {
         const { overwrite = false } = options;
         const { compilerFactory, fileSystemWrapper } = this._context;
-        filePath = fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        const standardizedFilePath = fileSystemWrapper.getStandardizedAbsolutePath(fileAbsoluteOrRelativePath, this.getDirectoryPath());
 
-        if (filePath === this.getFilePath())
+        if (standardizedFilePath === this.getFilePath())
             return false;
 
         return getCopiedSourceFile(this);
 
         function getCopiedSourceFile(currentFile: SourceFile) {
             try {
-                return compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), { overwrite, markInProject: getShouldBeInProject() });
+                return compilerFactory.createSourceFileFromText(standardizedFilePath, currentFile.getFullText(), { overwrite, markInProject: getShouldBeInProject() });
             } catch (err) {
                 if (err instanceof errors.InvalidOperationError)
                     throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
@@ -237,7 +237,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             function getShouldBeInProject() {
                 if (currentFile._isInProject())
                     return true;
-                const destinationFile = compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
+                const destinationFile = compilerFactory.getSourceFileFromCacheFromFilePath(standardizedFilePath);
                 return destinationFile != null && destinationFile._isInProject();
             }
         }
@@ -322,9 +322,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /** @internal */
-    _moveInternal(filePath: string, options: SourceFileMoveOptions = {}) {
+    _moveInternal(fileRelativeOrAbsolutePath: string, options: SourceFileMoveOptions = {}) {
         const { overwrite = false } = options;
-        filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(fileRelativeOrAbsolutePath, this.getDirectoryPath());
 
         if (filePath === this.getFilePath())
             return false;

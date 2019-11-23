@@ -186,7 +186,7 @@ export declare class Directory {
     /**
      * Gets the path to the directory.
      */
-    getPath(): string;
+    getPath(): StandardizedFilePath;
     /**
      * Gets the directory path's base name.
      */
@@ -273,10 +273,10 @@ export declare class Directory {
      * Adds an existing directory from the relative path or directory name, or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
-     * @param dirPath - Directory name or path to the directory that should be added.
+     * @param relativeOrAbsoluteDirPath - Directory name or path to the directory that should be added.
      * @param options - Options.
      */
-    addDirectoryAtPathIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    addDirectoryAtPathIfExists(relativeOrAbsoluteDirPath: string, options?: DirectoryAddOptions): Directory | undefined;
     /**
      * @deprecated Use `addDirectoryAtPath`.
      */
@@ -285,15 +285,15 @@ export declare class Directory {
      * Adds an existing directory from the relative path or directory name, or throws if it doesn't exist.
      *
      * Will return the directory if it was already added.
-     * @param dirPath - Directory name or path to the directory that should be added.
+     * @param relativeOrAbsoluteDirPath - Directory name or path to the directory that should be added.
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
-    addDirectoryAtPath(dirPath: string, options?: DirectoryAddOptions): Directory;
+    addDirectoryAtPath(relativeOrAbsoluteDirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Creates a directory if it doesn't exist.
-     * @param dirPath - Relative or absolute path to the directory that should be created.
+     * @param relativeOrAbsoluteDirPath - Relative or absolute path to the directory that should be created.
      */
-    createDirectory(dirPath: string): Directory;
+    createDirectory(relativeOrAbsoluteDirPath: string): Directory;
     /**
      * Creates a source file, relative to this directory.
      *
@@ -476,11 +476,11 @@ export declare class DirectoryEmitResult {
     /**
      * Gets a collections of skipped file paths.
      */
-    getSkippedFilePaths(): string[];
+    getSkippedFilePaths(): StandardizedFilePath[];
     /**
      * Gets the output file paths.
      */
-    getOutputFilePaths(): string[];
+    getOutputFilePaths(): StandardizedFilePath[];
 }
 
 export interface DirectoryMoveOptions extends SourceFileMoveOptions {
@@ -8178,7 +8178,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the file path.
      */
-    getFilePath(): string;
+    getFilePath(): StandardizedFilePath;
     /**
      * Gets the file path's base name.
      */
@@ -8198,7 +8198,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the directory path that the source file is contained in.
      */
-    getDirectoryPath(): string;
+    getDirectoryPath(): StandardizedFilePath;
     /**
      * Gets the full text with leading trivia.
      */
@@ -10552,7 +10552,7 @@ export interface MemoryEmitResultFile {
     /**
      * File path that was emitted to.
      */
-    filePath: string;
+    filePath: StandardizedFilePath;
     /**
      * The text that was emitted.
      */
@@ -10596,7 +10596,7 @@ export declare class OutputFile {
     /**
      * Gets the file path.
      */
-    getFilePath(): string;
+    getFilePath(): StandardizedFilePath;
     /**
      * Gets whether the byte order mark should be written.
      */

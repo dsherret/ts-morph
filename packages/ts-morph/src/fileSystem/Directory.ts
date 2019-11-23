@@ -1,5 +1,5 @@
 import { SourceFile, SourceFileCopyOptions, SourceFileMoveOptions } from "../compiler";
-import { errors, ObjectUtils, FileUtils, ModuleResolutionKind } from "@ts-morph/common";
+import { errors, ObjectUtils, FileUtils, ModuleResolutionKind, StandardizedFilePath } from "@ts-morph/common";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure, OptionalKind } from "../structures";
@@ -28,17 +28,17 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
 
 export class Directory {
     private __context: ProjectContext | undefined;
-    private _path!: string;
+    private _path!: StandardizedFilePath;
     private _pathParts!: string[];
 
     /** @private */
-    constructor(context: ProjectContext, path: string) {
+    constructor(context: ProjectContext, path: StandardizedFilePath) {
         this.__context = context;
         this._setPathInternal(path);
     }
 
     /** @internal */
-    _setPathInternal(path: string) {
+    _setPathInternal(path: StandardizedFilePath) {
         this._path = path;
         this._pathParts = path.split("/").filter(p => p.length > 0);
     }
@@ -284,12 +284,12 @@ export class Directory {
      * Adds an existing directory from the relative path or directory name, or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
-     * @param dirPath - Directory name or path to the directory that should be added.
+     * @param relativeOrAbsoluteDirPath - Directory name or path to the directory that should be added.
      * @param options - Options.
      * @skipOrThrowCheck
      */
-    addDirectoryAtPathIfExists(dirPath: string, options: DirectoryAddOptions = {}) {
-        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
+    addDirectoryAtPathIfExists(relativeOrAbsoluteDirPath: string, options: DirectoryAddOptions = {}) {
+        const dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsoluteDirPath, this.getPath());
         return this._context.directoryCoordinator.addDirectoryAtPathIfExists(
             dirPath,
             { ...options, markInProject: this._isInProject() }
@@ -307,11 +307,11 @@ export class Directory {
      * Adds an existing directory from the relative path or directory name, or throws if it doesn't exist.
      *
      * Will return the directory if it was already added.
-     * @param dirPath - Directory name or path to the directory that should be added.
+     * @param relativeOrAbsoluteDirPath - Directory name or path to the directory that should be added.
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
-    addDirectoryAtPath(dirPath: string, options: DirectoryAddOptions = {}) {
-        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
+    addDirectoryAtPath(relativeOrAbsoluteDirPath: string, options: DirectoryAddOptions = {}) {
+        const dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsoluteDirPath, this.getPath());
         return this._context.directoryCoordinator.addDirectoryAtPath(
             dirPath,
             { ...options, markInProject: this._isInProject() }
@@ -320,10 +320,10 @@ export class Directory {
 
     /**
      * Creates a directory if it doesn't exist.
-     * @param dirPath - Relative or absolute path to the directory that should be created.
+     * @param relativeOrAbsoluteDirPath - Relative or absolute path to the directory that should be created.
      */
-    createDirectory(dirPath: string) {
-        dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
+    createDirectory(relativeOrAbsoluteDirPath: string) {
+        const dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsoluteDirPath, this.getPath());
         return this._context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath, { markInProject: this._isInProject() });
     }
 
@@ -390,11 +390,11 @@ export class Directory {
     async emit(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
         const { fileSystemWrapper } = this._context;
         const writeTasks: Promise<void>[] = [];
-        const outputFilePaths: string[] = [];
-        const skippedFilePaths: string[] = [];
+        const outputFilePaths: StandardizedFilePath[] = [];
+        const skippedFilePaths: StandardizedFilePath[] = [];
 
         for (const emitResult of this._emitInternal(options)) {
-            if (typeof emitResult === "string")
+            if (isStandardizedFilePath(emitResult))
                 skippedFilePaths.push(emitResult);
             else {
                 writeTasks.push(fileSystemWrapper.writeFile(emitResult.filePath, emitResult.fileText));
@@ -414,11 +414,11 @@ export class Directory {
      */
     emitSync(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
         const { fileSystemWrapper } = this._context;
-        const outputFilePaths: string[] = [];
-        const skippedFilePaths: string[] = [];
+        const outputFilePaths: StandardizedFilePath[] = [];
+        const skippedFilePaths: StandardizedFilePath[] = [];
 
         for (const emitResult of this._emitInternal(options)) {
-            if (typeof emitResult === "string")
+            if (isStandardizedFilePath(emitResult))
                 skippedFilePaths.push(emitResult);
             else {
                 fileSystemWrapper.writeFileSync(emitResult.filePath, emitResult.fileText);
@@ -437,16 +437,16 @@ export class Directory {
         const getStandardizedPath = (path: string | undefined) => path == null
             ? undefined
             : this._context.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
-        const getSubDirPath = (path: string | undefined, dir: Directory) => path == null ? undefined : FileUtils.pathJoin(path, dir.getBaseName());
+        const getSubDirPath = (path: StandardizedFilePath | undefined, dir: Directory) => path == null ? undefined : FileUtils.pathJoin(path, dir.getBaseName());
         const hasDeclarationDir = this._context.compilerOptions.get().declarationDir != null || options.declarationDir != null;
 
         return emitDirectory(this, getStandardizedPath(options.outDir), getStandardizedPath(options.declarationDir));
 
         function* emitDirectory(
             directory: Directory,
-            outDir?: string,
-            declarationDir?: string
-        ): IterableIterator<string | { filePath: string; fileText: string; }> {
+            outDir?: StandardizedFilePath,
+            declarationDir?: StandardizedFilePath
+        ): IterableIterator<StandardizedFilePath | { filePath: StandardizedFilePath; fileText: string; }> {
             for (const sourceFile of directory.getSourceFiles()) {
                 const output = sourceFile.getEmitOutput({ emitOnlyDtsFiles });
 
@@ -554,7 +554,7 @@ export class Directory {
     }
 
     /** @internal */
-    private _copyInternal(newPath: string, options?: DirectoryCopyOptions) {
+    private _copyInternal(newPath: StandardizedFilePath, options?: DirectoryCopyOptions) {
         const originalPath = this.getPath();
 
         if (originalPath === newPath)
@@ -654,7 +654,7 @@ export class Directory {
     }
 
     /** @internal */
-    private _moveInternal(newPath: string, options: DirectoryMoveOptions | undefined, preAction?: () => void) {
+    private _moveInternal(newPath: StandardizedFilePath, options: DirectoryMoveOptions | undefined, preAction?: () => void) {
         const originalPath = this.getPath();
 
         if (originalPath === newPath)
@@ -833,7 +833,7 @@ export class Directory {
                         const filePath = sourceFile.getFilePath();
                         if (sourceFile.getDirectory() === thisDirectory)
                             return filePath;
-                        return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "");
+                        return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
                     case ModuleResolutionKind.Classic:
                         return sourceFile.getFilePath();
                     default:
@@ -924,4 +924,9 @@ function getDirectoryCopyOptions(options: DirectoryCopyOptions | undefined) {
     options = ObjectUtils.clone(options || {});
     setValueIfUndefined(options, "includeUntrackedFiles", true);
     return options;
+}
+
+// workaround for type checker not being able to inline this
+function isStandardizedFilePath(filePath: any): filePath is StandardizedFilePath {
+    return typeof filePath === "string";
 }

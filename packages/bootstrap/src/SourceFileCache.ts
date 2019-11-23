@@ -1,8 +1,8 @@
-import { KeyValueCache, DocumentRegistry, ScriptKind, ts, StringUtils, TsSourceFileContainer, FileUtils, TransactionalFileSystem,
-    CompilerOptionsContainer } from "@ts-morph/common";
+import { DocumentRegistry, ScriptKind, ts, StringUtils, TsSourceFileContainer, FileUtils, TransactionalFileSystem,
+    CompilerOptionsContainer, StandardizedFilePath} from "@ts-morph/common";
 
 export class SourceFileCache implements TsSourceFileContainer {
-    private readonly sourceFilesByFilePath = new KeyValueCache<string, ts.SourceFile>();
+    private readonly sourceFilesByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();
 
     readonly documentRegistry: DocumentRegistry;
 
@@ -13,30 +13,27 @@ export class SourceFileCache implements TsSourceFileContainer {
         this.documentRegistry = new DocumentRegistry(fileSystemWrapper);
     }
 
-    containsSourceFileAtPath(filePath: string) {
-        filePath = this.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    containsSourceFileAtPath(filePath: StandardizedFilePath) {
         return this.sourceFilesByFilePath.has(filePath);
     }
 
     getSourceFilePaths() {
-        return Array.from(this.sourceFilesByFilePath.getKeys());
+        return this.sourceFilesByFilePath.keys();
     }
 
     getSourceFiles() {
-        return this.sourceFilesByFilePath.getValuesAsArray();
+        return this.sourceFilesByFilePath.values();
     }
 
     getSourceFileVersion(sourceFile: ts.SourceFile) {
         return this.documentRegistry.getSourceFileVersion(sourceFile);
     }
 
-    getSourceFileFromCacheFromFilePath(filePath: string) {
-        filePath = this.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath) {
         return this.sourceFilesByFilePath.get(filePath);
     }
 
-    addOrGetSourceFileFromFilePath(filePath: string, options: { scriptKind: ScriptKind | undefined; }): ts.SourceFile | undefined {
-        filePath = this.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined; }): ts.SourceFile | undefined {
         let sourceFile = this.sourceFilesByFilePath.get(filePath);
         if (sourceFile == null && this.fileSystemWrapper.fileExistsSync(filePath)) {
             sourceFile = this.createSourceFileFromText(
@@ -50,7 +47,7 @@ export class SourceFileCache implements TsSourceFileContainer {
     }
 
     createSourceFileFromText(
-        filePath: string,
+        filePath: StandardizedFilePath,
         text: string,
         options: { scriptKind: ScriptKind | undefined; }
     ): ts.SourceFile {
@@ -65,31 +62,30 @@ export class SourceFileCache implements TsSourceFileContainer {
     }
 
     setSourceFile(sourceFile: ts.SourceFile) {
-        sourceFile.fileName = this.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
+        const standardizedFilePath = this.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
+        sourceFile.fileName = standardizedFilePath;
 
         this.documentRegistry.updateDocument(
-            sourceFile.fileName,
+            standardizedFilePath,
             this.compilerOptions.get(),
             ts.ScriptSnapshot.fromString(sourceFile.text),
             this.getSourceFileVersion(sourceFile),
             (sourceFile as any)["scriptKind"] as ts.ScriptKind
         );
 
-        this.fileSystemWrapper.queueMkdir(FileUtils.getDirPath(sourceFile.fileName));
-        this.sourceFilesByFilePath.set(sourceFile.fileName, sourceFile);
+        this.fileSystemWrapper.queueMkdir(FileUtils.getDirPath(standardizedFilePath));
+        this.sourceFilesByFilePath.set(standardizedFilePath, sourceFile);
     }
 
-    removeSourceFile(filePath: string) {
-        filePath = this.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        this.sourceFilesByFilePath.removeByKey(filePath);
+    removeSourceFile(filePath: StandardizedFilePath) {
+        this.sourceFilesByFilePath.delete(filePath);
     }
 
-    containsDirectoryAtPath(dirPath: string) {
-        dirPath = this.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+    containsDirectoryAtPath(dirPath: StandardizedFilePath) {
         return this.fileSystemWrapper.directoryExistsSync(dirPath);
     }
 
-    getChildDirectoriesOfDirectory(dirPath: string) {
+    getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath) {
         return this.fileSystemWrapper.getDirectories(dirPath);
     }
 }

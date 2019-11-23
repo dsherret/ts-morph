@@ -1,5 +1,5 @@
 import { errors, FileSystemHost, TransactionalFileSystem, InMemoryFileSystemHost, RealFileSystemHost, ResolutionHostFactory, TsConfigResolver,
-    CompilerOptionsContainer, Memoize, createModuleResolutionHost, createHosts, ts, FileUtils } from "@ts-morph/common";
+    CompilerOptionsContainer, Memoize, createModuleResolutionHost, createHosts, ts, FileUtils, StandardizedFilePath } from "@ts-morph/common";
 import { SourceFileCache } from "./SourceFileCache";
 
 /** Options for creating a project. */
@@ -47,7 +47,11 @@ export class Project {
         // get tsconfig info
         const tsConfigResolver = options.tsConfigFilePath == null
             ? undefined
-            : new TsConfigResolver(this._fileSystemWrapper, options.tsConfigFilePath, getEncodingFromProvidedOptions());
+            : new TsConfigResolver(
+                this._fileSystemWrapper,
+                this._fileSystemWrapper.getStandardizedAbsolutePath(options.tsConfigFilePath),
+                getEncodingFromProvidedOptions()
+            );
 
         // initialize the compiler options
         const tsCompilerOptions = getCompilerOptions();
@@ -127,7 +131,7 @@ export class Project {
      * @skipOrThrowCheck
      */
     addSourceFileAtPathIfExists(filePath: string, options?: { scriptKind?: ts.ScriptKind; }): ts.SourceFile | undefined {
-        return this._sourceFileCache.addOrGetSourceFileFromFilePath(filePath, {
+        return this._sourceFileCache.addOrGetSourceFileFromFilePath(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
             scriptKind: options && options.scriptKind
         });
     }
@@ -175,8 +179,8 @@ export class Project {
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
     addSourceFilesFromTsConfig(tsConfigFilePath: string): ts.SourceFile[] {
-        tsConfigFilePath = this._fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
-        const resolver = new TsConfigResolver(this._fileSystemWrapper, tsConfigFilePath, this.compilerOptions.getEncoding());
+        const standardizedFilePath = this._fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
+        const resolver = new TsConfigResolver(this._fileSystemWrapper, standardizedFilePath, this.compilerOptions.getEncoding());
         return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
     }
 
@@ -194,7 +198,10 @@ export class Project {
         sourceFileText?: string,
         options?: { scriptKind?: ts.ScriptKind; }
     ): ts.SourceFile {
-        return this._sourceFileCache.createSourceFileFromText(filePath, sourceFileText || "", { scriptKind: options && options.scriptKind });
+        return this._sourceFileCache.createSourceFileFromText(
+            this._fileSystemWrapper.getStandardizedAbsolutePath(filePath),
+            sourceFileText || "", { scriptKind: options && options.scriptKind }
+        );
     }
 
     /**
@@ -247,10 +254,9 @@ export class Project {
      */
     removeSourceFile(sourceFile: ts.SourceFile): void;
     removeSourceFile(filePathOrSourceFile: string | ts.SourceFile) {
-        if (typeof filePathOrSourceFile === "string")
-            this._sourceFileCache.removeSourceFile(filePathOrSourceFile);
-        else
-            this._sourceFileCache.removeSourceFile(filePathOrSourceFile.fileName);
+        this._sourceFileCache.removeSourceFile(this._fileSystemWrapper.getStandardizedAbsolutePath(
+            typeof filePathOrSourceFile === "string" ? filePathOrSourceFile : filePathOrSourceFile.fileName
+        ));
     }
 
     /**
@@ -284,7 +290,7 @@ export class Project {
     createProgram(options?: ts.CreateProgramOptions): ts.Program {
         const oldProgram = this._oldProgram;
         const program = ts.createProgram({
-            rootNames: this._sourceFileCache.getSourceFilePaths(),
+            rootNames: Array.from(this._sourceFileCache.getSourceFilePaths()),
             options: this.compilerOptions.get(),
             host: this.compilerHost,
             oldProgram,
@@ -350,14 +356,20 @@ export class Project {
     getSourceFile(fileNameOrSearchFunction: string | ((file: ts.SourceFile) => boolean)): ts.SourceFile | undefined {
         const filePathOrSearchFunction = getFilePathOrSearchFunction(this._fileSystemWrapper);
 
-        if (typeof filePathOrSearchFunction === "string") {
+        if (isStandardizedFilePath(filePathOrSearchFunction)) {
             // when a file path is specified, return even source files not in the project
             return this._sourceFileCache.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
         }
 
-        return selectSmallestDirPathResult(this.getSourceFiles().filter(filePathOrSearchFunction));
+        const allSoureFilesIterable = this.getSourceFiles();
+        return selectSmallestDirPathResult(function*() {
+            for (const sourceFile of allSoureFilesIterable) {
+                if (filePathOrSearchFunction(sourceFile))
+                    yield sourceFile;
+            }
+        }());
 
-        function getFilePathOrSearchFunction(fileSystemWrapper: TransactionalFileSystem): string | ((file: ts.SourceFile) => boolean) {
+        function getFilePathOrSearchFunction(fileSystemWrapper: TransactionalFileSystem): StandardizedFilePath | ((file: ts.SourceFile) => boolean) {
             if (fileNameOrSearchFunction instanceof Function)
                 return fileNameOrSearchFunction;
 
@@ -368,7 +380,7 @@ export class Project {
                 return def => FileUtils.pathEndsWith(def.fileName, fileNameOrPath);
         }
 
-        function selectSmallestDirPathResult(results: ts.SourceFile[]) {
+        function selectSmallestDirPathResult(results: Iterable<ts.SourceFile>) {
             let result: ts.SourceFile | undefined;
             // Select the result with the shortest directory path... this could be more efficient
             // and better, but it will do for now...
@@ -378,11 +390,16 @@ export class Project {
             }
             return result;
         }
+
+        // workaround to help the type checker figure this out
+        function isStandardizedFilePath(obj: any): obj is StandardizedFilePath {
+            return typeof obj === "string";
+        }
     }
 
     /** Gets the source files in the project. */
     getSourceFiles() {
-        return this._sourceFileCache.getSourceFiles();
+        return Array.from(this._sourceFileCache.getSourceFiles());
     }
 
     /**

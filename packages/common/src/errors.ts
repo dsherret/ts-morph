@@ -1,5 +1,6 @@
 import { getSyntaxKindName } from "./helpers";
 import { ts } from "./typescript";
+import { StandardizedFilePath } from "./fileSystem";
 
 /** Collection of helper functions that can be used to throw errors. */
 export namespace errors {
@@ -43,7 +44,7 @@ export namespace errors {
 
     /** Thrown when a file or directory path was not found. */
     export class PathNotFoundError extends BaseError {
-        constructor(public readonly path: string, prefix = "Path") {
+        constructor(public readonly path: StandardizedFilePath, prefix = "Path") {
             super(`${prefix} not found: ${path}`);
         }
 
@@ -52,14 +53,14 @@ export namespace errors {
 
     /** Thrown when a directory was not found. */
     export class DirectoryNotFoundError extends PathNotFoundError {
-        constructor(dirPath: string) {
+        constructor(dirPath: StandardizedFilePath) {
             super(dirPath, "Directory");
         }
     }
 
     /** Thrown when a file was not found. */
     export class FileNotFoundError extends PathNotFoundError {
-        constructor(filePath: string) {
+        constructor(filePath: StandardizedFilePath) {
             super(filePath, "File");
         }
     }

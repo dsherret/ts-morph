@@ -1,14 +1,14 @@
-import { FileUtils, TransactionalFileSystem } from "../fileSystem";
+import { FileUtils, TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
 import { ts, CompilerOptions } from "../typescript";
 import { Memoize } from "../decorators";
 import { getTsParseConfigHost, TsParseConfigHostResult } from "./getTsParseConfigHost";
 
 export class TsConfigResolver {
     private readonly host: TsParseConfigHostResult;
-    private readonly tsConfigFilePath: string;
-    private readonly tsConfigDirPath: string;
+    private readonly tsConfigFilePath: StandardizedFilePath;
+    private readonly tsConfigDirPath: StandardizedFilePath;
 
-    constructor(private readonly fileSystem: TransactionalFileSystem, tsConfigFilePath: string, private readonly encoding: string) {
+    constructor(private readonly fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, private readonly encoding: string) {
         this.host = getTsParseConfigHost(fileSystem, { encoding });
         this.tsConfigFilePath = fileSystem.getStandardizedAbsolutePath(tsConfigFilePath);
         this.tsConfigDirPath = FileUtils.getDirPath(this.tsConfigFilePath);
@@ -26,23 +26,23 @@ export class TsConfigResolver {
 
     @Memoize
     getPaths(compilerOptions?: CompilerOptions) {
-        const files = new Set<string>();
+        const files = new Set<StandardizedFilePath>();
         const { tsConfigDirPath, fileSystem } = this;
-        const directories = new Set<string>();
+        const directories = new Set<StandardizedFilePath>();
 
         compilerOptions = compilerOptions || this.getCompilerOptions();
 
         const rootDirs = getRootDirs(compilerOptions);
         const configFileContent = this.parseJsonConfigFileContent();
 
-        for (let dirPath of configFileContent.directories) {
-            dirPath = fileSystem.getStandardizedAbsolutePath(dirPath);
+        for (let dirName of configFileContent.directories) {
+            const dirPath = fileSystem.getStandardizedAbsolutePath(dirName);
             if (dirInProject(dirPath) && fileSystem.directoryExistsSync(dirPath))
                 directories.add(dirPath);
         }
 
-        for (let filePath of configFileContent.fileNames) {
-            filePath = fileSystem.getStandardizedAbsolutePath(filePath);
+        for (let fileName of configFileContent.fileNames) {
+            const filePath = fileSystem.getStandardizedAbsolutePath(fileName);
             const parentDirPath = FileUtils.getDirPath(filePath);
             if (dirInProject(parentDirPath) && fileSystem.fileExistsSync(filePath)) {
                 files.add(filePath);
@@ -58,7 +58,7 @@ export class TsConfigResolver {
             directoryPaths: Array.from(directories.values())
         };
 
-        function dirInProject(dirPath: string) {
+        function dirInProject(dirPath: StandardizedFilePath) {
             // fast check
             if (directories.has(dirPath))
                 return true;

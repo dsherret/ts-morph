@@ -1,20 +1,20 @@
-import { KeyValueCache } from "../collections";
 import { errors } from "../errors";
 import { FileUtils } from "./FileUtils";
 import { matchGlobs } from "./matchGlobs";
 import { FileSystemHost } from "./FileSystemHost";
+import { StandardizedFilePath } from "./StandardizedFilePath";
 
 interface VirtualDirectory {
-    path: string;
-    files: KeyValueCache<string, string>;
+    path: StandardizedFilePath;
+    files: Map<StandardizedFilePath, string>;
 }
 
 /** An implementation of a file system that exists in memory only. */
 export class InMemoryFileSystemHost implements FileSystemHost {
-    private readonly directories = new KeyValueCache<string, VirtualDirectory>();
+    private readonly directories = new Map<StandardizedFilePath, VirtualDirectory>();
 
     constructor() {
-        this.getOrCreateDir("/");
+        this.getOrCreateDir("/" as StandardizedFilePath);
     }
 
     /** @inheritdoc */
@@ -34,35 +34,35 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     deleteSync(path: string) {
-        path = FileUtils.getStandardizedAbsolutePath(this, path);
-        if (this.directories.has(path)) {
+        const standardizedPath = FileUtils.getStandardizedAbsolutePath(this, path);
+        if (this.directories.has(standardizedPath)) {
             // remove descendant dirs
-            for (const descendantDirPath of getDescendantDirectories(this.directories.getKeys(), path))
-                this.directories.removeByKey(descendantDirPath);
+            for (const descendantDirPath of getDescendantDirectories(this.directories.keys(), standardizedPath))
+                this.directories.delete(descendantDirPath);
             // remove this dir
-            this.directories.removeByKey(path);
+            this.directories.delete(standardizedPath);
             return;
         }
 
-        const parentDir = this.directories.get(FileUtils.getDirPath(path));
-        if (parentDir == null || !parentDir.files.has(path))
-            throw new errors.FileNotFoundError(path);
-        parentDir.files.removeByKey(path);
+        const parentDir = this.directories.get(FileUtils.getDirPath(standardizedPath));
+        if (parentDir == null || !parentDir.files.has(standardizedPath))
+            throw new errors.FileNotFoundError(standardizedPath);
+        parentDir.files.delete(standardizedPath);
     }
 
     /** @inheritdoc */
-    readDirSync(dirPath: string) {
-        dirPath = FileUtils.getStandardizedAbsolutePath(this, dirPath);
-        const dir = this.directories.get(dirPath);
+    readDirSync(dirPath: string): string[] {
+        const standardizedDirPath = FileUtils.getStandardizedAbsolutePath(this, dirPath);
+        const dir = this.directories.get(standardizedDirPath);
         if (dir == null)
-            throw new errors.DirectoryNotFoundError(dirPath);
+            throw new errors.DirectoryNotFoundError(standardizedDirPath);
 
-        return [...getDirectories(this.directories.getKeys()), ...dir.files.getKeys()];
+        return [...getDirectories(this.directories.keys()), ...dir.files.keys()];
 
-        function* getDirectories(dirPaths: IterableIterator<string>) {
+        function* getDirectories(dirPaths: IterableIterator<StandardizedFilePath>) {
             for (const path of dirPaths) {
                 const parentDir = FileUtils.getDirPath(path);
-                if (parentDir === dirPath && parentDir !== path)
+                if (parentDir === standardizedDirPath && parentDir !== path)
                     yield path;
             }
         }
@@ -79,14 +79,14 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     readFileSync(filePath: string, encoding = "utf-8") {
-        filePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
-        const parentDir = this.directories.get(FileUtils.getDirPath(filePath));
+        const standardizedFilePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
+        const parentDir = this.directories.get(FileUtils.getDirPath(standardizedFilePath));
         if (parentDir == null)
-            throw new errors.FileNotFoundError(filePath);
+            throw new errors.FileNotFoundError(standardizedFilePath);
 
-        const fileText = parentDir.files.get(filePath);
+        const fileText = parentDir.files.get(standardizedFilePath);
         if (fileText === undefined)
-            throw new errors.FileNotFoundError(filePath);
+            throw new errors.FileNotFoundError(standardizedFilePath);
         return fileText;
     }
 
@@ -98,9 +98,9 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     writeFileSync(filePath: string, fileText: string) {
-        filePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
-        const dirPath = FileUtils.getDirPath(filePath);
-        this.getOrCreateDir(dirPath).files.set(filePath, fileText);
+        const standardizedFilePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
+        const dirPath = FileUtils.getDirPath(standardizedFilePath);
+        this.getOrCreateDir(dirPath).files.set(standardizedFilePath, fileText);
     }
 
     /** @inheritdoc */
@@ -111,8 +111,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     mkdirSync(dirPath: string) {
-        dirPath = FileUtils.getStandardizedAbsolutePath(this, dirPath);
-        this.getOrCreateDir(dirPath);
+        this.getOrCreateDir(FileUtils.getStandardizedAbsolutePath(this, dirPath));
     }
 
     /** @inheritdoc */
@@ -123,29 +122,29 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     moveSync(srcPath: string, destPath: string) {
-        srcPath = FileUtils.getStandardizedAbsolutePath(this, srcPath);
-        destPath = FileUtils.getStandardizedAbsolutePath(this, destPath);
+        const standardizedSrcPath = FileUtils.getStandardizedAbsolutePath(this, srcPath);
+        const standardizedDestPath = FileUtils.getStandardizedAbsolutePath(this, destPath);
 
-        if (this.fileExistsSync(srcPath)) {
-            const fileText = this.readFileSync(srcPath);
-            this.deleteSync(srcPath);
-            this.writeFileSync(destPath, fileText);
+        if (this.fileExistsSync(standardizedSrcPath)) {
+            const fileText = this.readFileSync(standardizedSrcPath);
+            this.deleteSync(standardizedSrcPath);
+            this.writeFileSync(standardizedDestPath, fileText);
         }
-        else if (this.directories.has(srcPath)) {
-            const moveDirectory = (from: string, to: string) => {
+        else if (this.directories.has(standardizedSrcPath)) {
+            const moveDirectory = (from: StandardizedFilePath, to: StandardizedFilePath) => {
                 this._copyDirInternal(from, to);
-                this.directories.removeByKey(from);
+                this.directories.delete(from);
             };
-            moveDirectory(srcPath, destPath);
+            moveDirectory(standardizedSrcPath, standardizedDestPath);
 
             // move descendant dirs
-            for (const descendantDirPath of getDescendantDirectories(this.directories.getKeys(), srcPath)) {
-                const relativePath = FileUtils.getRelativePathTo(srcPath, descendantDirPath);
-                moveDirectory(descendantDirPath, FileUtils.pathJoin(destPath, relativePath));
+            for (const descendantDirPath of getDescendantDirectories(this.directories.keys(), standardizedSrcPath)) {
+                const relativePath = FileUtils.getRelativePathTo(standardizedSrcPath, descendantDirPath);
+                moveDirectory(descendantDirPath, FileUtils.pathJoin(standardizedDestPath, relativePath) as StandardizedFilePath);
             }
         }
         else {
-            throw new errors.PathNotFoundError(srcPath);
+            throw new errors.PathNotFoundError(standardizedSrcPath);
         }
     }
 
@@ -157,31 +156,33 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     copySync(srcPath: string, destPath: string) {
-        srcPath = FileUtils.getStandardizedAbsolutePath(this, srcPath);
-        destPath = FileUtils.getStandardizedAbsolutePath(this, destPath);
+        const standardizedSrcPath = FileUtils.getStandardizedAbsolutePath(this, srcPath);
+        const standardizedDestPath = FileUtils.getStandardizedAbsolutePath(this, destPath);
 
-        if (this.fileExistsSync(srcPath))
-            this.writeFileSync(destPath, this.readFileSync(srcPath));
-        else if (this.directories.has(srcPath)) {
-            this._copyDirInternal(srcPath, destPath);
+        if (this.fileExistsSync(standardizedSrcPath))
+            this.writeFileSync(standardizedDestPath, this.readFileSync(standardizedSrcPath));
+        else if (this.directories.has(standardizedSrcPath)) {
+            this._copyDirInternal(standardizedSrcPath, standardizedDestPath);
 
             // copy descendant dirs
-            for (const descendantDirPath of getDescendantDirectories(this.directories.getKeys(), srcPath)) {
-                const relativePath = FileUtils.getRelativePathTo(srcPath, descendantDirPath);
-                this._copyDirInternal(descendantDirPath, FileUtils.pathJoin(destPath, relativePath));
+            for (const descendantDirPath of getDescendantDirectories(this.directories.keys(), standardizedSrcPath)) {
+                const relativePath = FileUtils.getRelativePathTo(standardizedSrcPath, descendantDirPath);
+                this._copyDirInternal(descendantDirPath, FileUtils.pathJoin(standardizedDestPath, relativePath) as StandardizedFilePath);
             }
         }
         else {
-            throw new errors.PathNotFoundError(srcPath);
+            throw new errors.PathNotFoundError(standardizedSrcPath);
         }
     }
 
-    private _copyDirInternal(from: string, to: string) {
+    private _copyDirInternal(from: StandardizedFilePath, to: StandardizedFilePath) {
         const dir = this.directories.get(from)!;
         const newDir = this.getOrCreateDir(to);
 
-        for (const fileEntry of dir.files.getEntries())
-            newDir.files.set(FileUtils.pathJoin(to, FileUtils.getBaseName(fileEntry[0])), fileEntry[1]);
+        for (const [filePath, text] of dir.files.entries()) {
+            const toDir = FileUtils.pathJoin(to, FileUtils.getBaseName(filePath)) as StandardizedFilePath;
+            newDir.files.set(toDir, text);
+        }
     }
 
     /** @inheritdoc */
@@ -191,13 +192,13 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     fileExistsSync(filePath: string) {
-        filePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
-        const dirPath = FileUtils.getDirPath(filePath);
+        const standardizedFilePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
+        const dirPath = FileUtils.getDirPath(standardizedFilePath);
         const dir = this.directories.get(dirPath);
         if (dir == null)
             return false;
 
-        return dir.files.has(filePath);
+        return dir.files.has(standardizedFilePath);
     }
 
     /** @inheritdoc */
@@ -206,9 +207,8 @@ export class InMemoryFileSystemHost implements FileSystemHost {
     }
 
     /** @inheritdoc */
-    directoryExistsSync(dirPath: string) {
-        dirPath = FileUtils.getStandardizedAbsolutePath(this, dirPath);
-        return this.directories.has(dirPath);
+    directoryExistsSync(dirPath: string): boolean {
+        return this.directories.has(FileUtils.getStandardizedAbsolutePath(this, dirPath));
     }
 
     /** @inheritdoc */
@@ -232,20 +232,20 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     globSync(patterns: ReadonlyArray<string>): string[] {
-        const allFilePaths = Array.from(getAllFilePaths(this.directories.getValues()));
+        const allFilePaths = Array.from(getAllFilePaths(this.directories.values()));
         return matchGlobs(allFilePaths, patterns, this.getCurrentDirectory());
 
         function* getAllFilePaths(directories: IterableIterator<VirtualDirectory>) {
             for (const dir of directories)
-                yield* dir.files.getKeys();
+                yield* dir.files.keys();
         }
     }
 
-    private getOrCreateDir(dirPath: string) {
+    private getOrCreateDir(dirPath: StandardizedFilePath) {
         let dir = this.directories.get(dirPath);
 
         if (dir == null) {
-            dir = { path: dirPath, files: new KeyValueCache<string, string>() };
+            dir = { path: dirPath, files: new Map<StandardizedFilePath, string>() };
             this.directories.set(dirPath, dir);
             const parentDirPath = FileUtils.getDirPath(dirPath);
             if (parentDirPath !== dirPath)
@@ -256,7 +256,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
     }
 }
 
-function* getDescendantDirectories(directoryPaths: IterableIterator<string>, dirPath: string) {
+function* getDescendantDirectories(directoryPaths: IterableIterator<StandardizedFilePath>, dirPath: StandardizedFilePath) {
     for (const path of directoryPaths) {
         if (FileUtils.pathStartsWith(path, dirPath))
             yield path;

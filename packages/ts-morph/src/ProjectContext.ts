@@ -1,7 +1,8 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { LanguageService, QuoteKind, TypeChecker, SourceFile, Diagnostic } from "./compiler";
 import { errors, TransactionalFileSystem, CompilerOptionsContainer, ts, TsSourceFileContainer, Memoize, createModuleResolutionHost,
-    ResolutionHostFactory } from "@ts-morph/common";
+    ResolutionHostFactory,
+    StandardizedFilePath} from "@ts-morph/common";
 import { CompilerFactory, StructurePrinterFactory, InProjectCoordinator } from "./factories";
 import { DirectoryCoordinator } from "./fileSystem";
 import { IndentationText, ManipulationSettingsContainer } from "./options";
@@ -178,7 +179,7 @@ export class ProjectContext {
             getSourceFilePaths: () => this.compilerFactory.getSourceFilePaths(),
             getSourceFileVersion: sourceFile => this.compilerFactory.documentRegistry.getSourceFileVersion(sourceFile),
             getChildDirectoriesOfDirectory: dirPath => {
-                const result: string[] = [];
+                const result: StandardizedFilePath[] = [];
                 for (const dir of this.compilerFactory.getChildDirectoriesOfDirectory(dirPath))
                     result.push(dir.getPath());
                 return result;

@@ -1,12 +1,12 @@
 /* barrel:ignore */
-import { errors } from "@ts-morph/common";
+import { StandardizedFilePath } from "@ts-morph/common";
 import { SourceFile, Diagnostic } from "../../compiler";
 import { Project, ProjectOptions } from "../../Project";
 import { NodeHandler } from "../nodeHandlers";
 import { TextManipulator } from "../textManipulators";
 import { ManipulationError } from "./ManipulationError";
 
-export function doManipulation(sourceFile: SourceFile, textManipulator: TextManipulator, nodeHandler: NodeHandler, newFilePath?: string) {
+export function doManipulation(sourceFile: SourceFile, textManipulator: TextManipulator, nodeHandler: NodeHandler, newFilePath?: StandardizedFilePath) {
     sourceFile._firePreModified();
     const oldFileText = sourceFile.getFullText();
     const newFileText = textManipulator.getNewText(oldFileText);

@@ -1,4 +1,4 @@
-import { KeyValueCache, SortedKeyValueArray, LocaleStringComparer, FileUtils } from "@ts-morph/common";
+import { KeyValueCache, SortedKeyValueArray, LocaleStringComparer, FileUtils, StandardizedFilePath } from "@ts-morph/common";
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem/Directory";
 import { ProjectContext } from "../ProjectContext";
@@ -8,19 +8,19 @@ import { ProjectContext } from "../ProjectContext";
  * @internal
  */
 export class DirectoryCache {
-    private readonly directoriesByPath = new KeyValueCache<string, Directory>();
-    private readonly sourceFilesByDirPath = new KeyValueCache<string, SortedKeyValueArray<string, SourceFile>>();
-    private readonly directoriesByDirPath = new KeyValueCache<string, SortedKeyValueArray<string, Directory>>();
-    private readonly orphanDirs = new KeyValueCache<string, Directory>();
+    private readonly directoriesByPath = new KeyValueCache<StandardizedFilePath, Directory>();
+    private readonly sourceFilesByDirPath = new KeyValueCache<StandardizedFilePath, SortedKeyValueArray<string, SourceFile>>();
+    private readonly directoriesByDirPath = new KeyValueCache<StandardizedFilePath, SortedKeyValueArray<string, Directory>>();
+    private readonly orphanDirs = new KeyValueCache<StandardizedFilePath, Directory>();
 
     constructor(private readonly context: ProjectContext) {
     }
 
-    has(dirPath: string) {
+    has(dirPath: StandardizedFilePath) {
         return this.directoriesByPath.has(dirPath);
     }
 
-    get(dirPath: string) {
+    get(dirPath: StandardizedFilePath) {
         if (!this.directoriesByPath.has(dirPath)) {
             for (const orphanDir of this.orphanDirs.getValues()) {
                 if (FileUtils.pathStartsWith(orphanDir.getPath(), dirPath))
@@ -67,13 +67,13 @@ export class DirectoryCache {
         }
     }
 
-    remove(dirPath: string) {
+    remove(dirPath: StandardizedFilePath) {
         this.removeFromDirectoriesByDirPath(dirPath);
         this.directoriesByPath.removeByKey(dirPath);
         this.orphanDirs.removeByKey(dirPath);
     }
 
-    *getChildDirectoriesOfDirectory(dirPath: string) {
+    *getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath) {
         const entries = this.directoriesByDirPath.get(dirPath)?.entries();
         if (entries == null)
             return;
@@ -81,7 +81,7 @@ export class DirectoryCache {
             yield dir;
     }
 
-    *getChildSourceFilesOfDirectory(dirPath: string) {
+    *getChildSourceFilesOfDirectory(dirPath: StandardizedFilePath) {
         const entries = this.sourceFilesByDirPath.get(dirPath)?.entries();
         if (entries == null)
             return;
@@ -97,7 +97,7 @@ export class DirectoryCache {
         sourceFiles.set(sourceFile);
     }
 
-    removeSourceFile(filePath: string) {
+    removeSourceFile(filePath: StandardizedFilePath) {
         const dirPath = FileUtils.getDirPath(filePath);
         const sourceFiles = this.sourceFilesByDirPath.get(dirPath);
         if (sourceFiles == null)
@@ -109,7 +109,7 @@ export class DirectoryCache {
             this.sourceFilesByDirPath.removeByKey(dirPath);
     }
 
-    createOrAddIfExists(dirPath: string): Directory {
+    createOrAddIfExists(dirPath: StandardizedFilePath): Directory {
         if (this.has(dirPath))
             return this.get(dirPath)!;
 
@@ -117,7 +117,7 @@ export class DirectoryCache {
         return this.createDirectory(dirPath);
     }
 
-    private createDirectory(path: string) {
+    private createDirectory(path: StandardizedFilePath) {
         const newDirectory = new Directory(this.context, path);
         this.addDirectory(newDirectory);
         return newDirectory;
@@ -162,7 +162,7 @@ export class DirectoryCache {
         directories.set(directory);
     }
 
-    private removeFromDirectoriesByDirPath(dirPath: string) {
+    private removeFromDirectoriesByDirPath(dirPath: StandardizedFilePath) {
         if (FileUtils.isRootDirPath(dirPath))
             return;
         const parentDirPath = FileUtils.getDirPath(dirPath);
@@ -176,8 +176,8 @@ export class DirectoryCache {
             this.directoriesByDirPath.removeByKey(parentDirPath);
     }
 
-    private fillParentsOfDirPath(dirPath: string) {
-        const passedDirPaths: string[] = [];
+    private fillParentsOfDirPath(dirPath: StandardizedFilePath) {
+        const passedDirPaths: StandardizedFilePath[] = [];
         let parentDir = FileUtils.getDirPath(dirPath);
         while (dirPath !== parentDir) {
             dirPath = parentDir;

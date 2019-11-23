@@ -2,6 +2,7 @@ import { Node, RenameLocation, SourceFile } from "../../compiler";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { FullReplacementTextManipulator, InsertionTextManipulator, RenameLocationTextManipulator, UnchangedTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
+import { StandardizedFilePath } from "@ts-morph/common";
 
 export interface ReplaceNodeTextOptions {
     sourceFile: SourceFile;
@@ -86,7 +87,7 @@ export function replaceTextPossiblyCreatingChildNodes(opts: ReplaceTextPossiblyC
 
 export interface ReplaceSourceFileForFilePathMoveOptions {
     sourceFile: SourceFile;
-    newFilePath: string;
+    newFilePath: StandardizedFilePath;
 }
 
 /**

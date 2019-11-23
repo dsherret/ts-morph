@@ -3,6 +3,7 @@ import * as path from "path";
 import isNegatedGlob from "is-negated-glob";
 import { ArrayUtils, StringUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
+import { StandardizedFilePath } from "./StandardizedFilePath";
 import { TransactionalFileSystem } from "./TransactionalFileSystem";
 
 /** Utilities for working with files. */
@@ -31,8 +32,12 @@ export class FileUtils {
      * Joins the paths.
      * @param paths - Paths to join.
      */
-    static pathJoin(...paths: string[]) {
-        return FileUtils.standardizeSlashes(path.join(...paths));
+    static pathJoin<T extends string>(basePath: T, ...paths: string[]): T {
+        if (FileUtils.pathIsAbsolute(basePath)) {
+            // ensure nothing like /path/../otherPath happens by doing a path.normalize here
+            return FileUtils.standardizeSlashes(path.normalize(path.join(basePath, ...paths))) as T;
+        }
+        return FileUtils.standardizeSlashes(path.join(basePath, ...paths)) as T;
     }
 
     /**
@@ -49,8 +54,8 @@ export class FileUtils {
      * @param fileOrDirPath - Path to standardize.
      * @param relativeBase - Base path to be relative from.
      */
-    static getStandardizedAbsolutePath(fileSystem: FileSystemHost, fileOrDirPath: string, relativeBase?: string) {
-        return FileUtils.standardizeSlashes(path.normalize(getAbsolutePath()));
+    static getStandardizedAbsolutePath(fileSystem: FileSystemHost, fileOrDirPath: string, relativeBase?: string): StandardizedFilePath {
+        return FileUtils.standardizeSlashes(path.normalize(getAbsolutePath())) as StandardizedFilePath;
 
         function getAbsolutePath() {
             const isAbsolutePath = path.isAbsolute(fileOrDirPath);
@@ -66,15 +71,15 @@ export class FileUtils {
      * Gets the directory path.
      * @param fileOrDirPath - Path to get the directory name from.
      */
-    static getDirPath(fileOrDirPath: string) {
-        return FileUtils.standardizeSlashes(path.dirname(fileOrDirPath));
+    static getDirPath<T extends string>(fileOrDirPath: T): T {
+        return FileUtils.standardizeSlashes(path.dirname(fileOrDirPath)) as T;
     }
 
     /**
-     * Gets the base name.
+     * Gets the last portion of the path.
      * @param fileOrDirPath - Path to get the base name from.
      */
-    static getBaseName(fileOrDirPath: string) {
+    static getBaseName(fileOrDirPath: StandardizedFilePath) {
         return path.basename(fileOrDirPath);
     }
 
@@ -82,7 +87,7 @@ export class FileUtils {
      * Gets the extension of the file name.
      * @param fileOrDirPath - Path to get the extension from.
      */
-    static getExtension(fileOrDirPath: string) {
+    static getExtension(fileOrDirPath: StandardizedFilePath) {
         const baseName = FileUtils.getBaseName(fileOrDirPath);
         const lastDotIndex = baseName.lastIndexOf(".");
         if (lastDotIndex <= 0) // for files like .gitignore, need to include 0
@@ -100,8 +105,8 @@ export class FileUtils {
      * Changes all back slashes to forward slashes.
      * @param fileOrDirPath - Path.
      */
-    static standardizeSlashes(fileOrDirPath: string) {
-        return fileOrDirPath.replace(this.standardizeSlashesRegex, "/");
+    static standardizeSlashes<T extends string>(fileOrDirPath: T): T {
+        return fileOrDirPath.replace(this.standardizeSlashesRegex, "/") as T;
     }
 
     /**
@@ -162,8 +167,8 @@ export class FileUtils {
      * Gets the parent most paths out of the list of paths.
      * @param paths - File or directory paths.
      */
-    static getParentMostPaths(paths: string[]) {
-        const finalPaths: string[] = [];
+    static getParentMostPaths(paths: StandardizedFilePath[]) {
+        const finalPaths: StandardizedFilePath[] = [];
 
         for (const fileOrDirPath of ArrayUtils.sortByProperty(paths, p => p.length)) {
             if (finalPaths.every(p => !FileUtils.pathStartsWith(fileOrDirPath, p)))
@@ -179,7 +184,7 @@ export class FileUtils {
      * @param filePath - Path to file.
      * @param encoding - File encoding.
      */
-    static async readFileOrNotExists(fileSystem: FileSystemHost, filePath: string, encoding: string) {
+    static async readFileOrNotExists(fileSystem: FileSystemHost, filePath: StandardizedFilePath, encoding: string) {
         try {
             return await fileSystem.readFile(filePath, encoding);
         } catch (err) {
@@ -195,7 +200,7 @@ export class FileUtils {
      * @param filePath - Path to file.
      * @param encoding - File encoding.
      */
-    static readFileOrNotExistsSync(fileSystem: FileSystemHost, filePath: string, encoding: string) {
+    static readFileOrNotExistsSync(fileSystem: FileSystemHost, filePath: StandardizedFilePath, encoding: string) {
         try {
             return fileSystem.readFileSync(filePath, encoding);
         } catch (err) {
@@ -220,16 +225,16 @@ export class FileUtils {
      * @param absoluteDirPathFrom - Absolute directory path from.
      * @param absolutePathTo - Absolute path to.
      */
-    static getRelativePathTo(absoluteDirPathFrom: string, absolutePathTo: string) {
+    static getRelativePathTo(absoluteDirPathFrom: StandardizedFilePath, absolutePathTo: StandardizedFilePath) {
         const relativePath = path.relative(absoluteDirPathFrom, path.dirname(absolutePathTo));
-        return FileUtils.standardizeSlashes(path.join(relativePath, path.basename(absolutePathTo)));
+        return FileUtils.standardizeSlashes(path.join(relativePath, path.basename(absolutePathTo))) as StandardizedFilePath;
     }
 
     /**
      * Gets if the path is for the root directory.
      * @param path - Path.
      */
-    static isRootDirPath(dirOrFilePath: string) {
+    static isRootDirPath(dirOrFilePath: StandardizedFilePath) {
         return dirOrFilePath === FileUtils.getDirPath(dirOrFilePath);
     }
 
@@ -237,7 +242,7 @@ export class FileUtils {
      * Gets the descendant directories of the specified directory.
      * @param dirPath - Directory path.
      */
-    static *getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: string): IterableIterator<string> {
+    static *getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: StandardizedFilePath): IterableIterator<StandardizedFilePath> {
         for (const subDirPath of fileSystemWrapper.readDirSync(dirPath)) {
             if (!fileSystemWrapper.directoryExistsSync(subDirPath))
                 continue;

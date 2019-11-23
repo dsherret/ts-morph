@@ -20,7 +20,7 @@ import { kindToWrapperMappings } from "./kindToWrapperMappings";
  * @internal
  */
 export class CompilerFactory {
-    private readonly sourceFileCacheByFilePath = new KeyValueCache<string, SourceFile>();
+    private readonly sourceFileCacheByFilePath = new Map<StandardizedFilePath, SourceFile>();
     private readonly diagnosticCache = new WeakCache<ts.Diagnostic, Diagnostic>();
     private readonly definitionInfoCache = new WeakCache<ts.DefinitionInfo, DefinitionInfo>();
     private readonly documentSpanCache = new WeakCache<ts.DocumentSpan, DocumentSpan>();
@@ -52,7 +52,7 @@ export class CompilerFactory {
         // prevent memory leaks when the document registry key changes by just resetting it
         this.context.compilerOptions.onModified(() => {
             // repopulate the cache
-            const currentSourceFiles = this.sourceFileCacheByFilePath.getValuesAsArray();
+            const currentSourceFiles = Array.from(this.sourceFileCacheByFilePath.values()); // store this to prevent modifying while iterating
             for (const sourceFile of currentSourceFiles) {
                 // re-parse the source files in the new document registry, then populate the cache with the new nodes
                 replaceSourceFileForCacheUpdate(sourceFile);
@@ -72,14 +72,14 @@ export class CompilerFactory {
      * Gets the source file paths from the internal cache.
      */
     getSourceFilePaths() {
-        return Array.from(this.sourceFileCacheByFilePath.getKeys());
+        return this.sourceFileCacheByFilePath.keys();
     }
 
     /**
      * Gets the child directories of a directory.
      * @param dirPath - Directory path.
      */
-    getChildDirectoriesOfDirectory(dirPath: string) {
+    getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath) {
         return this.directoryCache.getChildDirectoriesOfDirectory(dirPath);
     }
 
@@ -87,7 +87,7 @@ export class CompilerFactory {
      * Gets the child source files of a directory.
      * @param dirPath - Directory path.
      */
-    getChildSourceFilesOfDirectory(dirPath: string) {
+    getChildSourceFilesOfDirectory(dirPath: StandardizedFilePath) {
         return this.directoryCache.getChildSourceFilesOfDirectory(dirPath);
     }
 
@@ -118,7 +118,7 @@ export class CompilerFactory {
      * @param options - Options.
      */
     createSourceFile(
-        filePath: string,
+        filePath: StandardizedFilePath,
         sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction,
         options: SourceFileCreateOptions & { markInProject: boolean; }
     ) {
@@ -143,7 +143,7 @@ export class CompilerFactory {
      * @param options - Options.
      * @throws InvalidOperationError if the file exists.
      */
-    createSourceFileFromText(filePath: string, sourceText: string, options: SourceFileCreateOptions & { markInProject: boolean; }) {
+    createSourceFileFromText(filePath: StandardizedFilePath, sourceText: string, options: SourceFileCreateOptions & { markInProject: boolean; }) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         if (options.overwrite === true)
             return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options as MakeOptionalUndefined<typeof options>);
@@ -156,7 +156,7 @@ export class CompilerFactory {
      * @param filePath - File path.
      * @param prefixMessage - Message to attach on as a prefix.
      */
-    throwIfFileExists(filePath: string, prefixMessage?: string) {
+    throwIfFileExists(filePath: StandardizedFilePath, prefixMessage?: string) {
         if (!this.containsSourceFileAtPath(filePath) && !this.context.fileSystemWrapper.fileExistsSync(filePath))
             return;
         prefixMessage = prefixMessage == null ? "" : prefixMessage + " ";
@@ -164,7 +164,7 @@ export class CompilerFactory {
     }
 
     private createOrOverwriteSourceFileFromText(
-        filePath: string,
+        filePath: StandardizedFilePath,
         sourceText: string,
         options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }
     ) {
@@ -183,7 +183,7 @@ export class CompilerFactory {
      * Gets the source file from the cache by a file path.
      * @param filePath - File path.
      */
-    getSourceFileFromCacheFromFilePath(filePath: string): SourceFile | undefined {
+    getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath): SourceFile | undefined {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         return this.sourceFileCacheByFilePath.get(filePath);
     }
@@ -192,7 +192,7 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    addOrGetSourceFileFromFilePath(filePath: string, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): SourceFile | undefined {
+    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): SourceFile | undefined {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
@@ -220,7 +220,7 @@ export class CompilerFactory {
      * Gets if the internal cache contains a source file at a specific file path.
      * @param filePath - File path to check.
      */
-    containsSourceFileAtPath(filePath: string) {
+    containsSourceFileAtPath(filePath: StandardizedFilePath) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         return this.sourceFileCacheByFilePath.has(filePath);
     }
@@ -229,7 +229,7 @@ export class CompilerFactory {
      * Gets if the internal cache contains a source file with the specified directory path.
      * @param dirPath - Directory path to check.
      */
-    containsDirectoryAtPath(dirPath: string) {
+    containsDirectoryAtPath(dirPath: StandardizedFilePath) {
         dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
         return this.directoryCache.has(dirPath);
     }
@@ -322,7 +322,7 @@ export class CompilerFactory {
     }
 
     private createSourceFileFromTextInternal(
-        filePath: string,
+        filePath: StandardizedFilePath,
         text: string,
         options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }
     ): SourceFile {
@@ -335,9 +335,8 @@ export class CompilerFactory {
         return sourceFile;
     }
 
-    createCompilerSourceFileFromText(filePath: string, text: string, scriptKind: ScriptKind | undefined): ts.SourceFile {
-        //todo: REMOVE THIS ASSERTION
-        return this.documentRegistry.createOrUpdateSourceFile(filePath as StandardizedFilePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
+    createCompilerSourceFileFromText(filePath: StandardizedFilePath, text: string, scriptKind: ScriptKind | undefined): ts.SourceFile {
+        return this.documentRegistry.createOrUpdateSourceFile(filePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
     }
 
     /**
@@ -376,7 +375,7 @@ export class CompilerFactory {
      * Gets a directory from a path.
      * @param dirPath - Directory path.
      */
-    getDirectoryFromPath(dirPath: string, options: { markInProject: boolean; }) {
+    getDirectoryFromPath(dirPath: StandardizedFilePath, options: { markInProject: boolean; }) {
         dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
         let directory = this.directoryCache.get(dirPath);
 
@@ -393,7 +392,7 @@ export class CompilerFactory {
      * Creates or adds a directory if it doesn't exist.
      * @param dirPath - Directory path.
      */
-    createDirectoryOrAddIfExists(dirPath: string, options: { markInProject: boolean; }) {
+    createDirectoryOrAddIfExists(dirPath: StandardizedFilePath, options: { markInProject: boolean; }) {
         const directory = this.directoryCache.createOrAddIfExists(dirPath);
         if (directory != null && options.markInProject)
             directory._markAsInProject();
@@ -404,7 +403,7 @@ export class CompilerFactory {
      * Gets a directory.
      * @param dirPath - Directory path.
      */
-    getDirectoryFromCache(dirPath: string) {
+    getDirectoryFromCache(dirPath: StandardizedFilePath) {
         return this.directoryCache.get(dirPath);
     }
 
@@ -412,7 +411,7 @@ export class CompilerFactory {
      * Gets a directory from the cache, but only if it's in the cache.
      * @param dirPath - Directory path.
      */
-    getDirectoryFromCacheOnlyIfInCache(dirPath: string) {
+    getDirectoryFromCacheOnlyIfInCache(dirPath: StandardizedFilePath) {
         return this.directoryCache.has(dirPath)
             ? this.directoryCache.get(dirPath)
             : undefined;
@@ -591,10 +590,11 @@ export class CompilerFactory {
 
         if (compilerNode.kind === SyntaxKind.SourceFile) {
             const sourceFile = compilerNode as ts.SourceFile;
-            this.directoryCache.removeSourceFile(sourceFile.fileName);
-            const wrappedSourceFile = this.sourceFileCacheByFilePath.get(sourceFile.fileName);
-            this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
-            this.documentRegistry.removeSourceFile(this.context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName));
+            const standardizedFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFile.fileName);
+            this.directoryCache.removeSourceFile(standardizedFilePath);
+            const wrappedSourceFile = this.sourceFileCacheByFilePath.get(standardizedFilePath);
+            this.sourceFileCacheByFilePath.delete(standardizedFilePath);
+            this.documentRegistry.removeSourceFile(standardizedFilePath);
             if (wrappedSourceFile != null)
                 this.sourceFileRemovedEventContainer.fire(wrappedSourceFile);
         }
@@ -612,7 +612,7 @@ export class CompilerFactory {
      * Removes the directory from the cache.
      * @param dirPath - Directory path.
      */
-    removeDirectoryFromCache(dirPath: string) {
+    removeDirectoryFromCache(dirPath: StandardizedFilePath) {
         this.directoryCache.remove(dirPath);
     }
 

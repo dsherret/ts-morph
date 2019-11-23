@@ -1,4 +1,4 @@
-import { FileUtils } from "@ts-morph/common";
+import { FileUtils, StandardizedFilePath } from "@ts-morph/common";
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem";
 import { CompilerFactory } from "./CompilerFactory";
@@ -63,7 +63,7 @@ export class InProjectCoordinator {
                 return true;
 
             // see if the node_modules directory is in the project
-            const nodeModulesPath = filePath.substring(0, index + nodeModulesSearchName.length - 1); // remove last slash
+            const nodeModulesPath = filePath.substring(0, index + nodeModulesSearchName.length - 1) as StandardizedFilePath; // remove last slash
             const nodeModulesDir = compilerFactory.getDirectoryFromCacheOnlyIfInCache(nodeModulesPath);
             if (nodeModulesDir != null && nodeModulesDir._isInProject())
                 return true;
