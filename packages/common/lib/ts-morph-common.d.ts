@@ -173,11 +173,6 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
      */
     constructor(transactionalFileSystem: TransactionalFileSystem, documentCaches?: DocumentCache[]);
     /**
-     * Removes the source file from the document registry
-     * @param fileName - File name to remove.
-     */
-    removeSourceFile(fileName: StandardizedFilePath): void;
-    /**
      * Creates or updates a source file in the document registry.
      * @param fileName - File name to create or update.
      * @param compilationSettings - Compiler options to use.
@@ -185,6 +180,18 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
      * @param scriptKind - Script kind of the file.
      */
     createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined): ts.SourceFile;
+    /**
+     * Gets a source file from the cache if it exists.
+     * @param fileName - File name to get.
+     * @param compilationSettings - Compiler options to use.
+     * @param scriptKind - Script kind of the file.
+     */
+    getSourceFileIfExists(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptKind: ScriptKind | undefined): ts.SourceFile | undefined;
+    /**
+     * Removes the source file from the document registry.
+     * @param fileName - File name to remove.
+     */
+    removeSourceFile(fileName: StandardizedFilePath): void;
     /** @inheritdoc */
     acquireDocument(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
     /** @inheritdoc */
@@ -903,6 +910,12 @@ export declare class ArrayUtils {
     static binarySearch<T>(items: ReadonlyArray<T>, storedComparer: StoredComparer<T>): number;
     static containsSubArray<T>(items: ReadonlyArray<T>, subArray: ReadonlyArray<T>): boolean;
 }
+
+/**
+ * Deep clones an object not maintaining references.
+ * @remarks If this has a circular reference it will go forever so be careful.
+ */
+export declare function deepClone<T extends object>(objToClone: T): T;
 
 /**
  * Event container subscription type

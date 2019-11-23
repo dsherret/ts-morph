@@ -195,14 +195,19 @@ export class CompilerFactory {
     addOrGetSourceFileFromFilePath(filePath: string, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): SourceFile | undefined {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
-        if (sourceFile == null && this.context.fileSystemWrapper.fileExistsSync(filePath)) {
-            this.context.logger.log(`Loading file: ${filePath}`);
-            sourceFile = this.createSourceFileFromTextInternal(
-                filePath,
-                this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()),
-                options
-            );
-            sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
+        if (sourceFile == null) {
+            let fileText: string | undefined;
+            try {
+                fileText = this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding())
+            } catch {
+                // ignore
+            }
+
+            if (fileText != null) {
+                this.context.logger.log(`Loaded file: ${filePath}`);
+                sourceFile = this.createSourceFileFromTextInternal(filePath, fileText, options);
+                sourceFile._setIsSaved(true); // source files loaded from the disk are saved to start with
+            }
         }
 
         if (sourceFile != null && options.markInProject)

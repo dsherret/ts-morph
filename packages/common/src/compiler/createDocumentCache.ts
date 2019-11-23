@@ -1,6 +1,7 @@
 import { ts, ScriptKind, ScriptTarget } from "../typescript";
-import { createCompilerSourceFile } from "./createCompilerSourceFile";
 import { TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
+import { deepClone } from "../utils";
+import { createCompilerSourceFile } from "./createCompilerSourceFile";
 
 /**
  * A cache of reusable source files that can be used across projects.
@@ -33,7 +34,9 @@ export interface DocumentCacheItem {
  * @param files - Files to use in the cache.
  */
 export function createDocumentCache(files: DocumentCacheItem[]): DocumentCache {
-    return new InternalDocumentCache(files);
+    const cache = new InternalDocumentCache();
+    cache._addFiles(files);
+    return cache;
 }
 
 /** @internal */
@@ -51,7 +54,7 @@ type DocumentKey = string & { _documentKeyBrand: undefined; };
 class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
     private readonly absoluteToOriginalPath = new Map<StandardizedFilePath, string>();
 
-    constructor(private readonly fileSystem: TransactionalFileSystem, private readonly documentCache: InternalDocumentCache) {
+    constructor(fileSystem: TransactionalFileSystem, private readonly documentCache: InternalDocumentCache) {
         for (const filePath of documentCache._getFilePaths())
             this.absoluteToOriginalPath.set(fileSystem.getStandardizedAbsolutePath(filePath), filePath);
     }
@@ -68,17 +71,27 @@ class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
 
         return this.documentCache._getDocumentIfMatch(originalFilePath, filePath, scriptSnapshot, scriptTarget, scriptKind);
     }
+
+    getDocumentIfExists(
+        filePath: StandardizedFilePath,
+        scriptTarget: ScriptTarget | undefined,
+        scriptKind: ScriptKind | undefined
+    ) {
+        const originalFilePath = this.absoluteToOriginalPath.get(filePath);
+        if (originalFilePath == null)
+            return;
+
+        return this.documentCache._getDocumentIfExists(originalFilePath, filePath, scriptTarget, scriptKind);
+    }
 }
 
 class InternalDocumentCache implements DocumentCache {
     declare __documentCacheBrand: undefined;
 
-    private readonly _fileTexts: Map<string, string>;
+    private readonly _fileTexts = new Map<string, string>();
     private readonly _documents = new Map<DocumentKey, ts.SourceFile>();
 
-    constructor(files: DocumentCacheItem[]) {
-        this._fileTexts = new Map();
-
+    _addFiles(files: DocumentCacheItem[]) {
         for (const file of files)
             this._fileTexts.set(file.fileName, file.text);
     }
@@ -100,20 +113,29 @@ class InternalDocumentCache implements DocumentCache {
     ) {
         const fileText = this._fileTexts.get(filePath);
         if (fileText == null)
-            return; // doesn't exist in cache
+            return undefined; // doesn't exist in cache
         if (fileText !== scriptSnapshot.getText(0, scriptSnapshot.getLength()))
-            return; // not a match
+            return undefined; // not a match
 
+        return this._getDocument(filePath, absoluteFilePath, scriptSnapshot, scriptTarget, scriptKind);
+    }
+
+    private _getDocument(
+        filePath: string,
+        absoluteFilePath: StandardizedFilePath,
+        scriptSnapshot: ts.IScriptSnapshot,
+        scriptTarget: ScriptTarget | undefined,
+        scriptKind: ScriptKind | undefined
+    ) {
         const documentKey = this._getKey(filePath, scriptTarget, scriptKind);
         let document = this._documents.get(documentKey);
         if (document == null) {
-            document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", scriptKind);
-            console.log(document.fileName);
+            document = createCompilerSourceFile(absoluteFilePath, scriptSnapshot, scriptTarget, "-1", false, scriptKind);
             this._documents.set(documentKey, document);
         }
 
         // ensure a clean source file is stored in the cache by always cloning this before returning
-        document = cloneWithReferencesCloned(document);
+        document = deepClone(document);
         document.fileName = absoluteFilePath;
 
         return document;
@@ -121,37 +143,7 @@ class InternalDocumentCache implements DocumentCache {
 
     /** @internal */
     private _getKey(filePath: string, scriptTarget: ScriptTarget | undefined, scriptKind: ScriptKind | undefined): DocumentKey {
-        return (filePath + (scriptTarget?.toString() ?? "undefined") + (scriptKind?.toString() ?? "undefined")) as DocumentKey;
+        return (filePath + (scriptTarget?.toString() ?? "-1") + (scriptKind?.toString() ?? "-1")) as DocumentKey;
     }
 }
 
-function cloneWithReferencesCloned<T extends object>(originalObject: T): T {
-    const references = new Map<object, object>();
-    return clone(originalObject) as T;
-
-    function clone(obj: object) {
-        let newObj: object | undefined = references.get(obj);
-        if (newObj == null) {
-            newObj = Object.create(obj.constructor.prototype) as object;
-
-            references.set(obj, newObj);
-
-            for (const propName of Object.keys(obj)) {
-                (newObj as any)[propName] = cloneItem((obj as any)[propName]);
-            }
-        }
-        return newObj;
-    }
-
-    function cloneArray(array: unknown[]): unknown[] {
-        return array.map(cloneItem);
-    }
-
-    function cloneItem(item: unknown) {
-        if (item instanceof Array)
-            return cloneArray(item);
-        else if (typeof item === "object")
-            return item === null ? item : clone(item);
-        return item;
-    }
-}

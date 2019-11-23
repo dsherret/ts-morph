@@ -6,14 +6,15 @@ export function createCompilerSourceFile(
     scriptSnapshot: ts.IScriptSnapshot,
     scriptTarget: ts.ScriptTarget | undefined,
     version: string,
-    scriptKind: ScriptKind | undefined
+    setParentNodes: boolean,
+    scriptKind: ScriptKind | undefined,
 ) {
     return ts.createLanguageServiceSourceFile(
         filePath,
         scriptSnapshot,
         scriptTarget ?? ScriptTarget.Latest,
         version,
-        true,
+        setParentNodes,
         scriptKind
     );
 }

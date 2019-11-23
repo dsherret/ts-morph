@@ -1,4 +1,3 @@
-import { KeyValueCache } from "../collections";
 import { errors } from "../errors";
 import { TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
 import { ts, CompilerOptions, ScriptKind } from "../typescript";
@@ -10,7 +9,7 @@ import { DocumentCache, FileSystemSpecificDocumentCache } from "./createDocument
  * supports using cached parsed source files.
  */
 export class DocumentRegistry implements ts.DocumentRegistry {
-    private readonly sourceFileCacheByFilePath = new KeyValueCache<StandardizedFilePath, ts.SourceFile>();
+    private readonly sourceFileCacheByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();
     private readonly documentCaches: FileSystemSpecificDocumentCache[] | undefined;
     private static readonly initialVersion = "0";
 
@@ -20,14 +19,6 @@ export class DocumentRegistry implements ts.DocumentRegistry {
      */
     constructor(private readonly transactionalFileSystem: TransactionalFileSystem, documentCaches?: DocumentCache[]) {
         this.documentCaches = documentCaches?.map(c => c._getCacheForFileSystem(transactionalFileSystem));
-    }
-
-    /**
-     * Removes the source file from the document registry
-     * @param fileName - File name to remove.
-     */
-    removeSourceFile(fileName: StandardizedFilePath) {
-        this.sourceFileCacheByFilePath.removeByKey(fileName);
     }
 
     /**
@@ -44,6 +35,14 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         else
             sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, this.getNextSourceFileVersion(sourceFile), scriptKind);
         return sourceFile;
+    }
+
+    /**
+     * Removes the source file from the document registry.
+     * @param fileName - File name to remove.
+     */
+    removeSourceFile(fileName: StandardizedFilePath) {
+        this.sourceFileCacheByFilePath.delete(fileName);
     }
 
     /** @inheritdoc */
@@ -142,7 +141,7 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         }
 
         // otherwise, create it
-        const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings.target, version, scriptKind);
+        const newSourceFile = createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings.target, version, true, scriptKind);
         this.sourceFileCacheByFilePath.set(fileName, newSourceFile);
         return newSourceFile;
     }
