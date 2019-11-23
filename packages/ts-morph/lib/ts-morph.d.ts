@@ -1,4 +1,4 @@
-import { errors, ts } from "@ts-morph/common";
+import { errors, ts, StandardizedFilePath } from "@ts-morph/common";
 
 /**
  * Represents a file system that can be interacted with.
@@ -12484,6 +12484,15 @@ export declare class CodeBlockWriter {
      * will combine the internal array into a string.
      */
     iterateLastChars<T>(action: (char: string, index: number) => T | undefined): T | undefined;
+    /**
+     * Iterates over the writer character char codes in reverse order. The iteration stops when a non-null or
+     * undefined value is returned from the action. The returned value is then returned by the method.
+     *
+     * @remarks It is much more efficient to use this method rather than `#toString()` since `#toString()`
+     * will combine the internal array into a string. Additionally, this is slightly more efficient that
+     * `iterateLastChars` as this won't allocate a string per character.
+     */
+    iterateLastCharCodes<T>(action: (charCode: number, index: number) => T | undefined): T | undefined;
     /**
      * Gets the writer's text.
      */

@@ -22,16 +22,14 @@
     "refactor": "ts-node --transpile-only scripts/refactor",
     "output-wrapped-nodes": "ts-node --transpile-only scripts/generation/outputWrappedNodesInfo",
     "package": "yarn build",
-    "publish-code-verification": "yarn code-verification && yarn ensure-no-declaration-file-errors && yarn ensure-declaration-files-not-changed",
+    "publish-code-verification": "yarn code-verification && yarn ensure-no-declaration-file-errors",
     "code-verification": "ts-node --transpile-only scripts/verification/main ensure-structures-match-classes ensure-overload-structures-match ensure-array-inputs-readonly ensure-classes-implement-structure-methods ensure-mixin-not-applied-multiple-times validate-public-api-class-member-names validate-compiler-node-to-wrapped-type validate-code-fences",
     "ensure-structures-match-classes": "ts-node --transpile-only scripts/verification/main ensure-structures-match-classes",
     "ensure-overload-structures-match": "ts-node --transpile-only scripts/verification/main ensure-overload-structures-match",
     "ensure-no-project-compile-errors": "ts-node --transpile-only scripts/verification/ensureNoProjectCompileErrors",
     "ensure-no-declaration-file-errors": "ts-node --transpile-only scripts/verification/ensureNoDeclarationFileErrors",
-    "ensure-declaration-files-not-changed": "ts-node --transpile-only scripts/verification/ensureDeclarationFilesNotChanged",
     "ensure-array-inputs-readonly": "ts-node --transpile-only scripts/verification/main ensure-array-inputs-readonly",
     "ensure-or-throw-exists": "ts-node --transpile-only scripts/verification/main ensure-or-throw-exists",
-    "overwrite-declaration-files": "yarn build:declarations && shx cp -rf dist-declarations/ts-morph.d.ts lib/ts-morph.d.ts",
     "type-check-docs": "ts-node --transpile-only scripts/typeCheckDocumentation.ts"
   },
   "repository": "git+https://github.com/dsherret/ts-morph.git",
@@ -71,7 +69,7 @@
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
     "@ts-morph/common": "~0.2.0",
-    "code-block-writer": "^10.0.0"
+    "code-block-writer": "^10.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.4",

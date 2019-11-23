@@ -7,7 +7,7 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
     // add imports the typescript compiler api and code block writer files
     statements.push({
         kind: tsMorph.StructureKind.ImportDeclaration,
-        namedImports: ["errors", "ts"],
+        namedImports: ["errors", "ts", "StandardizedFilePath"],
         moduleSpecifier: "@ts-morph/common"
     });
 

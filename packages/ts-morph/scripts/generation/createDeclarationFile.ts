@@ -67,7 +67,7 @@ export async function createDeclarationFile() {
     log("Adding getParent methods...");
     addGetParentMethods();
     log("Moving file...");
-    mainFile.move("ts-morph.d.ts");
+    mainFile.move("../lib/ts-morph.d.ts", { overwrite: true });
     finishLog(lastDateTime!);
 
     await Promise.all([mainFile.save()]);
