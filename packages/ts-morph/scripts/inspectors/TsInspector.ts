@@ -38,6 +38,14 @@ export class TsInspector {
         return [...kindToNameMappings[kind]];
     }
 
+    isTokenKind(kind: number) {
+        const lastToken = this.getSyntaxKindNamesAndValues().find(member => member.name === "LastToken")!;
+        if (kind > lastToken.value)
+            return false;
+        const firstToken = this.getSyntaxKindNamesAndValues().find(member => member.name === "FirstToken")!;
+        return kind >= firstToken.value;
+    }
+
     @Memoize
     private getKindToNameMappings() {
         const kindToNameMappings: { [kind: number]: string[]; } = {};

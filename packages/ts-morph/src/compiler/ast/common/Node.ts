@@ -2894,7 +2894,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets if the node is a InferKeyword.
      */
-    static readonly isInferKeyword: (node: compiler.Node) => node is compiler.Node = Node.is(SyntaxKind.InferKeyword);
+    static readonly isInferKeyword: (node: compiler.Node) => node is compiler.Node<ts.Token<SyntaxKind.InferKeyword>> = Node.is(SyntaxKind.InferKeyword);
 
     /**
      * Gets if the node is a InferTypeNode.
@@ -3849,7 +3849,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets if the node is a SemicolonToken.
      */
-    static readonly isSemicolonToken: (node: compiler.Node) => node is compiler.Node = Node.is(SyntaxKind.SemicolonToken);
+    static readonly isSemicolonToken: (node: compiler.Node) => node is compiler.Node<ts.Token<SyntaxKind.SemicolonToken>> = Node.is(SyntaxKind.SemicolonToken);
 
     /**
      * Gets if the node is a SetAccessorDeclaration.

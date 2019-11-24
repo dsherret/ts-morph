@@ -13,7 +13,9 @@
  */
 import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, KeyValueCache } from "@ts-morph/common";
-import { Mixin, TsMorphInspector, WrappedNode } from "../inspectors";
+import { Mixin, TsMorphInspector, WrappedNode, TsInspector } from "../inspectors";
+
+// todo: this should be cleaned up as it's a mess
 
 interface MethodInfo {
     name: string;
@@ -22,7 +24,7 @@ interface MethodInfo {
     isMixin: boolean;
 }
 
-export function createTypeGuardsUtility(inspector: TsMorphInspector) {
+export function createTypeGuardsUtility(inspector: TsMorphInspector, tsInspector: TsInspector) {
     const file = inspector.getProject().getSourceFileOrThrow("./src/compiler/ast/common/Node.ts");
     const nodeClass = file.getClassOrThrow("Node");
     const kindToWrapperMappings = inspector.getKindToWrapperMappings();
@@ -53,7 +55,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
                 kind: tsMorph.StructureKind.Property,
                 docs: [{ description }],
                 initializer: `Node.is(SyntaxKind.${method.name})`,
-                type: `(node: compiler.Node) => node is compiler.${method.wrapperName}`,
+                type: `(node: compiler.Node) => node is ${getNodeType(method)}`,
                 isReadonly: true
             };
             methodsAndProperties.push(propertyStructure);
@@ -67,7 +69,7 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
                 }],
                 typeParameters: method.isMixin ? [{ name: "T", constraint: "compiler.Node" }] : [],
                 parameters: [{ name: "node", type: method.isMixin ? "T" : "compiler.Node" }],
-                returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType & T` : ""),
+                returnType: `node is ${getNodeType(method)}`,
                 statements: writer => {
                     if (method.syntaxKinds.length === 0)
                         throw new Error(`For some reason ${method.name} had no syntax kinds.`);
@@ -89,6 +91,18 @@ export function createTypeGuardsUtility(inspector: TsMorphInspector) {
     }
     nodeClass.forgetDescendants();
     updateHasStructure();
+
+    function getNodeType(method: MethodInfo) {
+        if (isToken())
+            return `compiler.Node<ts.Token<SyntaxKind.${method.syntaxKinds[0]}>>`;
+        return `compiler.${method.wrapperName}` + (method.isMixin ? ` & compiler.${method.name}ExtensionType & T` : "");
+
+        function isToken() {
+            if (method.wrapperName !== "Node" || method.syntaxKinds.length !== 1)
+                return false;
+            return tsInspector.isTokenKind(tsInspector.getSyntaxKindForName(method.syntaxKinds[0]));
+        }
+    }
 
     function getMethodInfos() {
         const methodInfos = new KeyValueCache<string, MethodInfo>();

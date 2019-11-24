@@ -23,7 +23,7 @@ const tsInspector = factory.getTsInspector();
     }
     if (checkHasArg("create-type-guards")) {
         console.log("Creating type guards utility class...");
-        createTypeGuardsUtility(inspector);
+        createTypeGuardsUtility(inspector, tsInspector);
     }
     if (checkHasArg("create-structure-printer-factory")) {
         console.log("Creating structure printer factory...");
