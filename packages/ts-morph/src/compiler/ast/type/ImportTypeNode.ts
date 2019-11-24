@@ -1,9 +1,9 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../manipulation";
-import { TypeGuards } from "../../../utils";
 import { EntityName } from "../aliases";
 import { TypeArgumentedNode } from "../base";
 import { TypeNode } from "./TypeNode";
+import { Node } from "../common";
 
 export const ImportTypeNodeBase = TypeArgumentedNode(TypeNode);
 export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
@@ -13,9 +13,9 @@ export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
      */
     setArgument(text: string) {
         const arg = this.getArgument();
-        if (TypeGuards.isLiteralTypeNode(arg)) {
+        if (Node.isLiteralTypeNode(arg)) {
             const literal = arg.getLiteral();
-            if (TypeGuards.isStringLiteral(literal)) {
+            if (Node.isStringLiteral(literal)) {
                 literal.setLiteralValue(text);
                 return this;
             }

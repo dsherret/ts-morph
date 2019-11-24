@@ -1,8 +1,6 @@
 import { expect } from "chai";
 import { Project } from "../../Project";
-import { IfStatement } from "../../compiler";
-import { TypeGuards } from "../../utils/TypeGuards";
-
+import { IfStatement, Node } from "../../compiler";
 describe("tests for issue #706", () => {
     it("should not error when removing a else if", () => {
         const project = new Project({ useVirtualFileSystem: true });
@@ -29,7 +27,7 @@ if (true) {
 
 test;`);
 
-        const ifStatement = file.getStatementOrThrow(TypeGuards.isIfStatement);
+        const ifStatement = file.getStatementOrThrow(Node.isIfStatement);
         ifStatement.remove();
     });
 
@@ -38,7 +36,7 @@ test;`);
         const file = project.createSourceFile("test.ts", `if (true) {
 } else if (false) {
 }`);
-        const ifStatement = file.getStatementOrThrow(TypeGuards.isIfStatement);
+        const ifStatement = file.getStatementOrThrow(Node.isIfStatement);
         ifStatement.transform(() => {
             return ifStatement.compilerNode.elseStatement!;
         });

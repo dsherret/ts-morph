@@ -1,6 +1,5 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { GetAccessorDeclarationStructure, GetAccessorDeclarationSpecificStructure, StructureKind } from "../../../structures";
-import { TypeGuards } from "../../../utils";
 import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration } from "../function";
@@ -8,6 +7,7 @@ import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
+import { Node } from "../common";
 
 const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(DecoratableNode(
     AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor))))))
@@ -31,7 +31,7 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
         const isStatic = this.isStatic();
 
         return this.getParentOrThrow().forEachChild(sibling => {
-            if (TypeGuards.isSetAccessorDeclaration(sibling) && sibling.getName() === thisName && sibling.isStatic() === isStatic)
+            if (Node.isSetAccessorDeclaration(sibling) && sibling.getName() === thisName && sibling.isStatic() === isStatic)
                 return sibling;
             return undefined;
         });

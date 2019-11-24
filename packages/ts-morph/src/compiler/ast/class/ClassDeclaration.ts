@@ -2,14 +2,13 @@ import { ArrayUtils, KeyValueCache, StringUtils, ts } from "@ts-morph/common";
 import { ClassDeclarationStructure, ConstructorDeclarationStructure, MethodDeclarationStructure, ClassDeclarationSpecificStructure,
     ClassLikeDeclarationBaseSpecificStructure, InterfaceDeclarationStructure, PropertySignatureStructure, MethodSignatureStructure,
     ParameterDeclarationStructure, StructureKind, JSDocStructure } from "../../../structures";
-import { TypeGuards } from "../../../utils";
 import { ExportableNode, AmbientableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassLikeDeclarationBase } from "./base";
-import { Scope } from "../common";
+import { Scope, Node } from "../common";
 import { ParameterDeclaration } from "../function";
 import { PropertyDeclaration } from "./PropertyDeclaration";
 import { ConstructorDeclaration } from "./ConstructorDeclaration";
@@ -92,7 +91,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             properties: [
                 ...parameterProperties.map(p => {
                     const jsDocComment = ArrayUtils.flatten((p.getParentOrThrow() as ConstructorDeclaration).getJsDocs().map(j => j.getTags()))
-                        .filter(TypeGuards.isJSDocParameterTag)
+                        .filter(Node.isJSDocParameterTag)
                         .filter(t => t.getTagName() === "param" && t.getName() === p.getName() && t.getComment() != null)
                         .map(t => t.getComment()!.trim())[0];
                     return {
@@ -186,7 +185,7 @@ function getExtractedInterfaceAccessorStructure(getAndSet: (GetAccessorDeclarati
         name: getAndSet[0].getName(),
         type: getAndSet[0].getType().getText(getAndSet[0]),
         hasQuestionToken: false,
-        isReadonly: getAndSet.every(TypeGuards.isGetAccessorDeclaration)
+        isReadonly: getAndSet.every(Node.isGetAccessorDeclaration)
     };
 }
 

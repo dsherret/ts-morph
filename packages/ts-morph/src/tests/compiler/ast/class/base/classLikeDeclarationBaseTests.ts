@@ -5,7 +5,6 @@ import { Node, ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArgum
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure, StructureKind, ClassMemberStructures } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
-import { TypeGuards } from "../../../../../utils";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(ClassLikeDeclarationBase), () => {
@@ -14,7 +13,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         return {
             ...info,
             classNode: info.sourceFile.getFirstDescendantOrThrow(
-                d => TypeGuards.isClassExpression(d) || TypeGuards.isClassDeclaration(d)
+                d => Node.isClassExpression(d) || Node.isClassDeclaration(d)
             ) as Node & ClassLikeDeclarationBase
         };
     }
@@ -1340,7 +1339,7 @@ class c {
         });
 
         it("should get a property by function", () => {
-            const method = firstChild.getMember(m => TypeGuards.isMethodDeclaration(m) && m.getName() === "method")! as MethodDeclaration;
+            const method = firstChild.getMember(m => Node.isMethodDeclaration(m) && m.getName() === "method")! as MethodDeclaration;
             expect(method.getName()).to.equal("method");
         });
     });
@@ -1358,12 +1357,12 @@ class c {
         });
 
         it("should get a property by function", () => {
-            const method = firstChild.getMemberOrThrow(m => TypeGuards.isMethodDeclaration(m) && m.getName() === "method") as MethodDeclaration;
+            const method = firstChild.getMemberOrThrow(m => Node.isMethodDeclaration(m) && m.getName() === "method") as MethodDeclaration;
             expect(method.getName()).to.equal("method");
         });
 
         it("should throw when not found", () => {
-            expect(() => firstChild.getMemberOrThrow(m => TypeGuards.isMethodDeclaration(m) && m.getName() === "method9")).to.throw();
+            expect(() => firstChild.getMemberOrThrow(m => Node.isMethodDeclaration(m) && m.getName() === "method9")).to.throw();
         });
     });
 

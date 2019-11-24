@@ -1,7 +1,6 @@
 import { StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Node, SourceFile } from "../../compiler";
-import { TypeGuards } from "../../utils";
 import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromArray, verifyAndGetIndex, appendCommaToText,
     getNodesToReturn } from "../helpers";
 import { NodeHandlerFactory } from "../nodeHandlers";
@@ -193,7 +192,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
 
     function getPreviousNonCommentNode() {
         for (let i = insertIndex - 1; i >= 0; i--) {
-            if (!TypeGuards.isCommentNode(currentNodes[i]))
+            if (!Node.isCommentNode(currentNodes[i]))
                 return currentNodes[i];
         }
         return undefined;
@@ -201,7 +200,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
 
     function getNextNonCommentNode() {
         for (let i = insertIndex; i < currentNodes.length; i++) {
-            if (!TypeGuards.isCommentNode(currentNodes[i]))
+            if (!Node.isCommentNode(currentNodes[i]))
                 return currentNodes[i];
         }
         return undefined;
@@ -279,7 +278,7 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
             // ensure it passes the implementation
             if (child == null)
                 return child;
-            else if (TypeGuards.isOverloadableNode(child))
+            else if (Node.isOverloadableNode(child))
                 return child.getImplementation() || child;
             else
                 return child;

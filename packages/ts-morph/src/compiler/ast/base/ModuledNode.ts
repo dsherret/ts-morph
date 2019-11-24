@@ -2,7 +2,6 @@ import { errors, ArrayUtils, ts, SyntaxKind } from "@ts-morph/common";
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
 import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
-import { TypeGuards } from "../../../utils";
 import { Symbol } from "../../symbols";
 import { isComment } from "../utils";
 import { ExportedDeclarations } from "../aliases";
@@ -221,8 +220,8 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forImportDeclaration().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isImportDeclaration(previousMember) || isComment(previousMember.compilerNode),
-                        nextNewLine: nextMember => TypeGuards.isImportDeclaration(nextMember)
+                        previousNewLine: previousMember => Node.isImportDeclaration(previousMember) || isComment(previousMember.compilerNode),
+                        nextNewLine: nextMember => Node.isImportDeclaration(nextMember)
                     });
                 }
             });
@@ -247,7 +246,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getImportDeclarations(): ImportDeclaration[] {
-            return this.getStatements().filter(TypeGuards.isImportDeclaration);
+            return this.getStatements().filter(Node.isImportDeclaration);
         }
 
         addExportDeclaration(structure: OptionalKind<ExportDeclarationStructure>) {
@@ -272,8 +271,8 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forExportDeclaration().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember) || isComment(previousMember.compilerNode),
-                        nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
+                        previousNewLine: previousMember => Node.isExportDeclaration(previousMember) || isComment(previousMember.compilerNode),
+                        nextNewLine: nextMember => Node.isExportDeclaration(nextMember)
                     });
                 }
             });
@@ -298,7 +297,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportDeclarations(): ExportDeclaration[] {
-            return this.getStatements().filter(TypeGuards.isExportDeclaration);
+            return this.getStatements().filter(Node.isExportDeclaration);
         }
 
         addExportAssignment(structure: OptionalKind<ExportAssignmentStructure>) {
@@ -323,8 +322,8 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forExportAssignment().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember) || isComment(previousMember.compilerNode),
-                        nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)
+                        previousNewLine: previousMember => Node.isExportAssignment(previousMember) || isComment(previousMember.compilerNode),
+                        nextNewLine: nextMember => Node.isExportAssignment(nextMember)
                     });
                 }
             });
@@ -339,7 +338,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         }
 
         getExportAssignments(): ExportAssignment[] {
-            return this.getStatements().filter(TypeGuards.isExportAssignment);
+            return this.getStatements().filter(Node.isExportAssignment);
         }
 
         getDefaultExportSymbol(): Symbol | undefined {
@@ -380,11 +379,11 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             return result;
 
             function* getDeclarationHandlingImportsAndExports(declaration: Node): IterableIterator<Node> {
-                if (TypeGuards.isExportSpecifier(declaration)) {
+                if (Node.isExportSpecifier(declaration)) {
                     for (const d of declaration.getLocalTargetDeclarations())
                         yield* getDeclarationHandlingImportsAndExports(d);
                 }
-                else if (TypeGuards.isExportAssignment(declaration)) {
+                else if (Node.isExportAssignment(declaration)) {
                     const expression = declaration.getExpression();
                     if (expression == null || expression.getKind() !== SyntaxKind.Identifier) {
                         yield expression;
@@ -392,14 +391,14 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                     }
                     yield* getDeclarationsForSymbol(expression.getSymbol());
                 }
-                else if (TypeGuards.isImportSpecifier(declaration)) {
+                else if (Node.isImportSpecifier(declaration)) {
                     const identifier = declaration.getNameNode();
                     const symbol = identifier.getSymbol();
                     if (symbol == null)
                         return;
                     yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
                 }
-                else if (TypeGuards.isImportClause(declaration)) {
+                else if (Node.isImportClause(declaration)) {
                     const identifier = declaration.getDefaultImport();
                     if (identifier == null)
                         return;
@@ -408,7 +407,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                         return;
                     yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
                 }
-                else if (TypeGuards.isNamespaceImport(declaration)) {
+                else if (Node.isNamespaceImport(declaration)) {
                     const symbol = declaration.getNameNode().getSymbol();
                     if (symbol == null)
                         return;
@@ -436,7 +435,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
             const declaration = defaultExportSymbol.getDeclarations()[0];
             if (declaration.compilerNode.kind === SyntaxKind.ExportAssignment)
                 removeChildrenWithFormatting({ children: [declaration], getSiblingFormatting: () => FormattingKind.Newline });
-            else if (TypeGuards.isModifierableNode(declaration)) {
+            else if (Node.isModifierableNode(declaration)) {
                 declaration.toggleModifier("default", false);
                 declaration.toggleModifier("export", false);
             }

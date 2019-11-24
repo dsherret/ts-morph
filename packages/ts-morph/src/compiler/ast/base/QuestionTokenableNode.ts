@@ -2,7 +2,6 @@ import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { QuestionTokenableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
-import { TypeGuards } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -51,7 +50,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 return this;
 
             if (value) {
-                if (TypeGuards.isExclamationTokenableNode(this))
+                if (Node.isExclamationTokenableNode(this))
                     this.setHasExclamationToken(false);
 
                 insertIntoParentTextRange({
@@ -67,7 +66,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
             return this;
 
             function getInsertPos(this: QuestionTokenableNode & Node) {
-                if (TypeGuards.hasName(this))
+                if (Node.hasName(this))
                     return this.getNameNode().getEnd();
 
                 const colonNode = this.getFirstChildByKind(SyntaxKind.ColonToken);

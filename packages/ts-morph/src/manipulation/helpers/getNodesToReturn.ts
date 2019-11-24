@@ -1,5 +1,4 @@
 import { Node } from "../../compiler";
-import { TypeGuards } from "../../utils";
 
 export function getNodesToReturn<T extends Node>(oldChildren: T[] | number, newChildren: T[], index: number, allowCommentNodes: boolean) {
     const oldChildCount = typeof oldChildren === "number" ? oldChildren : oldChildren.length;
@@ -7,7 +6,7 @@ export function getNodesToReturn<T extends Node>(oldChildren: T[] | number, newC
     const result: T[] = [];
     for (let i = 0; i < newLength; i++) {
         const currentChild = newChildren[index + i];
-        if (allowCommentNodes || !TypeGuards.isCommentNode(currentChild))
+        if (allowCommentNodes || !Node.isCommentNode(currentChild))
             result.push(currentChild);
     }
     return result;

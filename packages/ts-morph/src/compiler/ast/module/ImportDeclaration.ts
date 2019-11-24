@@ -2,13 +2,14 @@ import { errors, ArrayUtils, StringUtils, SyntaxKind, ts } from "@ts-morph/commo
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
 import { ImportSpecifierStructure, ImportDeclarationStructure, ImportDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
-import { ModuleUtils, TypeGuards } from "../../../utils";
+import { ModuleUtils } from "../../../utils";
 import { StringLiteral } from "../literal";
 import { Statement } from "../statement";
 import { ImportSpecifier } from "./ImportSpecifier";
 import { SourceFile } from "./SourceFile";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
+import { Node } from "../common";
 
 export const ImportDeclarationBase = Statement;
 export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
@@ -33,7 +34,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
      */
     getModuleSpecifier(): StringLiteral {
         const moduleSpecifier = this._getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
-        if (!TypeGuards.isStringLiteral(moduleSpecifier))
+        if (!Node.isStringLiteral(moduleSpecifier))
             throw new errors.InvalidOperationError("Expected the module specifier to be a string literal.");
         return moduleSpecifier;
     }

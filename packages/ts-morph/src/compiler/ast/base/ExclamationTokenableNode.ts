@@ -2,7 +2,6 @@ import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ExclamationTokenableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
-import { TypeGuards } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -51,7 +50,7 @@ export function ExclamationTokenableNode<T extends Constructor<ExclamationTokena
                 return this;
 
             if (value) {
-                if (TypeGuards.isQuestionTokenableNode(this))
+                if (Node.isQuestionTokenableNode(this))
                     this.setHasQuestionToken(false);
 
                 const colonNode = this.getFirstChildByKind(SyntaxKind.ColonToken);

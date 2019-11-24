@@ -1,5 +1,4 @@
 import { Node } from "../../compiler";
-import { TypeGuards } from "../../utils";
 
 export function getNodeByNameOrFindFunction<T extends Node>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
     let findFunc: (declaration: T) => boolean;
@@ -18,7 +17,7 @@ export function nodeHasName(node: Node, name: string): boolean {
     const nameNode = (node as any).getNameNode() as Node;
     if (nameNode == null)
         return false;
-    if (TypeGuards.isArrayBindingPattern(nameNode) || TypeGuards.isObjectBindingPattern(nameNode))
+    if (Node.isArrayBindingPattern(nameNode) || Node.isObjectBindingPattern(nameNode))
         return nameNode.getElements().some(element => nodeHasName(element, name));
     const nodeName = (node as any).getName != null ? (node as any).getName() : nameNode.getText();
     return nodeName === name;

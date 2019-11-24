@@ -6,7 +6,7 @@ import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, inse
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure, ClassMemberStructures, OptionalKind, Structure, StructureTypeGuards, Structures } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, isNodeAmbientOrInAmbientContext } from "../../../../utils";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext } from "../../../../utils";
 import { Type } from "../../../types";
 import { DecoratableNode, JSDocableNode, ModifierableNode, TypeParameteredNode, ImplementsClauseableNode, TextInsertableNode, HeritageClauseableNode,
     NameableNode } from "../../base";
@@ -612,7 +612,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                 index,
                 parent: this,
                 write: (writer, info) => {
-                    const previousMemberHasBody = !isAmbient && info.previousMember != null && TypeGuards.isBodyableNode(info.previousMember)
+                    const previousMemberHasBody = !isAmbient && info.previousMember != null && Node.isBodyableNode(info.previousMember)
                         && info.previousMember.hasBody();
                     const firstStructureHasBody = !isAmbient && members instanceof Array && structureHasBody(members[0]);
 
@@ -629,7 +629,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                     writer.write(memberWriter.toString());
 
                     const lastStructureHasBody = !isAmbient && members instanceof Array && structureHasBody(members[members.length - 1]);
-                    const nextMemberHasBody = !isAmbient && info.nextMember != null && TypeGuards.isBodyableNode(info.nextMember) && info.nextMember.hasBody();
+                    const nextMemberHasBody = !isAmbient && info.nextMember != null && Node.isBodyableNode(info.nextMember) && info.nextMember.hasBody();
 
                     if (info.nextMember != null && lastStructureHasBody || nextMemberHasBody)
                         writer.blankLineIfLastNot();
@@ -684,7 +684,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         }
 
         getConstructors() {
-            return this.getMembers().filter(m => TypeGuards.isConstructorDeclaration(m)) as ConstructorDeclaration[];
+            return this.getMembers().filter(m => Node.isConstructorDeclaration(m)) as ConstructorDeclaration[];
         }
 
         addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>) {
@@ -775,12 +775,12 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                 structures,
                 expectedKind: SyntaxKind.PropertyDeclaration,
                 write: (writer, info) => {
-                    if (info.previousMember != null && TypeGuards.hasBody(info.previousMember))
+                    if (info.previousMember != null && Node.hasBody(info.previousMember))
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
                     this._context.structurePrinterFactory.forPropertyDeclaration().printTexts(writer, structures);
-                    if (info.nextMember != null && TypeGuards.hasBody(info.nextMember))
+                    if (info.nextMember != null && Node.hasBody(info.nextMember))
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
@@ -877,7 +877,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
         getProperties() {
             return this.getMembers()
-                .filter(m => TypeGuards.isPropertyDeclaration(m)) as PropertyDeclaration[];
+                .filter(m => Node.isPropertyDeclaration(m)) as PropertyDeclaration[];
         }
 
         getGetAccessor(name: string): GetAccessorDeclaration | undefined;
@@ -896,7 +896,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
         getGetAccessors() {
             return this.getMembers()
-                .filter(m => TypeGuards.isGetAccessorDeclaration(m)) as GetAccessorDeclaration[];
+                .filter(m => Node.isGetAccessorDeclaration(m)) as GetAccessorDeclaration[];
         }
 
         getSetAccessor(name: string): SetAccessorDeclaration | undefined;
@@ -915,7 +915,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
         getSetAccessors() {
             return this.getMembers()
-                .filter(m => TypeGuards.isSetAccessorDeclaration(m)) as SetAccessorDeclaration[];
+                .filter(m => Node.isSetAccessorDeclaration(m)) as SetAccessorDeclaration[];
         }
 
         getMethod(name: string): MethodDeclaration | undefined;
@@ -934,7 +934,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
         getMethods() {
             return this.getMembers()
-                .filter(m => TypeGuards.isMethodDeclaration(m)) as MethodDeclaration[];
+                .filter(m => Node.isMethodDeclaration(m)) as MethodDeclaration[];
         }
 
         getInstanceMethod(name: string): MethodDeclaration | undefined;
@@ -989,9 +989,9 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
         getInstanceMembers() {
             return this.getMembersWithParameterProperties().filter(m => {
-                if (TypeGuards.isConstructorDeclaration(m))
+                if (Node.isConstructorDeclaration(m))
                     return false;
-                return TypeGuards.isParameterDeclaration(m) || !m.isStatic();
+                return Node.isParameterDeclaration(m) || !m.isStatic();
             }) as ClassInstanceMemberTypes[];
         }
 
@@ -1011,15 +1011,15 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
         getStaticMembers() {
             return this.getMembers().filter(m => {
-                if (TypeGuards.isConstructorDeclaration(m))
+                if (Node.isConstructorDeclaration(m))
                     return false;
-                return !TypeGuards.isParameterDeclaration(m) && m.isStatic();
+                return !Node.isParameterDeclaration(m) && m.isStatic();
             }) as ClassStaticMemberTypes[];
         }
 
         getMembersWithParameterProperties() {
             const members: (ClassMemberTypes | ParameterDeclaration)[] = this.getMembers();
-            const implementationCtors = members.filter(c => TypeGuards.isConstructorDeclaration(c) && c.isImplementation()) as ConstructorDeclaration[];
+            const implementationCtors = members.filter(c => Node.isConstructorDeclaration(c) && c.isImplementation()) as ConstructorDeclaration[];
             for (const ctor of implementationCtors) {
                 // insert after the constructor
                 let insertIndex = members.indexOf(ctor) + 1;
@@ -1042,7 +1042,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             const compilerNode = this.compilerNode as ts.ClassExpression | ts.ClassDeclaration;
             const members = ExtendedParser.getContainerArray(compilerNode, this.getSourceFile().compilerNode);
             return getAllMembers(this, members)
-                .filter(m => isSupportedClassMember(m) || TypeGuards.isCommentClassElement(m)) as (ClassMemberTypes | CommentClassElement)[];
+                .filter(m => isSupportedClassMember(m) || Node.isCommentClassElement(m)) as (ClassMemberTypes | CommentClassElement)[];
         }
 
         getMember(name: string): ClassMemberTypes | undefined;
@@ -1106,9 +1106,9 @@ function getAllMembers(classDec: Node<ts.ClassLikeDeclarationBase>, compilerMemb
 
     // filter out the method declarations or constructor declarations without a body if not ambient
     return isAmbient ? members : members.filter(m => {
-        if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
+        if (!(Node.isConstructorDeclaration(m) || Node.isMethodDeclaration(m)))
             return true;
-        if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
+        if (Node.isMethodDeclaration(m) && m.isAbstract())
             return true;
         return m.isImplementation();
     });
@@ -1138,18 +1138,18 @@ function getImmediateDerivedClasses(classDec: ClassLikeDeclarationBaseSpecific &
 }
 
 function isClassPropertyType(m: Node) {
-    return TypeGuards.isPropertyDeclaration(m)
-        || TypeGuards.isSetAccessorDeclaration(m)
-        || TypeGuards.isGetAccessorDeclaration(m)
-        || TypeGuards.isParameterDeclaration(m);
+    return Node.isPropertyDeclaration(m)
+        || Node.isSetAccessorDeclaration(m)
+        || Node.isGetAccessorDeclaration(m)
+        || Node.isParameterDeclaration(m);
 }
 
 function isSupportedClassMember(m: Node) {
-    return TypeGuards.isMethodDeclaration(m)
-        || TypeGuards.isPropertyDeclaration(m)
-        || TypeGuards.isGetAccessorDeclaration(m)
-        || TypeGuards.isSetAccessorDeclaration(m)
-        || TypeGuards.isConstructorDeclaration(m);
+    return Node.isMethodDeclaration(m)
+        || Node.isPropertyDeclaration(m)
+        || Node.isGetAccessorDeclaration(m)
+        || Node.isSetAccessorDeclaration(m)
+        || Node.isConstructorDeclaration(m);
 }
 
 interface InsertChildrenOptions {

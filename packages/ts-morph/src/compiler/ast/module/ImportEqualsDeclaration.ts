@@ -1,9 +1,9 @@
 import { errors, ts } from "@ts-morph/common";
-import { TypeGuards } from "../../../utils";
 import { ModuleReference } from "../aliases";
 import { JSDocableNode, NamedNode } from "../base";
 import { Statement } from "../statement";
 import { SourceFile } from "./SourceFile";
+import { Node } from "../common";
 
 const createBase = <T extends typeof Statement>(ctor: T) => JSDocableNode(NamedNode(ctor));
 export const ImportEqualsDeclarationBase = createBase(Statement);
@@ -20,7 +20,7 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
      */
     isExternalModuleReferenceRelative() {
         const moduleReference = this.getModuleReference();
-        if (!TypeGuards.isExternalModuleReference(moduleReference))
+        if (!Node.isExternalModuleReference(moduleReference))
             return false;
 
         return moduleReference.isRelative();
@@ -39,7 +39,7 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
     setExternalModuleReference(textOrSourceFile: string | SourceFile) {
         const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this._sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
         const moduleReference = this.getModuleReference();
-        if (TypeGuards.isExternalModuleReference(moduleReference) && moduleReference.getExpression() != null)
+        if (Node.isExternalModuleReference(moduleReference) && moduleReference.getExpression() != null)
             moduleReference.getExpressionOrThrow().replaceWithText(writer => writer.quote(text));
         else
             moduleReference.replaceWithText(writer => writer.write("require(").quote(text).write(")"));
@@ -59,7 +59,7 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
      */
     getExternalModuleReferenceSourceFile() {
         const moduleReference = this.getModuleReference();
-        if (!TypeGuards.isExternalModuleReference(moduleReference))
+        if (!Node.isExternalModuleReference(moduleReference))
             return undefined;
         return moduleReference.getReferencedSourceFile();
     }

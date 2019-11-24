@@ -1,6 +1,5 @@
 import { errors, SyntaxKind } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
-import { TypeGuards } from "../../../../utils";
 import { Node } from "../../common";
 import { ModifierableNode } from "../ModifierableNode";
 
@@ -52,11 +51,11 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
         }
 
         getExportKeyword() {
-            if (TypeGuards.isVariableDeclaration(this)) {
+            if (Node.isVariableDeclaration(this)) {
                 const variableStatement = this.getVariableStatement();
                 return variableStatement?.getExportKeyword();
             }
-            if (!TypeGuards.isModifierableNode(this))
+            if (!Node.isModifierableNode(this))
                 return throwForNotModifierableNode();
             return this.getFirstModifierByKind(SyntaxKind.ExportKeyword);
         }
@@ -70,11 +69,11 @@ export function ExportGetableNode<T extends Constructor<ExportGetableNodeExtensi
         }
 
         getDefaultKeyword() {
-            if (TypeGuards.isVariableDeclaration(this)) {
+            if (Node.isVariableDeclaration(this)) {
                 const variableStatement = this.getVariableStatement();
                 return variableStatement?.getDefaultKeyword();
             }
-            if (!TypeGuards.isModifierableNode(this))
+            if (!Node.isModifierableNode(this))
                 return throwForNotModifierableNode();
             return this.getFirstModifierByKind(SyntaxKind.DefaultKeyword);
         }

@@ -6,8 +6,7 @@ import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclaratio
     StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, StatementStructures, OptionalKind,
     Structure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
-import { getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext,
-    TypeGuards } from "../../../utils";
+import { getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassDeclaration } from "../class";
@@ -516,7 +515,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 const childSyntaxList = this.getChildSyntaxListOrThrow();
 
                 // case and default clauses can optionally have blocks
-                if (TypeGuards.isCaseClause(this) || TypeGuards.isDefaultClause(this)) {
+                if (Node.isCaseClause(this) || Node.isDefaultClause(this)) {
                     const block = childSyntaxList.getFirstChildIfKind(SyntaxKind.Block);
                     if (block != null)
                         return block.getChildSyntaxListOrThrow();
@@ -569,7 +568,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getClasses(): ClassDeclaration[] {
-            return this.getStatements().filter(TypeGuards.isClassDeclaration);
+            return this.getStatements().filter(Node.isClassDeclaration);
         }
 
         getClass(name: string): ClassDeclaration | undefined;
@@ -616,7 +615,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getEnums(): EnumDeclaration[] {
-            return this.getStatements().filter(TypeGuards.isEnumDeclaration);
+            return this.getStatements().filter(Node.isEnumDeclaration);
         }
 
         getEnum(name: string): EnumDeclaration | undefined;
@@ -661,10 +660,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                         }).printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => structures[0].hasDeclareKeyword === true
-                            && TypeGuards.isFunctionDeclaration(previousMember)
+                            && Node.isFunctionDeclaration(previousMember)
                             && previousMember.getBody() == null,
                         nextNewLine: nextMember => structures[structures.length - 1].hasDeclareKeyword === true
-                            && TypeGuards.isFunctionDeclaration(nextMember)
+                            && Node.isFunctionDeclaration(nextMember)
                             && nextMember.getBody() == null
                     });
                 }
@@ -672,7 +671,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getFunctions(): FunctionDeclaration[] {
-            return this.getStatements().filter(TypeGuards.isFunctionDeclaration).filter(f => f.isAmbient() || f.isImplementation());
+            return this.getStatements().filter(Node.isFunctionDeclaration).filter(f => f.isAmbient() || f.isImplementation());
         }
 
         getFunction(name: string): FunctionDeclaration | undefined;
@@ -719,7 +718,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getInterfaces(): InterfaceDeclaration[] {
-            return this.getStatements().filter(TypeGuards.isInterfaceDeclaration);
+            return this.getStatements().filter(Node.isInterfaceDeclaration);
         }
 
         getInterface(name: string): InterfaceDeclaration | undefined;
@@ -767,7 +766,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getNamespaces(): NamespaceDeclaration[] {
-            return this.getStatements().filter(TypeGuards.isNamespaceDeclaration);
+            return this.getStatements().filter(Node.isNamespaceDeclaration);
         }
 
         getNamespace(name: string): NamespaceDeclaration | undefined;
@@ -809,15 +808,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forTypeAliasDeclaration().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
-                        nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
+                        previousNewLine: previousMember => Node.isTypeAliasDeclaration(previousMember),
+                        nextNewLine: nextMember => Node.isTypeAliasDeclaration(nextMember)
                     });
                 }
             });
         }
 
         getTypeAliases(): TypeAliasDeclaration[] {
-            return this.getStatements().filter(TypeGuards.isTypeAliasDeclaration);
+            return this.getStatements().filter(Node.isTypeAliasDeclaration);
         }
 
         getTypeAlias(name: string): TypeAliasDeclaration | undefined;
@@ -839,7 +838,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /* Variable statements */
 
         getVariableStatements(): VariableStatement[] {
-            return this.getStatements().filter(TypeGuards.isVariableStatement);
+            return this.getStatements().filter(Node.isVariableStatement);
         }
 
         getVariableStatement(nameOrFindFunction: string | ((statement: VariableStatement) => boolean)): VariableStatement | undefined {
@@ -880,8 +879,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forVariableStatement().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isVariableStatement(previousMember),
-                        nextNewLine: nextMember => TypeGuards.isVariableStatement(nextMember)
+                        previousNewLine: previousMember => Node.isVariableStatement(previousMember),
+                        nextNewLine: nextMember => Node.isVariableStatement(nextMember)
                     });
                 }
             });
@@ -914,11 +913,11 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getStructure() {
             const structure: Pick<StatementedNodeStructure, "statements"> = {};
-            if (TypeGuards.isBodyableNode(this) && !this.hasBody())
+            if (Node.isBodyableNode(this) && !this.hasBody())
                 structure.statements = undefined;
             else {
                 structure.statements = this.getStatements().map(s => {
-                    if (TypeGuards._hasStructure(s))
+                    if (Node._hasStructure(s))
                         return s.getStructure() as any; // todo: resolve this
                     return s.getText({ trimLeadingIndentation: true });
                 });
@@ -930,7 +929,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         set(structure: Partial<StatementedNodeStructure>) {
             // todo: I don't think it's necessary to do this in two steps anymore and this could probably
             // be changed to set the body text in one go instead (for performance reasons)
-            if (TypeGuards.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure.statements)))
+            if (Node.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure.statements)))
                 this.removeBody();
             else if (structure.statements != null) {
                 const statementCount = this._getCompilerStatementsWithComments().length;
@@ -958,15 +957,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         _getCompilerStatementsContainer(): StatementContainerNodes | undefined {
-            if (TypeGuards.isSourceFile(this) || TypeGuards.isCaseClause(this) || TypeGuards.isDefaultClause(this))
+            if (Node.isSourceFile(this) || Node.isCaseClause(this) || Node.isDefaultClause(this))
                 return this.compilerNode;
-            else if (TypeGuards.isNamespaceDeclaration(this)) {
+            else if (Node.isNamespaceDeclaration(this)) {
                 // need to get the inner-most body for namespaces
                 return (this._getInnerBody().compilerNode as ts.Block);
             }
-            else if (TypeGuards.isBodyableNode(this) || TypeGuards.isBodiedNode(this))
+            else if (Node.isBodyableNode(this) || Node.isBodiedNode(this))
                 return (this.getBody()?.compilerNode as any);
-            else if (TypeGuards.isBlock(this) || TypeGuards.isModuleBlock(this))
+            else if (Node.isBlock(this) || Node.isModuleBlock(this))
                 return this.compilerNode;
             else
                 throw new errors.NotImplementedError(`Could not find the statements for node kind: ${this.getKindName()}, text: ${this.getText()}`);
@@ -1007,6 +1006,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 }
 
 function addBodyIfNotExists(node: Node) {
-    if (TypeGuards.isBodyableNode(node) && !node.hasBody())
+    if (Node.isBodyableNode(node) && !node.hasBody())
         node.addBody();
 }

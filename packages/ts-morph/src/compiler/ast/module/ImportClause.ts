@@ -1,7 +1,5 @@
 import { errors, ts } from "@ts-morph/common";
 import { Node } from "../common";
-import { TypeGuards } from "../../../utils";
-
 export const ImportClauseBase = Node;
 export class ImportClause extends ImportClauseBase<ts.ImportClause> {
     /**
@@ -44,7 +42,7 @@ export class ImportClause extends ImportClauseBase<ts.ImportClause> {
      */
     getNamespaceImport() {
         const namedBindings = this.getNamedBindings();
-        if (namedBindings == null || !TypeGuards.isNamespaceImport(namedBindings))
+        if (namedBindings == null || !Node.isNamespaceImport(namedBindings))
             return undefined;
         return namedBindings.getNameNode();
     }
@@ -54,7 +52,7 @@ export class ImportClause extends ImportClauseBase<ts.ImportClause> {
      */
     getNamedImports() {
         const namedBindings = this.getNamedBindings();
-        if (namedBindings == null || !TypeGuards.isNamedImports(namedBindings))
+        if (namedBindings == null || !Node.isNamedImports(namedBindings))
             return [];
         return namedBindings.getElements();
     }

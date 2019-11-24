@@ -1,6 +1,5 @@
 import { ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
-import { TypeGuards } from "../../../../utils";
 import { Node } from "../../common";
 import { ReferencedSymbol } from "../../../tools";
 
@@ -30,12 +29,12 @@ export function ReferenceFindableNode<T extends Constructor<ReferenceFindableNod
 }
 
 function getNodeForReferences(node: ReferenceFindableNodeExtensionType) {
-    if (TypeGuards.isIdentifier(node))
+    if (Node.isIdentifier(node))
         return node;
     const nameNode = node.getNodeProperty("name");
     if (nameNode != null)
         return nameNode;
-    if (TypeGuards.isExportableNode(node))
+    if (Node.isExportableNode(node))
         return node.getDefaultKeyword() || node;
     return node;
 }

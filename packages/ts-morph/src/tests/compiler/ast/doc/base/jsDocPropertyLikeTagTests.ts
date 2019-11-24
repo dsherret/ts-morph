@@ -1,12 +1,11 @@
 import { expect } from "chai";
-import { JSDocPropertyLikeTag } from "../../../../../compiler";
-import { TypeGuards } from "../../../../../utils";
+import { JSDocPropertyLikeTag, Node } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(JSDocPropertyLikeTag), () => {
     function getInfo(text: string) {
         const info = getInfoFromText(text);
-        return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocPropertyLikeTag), ...info };
+        return { descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isJSDocPropertyLikeTag), ...info };
     }
 
     describe(nameof<JSDocPropertyLikeTag>(d => d.getTypeExpression), () => {

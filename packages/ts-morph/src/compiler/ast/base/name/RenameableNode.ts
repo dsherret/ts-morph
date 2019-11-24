@@ -1,6 +1,5 @@
 import { errors, KeyValueCache, ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
-import { TypeGuards } from "../../../../utils";
 import { Node } from "../../common";
 import { RenameOptions, RenameLocation } from "../../../tools";
 import { replaceSourceFileTextForRename } from "../../../../manipulation";
@@ -25,12 +24,12 @@ export function RenameableNode<T extends Constructor<RenameableNodeExtensionType
             return this;
 
             function getNodeToRename(thisNode: Node) {
-                if (TypeGuards.isIdentifier(thisNode))
+                if (Node.isIdentifier(thisNode))
                     return thisNode;
                 else if ((thisNode as any).getNameNode != null) {
                     const node = (thisNode as any).getNameNode() as Node;
                     errors.throwIfNullOrUndefined(node, "Expected to find a name node when renaming.");
-                    if (TypeGuards.isArrayBindingPattern(node) || TypeGuards.isObjectBindingPattern(node))
+                    if (Node.isArrayBindingPattern(node) || Node.isObjectBindingPattern(node))
                         throw new errors.NotImplementedError(`Not implemented renameable scenario for ${node.getKindName()}.`);
                     return node;
                 }

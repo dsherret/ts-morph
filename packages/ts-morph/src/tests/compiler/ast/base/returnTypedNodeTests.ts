@@ -1,10 +1,8 @@
 import { expect } from "chai";
-import { FunctionDeclaration, ReturnTypedNode } from "../../../../compiler";
+import { FunctionDeclaration, ReturnTypedNode, Node } from "../../../../compiler";
 import { ReturnTypedNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
-import { TypeGuards } from "../../../../utils";
-
 describe(nameof(ReturnTypedNode), () => {
     const { sourceFile: mainSourceFile } = getInfoFromText("function myImplicit() { return 5; }\nfunction myExplicit(): string { return ''; }");
     const implicitDeclaration = mainSourceFile.getFunctions()[0];
@@ -136,7 +134,7 @@ describe(nameof(ReturnTypedNode), () => {
             const text = "function f() {\n    function t(): {\n        b: string;\n    } {\n    }\n}";
             const expected = "{\n    b: string;\n}";
             const { firstChild } = getInfoFromText<FunctionDeclaration>(text);
-            expect(firstChild.getStatements().find(TypeGuards.isFunctionDeclaration)!.getStructure().returnType).to.deep.equal(expected);
+            expect(firstChild.getStatements().find(Node.isFunctionDeclaration)!.getStructure().returnType).to.deep.equal(expected);
         });
     });
 });

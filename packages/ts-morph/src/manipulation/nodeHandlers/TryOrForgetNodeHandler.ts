@@ -1,6 +1,5 @@
 import { Node } from "../../compiler";
 import { errors, ts } from "@ts-morph/common";
-import { TypeGuards } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 
 /**
@@ -12,7 +11,7 @@ export class TryOrForgetNodeHandler implements NodeHandler {
 
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         /* istanbul ignore next */
-        if (!TypeGuards.isSourceFile(currentNode))
+        if (!Node.isSourceFile(currentNode))
             throw new errors.InvalidOperationError(`Can only use a ${nameof(TryOrForgetNodeHandler)} with a source file.`);
 
         try {

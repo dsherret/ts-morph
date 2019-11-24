@@ -1,9 +1,8 @@
 import { Node } from "../../compiler";
-import { TypeGuards } from "../../utils";
 import { FormattingKind } from "./FormattingKind";
 
 export function getClassMemberFormatting(parent: Node, member: Node) {
-    if (TypeGuards.isAmbientableNode(parent) && parent.isAmbient())
+    if (Node.isAmbientableNode(parent) && parent.isAmbient())
         return FormattingKind.Newline;
 
     if (hasBody(member))
@@ -13,9 +12,9 @@ export function getClassMemberFormatting(parent: Node, member: Node) {
 }
 
 function hasBody(node: Node) {
-    if (TypeGuards.isBodyableNode(node) && node.getBody() != null)
+    if (Node.isBodyableNode(node) && node.getBody() != null)
         return true;
-    if (TypeGuards.isBodiedNode(node))
+    if (Node.isBodiedNode(node))
         return true;
     return false;
 }

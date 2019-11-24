@@ -1,7 +1,6 @@
 import { errors, SyntaxKind } from "@ts-morph/common";
 import { ExportableNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
-import { TypeGuards } from "../../../../utils";
 import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { Node } from "../../common";
@@ -36,7 +35,7 @@ function apply<T extends Constructor<ExportableNodeExtensionType & ExportGetable
             if (value === this.isDefaultExport())
                 return this;
 
-            if (value && !TypeGuards.isSourceFile(this.getParentOrThrow()))
+            if (value && !Node.isSourceFile(this.getParentOrThrow()))
                 throw new errors.InvalidOperationError("The parent must be a source file in order to set this node as a default export.");
 
             // remove any existing default export
@@ -50,7 +49,7 @@ function apply<T extends Constructor<ExportableNodeExtensionType & ExportGetable
                 return this;
 
             // set this node as the one to default export
-            if (TypeGuards.hasName(this) && shouldWriteAsSeparateStatement.call(this)) {
+            if (Node.hasName(this) && shouldWriteAsSeparateStatement.call(this)) {
                 const parentSyntaxList = this.getFirstAncestorByKindOrThrow(SyntaxKind.SyntaxList);
                 const name = this.getName();
 
@@ -66,9 +65,9 @@ function apply<T extends Constructor<ExportableNodeExtensionType & ExportGetable
             return this;
 
             function shouldWriteAsSeparateStatement(this: Node) {
-                if (TypeGuards.isEnumDeclaration(this) || TypeGuards.isNamespaceDeclaration(this) || TypeGuards.isTypeAliasDeclaration(this))
+                if (Node.isEnumDeclaration(this) || Node.isNamespaceDeclaration(this) || Node.isTypeAliasDeclaration(this))
                     return true;
-                if (TypeGuards.isAmbientableNode(this) && this.isAmbient())
+                if (Node.isAmbientableNode(this) && this.isAmbient())
                     return true;
                 return false;
             }
@@ -76,7 +75,7 @@ function apply<T extends Constructor<ExportableNodeExtensionType & ExportGetable
 
         setIsExported(value: boolean) {
             // remove the default keyword if it exists
-            if (TypeGuards.isSourceFile(this.getParentOrThrow()))
+            if (Node.isSourceFile(this.getParentOrThrow()))
                 this.toggleModifier("default", false);
 
             this.toggleModifier("export", value);

@@ -1,6 +1,5 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { Node, OverloadableNode } from "../../compiler";
-import { TypeGuards } from "../../utils";
 import { FormattingKind, getClassMemberFormatting, getClausedNodeChildFormatting, getInterfaceMemberFormatting,
     getStatementedNodeChildFormatting } from "../formatting";
 import { NodeHandlerFactory } from "../nodeHandlers";
@@ -69,12 +68,12 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
 }
 
 export function removeClassMember(classMember: Node) {
-    if (TypeGuards.isOverloadableNode(classMember)) {
+    if (Node.isOverloadableNode(classMember)) {
         if (classMember.isImplementation())
             removeClassMembers([...classMember.getOverloads(), classMember]);
         else {
             const parent = classMember.getParentOrThrow();
-            if (TypeGuards.isAmbientableNode(parent) && parent.isAmbient())
+            if (Node.isAmbientableNode(parent) && parent.isAmbient())
                 removeClassMembers([classMember]);
             else
                 removeChildren({ children: [classMember], removeFollowingSpaces: true, removeFollowingNewLines: true });

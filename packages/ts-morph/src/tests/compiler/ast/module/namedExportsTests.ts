@@ -1,13 +1,12 @@
 import { expect } from "chai";
-import { NamedExports } from "../../../../compiler";
-import { TypeGuards } from "../../../../utils";
+import { NamedExports, Node } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(NamedExports), () => {
     function getInfo(text: string) {
         const info = getInfoFromText(text);
         return {
-            descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isNamedExports),
+            descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isNamedExports),
             ...info
         };
     }

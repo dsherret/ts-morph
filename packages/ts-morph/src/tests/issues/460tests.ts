@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { TypeGuards } from "../../utils";
 import { getInfoFromText } from "../compiler/testHelpers";
+import { Node } from "../../compiler";
 
 describe("tests for issue #460", () => {
     it("should change to be ambientable", () => {
@@ -13,7 +13,7 @@ export declare function baz(...args: any[]): void;`;
         const { sourceFile } = getInfoFromText(fileText, { isDefinitionFile: true });
 
         sourceFile.forEachChild(child => {
-            if (TypeGuards.isAmbientableNode(child))
+            if (Node.isAmbientableNode(child))
                 child.setHasDeclareKeyword(false);
         });
 

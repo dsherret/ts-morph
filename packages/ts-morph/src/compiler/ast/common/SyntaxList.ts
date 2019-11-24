@@ -1,7 +1,7 @@
 import { ts } from "@ts-morph/common";
 import { getInsertPosFromIndex, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
-import { getTextFromStringOrWriter, TypeGuards } from "../../../utils";
+import { getTextFromStringOrWriter } from "../../../utils";
 import { Node } from "./Node";
 
 export class SyntaxList extends Node<ts.SyntaxList> {
@@ -44,7 +44,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
                 insertText = " " + insertText;
         }
         else {
-            if (index === 0 && TypeGuards.isSourceFile(parent)) {
+            if (index === 0 && Node.isSourceFile(parent)) {
                 if (!insertText.endsWith("\n"))
                     insertText += newLineKind;
             }
@@ -52,7 +52,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
                 insertText = newLineKind + insertText;
 
                 // remove the last newline if inserting to the end of a node that's not a source file
-                if (!TypeGuards.isSourceFile(parent) && index === initialChildCount && insertText.endsWith("\n"))
+                if (!Node.isSourceFile(parent) && index === initialChildCount && insertText.endsWith("\n"))
                     insertText = insertText.replace(/\r?\n$/, "");
             }
         }

@@ -1,12 +1,11 @@
-import { JSDocTypeExpression } from "../../../../compiler";
+import { JSDocTypeExpression, Node } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
-import { TypeGuards } from "../../../../utils";
 import { expect } from "chai";
 
 describe(nameof(JSDocTypeExpression), () => {
     function getInfo(text: string) {
         const info = getInfoFromText(text);
-        return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocTypeExpression), ...info };
+        return { descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isJSDocTypeExpression), ...info };
     }
 
     describe(nameof<JSDocTypeExpression>(d => d.getTypeNode), () => {
