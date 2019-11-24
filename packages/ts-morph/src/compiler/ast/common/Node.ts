@@ -2624,7 +2624,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         switch (node.getKind()) {
             case SyntaxKind.AnyKeyword:
             case SyntaxKind.BooleanKeyword:
-            case SyntaxKind.NeverKeyword:
             case SyntaxKind.NumberKeyword:
             case SyntaxKind.ObjectKeyword:
             case SyntaxKind.StringKeyword:
@@ -3473,7 +3472,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets if the node is a NeverKeyword.
      */
-    static readonly isNeverKeyword: (node: compiler.Node) => node is compiler.Expression = Node.is(SyntaxKind.NeverKeyword);
+    static readonly isNeverKeyword: (node: compiler.Node) => node is compiler.Node<ts.Token<SyntaxKind.NeverKeyword>> = Node.is(SyntaxKind.NeverKeyword);
     /**
      * Gets if the node is a NewExpression.
      */

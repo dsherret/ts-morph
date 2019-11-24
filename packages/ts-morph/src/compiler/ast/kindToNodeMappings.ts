@@ -1,6 +1,7 @@
-// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while.
-import { SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, ts } from "@ts-morph/common";
 import * as compiler from "./index";
+
+// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while.
 
 export interface ImplementedKindToNodeMappings {
     [SyntaxKind.SourceFile]: compiler.SourceFile;
@@ -145,15 +146,15 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.VariableDeclarationList]: compiler.VariableDeclarationList;
     [SyntaxKind.VariableStatement]: compiler.VariableStatement;
     [SyntaxKind.JSDocComment]: compiler.JSDoc;
-    [SyntaxKind.SemicolonToken]: compiler.Node;
-    [SyntaxKind.InferKeyword]: compiler.Node;
     [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression;
     [SyntaxKind.WhileStatement]: compiler.WhileStatement;
     [SyntaxKind.WithStatement]: compiler.WithStatement;
     [SyntaxKind.YieldExpression]: compiler.YieldExpression;
+    [SyntaxKind.SemicolonToken]: compiler.Node<ts.Token<SyntaxKind.SemicolonToken>>;
+    [SyntaxKind.InferKeyword]: compiler.Node<ts.Token<SyntaxKind.InferKeyword>>;
+    [SyntaxKind.NeverKeyword]: compiler.Node<ts.Token<SyntaxKind.NeverKeyword>>;
     [SyntaxKind.AnyKeyword]: compiler.Expression;
     [SyntaxKind.BooleanKeyword]: compiler.Expression;
-    [SyntaxKind.NeverKeyword]: compiler.Expression;
     [SyntaxKind.NumberKeyword]: compiler.Expression;
     [SyntaxKind.ObjectKeyword]: compiler.Expression;
     [SyntaxKind.StringKeyword]: compiler.Expression;
@@ -216,7 +217,6 @@ export interface KindToExpressionMappings {
     [SyntaxKind.YieldExpression]: compiler.YieldExpression;
     [SyntaxKind.AnyKeyword]: compiler.Expression;
     [SyntaxKind.BooleanKeyword]: compiler.Expression;
-    [SyntaxKind.NeverKeyword]: compiler.Expression;
     [SyntaxKind.NumberKeyword]: compiler.Expression;
     [SyntaxKind.ObjectKeyword]: compiler.Expression;
     [SyntaxKind.StringKeyword]: compiler.Expression;

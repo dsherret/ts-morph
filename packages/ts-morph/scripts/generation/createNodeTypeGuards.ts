@@ -1,7 +1,7 @@
 /**
- * Code generation: Create TypeGuards Utility
+ * Code generation: Create Node Type Guards
  * ------------------------------------------
- * This code creates the TypeGurads class found in the utils folder.
+ * This code creates the static methods found on Node.
  *
  * It is far easier to have this created and maintained by code generation.
  *
@@ -24,7 +24,7 @@ interface MethodInfo {
     isMixin: boolean;
 }
 
-export function createTypeGuardsUtility(inspector: TsMorphInspector, tsInspector: TsInspector) {
+export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: TsInspector) {
     const file = inspector.getProject().getSourceFileOrThrow("./src/compiler/ast/common/Node.ts");
     const nodeClass = file.getClassOrThrow("Node");
     const kindToWrapperMappings = inspector.getKindToWrapperMappings();
