@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, Node, PropertyDeclaration, TypeAliasDeclaration, TypedNode, VariableStatement } from "../../../../compiler";
 import { errors } from "@ts-morph/common";
-import { TypeGuards } from "../../../../utils";
 import { TypedNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -196,7 +195,7 @@ describe(nameof(TypedNode), () => {
     describe(nameof<TypeAliasDeclaration>(t => t.set), () => {
         function doTest(startingCode: string, structure: TypedNodeStructure, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
-            const firstTyped = sourceFile.getFirstDescendant(TypeGuards.isTypedNode);
+            const firstTyped = sourceFile.getFirstDescendant(Node.isTypedNode);
             (firstTyped as TypeAliasDeclaration).set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -241,7 +240,7 @@ describe(nameof(TypedNode), () => {
             const text = "function f() {\n    let a: {\n        b: string;\n    }}";
             const expected = "{\n    b: string;\n}";
             const { firstChild } = getInfoFromText<FunctionDeclaration>(text);
-            expect(firstChild.getStatements().find(TypeGuards.isVariableStatement)!.getDeclarations()[0].getStructure().type).to.deep.equal(expected);
+            expect(firstChild.getStatements().find(Node.isVariableStatement)!.getDeclarations()[0].getStructure().type).to.deep.equal(expected);
         });
     });
 });

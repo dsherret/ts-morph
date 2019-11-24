@@ -1,8 +1,6 @@
 import { KeyValueCache } from "@ts-morph/common";
-import { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, SourceFile, StringLiteral } from "../../compiler";
+import { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, SourceFile, StringLiteral, Node } from "../../compiler";
 import { ModuleUtils } from "../compiler";
-import { TypeGuards } from "../TypeGuards";
-
 export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
 
 export class SourceFileReferenceContainer {
@@ -82,11 +80,11 @@ export class SourceFileReferenceContainer {
         const parent = literal.getParentOrThrow();
         const grandParent = parent.getParent();
 
-        if (TypeGuards.isImportDeclaration(parent) || TypeGuards.isExportDeclaration(parent))
+        if (Node.isImportDeclaration(parent) || Node.isExportDeclaration(parent))
             return parent.getModuleSpecifierSourceFile();
-        else if (grandParent != null && TypeGuards.isImportEqualsDeclaration(grandParent))
+        else if (grandParent != null && Node.isImportEqualsDeclaration(grandParent))
             return grandParent.getExternalModuleReferenceSourceFile();
-        else if (TypeGuards.isCallExpression(parent)) {
+        else if (Node.isCallExpression(parent)) {
             const literalSymbol = literal.getSymbol();
             if (literalSymbol != null)
                 return ModuleUtils.getReferencedSourceFileFromSymbol(literalSymbol);

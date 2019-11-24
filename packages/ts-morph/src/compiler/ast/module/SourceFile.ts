@@ -6,7 +6,7 @@ import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulatio
 import { ProjectContext } from "../../../ProjectContext";
 import { SourceFileSpecificStructure, SourceFileStructure, StructureKind } from "../../../structures";
 import { Constructor } from "../../../types";
-import { ModuleUtils, SourceFileReferenceContainer, TypeGuards, SourceFileReferencingNodes } from "../../../utils";
+import { ModuleUtils, SourceFileReferenceContainer, SourceFileReferencingNodes } from "../../../utils";
 import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, TextChange, UserPreferences } from "../../tools";
 import { ModuledNode, TextInsertableNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -987,7 +987,7 @@ function updateStringLiteralReferences(nodeReferences: ReadonlyArray<[StringLite
 function getReferencingNodeFromStringLiteral(literal: StringLiteral) {
     const parent = literal.getParentOrThrow();
     const grandParent = parent.getParent();
-    if (grandParent != null && TypeGuards.isImportEqualsDeclaration(grandParent))
+    if (grandParent != null && Node.isImportEqualsDeclaration(grandParent))
         return grandParent;
     else
         return parent as SourceFileReferencingNodes;

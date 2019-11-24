@@ -2,7 +2,7 @@ import { errors, ArrayUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards } from "../../../utils";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { NamedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
@@ -144,7 +144,7 @@ function getInsertPos(node: TypeParameteredNode & Node) {
     const namedNode = node as any as (NamedNode & Node);
     if (namedNode.getNameNode != null)
         return namedNode.getNameNode().getEnd();
-    else if (TypeGuards.isCallSignatureDeclaration(node) || TypeGuards.isFunctionTypeNode(node))
+    else if (Node.isCallSignatureDeclaration(node) || Node.isFunctionTypeNode(node))
         return node.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getStart();
     else
         throw new errors.NotImplementedError(`Not implemented scenario inserting type parameters for node with kind ${node.getKindName()}.`);

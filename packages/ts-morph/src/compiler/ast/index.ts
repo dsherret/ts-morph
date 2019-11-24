@@ -16,6 +16,7 @@ export * from "./jsx";
 export * from "./kindToNodeMappings";
 export * from "./literal";
 export * from "./module";
+export * from "./name";
 export * from "./statement";
 export * from "./type";
 export * from "./variable";

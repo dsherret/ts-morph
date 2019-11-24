@@ -3,7 +3,8 @@ import { insertIntoParentTextRange, removeChildren } from "../../../../manipulat
 import { NameableNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
 import { callBaseSet } from "../../callBaseSet";
-import { Identifier, Node } from "../../common";
+import { Node } from "../../common";
+import { Identifier } from "../../name";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { RenameableNode } from "./RenameableNode";

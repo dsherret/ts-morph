@@ -2,7 +2,7 @@ import { errors, ArrayUtils, StringUtils, SyntaxKind, ts } from "@ts-morph/commo
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex, removeChildren } from "../../../manipulation";
 import { ExportSpecifierStructure, ExportDeclarationSpecificStructure, ExportDeclarationStructure, StructureKind, OptionalKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
-import { ModuleUtils, TypeGuards } from "../../../utils";
+import { ModuleUtils } from "../../../utils";
 import { StringLiteral } from "../literal";
 import { Node } from "../common";
 import { Statement } from "../statement";
@@ -56,7 +56,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
         const moduleSpecifier = this._getNodeFromCompilerNodeIfExists(this.compilerNode.moduleSpecifier);
         if (moduleSpecifier == null)
             return undefined;
-        if (!TypeGuards.isStringLiteral(moduleSpecifier))
+        if (!Node.isStringLiteral(moduleSpecifier))
             throw new errors.InvalidOperationError("Expected the module specifier to be a string literal.");
         return moduleSpecifier;
     }
@@ -87,7 +87,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
         if (symbol == null)
             return undefined;
         const declaration = symbol.getDeclarations()[0];
-        return declaration != null && TypeGuards.isSourceFile(declaration) ? declaration : undefined;
+        return declaration != null && Node.isSourceFile(declaration) ? declaration : undefined;
     }
 
     /**

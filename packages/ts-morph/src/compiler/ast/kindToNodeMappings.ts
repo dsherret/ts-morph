@@ -1,6 +1,7 @@
-// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while.
-import { SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, ts } from "@ts-morph/common";
 import * as compiler from "./index";
+
+// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while.
 
 export interface ImplementedKindToNodeMappings {
     [SyntaxKind.SourceFile]: compiler.SourceFile;
@@ -45,7 +46,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ExpressionStatement]: compiler.ExpressionStatement;
     [SyntaxKind.ExternalModuleReference]: compiler.ExternalModuleReference;
     [SyntaxKind.QualifiedName]: compiler.QualifiedName;
-    [SyntaxKind.FirstNode]: compiler.QualifiedName;
     [SyntaxKind.ForInStatement]: compiler.ForInStatement;
     [SyntaxKind.ForOfStatement]: compiler.ForOfStatement;
     [SyntaxKind.ForStatement]: compiler.ForStatement;
@@ -61,7 +61,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ImportEqualsDeclaration]: compiler.ImportEqualsDeclaration;
     [SyntaxKind.ImportSpecifier]: compiler.ImportSpecifier;
     [SyntaxKind.ImportType]: compiler.ImportTypeNode;
-    [SyntaxKind.LastTypeNode]: compiler.ImportTypeNode;
     [SyntaxKind.IndexedAccessType]: compiler.IndexedAccessTypeNode;
     [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration;
     [SyntaxKind.InferType]: compiler.InferTypeNode;
@@ -73,15 +72,11 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag;
     [SyntaxKind.JSDocSignature]: compiler.JSDocSignature;
     [SyntaxKind.JSDocTag]: compiler.JSDocUnknownTag;
-    [SyntaxKind.FirstJSDocTagNode]: compiler.JSDocUnknownTag;
     [SyntaxKind.JSDocTypeExpression]: compiler.JSDocTypeExpression;
-    [SyntaxKind.FirstJSDocNode]: compiler.JSDocTypeExpression;
     [SyntaxKind.JSDocTypeTag]: compiler.JSDocTypeTag;
     [SyntaxKind.JSDocTypedefTag]: compiler.JSDocTypedefTag;
     [SyntaxKind.JSDocParameterTag]: compiler.JSDocParameterTag;
     [SyntaxKind.JSDocPropertyTag]: compiler.JSDocPropertyTag;
-    [SyntaxKind.LastJSDocNode]: compiler.JSDocPropertyTag;
-    [SyntaxKind.LastJSDocTagNode]: compiler.JSDocPropertyTag;
     [SyntaxKind.JsxAttribute]: compiler.JsxAttribute;
     [SyntaxKind.JsxClosingElement]: compiler.JsxClosingElement;
     [SyntaxKind.JsxClosingFragment]: compiler.JsxClosingFragment;
@@ -107,10 +102,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.NonNullExpression]: compiler.NonNullExpression;
     [SyntaxKind.NotEmittedStatement]: compiler.NotEmittedStatement;
     [SyntaxKind.NoSubstitutionTemplateLiteral]: compiler.NoSubstitutionTemplateLiteral;
-    [SyntaxKind.LastLiteralToken]: compiler.NoSubstitutionTemplateLiteral;
-    [SyntaxKind.FirstTemplateToken]: compiler.NoSubstitutionTemplateLiteral;
     [SyntaxKind.NumericLiteral]: compiler.NumericLiteral;
-    [SyntaxKind.FirstLiteralToken]: compiler.NumericLiteral;
     [SyntaxKind.ObjectBindingPattern]: compiler.ObjectBindingPattern;
     [SyntaxKind.ObjectLiteralExpression]: compiler.ObjectLiteralExpression;
     [SyntaxKind.OmittedExpression]: compiler.OmittedExpression;
@@ -139,7 +131,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TemplateMiddle]: compiler.TemplateMiddle;
     [SyntaxKind.TemplateSpan]: compiler.TemplateSpan;
     [SyntaxKind.TemplateTail]: compiler.TemplateTail;
-    [SyntaxKind.LastTemplateToken]: compiler.TemplateTail;
     [SyntaxKind.ThisType]: compiler.ThisTypeNode;
     [SyntaxKind.ThrowStatement]: compiler.ThrowStatement;
     [SyntaxKind.TryStatement]: compiler.TryStatement;
@@ -149,22 +140,21 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypeLiteral]: compiler.TypeLiteralNode;
     [SyntaxKind.TypeParameter]: compiler.TypeParameterDeclaration;
     [SyntaxKind.TypePredicate]: compiler.TypePredicateNode;
-    [SyntaxKind.FirstTypeNode]: compiler.TypePredicateNode;
     [SyntaxKind.TypeReference]: compiler.TypeReferenceNode;
     [SyntaxKind.UnionType]: compiler.UnionTypeNode;
     [SyntaxKind.VariableDeclaration]: compiler.VariableDeclaration;
     [SyntaxKind.VariableDeclarationList]: compiler.VariableDeclarationList;
     [SyntaxKind.VariableStatement]: compiler.VariableStatement;
     [SyntaxKind.JSDocComment]: compiler.JSDoc;
-    [SyntaxKind.SemicolonToken]: compiler.Node;
-    [SyntaxKind.InferKeyword]: compiler.Node;
     [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression;
     [SyntaxKind.WhileStatement]: compiler.WhileStatement;
     [SyntaxKind.WithStatement]: compiler.WithStatement;
     [SyntaxKind.YieldExpression]: compiler.YieldExpression;
+    [SyntaxKind.SemicolonToken]: compiler.Node<ts.Token<SyntaxKind.SemicolonToken>>;
+    [SyntaxKind.InferKeyword]: compiler.Node<ts.Token<SyntaxKind.InferKeyword>>;
+    [SyntaxKind.NeverKeyword]: compiler.Node<ts.Token<SyntaxKind.NeverKeyword>>;
     [SyntaxKind.AnyKeyword]: compiler.Expression;
     [SyntaxKind.BooleanKeyword]: compiler.Expression;
-    [SyntaxKind.NeverKeyword]: compiler.Expression;
     [SyntaxKind.NumberKeyword]: compiler.Expression;
     [SyntaxKind.ObjectKeyword]: compiler.Expression;
     [SyntaxKind.StringKeyword]: compiler.Expression;
@@ -209,10 +199,7 @@ export interface KindToExpressionMappings {
     [SyntaxKind.NewExpression]: compiler.NewExpression;
     [SyntaxKind.NonNullExpression]: compiler.NonNullExpression;
     [SyntaxKind.NoSubstitutionTemplateLiteral]: compiler.NoSubstitutionTemplateLiteral;
-    [SyntaxKind.LastLiteralToken]: compiler.NoSubstitutionTemplateLiteral;
-    [SyntaxKind.FirstTemplateToken]: compiler.NoSubstitutionTemplateLiteral;
     [SyntaxKind.NumericLiteral]: compiler.NumericLiteral;
-    [SyntaxKind.FirstLiteralToken]: compiler.NumericLiteral;
     [SyntaxKind.ObjectLiteralExpression]: compiler.ObjectLiteralExpression;
     [SyntaxKind.OmittedExpression]: compiler.OmittedExpression;
     [SyntaxKind.ParenthesizedExpression]: compiler.ParenthesizedExpression;
@@ -230,7 +217,6 @@ export interface KindToExpressionMappings {
     [SyntaxKind.YieldExpression]: compiler.YieldExpression;
     [SyntaxKind.AnyKeyword]: compiler.Expression;
     [SyntaxKind.BooleanKeyword]: compiler.Expression;
-    [SyntaxKind.NeverKeyword]: compiler.Expression;
     [SyntaxKind.NumberKeyword]: compiler.Expression;
     [SyntaxKind.ObjectKeyword]: compiler.Expression;
     [SyntaxKind.StringKeyword]: compiler.Expression;

@@ -1,5 +1,5 @@
 import { errors, ts } from "@ts-morph/common";
-import { ModuleUtils, TypeGuards } from "../../../utils";
+import { ModuleUtils } from "../../../utils";
 import { Node } from "../common";
 import { Expression } from "../expression";
 
@@ -30,7 +30,7 @@ export class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
      */
     isRelative() {
         const expression = this.getExpression();
-        if (expression == null || !TypeGuards.isStringLiteral(expression))
+        if (expression == null || !Node.isStringLiteral(expression))
             return false;
         return ModuleUtils.isModuleSpecifierRelative(expression.getLiteralText());
     }

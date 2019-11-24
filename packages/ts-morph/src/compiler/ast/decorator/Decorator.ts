@@ -1,6 +1,5 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { FormattingKind, insertIntoParentTextRange, removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList } from "../../../manipulation";
-import { TypeGuards } from "../../../utils";
 import { WriterFunction } from "../../../types";
 import { Node } from "../common/Node";
 import { CallExpression, Expression } from "../expression";
@@ -31,7 +30,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
 
         function getIdentifierFromName(expression: Expression) {
             const identifier = getNameFromExpression(expression);
-            if (!TypeGuards.isIdentifier(identifier)) {
+            if (!Node.isIdentifier(identifier)) {
                 throw new errors.NotImplementedError(
                     `Expected the decorator expression '${identifier.getText()}' to be an identifier, `
                         + `but it wasn't. Please report this as a bug.`
@@ -41,7 +40,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         }
 
         function getNameFromExpression(expression: Expression) {
-            if (TypeGuards.isPropertyAccessExpression(expression))
+            if (Node.isPropertyAccessExpression(expression))
                 return expression.getNameNode();
             return expression;
         }

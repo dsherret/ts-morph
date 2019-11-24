@@ -1,6 +1,6 @@
 import { tsMorph } from "@ts-morph/scripts";
 import { createGetStructureFunctions } from "./createGetStructureFunctions";
-import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
+import { createNodeTypeGuards } from "./createNodeTypeGuards";
 import { createKindToNodeMappings } from "./createKindToNodeMappings";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
 import { createDeclarationFile } from "./createDeclarationFile";
@@ -22,8 +22,8 @@ const tsInspector = factory.getTsInspector();
         createGetStructureFunctions(inspector.getStructures());
     }
     if (checkHasArg("create-type-guards")) {
-        console.log("Creating type guards utility class...");
-        createTypeGuardsUtility(inspector);
+        console.log("Creating node type guards...");
+        createNodeTypeGuards(inspector, tsInspector);
     }
     if (checkHasArg("create-structure-printer-factory")) {
         console.log("Creating structure printer factory...");

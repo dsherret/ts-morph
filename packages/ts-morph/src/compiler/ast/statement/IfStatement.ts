@@ -3,7 +3,6 @@ import { Node } from "../common";
 import { Expression } from "../expression";
 import { Statement } from "./Statement";
 import { removeStatementedNodeChildren } from "../../../manipulation";
-import { TypeGuards } from "../../../utils";
 
 export class IfStatement extends Statement<ts.IfStatement> {
     /**
@@ -31,7 +30,7 @@ export class IfStatement extends Statement<ts.IfStatement> {
     remove() {
         // need to also remove the else keyword if it exists
         const nodes: Node[] = [];
-        if (TypeGuards.isIfStatement(this.getParentOrThrow()))
+        if (Node.isIfStatement(this.getParentOrThrow()))
             nodes.push(this.getPreviousSiblingIfKindOrThrow(SyntaxKind.ElseKeyword));
         nodes.push(this);
 

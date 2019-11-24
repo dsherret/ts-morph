@@ -1,6 +1,6 @@
 import { ts } from "@ts-morph/common";
+import { Node } from "../common";
 import { Expression } from "../expression";
-import { Node } from "./Node";
 
 export class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
     /**

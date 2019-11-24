@@ -16,8 +16,10 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
     kindToNodeMappingsFile.removeText();
 
     // add imports
+    kindToNodeMappingsFile.insertText(0, writer => writer
+        .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while."));
     kindToNodeMappingsFile.addImportDeclarations([{
-        namedImports: ["SyntaxKind"],
+        namedImports: ["SyntaxKind", "ts"],
         moduleSpecifier: "@ts-morph/common"
     }, {
         namespaceImport: "compiler",
@@ -32,9 +34,6 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
     }));
     addDefaultIndexSignature(addTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression")));
 
-    kindToNodeMappingsFile.insertText(0, writer => writer
-        .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while."));
-
     function addTypeForSubSet(name: string, nodeClass: tsMorph.ClassDeclaration) {
         const classType = nodeClass.getType();
         const addingProperties: tsMorph.PropertySignatureStructure[] = [];
@@ -47,11 +46,11 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
             if (!hasDescendantBaseType(mapping.wrappedNode.getType(), t => t.getText() === classType.getText()))
                 continue;
             for (const kindName of mapping.syntaxKindNames) {
-                for (const possibleKindName of tsInspector.getNamesFromKind((tsMorph.SyntaxKind as any)[kindName])) {
+                for (const possibleKindName of tsInspector.getNamesFromKind(tsInspector.getSyntaxKindForName(kindName))) {
                     addingProperties.push({
                         kind: tsMorph.StructureKind.PropertySignature,
                         name: `[SyntaxKind.${possibleKindName}]`,
-                        type: `compiler.${mapping.wrapperName}`
+                        type: getNodeType(mapping.wrapperName, kindName)
                     });
                 }
             }
@@ -61,6 +60,18 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
         newInterface.getChildren().forEach(c => c.forget());
 
         return newInterface;
+
+        function getNodeType(wrapperName: string, syntaxKindName: string) {
+            if (isToken())
+                return `compiler.Node<ts.Token<SyntaxKind.${syntaxKindName}>>`;
+            return `compiler.${wrapperName}`;
+
+            function isToken() {
+                if (wrapperName !== "Node")
+                    return false;
+                return tsInspector.isTokenKind(tsInspector.getSyntaxKindForName(syntaxKindName));
+            }
+        }
     }
 
     function addDefaultIndexSignature(interfaceDec: tsMorph.InterfaceDeclaration) {

@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { AssertTrue, IsExact } from "conditional-type-checks";
-import { VariableStatement, BindingNamedNode, BindingName } from "../../../../../compiler";
-import { TypeGuards } from "../../../../../utils";
+import { VariableStatement, BindingNamedNode, BindingName, Node } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
 function getInfoFromTextWithFirstVariableDeclaration(text: string) {
@@ -14,7 +13,7 @@ describe(nameof(BindingNamedNode), () => {
     describe(nameof<BindingNamedNode>(n => n.getName), () => {
         function doTest(text: string, expectedName: string) {
             const { sourceFile } = getInfoFromText(text);
-            const node = sourceFile.getDescendants().find(TypeGuards.isBindingNamedNode)!;
+            const node = sourceFile.getDescendants().find(Node.isBindingNamedNode)!;
             expect(node.getName()).to.equal(expectedName);
         }
 

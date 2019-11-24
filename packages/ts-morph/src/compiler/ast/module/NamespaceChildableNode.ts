@@ -1,6 +1,5 @@
 import { Constructor } from "../../../types";
 import { errors, SyntaxKind } from "@ts-morph/common";
-import { TypeGuards } from "../../../utils";
 import { Node } from "../common";
 import { NamespaceDeclaration } from "./NamespaceDeclaration";
 
@@ -26,7 +25,7 @@ export function NamespaceChildableNode<T extends Constructor<NamespaceChildableN
 
         getParentNamespace() {
             let parent = this.getParentOrThrow();
-            if (!TypeGuards.isModuleBlock(parent))
+            if (!Node.isModuleBlock(parent))
                 return undefined;
 
             while (parent.getParentOrThrow().getKind() === SyntaxKind.ModuleDeclaration)

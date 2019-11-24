@@ -1,6 +1,6 @@
 import { ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
-import { Identifier } from "../../common";
+import { Identifier } from "../../name";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { RenameableNode } from "./RenameableNode";
 import { NamedNodeBase, NamedNodeBaseExtensionType, NamedNodeSpecificBase } from "./NamedNodeBase";

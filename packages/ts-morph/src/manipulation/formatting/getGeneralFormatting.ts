@@ -1,14 +1,13 @@
 import { Node } from "../../compiler";
-import { TypeGuards } from "../../utils";
 import { getClassMemberFormatting } from "./getClassMemberFormatting";
 import { getInterfaceMemberFormatting } from "./getInterfaceMemberFormatting";
 import { getStatementedNodeChildFormatting } from "./getStatementedNodeChildFormatting";
 
 export function getGeneralFormatting(parent: Node, child: Node) {
     // todo: support more
-    if (TypeGuards.isClassDeclaration(parent))
+    if (Node.isClassDeclaration(parent))
         return getClassMemberFormatting(parent, child);
-    if (TypeGuards.isInterfaceDeclaration(parent))
+    if (Node.isInterfaceDeclaration(parent))
         return getInterfaceMemberFormatting(parent, child);
 
     // todo: don't assume it's a statemented node here

@@ -1,7 +1,7 @@
 import { errors, SyntaxKind } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { Constructor, WriterFunction } from "../../../types";
-import { getTextFromStringOrWriter, TypeGuards } from "../../../utils";
+import { getTextFromStringOrWriter } from "../../../utils";
 import { Node } from "../common";
 
 export type TextInsertableNodeExtensionType = Node;
@@ -94,7 +94,7 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
 
 function getValidRange(thisNode: Node): [number, number] {
     const rangeNode = getRangeNode();
-    const openBrace = TypeGuards.isSourceFile(rangeNode) ? undefined : rangeNode.getPreviousSiblingIfKind(SyntaxKind.OpenBraceToken);
+    const openBrace = Node.isSourceFile(rangeNode) ? undefined : rangeNode.getPreviousSiblingIfKind(SyntaxKind.OpenBraceToken);
     const closeBrace = openBrace == null ? undefined : rangeNode.getNextSiblingIfKind(SyntaxKind.CloseBraceToken);
     if (openBrace != null && closeBrace != null)
         return [openBrace.getEnd(), closeBrace.getStart()];
@@ -102,7 +102,7 @@ function getValidRange(thisNode: Node): [number, number] {
         return [rangeNode.getPos(), rangeNode.getEnd()];
 
     function getRangeNode() {
-        if (TypeGuards.isSourceFile(thisNode))
+        if (Node.isSourceFile(thisNode))
             return thisNode;
         return thisNode.getChildSyntaxListOrThrow();
     }

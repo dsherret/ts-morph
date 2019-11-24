@@ -10,7 +10,7 @@ import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure, OptionalKind } from "../structures";
 import { WriterFunction } from "../types";
 import { replaceSourceFileForCacheUpdate } from "../manipulation";
-import { getTextFromStringOrWriter, TypeGuards } from "../utils";
+import { getTextFromStringOrWriter } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
 import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
 import { kindToWrapperMappings } from "./kindToWrapperMappings";
@@ -637,13 +637,13 @@ export class CompilerFactory {
                     this.nodeCache.rememberNode(node);
             });
 
-            if (TypeGuards.isNode(result))
+            if (Node.isNode(result))
                 this.nodeCache.rememberNode(result);
 
             if (isPromise(result)) {
                 wasPromise = true;
                 return result.then(value => {
-                    if (TypeGuards.isNode(value))
+                    if (Node.isNode(value))
                         this.nodeCache.rememberNode(value);
 
                     this.nodeCache.forgetLastPoint();

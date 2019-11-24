@@ -3,13 +3,13 @@ import { removeChildren, insertIntoParentTextRange } from "../../../manipulation
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { AmbientableNode, BodiedNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode, UnwrappableNode,
     ModuledNode } from "../base";
-import { TypeGuards } from "../../../utils";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
-import { Identifier } from "../common";
+import { Identifier } from "../name";
 import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
 import { NamespaceDeclarationKind } from "./NamespaceDeclarationKind";
+import { Node } from "../common";
 
 const createBase = <T extends typeof Statement>(ctor: T) => ModuledNode(UnwrappableNode(
     TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(AmbientableNode(
@@ -173,7 +173,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     /** @internal */
     _getInnerBody() {
         let node = this.getBody();
-        while (TypeGuards.isBodiedNode(node) && (node.compilerNode as ts.Node as ts.Block).statements == null)
+        while (Node.isBodiedNode(node) && (node.compilerNode as ts.Node as ts.Block).statements == null)
             node = node.getBody();
         return node;
     }

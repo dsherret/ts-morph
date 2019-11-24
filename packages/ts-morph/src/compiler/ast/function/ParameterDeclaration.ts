@@ -2,7 +2,6 @@ import { ts, SyntaxKind } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { ParameterDeclarationStructure, ParameterDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
-import { TypeGuards } from "../../../utils";
 import { BindingNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode,
     TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -137,7 +136,7 @@ function addParensIfNecessary(parameter: Node) {
         addParens();
 
     function isParameterWithoutParens() {
-        return TypeGuards.isArrowFunction(parent)
+        return Node.isArrowFunction(parent)
             && parent.compilerNode.parameters.length === 1
             && parameter.getParentSyntaxListOrThrow().getPreviousSiblingIfKind(SyntaxKind.OpenParenToken) == null;
     }

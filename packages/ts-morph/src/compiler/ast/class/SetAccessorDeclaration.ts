@@ -5,9 +5,9 @@ import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration } from "../function";
 import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
-import { TypeGuards } from "../../../utils";
 import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
+import { Node } from "../common";
 
 const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(
     DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor)))))))
@@ -31,7 +31,7 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
         const isStatic = this.isStatic();
 
         return this.getParentOrThrow().forEachChild(sibling => {
-            if (TypeGuards.isGetAccessorDeclaration(sibling) && sibling.getName() === thisName && sibling.isStatic() === isStatic)
+            if (Node.isGetAccessorDeclaration(sibling) && sibling.getName() === thisName && sibling.isStatic() === isStatic)
                 return sibling;
             return undefined;
         });

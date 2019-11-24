@@ -1,6 +1,6 @@
 import { errors, ts } from "@ts-morph/common";
-import { TypeGuards } from "../../utils";
 import { Type } from "./Type";
+import { Node } from "../ast";
 
 export class TypeParameter extends Type<ts.TypeParameter> {
     /**
@@ -53,7 +53,7 @@ export class TypeParameter extends Type<ts.TypeParameter> {
         const declaration = symbol.getDeclarations()[0];
         if (declaration == null)
             return undefined;
-        if (!TypeGuards.isTypeParameterDeclaration(declaration))
+        if (!Node.isTypeParameterDeclaration(declaration))
             return undefined;
         return declaration;
     }

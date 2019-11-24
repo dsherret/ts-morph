@@ -1,7 +1,6 @@
 import { ArrayUtils, ts } from "@ts-morph/common";
 import { ScopeableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
-import { TypeGuards } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Scope } from "../common/Scope";
@@ -33,7 +32,7 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
             const scope = getScopeForNode(this);
             if (scope != null)
                 return scope;
-            if (TypeGuards.isParameterDeclaration(this) && this.isReadonly())
+            if (Node.isParameterDeclaration(this) && this.isReadonly())
                 return Scope.Public;
             return undefined;
         }

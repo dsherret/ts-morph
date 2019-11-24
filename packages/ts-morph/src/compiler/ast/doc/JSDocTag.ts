@@ -1,5 +1,6 @@
 import { ts } from "@ts-morph/common";
-import { Identifier, Node } from "../common";
+import { Node } from "../common";
+import { Identifier } from "../name";
 
 /**
  * JS doc tag node.

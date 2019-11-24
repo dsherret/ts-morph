@@ -1,7 +1,6 @@
 import { expect } from "chai";
-import { ClassDeclaration, MethodDeclaration, PropertyDeclaration, StaticableNode } from "../../../../compiler";
+import { ClassDeclaration, MethodDeclaration, PropertyDeclaration, StaticableNode, Node } from "../../../../compiler";
 import { StaticableNodeStructure } from "../../../../structures";
-import { TypeGuards } from "../../../../utils";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(StaticableNode), () => {
@@ -56,7 +55,7 @@ describe(nameof(StaticableNode), () => {
 
     function getFirstMethod(code: string) {
         const result = getInfoFromText<ClassDeclaration>(code);
-        const firstMethod = result.firstChild.getMembers().filter(m => TypeGuards.isMethodDeclaration(m))[0] as MethodDeclaration;
+        const firstMethod = result.firstChild.getMembers().filter(m => Node.isMethodDeclaration(m))[0] as MethodDeclaration;
         return { firstMethod, ...result };
     }
 

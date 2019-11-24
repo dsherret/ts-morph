@@ -1,5 +1,4 @@
 import { Node } from "../../compiler";
-import { TypeGuards } from "../../utils";
 import { FormattingKind } from "../formatting";
 import { getPosAtNextNonBlankLine } from "../textSeek";
 import { getSpacingBetweenNodes } from "./getSpacingBetweenNodes";
@@ -27,7 +26,7 @@ export class ChangingChildOrderTextManipulator<TParentNode extends Node> impleme
         const lowerIndex = Math.min(newIndex, oldIndex);
         const upperIndex = Math.max(newIndex, oldIndex);
         const childrenInNewOrder = getChildrenInNewOrder();
-        const isParentSourceFile = TypeGuards.isSourceFile(parent.getParentOrThrow());
+        const isParentSourceFile = Node.isSourceFile(parent.getParentOrThrow());
 
         let finalText = "";
         fillPrefixText();

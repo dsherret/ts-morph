@@ -1,12 +1,11 @@
 import { expect } from "chai";
-import { JSDocTag } from "../../../../compiler";
-import { TypeGuards } from "../../../../utils";
+import { JSDocTag, Node } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(JSDocTag), () => {
     function getInfo(text: string) {
         const info = getInfoFromText(text);
-        return { descendant: info.sourceFile.getFirstDescendantOrThrow(TypeGuards.isJSDocTag), ...info };
+        return { descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isJSDocTag), ...info };
     }
 
     describe(nameof<JSDocTag>(d => d.getTagName), () => {

@@ -1,7 +1,6 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { VariableDeclarationStructure, VariableDeclarationSpecificStructure, StructureKind } from "../../../structures";
-import { TypeGuards } from "../../../utils";
 import { BindingNamedNode, ExclamationTokenableNode, InitializerExpressionableNode, TypedNode, ExportGetableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
@@ -62,7 +61,7 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
      */
     getVariableStatement() {
         const grandParent = this.getParentOrThrow().getParentOrThrow();
-        return TypeGuards.isVariableStatement(grandParent) ? grandParent : undefined;
+        return Node.isVariableStatement(grandParent) ? grandParent : undefined;
     }
 
     /**
