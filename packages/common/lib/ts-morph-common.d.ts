@@ -577,6 +577,10 @@ export declare class TransactionalFileSystem {
     moveDirectoryImmediately(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): Promise<void>;
     moveDirectoryImmediatelySync(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): void;
     deleteDirectoryImmediately(dirPath: StandardizedFilePath): Promise<void>;
+    /** Recreates a directory on the underlying file system asynchronously. */
+    clearDirectoryImmediately(dirPath: StandardizedFilePath): Promise<void>;
+    /** Recreates a directory on the underlying file system synchronously. */
+    clearDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
     deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
     private deleteSuppressNotFound;
     private deleteSuppressNotFoundSync;

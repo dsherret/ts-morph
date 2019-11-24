@@ -239,6 +239,28 @@ directory.deleteImmediatelySync();
 
 This isn't recommended though because it could possibly leave the file system in a halfway state if your code errors before it's done.
 
+### Clearing
+
+Call:
+
+```ts
+directory.clear();
+```
+
+This will delete the directory's descendants in memory and queue a delete and mkdir operation to the file system.
+
+#### Clearing immediately
+
+If you want to do this operation immediatley to the file system, then use the following:
+
+```ts
+await directory.clearImmediately();
+// or
+directory.clearImmediatelySync();
+```
+
+This isn't recommended though because it could possibly leave the file system in a halfway state if your code errors before it's done.
+
 ### Forgetting
 
 Forgets the directory from main project object without deleting it:

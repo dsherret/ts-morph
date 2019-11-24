@@ -400,6 +400,21 @@ export declare class Directory {
      */
     moveImmediatelySync(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions): this;
     /**
+     * Recreates the directory.
+     * @remarks This will delete all the descendant source files and directories in memory and queue a delete & mkdir to the file system.
+     */
+    clear(): void;
+    /**
+     * Asynchronously recreates the directory.
+     * @remarks This will delete all the descendant source files and directories in memory and push a delete & mkdir to the file system.
+     */
+    clearImmediately(): Promise<void>;
+    /**
+     * Synchronously recreates the directory.
+     * @remarks This will delete all the descendant source files and directories in memory and push a delete & mkdir to the file system.
+     */
+    clearImmediatelySync(): void;
+    /**
      * Queues a deletion of the directory to the file system.
      *
      * The directory will be deleted when calling ast.save(). If you wish to delete the file immediately, then use deleteImmediately().
@@ -3438,7 +3453,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets if the node is a InferKeyword.
      */
-    static readonly isInferKeyword: (node: Node) => node is Node;
+    static readonly isInferKeyword: (node: Node) => node is Node<ts.Token<SyntaxKind.InferKeyword>>;
     /**
      * Gets if the node is a InterfaceDeclaration.
      */
@@ -3562,7 +3577,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets if the node is a NeverKeyword.
      */
-    static readonly isNeverKeyword: (node: Node) => node is Expression;
+    static readonly isNeverKeyword: (node: Node) => node is Node<ts.Token<SyntaxKind.NeverKeyword>>;
     /**
      * Gets if the node is a NewExpression.
      */
@@ -3650,7 +3665,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets if the node is a SemicolonToken.
      */
-    static readonly isSemicolonToken: (node: Node) => node is Node;
+    static readonly isSemicolonToken: (node: Node) => node is Node<ts.Token<SyntaxKind.SemicolonToken>>;
     /**
      * Gets if the node is a ShorthandPropertyAssignment.
      */
@@ -7031,7 +7046,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ExpressionStatement]: ExpressionStatement;
     [SyntaxKind.ExternalModuleReference]: ExternalModuleReference;
     [SyntaxKind.QualifiedName]: QualifiedName;
-    [SyntaxKind.FirstNode]: QualifiedName;
     [SyntaxKind.ForInStatement]: ForInStatement;
     [SyntaxKind.ForOfStatement]: ForOfStatement;
     [SyntaxKind.ForStatement]: ForStatement;
@@ -7047,7 +7061,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ImportEqualsDeclaration]: ImportEqualsDeclaration;
     [SyntaxKind.ImportSpecifier]: ImportSpecifier;
     [SyntaxKind.ImportType]: ImportTypeNode;
-    [SyntaxKind.LastTypeNode]: ImportTypeNode;
     [SyntaxKind.IndexedAccessType]: IndexedAccessTypeNode;
     [SyntaxKind.IndexSignature]: IndexSignatureDeclaration;
     [SyntaxKind.InferType]: InferTypeNode;
@@ -7059,15 +7072,11 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
     [SyntaxKind.JSDocSignature]: JSDocSignature;
     [SyntaxKind.JSDocTag]: JSDocUnknownTag;
-    [SyntaxKind.FirstJSDocTagNode]: JSDocUnknownTag;
     [SyntaxKind.JSDocTypeExpression]: JSDocTypeExpression;
-    [SyntaxKind.FirstJSDocNode]: JSDocTypeExpression;
     [SyntaxKind.JSDocTypeTag]: JSDocTypeTag;
     [SyntaxKind.JSDocTypedefTag]: JSDocTypedefTag;
     [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
     [SyntaxKind.JSDocPropertyTag]: JSDocPropertyTag;
-    [SyntaxKind.LastJSDocNode]: JSDocPropertyTag;
-    [SyntaxKind.LastJSDocTagNode]: JSDocPropertyTag;
     [SyntaxKind.JsxAttribute]: JsxAttribute;
     [SyntaxKind.JsxClosingElement]: JsxClosingElement;
     [SyntaxKind.JsxClosingFragment]: JsxClosingFragment;
@@ -7093,10 +7102,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.NonNullExpression]: NonNullExpression;
     [SyntaxKind.NotEmittedStatement]: NotEmittedStatement;
     [SyntaxKind.NoSubstitutionTemplateLiteral]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.LastLiteralToken]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.FirstTemplateToken]: NoSubstitutionTemplateLiteral;
     [SyntaxKind.NumericLiteral]: NumericLiteral;
-    [SyntaxKind.FirstLiteralToken]: NumericLiteral;
     [SyntaxKind.ObjectBindingPattern]: ObjectBindingPattern;
     [SyntaxKind.ObjectLiteralExpression]: ObjectLiteralExpression;
     [SyntaxKind.OmittedExpression]: OmittedExpression;
@@ -7125,7 +7131,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TemplateMiddle]: TemplateMiddle;
     [SyntaxKind.TemplateSpan]: TemplateSpan;
     [SyntaxKind.TemplateTail]: TemplateTail;
-    [SyntaxKind.LastTemplateToken]: TemplateTail;
     [SyntaxKind.ThisType]: ThisTypeNode;
     [SyntaxKind.ThrowStatement]: ThrowStatement;
     [SyntaxKind.TryStatement]: TryStatement;
@@ -7135,22 +7140,21 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypeLiteral]: TypeLiteralNode;
     [SyntaxKind.TypeParameter]: TypeParameterDeclaration;
     [SyntaxKind.TypePredicate]: TypePredicateNode;
-    [SyntaxKind.FirstTypeNode]: TypePredicateNode;
     [SyntaxKind.TypeReference]: TypeReferenceNode;
     [SyntaxKind.UnionType]: UnionTypeNode;
     [SyntaxKind.VariableDeclaration]: VariableDeclaration;
     [SyntaxKind.VariableDeclarationList]: VariableDeclarationList;
     [SyntaxKind.VariableStatement]: VariableStatement;
     [SyntaxKind.JSDocComment]: JSDoc;
-    [SyntaxKind.SemicolonToken]: Node;
-    [SyntaxKind.InferKeyword]: Node;
     [SyntaxKind.TypeOfExpression]: TypeOfExpression;
     [SyntaxKind.WhileStatement]: WhileStatement;
     [SyntaxKind.WithStatement]: WithStatement;
     [SyntaxKind.YieldExpression]: YieldExpression;
+    [SyntaxKind.SemicolonToken]: Node<ts.Token<SyntaxKind.SemicolonToken>>;
+    [SyntaxKind.InferKeyword]: Node<ts.Token<SyntaxKind.InferKeyword>>;
+    [SyntaxKind.NeverKeyword]: Node<ts.Token<SyntaxKind.NeverKeyword>>;
     [SyntaxKind.AnyKeyword]: Expression;
     [SyntaxKind.BooleanKeyword]: Expression;
-    [SyntaxKind.NeverKeyword]: Expression;
     [SyntaxKind.NumberKeyword]: Expression;
     [SyntaxKind.ObjectKeyword]: Expression;
     [SyntaxKind.StringKeyword]: Expression;
@@ -7195,10 +7199,7 @@ export interface KindToExpressionMappings {
     [SyntaxKind.NewExpression]: NewExpression;
     [SyntaxKind.NonNullExpression]: NonNullExpression;
     [SyntaxKind.NoSubstitutionTemplateLiteral]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.LastLiteralToken]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.FirstTemplateToken]: NoSubstitutionTemplateLiteral;
     [SyntaxKind.NumericLiteral]: NumericLiteral;
-    [SyntaxKind.FirstLiteralToken]: NumericLiteral;
     [SyntaxKind.ObjectLiteralExpression]: ObjectLiteralExpression;
     [SyntaxKind.OmittedExpression]: OmittedExpression;
     [SyntaxKind.ParenthesizedExpression]: ParenthesizedExpression;
@@ -7216,7 +7217,6 @@ export interface KindToExpressionMappings {
     [SyntaxKind.YieldExpression]: YieldExpression;
     [SyntaxKind.AnyKeyword]: Expression;
     [SyntaxKind.BooleanKeyword]: Expression;
-    [SyntaxKind.NeverKeyword]: Expression;
     [SyntaxKind.NumberKeyword]: Expression;
     [SyntaxKind.ObjectKeyword]: Expression;
     [SyntaxKind.StringKeyword]: Expression;

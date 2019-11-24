@@ -564,6 +564,108 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
+    describe(nameof<TransactionalFileSystem>(w => w.clearDirectoryImmediately), () => {
+        function doTests(clearDir: (wrapper: TransactionalFileSystem, dirPath: string, runChecks: (error?: any) => void) => void) {
+            it("should delete a child file that was queued for delete when immediately clearing a parent dir", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                const dirPath = "/dir";
+                const filePath = wrapper.getStandardizedAbsolutePath("/dir/file.ts");
+                wrapper.writeFileSync(filePath, "");
+                wrapper.queueFileDelete(filePath);
+                clearDir(wrapper, dirPath, err => {
+                    expect(err).to.be.undefined;
+                    checkStateForDir(objs, dirPath, [true, true]);
+                    checkState(objs, filePath, [false, false]);
+                });
+            });
+
+            it("should maintain the list of files to delete when there's an error deleting a directory", () => {
+                const objs = setup();
+                const { wrapper, fileSystem } = objs;
+                const dirPath = "/dir";
+                const filePath = wrapper.getStandardizedAbsolutePath("/dir/file.ts");
+                wrapper.writeFileSync(filePath, "");
+                wrapper.queueFileDelete(filePath);
+                fileSystem.deleteSync = (path: string) => {
+                    throw new Error();
+                };
+                clearDir(wrapper, dirPath, err => {
+                    expect(err).to.be.instanceof(Error);
+                    checkStateForDir(objs, dirPath, [true, true]);
+                    checkState(objs, filePath, [false, true]);
+                });
+            });
+
+            it("should throw when clearing a directory in a directory with external operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"), "text");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir"), wrapper.getStandardizedAbsolutePath("/dir2"));
+                clearDir(wrapper, "/dir2/subDir", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should throw when clearing a directory in a directory whose parent was once marked for deletion", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"), "text");
+                wrapper.queueDirectoryDelete(wrapper.getStandardizedAbsolutePath("/dir"));
+                wrapper.removeFileDelete(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"));
+                clearDir(wrapper, "/dir/subDir", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should not throw when clearing a directory that contains queued moves that are internal", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"), "");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir2/file.ts"), "");
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir/subDir"), wrapper.getStandardizedAbsolutePath("/dir/newDir"));
+                wrapper.queueMoveDirectory(wrapper.getStandardizedAbsolutePath("/dir/subDir2"), wrapper.getStandardizedAbsolutePath("/dir/newDir/subSub"));
+                clearDir(wrapper, "/dir", err => {
+                    expect(err).to.be.undefined;
+                });
+            });
+
+            it("should not throw when clearing a directory that contains queued deletes that are internal", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir/file.ts"), "");
+                wrapper.writeFileSync(wrapper.getStandardizedAbsolutePath("/dir/subDir2/file.ts"), "");
+                wrapper.queueDirectoryDelete(wrapper.getStandardizedAbsolutePath("/dir/subDir"));
+                wrapper.queueFileDelete(wrapper.getStandardizedAbsolutePath("/dir/subDir2/file.ts"));
+                clearDir(wrapper, "/dir", err => {
+                    expect(err).to.be.undefined;
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (wrapper, filePath, runChecks) => {
+                try {
+                    await wrapper.clearDirectoryImmediately(wrapper.getStandardizedAbsolutePath(filePath));
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
+        });
+
+        describe("sync", () => {
+            doTests((wrapper, filePath, runChecks) => {
+                try {
+                    wrapper.clearDirectoryImmediatelySync(wrapper.getStandardizedAbsolutePath(filePath));
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
+        });
+    });
+
     describe(nameof<TransactionalFileSystem>(w => w.fileExistsSync), () => {
         it("should not exist after queued for delete", () => {
             const { wrapper } = setup();

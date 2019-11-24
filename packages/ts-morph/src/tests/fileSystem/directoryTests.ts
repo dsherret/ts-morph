@@ -1114,7 +1114,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.delete), () => {
-        it("should delete the file and remove all its descendants", () => {
+        it("should delete the directory and remove all its descendants", () => {
             const fileSystem = getFileSystemHostWithFiles([], []);
             const project = new Project({ fileSystem });
             const directory = project.createDirectory("dir");
@@ -1132,7 +1132,7 @@ describe(nameof(Directory), () => {
             expect(fileSystem.getDeleteLog().map(d => d.path).sort()).to.deep.equal(["/dir/childDir", "/dir/file.ts", "/dir"].sort());
         });
 
-        it("mixing delete and delete immediately", () => {
+        it("mixing delete and delete immediately", async () => {
             const fileSystem = getFileSystemHostWithFiles([], []);
             const project = new Project({ fileSystem });
             const directory = project.createDirectory("dir");
@@ -1141,7 +1141,7 @@ describe(nameof(Directory), () => {
 
             childDir.delete();
             sourceFile.delete();
-            directory.deleteImmediately();
+            await directory.deleteImmediately();
             expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
             project.saveSync();
             // should not add the child directory and source file here...
@@ -1161,6 +1161,47 @@ describe(nameof(Directory), () => {
             project.createDirectory("dir");
             project.saveSync();
             expect(fileSystem.getDeleteLog().map(d => d.path).sort()).to.deep.equal([...filePaths, "/dir", "/dir/subDir"].sort());
+        });
+    });
+
+    describe(nameof<Directory>(d => d.clear), () => {
+        it("should clear the directory by removing all its descendants", () => {
+            const fileSystem = getFileSystemHostWithFiles([], []);
+            const project = new Project({ fileSystem });
+            const directory = project.createDirectory("dir");
+            const childDir = directory.createDirectory("childDir");
+            const sourceFile = directory.createSourceFile("file.ts");
+            const otherSourceFile = project.createSourceFile("otherFile.ts");
+
+            directory.clear();
+            expect(fileSystem.getDeleteLog()).to.deep.equal([]);
+            expect(directory.wasForgotten()).to.be.false;
+            expect(childDir.wasForgotten()).to.be.true;
+            expect(sourceFile.wasForgotten()).to.be.true;
+            expect(otherSourceFile.wasForgotten()).to.be.false;
+            fileSystem.clearCreatedDirectories();
+            fileSystem.clearDeleteLog();
+            project.saveSync();
+            expect(fileSystem.getDeleteLog().map(d => d.path).sort()).to.deep.equal(["/dir/childDir", "/dir/file.ts", "/dir"].sort());
+            expect(fileSystem.getCreatedDirectories().sort()).to.deep.equal(["/dir"].sort());
+        });
+
+        it("mixing clear and clear immediately", async () => {
+            const fileSystem = getFileSystemHostWithFiles([], []);
+            const project = new Project({ fileSystem });
+            const directory = project.createDirectory("dir");
+            const childDir = directory.createDirectory("childDir");
+            const sourceFile = directory.createSourceFile("sourceFile.ts");
+
+            fileSystem.clearCreatedDirectories();
+            childDir.clear();
+            sourceFile.delete();
+            await directory.clearImmediately();
+            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
+            project.saveSync();
+            // should not add the child directory and source file here...
+            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
+            expect(fileSystem.getCreatedDirectories()).to.deep.equal(["/dir"]);
         });
     });
 
@@ -1463,6 +1504,44 @@ describe(nameof(Directory), () => {
         describe("sync", () => {
             doTests((directory, doChecks) => {
                 directory.deleteImmediatelySync();
+                doChecks();
+            });
+        });
+    });
+
+    describe(nameof<Directory>(d => d.clearImmediately), () => {
+        function doTests(clearImmediately: (directory: Directory, doChecks: () => void) => void) {
+            it("should delete the file and remove all its descendants", async () => {
+                const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }]);
+                const project = new Project({ fileSystem });
+                const directory = project.createDirectory("dir");
+                const childDir = directory.createDirectory("childDir");
+                const sourceFile = directory.addSourceFileAtPath("file.ts");
+                const otherSourceFile = project.createSourceFile("otherFile.ts");
+
+                fileSystem.clearCreatedDirectories();
+
+                clearImmediately(directory, () => {
+                    expect(directory.wasForgotten()).to.be.false;
+                    expect(childDir.wasForgotten()).to.be.true;
+                    expect(sourceFile.wasForgotten()).to.be.true;
+                    expect(otherSourceFile.wasForgotten()).to.be.false;
+                    expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
+                    expect(fileSystem.getCreatedDirectories()).to.deep.equal(["/dir"]);
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (directory, doChecks) => {
+                await directory.clearImmediately();
+                doChecks();
+            });
+        });
+
+        describe("sync", () => {
+            doTests((directory, doChecks) => {
+                directory.clearImmediatelySync();
                 doChecks();
             });
         });

@@ -708,19 +708,54 @@ export class Directory {
     }
 
     /**
+     * Recreates the directory.
+     * @remarks This will delete all the descendant source files and directories in memory and queue a delete & mkdir to the file system.
+     */
+    clear() {
+        const path = this.getPath();
+        this._deleteDescendants();
+        this._context.fileSystemWrapper.queueDirectoryDelete(path);
+        this._context.fileSystemWrapper.queueMkdir(path);
+    }
+
+    /**
+     * Asynchronously recreates the directory.
+     * @remarks This will delete all the descendant source files and directories in memory and push a delete & mkdir to the file system.
+     */
+    async clearImmediately() {
+        const path = this.getPath();
+        this._deleteDescendants();
+        await this._context.fileSystemWrapper.clearDirectoryImmediately(path);
+    }
+
+    /**
+     * Synchronously recreates the directory.
+     * @remarks This will delete all the descendant source files and directories in memory and push a delete & mkdir to the file system.
+     */
+    clearImmediatelySync() {
+        const path = this.getPath();
+        this._deleteDescendants();
+        this._context.fileSystemWrapper.clearDirectoryImmediatelySync(path);
+    }
+
+    /**
      * Queues a deletion of the directory to the file system.
      *
      * The directory will be deleted when calling ast.save(). If you wish to delete the file immediately, then use deleteImmediately().
      */
     delete() {
-        const { fileSystemWrapper } = this._context;
         const path = this.getPath();
+        this._deleteDescendants();
+        this._context.fileSystemWrapper.queueDirectoryDelete(path);
+        this.forget();
+    }
+
+    /** @internal */
+    private _deleteDescendants() {
         for (const sourceFile of this.getSourceFiles())
             sourceFile.delete();
         for (const dir of this.getDirectories())
             dir.delete();
-        fileSystemWrapper.queueDirectoryDelete(path);
-        this.forget();
     }
 
     /**

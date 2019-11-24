@@ -4,6 +4,8 @@ export interface CustomFileSystemProps {
     getWriteLog(): { filePath: string; fileText: string; }[];
     getDeleteLog(): { path: string; }[];
     getCreatedDirectories(): string[];
+    clearDeleteLog(): void;
+    clearCreatedDirectories(): void;
     getFiles(): [string, string][];
 }
 
@@ -65,6 +67,14 @@ class VirtualFileSystemForTest extends InMemoryFileSystemHost implements CustomF
 
     getCreatedDirectories() {
         return [...this.trackedDirectories.values()].filter(path => this.initialDirectories.indexOf(path) === -1);
+    }
+
+    clearCreatedDirectories() {
+        this.trackedDirectories.clear();
+    }
+
+    clearDeleteLog() {
+        this.deleteLog.length = 0;
     }
 
     private doDelete(path: string) {

@@ -505,6 +505,20 @@ export class TransactionalFileSystem {
         }
     }
 
+    /** Recreates a directory on the underlying file system asynchronously. */
+    async clearDirectoryImmediately(dirPath: StandardizedFilePath) {
+        await this.deleteDirectoryImmediately(dirPath);
+        this.getOrCreateDirectory(dirPath).setIsDeleted(false);
+        await this.fileSystem.mkdir(dirPath);
+    }
+
+    /** Recreates a directory on the underlying file system synchronously. */
+    clearDirectoryImmediatelySync(dirPath: StandardizedFilePath) {
+        this.deleteDirectoryImmediatelySync(dirPath);
+        this.getOrCreateDirectory(dirPath).setIsDeleted(false);
+        this.fileSystem.mkdirSync(dirPath);
+    }
+
     deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath) {
         const dir = this.getOrCreateDirectory(dirPath);
 
