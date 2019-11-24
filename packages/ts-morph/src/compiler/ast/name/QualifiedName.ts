@@ -1,7 +1,7 @@
 import { ts } from "@ts-morph/common";
 import { EntityName } from "../aliases";
+import { Node } from "../common";
 import { Identifier } from "./Identifier";
-import { Node } from "./Node";
 
 export class QualifiedName extends Node<ts.QualifiedName> {
     /**

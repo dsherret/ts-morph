@@ -6,7 +6,7 @@ import { AmbientableNode, BodiedNode, ExportableNode, JSDocableNode, Modifierabl
 import { TypeGuards } from "../../../utils";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
-import { Identifier } from "../common";
+import { Identifier } from "../name";
 import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
 import { NamespaceDeclarationKind } from "./NamespaceDeclarationKind";

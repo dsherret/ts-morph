@@ -1,8 +1,8 @@
 import { ts } from "@ts-morph/common";
 import { ReferenceFindableNode, RenameableNode } from "../base";
+import { Node } from "../common";
 import { PrimaryExpression } from "../expression/PrimaryExpression";
 import { DefinitionInfo, ImplementationLocation } from "../../tools";
-import { Node } from "./Node";
 
 export const IdentifierBase = ReferenceFindableNode(RenameableNode(PrimaryExpression));
 export class Identifier extends IdentifierBase<ts.Identifier> {

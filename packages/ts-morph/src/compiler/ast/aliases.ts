@@ -2,7 +2,8 @@ import { ts } from "@ts-morph/common";
 import { AssertTrue, IsExact } from "conditional-type-checks";
 import { ArrayBindingPattern, ObjectBindingPattern, BindingElement } from "./binding";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration, ClassDeclaration } from "./class";
-import { ComputedPropertyName, Identifier, Node, QualifiedName } from "./common";
+import { Node } from "./common";
+import { ComputedPropertyName, Identifier, QualifiedName } from "./name";
 import { Decorator } from "./decorator";
 import { EnumDeclaration } from "./enum";
 import { Expression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ThisExpression, OmittedExpression,
