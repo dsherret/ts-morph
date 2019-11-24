@@ -24,7 +24,8 @@ export interface TsSourceFileContainer {
      * @param filePath - File path to get.
      * @param opts - Options for adding or getting the file.
      */
-    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, opts: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): ts.SourceFile | undefined;
+    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, opts: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): ts.SourceFile
+        | undefined;
     /**
      * Gets the source file version of the specified source file.
      * @param sourceFile - Source file to inspect.

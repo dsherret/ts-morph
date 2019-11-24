@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { errors } from "../../errors";
 import { TransactionalFileSystem, InMemoryFileSystemHost } from "../../fileSystem";
-import { StandardizedFilePath } from "../../../lib/ts-morph-common";
 
 describe(nameof(TransactionalFileSystem), () => {
     interface SetupObjects {
@@ -10,7 +9,7 @@ describe(nameof(TransactionalFileSystem), () => {
     }
 
     function setup(): SetupObjects {
-        const fileSystem = new InMemoryFileSystemHost();
+        const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
         return { fileSystem, wrapper: new TransactionalFileSystem(fileSystem) };
     }
 

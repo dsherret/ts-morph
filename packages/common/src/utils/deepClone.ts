@@ -8,9 +8,8 @@ export function deepClone<T extends object>(objToClone: T): T {
     function clone(obj: object) {
         const newObj = Object.create(obj.constructor.prototype) as object;
 
-        for (const propName of Object.keys(obj)) {
+        for (const propName of Object.keys(obj))
             (newObj as any)[propName] = cloneItem((obj as any)[propName]);
-        }
 
         return newObj;
     }

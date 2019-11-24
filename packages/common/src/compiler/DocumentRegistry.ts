@@ -24,7 +24,12 @@ export class DocumentRegistry implements ts.DocumentRegistry {
      * @param scriptSnapshot - Script snapshot (text) of the file.
      * @param scriptKind - Script kind of the file.
      */
-    createOrUpdateSourceFile(fileName: StandardizedFilePath, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, scriptKind: ScriptKind | undefined) {
+    createOrUpdateSourceFile(
+        fileName: StandardizedFilePath,
+        compilationSettings: CompilerOptions,
+        scriptSnapshot: ts.IScriptSnapshot,
+        scriptKind: ScriptKind | undefined
+    ) {
         let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
         if (sourceFile == null)
             sourceFile = this.updateSourceFile(fileName, compilationSettings, scriptSnapshot, DocumentRegistry.initialVersion, scriptKind);
@@ -99,12 +104,10 @@ export class DocumentRegistry implements ts.DocumentRegistry {
 
     /** @inheritdoc */
     releaseDocument(fileName: string, compilationSettings: CompilerOptions) {
-        // ignore, handled by removeSourceFile
     }
 
     /** @inheritdoc */
     releaseDocumentWithKey(path: ts.Path, key: ts.DocumentRegistryBucketKey) {
-        // ignore, handled by removeSourceFile
     }
 
     /** @inheritdoc */

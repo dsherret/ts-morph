@@ -1,4 +1,5 @@
-import { errors, ArrayUtils, StringUtils, Memoize, EventContainer, FileUtils, LanguageVariant, ScriptTarget, ts, ScriptKind, StandardizedFilePath } from "@ts-morph/common";
+import { errors, ArrayUtils, StringUtils, Memoize, EventContainer, FileUtils, LanguageVariant, ScriptTarget, ts, ScriptKind,
+    StandardizedFilePath } from "@ts-morph/common";
 import { Directory } from "../../../fileSystem";
 import { getTextFromFormattingEdits, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove,
     replaceSourceFileTextForFormatting } from "../../../manipulation";
@@ -226,7 +227,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         function getCopiedSourceFile(currentFile: SourceFile) {
             try {
-                return compilerFactory.createSourceFileFromText(standardizedFilePath, currentFile.getFullText(), { overwrite, markInProject: getShouldBeInProject() });
+                return compilerFactory.createSourceFileFromText(standardizedFilePath, currentFile.getFullText(),
+                    { overwrite, markInProject: getShouldBeInProject() });
             } catch (err) {
                 if (err instanceof errors.InvalidOperationError)
                     throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);

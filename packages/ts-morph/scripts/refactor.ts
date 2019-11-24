@@ -63,7 +63,7 @@ for (let i = 0; i < sourceFiles.length; i++) {
                 if (descendant.getText() === "TypeGuards")
                     descendant.replaceWithText("Node");
             }
-        })
+        });
     }
 }
 

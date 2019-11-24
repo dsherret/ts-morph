@@ -23,8 +23,8 @@ class VirtualFileSystemForTest extends InMemoryFileSystemHost implements CustomF
     private readonly trackedDirectories = new Set<string>();
     private readonly files = new KeyValueCache<string, string>();
 
-    constructor(private readonly initialFiles: { filePath: string; text: string; }[], private readonly initialDirectories: string[] = []) {
-        super();
+    constructor(initialFiles: { filePath: string; text: string; }[], private readonly initialDirectories: string[] = []) {
+        super({ skipLoadingLibFiles: true });
 
         for (const item of initialDirectories)
             this.trackedDirectories.add(item);

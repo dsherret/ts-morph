@@ -103,8 +103,15 @@ export function getInfoFromTextWithDescendant<TDescendant extends Node>(
 }
 
 function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
-    const { isDefinitionFile = false, isJsx = false, filePath = undefined, host = new InMemoryFileSystemHost(), disableErrorCheck = false,
-        compilerOptions = undefined, includeLibDts = false } = opts || {};
+    const {
+        isDefinitionFile = false,
+        isJsx = false,
+        filePath = undefined,
+        host = new InMemoryFileSystemHost({ skipLoadingLibFiles: true }),
+        disableErrorCheck = false,
+        compilerOptions = undefined,
+        includeLibDts = false
+    } = opts || {};
 
     if (includeLibDts) {
         for (const libFile of libFiles)

@@ -437,7 +437,9 @@ export class Directory {
         const getStandardizedPath = (path: string | undefined) => path == null
             ? undefined
             : this._context.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
-        const getSubDirPath = (path: StandardizedFilePath | undefined, dir: Directory) => path == null ? undefined : FileUtils.pathJoin(path, dir.getBaseName());
+        const getSubDirPath = (path: StandardizedFilePath | undefined, dir: Directory) => path == null
+            ? undefined
+            : FileUtils.pathJoin(path, dir.getBaseName());
         const hasDeclarationDir = this._context.compilerOptions.get().declarationDir != null || options.declarationDir != null;
 
         return emitDirectory(this, getStandardizedPath(options.outDir), getStandardizedPath(options.declarationDir));

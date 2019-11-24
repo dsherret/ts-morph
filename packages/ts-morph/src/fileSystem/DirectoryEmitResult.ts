@@ -2,7 +2,9 @@ import { StandardizedFilePath } from "@ts-morph/common";
 
 export class DirectoryEmitResult {
     /** @private */
-    constructor(private readonly _skippedFilePaths: ReadonlyArray<StandardizedFilePath>, private readonly _outputFilePaths: ReadonlyArray<StandardizedFilePath>) {
+    constructor(private readonly _skippedFilePaths: ReadonlyArray<StandardizedFilePath>,
+        private readonly _outputFilePaths: ReadonlyArray<StandardizedFilePath>)
+    {
     }
 
     /** Gets a collections of skipped file paths. */

@@ -27,7 +27,8 @@ export class FileTextChanges {
         this._context = context;
         this._compilerObject = compilerObject;
 
-        const file = context.compilerFactory.getSourceFileFromCacheFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(compilerObject.fileName));
+        const file = context.compilerFactory
+            .getSourceFileFromCacheFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(compilerObject.fileName));
         this._existingFileExists = file != null;
         if (!compilerObject.isNewFile)
             this._sourceFile = file;

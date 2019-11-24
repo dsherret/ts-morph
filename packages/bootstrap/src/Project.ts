@@ -200,7 +200,8 @@ export class Project {
     ): ts.SourceFile {
         return this._sourceFileCache.createSourceFileFromText(
             this._fileSystemWrapper.getStandardizedAbsolutePath(filePath),
-            sourceFileText || "", { scriptKind: options && options.scriptKind }
+            sourceFileText || "",
+            { scriptKind: options && options.scriptKind }
         );
     }
 

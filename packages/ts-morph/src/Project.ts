@@ -1,5 +1,5 @@
 import { errors, FileUtils, TransactionalFileSystem, FileSystemHost, RealFileSystemHost, matchGlobs, InMemoryFileSystemHost, ResolutionHostFactory,
-    TsConfigResolver, CompilerOptionsContainer, ts, CompilerOptions, ScriptKind, IterableUtils, getLibFiles, StandardizedFilePath } from "@ts-morph/common";
+    TsConfigResolver, CompilerOptionsContainer, ts, CompilerOptions, ScriptKind, IterableUtils, StandardizedFilePath } from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import { Directory, DirectoryAddOptions } from "./fileSystem";
@@ -103,15 +103,8 @@ export class Project {
         }
 
         function getFileSystem() {
-            if (options.useVirtualFileSystem) {
-                const fileSystem = new InMemoryFileSystemHost();
-                if (!options.skipLoadingLibFiles) {
-                    const libFiles = getLibFiles();
-                    for (const libFile of libFiles)
-                        fileSystem.writeFileSync(`/node_modules/typescript/lib/${libFile.fileName}`, libFile.text);
-                }
-                return fileSystem;
-            }
+            if (options.useVirtualFileSystem)
+                return new InMemoryFileSystemHost({ skipLoadingLibFiles: options.skipLoadingLibFiles });
             return options.fileSystem ?? new RealFileSystemHost();
         }
 
@@ -308,7 +301,8 @@ export class Project {
      * @skipOrThrowCheck
      */
     addSourceFileAtPathIfExists(filePath: string): SourceFile | undefined {
-        return this._context.directoryCoordinator.addSourceFileAtPathIfExists(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath), { markInProject: true });
+        return this._context.directoryCoordinator.addSourceFileAtPathIfExists(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath),
+            { markInProject: true });
     }
 
     /**
@@ -326,7 +320,8 @@ export class Project {
      * @throws FileNotFoundError when the file is not found.
      */
     addSourceFileAtPath(filePath: string): SourceFile {
-        return this._context.directoryCoordinator.addSourceFileAtPath(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath), { markInProject: true });
+        return this._context.directoryCoordinator.addSourceFileAtPath(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath),
+            { markInProject: true });
     }
 
     /**
@@ -371,7 +366,8 @@ export class Project {
     ): SourceFile {
         return this._context.compilerFactory.createSourceFile(
             this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath),
-            sourceFileText ?? "", { ...(options ?? {}), markInProject: true }
+            sourceFileText ?? "",
+            { ...(options ?? {}), markInProject: true }
         );
     }
 

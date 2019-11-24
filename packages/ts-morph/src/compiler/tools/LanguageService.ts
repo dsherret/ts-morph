@@ -196,7 +196,8 @@ export class LanguageService {
      */
     getFormattingEditsForDocument(filePath: string, formatSettings: FormatCodeSettings) {
         const standardizedFilePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        return (this.compilerObject.getFormattingEditsForDocument(standardizedFilePath, this._getFilledSettings(formatSettings)) || []).map(e => new TextChange(e));
+        return (this.compilerObject.getFormattingEditsForDocument(standardizedFilePath, this._getFilledSettings(formatSettings)) || [])
+            .map(e => new TextChange(e));
     }
 
     /**

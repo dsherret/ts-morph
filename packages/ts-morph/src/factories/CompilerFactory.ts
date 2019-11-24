@@ -1,5 +1,5 @@
-import { errors, KeyValueCache, WeakCache, StringUtils, EventContainer, FileUtils, DocumentRegistry, SyntaxKind, ts, TypeFlags,
-    ScriptKind, StandardizedFilePath} from "@ts-morph/common";
+import { errors, KeyValueCache, WeakCache, StringUtils, EventContainer, FileUtils, DocumentRegistry, SyntaxKind, ts, TypeFlags, ScriptKind,
+    StandardizedFilePath } from "@ts-morph/common";
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter, CommentStatement,
     CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerCommentNode, CommentEnumMember } from "../compiler";
@@ -192,13 +192,15 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): SourceFile | undefined {
+    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): SourceFile
+        | undefined
+    {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
             let fileText: string | undefined;
             try {
-                fileText = this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding())
+                fileText = this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding());
             } catch {
                 // ignore
             }

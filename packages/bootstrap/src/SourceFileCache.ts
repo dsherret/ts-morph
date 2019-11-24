@@ -1,5 +1,5 @@
-import { DocumentRegistry, ScriptKind, ts, StringUtils, TsSourceFileContainer, FileUtils, TransactionalFileSystem,
-    CompilerOptionsContainer, StandardizedFilePath} from "@ts-morph/common";
+import { DocumentRegistry, ScriptKind, ts, StringUtils, TsSourceFileContainer, FileUtils, TransactionalFileSystem, CompilerOptionsContainer,
+    StandardizedFilePath } from "@ts-morph/common";
 
 export class SourceFileCache implements TsSourceFileContainer {
     private readonly sourceFilesByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();

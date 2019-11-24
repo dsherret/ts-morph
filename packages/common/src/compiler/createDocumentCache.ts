@@ -80,7 +80,7 @@ class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
 }
 
 class InternalDocumentCache implements DocumentCache {
-    declare __documentCacheBrand: undefined;
+    __documentCacheBrand: undefined;
 
     private readonly _fileTexts = new Map<string, string>();
     private readonly _documents = new Map<DocumentKey, ts.SourceFile>();
@@ -140,4 +140,3 @@ class InternalDocumentCache implements DocumentCache {
         return (filePath + (scriptTarget?.toString() ?? "-1") + (scriptKind?.toString() ?? "-1")) as DocumentKey;
     }
 }
-

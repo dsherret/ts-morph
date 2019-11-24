@@ -1,4 +1,5 @@
 import { errors } from "../errors";
+import { getLibFiles } from "../getLibFiles";
 import { FileUtils } from "./FileUtils";
 import { matchGlobs } from "./matchGlobs";
 import { FileSystemHost } from "./FileSystemHost";
@@ -9,12 +10,30 @@ interface VirtualDirectory {
     files: Map<StandardizedFilePath, string>;
 }
 
+export interface InMemoryFileSystemHostOptions {
+    /**
+     * Set this to true to not load the /node_modules/typescript/lib files on construction.
+     * @default false
+     */
+    skipLoadingLibFiles?: boolean;
+}
+
 /** An implementation of a file system that exists in memory only. */
 export class InMemoryFileSystemHost implements FileSystemHost {
     private readonly directories = new Map<StandardizedFilePath, VirtualDirectory>();
 
-    constructor() {
+    /**
+     * Constructor.
+     * @param options - Options for creating the file system.
+     */
+    constructor(options?: { skipLoadingLibFiles?: boolean; }) {
         this.getOrCreateDir("/" as StandardizedFilePath);
+
+        if (!options?.skipLoadingLibFiles) {
+            const libFiles = getLibFiles();
+            for (const libFile of libFiles)
+                this._writeFileSync(`/node_modules/typescript/lib/${libFile.fileName}`, libFile.text);
+        }
     }
 
     /** @inheritdoc */
@@ -98,6 +117,12 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     writeFileSync(filePath: string, fileText: string) {
+        this._writeFileSync(filePath, fileText);
+    }
+
+    /* @internal */
+    private _writeFileSync(filePath: string, fileText: string) {
+        // private method to avoid calling a method in the constructor that could be overwritten (virtual method)
         const standardizedFilePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
         const dirPath = FileUtils.getDirPath(standardizedFilePath);
         this.getOrCreateDir(dirPath).files.set(standardizedFilePath, fileText);

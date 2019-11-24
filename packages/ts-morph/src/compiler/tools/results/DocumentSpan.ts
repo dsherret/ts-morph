@@ -24,7 +24,8 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
         // store this node so that it's start doesn't go out of date because of manipulation (though the text span may)
         // Note: this will cause the source file to transitively hold a reference to this node and so it won't be released
         // from the WeakMap until a manipulation happens on the source file.
-        this._sourceFile = this._context.compilerFactory.getSourceFileFromCacheFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.fileName))!;
+        this._sourceFile = this._context.compilerFactory
+            .getSourceFileFromCacheFromFilePath(context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.fileName))!;
         this._sourceFile._doActionPreNextModification(() => this.getNode());
     }
 

@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { Project } from "../../Project";
 describe("tests for issue #534", () => {
     it("should use the tsconfig.json file path for type reference directive resolution", () => {
-        const fileSystem = new InMemoryFileSystemHost();
+        const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
         fileSystem.mkdirSync("/dir");
         fileSystem.mkdirSync("/dir/node_modules");
         fileSystem.mkdirSync("/dir/node_modules/@types");

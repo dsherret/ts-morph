@@ -726,10 +726,24 @@ export declare class FileUtils {
 /** Checks the specified file paths to see if the match any of the specified patterns. */
 export declare function matchGlobs(paths: ReadonlyArray<string>, patterns: ReadonlyArray<string> | string, cwd: string): string[];
 
+export interface InMemoryFileSystemHostOptions {
+    /**
+     * Set this to true to not load the /node_modules/typescript/lib files on construction.
+     * @default false
+     */
+    skipLoadingLibFiles?: boolean;
+}
+
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
     private readonly directories;
-    constructor();
+    /**
+     * Constructor.
+     * @param options - Options for creating the file system.
+     */
+    constructor(options?: {
+        skipLoadingLibFiles?: boolean;
+    });
     /** @inheritdoc */
     isCaseSensitive(): boolean;
     /** @inheritdoc */

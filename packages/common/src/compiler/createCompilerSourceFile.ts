@@ -7,7 +7,7 @@ export function createCompilerSourceFile(
     scriptTarget: ts.ScriptTarget | undefined,
     version: string,
     setParentNodes: boolean,
-    scriptKind: ScriptKind | undefined,
+    scriptKind: ScriptKind | undefined
 ) {
     return ts.createLanguageServiceSourceFile(
         filePath,

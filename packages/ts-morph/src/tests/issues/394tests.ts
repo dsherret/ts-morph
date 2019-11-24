@@ -4,7 +4,7 @@ import { SourceFile } from "../../compiler";
 import { Project } from "../../Project";
 describe("tests for issue #394", () => {
     it("should get the original source file with correct casing when the module specifier has incorrect casing and using a case insensitive file system", () => {
-        const fileSystem: FileSystemHost = new InMemoryFileSystemHost();
+        const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
         const sourceFiles: SourceFile[] = [];
         fileSystem.fileExistsSync = filePath => sourceFiles.some(s => s.getFilePath().toLowerCase() === filePath.toLowerCase());
         fileSystem.readFileSync = filePath => {
