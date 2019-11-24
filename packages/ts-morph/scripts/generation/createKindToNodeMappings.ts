@@ -47,7 +47,7 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
             if (!hasDescendantBaseType(mapping.wrappedNode.getType(), t => t.getText() === classType.getText()))
                 continue;
             for (const kindName of mapping.syntaxKindNames) {
-                for (const possibleKindName of tsInspector.getNamesFromKind((tsMorph.SyntaxKind as any)[kindName])) {
+                for (const possibleKindName of tsInspector.getNamesFromKind(tsInspector.getSyntaxKindForName(kindName))) {
                     addingProperties.push({
                         kind: tsMorph.StructureKind.PropertySignature,
                         name: `[SyntaxKind.${possibleKindName}]`,

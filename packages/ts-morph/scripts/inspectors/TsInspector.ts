@@ -33,7 +33,7 @@ export class TsInspector {
         return ArrayUtils.sortByProperty(interfaces.map(i => this.wrapperFactory.getTsNode(i)), item => item.getName());
     }
 
-    getNamesFromKind(kind: tsMorph.SyntaxKind) {
+    getNamesFromKind(kind: number) {
         const kindToNameMappings = this.getKindToNameMappings();
         return [...kindToNameMappings[kind]];
     }
@@ -41,13 +41,36 @@ export class TsInspector {
     @Memoize
     private getKindToNameMappings() {
         const kindToNameMappings: { [kind: number]: string[]; } = {};
-        for (const name of Object.keys(tsMorph.SyntaxKind).filter(k => isNaN(parseInt(k, 10)))) {
-            const value = (tsMorph.SyntaxKind as any)[name];
+        for (const { name, value, isAlias } of this.getSyntaxKindNamesAndValues()) {
+            if (isAlias)
+                continue;
             if (kindToNameMappings[value] == null)
                 kindToNameMappings[value] = [];
             kindToNameMappings[value].push(name);
         }
 
         return kindToNameMappings;
+    }
+
+    getSyntaxKindForName(name: string) {
+        const result = this.getSyntaxKindNamesAndValues().find(member => member.name === name);
+        if (result == null)
+            throw new Error(`Not found syntax kind: ${name}`);
+        return result.value;
+    }
+
+    @Memoize
+    getSyntaxKindNamesAndValues() {
+        const foundValues = new Set<number>();
+        return this.getTsSymbol().getExportOrThrow("SyntaxKind").getExports().map(e => {
+            const value = (e.getValueDeclarationOrThrow() as tsMorph.EnumMember).getValue() as number;
+            const isAlias = foundValues.has(value);
+            foundValues.add(value);
+            return {
+                name: e.getName(),
+                value,
+                isAlias
+            };
+        });
     }
 }
