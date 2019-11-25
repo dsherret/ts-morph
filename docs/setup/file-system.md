@@ -4,8 +4,7 @@ title: File System
 
 ## File System
 
-By default, the library will use the local file system based on the current working directory. In most scenarios, you won't have to bother with what's outlined here, but it may
-by useful in some scenarios (for example, using a virtual file system is useful for mocking the file system for testing purposes).
+By default, the library will use the local file system based on the current working directory. In most scenarios, you won't have to bother with what's outlined here, but it may be useful in some scenarios (for example, using an in-memory file system is useful for mocking the file system for testing purposes).
 
 ### Current File System Object
 
@@ -19,27 +18,26 @@ const fs = project.getFileSystem(); // returns: FileSystemHost
 This file system object can be used to interact with the current file system. The methods available on it are very obvious and not worth explaining
 here (ex. `writeFile(filePath: string, fileText: string): Promise<void>`, `readFile(filePath: string): Promise<string>`, `readFileSync(filePath: string): string`, etc..).
 
-### Virtual File System
+### In-Memory File System
 
-If you want to use a virtual file system that is stored in memory, specify that when creating an `Ast` object:
+If you want to use a file system that is stored in memory, specify that when creating a `Project` instance:
 
 ```ts
 import { Project } from "ts-morph";
 
-const project = new Project({ useVirtualFileSystem: true });
+const project = new Project({ useInMemoryFileSystem: true });
 const fs = project.getFileSystem();
 
-// note that it's ok to use synchronous commands when using a virtual file system
 const sourceFile = project.createSourceFile("file.ts", "console.log(5);");
 sourceFile.saveSync();
-fs.readFileSync("file.ts"); // returns: "console.log(5);"
+console.log(fs.readFileSync("file.ts")); // outputs: "console.log(5);"
 ```
 
 The current working directory on this file system will be `/`.
 
 #### `lib.d.ts` files
 
-Since ts-morph 6.0, the virtual file system will have the [`lib.d.ts` files](https://github.com/Microsoft/TypeScript/tree/master/lib) loaded into the `/node_modules/typescript/lib` folder by default.
+Since ts-morph 6.0, the in memory file system will have the [`lib.d.ts` files](https://github.com/Microsoft/TypeScript/tree/master/lib) loaded into the `/node_modules/typescript/lib` folder by default.
 
 If you want the old behaviour, you can specify to skip loading them by providing a `skipLoadingLibFiles` option:
 
@@ -47,7 +45,7 @@ If you want the old behaviour, you can specify to skip loading them by providing
 import { Project, FileSystemHost } from "ts-morph";
 
 const project = new Project({
-    useVirtualFileSystem: true,
+    inMemoryFileSystem: true,
     skipLoadingLibFiles: true
 });
 
@@ -58,7 +56,7 @@ When using a non-default file system, the library will search for these files in
 
 ### Custom File System
 
-It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Ast` object:
+It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Project` instance:
 
 ```ts ignore-error: 2420, 2345
 import { Project, FileSystemHost } from "ts-morph";

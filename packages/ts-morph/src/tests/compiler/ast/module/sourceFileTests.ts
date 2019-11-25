@@ -598,13 +598,13 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.isDeclarationFile), () => {
         it("should be a source file when the file name ends with .d.ts", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("MyFile.d.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.true;
         });
 
         it("should not be a source file when the file name ends with .ts", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("MyFile.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.false;
         });
@@ -704,7 +704,7 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.getEmitOutput), () => {
         it("should get the emit output for the source file", () => {
-            const project = new Project({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
+            const project = new Project({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 }, useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput();
 
@@ -718,7 +718,7 @@ describe(nameof(SourceFile), () => {
         it("should only emit the declaration file when specified", () => {
             const project = new Project({
                 compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 },
-                useVirtualFileSystem: true
+                useInMemoryFileSystem: true
             });
             const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput({ emitOnlyDtsFiles: true });
@@ -1061,7 +1061,7 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.getRelativePathTo), () => {
         function doSourceFileTest(from: string, to: string, expected: string) {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fromFile = project.createSourceFile(from);
             const toFile = project.createSourceFile(to);
             expect(fromFile.getRelativePathTo(toFile)).to.equal(expected);
@@ -1074,7 +1074,7 @@ function myFunction(param: MyClass) {
         });
 
         function doDirTest(from: string, to: string, expected: string) {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fromFile = project.createSourceFile(from);
             const toDir = project.createDirectory(to);
             expect(fromFile.getRelativePathTo(toDir)).to.equal(expected);
@@ -1087,7 +1087,7 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.getRelativePathAsModuleSpecifierTo), () => {
         function doSourceFileTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
-            const project = new Project({ useVirtualFileSystem: true, compilerOptions });
+            const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
             const fromFile = project.createSourceFile(from);
             const toFile = from === to ? fromFile : project.createSourceFile(to);
             expect(fromFile.getRelativePathAsModuleSpecifierTo(toFile)).to.equal(expected);
@@ -1146,7 +1146,7 @@ function myFunction(param: MyClass) {
         });
 
         function doDirectoryTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
-            const project = new Project({ useVirtualFileSystem: true, compilerOptions });
+            const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
             const fromFile = project.createSourceFile(from);
             const toDirectory = project.createDirectory(to);
             expect(fromFile.getRelativePathAsModuleSpecifierTo(toDirectory)).to.equal(expected);

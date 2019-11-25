@@ -6,7 +6,7 @@ import { FileSystemHost } from "./FileSystemHost";
 /** An implementation of a file host that interacts with the actual file system. */
 export class RealFileSystemHost implements FileSystemHost {
     // Prevent fs-extra and fast-glob from being loaded in environments that don't support it (ex. browsers).
-    // This means if someone specifies to use a virtual file system then it won't load this.
+    // This means if someone specifies to use an in-memory file system then it won't load this.
     private fs: typeof import("fs-extra") = require("fs-extra");
     private fastGlob: typeof import("fast-glob") = require("fast-glob");
 

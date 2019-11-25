@@ -65,7 +65,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getModuleSpecifierSourceFileOrThrow), () => {
         it("should get the source file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
             const classSourceFile = project.createSourceFile("class.ts", `export class Class {}`);
 
@@ -73,7 +73,7 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should throw when it doesn't exist", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
 
             expect(() => mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow()).to.throw();
@@ -82,7 +82,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getModuleSpecifierSourceFile), () => {
         it("should get the source file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
             const classSourceFile = project.createSourceFile("class.ts", `export class Class {}`);
 
@@ -90,7 +90,7 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should get the source file when it's an index.ts file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
             const classSourceFile = project.createSourceFile("class/index.ts", `export class Class {}`);
 
@@ -99,7 +99,7 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should not get the source file when it's an index.ts file and using classic module resolution", () => {
             // needs to be NodeJs resolution to work
-            const project = new Project({ useVirtualFileSystem: true, compilerOptions: { moduleResolution: ModuleResolutionKind.Classic } });
+            const project = new Project({ useInMemoryFileSystem: true, compilerOptions: { moduleResolution: ModuleResolutionKind.Classic } });
             const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
             const classSourceFile = project.createSourceFile("class/index.ts", `export class Class {}`);
 
@@ -107,7 +107,7 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should return undefined when it doesn't exist", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
 
             expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFile()).to.be.undefined;

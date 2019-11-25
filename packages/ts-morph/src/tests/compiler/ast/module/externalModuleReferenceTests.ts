@@ -58,7 +58,7 @@ describe(nameof(ExternalModuleReference), () => {
 
     describe(nameof<ExternalModuleReference>(n => n.getReferencedSourceFile), () => {
         it("should get the referenced source file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
             const classSourceFile = project.createSourceFile("class.ts", `export class Class {}`);
 
@@ -66,7 +66,7 @@ describe(nameof(ExternalModuleReference), () => {
         });
 
         it("should return undefined when the referenced file doesn't exist", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
 
             expect(mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ExternalModuleReference).getReferencedSourceFile()).to.be.undefined;
@@ -75,7 +75,7 @@ describe(nameof(ExternalModuleReference), () => {
 
     describe(nameof<ExternalModuleReference>(n => n.getReferencedSourceFileOrThrow), () => {
         it("should get the referenced source file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
             const classSourceFile = project.createSourceFile("class.ts", `export class Class {}`);
 
@@ -84,7 +84,7 @@ describe(nameof(ExternalModuleReference), () => {
         });
 
         it("should throw when the referenced file doesn't exist", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
 
             expect(() => mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ExternalModuleReference).getReferencedSourceFileOrThrow()).to.throw();

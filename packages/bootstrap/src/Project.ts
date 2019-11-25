@@ -13,19 +13,19 @@ export interface ProjectOptions {
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. */
     skipFileDependencyResolution?: boolean;
     /** Whether to use an in-memory file system. */
-    useVirtualFileSystem?: boolean;
+    useInMemoryFileSystem?: boolean;
+    /** Skip loading the lib files when using an in-memory file system. @default false */
+    skipLoadingLibFiles?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
-     * @remarks Consider using `useVirtualFileSystem` instead.
+     * @remarks Consider using `inMemoryFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
     /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
     resolutionHost?: ResolutionHostFactory;
 }
 
-/**
- * Project that holds source files.
- */
+/** Project that holds source files. */
 export class Project {
     /** @internal */
     private readonly _sourceFileCache: SourceFileCache;
@@ -41,6 +41,8 @@ export class Project {
      * @param options - Optional options.
      */
     constructor(options: ProjectOptions = {}) {
+        verifyOptions();
+
         this.fileSystem = getFileSystem();
         this._fileSystemWrapper = new TransactionalFileSystem(this.fileSystem);
 
@@ -86,13 +88,20 @@ export class Project {
                 this.resolveSourceFileDependencies();
         }
 
-        function getFileSystem(): FileSystemHost {
-            // setup file system
-            if (options.fileSystem != null && options.useVirtualFileSystem)
-                throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use a virtual file system.");
-            else if (options.useVirtualFileSystem)
-                return new InMemoryFileSystemHost();
-            return options.fileSystem || new RealFileSystemHost();
+        function verifyOptions() {
+            if (options.fileSystem != null && options.useInMemoryFileSystem)
+                throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use an in-memory file system.");
+            if (options.skipLoadingLibFiles && !options.useInMemoryFileSystem) {
+                throw new errors.InvalidOperationError(
+                    `The ${nameof(options.skipLoadingLibFiles)} option can only be true when ${nameof(options.useInMemoryFileSystem)} is true.`
+                );
+            }
+        }
+
+        function getFileSystem() {
+            if (options.useInMemoryFileSystem)
+                return new InMemoryFileSystemHost({ skipLoadingLibFiles: options.skipLoadingLibFiles });
+            return options.fileSystem ?? new RealFileSystemHost();
         }
 
         function getCompilerOptions(): ts.CompilerOptions {

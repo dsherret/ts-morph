@@ -528,14 +528,14 @@ export interface ProjectOptions {
     /**
      * Whether to use an in-memory file system. @default false
      */
-    useVirtualFileSystem?: boolean;
+    useInMemoryFileSystem?: boolean;
     /**
      * Skip loading the lib files when using an in-memory file system. @default false
      */
     skipLoadingLibFiles?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
-     * @remarks Consider using `useVirtualFileSystem` instead.
+     * @remarks Consider using `useInMemoryFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
     /**

@@ -6,7 +6,7 @@ import { Project } from "../../../../Project";
 describe(nameof(FileTextChanges), () => {
     describe(nameof<FileTextChanges>(a => a.applyChanges), () => {
         function setup() {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("test.ts", "const t; const u;");
             return project;
         }

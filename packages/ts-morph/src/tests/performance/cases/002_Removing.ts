@@ -12,7 +12,7 @@ export class RemovingPerformanceTest extends PerformanceTestTemplate<SetupData> 
     name = "Removing Performance Test";
 
     protected setup() {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile("test.ts");
 
         const statements: string[] = [];

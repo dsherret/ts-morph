@@ -3,7 +3,7 @@ import { Project } from "../../Project";
 
 describe("tests for issue #45", () => {
     it("should not error when adding a constructor and the class only has an empty comment in the body", () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile("src/MyClass.ts", `class Foo {
 //
 }`);
@@ -16,7 +16,7 @@ describe("tests for issue #45", () => {
     });
 
     it("should not error when there is a comment on the close brace token", () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile("src/MyClass.ts", `class Foo {
 //
 /*b*/}`);

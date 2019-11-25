@@ -9,7 +9,7 @@ import { CustomFileSystemProps, getFileSystemHostWithFiles, testDirectoryTree } 
 
 describe(nameof(Directory), () => {
     function getProject(initialFiles: { filePath: string; text: string; }[] = [], initialDirectories: string[] = []) {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         for (const dir of initialDirectories)
             project.createDirectory(dir);
         for (const file of initialFiles)
@@ -327,14 +327,14 @@ describe(nameof(Directory), () => {
         });
 
         it("should add the created source file to the project when the directory is in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             const sourceFile = dir.createSourceFile("file.ts");
             expect(sourceFile._isInProject()).to.be.true;
         });
 
         it("should not add the created source file to the project when the directory is not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             const sourceFile = dir.createSourceFile("file.ts");
@@ -342,7 +342,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should not add the created source file to the project when the directory is not in the project and adding to a dir in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             const sourceFile = dir.createSourceFile("/file.ts");
@@ -351,7 +351,7 @@ describe(nameof(Directory), () => {
 
         it("should be able to specify a script kind", () => {
             // people should not be using markdown files in here... adding tests anyway...
-            const directory = new Project({ useVirtualFileSystem: true }).createDirectory("/dir");
+            const directory = new Project({ useInMemoryFileSystem: true }).createDirectory("/dir");
             const sourceFile = directory.createSourceFile("MyFile.md", "# Header", { scriptKind: ScriptKind.External });
             expect(sourceFile.getScriptKind()).to.equal(ScriptKind.External);
 
@@ -464,14 +464,14 @@ describe(nameof(Directory), () => {
         });
 
         it("should make the created directory in the project when the current directory is", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             const subDir = dir.createDirectory("subDir");
             expect(subDir._isInProject()).to.be.true;
         });
 
         it("should not make the created directory in the project when the current directory is not", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             const subDir = dir.createDirectory("subDir");
@@ -479,7 +479,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should not make the directory in the project when specifying an existing directory not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             const subDir = dir.createDirectory("subDir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
@@ -489,7 +489,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should not make the directory in the project when creating a directory in a directory within the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             const otherDir = dir.createDirectory("/otherDir");
@@ -525,7 +525,7 @@ describe(nameof(Directory), () => {
 
         it("should add a directory and all its descendant directories when specifying the recursive option", () => {
             const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             directories.forEach(d => project.getFileSystem().mkdirSync(d));
             const rootDir = project.addDirectoryAtPath("/");
             expect(rootDir.addDirectoryAtPathIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
@@ -542,7 +542,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should add to project when current dir is in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             dir.createDirectory("subDir").forget();
             const subDir = dir.addDirectoryAtPathIfExists("subDir")!;
@@ -550,7 +550,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should not add to project when current dir is not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             dir.createDirectory("subDir").forget();
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
@@ -559,7 +559,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should add to project when current dir is in the project, but the added one isn't", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir.createDirectory("subDir"));
             const subDir = dir.addDirectoryAtPathIfExists("subDir")!;
@@ -585,7 +585,7 @@ describe(nameof(Directory), () => {
 
         it("should add a directory and all its descendant directories when specifying the recursive option", () => {
             const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             directories.forEach(d => project.getFileSystem().mkdirSync(d));
             const rootDir = project.addDirectoryAtPath("/");
             expect(rootDir.addDirectoryAtPath("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
@@ -602,7 +602,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should add to project when current dir is in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             dir.createDirectory("subDir").forget();
             const subDir = dir.addDirectoryAtPath("subDir");
@@ -610,7 +610,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should not add to project when current dir is not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             dir.createDirectory("subDir").forget();
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
@@ -619,7 +619,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should add to project when current dir is in the project, but the added one isn't", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir.createDirectory("subDir"));
             const subDir = dir.addDirectoryAtPath("subDir");
@@ -628,7 +628,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.getDirectory), () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const directory = project.createDirectory("dir");
         const child1 = directory.createDirectory("child1");
         const child2 = directory.createDirectory("child2");
@@ -656,7 +656,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.getDirectoryOrThrow), () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const directory = project.createDirectory("dir");
         const child1 = directory.createDirectory("child1");
         const child2 = directory.createDirectory("child2");
@@ -861,14 +861,14 @@ describe(nameof(Directory), () => {
         });
 
         it("should be in the project when copying from a directory in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             const newDir = dir.copy("/otherDir");
             expect(newDir._isInProject()).to.be.true;
         });
 
         it("should be in the project when copying from a directory in the project to a directory not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             const otherDir = project.createDirectory("/otherDir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(otherDir);
@@ -878,7 +878,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should not be in the project when copying from a directory not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             const newDir = dir.copy("/otherDir");
@@ -886,7 +886,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should not be in the project when copying from a directory not in the project to a directory not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             project.createDirectory("/dir2");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
@@ -895,7 +895,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should have descendants not in project when copying from a directory not in the project to overwrite a directory in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             const otherDir = dir.createDirectory("/dir/otherDir");
             otherDir.createDirectory("subDir");
@@ -1031,14 +1031,14 @@ describe(nameof(Directory), () => {
         });
 
         it("should be in the project when moving from a directory in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             const newDir = dir.move("/otherDir");
             expect(newDir._isInProject()).to.be.true;
         });
 
         it("should be in the project when copying from a directory in the project to a directory not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             const otherDir = project.createDirectory("/otherDir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(otherDir);
@@ -1047,7 +1047,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should not be in the project when moving from a directory not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             const newDir = dir.move("/otherDir");
@@ -1055,7 +1055,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should not be in the project when moving from a directory not in the project to a directory not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             project.createDirectory("/dir2");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
@@ -1064,7 +1064,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should have descendants not in project when moving from a directory not in the project to overwrite a directory in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             const otherDir = dir.createDirectory("/dir/otherDir");
             otherDir.createDirectory("subDir");
@@ -1752,7 +1752,7 @@ describe(nameof(Directory), () => {
 
     describe(nameof<Directory>(s => s.getRelativePathTo), () => {
         function doSourceFileTest(from: string, to: string, expected: string) {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fromDir = project.createDirectory(from);
             const toFile = project.createSourceFile(to);
             expect(fromDir.getRelativePathTo(toFile)).to.equal(expected);
@@ -1765,7 +1765,7 @@ describe(nameof(Directory), () => {
         });
 
         function doDirTest(from: string, to: string, expected: string) {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fromDir = project.createDirectory(from);
             const toDir = project.createDirectory(to);
             expect(fromDir.getRelativePathTo(toDir)).to.equal(expected);
@@ -1778,7 +1778,7 @@ describe(nameof(Directory), () => {
 
     describe(nameof<Directory>(s => s.getRelativePathAsModuleSpecifierTo), () => {
         function doSourceFileTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
-            const project = new Project({ useVirtualFileSystem: true, compilerOptions });
+            const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
             const fromFile = from === "/" ? project.addDirectoryAtPath(from) : project.createDirectory(from);
             const toFile = project.createSourceFile(to);
             expect(fromFile.getRelativePathAsModuleSpecifierTo(toFile)).to.equal(expected);
@@ -1833,7 +1833,7 @@ describe(nameof(Directory), () => {
         });
 
         function doDirectoryTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
-            const project = new Project({ useVirtualFileSystem: true, compilerOptions });
+            const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
             const fromDir = project.createDirectory(from);
             const toDirectory = from === to ? fromDir : project.createDirectory(to);
             expect(fromDir.getRelativePathAsModuleSpecifierTo(toDirectory)).to.equal(expected);

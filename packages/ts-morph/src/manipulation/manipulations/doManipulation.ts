@@ -49,7 +49,7 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
 function getSyntacticDiagnostics(sourceFile: SourceFile, newText: string) {
     try {
         // hack to avoid circular references
-        const projectOptions: ProjectOptions = { useVirtualFileSystem: true };
+        const projectOptions: ProjectOptions = { useInMemoryFileSystem: true };
         const project = new (sourceFile._context.project.constructor as any)(projectOptions) as Project;
         const newFile = project.createSourceFile(sourceFile.getFilePath(), newText);
         return project.getProgram().getSyntacticDiagnostics(newFile);

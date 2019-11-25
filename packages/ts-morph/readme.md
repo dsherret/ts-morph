@@ -46,7 +46,7 @@ import { Project, StructureKind } from "ts-morph";
 
 // initialize
 const project = new Project({
-    // Optionally specify compiler options, tsconfig.json, virtual file system, and more here.
+    // Optionally specify compiler options, tsconfig.json, in-memory file system, and more here.
     // If you initialize with a tsconfig.json, then it will automatically populate the project
     // with the associated source files.
     // Read more: https://ts-morph.com/setup/

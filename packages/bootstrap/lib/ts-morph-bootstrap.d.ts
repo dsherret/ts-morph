@@ -122,19 +122,19 @@ export interface ProjectOptions {
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. */
     skipFileDependencyResolution?: boolean;
     /** Whether to use an in-memory file system. */
-    useVirtualFileSystem?: boolean;
+    useInMemoryFileSystem?: boolean;
+    /** Skip loading the lib files when using an in-memory file system. @default false */
+    skipLoadingLibFiles?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
-     * @remarks Consider using `useVirtualFileSystem` instead.
+     * @remarks Consider using `inMemoryFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
     /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
     resolutionHost?: ResolutionHostFactory;
 }
 
-/**
- * Project that holds source files.
- */
+/** Project that holds source files. */
 export declare class Project {
     /**
      * Initializes a new instance.

@@ -106,7 +106,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
 
     describe(nameof<ImportEqualsDeclaration>(n => n.getExternalModuleReferenceSourceFile), () => {
         it("should get the referenced source file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
             const classSourceFile = project.createSourceFile("class.ts", `export class Class {}`);
 
@@ -115,14 +115,14 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
 
         it("should return undefined when the referenced file doesn't exist", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
 
             expect(mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ImportEqualsDeclaration).getExternalModuleReferenceSourceFile()).to.be.undefined;
         });
 
         it("should return undefined when doesn't have an external module reference", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = Namespace.Test);`);
 
             expect(mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ImportEqualsDeclaration).getExternalModuleReferenceSourceFile()).to.be.undefined;
@@ -131,7 +131,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
 
     describe(nameof<ImportEqualsDeclaration>(n => n.getExternalModuleReferenceSourceFileOrThrow), () => {
         it("should get the referenced source file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
             const classSourceFile = project.createSourceFile("class.ts", `export class Class {}`);
 
@@ -140,7 +140,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
 
         it("should throw when doesn't have an external module reference", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = Namespace.Test;`);
 
             expect(() => mainSourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ImportEqualsDeclaration).getExternalModuleReferenceSourceFileOrThrow())

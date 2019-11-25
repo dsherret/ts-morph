@@ -4,7 +4,7 @@ import { Project } from "../../../../Project";
 import { MemoryEmitResult } from "../../../../compiler";
 describe(nameof(MemoryEmitResult), () => {
     function emitSetup(compilerOptions: CompilerOptions) {
-        const project = new Project({ compilerOptions, useVirtualFileSystem: true });
+        const project = new Project({ compilerOptions, useInMemoryFileSystem: true });
         const fileSystem = project.getFileSystem();
         fileSystem.writeFileSync("file1.ts", "\uFEFFconst num1 = 1;"); // has BOM
         project.addSourceFileAtPath("file1.ts");

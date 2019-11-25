@@ -7,7 +7,7 @@ import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ExportSpecifier), () => {
     function getProject() {
-        return new Project({ useVirtualFileSystem: true });
+        return new Project({ useInMemoryFileSystem: true });
     }
 
     describe(nameof<ExportSpecifier>(n => n.getNameNode), () => {

@@ -6,7 +6,7 @@ before_script:
     - travis_wait yarn build
     - lerna run ensure-no-project-compile-errors
 script:
-    - travis_wait lerna run test:ci # running coveralls might take a bit of time
+    - lerna run test:ci
     - lerna run test:ts-versions
 after_script:
     - lerna run code-verification

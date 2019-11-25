@@ -3,7 +3,7 @@ import { Project } from "../../Project";
 
 describe("tests for issue #413", () => {
     it("should not error when using multiple globs and addSourceFilesAtPaths", () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const fs = project.getFileSystem();
         ["/dir", "/dir2"].forEach(d => fs.mkdir(d));
         fs.writeFileSync("/foo.ts", "");

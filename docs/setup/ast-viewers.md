@@ -18,6 +18,7 @@ Features:
 * View the type and symbol of the selected node.
 * Toggle the tree between `node.forEachChild(...)` and `node.getChildren()`.
 * Change compiler API versions.
+* Use some compiler objects in the browser console.
 
 [![TypeScript AST Viewer](images/ts-ast-viewer.png)](http://ts-ast-viewer.com)
 

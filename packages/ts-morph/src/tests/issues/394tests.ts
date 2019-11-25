@@ -25,7 +25,7 @@ describe("tests for issue #394", () => {
     });
 
     it("should not be able to get the source file symbol when the module specifier has incorrect casing and using a case sensitive file system", () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const interfaceSourceFile = project.createSourceFile("/folder/MyInterface.ts", "export interface MyInterface {}");
         const sourceFile = project.createSourceFile("/folder/main.ts", "import { MyInterface } from './myInterface';\n\nlet myVar: MyInterface;");
         const varDeclaration = sourceFile.getVariableDeclarationOrThrow("myVar");

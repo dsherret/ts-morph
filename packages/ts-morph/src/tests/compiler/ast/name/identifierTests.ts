@@ -149,7 +149,7 @@ const t = MyNamespace.MyClass;
         });
 
         it("should get the namespace import identifier of one that's exported from an imported namespace export that doesn't import a namespace", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import * as ts from "./Test"; export { ts };`);
             project.createSourceFile("Test.ts", `export class Test {}`);
 

@@ -75,7 +75,7 @@ describe(nameof(Project), () => {
         describe("custom module resolution", () => {
             it("should not throw if getting the compiler options not within a method", () => {
                 expect(() => new Project({
-                    useVirtualFileSystem: true,
+                    useInMemoryFileSystem: true,
                     resolutionHost: (_, getCompilerOptions) => {
                         // this should be allowed now
                         expect(getCompilerOptions()).to.deep.equal({ allowJs: true });
@@ -89,7 +89,7 @@ describe(nameof(Project), () => {
 
             it("should not throw if using the module resolution host not within a method", () => {
                 expect(() => new Project({
-                    useVirtualFileSystem: true,
+                    useInMemoryFileSystem: true,
                     resolutionHost: moduleResolutionHost => {
                         // this is now allowed here, but used to not be
                         moduleResolutionHost.fileExists("./test.ts");
@@ -101,7 +101,7 @@ describe(nameof(Project), () => {
             function setup() {
                 // this is deno style module resolution
                 const project = new Project({
-                    useVirtualFileSystem: true,
+                    useInMemoryFileSystem: true,
                     resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
                         return {
                             resolveModuleNames: (moduleNames, containingFile) => {
@@ -209,19 +209,19 @@ describe(nameof(Project), () => {
 
         describe(nameof<ProjectOptions>(o => o.skipLoadingLibFiles), () => {
             it("should not skip loading lib files when empty", () => {
-                const project = new Project({ useVirtualFileSystem: true });
+                const project = new Project({ useInMemoryFileSystem: true });
                 const result = project.getFileSystem().readDirSync("/node_modules/typescript/lib");
                 expect(result.some(r => r.includes("lib.d.ts"))).to.be.true;
             });
 
             it("should not skip loading lib files when true", () => {
-                const project = new Project({ useVirtualFileSystem: true, skipLoadingLibFiles: true });
+                const project = new Project({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
                 expect(project.getFileSystem().directoryExistsSync("/node_modules")).to.be.false;
             });
 
-            it("should throw when providing skipLoadingLibFiles without using a virtual file system", () => {
+            it("should throw when providing skipLoadingLibFiles without using n in-memory file system", () => {
                 expect(() => new Project({ skipLoadingLibFiles: true }))
-                    .to.throw("The skipLoadingLibFiles option can only be true when useVirtualFileSystem is true.");
+                    .to.throw("The skipLoadingLibFiles option can only be true when useInMemoryFileSystem is true.");
             });
         });
     });
@@ -410,7 +410,7 @@ describe(nameof(Project), () => {
 
         it("should add a directory and all its descendant directories when specifying the recursive option", () => {
             const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             directories.forEach(d => project.getFileSystem().mkdirSync(d));
             expect(project.addDirectoryAtPathIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
 
@@ -434,7 +434,7 @@ describe(nameof(Project), () => {
         });
 
         it("should add the directory to the project if previously not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             expect(dir._isInProject()).to.be.false;
@@ -461,7 +461,7 @@ describe(nameof(Project), () => {
 
         it("should add a directory and all its descendant directories when specifying the recursive option", () => {
             const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             directories.forEach(d => project.getFileSystem().mkdirSync(d));
             expect(project.addDirectoryAtPath("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
 
@@ -485,7 +485,7 @@ describe(nameof(Project), () => {
         });
 
         it("should add the directory to the project if previously not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             expect(dir._isInProject()).to.be.false;
@@ -527,14 +527,14 @@ describe(nameof(Project), () => {
         });
 
         it("should be added to the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
 
             expect(dir._isInProject()).to.be.true;
         });
 
         it("should be added to the project when creating a directory that's created, but not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const dir = project.createDirectory("/dir");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(dir);
             expect(dir._isInProject()).to.be.false;
@@ -636,7 +636,7 @@ describe(nameof(Project), () => {
         });
 
         it("should not return directories not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const rootDir = project.createDirectory("/");
             const subDir = project.createDirectory("/sub");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDir);
@@ -645,7 +645,7 @@ describe(nameof(Project), () => {
         });
 
         it("should not return an ancestor directory that exists, but is not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const rootDir = project.createDirectory("/");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(rootDir);
             project.createDirectory("/subDir");
@@ -705,7 +705,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.addSourceFileAtPathIfExists), () => {
         it("should return undefined if adding a source file at a non-existent path", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             expect(project.addSourceFileAtPathIfExists("non-existent-file.ts")).to.be.undefined;
         });
 
@@ -720,7 +720,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.addSourceFilesAtPaths), () => {
         it("should add based on a string file glob", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fs = project.getFileSystem();
             fs.writeFileSync("file1.ts", "");
             fs.writeFileSync("dir/file.ts", "");
@@ -736,7 +736,7 @@ describe(nameof(Project), () => {
         });
 
         it("should add based on multiple file globs", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fs = project.getFileSystem();
             fs.writeFileSync("file1.ts", "");
             fs.writeFileSync("dir/file.ts", "");
@@ -752,7 +752,7 @@ describe(nameof(Project), () => {
         });
 
         it("should add the directory's descendant directories specified in the glob and ignore negated globs", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fs = project.getFileSystem();
             ["/dir", "/dir2", "/dir/child", "/dir/child/grandChild", "/dir3"].forEach(d => {
                 fs.mkdirSync(d);
@@ -778,7 +778,7 @@ describe(nameof(Project), () => {
         });
 
         it("should add the directory's descendant directories specified in the glob", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fs = project.getFileSystem();
             ["/dir", "/dir/node_modules", "/dir/child", "/dir/child/grandChild"].forEach(d => {
                 fs.mkdirSync(d);
@@ -791,7 +791,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.createSourceFile), () => {
         it("should throw an exception if creating a source file at an existing path", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("file.ts", "");
             expect(() => {
                 project.createSourceFile("file.ts", "");
@@ -800,7 +800,7 @@ describe(nameof(Project), () => {
         });
 
         it("should not throw an exception if creating a source file at an existing path when providing the overwrite option", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const file1 = project.createSourceFile("file.ts", "");
             const newFileText = "class Identifier {}";
             const file2 = project.createSourceFile("file.ts", newFileText, { overwrite: true });
@@ -816,30 +816,30 @@ describe(nameof(Project), () => {
         });
 
         it("should mark the source file as having not been saved", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             expect(project.createSourceFile("file.ts", "").isSaved()).to.be.false;
         });
 
         it("should create a source file with the default target", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             expect(project.createSourceFile("file.ts", "").getLanguageVersion()).to.equal(ScriptTarget.Latest);
         });
 
         it("should create a source file with the compiler options' target", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.compilerOptions.set({ target: ScriptTarget.ES2015 });
             expect(project.createSourceFile("file.ts", "").getLanguageVersion()).to.equal(ScriptTarget.ES2015);
         });
 
         it("should add a source file based on a writer function", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("test.ts", writer => writer.writeLine("enum MyEnum {}"));
             expect(sourceFile.getFullText()).to.equal("enum MyEnum {}\n");
         });
 
         it("should add a source file based on a structure", () => {
             // basic test
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("MyFile.ts", {
                 statements: [{
                     kind: StructureKind.Enum,
@@ -853,14 +853,14 @@ describe(nameof(Project), () => {
             const structure: OptionalKindAndTrivia<MakeRequired<SourceFileStructure>> = {
                 statements: ["console.log('here');"]
             };
-            const sourceFile = new Project({ useVirtualFileSystem: true }).createSourceFile("MyFile.ts", structure);
+            const sourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile("MyFile.ts", structure);
             const expectedText = "console.log('here');\n";
             expect(sourceFile.getFullText()).to.equal(expectedText);
         });
 
         it("should be able to specify a script kind", () => {
             // people should not be using markdown files in here... adding tests anyway...
-            const sourceFile = new Project({ useVirtualFileSystem: true }).createSourceFile("MyFile.md", "# Header", { scriptKind: ScriptKind.External });
+            const sourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile("MyFile.md", "# Header", { scriptKind: ScriptKind.External });
             expect(sourceFile.getScriptKind()).to.equal(ScriptKind.External);
 
             // should work after manipulation
@@ -870,7 +870,7 @@ describe(nameof(Project), () => {
 
         it("", () => {
             // todo: remove
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("MyFile.ts", "enum MyEnum {\n    myMember\n}\nlet myEnum: MyEnum;\nlet myOtherEnum: MyNewEnum;");
             const enumDef = sourceFile.getEnums()[0];
             enumDef.rename("NewName");
@@ -886,7 +886,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe("mixing real files with virtual files", () => {
+    describe("mixing real files with in-memory files", () => {
         function createProject() {
             const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles");
             const project = new Project();
@@ -914,7 +914,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.removeSourceFile), () => {
         it("should remove the source file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("myFile.ts", ``);
             expect(project.removeSourceFile(sourceFile)).to.equal(true);
             expect(project.removeSourceFile(sourceFile)).to.equal(false);
@@ -1093,42 +1093,42 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.getSourceFile), () => {
         it("should get the first match based on the directory structure", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("dir/file.ts");
             const expectedFile = project.createSourceFile("file.ts");
             expect(project.getSourceFile("file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
         });
 
         it("should get the first match based on the directory structure when specifying a dot slash", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("dir/file.ts");
             const expectedFile = project.createSourceFile("file.ts");
             expect(project.getSourceFile("./file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
         });
 
         it("should get the first match based on the directory structure when using ../", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const expectedFile = project.createSourceFile("dir/file.ts");
             project.createSourceFile("file.ts");
             expect(project.getSourceFile("dir/../dir/file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
         });
 
         it("should get the first match based on a file name", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("file.ts");
             const expectedFile = project.createSourceFile("dir/file2.ts");
             expect(project.getSourceFile("file2.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
         });
 
         it("should get when specifying an absolute path", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("dir/file.ts");
             const expectedFile = project.createSourceFile("file.ts");
             expect(project.getSourceFile("/file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
         });
 
         it("should get the first match based on the directory structure when swapping the order of what was created first", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const expectedFile = project.createSourceFile("file.ts");
             project.createSourceFile("dir/file.ts");
             expect(project.getSourceFile("file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
@@ -1137,14 +1137,14 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.getSourceFileOrThrow), () => {
         it("should throw when it can't find the source file based on a provided file name", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow("fileName.ts")).to.throw(
                 "Could not find source file in project with the provided file name: fileName.ts"
             );
         });
 
         it("should throw when it can't find the source file based on a provided relative path", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             // this should show the absolute path in the error message
             expect(() => project.getSourceFileOrThrow("src/fileName.ts")).to.throw(
                 "Could not find source file in project at the provided path: /src/fileName.ts"
@@ -1152,21 +1152,21 @@ describe(nameof(Project), () => {
         });
 
         it("should throw when it can't find the source file based on a provided absolute path", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow("/fileName.ts")).to.throw(
                 "Could not find source file in project at the provided path: /fileName.ts"
             );
         });
 
         it("should throw when it can't find the source file based on a provided condition", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow(() => false)).to.throw(
                 "Could not find source file in project based on the provided condition."
             );
         });
 
         it("should not throw when it finds the file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("myFile.ts", "");
             expect(project.getSourceFileOrThrow("myFile.ts").getFilePath()).to.contain("myFile.ts");
         });
@@ -1174,7 +1174,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.getSourceFiles), () => {
         it("should get all the source files added to the project sorted by directory structure", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("dir/child/file.ts");
             project.createSourceFile("dir/file.ts");
             project.createSourceFile("file1.ts");
@@ -1190,7 +1190,7 @@ describe(nameof(Project), () => {
         });
 
         describe("globbing", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("file.ts", "");
             project.createSourceFile("src/file.ts", "");
             project.createSourceFile("src/test/file1.ts", "");
@@ -1236,7 +1236,7 @@ describe(nameof(Project), () => {
         });
 
         it("should not return files not in the project", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const subDirFile = project.createSourceFile("/dir/other.ts");
             project.createSourceFile("main.ts");
             project._context.inProjectCoordinator.setDirectoryAndFilesAsNotInProjectForTesting(subDirFile.getDirectory());
@@ -1247,7 +1247,7 @@ describe(nameof(Project), () => {
     describe(nameof<Project>(t => t.forgetNodesCreatedInBlock), () => {
         describe("synchronous", () => {
             // todo: this should be moved into an "it" block
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             let sourceFile: SourceFile;
             let sourceFileNotNavigated: SourceFile;
             let classNode: Node;
@@ -1356,7 +1356,7 @@ describe(nameof(Project), () => {
 
         describe("asynchronous", () => {
             it("should have forgotten the class or interface", async () => {
-                const project = new Project({ useVirtualFileSystem: true });
+                const project = new Project({ useInMemoryFileSystem: true });
                 const sourceFile = project.createSourceFile("file.ts");
                 let interfaceDec: InterfaceDeclaration;
                 let classDec: ClassDeclaration;
@@ -1376,7 +1376,7 @@ describe(nameof(Project), () => {
             });
 
             it("should get the return value", async () => {
-                const project = new Project({ useVirtualFileSystem: true });
+                const project = new Project({ useInMemoryFileSystem: true });
                 const resultPromise = project.forgetNodesCreatedInBlock(() => Promise.resolve(5));
                 assert<IsExact<typeof resultPromise, Promise<number>>>(true);
                 const result = await resultPromise;
@@ -1387,7 +1387,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(p => p.compilerOptions), () => {
         it("should reparse after modifying the compiler options", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("myFile.ts", `function myFunction(param: string) {}`);
             expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.Latest);
             project.compilerOptions.set({ target: ScriptTarget.ES5 });
@@ -1397,7 +1397,7 @@ describe(nameof(Project), () => {
 
     describe("ambient modules", () => {
         function getProject() {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fileSystem = project.getFileSystem();
 
             fileSystem.writeFileSync("/node_modules/@types/jquery/index.d.ts", `
@@ -1422,7 +1422,7 @@ describe(nameof(Project), () => {
             });
 
             it("should get when doesn't exist", () => {
-                const project = new Project({ useVirtualFileSystem: true });
+                const project = new Project({ useInMemoryFileSystem: true });
                 expect(project.getAmbientModules().length).to.equal(0);
             });
         });
@@ -1459,7 +1459,7 @@ describe(nameof(Project), () => {
 
     describe("manipulating then getting something from the type checker", () => {
         it("should not error after manipulation", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("myFile.ts", `function myFunction(param: string) {}`);
             const param = sourceFile.getFunctions()[0].getParameters()[0];
             expect(param.getType().getText()).to.equal("string");
@@ -1470,7 +1470,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(p => p.formatDiagnosticsWithColorAndContext), () => {
         function setup() {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("test.ts", "const t; const u;");
             return project;
         }
@@ -1507,7 +1507,7 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(p => p.getModuleResolutionHost), () => {
         function setup() {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const moduleResolutionHost = project.getModuleResolutionHost();
             return {
                 project,

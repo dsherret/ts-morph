@@ -3,7 +3,7 @@ import { Project } from "../../Project";
 
 describe("tests for issue #735", () => {
     it("should not error when removing namespace with preceeding comment", () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile(
             "./sample.ts",
             "//  aaaa bbbb \n namespace Foo {\n\texport class Bar {\n \t\tconstructor(){}\n \t\tsayHello(){return 'hello';}\n\t}\n}\n"

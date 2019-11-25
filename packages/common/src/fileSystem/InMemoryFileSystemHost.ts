@@ -20,6 +20,7 @@ export interface InMemoryFileSystemHostOptions {
 
 /** An implementation of a file system that exists in memory only. */
 export class InMemoryFileSystemHost implements FileSystemHost {
+    /** @internal */
     private readonly directories = new Map<StandardizedFilePath, VirtualDirectory>();
 
     /**

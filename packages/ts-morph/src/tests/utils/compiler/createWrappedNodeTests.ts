@@ -45,7 +45,7 @@ describe(nameof(createWrappedNode), () => {
     });
 
     it("should be able to provide a type checker", () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile("test.ts", "let s = '';");
         const typeChecker = project.getTypeChecker();
         const wrappedSourceFile = createWrappedNode(sourceFile.compilerNode, { typeChecker: typeChecker.compilerObject }) as SourceFile;

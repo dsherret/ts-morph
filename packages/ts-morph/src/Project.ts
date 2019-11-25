@@ -21,12 +21,12 @@ export interface ProjectOptions {
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
     skipFileDependencyResolution?: boolean;
     /** Whether to use an in-memory file system. @default false */
-    useVirtualFileSystem?: boolean;
+    useInMemoryFileSystem?: boolean;
     /** Skip loading the lib files when using an in-memory file system. @default false */
     skipLoadingLibFiles?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
-     * @remarks Consider using `useVirtualFileSystem` instead.
+     * @remarks Consider using `useInMemoryFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
     /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
@@ -93,17 +93,17 @@ export class Project {
         }
 
         function verifyOptions() {
-            if (options.fileSystem != null && options.useVirtualFileSystem)
-                throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use a virtual file system.");
-            if (options.skipLoadingLibFiles && !options.useVirtualFileSystem) {
+            if (options.fileSystem != null && options.useInMemoryFileSystem)
+                throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use an in-memory file system.");
+            if (options.skipLoadingLibFiles && !options.useInMemoryFileSystem) {
                 throw new errors.InvalidOperationError(
-                    `The ${nameof(options.skipLoadingLibFiles)} option can only be true when ${nameof(options.useVirtualFileSystem)} is true.`
+                    `The ${nameof(options.skipLoadingLibFiles)} option can only be true when ${nameof(options.useInMemoryFileSystem)} is true.`
                 );
             }
         }
 
         function getFileSystem() {
-            if (options.useVirtualFileSystem)
+            if (options.useInMemoryFileSystem)
                 return new InMemoryFileSystemHost({ skipLoadingLibFiles: options.skipLoadingLibFiles });
             return options.fileSystem ?? new RealFileSystemHost();
         }

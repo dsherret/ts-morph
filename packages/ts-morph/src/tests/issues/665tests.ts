@@ -3,7 +3,7 @@ import { Project } from "../../Project";
 
 describe("tests for issue #665", () => {
     it("should not error when getting the descendants when there's jsx in a ts file", () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const file = project.createSourceFile("test.ts", `
 function oi(){
   const snapshot = { isDraggingOver: false };
@@ -21,7 +21,7 @@ function oi(){
     });
 
     it("should not error when getting the descendants when there's jsx in a ts file for second example", () => {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const file = project.createSourceFile("test.ts", `
 import * as React from 'react';
 

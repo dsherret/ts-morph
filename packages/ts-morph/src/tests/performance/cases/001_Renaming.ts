@@ -8,7 +8,7 @@ export class RenamingPerformanceTest extends PerformanceTestTemplate<ClassDeclar
     name = "Renaming Performance Test";
 
     protected setup() {
-        const project = new Project({ useVirtualFileSystem: true });
+        const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile("test.ts");
 
         const assignmentStatements: string[] = [];

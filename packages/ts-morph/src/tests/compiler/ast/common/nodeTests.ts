@@ -189,7 +189,7 @@ describe(nameof(Node), () => {
 
     describe(nameof<Node>(n => n._hasWrappedChildren), () => {
         it("should have wrapped children after calling getChildren()", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
             expect(sourceFile._hasWrappedChildren()).to.be.false;
             sourceFile.getChildren();
@@ -199,7 +199,7 @@ describe(nameof(Node), () => {
         });
 
         it("should have wrapped children after calling forEachChild()", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
             sourceFile.forEachChild(_ => {});
             expect(sourceFile._hasWrappedChildren()).to.be.true;
@@ -208,7 +208,7 @@ describe(nameof(Node), () => {
         });
 
         it("should only have wrapped children after calling getChildren() for syntax lists", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
             const syntaxList = sourceFile.getChildSyntaxListOrThrow();
             expect(syntaxList._hasWrappedChildren()).to.be.false;
@@ -219,7 +219,7 @@ describe(nameof(Node), () => {
         });
 
         it("should have wrapped children after doing forEachChild on the parent for syntax lists", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const sourceFile = project.createSourceFile("/test.ts", "class C { prop: string; }");
             const syntaxList = sourceFile.getChildSyntaxListOrThrow();
             expect(syntaxList._hasWrappedChildren()).to.be.false;

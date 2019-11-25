@@ -489,7 +489,7 @@ describe(nameof(ModuledNode), () => {
         }
 
         it("should get from a file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile(
                 "main.ts",
                 `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n`
@@ -520,7 +520,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should get the original declaration of one that's imported then exported", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import { Test } from "./Test"; export { Test };`);
             project.createSourceFile("Test.ts", `export class Test {}`);
 
@@ -530,7 +530,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should get the original declaration of one that's imported on a different name then exported", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import { Test as NewTest } from "./Test"; export { NewTest };`);
             project.createSourceFile("Test.ts", `export class Test {}`);
 
@@ -540,7 +540,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should get the namespace import identifier of one that's exported from an imported namespace export that doesn't import a namespace", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import * as ts from "./Test"; export { ts };`);
             project.createSourceFile("Test.ts", `export class Test {}`);
 
@@ -551,7 +551,7 @@ describe(nameof(ModuledNode), () => {
 
         it("should get the namespace import identifier of one that's exported from an imported namespace export that imports a namespace declaration", () => {
             // perhaps in the future this should return the namespace declarations
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const fileSystem = project.getFileSystem();
             fileSystem.writeFileSync("/node_modules/@types/typescript/index.d.ts", `
 declare namespace ts { const version: string; }
@@ -568,7 +568,7 @@ export = ts;`);
         });
 
         it("should get the original declaration of one that's imported on a default import then exported", () => {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import Test from "./Test"; export { Test };`);
             project.createSourceFile("Test.ts", `export default class Test {}`);
 
@@ -578,7 +578,7 @@ export = ts;`);
         });
 
         function doTest(text: string, expected: [string, string[]][]) {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", text);
 
             assertMapsEqual(expected, mainSourceFile.getExportedDeclarations());
@@ -626,7 +626,7 @@ export = ts;`);
         });
 
         function doNamespaceTest(text: string, expected: [string, string[]][]) {
-            const project = new Project({ useVirtualFileSystem: true });
+            const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("file.d.ts", text);
 
             assertMapsEqual(expected, mainSourceFile.getNamespaces()[0].getExportedDeclarations());
