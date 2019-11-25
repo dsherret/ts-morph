@@ -61,7 +61,7 @@ describe(nameof(StatementedNode), () => {
                 properties: [{ name: "p" }],
                 methods: [{ name: "m" }]
             };
-            const expectedText = "/**\n * Test\n */\nexport default interface I<T> extends IBase, IBase2 {\n"
+            const expectedText = "/** Test */\nexport default interface I<T> extends IBase, IBase2 {\n"
                 + "    (): void;\n"
                 + "    new();\n"
                 + "    [key: string]: string;\n"

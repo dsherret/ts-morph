@@ -68,7 +68,7 @@ describe(nameof(StatementedNode), () => {
                 getAccessors: [{ name: "g" }, { name: "s" }, { name: "g2" }, { name: "g3" }],
                 setAccessors: [{ name: "s" }, { name: "g" }, { name: "s2" }]
             };
-            const expectedText = "/**\n * Test\n */\n@D\nexport default abstract class C<T> extends Base implements IBase, IBase2 {\n"
+            const expectedText = "/** Test */\n@D\nexport default abstract class C<T> extends Base implements IBase, IBase2 {\n"
                 + "    p: number;\n\n"
                 + "    constructor() {\n    }\n\n"
                 + "    constructor() {\n    }\n\n"

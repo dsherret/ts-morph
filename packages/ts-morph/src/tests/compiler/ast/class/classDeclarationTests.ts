@@ -406,9 +406,7 @@ class Test {
      * Description1.
      */
     method(param1: string): string;
-    /**
-     * Description2.
-     */
+    /** Description2. */
     method(param2: number): number;
     /** Ignores this implementation */
     method() {
@@ -433,7 +431,7 @@ class Test {
                 }],
                 methods: [{
                     kind: StructureKind.MethodSignature,
-                    docs: [{ kind: StructureKind.JSDoc, description: "Description1." }],
+                    docs: [{ kind: StructureKind.JSDoc, description: "\nDescription1." }],
                     name: "method",
                     returnType: "string",
                     hasQuestionToken: false,
@@ -541,7 +539,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                     name: "Name",
                     constructSignatures: [{
                         kind: StructureKind.ConstructSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Description." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "\nDescription." }],
                         parameters: [{
                             kind: StructureKind.Parameter,
                             decorators: [],
@@ -695,9 +693,7 @@ class Test {
      * Description1.
      */
     static method(param1: string): string;
-    /**
-     * Description2.
-     */
+    /** Description2. */
     static method(param2: number): number;
     /** Ignores this implementation */
     static method() {
@@ -707,7 +703,7 @@ class Test {
                     name: "Name",
                     constructSignatures: [{
                         kind: StructureKind.ConstructSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Test." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "\nTest." }],
                         parameters: [{
                             kind: StructureKind.Parameter,
                             decorators: [],
@@ -722,7 +718,7 @@ class Test {
                         returnType: "Test"
                     }, {
                         kind: StructureKind.ConstructSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Test2." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "\nTest2." }],
                         parameters: [{
                             kind: StructureKind.Parameter,
                             decorators: [],
@@ -739,7 +735,7 @@ class Test {
                     properties: [],
                     methods: [{
                         kind: StructureKind.MethodSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Description1." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "\nDescription1." }],
                         name: "method",
                         returnType: "string",
                         hasQuestionToken: false,

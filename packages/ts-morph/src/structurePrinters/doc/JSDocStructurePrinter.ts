@@ -16,20 +16,39 @@ export class JSDocStructurePrinter extends NodePrinter<OptionalKind<JSDocStructu
     }
 
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<JSDocStructure> | string | WriterFunction) {
-        const lines = getText.call(this).split(/\r?\n/);
-        writer.writeLine("/**");
-        for (const line of lines) {
-            writer.write(` *`);
-            if (line.length > 0)
-                writer.write(` ${line}`);
-            writer.newLine();
-        }
-        writer.write(" */");
+        const text = getText(this);
+        const lines = text.split(/\r?\n/);
+        const startsWithNewLine = lines[0].length === 0;
+        const isSingleLine = lines.length <= 1;
+        const startIndex = startsWithNewLine ? 1 : 0;
 
-        function getText(this: JSDocStructurePrinter) {
+        writer.write("/**");
+
+        if (isSingleLine)
+            writer.space();
+        else
+            writer.newLine();
+
+        if (isSingleLine)
+            writer.write(lines[startIndex]);
+        else {
+            for (let i = startIndex; i < lines.length; i++) {
+                writer.write(` *`);
+
+                if (lines[i].length > 0)
+                    writer.write(` ${lines[i]}`);
+
+                writer.newLine();
+            }
+        }
+
+        writer.spaceIfLastNot();
+        writer.write("*/");
+
+        function getText(jsdocPrinter: JSDocStructurePrinter) {
             if (typeof structure === "string")
                 return structure;
-            const tempWriter = this.getNewWriter(writer);
+            const tempWriter = jsdocPrinter.getNewWriter(writer);
             if (typeof structure === "function") {
                 structure(tempWriter);
                 return tempWriter.toString();

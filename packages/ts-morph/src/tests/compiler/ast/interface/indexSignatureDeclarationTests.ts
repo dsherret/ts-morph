@@ -220,7 +220,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
                 isReadonly: true
             };
             doTest("interface Identifier {\n    [key: string]: SomeReference;\n}", allProps,
-                "interface Identifier {\n    /**\n     * Desc\n     */\n    readonly [newKeyName: number]: Date;\n}");
+                "interface Identifier {\n    /** Desc */\n    readonly [newKeyName: number]: Date;\n}");
         });
 
         it("should change the return type when using a writer", () => {

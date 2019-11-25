@@ -66,22 +66,35 @@ describe(nameof(JSDocableNode), () => {
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
-        it("should insert when none exist", () => {
-            doTest("function identifier() {}", 0, [{ description: "Description" }], "/**\n * Description\n */\nfunction identifier() {}");
+        it("should insert when none exist as single line", () => {
+            doTest("function identifier() {}", 0, [{ description: "Description" }], "/** Description */\nfunction identifier() {}");
+        });
+
+        it("should insert when none exist as multi-line line when adding a newline at the start", () => {
+            doTest("function identifier() {}", 0, [{ description: "\nDescription" }], "/**\n * Description\n */\nfunction identifier() {}");
+        });
+
+        it("should insert when none exist as multi-line line when adding a \\r\\n newline at the start", () => {
+            doTest("function identifier() {}", 0, [{ description: "\r\nDescription" }], "/**\n * Description\n */\nfunction identifier() {}");
+        });
+
+        it("should insert when none exist as multi-line line when multiple lines", () => {
+            doTest("function identifier() {}", 0, [{ description: "Description\nOther" }],
+                "/**\n * Description\n * Other\n */\nfunction identifier() {}");
         });
 
         it("should insert at start when indentation is different", () => {
-            doTest("namespace N {\n    /**\n     * Desc2\n     */\n    function identifier() {}\n}", 0, [{ description: "Desc1" }],
+            doTest("namespace N {\n    /**\n     * Desc2\n     */\n    function identifier() {}\n}", 0, [{ description: "\nDesc1" }],
                 "namespace N {\n    /**\n     * Desc1\n     */\n    /**\n     * Desc2\n     */\n    function identifier() {}\n}");
         });
 
         it("should insert multiple at end", () => {
-            doTest("/**\n * Desc1\n */\nfunction identifier() {}", 1, [{ description: writer => writer.write("Desc2") }, "Desc3"],
-                "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
+            doTest("/**\n * Desc1\n */\nfunction identifier() {}", 1, [{ description: writer => writer.newLine().write("Desc2") }, "Desc3"],
+                "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/** Desc3 */\nfunction identifier() {}");
         });
 
         it("should insert in the middle", () => {
-            doTest("/**\n * Desc1\n */\n/**\n * Desc3\n */\nfunction identifier() {}", 1, [writer => writer.write("Desc2")],
+            doTest("/**\n * Desc1\n */\n/**\n * Desc3\n */\nfunction identifier() {}", 1, [writer => writer.write("\nDesc2")],
                 "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
         });
 
@@ -95,7 +108,7 @@ describe(nameof(JSDocableNode), () => {
 
         describe("PropertyDeclaration", () => {
             it("should add a js doc to a property declaration", () => {
-                doTest("class C {\n    prop;\n}", 0, [{ description: "Testing" }], "class C {\n    /**\n     * Testing\n     */\n    prop;\n}",
+                doTest("class C {\n    prop;\n}", 0, [{ description: "\nTesting" }], "class C {\n    /**\n     * Testing\n     */\n    prop;\n}",
                     SyntaxKind.PropertyDeclaration);
             });
         });
@@ -111,7 +124,7 @@ describe(nameof(JSDocableNode), () => {
 
         it("should insert", () => {
             doTest("/**\n * Desc2\n */\nfunction identifier() {}", 0, { description: "Desc1" },
-                "/**\n * Desc1\n */\n/**\n * Desc2\n */\nfunction identifier() {}");
+                "/** Desc1 */\n/**\n * Desc2\n */\nfunction identifier() {}");
         });
     });
 
@@ -124,8 +137,8 @@ describe(nameof(JSDocableNode), () => {
         }
 
         it("should add multiple at end", () => {
-            doTest("/**\n * Desc1\n */\nfunction identifier() {}", [{ description: "Desc2" }, "Desc3"],
-                "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
+            doTest("/**\n * Desc1\n */\nfunction identifier() {}", [{ description: "Desc2" }, "\nDesc3"],
+                "/**\n * Desc1\n */\n/** Desc2 */\n/**\n * Desc3\n */\nfunction identifier() {}");
         });
     });
 
@@ -138,7 +151,7 @@ describe(nameof(JSDocableNode), () => {
         }
 
         it("should add at the end", () => {
-            doTest("/**\n * Desc1\n */\nfunction identifier() {}", { description: "Desc2" },
+            doTest("/**\n * Desc1\n */\nfunction identifier() {}", { description: "\nDesc2" },
                 "/**\n * Desc1\n */\n/**\n * Desc2\n */\nfunction identifier() {}");
         });
     });
@@ -151,7 +164,7 @@ describe(nameof(JSDocableNode), () => {
         }
 
         it("should modify when setting", () => {
-            doTest("class Identifier {}", { docs: [{ description: "Desc1" }, "Desc2"] }, "/**\n * Desc1\n */\n/**\n * Desc2\n */\nclass Identifier {}");
+            doTest("class Identifier {}", { docs: [{ description: "Desc1" }, "\nDesc2"] }, "/** Desc1 */\n/**\n * Desc2\n */\nclass Identifier {}");
         });
 
         it("should not modify anything if the structure doesn't specify a value", () => {
@@ -159,7 +172,7 @@ describe(nameof(JSDocableNode), () => {
         });
 
         it("should replace existing", () => {
-            doTest("/** Test */\nclass Identifier {}", { docs: [{ description: "New" }] }, "/**\n * New\n */\nclass Identifier {}");
+            doTest("/** Test */\nclass Identifier {}", { docs: [{ description: "New" }] }, "/** New */\nclass Identifier {}");
         });
 
         it("should remove existing when structure specifies a value", () => {
@@ -178,7 +191,8 @@ describe(nameof(JSDocableNode), () => {
         });
 
         it("should get the js docs when they exist", () => {
-            doTest("/** Test *//** Test2 */class Identifier {}", ["Test", "Test2"]);
+            // js docs that are multi-line, but a single line will have a newline at the start
+            doTest("/** Test *//**\n * Test2\n */class Identifier {}", ["Test", "\nTest2"]);
         });
     });
 });

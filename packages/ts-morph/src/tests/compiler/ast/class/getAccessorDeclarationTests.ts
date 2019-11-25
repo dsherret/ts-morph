@@ -115,9 +115,7 @@ describe(nameof(GetAccessorDeclaration), () => {
 
             const expectedCode = `
 class Identifier {
-    /**
-     * d
-     */
+    /** d */
     @dec
     public abstract static get asdf<T>(p): string {
         class C {

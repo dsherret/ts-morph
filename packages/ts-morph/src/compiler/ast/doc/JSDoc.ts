@@ -15,6 +15,13 @@ export const JSDocBase = Node;
  */
 export class JSDoc extends JSDocBase<ts.JSDoc> {
     /**
+     * Gets if this JS doc spans multiple lines.
+     */
+    isMultiLine() {
+        return this.getText().includes("\n");
+    }
+
+    /**
      * Gets the tags of the JSDoc.
      */
     getTags(): JSDocTag[] {
@@ -111,7 +118,18 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
     getStructure(): JSDocStructure {
         return callBaseGetStructure<JSDocSpecificStructure>(JSDocBase.prototype, this, {
             kind: StructureKind.JSDoc,
-            description: this.getInnerText() // good enough for now
+            description: getDescription.call(this)
         });
+
+        function getDescription(this: JSDoc) {
+            const description = this.getInnerText(); // good enough for now
+
+            // If the jsdoc text is like /**\n * Some description.\n*/ then force its
+            // description to start with a newline so that ts-morph will later make this multi-line.
+            if (this.isMultiLine() && !description.includes("\n"))
+                return this._context.manipulationSettings.getNewLineKindAsString() + description;
+            else
+                return description;
+        }
     }
 }

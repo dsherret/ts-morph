@@ -135,7 +135,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 returnType: "T",
                 typeParameters: [{ name: "T" }]
             };
-            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    new<T>(param): T;\n}");
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    new<T>(param): T;\n}");
         });
     });
 
@@ -260,7 +260,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 keyName: "keyName",
                 keyType: "number"
             };
-            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    readonly [keyName: number]: string;\n}");
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    readonly [keyName: number]: string;\n}");
         });
     });
 
@@ -375,7 +375,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 returnType: "T",
                 typeParameters: [{ name: "T" }]
             };
-            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    <T>(param): T;\n}");
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    <T>(param): T;\n}");
         });
     });
 
@@ -494,7 +494,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 parameters: [{ name: "param" }],
                 typeParameters: [{ name: "T" }]
             };
-            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    method?<T>(param): number;\n}");
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    method?<T>(param): number;\n}");
         });
     });
 
@@ -620,7 +620,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 type: "number",
                 initializer: "5" // doesn't make sense
             };
-            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    readonly prop?: number = 5;\n}");
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    readonly prop?: number = 5;\n}");
         });
     });
 

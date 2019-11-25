@@ -57,7 +57,7 @@ describe(nameof(StatementedNode), () => {
                 isExported: true,
                 members: [{ name: "member1" }, { name: "member2" }]
             };
-            const expectedText = "/**\n * Testing\n */\nexport const enum Enum {\n    member1,\n    member2\n}\n";
+            const expectedText = "/** Testing */\nexport const enum Enum {\n    member1,\n    member2\n}\n";
             doTest("", 0, [structure], expectedText);
         });
     });

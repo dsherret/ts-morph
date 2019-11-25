@@ -288,7 +288,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 }, "console.log('here');"]
             };
             doTest("class c {\n}", 0, structure,
-                "class c {\n    public constructor();\n    private constructor();\n    /**\n     * Test\n     */\n    public constructor<T>(param) {\n"
+                "class c {\n    public constructor();\n    private constructor();\n    /** Test */\n    public constructor<T>(param) {\n"
                     + "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n"
                     + "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n"
                     + "        console.log('here');\n"
@@ -401,7 +401,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 typeParameters: [{ name: "T" }],
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
-            doTest("class c {\n}", 0, [structure], "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static get prop<T>(param): number {\n"
+            doTest("class c {\n}", 0, [structure], "class c {\n    /** Test */\n    @dec\n    public static get prop<T>(param): number {\n"
                 + "        class C {\n        }\n\n        console.log('here');\n"
                 + "    }\n}");
         });
@@ -488,7 +488,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 isReadonly: true
             };
             doTest("class c {\n}", 0, [structure, { name: "other", hasExclamationToken: true }],
-                "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static readonly prop?: number = 5;\n    other!;\n"
+                "class c {\n    /** Test */\n    @dec\n    public static readonly prop?: number = 5;\n    other!;\n"
                     + "}");
         });
     });
@@ -644,7 +644,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 typeParameters: [{ name: "T" }],
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
-            doTest("class c {\n}", 0, [structure], "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static set prop<T>(param): number {\n"
+            doTest("class c {\n}", 0, [structure], "class c {\n    /** Test */\n    @dec\n    public static set prop<T>(param): number {\n"
                 + "        class C {\n        }\n\n        console.log('here');\n"
                 + "    }\n}");
         });
@@ -888,7 +888,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
             };
             doTest("class c {\n}", 0, [structure], "class c {\n    public static myMethod?();\n    private myMethod();\n"
-                + "    /**\n     * Test\n     */\n    @dec\n    public static async myMethod?<T>(param): number {\n"
+                + "    /** Test */\n    @dec\n    public static async myMethod?<T>(param): number {\n"
                 + "        class C {\n        }\n\n        console.log('here');\n"
                 + "    }\n}");
         });

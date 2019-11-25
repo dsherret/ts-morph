@@ -32,7 +32,7 @@ describe(nameof(ConstructSignatureDeclaration), () => {
                 typeParameters: undefined
             };
             doTest("interface Identifier {\n    new(): any;\n}", structure,
-                "interface Identifier {\n    /**\n     * test\n     */\n    new(param): string;\n}");
+                "interface Identifier {\n    /** test */\n    new(param): string;\n}");
         });
     });
 

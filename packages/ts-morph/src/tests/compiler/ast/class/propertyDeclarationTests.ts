@@ -24,7 +24,7 @@ describe(nameof(PropertyDeclaration), () => {
             doTest("class Identifier { prop: string; }", { type: "number" }, "class Identifier { prop: number; }");
         });
 
-        it("should change everything setting", () => {
+        it("should change when setting everything", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<PropertyDeclarationStructure>> = {
                 name: "newName",
                 type: "string",
@@ -40,7 +40,7 @@ describe(nameof(PropertyDeclaration), () => {
             };
 
             doTest("class Identifier {\n    prop: string;\n}", structure,
-                "class Identifier {\n    /**\n     * test\n     */\n    @dec\n    public abstract static readonly newName?: string = 5;\n}");
+                "class Identifier {\n    /** test */\n    @dec\n    public abstract static readonly newName?: string = 5;\n}");
         });
     });
 

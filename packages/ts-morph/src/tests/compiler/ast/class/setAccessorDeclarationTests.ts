@@ -115,9 +115,7 @@ describe(nameof(SetAccessorDeclaration), () => {
 
             const expectedCode = `
 class Identifier {
-    /**
-     * d
-     */
+    /** d */
     @dec
     public abstract static set asdf<T>(p): string {
         class C {

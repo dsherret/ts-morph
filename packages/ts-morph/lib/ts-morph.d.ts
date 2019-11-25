@@ -5225,6 +5225,10 @@ declare const JSDocBase: typeof Node;
  */
 export declare class JSDoc extends JSDocBase<ts.JSDoc> {
     /**
+     * Gets if this JS doc spans multiple lines.
+     */
+    isMultiLine(): boolean;
+    /**
      * Gets the tags of the JSDoc.
      */
     getTags(): JSDocTag[];
@@ -11491,6 +11495,10 @@ export interface JSDocStructure extends Structure, JSDocSpecificStructure {
 }
 
 interface JSDocSpecificStructure extends KindedStructure<StructureKind.JSDoc> {
+    /**
+     * The description of the JS doc.
+     * @remarks To force this to be multi-line, add a newline to the front of the string.
+     */
     description: string | WriterFunction;
 }
 

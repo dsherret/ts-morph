@@ -115,7 +115,7 @@ describe(nameof(EnumDeclaration), () => {
                     { name: "member2", value: 2, docs: [{ description: "description" }] },
                     { name: "member3" }
                 ],
-                "enum MyEnum {\n    // a\n    member1, // testing\n    /**\n     * description\n     */\n    member2 = 2,\n    member3\n}\n"
+                "enum MyEnum {\n    // a\n    member1, // testing\n    /** description */\n    member2 = 2,\n    member3\n}\n"
             );
         });
 
@@ -130,7 +130,7 @@ describe(nameof(EnumDeclaration), () => {
                 "enum MyEnum {\n}\n",
                 0,
                 [structure],
-                "enum MyEnum {\n    /**\n     * testing\n     */\n    member = 5\n}\n"
+                "enum MyEnum {\n    /** testing */\n    member = 5\n}\n"
             );
         });
 

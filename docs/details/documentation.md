@@ -31,8 +31,14 @@ Add or insert JS doc comments using the `addJsDoc()`, `addJsDocs()`, `insertJsDo
 For example:
 
 ```ts
+// adds /** Some description... */
 const docNode = classDeclaration.addJsDoc({
     description: "Some description..."
+});
+
+// or to force it to be multi-line, add a newline to the front of the string
+classDeclaration.addJsDoc({
+    description: "\nSome description..."
 });
 ```
 

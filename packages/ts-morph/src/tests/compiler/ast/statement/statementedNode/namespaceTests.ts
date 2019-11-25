@@ -63,7 +63,7 @@ describe(nameof(StatementedNode), () => {
                 "",
                 0,
                 [structure],
-                "/**\n * Test\n */\nexport module n {\n"
+                "/** Test */\nexport module n {\n"
                     + "    class C {\n    }\n\n    console.log('here');\n"
                     + "}\n"
             );

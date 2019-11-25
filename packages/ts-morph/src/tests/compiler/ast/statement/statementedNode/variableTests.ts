@@ -73,7 +73,7 @@ describe(nameof(StatementedNode), () => {
                 isDefaultExport: false,
                 isExported: true
             };
-            const expectedText = "/**\n * Testing\n */\nexport var v!: number = 5;\n";
+            const expectedText = "/** Testing */\nexport var v!: number = 5;\n";
             doTest("", 0, [structure], expectedText);
         });
     });

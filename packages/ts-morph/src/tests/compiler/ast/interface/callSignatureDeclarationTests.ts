@@ -31,7 +31,7 @@ describe(nameof(CallSignatureDeclaration), () => {
                 typeParameters: ["T"],
                 returnType: "string"
             };
-            doTest("interface Identifier {\n    (): any;\n}", structure, "interface Identifier {\n    /**\n     * test\n     */\n    <T>(param): string;\n}");
+            doTest("interface Identifier {\n    (): any;\n}", structure, "interface Identifier {\n    /** test */\n    <T>(param): string;\n}");
         });
     });
 

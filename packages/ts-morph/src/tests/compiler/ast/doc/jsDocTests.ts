@@ -4,6 +4,21 @@ import { JSDocStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(JSDoc), () => {
+    describe(nameof<JSDoc>(d => d.isMultiLine), () => {
+        function doTest(text: string, expectedValue: boolean) {
+            const { sourceFile } = getInfoFromText(text);
+            const actual = sourceFile.getFunctions()[0].getJsDocs()[0].isMultiLine();
+            expect(actual).to.equal(expectedValue);
+        }
+
+        it("should be multi-line when it is", () => {
+            doTest("/**\n * Test\n */\nfunction func() {}", true);
+        });
+
+        it("should not be multi-line when single-line", () => {
+            doTest("/** Test */\nfunction func() {}", false);
+        });
+    });
     describe(nameof<JSDoc>(d => d.remove), () => {
         function doTest(text: string, index: number, jsDocIndex: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
