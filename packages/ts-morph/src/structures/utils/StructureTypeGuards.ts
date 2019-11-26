@@ -168,6 +168,7 @@ export class StructureTypeGuards {
     static isAmbientable<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & AmbientableNodeStructure {
         switch (structure.kind) {
             case StructureKind.Class:
+            case StructureKind.Property:
             case StructureKind.Enum:
             case StructureKind.Function:
             case StructureKind.FunctionOverload:

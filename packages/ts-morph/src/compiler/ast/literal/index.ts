@@ -1,3 +1,4 @@
+export * from "./BigIntLiteral";
 export * from "./BooleanLiteral";
 export * from "./NullLiteral";
 export * from "./NumericLiteral";

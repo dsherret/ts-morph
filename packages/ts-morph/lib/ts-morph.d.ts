@@ -3279,6 +3279,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static readonly isAwaitExpression: (node: Node) => node is AwaitExpression;
     /**
+     * Gets if the node is a BigIntLiteral.
+     */
+    static readonly isBigIntLiteral: (node: Node) => node is BigIntLiteral;
+    /**
      * Gets if the node is a BinaryExpression.
      */
     static readonly isBinaryExpression: (node: Node) => node is BinaryExpression;
@@ -7015,6 +7019,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ArrowFunction]: ArrowFunction;
     [SyntaxKind.AsExpression]: AsExpression;
     [SyntaxKind.AwaitExpression]: AwaitExpression;
+    [SyntaxKind.BigIntLiteral]: BigIntLiteral;
     [SyntaxKind.BindingElement]: BindingElement;
     [SyntaxKind.BinaryExpression]: BinaryExpression;
     [SyntaxKind.Block]: Block;
@@ -7183,6 +7188,7 @@ export interface KindToExpressionMappings {
     [SyntaxKind.ArrowFunction]: ArrowFunction;
     [SyntaxKind.AsExpression]: AsExpression;
     [SyntaxKind.AwaitExpression]: AwaitExpression;
+    [SyntaxKind.BigIntLiteral]: BigIntLiteral;
     [SyntaxKind.BinaryExpression]: BinaryExpression;
     [SyntaxKind.CallExpression]: CallExpression;
     [SyntaxKind.ClassExpression]: ClassExpression;
@@ -7233,6 +7239,26 @@ export interface KindToExpressionMappings {
     [SyntaxKind.SuperKeyword]: SuperExpression;
     [SyntaxKind.ThisKeyword]: ThisExpression;
     [SyntaxKind.VoidExpression]: VoidExpression;
+}
+
+declare const BigIntLiteralBase: typeof LiteralExpression;
+
+export declare class BigIntLiteral extends BigIntLiteralBase<ts.BigIntLiteral> {
+    /**
+     * Gets the BigInt literal value.
+     *
+     * Assert this as a `bigint` in environments that support it.
+     */
+    getLiteralValue(): unknown;
+    /**
+     * Sets the bigint literal value.
+     * @param value - Value to set (must provide a bigint here at runtime).
+     */
+    setLiteralValue(value: unknown): this;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.BigIntLiteral>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.BigIntLiteral>>;
 }
 
 declare const BooleanLiteralBase: typeof PrimaryExpression;

@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 177
+**Total:** 178
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -28,6 +28,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: operatorToken
 * [AwaitExpression](src/compiler/ast/expression/AwaitExpression.ts)
     * :heavy_check_mark: expression
+* [BigIntLiteral](src/compiler/ast/literal/BigIntLiteral.ts)
 * [BinaryExpression](src/compiler/ast/expression/BinaryExpression.ts)
     * :heavy_check_mark: left
     * :heavy_check_mark: operatorToken
@@ -44,6 +45,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: label
 * [CallExpression](src/compiler/ast/expression/CallExpression.ts)
     * :heavy_check_mark: expression
+    * :x: questionDotToken
     * :heavy_check_mark: typeArguments
     * :heavy_check_mark: arguments
 * [CallSignatureDeclaration](src/compiler/ast/interface/CallSignatureDeclaration.ts)
@@ -62,7 +64,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ClassExpression](src/compiler/ast/class/ClassExpression.ts)
 * [CommaListExpression](src/compiler/ast/expression/CommaListExpression.ts)
     * :heavy_check_mark: elements
-* [ComputedPropertyName](src/compiler/ast/common/ComputedPropertyName.ts)
+* [ComputedPropertyName](src/compiler/ast/name/ComputedPropertyName.ts)
     * :heavy_check_mark: expression
 * [ConditionalExpression](src/compiler/ast/expression/ConditionalExpression.ts)
     * :heavy_check_mark: condition
@@ -92,6 +94,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: expression
 * [ElementAccessExpression](src/compiler/ast/expression/ElementAccessExpression.ts)
     * :heavy_check_mark: expression
+    * :x: questionDotToken
     * :heavy_check_mark: argumentExpression
 * [EmptyStatement](src/compiler/ast/statement/EmptyStatement.ts)
 * [EnumDeclaration](src/compiler/ast/enum/EnumDeclaration.ts)
@@ -141,11 +144,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [HeritageClause](src/compiler/ast/general/HeritageClause.ts)
     * :heavy_check_mark: token
     * :heavy_check_mark: types
-* [Identifier](src/compiler/ast/common/Identifier.ts)
+* [Identifier](src/compiler/ast/name/Identifier.ts)
     * :x: escapedText
     * :x: originalKeywordKind
     * :x: isInJSDocNamespace
-* [Identifier](src/compiler/ast/common/Identifier.ts)
+* [Identifier](src/compiler/ast/name/Identifier.ts)
     * :heavy_check_mark: text
 * [IfStatement](src/compiler/ast/statement/IfStatement.ts)
     * :heavy_check_mark: expression
@@ -308,6 +311,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [PrimaryExpression](src/compiler/ast/expression/PrimaryExpression.ts)
 * [PropertyAccessExpression](src/compiler/ast/expression/PropertyAccessExpression.ts)
     * :heavy_check_mark: expression
+    * :x: questionDotToken
     * :heavy_check_mark: name
 * [PropertyAssignment](src/compiler/ast/expression/object/PropertyAssignment.ts)
     * :heavy_check_mark: name
@@ -324,7 +328,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: questionToken
     * :heavy_check_mark: type
     * :heavy_check_mark: initializer
-* [QualifiedName](src/compiler/ast/common/QualifiedName.ts)
+* [QualifiedName](src/compiler/ast/name/QualifiedName.ts)
     * :heavy_check_mark: left
     * :heavy_check_mark: right
 * [RegularExpressionLiteral](src/compiler/ast/literal/RegularExpressionLiteral.ts)
@@ -415,6 +419,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: default
     * :x: expression
 * [TypePredicateNode](src/compiler/ast/type/TypePredicateNode.ts)
+    * :heavy_check_mark: assertsModifier
     * :heavy_check_mark: parameterName
     * :heavy_check_mark: type
 * [TypeReferenceNode](src/compiler/ast/type/TypeReferenceNode.ts)
@@ -445,12 +450,13 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 54
+**Total:** 56
 
-* BigIntLiteral
 * Bundle
+* CallChain
 * ClassLikeDeclarationBase
 * DeclarationStatement
+* ElementAccessChain
 * FunctionOrConstructorTypeNodeBase
 * ImportCall
 * InputFiles
@@ -483,6 +489,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * NodeWithTypeArguments
 * ObjectLiteralExpressionBase
 * OptionalTypeNode
+* PropertyAccessChain
 * PropertyAccessEntityNameExpression
 * PropertyLikeDeclaration
 * RestTypeNode

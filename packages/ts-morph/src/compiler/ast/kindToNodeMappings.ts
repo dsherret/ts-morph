@@ -11,6 +11,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ArrowFunction]: compiler.ArrowFunction;
     [SyntaxKind.AsExpression]: compiler.AsExpression;
     [SyntaxKind.AwaitExpression]: compiler.AwaitExpression;
+    [SyntaxKind.BigIntLiteral]: compiler.BigIntLiteral;
     [SyntaxKind.BindingElement]: compiler.BindingElement;
     [SyntaxKind.BinaryExpression]: compiler.BinaryExpression;
     [SyntaxKind.Block]: compiler.Block;
@@ -179,6 +180,7 @@ export interface KindToExpressionMappings {
     [SyntaxKind.ArrowFunction]: compiler.ArrowFunction;
     [SyntaxKind.AsExpression]: compiler.AsExpression;
     [SyntaxKind.AwaitExpression]: compiler.AwaitExpression;
+    [SyntaxKind.BigIntLiteral]: compiler.BigIntLiteral;
     [SyntaxKind.BinaryExpression]: compiler.BinaryExpression;
     [SyntaxKind.CallExpression]: compiler.CallExpression;
     [SyntaxKind.ClassExpression]: compiler.ClassExpression;
