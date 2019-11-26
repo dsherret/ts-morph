@@ -35,6 +35,8 @@ console.log(fs.readFileSync("file.ts")); // outputs: "console.log(5);"
 
 The current working directory on this file system will be `/`.
 
+This file system can also be imported and created via the `InMemoryFileSystemHost` export.
+
 #### `lib.d.ts` files
 
 Since ts-morph 6.0, the in memory file system will have the [`lib.d.ts` files](https://github.com/Microsoft/TypeScript/tree/master/lib) loaded into the `/node_modules/typescript/lib` folder by default.

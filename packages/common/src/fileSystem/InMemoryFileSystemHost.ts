@@ -27,7 +27,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
      * Constructor.
      * @param options - Options for creating the file system.
      */
-    constructor(options?: { skipLoadingLibFiles?: boolean; }) {
+    constructor(options?: InMemoryFileSystemHostOptions) {
         this.getOrCreateDir("/" as StandardizedFilePath);
 
         if (!options?.skipLoadingLibFiles) {
@@ -201,6 +201,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
         }
     }
 
+    /** @internal */
     private _copyDirInternal(from: StandardizedFilePath, to: StandardizedFilePath) {
         const dir = this.directories.get(from)!;
         const newDir = this.getOrCreateDir(to);
@@ -267,6 +268,7 @@ export class InMemoryFileSystemHost implements FileSystemHost {
         }
     }
 
+    /** @internal */
     private getOrCreateDir(dirPath: StandardizedFilePath) {
         let dir = this.directories.get(dirPath);
 

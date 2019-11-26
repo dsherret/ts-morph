@@ -2,7 +2,7 @@
 import { errors } from "@ts-morph/common";
 export { FileSystemHost, ResolutionHost, ResolutionHostFactory, CompilerOptionsContainer, SettingsContainer, ts, SyntaxKind, ScriptTarget, ScriptKind,
     LanguageVariant, EmitHint, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory,
-    CompilerOptions, EditorSettings } from "@ts-morph/common";
+    CompilerOptions, EditorSettings, InMemoryFileSystemHostOptions, InMemoryFileSystemHost } from "@ts-morph/common";
 export * from "./codeBlockWriter";
 export * from "./compiler";
 const { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError,

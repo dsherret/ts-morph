@@ -111,6 +111,67 @@ export declare abstract class SettingsContainer<T extends object> {
     onModified(action: () => void): void;
 }
 
+export interface InMemoryFileSystemHostOptions {
+    /**
+     * Set this to true to not load the /node_modules/typescript/lib files on construction.
+     * @default false
+     */
+    skipLoadingLibFiles?: boolean;
+}
+
+/** An implementation of a file system that exists in memory only. */
+export declare class InMemoryFileSystemHost implements FileSystemHost {
+    /**
+     * Constructor.
+     * @param options - Options for creating the file system.
+     */
+    constructor(options?: InMemoryFileSystemHostOptions);
+    /** @inheritdoc */
+    isCaseSensitive(): boolean;
+    /** @inheritdoc */
+    delete(path: string): Promise<void>;
+    /** @inheritdoc */
+    deleteSync(path: string): void;
+    /** @inheritdoc */
+    readDirSync(dirPath: string): string[];
+    /** @inheritdoc */
+    readFile(filePath: string, encoding?: string): Promise<string>;
+    /** @inheritdoc */
+    readFileSync(filePath: string, encoding?: string): string;
+    /** @inheritdoc */
+    writeFile(filePath: string, fileText: string): Promise<void>;
+    /** @inheritdoc */
+    writeFileSync(filePath: string, fileText: string): void;
+    /** @inheritdoc */
+    mkdir(dirPath: string): Promise<void>;
+    /** @inheritdoc */
+    mkdirSync(dirPath: string): void;
+    /** @inheritdoc */
+    move(srcPath: string, destPath: string): Promise<void>;
+    /** @inheritdoc */
+    moveSync(srcPath: string, destPath: string): void;
+    /** @inheritdoc */
+    copy(srcPath: string, destPath: string): Promise<void>;
+    /** @inheritdoc */
+    copySync(srcPath: string, destPath: string): void;
+    /** @inheritdoc */
+    fileExists(filePath: string): Promise<boolean>;
+    /** @inheritdoc */
+    fileExistsSync(filePath: string): boolean;
+    /** @inheritdoc */
+    directoryExists(dirPath: string): Promise<boolean>;
+    /** @inheritdoc */
+    directoryExistsSync(dirPath: string): boolean;
+    /** @inheritdoc */
+    realpathSync(path: string): string;
+    /** @inheritdoc */
+    getCurrentDirectory(): string;
+    /** @inheritdoc */
+    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
+    /** @inheritdoc */
+    globSync(patterns: ReadonlyArray<string>): string[];
+}
+
 /** Options for creating a project. */
 export interface ProjectOptions {
     /** Compiler options */

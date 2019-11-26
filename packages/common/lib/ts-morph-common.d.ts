@@ -740,14 +740,11 @@ export interface InMemoryFileSystemHostOptions {
 
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
-    private readonly directories;
     /**
      * Constructor.
      * @param options - Options for creating the file system.
      */
-    constructor(options?: {
-        skipLoadingLibFiles?: boolean;
-    });
+    constructor(options?: InMemoryFileSystemHostOptions);
     /** @inheritdoc */
     isCaseSensitive(): boolean;
     /** @inheritdoc */
@@ -776,7 +773,6 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     copy(srcPath: string, destPath: string): Promise<void>;
     /** @inheritdoc */
     copySync(srcPath: string, destPath: string): void;
-    private _copyDirInternal;
     /** @inheritdoc */
     fileExists(filePath: string): Promise<boolean>;
     /** @inheritdoc */
@@ -793,7 +789,6 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     glob(patterns: ReadonlyArray<string>): Promise<string[]>;
     /** @inheritdoc */
     globSync(patterns: ReadonlyArray<string>): string[];
-    private getOrCreateDir;
 }
 
 /** Nominal type to denote a file path that has been standardized. */
