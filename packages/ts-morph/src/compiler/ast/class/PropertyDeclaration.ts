@@ -1,17 +1,17 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { PropertyDeclarationSpecificStructure, PropertyDeclarationStructure, StructureKind } from "../../../structures";
-import { ChildOrderableNode, DecoratableNode, ExclamationTokenableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
+import { ChildOrderableNode, AmbientableNode, DecoratableNode, ExclamationTokenableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
     QuestionTokenableNode, ReadonlyableNode, ScopedNode, StaticableNode, TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
 
-const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(
+const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(AmbientableNode(DecoratableNode(AbstractableNode(ScopedNode(
     StaticableNode(JSDocableNode(ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(
         TypedNode(PropertyNamedNode(ModifierableNode(ctor)))
     ))))))
-))));
+)))));
 export const PropertyDeclarationBase = createBase(ClassElement);
 export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
     /**

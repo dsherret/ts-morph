@@ -316,6 +316,7 @@ export namespace fillStructures {
         setIfNull(structure, "isAbstract", false);
         setIfNull(structure, "hasExclamationToken", false);
         setIfNull(structure, "hasQuestionToken", false);
+        setIfNull(structure, "hasDeclareKeyword", false);
         setIfNull(structure, "initializer", undefined);
         setIfNull(structure, "scope", undefined);
 
