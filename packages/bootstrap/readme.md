@@ -51,7 +51,7 @@ const project = new Project({ tsConfigFilePath: "tsconfig.json" });
 const project = new Project();
 
 // in memory file system
-const project2 = new Project({ inMemoryFileSystem: true });
+const project2 = new Project({ useInMemoryFileSystem: true });
 
 // custom file system
 const fileSystem: FileSystemHost = { ...etc... };
@@ -182,7 +182,7 @@ project.removeSourceFile(sourceFile);
 ```ts
 import { Project, ts } from "@ts-morph/bootstrap";
 
-const project = new Project({ inMemoryFileSystem: true });
+const project = new Project({ useInMemoryFileSystem: true });
 project.createSourceFile("test.ts", "const t: string = 5;");
 
 const program = project.createProgram();

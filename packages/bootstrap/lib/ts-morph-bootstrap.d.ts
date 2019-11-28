@@ -188,7 +188,7 @@ export interface ProjectOptions {
     skipLoadingLibFiles?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
-     * @remarks Consider using `inMemoryFileSystem` instead.
+     * @remarks Consider using `useInMemoryFileSystem` instead.
      */
     fileSystem?: FileSystemHost;
     /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
