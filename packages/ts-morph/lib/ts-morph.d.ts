@@ -11884,445 +11884,6 @@ export declare function forEachStructureChild<TStructure>(structures: ReadonlyAr
  */
 export declare function forEachStructureChild<TStructure>(structure: Structures, callback: (child: Structures) => TStructure | void): TStructure | undefined;
 
-/**
- * Type guards for use on structures.
- */
-export declare class StructureTypeGuards {
-    private constructor();
-    /**
-     * Gets if the provided structure has a name.
-     */
-    static hasName<T extends Structure>(structure: T): structure is T & {
-            name: string;
-        };
-    /**
-     * Gets if the provided structure is a ClassDeclarationStructure.
-     */
-    static isClass(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ClassDeclarationStructure;
-    /**
-     * Gets if the provided structure is a ClassLikeDeclarationBaseStructure.
-     */
-    static isClassLikeDeclarationBase<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ClassLikeDeclarationBaseStructure;
-    /**
-     * Gets if the provided structure is a NameableNodeStructure.
-     */
-    static isNameable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & NameableNodeStructure;
-    /**
-     * Gets if the provided structure is a ImplementsClauseableNodeStructure.
-     */
-    static isImplementsClauseable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ImplementsClauseableNodeStructure;
-    /**
-     * Gets if the provided structure is a DecoratableNodeStructure.
-     */
-    static isDecoratable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & DecoratableNodeStructure;
-    /**
-     * Gets if the provided structure is a TypeParameteredNodeStructure.
-     */
-    static isTypeParametered<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & TypeParameteredNodeStructure;
-    /**
-     * Gets if the provided structure is a JSDocableNodeStructure.
-     */
-    static isJSDocable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & JSDocableNodeStructure;
-    /**
-     * Gets if the provided structure is a AbstractableNodeStructure.
-     */
-    static isAbstractable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & AbstractableNodeStructure;
-    /**
-     * Gets if the provided structure is a AmbientableNodeStructure.
-     */
-    static isAmbientable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & AmbientableNodeStructure;
-    /**
-     * Gets if the provided structure is a ExportableNodeStructure.
-     */
-    static isExportable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ExportableNodeStructure;
-    /**
-     * Gets if the provided structure is a ConstructorDeclarationStructure.
-     */
-    static isConstructor(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ConstructorDeclarationStructure;
-    /**
-     * Gets if the provided structure is a ScopedNodeStructure.
-     */
-    static isScoped<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ScopedNodeStructure;
-    /**
-     * Gets if the provided structure is a FunctionLikeDeclarationStructure.
-     */
-    static isFunctionLike<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & FunctionLikeDeclarationStructure;
-    /**
-     * Gets if the provided structure is a SignaturedDeclarationStructure.
-     */
-    static isSignatured<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & SignaturedDeclarationStructure;
-    /**
-     * Gets if the provided structure is a ParameteredNodeStructure.
-     */
-    static isParametered<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ParameteredNodeStructure;
-    /**
-     * Gets if the provided structure is a ReturnTypedNodeStructure.
-     */
-    static isReturnTyped<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ReturnTypedNodeStructure;
-    /**
-     * Gets if the provided structure is a StatementedNodeStructure.
-     */
-    static isStatemented<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & StatementedNodeStructure;
-    /**
-     * Gets if the provided structure is a ConstructorDeclarationOverloadStructure.
-     */
-    static isConstructorDeclarationOverload(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ConstructorDeclarationOverloadStructure;
-    /**
-     * Gets if the provided structure is a GetAccessorDeclarationStructure.
-     */
-    static isGetAccessor(structure: Structure & {
-            kind: StructureKind;
-        }): structure is GetAccessorDeclarationStructure;
-    /**
-     * Gets if the provided structure is a PropertyNamedNodeStructure.
-     */
-    static isPropertyNamed<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & PropertyNamedNodeStructure;
-    /**
-     * Gets if the provided structure is a StaticableNodeStructure.
-     */
-    static isStaticable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & StaticableNodeStructure;
-    /**
-     * Gets if the provided structure is a MethodDeclarationStructure.
-     */
-    static isMethod(structure: Structure & {
-            kind: StructureKind;
-        }): structure is MethodDeclarationStructure;
-    /**
-     * Gets if the provided structure is a AsyncableNodeStructure.
-     */
-    static isAsyncable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & AsyncableNodeStructure;
-    /**
-     * Gets if the provided structure is a GeneratorableNodeStructure.
-     */
-    static isGeneratorable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & GeneratorableNodeStructure;
-    /**
-     * Gets if the provided structure is a QuestionTokenableNodeStructure.
-     */
-    static isQuestionTokenable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & QuestionTokenableNodeStructure;
-    /**
-     * Gets if the provided structure is a MethodDeclarationOverloadStructure.
-     */
-    static isMethodDeclarationOverload(structure: Structure & {
-            kind: StructureKind;
-        }): structure is MethodDeclarationOverloadStructure;
-    /**
-     * Gets if the provided structure is a PropertyDeclarationStructure.
-     */
-    static isProperty(structure: Structure & {
-            kind: StructureKind;
-        }): structure is PropertyDeclarationStructure;
-    /**
-     * Gets if the provided structure is a TypedNodeStructure.
-     */
-    static isTyped<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & TypedNodeStructure;
-    /**
-     * Gets if the provided structure is a ExclamationTokenableNodeStructure.
-     */
-    static isExclamationTokenable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ExclamationTokenableNodeStructure;
-    /**
-     * Gets if the provided structure is a ReadonlyableNodeStructure.
-     */
-    static isReadonlyable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ReadonlyableNodeStructure;
-    /**
-     * Gets if the provided structure is a InitializerExpressionableNodeStructure.
-     */
-    static isInitializerExpressionable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & InitializerExpressionableNodeStructure;
-    /**
-     * Gets if the provided structure is a SetAccessorDeclarationStructure.
-     */
-    static isSetAccessor(structure: Structure & {
-            kind: StructureKind;
-        }): structure is SetAccessorDeclarationStructure;
-    /**
-     * Gets if the provided structure is a DecoratorStructure.
-     */
-    static isDecorator(structure: Structure & {
-            kind: StructureKind;
-        }): structure is DecoratorStructure;
-    /**
-     * Gets if the provided structure is a JSDocStructure.
-     */
-    static isJSDoc(structure: Structure & {
-            kind: StructureKind;
-        }): structure is JSDocStructure;
-    /**
-     * Gets if the provided structure is a EnumDeclarationStructure.
-     */
-    static isEnum(structure: Structure & {
-            kind: StructureKind;
-        }): structure is EnumDeclarationStructure;
-    /**
-     * Gets if the provided structure is a NamedNodeStructure.
-     */
-    static isNamed<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & NamedNodeStructure;
-    /**
-     * Gets if the provided structure is a EnumMemberStructure.
-     */
-    static isEnumMember(structure: Structure & {
-            kind: StructureKind;
-        }): structure is EnumMemberStructure;
-    /**
-     * Gets if the provided structure is a FunctionDeclarationStructure.
-     */
-    static isFunction(structure: Structure & {
-            kind: StructureKind;
-        }): structure is FunctionDeclarationStructure;
-    /**
-     * Gets if the provided structure is a FunctionDeclarationOverloadStructure.
-     */
-    static isFunctionDeclarationOverload(structure: Structure & {
-            kind: StructureKind;
-        }): structure is FunctionDeclarationOverloadStructure;
-    /**
-     * Gets if the provided structure is a ParameterDeclarationStructure.
-     */
-    static isParameter(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ParameterDeclarationStructure;
-    /**
-     * Gets if the provided structure is a BindingNamedNodeStructure.
-     */
-    static isBindingNamed<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & BindingNamedNodeStructure;
-    /**
-     * Gets if the provided structure is a ScopeableNodeStructure.
-     */
-    static isScopeable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ScopeableNodeStructure;
-    /**
-     * Gets if the provided structure is a CallSignatureDeclarationStructure.
-     */
-    static isCallSignature(structure: Structure & {
-            kind: StructureKind;
-        }): structure is CallSignatureDeclarationStructure;
-    /**
-     * Gets if the provided structure is a ConstructSignatureDeclarationStructure.
-     */
-    static isConstructSignature(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ConstructSignatureDeclarationStructure;
-    /**
-     * Gets if the provided structure is a IndexSignatureDeclarationStructure.
-     */
-    static isIndexSignature(structure: Structure & {
-            kind: StructureKind;
-        }): structure is IndexSignatureDeclarationStructure;
-    /**
-     * Gets if the provided structure is a InterfaceDeclarationStructure.
-     */
-    static isInterface(structure: Structure & {
-            kind: StructureKind;
-        }): structure is InterfaceDeclarationStructure;
-    /**
-     * Gets if the provided structure is a ExtendsClauseableNodeStructure.
-     */
-    static isExtendsClauseable<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ExtendsClauseableNodeStructure;
-    /**
-     * Gets if the provided structure is a TypeElementMemberedNodeStructure.
-     */
-    static isTypeElementMembered<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & TypeElementMemberedNodeStructure;
-    /**
-     * Gets if the provided structure is a MethodSignatureStructure.
-     */
-    static isMethodSignature(structure: Structure & {
-            kind: StructureKind;
-        }): structure is MethodSignatureStructure;
-    /**
-     * Gets if the provided structure is a PropertySignatureStructure.
-     */
-    static isPropertySignature(structure: Structure & {
-            kind: StructureKind;
-        }): structure is PropertySignatureStructure;
-    /**
-     * Gets if the provided structure is a JsxAttributeStructure.
-     */
-    static isJsxAttribute(structure: Structure & {
-            kind: StructureKind;
-        }): structure is JsxAttributeStructure;
-    /**
-     * Gets if the provided structure is a JsxElementStructure.
-     */
-    static isJsxElement(structure: Structure & {
-            kind: StructureKind;
-        }): structure is JsxElementStructure;
-    /**
-     * Gets if the provided structure is a JsxSelfClosingElementStructure.
-     */
-    static isJsxSelfClosingElement(structure: Structure & {
-            kind: StructureKind;
-        }): structure is JsxSelfClosingElementStructure;
-    /**
-     * Gets if the provided structure is a JsxTagNamedNodeStructure.
-     */
-    static isJsxTagNamed<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & JsxTagNamedNodeStructure;
-    /**
-     * Gets if the provided structure is a JsxAttributedNodeStructure.
-     */
-    static isJsxAttributed<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & JsxAttributedNodeStructure;
-    /**
-     * Gets if the provided structure is a JsxSpreadAttributeStructure.
-     */
-    static isJsxSpreadAttribute(structure: Structure & {
-            kind: StructureKind;
-        }): structure is JsxSpreadAttributeStructure;
-    /**
-     * Gets if the provided structure is a ExportAssignmentStructure.
-     */
-    static isExportAssignment(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ExportAssignmentStructure;
-    /**
-     * Gets if the provided structure is a ExportDeclarationStructure.
-     */
-    static isExportDeclaration(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ExportDeclarationStructure;
-    /**
-     * Gets if the provided structure is a ExportSpecifierStructure.
-     */
-    static isExportSpecifier(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ExportSpecifierStructure;
-    /**
-     * Gets if the provided structure is a ImportDeclarationStructure.
-     */
-    static isImportDeclaration(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ImportDeclarationStructure;
-    /**
-     * Gets if the provided structure is a ImportSpecifierStructure.
-     */
-    static isImportSpecifier(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ImportSpecifierStructure;
-    /**
-     * Gets if the provided structure is a NamespaceDeclarationStructure.
-     */
-    static isNamespace(structure: Structure & {
-            kind: StructureKind;
-        }): structure is NamespaceDeclarationStructure;
-    /**
-     * Gets if the provided structure is a SourceFileStructure.
-     */
-    static isSourceFile(structure: Structure & {
-            kind: StructureKind;
-        }): structure is SourceFileStructure;
-    /**
-     * Gets if the provided structure is a VariableDeclarationStructure.
-     */
-    static isVariableDeclaration(structure: Structure & {
-            kind: StructureKind;
-        }): structure is VariableDeclarationStructure;
-    /**
-     * Gets if the provided structure is a VariableStatementStructure.
-     */
-    static isVariableStatement(structure: Structure & {
-            kind: StructureKind;
-        }): structure is VariableStatementStructure;
-    /**
-     * Gets if the provided structure is a TypeAliasDeclarationStructure.
-     */
-    static isTypeAlias(structure: Structure & {
-            kind: StructureKind;
-        }): structure is TypeAliasDeclarationStructure;
-    /**
-     * Gets if the provided structure is a TypeParameterDeclarationStructure.
-     */
-    static isTypeParameter(structure: Structure & {
-            kind: StructureKind;
-        }): structure is TypeParameterDeclarationStructure;
-    /**
-     * Gets if the provided structure is a PropertyAssignmentStructure.
-     */
-    static isPropertyAssignment(structure: Structure & {
-            kind: StructureKind;
-        }): structure is PropertyAssignmentStructure;
-    /**
-     * Gets if the provided structure is a ShorthandPropertyAssignmentStructure.
-     */
-    static isShorthandPropertyAssignment(structure: Structure & {
-            kind: StructureKind;
-        }): structure is ShorthandPropertyAssignmentStructure;
-    /**
-     * Gets if the provided structure is a SpreadAssignmentStructure.
-     */
-    static isSpreadAssignment(structure: Structure & {
-            kind: StructureKind;
-        }): structure is SpreadAssignmentStructure;
-    /**
-     * Gets if the provided structure is a ExpressionedNodeStructure.
-     */
-    static isExpressioned<T extends Structure & {
-            kind: StructureKind;
-        }>(structure: T): structure is T & ExpressionedNodeStructure;
-}
-
 export interface Structure {
     /**
      * Leading comments or whitespace.
@@ -12333,6 +11894,444 @@ export interface Structure {
      */
     trailingTrivia?: string | WriterFunction | (string | WriterFunction)[];
 }
+
+/**
+ * Type guards for use on structures.
+ */
+export declare const Structure: {
+        /**
+         * Gets if the provided structure has a name.
+         */
+        readonly hasName: <T extends Structure>(structure: T) => structure is T & {
+            name: string;
+        };
+        /**
+         * Gets if the provided structure is a ClassDeclarationStructure.
+         */
+        readonly isClass: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ClassDeclarationStructure;
+        /**
+         * Gets if the provided structure is a ClassLikeDeclarationBaseStructure.
+         */
+        readonly isClassLikeDeclarationBase: <T_1 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_1) => structure is T_1 & ClassLikeDeclarationBaseStructure;
+        /**
+         * Gets if the provided structure is a NameableNodeStructure.
+         */
+        readonly isNameable: <T_2 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_2) => structure is T_2 & NameableNodeStructure;
+        /**
+         * Gets if the provided structure is a ImplementsClauseableNodeStructure.
+         */
+        readonly isImplementsClauseable: <T_3 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_3) => structure is T_3 & ImplementsClauseableNodeStructure;
+        /**
+         * Gets if the provided structure is a DecoratableNodeStructure.
+         */
+        readonly isDecoratable: <T_4 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_4) => structure is T_4 & DecoratableNodeStructure;
+        /**
+         * Gets if the provided structure is a TypeParameteredNodeStructure.
+         */
+        readonly isTypeParametered: <T_5 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_5) => structure is T_5 & TypeParameteredNodeStructure;
+        /**
+         * Gets if the provided structure is a JSDocableNodeStructure.
+         */
+        readonly isJSDocable: <T_6 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_6) => structure is T_6 & JSDocableNodeStructure;
+        /**
+         * Gets if the provided structure is a AbstractableNodeStructure.
+         */
+        readonly isAbstractable: <T_7 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_7) => structure is T_7 & AbstractableNodeStructure;
+        /**
+         * Gets if the provided structure is a AmbientableNodeStructure.
+         */
+        readonly isAmbientable: <T_8 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_8) => structure is T_8 & AmbientableNodeStructure;
+        /**
+         * Gets if the provided structure is a ExportableNodeStructure.
+         */
+        readonly isExportable: <T_9 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_9) => structure is T_9 & ExportableNodeStructure;
+        /**
+         * Gets if the provided structure is a ConstructorDeclarationStructure.
+         */
+        readonly isConstructor: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ConstructorDeclarationStructure;
+        /**
+         * Gets if the provided structure is a ScopedNodeStructure.
+         */
+        readonly isScoped: <T_10 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_10) => structure is T_10 & ScopedNodeStructure;
+        /**
+         * Gets if the provided structure is a FunctionLikeDeclarationStructure.
+         */
+        readonly isFunctionLike: <T_11 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_11) => structure is T_11 & FunctionLikeDeclarationStructure;
+        /**
+         * Gets if the provided structure is a SignaturedDeclarationStructure.
+         */
+        readonly isSignatured: <T_12 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_12) => structure is T_12 & SignaturedDeclarationStructure;
+        /**
+         * Gets if the provided structure is a ParameteredNodeStructure.
+         */
+        readonly isParametered: <T_13 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_13) => structure is T_13 & ParameteredNodeStructure;
+        /**
+         * Gets if the provided structure is a ReturnTypedNodeStructure.
+         */
+        readonly isReturnTyped: <T_14 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_14) => structure is T_14 & ReturnTypedNodeStructure;
+        /**
+         * Gets if the provided structure is a StatementedNodeStructure.
+         */
+        readonly isStatemented: <T_15 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_15) => structure is T_15 & StatementedNodeStructure;
+        /**
+         * Gets if the provided structure is a ConstructorDeclarationOverloadStructure.
+         */
+        readonly isConstructorDeclarationOverload: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ConstructorDeclarationOverloadStructure;
+        /**
+         * Gets if the provided structure is a GetAccessorDeclarationStructure.
+         */
+        readonly isGetAccessor: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is GetAccessorDeclarationStructure;
+        /**
+         * Gets if the provided structure is a PropertyNamedNodeStructure.
+         */
+        readonly isPropertyNamed: <T_16 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_16) => structure is T_16 & PropertyNamedNodeStructure;
+        /**
+         * Gets if the provided structure is a StaticableNodeStructure.
+         */
+        readonly isStaticable: <T_17 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_17) => structure is T_17 & StaticableNodeStructure;
+        /**
+         * Gets if the provided structure is a MethodDeclarationStructure.
+         */
+        readonly isMethod: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is MethodDeclarationStructure;
+        /**
+         * Gets if the provided structure is a AsyncableNodeStructure.
+         */
+        readonly isAsyncable: <T_18 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_18) => structure is T_18 & AsyncableNodeStructure;
+        /**
+         * Gets if the provided structure is a GeneratorableNodeStructure.
+         */
+        readonly isGeneratorable: <T_19 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_19) => structure is T_19 & GeneratorableNodeStructure;
+        /**
+         * Gets if the provided structure is a QuestionTokenableNodeStructure.
+         */
+        readonly isQuestionTokenable: <T_20 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_20) => structure is T_20 & QuestionTokenableNodeStructure;
+        /**
+         * Gets if the provided structure is a MethodDeclarationOverloadStructure.
+         */
+        readonly isMethodDeclarationOverload: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is MethodDeclarationOverloadStructure;
+        /**
+         * Gets if the provided structure is a PropertyDeclarationStructure.
+         */
+        readonly isProperty: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is PropertyDeclarationStructure;
+        /**
+         * Gets if the provided structure is a TypedNodeStructure.
+         */
+        readonly isTyped: <T_21 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_21) => structure is T_21 & TypedNodeStructure;
+        /**
+         * Gets if the provided structure is a ExclamationTokenableNodeStructure.
+         */
+        readonly isExclamationTokenable: <T_22 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_22) => structure is T_22 & ExclamationTokenableNodeStructure;
+        /**
+         * Gets if the provided structure is a ReadonlyableNodeStructure.
+         */
+        readonly isReadonlyable: <T_23 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_23) => structure is T_23 & ReadonlyableNodeStructure;
+        /**
+         * Gets if the provided structure is a InitializerExpressionableNodeStructure.
+         */
+        readonly isInitializerExpressionable: <T_24 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_24) => structure is T_24 & InitializerExpressionableNodeStructure;
+        /**
+         * Gets if the provided structure is a SetAccessorDeclarationStructure.
+         */
+        readonly isSetAccessor: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is SetAccessorDeclarationStructure;
+        /**
+         * Gets if the provided structure is a DecoratorStructure.
+         */
+        readonly isDecorator: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is DecoratorStructure;
+        /**
+         * Gets if the provided structure is a JSDocStructure.
+         */
+        readonly isJSDoc: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is JSDocStructure;
+        /**
+         * Gets if the provided structure is a EnumDeclarationStructure.
+         */
+        readonly isEnum: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is EnumDeclarationStructure;
+        /**
+         * Gets if the provided structure is a NamedNodeStructure.
+         */
+        readonly isNamed: <T_25 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_25) => structure is T_25 & NamedNodeStructure;
+        /**
+         * Gets if the provided structure is a EnumMemberStructure.
+         */
+        readonly isEnumMember: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is EnumMemberStructure;
+        /**
+         * Gets if the provided structure is a FunctionDeclarationStructure.
+         */
+        readonly isFunction: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is FunctionDeclarationStructure;
+        /**
+         * Gets if the provided structure is a FunctionDeclarationOverloadStructure.
+         */
+        readonly isFunctionDeclarationOverload: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is FunctionDeclarationOverloadStructure;
+        /**
+         * Gets if the provided structure is a ParameterDeclarationStructure.
+         */
+        readonly isParameter: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ParameterDeclarationStructure;
+        /**
+         * Gets if the provided structure is a BindingNamedNodeStructure.
+         */
+        readonly isBindingNamed: <T_26 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_26) => structure is T_26 & BindingNamedNodeStructure;
+        /**
+         * Gets if the provided structure is a ScopeableNodeStructure.
+         */
+        readonly isScopeable: <T_27 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_27) => structure is T_27 & ScopeableNodeStructure;
+        /**
+         * Gets if the provided structure is a CallSignatureDeclarationStructure.
+         */
+        readonly isCallSignature: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is CallSignatureDeclarationStructure;
+        /**
+         * Gets if the provided structure is a ConstructSignatureDeclarationStructure.
+         */
+        readonly isConstructSignature: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ConstructSignatureDeclarationStructure;
+        /**
+         * Gets if the provided structure is a IndexSignatureDeclarationStructure.
+         */
+        readonly isIndexSignature: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is IndexSignatureDeclarationStructure;
+        /**
+         * Gets if the provided structure is a InterfaceDeclarationStructure.
+         */
+        readonly isInterface: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is InterfaceDeclarationStructure;
+        /**
+         * Gets if the provided structure is a ExtendsClauseableNodeStructure.
+         */
+        readonly isExtendsClauseable: <T_28 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_28) => structure is T_28 & ExtendsClauseableNodeStructure;
+        /**
+         * Gets if the provided structure is a TypeElementMemberedNodeStructure.
+         */
+        readonly isTypeElementMembered: <T_29 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_29) => structure is T_29 & TypeElementMemberedNodeStructure;
+        /**
+         * Gets if the provided structure is a MethodSignatureStructure.
+         */
+        readonly isMethodSignature: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is MethodSignatureStructure;
+        /**
+         * Gets if the provided structure is a PropertySignatureStructure.
+         */
+        readonly isPropertySignature: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is PropertySignatureStructure;
+        /**
+         * Gets if the provided structure is a JsxAttributeStructure.
+         */
+        readonly isJsxAttribute: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is JsxAttributeStructure;
+        /**
+         * Gets if the provided structure is a JsxElementStructure.
+         */
+        readonly isJsxElement: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is JsxElementStructure;
+        /**
+         * Gets if the provided structure is a JsxSelfClosingElementStructure.
+         */
+        readonly isJsxSelfClosingElement: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is JsxSelfClosingElementStructure;
+        /**
+         * Gets if the provided structure is a JsxTagNamedNodeStructure.
+         */
+        readonly isJsxTagNamed: <T_30 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_30) => structure is T_30 & JsxTagNamedNodeStructure;
+        /**
+         * Gets if the provided structure is a JsxAttributedNodeStructure.
+         */
+        readonly isJsxAttributed: <T_31 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_31) => structure is T_31 & JsxAttributedNodeStructure;
+        /**
+         * Gets if the provided structure is a JsxSpreadAttributeStructure.
+         */
+        readonly isJsxSpreadAttribute: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is JsxSpreadAttributeStructure;
+        /**
+         * Gets if the provided structure is a ExportAssignmentStructure.
+         */
+        readonly isExportAssignment: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ExportAssignmentStructure;
+        /**
+         * Gets if the provided structure is a ExportDeclarationStructure.
+         */
+        readonly isExportDeclaration: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ExportDeclarationStructure;
+        /**
+         * Gets if the provided structure is a ExportSpecifierStructure.
+         */
+        readonly isExportSpecifier: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ExportSpecifierStructure;
+        /**
+         * Gets if the provided structure is a ImportDeclarationStructure.
+         */
+        readonly isImportDeclaration: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ImportDeclarationStructure;
+        /**
+         * Gets if the provided structure is a ImportSpecifierStructure.
+         */
+        readonly isImportSpecifier: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ImportSpecifierStructure;
+        /**
+         * Gets if the provided structure is a NamespaceDeclarationStructure.
+         */
+        readonly isNamespace: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is NamespaceDeclarationStructure;
+        /**
+         * Gets if the provided structure is a SourceFileStructure.
+         */
+        readonly isSourceFile: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is SourceFileStructure;
+        /**
+         * Gets if the provided structure is a VariableDeclarationStructure.
+         */
+        readonly isVariableDeclaration: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is VariableDeclarationStructure;
+        /**
+         * Gets if the provided structure is a VariableStatementStructure.
+         */
+        readonly isVariableStatement: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is VariableStatementStructure;
+        /**
+         * Gets if the provided structure is a TypeAliasDeclarationStructure.
+         */
+        readonly isTypeAlias: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is TypeAliasDeclarationStructure;
+        /**
+         * Gets if the provided structure is a TypeParameterDeclarationStructure.
+         */
+        readonly isTypeParameter: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is TypeParameterDeclarationStructure;
+        /**
+         * Gets if the provided structure is a PropertyAssignmentStructure.
+         */
+        readonly isPropertyAssignment: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is PropertyAssignmentStructure;
+        /**
+         * Gets if the provided structure is a ShorthandPropertyAssignmentStructure.
+         */
+        readonly isShorthandPropertyAssignment: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ShorthandPropertyAssignmentStructure;
+        /**
+         * Gets if the provided structure is a SpreadAssignmentStructure.
+         */
+        readonly isSpreadAssignment: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is SpreadAssignmentStructure;
+        /**
+         * Gets if the provided structure is a ExpressionedNodeStructure.
+         */
+        readonly isExpressioned: <T_32 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_32) => structure is T_32 & ExpressionedNodeStructure;
+    };
 
 export interface KindedStructure<TKind extends StructureKind> {
     kind: TKind;

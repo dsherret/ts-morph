@@ -1,27 +1,34 @@
 /**
- * Code Manipulation - Create `StructureTypeGuards`
+ * Code Manipulation - Create type guards on `Structure`
  * -------------------------------------------------
- * This modifies the StructureTypeGuards.ts file that
- * is used for doing type guards on structures.
+ * This modifies the Structure.ts file that is used
+ * for doing type guards on structures.
  * -------------------------------------------------
  */
 import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector, Structure } from "../inspectors";
 
-export function createStructureTypeGuardsUtility(inspector: TsMorphInspector) {
-    const structureTypeGuardsFile = inspector.getProject().getSourceFileOrThrow("StructureTypeGuards.ts");
-    const typeGuardsClass = structureTypeGuardsFile.getClassOrThrow("StructureTypeGuards");
-    clearPreviouslyGeneratedMethods(typeGuardsClass);
+export function createStructureTypeGuards(inspector: TsMorphInspector) {
+    const structureTypeGuardsFile = inspector.getProject().getSourceFileOrThrow("Structure.ts");
+    const typeGuardsExpr = structureTypeGuardsFile
+        .getVariableDeclarationOrThrow("Structure")
+        .getInitializerIfKindOrThrow(tsMorph.SyntaxKind.AsExpression)
+        .getExpressionIfKindOrThrow(tsMorph.SyntaxKind.ObjectLiteralExpression);
+
+    clearPreviouslyGeneratedMethods(typeGuardsExpr);
+
     const structureInfos = getStructureInfos(inspector);
-    addNewMethods(typeGuardsClass, structureInfos);
+    addNewMethods(typeGuardsExpr, structureInfos);
+
     structureTypeGuardsFile.fixMissingImports();
 }
 
-function clearPreviouslyGeneratedMethods(typeGuardsClass: tsMorph.ClassDeclaration) {
-    // remove all the static methods that start with "is"
-    typeGuardsClass.getStaticMethods()
-        .filter(m => m.getName().startsWith("is"))
-        .forEach(m => m.remove());
+function clearPreviouslyGeneratedMethods(typeGuardsExpr: tsMorph.ObjectLiteralExpression) {
+    // remove all the methods that start with "is"
+    for (const prop of typeGuardsExpr.getProperties()) {
+        if (tsMorph.TypeGuards.isMethodDeclaration(prop) && prop.getName().startsWith("is"))
+            prop.remove();
+    }
 }
 
 interface StructureInfo {
@@ -70,10 +77,9 @@ function getStructureInfos(inspector: TsMorphInspector) {
     }
 }
 
-function addNewMethods(typeGuardsClass: tsMorph.ClassDeclaration, structureInfos: StructureInfo[]) {
-    typeGuardsClass.addMethods(structureInfos.map(info => ({
+function addNewMethods(typeGuardsExpr: tsMorph.ObjectLiteralExpression, structureInfos: StructureInfo[]) {
+    typeGuardsExpr.addMethods(structureInfos.map(info => ({
         docs: [`Gets if the provided structure is a ${info.name}.`],
-        isStatic: true,
         name: `is${formatName(info.name)}`,
         parameters: [{ name: "structure", type: getParameterType(info) }],
         returnType: `structure is ${getReturnType(info)}`,

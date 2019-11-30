@@ -4,7 +4,7 @@ import { errors, ArrayUtils, StringUtils, ts, SyntaxKind } from "@ts-morph/commo
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange, InsertIntoBracesOrSourceFileOptionsWriteInfo,
     insertIntoBracesOrSourceFileWithGetChildrenWithComments } from "../../../../manipulation";
 import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure, ClassMemberStructures, OptionalKind, Structure, StructureTypeGuards, Structures } from "../../../../structures";
+    SetAccessorDeclarationStructure, ClassMemberStructures, OptionalKind, Structure, Structures } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext } from "../../../../utils";
 import { Type } from "../../../types";
@@ -643,10 +643,10 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                     return false;
 
                 const structure = value as Structures;
-                return StructureTypeGuards.isMethod(structure)
-                    || StructureTypeGuards.isGetAccessor(structure)
-                    || StructureTypeGuards.isSetAccessor(structure)
-                    || StructureTypeGuards.isConstructor(structure);
+                return Structure.isMethod(structure)
+                    || Structure.isGetAccessor(structure)
+                    || Structure.isSetAccessor(structure)
+                    || Structure.isConstructor(structure);
             }
         }
 
