@@ -8573,7 +8573,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      * @param textChanges - Text changes.
      */
-    applyTextChanges(textChanges: ReadonlyArray<TextChange>): this;
+    applyTextChanges(textChanges: ReadonlyArray<ts.TextChange | TextChange>): this;
     /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.

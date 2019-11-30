@@ -1,8 +1,9 @@
+import { ts } from "@ts-morph/common";
 import { SourceFile, TextChange } from "../../compiler";
 
-export function getTextFromFormattingEdits(sourceFile: SourceFile, formattingEdits: ReadonlyArray<TextChange>) {
+export function getTextFromTextChanges(sourceFile: SourceFile, textChanges: ReadonlyArray<TextChange | ts.TextChange>) {
     // reverse the order
-    const reversedFormattingEdits = formattingEdits.map((edit, index) => ({ edit, index })).sort((a, b) => {
+    const reversedFormattingEdits = textChanges.map((edit, index) => ({ edit: toWrappedTextChange(edit), index })).sort((a, b) => {
         const aStart = a.edit.getSpan().getStart();
         const bStart = b.edit.getSpan().getStart();
         const difference = bStart - aStart;
@@ -17,4 +18,11 @@ export function getTextFromFormattingEdits(sourceFile: SourceFile, formattingEdi
         text = text.slice(0, span.getStart()) + edit.getNewText() + text.slice(span.getEnd());
     }
     return text;
+
+    function toWrappedTextChange(change: TextChange | ts.TextChange) {
+        if (change instanceof TextChange)
+            return change;
+        else
+            return new TextChange(change);
+    }
 }

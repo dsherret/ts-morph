@@ -2,7 +2,7 @@ import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { errors, ArrayUtils, StoredComparer, getSyntaxKindName, StringUtils, ts, SyntaxKind, SymbolFlags } from "@ts-morph/common";
 import { ProjectContext } from "../../../ProjectContext";
 import * as compiler from "../../../compiler";
-import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits,
+import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePos, getPreviousMatchingPos, getTextFromTextChanges,
     insertIntoParentTextRange, replaceSourceFileTextForFormatting, replaceSourceFileTextStraight, hasNewLineInRange } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { getParentSyntaxList, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions } from "../../../utils";
@@ -1402,7 +1402,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
         replaceSourceFileTextForFormatting({
             sourceFile: this._sourceFile,
-            newText: getTextFromFormattingEdits(this._sourceFile, formattingEdits)
+            newText: getTextFromTextChanges(this._sourceFile, formattingEdits)
         });
     }
 

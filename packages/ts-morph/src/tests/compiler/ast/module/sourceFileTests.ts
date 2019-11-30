@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, VariableDeclarationKind } from "../../../../compiler";
+import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, VariableDeclarationKind, TextChange } from "../../../../compiler";
 import { errors, CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
@@ -1490,6 +1490,26 @@ function myFunction(param: MyClass) {
             sourceFile.replaceWithText("");
             expect(directives[0].wasForgotten()).to.be.true;
             expect(sourceFile.getTypeReferenceDirectives().length).to.equal(0);
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.applyTextChanges), () => {
+        // there are more tests for this functionality elsewhere... this is just testing the applyTextChanges api
+
+        it("should apply the file text change when using a wrapped object", () => {
+            const { sourceFile } = getInfoFromText("test;");
+            const change = new TextChange({ newText: "console;", span: { start: 0, length: 0 } });
+            sourceFile.applyTextChanges([change]);
+            expect(sourceFile.getText()).to.equal("console;test;");
+        });
+
+        it("should apply the file text change when using a compiler object", () => {
+            const { sourceFile } = getInfoFromText("test;");
+            sourceFile.applyTextChanges([
+                { newText: "console;", span: { start: 0, length: 0 } },
+                { newText: "asdf;", span: { start: 0, length: 5 } }
+            ]);
+            expect(sourceFile.getText()).to.equal("console;asdf;");
         });
     });
 

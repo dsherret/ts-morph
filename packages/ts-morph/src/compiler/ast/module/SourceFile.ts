@@ -1,7 +1,7 @@
 import { errors, ArrayUtils, StringUtils, Memoize, EventContainer, FileUtils, LanguageVariant, ScriptTarget, ts, ScriptKind,
     StandardizedFilePath } from "@ts-morph/common";
 import { Directory } from "../../../fileSystem";
-import { getTextFromFormattingEdits, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove,
+import { getTextFromTextChanges, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove,
     replaceSourceFileTextForFormatting } from "../../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { ProjectContext } from "../../../ProjectContext";
@@ -919,7 +919,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      * @param textChanges - Text changes.
      */
-    applyTextChanges(textChanges: ReadonlyArray<TextChange>) {
+    applyTextChanges(textChanges: ReadonlyArray<ts.TextChange | TextChange>) {
         // do nothing if no changes
         if (textChanges.length === 0)
             return this;
@@ -929,7 +929,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             sourceFile: this._sourceFile,
             start: 0,
             replacingLength: this.getFullWidth(),
-            newText: getTextFromFormattingEdits(this, textChanges)
+            newText: getTextFromTextChanges(this, textChanges)
         });
         return this;
     }

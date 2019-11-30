@@ -1,7 +1,7 @@
 import { errors, ObjectUtils, FileUtils, RealFileSystemHost, ResolutionHost, CompilerOptions, EditorSettings, ScriptTarget, ts, TsSourceFileContainer,
     createHosts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
-import { getTextFromFormattingEdits } from "../../manipulation";
+import { getTextFromTextChanges } from "../../manipulation";
 import { fillDefaultEditorSettings, fillDefaultFormatCodeSettings } from "../../utils";
 import { Node } from "../ast/common";
 import { SourceFile } from "../ast/module";
@@ -213,7 +213,7 @@ export class LanguageService {
 
         formatSettings = this._getFilledSettings(formatSettings);
         const formattingEdits = this.getFormattingEditsForDocument(standardizedFilePath, formatSettings);
-        let newText = getTextFromFormattingEdits(sourceFile, formattingEdits);
+        let newText = getTextFromTextChanges(sourceFile, formattingEdits);
         const newLineChar = formatSettings.newLineCharacter!;
 
         if (formatSettings.ensureNewLineAtEndOfFile && !newText.endsWith(newLineChar))
