@@ -12,6 +12,7 @@ export * from "./InitializerExpressionableNodeStructure";
 export * from "./JSDocableNodeStructure";
 export * from "./name";
 export * from "./ParameteredNodeStructure";
+export * from "./QuestionDotTokenableNodeStructure";
 export * from "./QuestionTokenableNodeStructure";
 export * from "./ReadonlyableNodeStructure";
 export * from "./ReturnTypedNodeStructure";

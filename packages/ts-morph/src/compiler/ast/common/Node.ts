@@ -3684,6 +3684,21 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isQualifiedName: (node: compiler.Node) => node is compiler.QualifiedName = Node.is(SyntaxKind.QualifiedName);
 
     /**
+     * Gets if the node is a QuestionDotTokenableNode.
+     * @param node - Node to check.
+     */
+    static isQuestionDotTokenableNode<T extends compiler.Node>(node: T): node is compiler.QuestionDotTokenableNode & compiler.QuestionDotTokenableNodeExtensionType & T {
+        switch (node.getKind()) {
+            case SyntaxKind.CallExpression:
+            case SyntaxKind.ElementAccessExpression:
+            case SyntaxKind.PropertyAccessExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a QuestionTokenableNode.
      * @param node - Node to check.
      */

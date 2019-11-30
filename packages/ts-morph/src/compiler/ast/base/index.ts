@@ -19,6 +19,7 @@ export * from "./ModifierableNode";
 export * from "./ModuledNode";
 export * from "./name";
 export * from "./ParameteredNode";
+export * from "./QuestionDotTokenableNode";
 export * from "./QuestionTokenableNode";
 export * from "./ReadonlyableNode";
 export * from "./ReturnTypedNode";

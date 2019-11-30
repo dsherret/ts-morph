@@ -2006,6 +2006,31 @@ export interface ParameteredNode {
 declare type ParameteredNodeExtensionType = Node<ts.Node & {
         parameters: ts.NodeArray<ts.ParameterDeclaration>;
     }>;
+export declare function QuestionDotTokenableNode<T extends Constructor<QuestionDotTokenableNodeExtensionType>>(Base: T): Constructor<QuestionDotTokenableNode> & T;
+
+export interface QuestionDotTokenableNode {
+    /**
+     * If it has a question dot token.
+     */
+    hasQuestionDotToken(): boolean;
+    /**
+     * Gets the question dot token node or returns undefined if it doesn't exist.
+     */
+    getQuestionDotTokenNode(): Node<ts.QuestionDotToken> | undefined;
+    /**
+     * Gets the question dot token node or throws.
+     */
+    getQuestionDotTokenNodeOrThrow(): Node<ts.QuestionDotToken>;
+    /**
+     * Sets if this node has a question dot token.
+     * @param value - If it should have a question dot token or not.
+     */
+    setHasQuestionDotToken(value: boolean): this;
+}
+
+declare type QuestionDotTokenableNodeExtensionType = Node<ts.Node & {
+        questionDotToken?: ts.QuestionDotToken;
+    }>;
 export declare function QuestionTokenableNode<T extends Constructor<QuestionTokenableNodeExtensionType>>(Base: T): Constructor<QuestionTokenableNode> & T;
 
 export interface QuestionTokenableNode {
@@ -5809,7 +5834,7 @@ export declare class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryE
     getRight(): Expression;
 }
 
-declare const CallExpressionBase: Constructor<TypeArgumentedNode> & Constructor<ArgumentedNode> & Constructor<LeftHandSideExpressionedNode> & typeof LeftHandSideExpression;
+declare const CallExpressionBase: Constructor<TypeArgumentedNode> & Constructor<ArgumentedNode> & Constructor<QuestionDotTokenableNode> & Constructor<LeftHandSideExpressionedNode> & typeof LeftHandSideExpression;
 
 export declare class CallExpression<T extends ts.CallExpression = ts.CallExpression> extends CallExpressionBase<T> {
     /**
@@ -5869,7 +5894,7 @@ export declare class DeleteExpression extends DeleteExpressionBase<ts.DeleteExpr
     getParentOrThrow(): NonNullable<NodeParentType<ts.DeleteExpression>>;
 }
 
-declare const ElementAccessExpressionBase: Constructor<LeftHandSideExpressionedNode> & typeof MemberExpression;
+declare const ElementAccessExpressionBase: Constructor<QuestionDotTokenableNode> & Constructor<LeftHandSideExpressionedNode> & typeof MemberExpression;
 
 export declare class ElementAccessExpression<T extends ts.ElementAccessExpression = ts.ElementAccessExpression> extends ElementAccessExpressionBase<T> {
     /**
@@ -6399,7 +6424,7 @@ export declare class PrefixUnaryExpression extends PrefixUnaryExpressionBase<ts.
 export declare class PrimaryExpression<T extends ts.PrimaryExpression = ts.PrimaryExpression> extends MemberExpression<T> {
 }
 
-declare const PropertyAccessExpressionBase: Constructor<NamedNode> & Constructor<LeftHandSideExpressionedNode> & typeof MemberExpression;
+declare const PropertyAccessExpressionBase: Constructor<NamedNode> & Constructor<QuestionDotTokenableNode> & Constructor<LeftHandSideExpressionedNode> & typeof MemberExpression;
 
 export declare class PropertyAccessExpression<T extends ts.PropertyAccessExpression = ts.PropertyAccessExpression> extends PropertyAccessExpressionBase<T> {
 }
@@ -11499,6 +11524,10 @@ export interface PropertyNamedNodeStructure {
 
 export interface ParameteredNodeStructure {
     parameters?: OptionalKind<ParameterDeclarationStructure>[];
+}
+
+export interface QuestionDotTokenableNodeStructure {
+    hasQuestionDotToken?: boolean;
 }
 
 export interface QuestionTokenableNodeStructure {
