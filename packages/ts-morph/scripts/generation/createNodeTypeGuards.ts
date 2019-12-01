@@ -229,7 +229,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
             returnType: `value is compiler.Node`,
             parameters: [{ name: "value", type: "unknown" }],
             statements: writer => {
-                writer.writeLine("return value != null && (value as any).compilerNode != null");
+                writer.writeLine("return value != null && (value as any).compilerNode != null;");
             }
         });
     }

@@ -33,8 +33,11 @@ describe(nameof(PropertySignature), () => {
                 initializer: "5",
                 isReadonly: true
             };
-            doTest("interface Identifier {\n    prop: string;\n}", structure,
-                "interface Identifier {\n    /** test */\n    readonly name?: number = 5;\n}");
+            doTest(
+                "interface Identifier {\n    prop: string;\n}",
+                structure,
+                "interface Identifier {\n    /** test */\n    readonly name?: number = 5;\n}"
+            );
         });
     });
 

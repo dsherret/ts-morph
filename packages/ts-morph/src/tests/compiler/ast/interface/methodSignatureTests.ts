@@ -33,8 +33,11 @@ describe(nameof(MethodSignature), () => {
                 typeParameters: ["T"],
                 returnType: "number"
             };
-            doTest("interface Identifier {\n    method(): string;\n}", structure,
-                "interface Identifier {\n    /** test */\n    name?<T>(param): number;\n}");
+            doTest(
+                "interface Identifier {\n    method(): string;\n}",
+                structure,
+                "interface Identifier {\n    /** test */\n    name?<T>(param): number;\n}"
+            );
         });
     });
 

@@ -4,7 +4,7 @@ import { NamespaceDeclarationStructure, VariableStatementStructure, OptionalKind
     PropertySignatureStructure, MethodSignatureStructure, CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure,
     ConstructSignatureDeclarationStructure, FunctionDeclarationOverloadStructure, EnumMemberStructure, MethodDeclarationStructure,
     MethodDeclarationOverloadStructure, SetAccessorDeclarationStructure, GetAccessorDeclarationStructure, DecoratorStructure, ConstructorDeclarationStructure,
-    ConstructorDeclarationOverloadStructure, JSDocTagStructure} from "../../../structures";
+    ConstructorDeclarationOverloadStructure, JSDocTagStructure } from "../../../structures";
 import { NamespaceDeclarationKind, VariableDeclarationKind } from "../../../compiler";
 
 // this file is incomplete... update accordingly as needed

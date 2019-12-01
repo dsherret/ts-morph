@@ -79,8 +79,12 @@ describe(nameof(JSDocableNode), () => {
         });
 
         it("should insert when none exist as multi-line line when multiple lines", () => {
-            doTest("function identifier() {}", 0, [{ description: "Description\nOther" }],
-                "/**\n * Description\n * Other\n */\nfunction identifier() {}");
+            doTest(
+                "function identifier() {}",
+                0,
+                [{ description: "Description\nOther" }],
+                "/**\n * Description\n * Other\n */\nfunction identifier() {}"
+            );
         });
 
         it("should insert at start when indentation is different", () => {
@@ -123,8 +127,12 @@ describe(nameof(JSDocableNode), () => {
         }
 
         it("should insert", () => {
-            doTest("/**\n * Desc2\n */\nfunction identifier() {}", 0, { description: "Desc1" },
-                "/** Desc1 */\n/**\n * Desc2\n */\nfunction identifier() {}");
+            doTest(
+                "/**\n * Desc2\n */\nfunction identifier() {}",
+                0,
+                { description: "Desc1" },
+                "/** Desc1 */\n/**\n * Desc2\n */\nfunction identifier() {}"
+            );
         });
     });
 

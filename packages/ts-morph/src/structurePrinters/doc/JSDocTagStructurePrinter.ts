@@ -6,7 +6,7 @@ import { NodePrinter } from "../NodePrinter";
 import { StructurePrinterFactory } from "../../factories";
 
 export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagStructure> | string | WriterFunction> {
-    constructor(factory: StructurePrinterFactory, private readonly options: { printStarsOnNewLine: boolean }) {
+    constructor(factory: StructurePrinterFactory, private readonly options: { printStarsOnNewLine: boolean; }) {
         super(factory);
     }
 
@@ -45,13 +45,12 @@ export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagS
             if (typeof structure === "string")
                 return structure;
             const tempWriter = tagPrinter.getNewWriter(writer);
-            if (typeof structure === "function") {
+            if (typeof structure === "function")
                 structure(tempWriter);
-            }
             else {
                 if (structure.text)
                     printTextFromStringOrWriter(tempWriter, structure.text);
-                tempWriter.unsafeInsert(0, `@${structure.tagName}` + (tempWriter.getLength() > 0 ? " " : ""))
+                tempWriter.unsafeInsert(0, `@${structure.tagName}` + (tempWriter.getLength() > 0 ? " " : ""));
             }
 
             return tempWriter.toString();

@@ -1,6 +1,6 @@
-import { AbstractableNodeStructure, AmbientableNodeStructure, DecoratableNodeStructure, ExclamationTokenableNodeStructure, InitializerExpressionableNodeStructure,
-    JSDocableNodeStructure, PropertyNamedNodeStructure, QuestionTokenableNodeStructure, ReadonlyableNodeStructure, ScopedNodeStructure,
-    StaticableNodeStructure, TypedNodeStructure } from "../base";
+import { AbstractableNodeStructure, AmbientableNodeStructure, DecoratableNodeStructure, ExclamationTokenableNodeStructure,
+    InitializerExpressionableNodeStructure, JSDocableNodeStructure, PropertyNamedNodeStructure, QuestionTokenableNodeStructure, ReadonlyableNodeStructure,
+    ScopedNodeStructure, StaticableNodeStructure, TypedNodeStructure } from "../base";
 import { Structure, KindedStructure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 

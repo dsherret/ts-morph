@@ -49,9 +49,8 @@ export class JSDocStructurePrinter extends NodePrinter<OptionalKind<JSDocStructu
             if (typeof structure === "string")
                 return structure;
             const tempWriter = jsdocPrinter.getNewWriter(writer);
-            if (typeof structure === "function") {
+            if (typeof structure === "function")
                 structure(tempWriter);
-            }
             else {
                 if (structure.description)
                     printTextFromStringOrWriter(tempWriter, structure.description);
