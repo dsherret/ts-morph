@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
 import { JSDocStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
+import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(JSDoc), () => {
     describe(nameof<JSDoc>(d => d.isMultiLine), () => {
@@ -19,6 +19,7 @@ describe(nameof(JSDoc), () => {
             doTest("/** Test */\nfunction func() {}", false);
         });
     });
+
     describe(nameof<JSDoc>(d => d.remove), () => {
         function doTest(text: string, index: number, jsDocIndex: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
@@ -44,31 +45,44 @@ describe(nameof(JSDoc), () => {
         });
     });
 
-    describe(nameof<JSDoc>(d => d.getComment), () => {
+    describe(nameof<JSDoc>(d => d.getDescription), () => {
         function doTest(text: string, expectedComment: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
-            const comment = sourceFile.getFunctions()[0].getJsDocs()[0].getComment();
+            const comment = sourceFile.getFunctions()[0].getJsDocs()[0].getDescription();
             expect(comment).to.equal(expectedComment);
         }
 
-        it("should get the comment when it exists", () => {
-            doTest("/**\n * Description\n */function identifier() {}", "Description");
+        it("should get when it exists", () => {
+            doTest("/** Description */function identifier() {}", "Description");
         });
 
-        it("should be undefined when it doesn't exist", () => {
-            doTest("/**\n *\n */function identifier() {}", undefined);
+        it("should get when it exists and is multi-line", () => {
+            // multi-line js doc descriptions always start with a newline
+            doTest("/**\n * Description\n */function identifier() {}", "\nDescription");
+        });
+
+        it("should get when empty, but multi-line", () => {
+            doTest("/**\n *\n */function identifier() {}", "\n");
+        });
+
+        it("should be empty when empty", () => {
+            doTest("/** */function identifier() {}", "");
         });
     });
 
-    describe(nameof<JSDoc>(d => d.setComment), () => {
+    describe(nameof<JSDoc>(d => d.setDescription), () => {
         function doTest(text: string, comment: string, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
-            sourceFile.getFunctions()[0].getJsDocs()[0].setComment(comment);
+            sourceFile.getFunctions()[0].getJsDocs()[0].setDescription(comment);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
-        it("should set a new comment with one line", () => {
-            doTest("/**\n * Description\n */function identifier() {}", "New Text", "/**\n * New Text\n */function identifier() {}");
+        it("should set a multi-line comment ot single line", () => {
+            doTest("/**\n * Description\n */function identifier() {}", "New Text", "/** New Text */function identifier() {}");
+        });
+
+        it("should replace text of multi-line with multi-line", () => {
+            doTest("/**\n * Description\n */function identifier() {}", "\nNew Text", "/**\n * New Text\n */function identifier() {}");
         });
 
         it("should set a new comment with multiple lines", () => {
@@ -79,8 +93,12 @@ describe(nameof(JSDoc), () => {
             doTest("/**\n * Description\n */\nfunction f() {}", "t\n\nu", "/**\n * t\n *\n * u\n */\nfunction f() {}");
         });
 
-        it("should set a new comment when originally all on the same line", () => {
-            doTest("/** Description */function identifier() {}", "New", "/**\n * New\n */function identifier() {}");
+        it("should set a new single-line comment when originally single-line", () => {
+            doTest("/** Description */function identifier() {}", "New", "/** New */function identifier() {}");
+        });
+
+        it("should set a new multi-line comment when originally single-line", () => {
+            doTest("/** Description */function identifier() {}", "\nNew", "/**\n * New\n */function identifier() {}");
         });
 
         it("should set a new comment without affecting the tags", () => {
@@ -168,8 +186,12 @@ describe(nameof(JSDoc), () => {
             doTest(code, {}, code);
         });
 
-        it("should change when specified", () => {
-            doTest("/**\n * Test\n */\nclass Test {}", { description: "New" }, "/**\n * New\n */\nclass Test {}");
+        it("should change description when multi-line", () => {
+            doTest("/**\n * Test\n */\nclass Test {}", { description: "\nNew" }, "/**\n * New\n */\nclass Test {}");
+        });
+
+        it("should change description when single-line", () => {
+            doTest("/**\n * Test\n */\nclass Test {}", { description: "New" }, "/** New */\nclass Test {}");
         });
     });
 
@@ -177,20 +199,25 @@ describe(nameof(JSDoc), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JSDocStructure>>) {
             const { sourceFile } = getInfoFromText(text);
             const structure = sourceFile.getFunctions()[0].getJsDocs()[0].getStructure();
-            expect(structure).to.deep.equal(expectedStructure);
+            expect(structure).to.deep.equal(fillStructures.jsDoc(expectedStructure));
         }
 
         it("should get when has nothing", () => {
             doTest("/** */function t() {}", {
                 kind: StructureKind.JSDoc,
-                description: ""
+                description: "",
+                tags: []
             });
         });
 
         it("should get when has everything", () => {
-            doTest("/** Test @param p - Testing */function t() {}", {
+            doTest("/** Test\n * @param p - Testing\n */\nfunction t() {}", {
                 kind: StructureKind.JSDoc,
-                description: "Test @param p - Testing" // for now...
+                description: "\nTest",
+                tags: [{
+                    tagName: "param",
+                    text: "p - Testing"
+                }]
             });
         });
     });

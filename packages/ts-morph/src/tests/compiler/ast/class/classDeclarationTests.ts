@@ -269,7 +269,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
 }`, undefined, {
                 kind: StructureKind.Interface,
                 name: "Test",
-                docs: [{ kind: StructureKind.JSDoc, description: "Test" }],
+                docs: [{ kind: StructureKind.JSDoc, description: "Test", tags: [] }],
                 typeParameters: [
                     { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
                     { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined }
@@ -301,7 +301,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                     type: "string",
                     hasQuestionToken: false,
                     isReadonly: false,
-                    docs: [{ kind: StructureKind.JSDoc, description: "Description" }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "Description", tags: [] }]
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "prop2",
@@ -315,25 +315,25 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                     type: "number",
                     hasQuestionToken: false,
                     isReadonly: true,
-                    docs: [{ kind: StructureKind.JSDoc, description: "MyGet" }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "MyGet", tags: [] }]
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "myGetAndSet",
                     type: "string",
                     hasQuestionToken: false,
                     isReadonly: false,
-                    docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get" }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get", tags: [] }]
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "mySet",
                     type: "string",
                     hasQuestionToken: false,
                     isReadonly: false,
-                    docs: [{ kind: StructureKind.JSDoc, description: "MySet" }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "MySet", tags: [] }]
                 }],
                 methods: [{
                     kind: StructureKind.MethodSignature,
-                    docs: [{ kind: StructureKind.JSDoc, description: "Method" }],
+                    docs: [{ kind: StructureKind.JSDoc, description: "Method", tags: [] }],
                     name: "myMethod",
                     returnType: "number",
                     hasQuestionToken: false,
@@ -431,7 +431,7 @@ class Test {
                 }],
                 methods: [{
                     kind: StructureKind.MethodSignature,
-                    docs: [{ kind: StructureKind.JSDoc, description: "\nDescription1." }],
+                    docs: [{ kind: StructureKind.JSDoc, description: "\nDescription1.", tags: [] }],
                     name: "method",
                     returnType: "string",
                     hasQuestionToken: false,
@@ -449,7 +449,7 @@ class Test {
                     typeParameters: []
                 }, {
                     kind: StructureKind.MethodSignature,
-                    docs: [{ kind: StructureKind.JSDoc, description: "Description2." }],
+                    docs: [{ kind: StructureKind.JSDoc, description: "Description2.", tags: [] }],
                     name: "method",
                     returnType: "number",
                     hasQuestionToken: false,
@@ -474,14 +474,6 @@ class Test {
         function doTest(code: string, name: string, expectedStructure: InterfaceDeclarationStructure, filePath?: string) {
             const { descendant } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration, { filePath });
             const structure = descendant.extractStaticInterface(name);
-
-            if (expectedStructure.properties == null)
-                expectedStructure.properties = [];
-            if (expectedStructure.methods == null)
-                expectedStructure.methods = [];
-            if (expectedStructure.constructSignatures == null)
-                expectedStructure.constructSignatures = [];
-
             expect(structure).to.deep.equal(expectedStructure);
         }
 
@@ -539,7 +531,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                     name: "Name",
                     constructSignatures: [{
                         kind: StructureKind.ConstructSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "\nDescription." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "\nDescription.", tags: [] }],
                         parameters: [{
                             kind: StructureKind.Parameter,
                             decorators: [],
@@ -589,7 +581,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Description" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description", tags: [] }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "prop2",
@@ -603,25 +595,25 @@ class Test<T extends string = number, U> extends Base implements IBase {
                         type: "number",
                         hasQuestionToken: false,
                         isReadonly: true,
-                        docs: [{ kind: StructureKind.JSDoc, description: "MyGet" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MyGet", tags: [] }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "myGetAndSet",
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get", tags: [] }]
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "mySet",
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "MySet" }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MySet", tags: [] }]
                     }],
                     methods: [{
                         kind: StructureKind.MethodSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Method" }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Method", tags: [] }],
                         name: "myMethod",
                         returnType: "number",
                         hasQuestionToken: false,
@@ -703,7 +695,7 @@ class Test {
                     name: "Name",
                     constructSignatures: [{
                         kind: StructureKind.ConstructSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "\nTest." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "\nTest.", tags: [] }],
                         parameters: [{
                             kind: StructureKind.Parameter,
                             decorators: [],
@@ -718,7 +710,7 @@ class Test {
                         returnType: "Test"
                     }, {
                         kind: StructureKind.ConstructSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "\nTest2." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "\nTest2.", tags: [] }],
                         parameters: [{
                             kind: StructureKind.Parameter,
                             decorators: [],
@@ -735,7 +727,7 @@ class Test {
                     properties: [],
                     methods: [{
                         kind: StructureKind.MethodSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "\nDescription1." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "\nDescription1.", tags: [] }],
                         name: "method",
                         returnType: "string",
                         hasQuestionToken: false,
@@ -753,7 +745,7 @@ class Test {
                         typeParameters: []
                     }, {
                         kind: StructureKind.MethodSignature,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Description2." }],
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description2.", tags: [] }],
                         name: "method",
                         returnType: "number",
                         hasQuestionToken: false,

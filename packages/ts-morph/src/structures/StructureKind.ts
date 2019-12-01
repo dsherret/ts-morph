@@ -22,6 +22,7 @@ export enum StructureKind {
     JsxElement,
     JsxSelfClosingElement,
     JSDoc,
+    JSDocTag,
     Method,
     MethodOverload,
     MethodSignature,

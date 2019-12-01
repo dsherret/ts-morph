@@ -4,7 +4,7 @@ import { NamespaceDeclarationStructure, VariableStatementStructure, OptionalKind
     PropertySignatureStructure, MethodSignatureStructure, CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure,
     ConstructSignatureDeclarationStructure, FunctionDeclarationOverloadStructure, EnumMemberStructure, MethodDeclarationStructure,
     MethodDeclarationOverloadStructure, SetAccessorDeclarationStructure, GetAccessorDeclarationStructure, DecoratorStructure, ConstructorDeclarationStructure,
-    ConstructorDeclarationOverloadStructure } from "../../../structures";
+    ConstructorDeclarationOverloadStructure, JSDocTagStructure} from "../../../structures";
 import { NamespaceDeclarationKind, VariableDeclarationKind } from "../../../compiler";
 
 // this file is incomplete... update accordingly as needed
@@ -416,7 +416,16 @@ export namespace fillStructures {
 
     export function jsDoc(structure: OptionalKind<JSDocStructure>): JSDocStructure {
         setIfNull(structure, "kind", StructureKind.JSDoc);
+        setIfNull(structure, "tags", []);
+
+        fill(structure.tags!, jsDocTag);
+
         return structure as JSDocStructure;
+    }
+
+    export function jsDocTag(structure: OptionalKind<JSDocTagStructure>): JSDocTagStructure {
+        setIfNull(structure, "kind", StructureKind.JSDocTag);
+        return structure as JSDocTagStructure;
     }
 }
 

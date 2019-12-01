@@ -80,6 +80,11 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forJSDocTag(options: { printStarsOnNewLine: boolean; }): structurePrinters.JSDocTagStructurePrinter {
+        return new structurePrinters.JSDocTagStructurePrinter(this, options);
+    }
+
+    @Memoize
     forEnumDeclaration(): structurePrinters.EnumDeclarationStructurePrinter {
         return new structurePrinters.EnumDeclarationStructurePrinter(this);
     }

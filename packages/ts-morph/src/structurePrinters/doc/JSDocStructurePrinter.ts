@@ -1,7 +1,7 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { JSDocStructure, OptionalKind } from "../../structures";
 import { WriterFunction } from "../../types";
-import { getTextFromStringOrWriter } from "../../utils";
+import { printTextFromStringOrWriter } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 
 export class JSDocStructurePrinter extends NodePrinter<OptionalKind<JSDocStructure> | string | WriterFunction> {
@@ -51,9 +51,17 @@ export class JSDocStructurePrinter extends NodePrinter<OptionalKind<JSDocStructu
             const tempWriter = jsdocPrinter.getNewWriter(writer);
             if (typeof structure === "function") {
                 structure(tempWriter);
-                return tempWriter.toString();
             }
-            return getTextFromStringOrWriter(tempWriter, structure.description);
+            else {
+                if (structure.description)
+                    printTextFromStringOrWriter(tempWriter, structure.description);
+                if (structure.tags && structure.tags.length > 0) {
+                    if (tempWriter.getLength() > 0)
+                        tempWriter.newLineIfLastNot();
+                    jsdocPrinter.factory.forJSDocTag({ printStarsOnNewLine: false }).printTags(tempWriter, structure.tags);
+                }
+            }
+            return tempWriter.toString();
         }
     }
 }
