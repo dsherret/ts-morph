@@ -1,13 +1,13 @@
 import { errors } from "../errors";
 
-const regExWhitespaceSet = new Set<string>([" ", "\f", "\n", "\r", "\t", "\v", "\u00A0", "\u2028", "\u2029"]);
+const regExWhitespaceSet = new Set([" ", "\f", "\n", "\r", "\t", "\v", "\u00A0", "\u2028", "\u2029"].map(c => c.charCodeAt(0)));
 
 export class StringUtils {
     private constructor() {
     }
 
-    static isWhitespaceChar(char: string | undefined) {
-        return regExWhitespaceSet.has(char!);
+    static isWhitespaceCharCode(charCode: number | undefined) {
+        return regExWhitespaceSet.has(charCode!);
     }
 
     static isSpaces(text: string) {
@@ -45,7 +45,7 @@ export class StringUtils {
             return true; // might as well since text.length === 0 returns true
 
         for (let i = 0; i < text.length; i++) {
-            if (!StringUtils.isWhitespaceChar(text[i]))
+            if (!StringUtils.isWhitespaceCharCode(text.charCodeAt(i)))
                 return false;
         }
 
@@ -66,7 +66,7 @@ export class StringUtils {
 
     static insertAtLastNonWhitespace(str: string, insertText: string) {
         let i = str.length;
-        while (i > 0 && StringUtils.isWhitespaceChar(str[i - 1]))
+        while (i > 0 && StringUtils.isWhitespaceCharCode(str.charCodeAt(i - 1)))
             i--;
         return str.substring(0, i) + insertText + str.substring(i);
     }
@@ -127,10 +127,10 @@ export class StringUtils {
             throw new errors.InvalidOperationError(`Specified char must be one character long.`);
 
         let result = "";
-        for (let i = 0; i < str.length; i++) {
-            if (str[i] === char)
+        for (const currentChar of str) {
+            if (currentChar === char)
                 result += "\\";
-            result += str[i];
+            result += currentChar;
         }
         return result;
     }

@@ -4947,6 +4947,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isPropertyNamedNode<T extends Node>(node: T): node is PropertyNamedNode & PropertyNamedNodeExtensionType & T;
     /**
+     * Gets if the node is a QuestionDotTokenableNode.
+     * @param node - Node to check.
+     */
+    static isQuestionDotTokenableNode<T extends Node>(node: T): node is QuestionDotTokenableNode & QuestionDotTokenableNodeExtensionType & T;
+    /**
      * Gets if the node is a QuestionTokenableNode.
      * @param node - Node to check.
      */
@@ -5369,18 +5374,19 @@ export declare class JSDoc extends JSDocBase<ts.JSDoc> {
      */
     getTags(): JSDocTag[];
     /**
-     * Gets the comment.
-     */
-    getComment(): string | undefined;
-    /**
-     * Gets the JSDoc's text without the surrounding comment.
+     * Gets the JSDoc's text without the surrounding slashes and stars.
      */
     getInnerText(): string;
     /**
-     * Sets the comment.
+     * Gets the description from the JS doc comment.
+     * @remarks This will contain a leading newline if the jsdoc is multi-line.
+     */
+    getDescription(): string;
+    /**
+     * Sets the description.
      * @param textOrWriterFunction - Text or writer function to set.
      */
-    setComment(textOrWriterFunction: string | WriterFunction): this;
+    setDescription(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes this JSDoc.
      */
@@ -5488,10 +5494,12 @@ export declare class JSDocSignature extends JSDocType<ts.JSDocSignature> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocSignature>>;
 }
 
+declare const JSDocTagBase: typeof Node;
+
 /**
  * JS doc tag node.
  */
-export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends Node<NodeType> {
+export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocTagBase<NodeType> {
     /**
      * Gets the tag's name as a string.
      */
@@ -5504,6 +5512,20 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
      * Gets the tag's comment.
      */
     getComment(): string | undefined;
+    /**
+     * Removes the JS doc comment.
+     */
+    remove(): void;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     * @returns The node or the node that replaced the existing node (ex. when changing from a JSDocParameterTag to something else).
+     */
+    set(structure: Partial<JSDocTagStructure>): Node<ts.Node>;
+    /**
+     * Gets a structure that represents this JS doc tag node.
+     */
+    getStructure(): JSDocTagStructure;
 }
 
 /**
@@ -11661,7 +11683,25 @@ interface JSDocSpecificStructure extends KindedStructure<StructureKind.JSDoc> {
      * The description of the JS doc.
      * @remarks To force this to be multi-line, add a newline to the front of the string.
      */
-    description: string | WriterFunction;
+    description?: string | WriterFunction;
+    /**
+     * JS doc tags (ex. `&#64;param value - Some description.`).
+     */
+    tags?: OptionalKind<JSDocTagStructure>[];
+}
+
+export interface JSDocTagStructure extends Structure, JSDocTagSpecificStructure {
+}
+
+interface JSDocTagSpecificStructure extends KindedStructure<StructureKind.JSDocTag> {
+    /**
+     * The name for the JS doc tag that comes after the "at" symbol.
+     */
+    tagName: string;
+    /**
+     * The text that follows the tag name.
+     */
+    text?: string | WriterFunction;
 }
 
 export interface ExpressionedNodeStructure {
@@ -12390,22 +12430,23 @@ export declare enum StructureKind {
     JsxElement = 20,
     JsxSelfClosingElement = 21,
     JSDoc = 22,
-    Method = 23,
-    MethodOverload = 24,
-    MethodSignature = 25,
-    Namespace = 26,
-    Parameter = 27,
-    Property = 28,
-    PropertyAssignment = 29,
-    PropertySignature = 30,
-    SetAccessor = 31,
-    ShorthandPropertyAssignment = 32,
-    SourceFile = 33,
-    SpreadAssignment = 34,
-    TypeAlias = 35,
-    TypeParameter = 36,
-    VariableDeclaration = 37,
-    VariableStatement = 38
+    JSDocTag = 23,
+    Method = 24,
+    MethodOverload = 25,
+    MethodSignature = 26,
+    Namespace = 27,
+    Parameter = 28,
+    Property = 29,
+    PropertyAssignment = 30,
+    PropertySignature = 31,
+    SetAccessor = 32,
+    ShorthandPropertyAssignment = 33,
+    SourceFile = 34,
+    SpreadAssignment = 35,
+    TypeAlias = 36,
+    TypeParameter = 37,
+    VariableDeclaration = 38,
+    VariableStatement = 39
 }
 
 export declare type OptionalKind<TStructure extends {

@@ -932,7 +932,7 @@ export declare class ObjectUtils {
 
 export declare class StringUtils {
     private constructor();
-    static isWhitespaceChar(char: string | undefined): boolean;
+    static isWhitespaceCharCode(charCode: number | undefined): boolean;
     static isSpaces(text: string): boolean;
     static hasBom(text: string): boolean;
     static stripBom(text: string): string;

@@ -9,28 +9,33 @@ export interface RemoveChildrenTextManipulatorOptions {
     removeFollowingSpaces?: boolean;
     removePrecedingNewLines?: boolean;
     removeFollowingNewLines?: boolean;
+    customRemovalPos?: number;
+    customRemovalEnd?: number;
+    replaceTrivia?: string;
 }
 
-export class RemoveChildrenTextManipulator<TNode extends Node> implements TextManipulator {
+export class RemoveChildrenTextManipulator implements TextManipulator {
     private removalPos: number | undefined;
 
     constructor(private readonly opts: RemoveChildrenTextManipulatorOptions) {
     }
 
     getNewText(inputText: string) {
+        const opts = this.opts;
         const {
             children,
             removePrecedingSpaces = false,
             removeFollowingSpaces = false,
             removePrecedingNewLines = false,
-            removeFollowingNewLines = false
-        } = this.opts;
+            removeFollowingNewLines = false,
+            replaceTrivia = ""
+        } = opts;
         const sourceFile = children[0].getSourceFile();
         const fullText = sourceFile.getFullText();
         const removalPos = getRemovalPos();
         this.removalPos = removalPos;
 
-        return getPrefix() + getSuffix();
+        return getPrefix() + replaceTrivia + getSuffix();
 
         function getPrefix() {
             return fullText.substring(0, removalPos);
@@ -41,6 +46,8 @@ export class RemoveChildrenTextManipulator<TNode extends Node> implements TextMa
         }
 
         function getRemovalPos() {
+            if (opts.customRemovalPos != null)
+                return opts.customRemovalPos;
             const pos = children[0].getNonWhitespaceStart();
             if (removePrecedingSpaces || removePrecedingNewLines)
                 return getPreviousMatchingPos(fullText, pos, getCharRemovalFunction(removePrecedingSpaces, removePrecedingNewLines));
@@ -48,6 +55,8 @@ export class RemoveChildrenTextManipulator<TNode extends Node> implements TextMa
         }
 
         function getRemovalEnd() {
+            if (opts.customRemovalEnd != null)
+                return opts.customRemovalEnd;
             const end = children[children.length - 1].getEnd();
             if (removeFollowingSpaces || removeFollowingNewLines)
                 return getNextMatchingPos(fullText, end, getCharRemovalFunction(removeFollowingSpaces, removeFollowingNewLines));

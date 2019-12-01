@@ -12,6 +12,9 @@ export interface RemoveChildrenOptions {
     removeFollowingSpaces?: boolean;
     removePrecedingNewLines?: boolean;
     removeFollowingNewLines?: boolean;
+    replaceTrivia?: string;
+    customRemovalPos?: number;
+    customRemovalEnd?: number;
 }
 
 export function removeChildren(opts: RemoveChildrenOptions) {

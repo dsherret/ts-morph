@@ -38,6 +38,88 @@ describe(nameof(JSDocTag), () => {
         });
     });
 
+    describe(nameof<JSDocTag>(n => n.remove), () => {
+        function doTest(text: string, index: number, expected: string) {
+            const { sourceFile } = getInfoFromText(text);
+            const descendant = sourceFile.getDescendants().filter(Node.isJSDocTag)[index];
+            descendant.remove();
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should remove the tag comment when it is the only one and on the first line", () => {
+            doTest(
+                "/** @param t - String */\nfunction test() {}",
+                0,
+                "/***/\nfunction test() {}"
+            );
+        });
+
+        it("should remove the tag comment when it is the only one and on the second line", () => {
+            doTest(
+                "/**\n * @param t - String */\nfunction test() {}",
+                0,
+                "/***/\nfunction test() {}"
+            );
+        });
+
+        it("should remove the tag comment when it is the only one and has a description", () => {
+            doTest(
+                "/**\n * Description.\n * @param t - String\n */\nfunction test() {}",
+                0,
+                "/**\n * Description.\n */\nfunction test() {}"
+            );
+        });
+
+        it("should remove the tag comment at the start", () => {
+            doTest(
+                "/**\n * @param t - String\n * @param u\n */\nfunction test() {}",
+                0,
+                "/**\n * @param u\n */\nfunction test() {}"
+            );
+        });
+
+        it("should remove the tag comment in the middle", () => {
+            doTest(
+                "/**\n * @param t - String\n * @param u\n * @param v\n */\nfunction test() {}",
+                1,
+                "/**\n * @param t - String\n * @param v\n */\nfunction test() {}"
+            );
+        });
+
+        it("should remove the tag comment at the end", () => {
+            doTest(
+                "/**\n * @param t - String\n * @param u\n */\nfunction test() {}",
+                1,
+                "/**\n * @param t - String\n */\nfunction test() {}"
+            );
+        });
+
+        it("should remove the tag comment at the start when on the same line as the start", () => {
+            doTest(
+                "/** @param t - String\n * @param u\n */\nfunction test() {}",
+                0,
+                "/**\n * @param u\n */\nfunction test() {}"
+            );
+        });
+
+        it("should remove the tag comment at the end when previous is at the start", () => {
+            // todo: make this better
+            doTest(
+                "/** @param t - String\n * @param u\n */\nfunction test() {}",
+                1,
+                "/** @param t - String\n */\nfunction test() {}"
+            );
+        });
+
+        it("should handle indented code", () => {
+            doTest(
+                "function test() {\n    /**\n     * @param t - String\n     * @param u\n     */\nfunction test() {} }",
+                0,
+                "function test() {\n    /**\n     * @param u\n     */\nfunction test() {} }"
+            );
+        });
+    });
+
     describe(nameof<JSDocTag>(d => d.set), () => {
         function doTest(text: string, structure: Partial<JSDocTagStructure>, expectedText: string) {
             const { sourceFile, descendant } = getInfo(text);

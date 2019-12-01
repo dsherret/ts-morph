@@ -1,10 +1,11 @@
-import { ts } from "@ts-morph/common";
+import { ts, StringUtils } from "@ts-morph/common";
 import { Node } from "../common";
 import { Identifier } from "../name";
 import { JSDocTagStructure, JSDocTagSpecificStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { getTextWithoutStars } from "./utils/getTextWithoutStars";
+import { removeChildren, getEndPosFromIndex } from "../../../manipulation";
 
 export const JSDocTagBase = Node;
 /**
@@ -25,11 +26,47 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
         return this._getNodeFromCompilerNode(this.compilerNode.tagName);
     }
 
-    /**
-     * Gets the tag's comment.
-     */
+    /** Gets the tag's comment. */
     getComment() {
         return this.compilerNode.comment;
+    }
+
+    /** Removes the JS doc comment. */
+    remove() {
+        const parent = this.getParentOrThrow();
+        const jsDocBodyStart = this.getParentOrThrow().getStart() + 3; // +3 for slash star star
+        const isLastJsDoc = this.getEnd() === parent.getEnd() - 2; // -2 for star slash
+        const startPos = getStartPos.call(this);
+
+        removeChildren({
+            children: [this],
+            customRemovalPos: startPos,
+            replaceTrivia: getReplaceTrivia.call(this)
+        });
+
+        function getStartPos(this: JSDocTag) {
+            const asteriskCharCode = "*".charCodeAt(0);
+            const start = this.getStart();
+            const sourceFileText = this.getSourceFile().getFullText();
+
+            let lastPos = start;
+            for (let i = start - 1; i >= jsDocBodyStart; i--) {
+                const currentCharCode = sourceFileText.charCodeAt(i);
+                if (currentCharCode !== asteriskCharCode && !StringUtils.isWhitespaceCharCode(currentCharCode))
+                    break;
+                lastPos = i;
+            }
+            return lastPos;
+        }
+
+        function getReplaceTrivia(this: JSDocTag) {
+            if (startPos === jsDocBodyStart && isLastJsDoc)
+                return "";
+
+            const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();
+            const indentationText = this.getParentOrThrow().getIndentationText();
+            return `${newLineKind}${indentationText} ` + (isLastJsDoc ? "" : "* ");
+        }
     }
 
     /**
@@ -47,8 +84,7 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
                 tagName: structure.tagName ?? this.getTagName(),
                 text: structure.text != null ? structure.text : getText(this)
             });
-            // a tag's end will go up to the next tag or end of the JS doc
-            const trailingWhiteSpace = this.getText().substring(this.getText().trimRight().length); // todo: not performant
+            const trailingWhiteSpace = this.getSourceFile().getFullText().substring(getNonWhiteSpaceTagEnd(this), this.getEnd());
             return this.replaceWithText(writer.toString() + trailingWhiteSpace);
         }
 
@@ -70,4 +106,16 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
 
 function getText(jsDocTag: JSDocTag) {
     return getTextWithoutStars(jsDocTag.getSourceFile().getFullText().substring(jsDocTag.getTagNameNode().getEnd(), jsDocTag.getEnd()).trim());
+}
+
+function getNonWhiteSpaceTagEnd(jsDocTag: JSDocTag) {
+    // a tag's end will go up to the next tag or end of the JS doc
+    const sourceFileText = jsDocTag.getSourceFile().getFullText();
+    const asteriskCharCode = "*".charCodeAt(0);
+    for (let i = jsDocTag.getEnd(); i >= 0; i--) {
+        const currentCharCode = sourceFileText.charCodeAt(i);
+        if (currentCharCode !== asteriskCharCode && !StringUtils.isWhitespaceCharCode(currentCharCode))
+            return i + 1;
+    }
+    return 0;
 }

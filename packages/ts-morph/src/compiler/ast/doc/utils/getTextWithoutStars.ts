@@ -12,11 +12,12 @@ export function getTextWithoutStars(inputText: string) {
     }).join("\n");
 
     function getStarPosIfFirstNonWhitespaceChar(text: string) {
+        const asteriskCharCode = "*".charCodeAt(0);
         for (let i = 0; i < text.length; i++) {
-            const char = text[i];
-            if (char === "*")
+            const charCode = text.charCodeAt(i);
+            if (charCode === asteriskCharCode)
                 return i;
-            else if (!StringUtils.isWhitespaceChar(char))
+            else if (!StringUtils.isWhitespaceCharCode(charCode))
                 break;
         }
 
