@@ -5501,15 +5501,22 @@ declare const JSDocTagBase: typeof Node;
  */
 export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocTagBase<NodeType> {
     /**
-     * Gets the tag's name as a string.
+     * Gets the tag's name as a string (ex. returns `"param"` for `&#64;param`).
      */
     getTagName(): string;
     /**
-     * Gets the tag name node.
+     * Gets the tag name node (ex. Returns the `param` identifier for `&#64;param`).
      */
     getTagNameNode(): Identifier;
     /**
-     * Gets the tag's comment.
+     * Sets the tag name.
+     * @param tagName - The new name to use.
+     * @returns The current node or new node if the node kind changed.
+     * @remarks This will forget the current node if the JSDocTag kind changes. Use the return value if you're changing the kind.
+     */
+    setTagName(tagName: string): Node<ts.Node>;
+    /**
+     * Gets the tag's comment (ex. `"Some description."` for `&#64;param value Some description.`)
      */
     getComment(): string | undefined;
     /**
@@ -5522,6 +5529,10 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
      * @returns The node or the node that replaced the existing node (ex. when changing from a JSDocParameterTag to something else).
      */
     set(structure: Partial<JSDocTagStructure>): Node<ts.Node>;
+    /**
+     * @inheritdoc
+     */
+    replaceWithText(textOrWriterFunction: string | WriterFunction): Node;
     /**
      * Gets a structure that represents this JS doc tag node.
      */

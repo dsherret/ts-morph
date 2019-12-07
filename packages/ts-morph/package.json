@@ -3,11 +3,11 @@
   "version": "5.0.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/ts-morph.js",
-  "typings": "dist-declarations/ts-morph.d.ts",
+  "typings": "lib/ts-morph.d.ts",
   "scripts": {
     "dopublish": "yarn type-check-docs && yarn package && yarn publish-code-verification && echo \"Run: npm publish --otp\"",
     "build": "rimraf dist && rollup --config && yarn build:declarations",
-    "build:declarations": "rimraf dist-declarations && ts-node --transpile-only scripts/generation/main create-declaration-file",
+    "build:declarations": "ts-node --transpile-only scripts/generation/main create-declaration-file",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha --opts mocha.opts",
     "test:debug": "yarn test --inspect-brk",
     "test:watch": "yarn test --watch-extensions ts --watch",
@@ -60,9 +60,6 @@
       "html"
     ],
     "all": true
-  },
-  "typescript": {
-    "definition": "dist-declarations/ts-morph.d.ts"
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",

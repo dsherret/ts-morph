@@ -27,7 +27,7 @@ export class UnwrapParentHandler implements NodeHandler {
             this.helper.handleForValues(this.straightReplacementNodeHandler, currentChildren.next(), newChildren.next(), newSourceFile);
 
         // the child syntax list's children should map to the newNodes next children
-        const currentChild = this.compilerFactory.getExistingCompilerNode(currentChildren.next())!;
+        const currentChild = this.compilerFactory.getExistingNodeFromCompilerNode(currentChildren.next())!;
         const childSyntaxList = currentChild.getChildSyntaxListOrThrow();
         for (const child of ExtendedParser.getCompilerChildren(childSyntaxList.compilerNode, childSyntaxList._sourceFile.compilerNode))
             this.helper.handleForValues(this.straightReplacementNodeHandler, child, newChildren.next(), newSourceFile);

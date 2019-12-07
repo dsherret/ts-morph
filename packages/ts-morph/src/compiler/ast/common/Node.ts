@@ -551,7 +551,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const children = this._getCompilerChildrenFast();
         for (const child of children) {
             if (this._context.compilerFactory.hasCompilerNode(child))
-                yield this._context.compilerFactory.getExistingCompilerNode(child)!;
+                yield this._context.compilerFactory.getExistingNodeFromCompilerNode(child)!;
             else if (child.kind === SyntaxKind.SyntaxList) {
                 // always return syntax lists because their children could be in the cache
                 yield this._getNodeFromCompilerNode(child);
@@ -1475,7 +1475,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             if (lastTransformation != null && lastTransformation.start > start)
                 transformations.pop();
 
-            const wrappedNode = compilerFactory.getExistingCompilerNode(oldNode);
+            const wrappedNode = compilerFactory.getExistingNodeFromCompilerNode(oldNode);
             transformations.push({
                 start,
                 end,

@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "rootDir": "./src",
-    "outDir": "./dist-declarations",
+    "outDir": "./lib",
     "emitDeclarationOnly": true
   },
   "exclude": [

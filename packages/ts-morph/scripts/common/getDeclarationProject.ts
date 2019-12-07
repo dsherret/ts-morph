@@ -10,7 +10,7 @@ export function getDeclarationProject() {
         },
         addFilesFromTsConfig: false
     });
-    project.addSourceFilesAtPaths(path.join(rootFolder, "dist-declarations/**/*.d.ts"));
+    project.addSourceFilesAtPaths(path.join(rootFolder, "lib/**/*.d.ts"));
     return project;
 }
 

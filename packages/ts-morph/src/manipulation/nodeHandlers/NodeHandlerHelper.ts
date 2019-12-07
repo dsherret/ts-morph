@@ -11,18 +11,18 @@ export class NodeHandlerHelper {
 
     handleForValues(handler: NodeHandler, currentNode: ts.Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         if (this.compilerFactory.hasCompilerNode(currentNode))
-            handler.handleNode(this.compilerFactory.getExistingCompilerNode(currentNode)!, newNode, newSourceFile);
+            handler.handleNode(this.compilerFactory.getExistingNodeFromCompilerNode(currentNode)!, newNode, newSourceFile);
         else if (currentNode.kind === SyntaxKind.SyntaxList) {
             // always handle syntax lists because their children might be in the cache
             // todo: pass this in for performance reasons
-            const sourceFile = this.compilerFactory.getExistingCompilerNode(currentNode.getSourceFile())! as SourceFile;
+            const sourceFile = this.compilerFactory.getExistingNodeFromCompilerNode(currentNode.getSourceFile())! as SourceFile;
             handler.handleNode(this.compilerFactory.getNodeFromCompilerNode(currentNode, sourceFile), newNode, newSourceFile);
         }
     }
 
     forgetNodeIfNecessary(currentNode: ts.Node) {
         if (this.compilerFactory.hasCompilerNode(currentNode))
-            this.compilerFactory.getExistingCompilerNode(currentNode)!.forget();
+            this.compilerFactory.getExistingNodeFromCompilerNode(currentNode)!.forget();
     }
 
     getCompilerChildrenAsIterators(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile): [AdvancedIterator<ts.Node>, AdvancedIterator<ts.Node>] {

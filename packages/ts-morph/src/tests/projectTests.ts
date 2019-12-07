@@ -1245,8 +1245,7 @@ describe(nameof(Project), () => {
     });
 
     describe(nameof<Project>(t => t.forgetNodesCreatedInBlock), () => {
-        describe("synchronous", () => {
-            // todo: this should be moved into an "it" block
+        it("should work for a synchronous block", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             let sourceFile: SourceFile;
             let sourceFileNotNavigated: SourceFile;
@@ -1280,78 +1279,37 @@ describe(nameof(Project), () => {
                 return namespaceNode.addInterface({ name: "Interface6" });
             });
 
-            it("should not have forgotten the source file", () => {
-                expect(sourceFile.wasForgotten()).to.be.false;
+            expect(sourceFile!.wasForgotten()).to.be.false;
+            expect(sourceFileNotNavigated!.wasForgotten()).to.be.false;
+            expect(classNode!.wasForgotten()).to.be.true;
+            expect(namespaceNode!.wasForgotten()).to.be.false;
+            expect(namespaceKeywordNode!.wasForgotten()).to.be.true;
+            expect(interfaceNode1!.wasForgotten()).to.be.false;
+            expect(interfaceNode2!.wasForgotten()).to.be.true;
+            expect(interfaceNode3!.wasForgotten()).to.be.false;
+            expect(interfaceNode4!.wasForgotten()).to.be.false;
+            expect(interfaceNode5!.wasForgotten()).to.be.true;
+            expect(returnedNode.wasForgotten()).to.be.false;
+
+            const newSourceFile = project.createSourceFile("file3.ts", "class MyClass {}");
+            project.forgetNodesCreatedInBlock(() => {
+                const classDec = newSourceFile.getClassOrThrow("MyClass");
+                classDec.remove();
             });
 
-            it("should not have forgotten the not navigated source file", () => {
-                expect(sourceFileNotNavigated.wasForgotten()).to.be.false;
+            const newSourceFile2 = project.createSourceFile("file4.ts");
+            project.forgetNodesCreatedInBlock(remember => {
+                const classDec = newSourceFile2.addClass({ name: "Class" });
+                classDec.forget();
+                expect(() => remember(classDec)).to.throw(errors.InvalidOperationError);
             });
 
-            it("should have forgotten the class", () => {
-                expect(classNode.wasForgotten()).to.be.true;
-            });
-
-            it("should not have forgotten the namespace because one of its children was remembered", () => {
-                expect(namespaceNode.wasForgotten()).to.be.false;
-            });
-
-            it("should have forgotten the namespace keyword", () => {
-                expect(namespaceKeywordNode.wasForgotten()).to.be.true;
-            });
-
-            it("should not have forgotten the first interface because it was remembered", () => {
-                expect(interfaceNode1.wasForgotten()).to.be.false;
-            });
-
-            it("should have forgotten the second interface", () => {
-                expect(interfaceNode2.wasForgotten()).to.be.true;
-            });
-
-            it("should not have forgotten the third interface because it was remembered", () => {
-                expect(interfaceNode3.wasForgotten()).to.be.false;
-            });
-
-            it("should not have forgotten the fourth interface because it was remembered", () => {
-                expect(interfaceNode4.wasForgotten()).to.be.false;
-            });
-
-            it("should have forgotten the created fifth interface because it was not remembered", () => {
-                expect(interfaceNode5.wasForgotten()).to.be.true;
-            });
-
-            it("should not have forgotten the returned node", () => {
-                expect(returnedNode.wasForgotten()).to.be.false;
-            });
-
-            it("should not throw if removing a created node in a block", () => {
-                const newSourceFile = project.createSourceFile("file3.ts", "class MyClass {}");
-                project.forgetNodesCreatedInBlock(remember => {
-                    const classDec = newSourceFile.getClassOrThrow("MyClass");
-                    classDec.remove();
-                });
-            });
-
-            it("should throw if attempting to remember a node that was forgotten", () => {
-                const newSourceFile = project.createSourceFile("file4.ts");
-                project.forgetNodesCreatedInBlock(remember => {
-                    const classDec = newSourceFile.addClass({ name: "Class" });
-                    classDec.forget();
-                    expect(() => remember(classDec)).to.throw(errors.InvalidOperationError);
-                });
-            });
-
-            it("should get exceptions thrown in the body", () => {
-                expect(() => project.forgetNodesCreatedInBlock(() => {
-                    throw new Error("");
-                })).to.throw();
-            });
-
-            it("should get the return value", () => {
-                const result = project.forgetNodesCreatedInBlock(() => 5);
-                assert<IsExact<typeof result, number>>(true);
-                expect(result).to.equal(5);
-            });
+            expect(() => project.forgetNodesCreatedInBlock(() => {
+                throw new Error("");
+            })).to.throw();
+            const result = project.forgetNodesCreatedInBlock(() => 5);
+            assert<IsExact<typeof result, number>>(true);
+            expect(result).to.equal(5);
         });
 
         describe("asynchronous", () => {

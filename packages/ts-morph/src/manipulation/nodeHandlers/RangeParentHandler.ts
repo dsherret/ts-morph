@@ -1,4 +1,4 @@
-import { ts } from "@ts-morph/common";
+import { ts, StringUtils } from "@ts-morph/common";
 import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 import { NodeHandler } from "./NodeHandler";
@@ -48,17 +48,38 @@ export class RangeParentHandler implements NodeHandler {
             this.straightReplace(currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
         // handle the new nodes
-        while (!newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) >= this.start && newNodeChildren.peek.getEnd() <= this.end)
-            newNodeChildren.next();
+        const newNodes: ts.Node[] = [];
+        while (!newNodeChildren.done && newNodeChildren.peek.getStart(newSourceFile) >= this.start
+            && getRealEnd(newNodeChildren.peek, newSourceFile) <= this.end)
+        {
+            newNodes.push(newNodeChildren.next());
+        }
 
         // handle the nodes being replaced
         if (this.replacingLength != null) {
             const replacingEnd = this.start + this.replacingLength;
+            const oldNodes: ts.Node[] = [];
+
             while (
                 !currentNodeChildren.done
-                && (currentNodeChildren.peek.end <= replacingEnd || currentNodeChildren.peek.getStart(currentSourceFile) < replacingEnd)
+                && (getRealEnd(currentNodeChildren.peek, currentSourceFile) <= replacingEnd
+                    || currentNodeChildren.peek.getStart(currentSourceFile) < replacingEnd)
             ) {
-                this.helper.forgetNodeIfNecessary(currentNodeChildren.next());
+                oldNodes.push(currentNodeChildren.next());
+            }
+
+            // if the new node kinds and the old node kinds are the same, then don't forget the existing nodes
+            if (oldNodes.length === newNodes.length && oldNodes.every((node, i) => node.kind === newNodes[i].kind)) {
+                for (let i = 0; i < oldNodes.length; i++) {
+                    const node = this.compilerFactory.getExistingNodeFromCompilerNode(oldNodes[i]);
+                    if (node != null) {
+                        node.forgetDescendants();
+                        this.compilerFactory.replaceCompilerNode(oldNodes[i], newNodes[i]);
+                    }
+                }
+            }
+            else {
+                oldNodes.forEach(node => this.helper.forgetNodeIfNecessary(node));
             }
         }
 
@@ -100,4 +121,17 @@ export class RangeParentHandler implements NodeHandler {
 
         return true;
     }
+}
+
+// this is sadly necessary due to TS issue #35455 where a JSDocTag node's end will not actually be the end
+const asteriskCharCode = "*".charCodeAt(0);
+function getRealEnd(node: ts.Node, sourceFile: ts.SourceFile) {
+    let end = node.end;
+    while (end > 0) {
+        const currentCharCode = sourceFile.text.charCodeAt(end - 1);
+        if (currentCharCode !== asteriskCharCode && !StringUtils.isWhitespaceCharCode(currentCharCode))
+            return end;
+        end--;
+    }
+    return end;
 }

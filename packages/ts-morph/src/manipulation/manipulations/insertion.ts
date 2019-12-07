@@ -25,7 +25,6 @@ export interface InsertIntoParentTextRangeOptions {
 export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions) {
     const { insertPos, newText, parent } = opts;
 
-    // todo: this should only forget the existing node if the kind changes
     doManipulation(parent._sourceFile, new InsertionTextManipulator({
         insertPos,
         newText,

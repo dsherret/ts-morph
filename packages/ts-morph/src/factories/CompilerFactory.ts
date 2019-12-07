@@ -262,7 +262,7 @@ export class CompilerFactory {
      * Gets an existing node from the cache.
      * @param compilerNode - Compiler node.
      */
-    getExistingCompilerNode(compilerNode: ts.Node) {
+    getExistingNodeFromCompilerNode(compilerNode: ts.Node) {
         return this.nodeCache.get(compilerNode);
     }
 

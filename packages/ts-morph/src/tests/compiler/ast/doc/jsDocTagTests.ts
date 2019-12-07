@@ -23,6 +23,22 @@ describe(nameof(JSDocTag), () => {
         });
     });
 
+    describe(nameof<JSDocTag>(d => d.setTagName), () => {
+        it("should set the tag name", () => {
+            const { sourceFile, descendant } = getInfo("/** @param t - String */\nfunction test() {}");
+            descendant.setTagName("other");
+            expect(descendant.wasForgotten()).to.be.true;
+            expect(sourceFile.getFullText()).to.equal("/** @other t - String */\nfunction test() {}");
+        });
+
+        it("should not forget the current node when providing the same tag name", () => {
+            const { sourceFile, descendant } = getInfo("/** @param t - String */\nfunction test() {}");
+            descendant.setTagName("param");
+            expect(descendant.wasForgotten()).to.be.false;
+            expect(sourceFile.getFullText()).to.equal("/** @param t - String */\nfunction test() {}");
+        });
+    });
+
     describe(nameof<JSDocTag>(d => d.getComment), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
@@ -118,6 +134,31 @@ describe(nameof(JSDocTag), () => {
                 "function test() {\n    /**\n     * @param u\n     */\nfunction test() {} }"
             );
         });
+
+        it("should remove the tag comment at the start when not a param comment", () => {
+            doTest(
+                "/**\n * @example - String\n * @example other\n *\n testing\n */\nfunction test() {}",
+                0,
+                "/**\n * @example other\n *\n testing\n */\nfunction test() {}"
+            );
+        });
+
+        it("should remove the tag comment in the middle when not a param comment", () => {
+            // compiler has bugs where it doesn't set the width property (TS issue #35455)
+            doTest(
+                "/**\n * @example - String\n * @example other\n *\n testing\n * @example testing\n */\nfunction test() {}",
+                1,
+                "/**\n * @example - String\n * @example testing\n */\nfunction test() {}"
+            );
+        });
+
+        it("should remove the tag comment at the end when not a param comment", () => {
+            doTest(
+                "/**\n * @example - String\n * @example other\n *\n testing\n */\nfunction test() {}",
+                1,
+                "/**\n * @example - String\n */\nfunction test() {}"
+            );
+        });
     });
 
     describe(nameof<JSDocTag>(d => d.set), () => {
@@ -144,6 +185,30 @@ describe(nameof(JSDocTag), () => {
                 "/** @param - other */\nfunction test() {}",
                 { tagName: "asdf", text: "t - test\nOther." },
                 "/** @asdf t - test\n * Other. */\nfunction test() {}"
+            );
+        });
+
+        it("should set to a different tag name and text when no text exists", () => {
+            doTest(
+                "/** @param */\nfunction test() {}",
+                { tagName: "other", text: "asdf testing" },
+                "/** @other asdf testing */\nfunction test() {}"
+            );
+        });
+
+        it("should set to a different tag name and text", () => {
+            doTest(
+                "/**\n * @param testing this\n */\nfunction test() {}",
+                { tagName: "other", text: "asdf testing" },
+                "/**\n * @other asdf testing\n */\nfunction test() {}"
+            );
+        });
+
+        it("should set to a different tag name and text (reversed)", () => {
+            doTest(
+                "/**\n * @other asdf testing\n */\nfunction test() {}",
+                { tagName: "param", text: "testing this" },
+                "/**\n * @param testing this\n */\nfunction test() {}"
             );
         });
     });

@@ -1,11 +1,13 @@
-import { ts, StringUtils } from "@ts-morph/common";
+import { ts, StringUtils, SyntaxKind } from "@ts-morph/common";
 import { Node } from "../common";
 import { Identifier } from "../name";
 import { JSDocTagStructure, JSDocTagSpecificStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { getTextWithoutStars } from "./utils/getTextWithoutStars";
-import { removeChildren, getEndPosFromIndex } from "../../../manipulation";
+import { removeChildren, insertIntoParentTextRange } from "../../../manipulation";
+import { WriterFunction } from "../../../types";
+import { getTextFromStringOrWriter } from "../../../utils";
 
 export const JSDocTagBase = Node;
 /**
@@ -13,54 +15,54 @@ export const JSDocTagBase = Node;
  */
 export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocTagBase<NodeType> {
     /**
-     * Gets the tag's name as a string.
+     * Gets the tag's name as a string (ex. returns `"param"` for `&#64;param`).
      */
     getTagName() {
         return this.getTagNameNode().getText();
     }
 
     /**
-     * Gets the tag name node.
+     * Gets the tag name node (ex. Returns the `param` identifier for `&#64;param`).
      */
     getTagNameNode(): Identifier {
         return this._getNodeFromCompilerNode(this.compilerNode.tagName);
     }
 
-    /** Gets the tag's comment. */
+    /**
+     * Sets the tag name.
+     * @param tagName - The new name to use.
+     * @returns The current node or new node if the node kind changed.
+     * @remarks This will forget the current node if the JSDocTag kind changes. Use the return value if you're changing the kind.
+     */
+    setTagName(tagName: string) {
+        return this.set({ tagName });
+    }
+
+    /** Gets the tag's comment (ex. `"Some description."` for `&#64;param value Some description.`) */
     getComment() {
         return this.compilerNode.comment;
     }
 
     /** Removes the JS doc comment. */
     remove() {
-        const parent = this.getParentOrThrow();
         const jsDocBodyStart = this.getParentOrThrow().getStart() + 3; // +3 for slash star star
-        const isLastJsDoc = this.getEnd() === parent.getEnd() - 2; // -2 for star slash
-        const startPos = getStartPos.call(this);
+        const nextJsDocTag = getNextJsDocTag(this);
+        const isLastJsDoc = nextJsDocTag == null;
+        const removalStart = getRemovalStart.call(this);
 
         removeChildren({
             children: [this],
-            customRemovalPos: startPos,
+            customRemovalPos: removalStart,
+            customRemovalEnd: getNextTagStartOrDocEnd(this, nextJsDocTag),
             replaceTrivia: getReplaceTrivia.call(this)
         });
 
-        function getStartPos(this: JSDocTag) {
-            const asteriskCharCode = "*".charCodeAt(0);
-            const start = this.getStart();
-            const sourceFileText = this.getSourceFile().getFullText();
-
-            let lastPos = start;
-            for (let i = start - 1; i >= jsDocBodyStart; i--) {
-                const currentCharCode = sourceFileText.charCodeAt(i);
-                if (currentCharCode !== asteriskCharCode && !StringUtils.isWhitespaceCharCode(currentCharCode))
-                    break;
-                lastPos = i;
-            }
-            return lastPos;
+        function getRemovalStart(this: JSDocTag) {
+            return Math.max(jsDocBodyStart, getPreviousNonWhiteSpacePos(this, this.getStart()));
         }
 
         function getReplaceTrivia(this: JSDocTag) {
-            if (startPos === jsDocBodyStart && isLastJsDoc)
+            if (removalStart === jsDocBodyStart && isLastJsDoc)
                 return "";
 
             const newLineKind = this._context.manipulationSettings.getNewLineKindAsString();
@@ -79,16 +81,35 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
 
         if (structure.text != null || structure.tagName != null) {
             // replace everything as changing the tag name or text may change the type
-            const writer = this.getParentOrThrow().getParentOrThrow()._getWriterWithQueuedIndentation();
-            this._context.structurePrinterFactory.forJSDocTag({ printStarsOnNewLine: true }).printText(writer, {
-                tagName: structure.tagName ?? this.getTagName(),
-                text: structure.text != null ? structure.text : getText(this)
+            return this.replaceWithText(writer => {
+                this._context.structurePrinterFactory.forJSDocTag({ printStarsOnNewLine: true }).printText(writer, {
+                    tagName: structure.tagName ?? this.getTagName(),
+                    text: structure.text != null ? structure.text : getText(this)
+                });
             });
-            const trailingWhiteSpace = this.getSourceFile().getFullText().substring(getNonWhiteSpaceTagEnd(this), this.getEnd());
-            return this.replaceWithText(writer.toString() + trailingWhiteSpace);
         }
 
         return this;
+    }
+
+    /** @inheritdoc */
+    replaceWithText(textOrWriterFunction: string | WriterFunction): Node {
+        // this needs to be custom implemented because of TS issue #35455 where JSDoc start and end widths are wrong
+        const newText = getTextFromStringOrWriter(this._getWriterWithQueuedIndentation(), textOrWriterFunction);
+        const parent = this.getParentOrThrow();
+        const childIndex = this.getChildIndex();
+
+        const start = this.getStart();
+        insertIntoParentTextRange({
+            parent,
+            insertPos: start,
+            newText,
+            replacing: {
+                textLength: getTagEnd(this) - start
+            }
+        });
+
+        return parent.getChildren()[childIndex];
     }
 
     /**
@@ -108,14 +129,36 @@ function getText(jsDocTag: JSDocTag) {
     return getTextWithoutStars(jsDocTag.getSourceFile().getFullText().substring(jsDocTag.getTagNameNode().getEnd(), jsDocTag.getEnd()).trim());
 }
 
-function getNonWhiteSpaceTagEnd(jsDocTag: JSDocTag) {
-    // a tag's end will go up to the next tag or end of the JS doc
-    const sourceFileText = jsDocTag.getSourceFile().getFullText();
+function getTagEnd(jsDocTag: JSDocTag) {
+    return getPreviousNonWhiteSpacePos(jsDocTag, getNextTagStartOrDocEnd(jsDocTag));
+}
+
+function getNextTagStartOrDocEnd(jsDocTag: JSDocTag, nextJsDocTag?: JSDocTag) {
+    // JSDocTag#getEnd() is inconsistent (TS issue #35455)
+    nextJsDocTag = nextJsDocTag ?? getNextJsDocTag(jsDocTag);
+
+    return nextJsDocTag != null
+        ? nextJsDocTag.getStart()
+        : jsDocTag.getParentOrThrow().getEnd() - 2; // -2 for star slash
+}
+
+function getNextJsDocTag(jsDocTag: JSDocTag): JSDocTag | undefined {
+    const parent = jsDocTag.getParentIfKindOrThrow(SyntaxKind.JSDocComment);
+    const tags = parent.getTags();
+    const thisIndex = tags.indexOf(jsDocTag);
+    return tags[thisIndex + 1];
+}
+
+function getPreviousNonWhiteSpacePos(jsDocTag: JSDocTag, pos: number) {
     const asteriskCharCode = "*".charCodeAt(0);
-    for (let i = jsDocTag.getEnd(); i >= 0; i--) {
-        const currentCharCode = sourceFileText.charCodeAt(i);
+    const sourceFileText = jsDocTag.getSourceFile().getFullText();
+
+    while (pos > 0) {
+        const currentCharCode = sourceFileText.charCodeAt(pos - 1);
         if (currentCharCode !== asteriskCharCode && !StringUtils.isWhitespaceCharCode(currentCharCode))
-            return i + 1;
+            break;
+        pos--;
     }
-    return 0;
+
+    return pos;
 }

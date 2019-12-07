@@ -12,7 +12,6 @@
     "./lib",
     "./docs",
     "./dist-scripts",
-    "./dist-declarations",
     "./dist",
     "node_modules"
   ]
