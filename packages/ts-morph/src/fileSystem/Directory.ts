@@ -1,5 +1,5 @@
 import { SourceFile, SourceFileCopyOptions, SourceFileMoveOptions } from "../compiler";
-import { errors, ObjectUtils, FileUtils, ModuleResolutionKind, StandardizedFilePath } from "@ts-morph/common";
+import { errors, ObjectUtils, FileUtils, ModuleResolutionKind, StandardizedFilePath, matchGlobs } from "@ts-morph/common";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure, OptionalKind } from "../structures";
@@ -206,8 +206,41 @@ export class Directory {
     /**
      * Gets the source files within this directory.
      */
-    getSourceFiles() {
-        return Array.from(this._getSourceFilesIterator());
+    getSourceFiles(): SourceFile[];
+    /**
+     * Gets all the source files added to the project relative to the directory that match a pattern.
+     * @param globPattern - Glob pattern for filtering out the source files.
+     */
+    getSourceFiles(globPattern: string): SourceFile[];
+    /**
+     * Gets all the source files added to the project relative to the directory that match the provided patterns.
+     * @param globPatterns - Glob patterns for filtering out the source files.
+     */
+    getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
+    getSourceFiles(globPatterns?: string | ReadonlyArray<string>): SourceFile[] {
+        const { compilerFactory, fileSystemWrapper } = this._context;
+        const dir = this;
+
+        if (typeof globPatterns === "string" || globPatterns instanceof Array) {
+            const finalGlobPatterns = typeof globPatterns === "string" ? [globPatterns] : globPatterns;
+            return Array.from(getFilteredSourceFiles(finalGlobPatterns));
+        }
+        else {
+            return Array.from(this._getSourceFilesIterator());
+        }
+
+        function* getFilteredSourceFiles(globPatterns: string[]) {
+            const sourceFilePaths = Array.from(getSourceFilePaths());
+            const matchedPaths = matchGlobs(sourceFilePaths, globPatterns!, dir.getPath());
+
+            for (const matchedPath of matchedPaths)
+                yield compilerFactory.getSourceFileFromCacheFromFilePath(fileSystemWrapper.getStandardizedAbsolutePath(matchedPath))!;
+
+            function* getSourceFilePaths() {
+                for (const sourceFile of dir._getDescendantSourceFilesIterator())
+                    yield sourceFile.getFilePath();
+            }
+        }
     }
 
     /** @internal */

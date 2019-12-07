@@ -52,6 +52,40 @@ describe(nameof(Directory), () => {
             project._context.inProjectCoordinator.setSourceFileNotInProject(file);
             expect(dir.getSourceFiles().map(f => f.getFilePath())).to.deep.equal(["/dir/file.ts"]);
         });
+
+        it("should get sources files based on a file glob", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir");
+            const file = dir.createSourceFile("file.ts");
+            project._context.inProjectCoordinator.setSourceFileNotInProject(file);
+            dir.createSourceFile("file2.ts");
+            dir.createSourceFile("subDir/file3.ts");
+            dir.createSourceFile("subDir/file.js");
+            project.createSourceFile("file.ts");
+
+            expect(dir.getSourceFiles("**/*.ts").map(f => f.getFilePath())).to.deep.equal([
+                "/dir/file.ts",
+                "/dir/file2.ts",
+                "/dir/subDir/file3.ts"
+            ]);
+        });
+
+        it("should get sources files based on file globs", () => {
+            const project = getProject();
+            const dir = project.createDirectory("dir");
+            dir.createSourceFile("file.ts");
+            dir.createSourceFile("file2.ts");
+            dir.createSourceFile("subDir/file3.ts");
+            dir.createSourceFile("subDir/file.js");
+            dir.createSourceFile("subDir2/file.ts");
+            dir.createSourceFile("subDir2/file.js");
+            project.createSourceFile("file.ts");
+
+            expect(dir.getSourceFiles(["subDir/*.ts", "subDir2/*.js"]).map(f => f.getFilePath())).to.deep.equal([
+                "/dir/subDir/file3.ts",
+                "/dir/subDir2/file.js"
+            ]);
+        });
     });
 
     describe("ancestor/descendant tests", () => {

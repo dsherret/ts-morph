@@ -355,6 +355,16 @@ export declare class Directory {
      */
     getSourceFiles(): SourceFile[];
     /**
+     * Gets all the source files added to the project relative to the directory that match a pattern.
+     * @param globPattern - Glob pattern for filtering out the source files.
+     */
+    getSourceFiles(globPattern: string): SourceFile[];
+    /**
+     * Gets all the source files added to the project relative to the directory that match the provided patterns.
+     * @param globPatterns - Glob patterns for filtering out the source files.
+     */
+    getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
+    /**
      * Gets the source files in the current directory and all the descendant directories.
      */
     getDescendantSourceFiles(): SourceFile[];
@@ -805,7 +815,6 @@ export declare class Project {
     getSourceFile(searchFunction: (file: SourceFile) => boolean): SourceFile | undefined;
     /**
      * Gets all the source files added to the project.
-     * @param globPattern - Glob pattern for filtering out the source files.
      */
     getSourceFiles(): SourceFile[];
     /**

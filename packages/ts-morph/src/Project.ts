@@ -456,7 +456,6 @@ export class Project {
 
     /**
      * Gets all the source files added to the project.
-     * @param globPattern - Glob pattern for filtering out the source files.
      */
     getSourceFiles(): SourceFile[];
     /**
