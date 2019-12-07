@@ -1,6 +1,8 @@
 import { ts, StringUtils } from "@ts-morph/common";
 import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
+import { CharCodes } from "../../utils";
+import { getPreviousMatchingPos } from "../textSeek";
 import { NodeHandler } from "./NodeHandler";
 import { NodeHandlerHelper } from "./NodeHandlerHelper";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
@@ -124,14 +126,10 @@ export class RangeParentHandler implements NodeHandler {
 }
 
 // this is sadly necessary due to TS issue #35455 where a JSDocTag node's end will not actually be the end
-const asteriskCharCode = "*".charCodeAt(0);
 function getRealEnd(node: ts.Node, sourceFile: ts.SourceFile) {
-    let end = node.end;
-    while (end > 0) {
-        const currentCharCode = sourceFile.text.charCodeAt(end - 1);
-        if (currentCharCode !== asteriskCharCode && !StringUtils.isWhitespaceCharCode(currentCharCode))
-            return end;
-        end--;
-    }
-    return end;
+    return getPreviousMatchingPos(
+        sourceFile.text,
+        node.end,
+        charCode => charCode !== CharCodes.ASTERISK && !StringUtils.isWhitespaceCharCode(charCode)
+    );
 }

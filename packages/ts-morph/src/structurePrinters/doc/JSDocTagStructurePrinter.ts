@@ -10,7 +10,7 @@ export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagS
         super(factory);
     }
 
-    printTags(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<JSDocTagStructure> | string | WriterFunction> | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<OptionalKind<JSDocTagStructure> | string | WriterFunction> | undefined) {
         if (structures == null)
             return;
 

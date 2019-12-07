@@ -2,7 +2,7 @@ import { StringUtils, ts, errors } from "@ts-morph/common";
 import { removeChildren, replaceTextPossiblyCreatingChildNodes } from "../../../manipulation";
 import { getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { WriterFunction } from "../../../types";
-import { getTextFromStringOrWriter } from "../../../utils";
+import { getTextFromStringOrWriter, CharCodes } from "../../../utils";
 import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
 import { JSDocStructure, JSDocSpecificStructure, StructureKind } from "../../../structures";
@@ -59,7 +59,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
         const tags = this.getTags();
         const startEditPos = this.getStart() + 3;
         const endEditPos = tags.length > 0
-            ? getPreviousMatchingPos(this._sourceFile.getFullText(), tags[0].getStart(), c => c === "*") - 1
+            ? getPreviousMatchingPos(this._sourceFile.getFullText(), tags[0].getStart(), c => c === CharCodes.ASTERISK) - 1
             : this.getEnd() - 2;
 
         replaceTextPossiblyCreatingChildNodes({

@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, Scope } from "../../../../compiler";
 import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
+
 describe(nameof(ParameterDeclaration), () => {
     describe(nameof<ParameterDeclaration>(d => d.isRestParameter), () => {
         function doTest(startCode: string, isRestParameter: boolean) {

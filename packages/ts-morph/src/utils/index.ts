@@ -1,4 +1,5 @@
 export * from "./AdvancedIterator";
+export * from "./CharCodes";
 export * from "./compiler";
 export * from "./fillDefaultEditorSettings";
 export * from "./fillDefaultFormatCodeSettings";

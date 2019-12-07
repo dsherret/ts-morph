@@ -7,7 +7,7 @@ import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulatio
 import { ProjectContext } from "../../../ProjectContext";
 import { SourceFileSpecificStructure, SourceFileStructure, StructureKind } from "../../../structures";
 import { Constructor } from "../../../types";
-import { ModuleUtils, SourceFileReferenceContainer, SourceFileReferencingNodes } from "../../../utils";
+import { ModuleUtils, SourceFileReferenceContainer, SourceFileReferencingNodes, CharCodes } from "../../../utils";
 import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, TextChange, UserPreferences } from "../../tools";
 import { ModuledNode, TextInsertableNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -706,8 +706,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const positionRange = typeof positionRangeOrPos === "number" ? [positionRangeOrPos, positionRangeOrPos] as [number, number] : positionRangeOrPos;
         errors.throwIfRangeOutOfRange(positionRange, [0, sourceFileText.length], nameof(positionRange));
 
-        const startLinePos = getPreviousMatchingPos(sourceFileText, positionRange[0], char => char === "\n");
-        const endLinePos = getNextMatchingPos(sourceFileText, positionRange[1], char => char === "\r" || char === "\n");
+        const startLinePos = getPreviousMatchingPos(sourceFileText, positionRange[0], char => char === CharCodes.NEWLINE);
+        const endLinePos = getNextMatchingPos(sourceFileText, positionRange[1], char => char === CharCodes.CARRIAGE_RETURN || char === CharCodes.NEWLINE);
 
         const correctedText = StringUtils.indent(sourceFileText.substring(startLinePos, endLinePos), times, {
             indentText: this._context.manipulationSettings.getIndentationText(),

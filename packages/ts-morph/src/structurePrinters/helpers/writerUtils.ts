@@ -1,10 +1,10 @@
 import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { CharCodes } from "../../utils";
 
 export function isLastNonWhitespaceCharCloseBrace(writer: CodeBlockWriter) {
-    const closeBraceCharCode = "}".charCodeAt(0);
     return writer.iterateLastCharCodes(charCode => {
-        if (charCode === closeBraceCharCode)
+        if (charCode === CharCodes.CLOSE_BRACE)
             return true;
         else if (StringUtils.isWhitespaceCharCode(charCode))
             return undefined;

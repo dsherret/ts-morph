@@ -5,7 +5,7 @@ import * as compiler from "../../../compiler";
 import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePos, getPreviousMatchingPos, getTextFromTextChanges, insertIntoParentTextRange,
     replaceSourceFileTextForFormatting, replaceSourceFileTextStraight, hasNewLineInRange } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
-import { getParentSyntaxList, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions } from "../../../utils";
+import { getParentSyntaxList, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, CharCodes } from "../../../utils";
 import { Structure } from "../../../structures";
 import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
@@ -1008,7 +1008,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const trailingComments = this.getTrailingCommentRanges();
         const searchStart = getSearchStart();
 
-        return getNextMatchingPos(this._sourceFile.getFullText(), searchStart, char => char !== " " && char !== "\t");
+        return getNextMatchingPos(this._sourceFile.getFullText(), searchStart, char => char !== CharCodes.SPACE && char !== CharCodes.TAB);
 
         function getSearchStart() {
             return trailingComments.length > 0 ? trailingComments[trailingComments.length - 1].getEnd() : end;
@@ -1298,7 +1298,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getStartLinePos(includeJsDocComments?: boolean) {
         const sourceFileText = this._sourceFile.getFullText();
-        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComments), char => char === "\n" || char === "\r");
+        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComments), char => char === CharCodes.NEWLINE || char === CharCodes.CARRIAGE_RETURN);
     }
 
     /**
@@ -1314,7 +1314,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getEndLineNumber() {
         const sourceFileText = this._sourceFile.getFullText();
-        const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === "\n" || char === "\r");
+        const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === CharCodes.NEWLINE || char === CharCodes.CARRIAGE_RETURN);
         return StringUtils.getLineNumberAtPos(this._sourceFile.getFullText(), endLinePos);
     }
 

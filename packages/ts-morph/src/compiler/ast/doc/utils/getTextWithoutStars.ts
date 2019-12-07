@@ -1,4 +1,5 @@
 import { StringUtils } from "@ts-morph/common";
+import { CharCodes } from "../../../../utils";
 
 export function getTextWithoutStars(inputText: string) {
     const innerTextWithStars = inputText.replace(/^\/\*\*[^\S\n]*\n?/, "").replace(/(\r?\n)?[^\S\n]*\*\/$/, "");
@@ -12,10 +13,9 @@ export function getTextWithoutStars(inputText: string) {
     }).join("\n");
 
     function getStarPosIfFirstNonWhitespaceChar(text: string) {
-        const asteriskCharCode = "*".charCodeAt(0);
         for (let i = 0; i < text.length; i++) {
             const charCode = text.charCodeAt(i);
-            if (charCode === asteriskCharCode)
+            if (charCode === CharCodes.ASTERISK)
                 return i;
             else if (!StringUtils.isWhitespaceCharCode(charCode))
                 break;

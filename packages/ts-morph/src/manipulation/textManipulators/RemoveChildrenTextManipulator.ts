@@ -2,6 +2,7 @@ import { Node } from "../../compiler";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../textSeek";
 import { getTextForError } from "./getTextForError";
 import { TextManipulator } from "./TextManipulator";
+import { CharCodes } from "../../utils";
 
 export interface RemoveChildrenTextManipulatorOptions {
     children: Node[];
@@ -64,8 +65,8 @@ export class RemoveChildrenTextManipulator implements TextManipulator {
         }
 
         function getCharRemovalFunction(removeSpaces: boolean, removeNewLines: boolean) {
-            return (char: string) => {
-                if (removeNewLines && (char === "\r" || char === "\n"))
+            return (char: number) => {
+                if (removeNewLines && (char === CharCodes.CARRIAGE_RETURN || char === CharCodes.NEWLINE))
                     return false;
                 if (removeSpaces && !charNotSpaceOrTab(char))
                     return false;
@@ -73,8 +74,8 @@ export class RemoveChildrenTextManipulator implements TextManipulator {
             };
         }
 
-        function charNotSpaceOrTab(char: string) {
-            return char !== " " && char !== "\t";
+        function charNotSpaceOrTab(charCode: number) {
+            return charCode !== CharCodes.SPACE && charCode !== CharCodes.TAB;
         }
     }
 

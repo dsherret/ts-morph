@@ -1,8 +1,8 @@
 // todo: tests
-export function getPreviousMatchingPos(text: string, pos: number, condition: (char: string) => boolean) {
+export function getPreviousMatchingPos(text: string, pos: number, condition: (charCode: number) => boolean) {
     while (pos > 0) {
-        const char = text[pos - 1];
-        if (!condition(char))
+        const charCode = text.charCodeAt(pos - 1);
+        if (!condition(charCode))
             pos--;
         else
             break;

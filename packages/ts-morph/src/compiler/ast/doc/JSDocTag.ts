@@ -5,9 +5,9 @@ import { JSDocTagStructure, JSDocTagSpecificStructure, StructureKind } from "../
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { getTextWithoutStars } from "./utils/getTextWithoutStars";
-import { removeChildren, insertIntoParentTextRange } from "../../../manipulation";
+import { removeChildren, insertIntoParentTextRange, getPreviousMatchingPos } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
-import { getTextFromStringOrWriter } from "../../../utils";
+import { getTextFromStringOrWriter, CharCodes } from "../../../utils";
 
 export const JSDocTagBase = Node;
 /**
@@ -150,15 +150,7 @@ function getNextJsDocTag(jsDocTag: JSDocTag): JSDocTag | undefined {
 }
 
 function getPreviousNonWhiteSpacePos(jsDocTag: JSDocTag, pos: number) {
-    const asteriskCharCode = "*".charCodeAt(0);
     const sourceFileText = jsDocTag.getSourceFile().getFullText();
 
-    while (pos > 0) {
-        const currentCharCode = sourceFileText.charCodeAt(pos - 1);
-        if (currentCharCode !== asteriskCharCode && !StringUtils.isWhitespaceCharCode(currentCharCode))
-            break;
-        pos--;
-    }
-
-    return pos;
+    return getPreviousMatchingPos(sourceFileText, pos, charCode => charCode !== CharCodes.ASTERISK && !StringUtils.isWhitespaceCharCode(charCode));
 }
