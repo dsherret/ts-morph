@@ -15,8 +15,10 @@ export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagS
             return;
 
         for (let i = 0; i < structures.length; i++) {
-            if (i > 0)
+            if (i > 0) {
                 writer.newLine();
+                writer.conditionalWrite(this.options.printStarsOnNewLine, " * ");
+            }
 
             this.printText(writer, structures[i]);
         }

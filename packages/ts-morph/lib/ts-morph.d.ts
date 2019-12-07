@@ -5388,6 +5388,28 @@ export declare class JSDoc extends JSDocBase<ts.JSDoc> {
      */
     setDescription(textOrWriterFunction: string | WriterFunction): this;
     /**
+     * Adds a JS doc tag.
+     * @param structure - Tag structure to add.
+     */
+    addTag(structure: OptionalKind<JSDocTagStructure>): JSDocTag<ts.JSDocTag>;
+    /**
+     * Adds JS doc tags.
+     * @param structures - Tag structures to add.
+     */
+    addTags(structures: OptionalKind<JSDocTagStructure>[]): JSDocTag<ts.JSDocTag>[];
+    /**
+     * Inserts a JS doc tag at the specified index.
+     * @param index - Index to insert at.
+     * @param structure - Tag structure to insert.
+     */
+    insertTag(index: number, structure: OptionalKind<JSDocTagStructure>): JSDocTag<ts.JSDocTag>;
+    /**
+     * Inserts JS doc tags at the specified index.
+     * @param index - Index to insert at.
+     * @param structures - Tag structures to insert.
+     */
+    insertTags(index: number, structures: OptionalKind<JSDocTagStructure>[]): JSDocTag<ts.JSDocTag>[];
+    /**
      * Removes this JSDoc.
      */
     remove(): void;

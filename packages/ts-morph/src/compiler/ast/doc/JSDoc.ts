@@ -1,11 +1,11 @@
-import { StringUtils, ts, errors } from "@ts-morph/common";
-import { removeChildren, replaceTextPossiblyCreatingChildNodes } from "../../../manipulation";
+import { StringUtils, ts, errors, ArrayUtils } from "@ts-morph/common";
+import { removeChildren, replaceTextPossiblyCreatingChildNodes, verifyAndGetIndex, insertIntoParentTextRange, getNodesToReturn } from "../../../manipulation";
 import { getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { WriterFunction } from "../../../types";
 import { getTextFromStringOrWriter, CharCodes } from "../../../utils";
 import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
-import { JSDocStructure, JSDocSpecificStructure, StructureKind } from "../../../structures";
+import { JSDocStructure, JSDocSpecificStructure, StructureKind, JSDocTagStructure, OptionalKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { getTextWithoutStars } from "./utils/getTextWithoutStars";
@@ -83,6 +83,89 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
 
             // add the final spacing
             return isSingleLine ? " " + linesText + " " : newLineKind + linesText + newLineKind + indentationText + " ";
+        }
+    }
+
+    /**
+     * Adds a JS doc tag.
+     * @param structure - Tag structure to add.
+     */
+    addTag(structure: OptionalKind<JSDocTagStructure>) {
+        return this.addTags([structure])[0];
+    }
+
+    /**
+     * Adds JS doc tags.
+     * @param structures - Tag structures to add.
+     */
+    addTags(structures: OptionalKind<JSDocTagStructure>[]) {
+        return this.insertTags(this.compilerNode.tags?.length ?? 0, structures);
+    }
+
+    /**
+     * Inserts a JS doc tag at the specified index.
+     * @param index - Index to insert at.
+     * @param structure - Tag structure to insert.
+     */
+    insertTag(index: number, structure: OptionalKind<JSDocTagStructure>) {
+        return this.insertTags(index, [structure])[0];
+    }
+
+    /**
+     * Inserts JS doc tags at the specified index.
+     * @param index - Index to insert at.
+     * @param structures - Tag structures to insert.
+     */
+    insertTags(index: number, structures: OptionalKind<JSDocTagStructure>[]) {
+        if (ArrayUtils.isNullOrEmpty(structures))
+            return [];
+
+        const writer = this._getWriterWithQueuedIndentation();
+        const tags = this.getTags();
+        index = verifyAndGetIndex(index, tags.length);
+
+        if (tags.length === 0 && !this.isMultiLine()) {
+            const structurePrinter = this._context.structurePrinterFactory.forJSDoc();
+            this.replaceWithText(writer => {
+                structurePrinter.printText(writer, {
+                    description: this.getDescription(),
+                    tags: structures
+                });
+            });
+        }
+        else {
+            const structurePrinter = this._context.structurePrinterFactory.forJSDocTag({ printStarsOnNewLine: true });
+
+            writer.newLine().write(" * ");
+            structurePrinter.printTexts(writer, structures);
+            writer.newLine().write(" *");
+            writer.conditionalWrite(index < tags.length, " ");
+
+            const replaceStart = getReplaceStart.call(this);
+            const replaceEnd = getReplaceEnd.call(this);
+            insertIntoParentTextRange({
+                parent: this,
+                insertPos: replaceStart,
+                replacing: { textLength: replaceEnd - replaceStart },
+                newText: writer.toString()
+            });
+        }
+
+        return getNodesToReturn(tags, this.getTags(), index, false);
+
+        function getReplaceStart(this: JSDoc) {
+            const searchStart = index < tags.length ? tags[index].getStart() : this.getEnd() - 2; // -2 for star slash
+            return getPreviousMatchingPos(
+                this.getSourceFile().getFullText(),
+                searchStart,
+                charCode => !StringUtils.isWhitespaceCharCode(charCode) && charCode !== CharCodes.ASTERISK
+            );
+        }
+
+        function getReplaceEnd(this: JSDoc) {
+            if (index < tags.length)
+                return tags[index].getStart();
+            return this.getEnd() - 1; // -1 is for slash
         }
     }
 

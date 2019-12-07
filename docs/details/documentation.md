@@ -33,25 +33,32 @@ For example:
 ```ts
 // adds /** Some description... */
 const docNode = classDeclaration.addJsDoc({
-    description: "Some description..."
+    text: "Some description..."
 });
 
 // or to force it to be multi-line, add a newline to the front of the string
 classDeclaration.addJsDoc({
-    description: "\nSome description..."
+    text: "\nSome description..."
+});
+
+// or with tags
+classDeclaration.addJsDoc({
+    text: "Some description...",
+    tags: [{
+        tagName: "param",
+        text: "value - My value."
+    }]
 });
 ```
 
-Right now you can only add a description, but in the future support will be added for easily manipulating more JS doc syntax.
-
 ### JSDoc Nodes
 
-Get the comment:
+Get the description:
 
 ```ts
-// getting the node from the original example above
+// Getting the node from the example at the top of this file.
 const jsDoc = functionDeclaration.getJsDocs()[0];
-jsDoc.getComment(); // returns string: "Gets the name."
+jsDoc.getDescription(); // returns string: "Gets the name."
 ```
 
 Get the tags:

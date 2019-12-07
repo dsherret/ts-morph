@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
-import { JSDocStructure, StructureKind } from "../../../../structures";
+import { JSDocStructure, StructureKind, JSDocTagStructure, OptionalKind } from "../../../../structures";
 import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(JSDoc), () => {
@@ -126,6 +126,134 @@ describe(nameof(JSDoc), () => {
         it("should return the tags when they exist", () => {
             const text = "/**\n * Description\n * @param test - Test\n * @returns A value\n */function identifier() {}";
             doTest(text, ["@param test - Test\n * ", "@returns "]);
+        });
+    });
+
+    describe(nameof<JSDoc>(d => d.insertTags), () => {
+        function doTest(text: string, index: number, structures: OptionalKind<JSDocTagStructure>[], expectedText: string) {
+            const { sourceFile } = getInfoFromText(text);
+            const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
+            const result = jsDoc.insertTags(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should insert when there are none", () => {
+            doTest(
+                "/**\n * Description\n */\nfunction test() {}",
+                0,
+                [{ tagName: "name" }],
+                "/**\n * Description\n * @name\n */\nfunction test() {}"
+            );
+        });
+
+        it("should change to multi-line when inserting and non exist", () => {
+            doTest(
+                "/** Description */\nfunction test() {}",
+                0,
+                [{ tagName: "name" }],
+                "/**\n * Description\n * @name\n */\nfunction test() {}"
+            );
+        });
+
+        it("should not modify description when inserting and the doc starts on the first line and spans multiple lines", () => {
+            doTest(
+                "/** Description\n * Other. */\nfunction test() {}",
+                0,
+                [{ tagName: "name" }],
+                "/** Description\n * Other.\n * @name\n */\nfunction test() {}"
+            );
+        });
+
+        it("should insert at the start", () => {
+            doTest(
+                "/**\n * Description\n * @name\n */\nfunction test() {}",
+                0,
+                [{ tagName: "other" }],
+                "/**\n * Description\n * @other\n * @name\n */\nfunction test() {}"
+            );
+        });
+
+        it("should insert in the middle", () => {
+            doTest(
+                "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}",
+                1,
+                [{ tagName: "middle", text: "some description" }],
+                "/**\n * Description\n * @name\n * @middle some description\n * @other\n */\nfunction test() {}"
+            );
+        });
+
+        it("should insert at the end", () => {
+            doTest(
+                "/**\n * Description\n * @name\n */\nfunction test() {}",
+                1,
+                [{ tagName: "other" }],
+                "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}"
+            );
+        });
+
+        it("should insert multiple", () => {
+            doTest(
+                "/**\n * Description\n * @other\n */\nfunction test() {}",
+                0,
+                [{ tagName: "name" }, { tagName: "test", text: "some text" }],
+                "/**\n * Description\n * @name\n * @test some text\n * @other\n */\nfunction test() {}"
+            );
+        });
+    });
+
+    describe(nameof<JSDoc>(d => d.insertTag), () => {
+        function doTest(text: string, index: number, structure: OptionalKind<JSDocTagStructure>, expectedText: string) {
+            const { sourceFile } = getInfoFromText(text);
+            const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
+            const result = jsDoc.insertTag(index, structure);
+            expect(result.getKindName()).to.equal("JSDocTag");
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should insert", () => {
+            doTest(
+                "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}",
+                1,
+                { tagName: "middle", text: "some description" },
+                "/**\n * Description\n * @name\n * @middle some description\n * @other\n */\nfunction test() {}"
+            );
+        });
+    });
+
+    describe(nameof<JSDoc>(d => d.addTags), () => {
+        function doTest(text: string, structures: OptionalKind<JSDocTagStructure>[], expectedText: string) {
+            const { sourceFile } = getInfoFromText(text);
+            const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
+            const result = jsDoc.addTags(structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should add multiple", () => {
+            doTest(
+                "/**\n * Description\n * @name\n */\nfunction test() {}",
+                [{ tagName: "test", text: "some text" }, { tagName: "other" }],
+                "/**\n * Description\n * @name\n * @test some text\n * @other\n */\nfunction test() {}"
+            );
+        });
+    });
+
+    describe(nameof<JSDoc>(d => d.addTag), () => {
+        function doTest(text: string, structure: OptionalKind<JSDocTagStructure>, expectedText: string) {
+            const { sourceFile } = getInfoFromText(text);
+            const jsDoc = sourceFile.getFunctions()[0].getJsDocs()[0];
+            const result = jsDoc.addTag(structure);
+            expect(result.getKindName()).to.equal("JSDocTag");
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should add at the end", () => {
+            doTest(
+                "/**\n * Description\n * @name\n */\nfunction test() {}",
+                { tagName: "other" },
+                "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}"
+            );
         });
     });
 

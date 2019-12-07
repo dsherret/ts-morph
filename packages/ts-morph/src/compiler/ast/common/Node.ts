@@ -1298,7 +1298,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getStartLinePos(includeJsDocComments?: boolean) {
         const sourceFileText = this._sourceFile.getFullText();
-        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComments), char => char === CharCodes.NEWLINE || char === CharCodes.CARRIAGE_RETURN);
+        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComments),
+            char => char === CharCodes.NEWLINE || char === CharCodes.CARRIAGE_RETURN);
     }
 
     /**
