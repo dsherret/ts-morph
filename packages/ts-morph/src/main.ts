@@ -28,7 +28,5 @@ export { WriterFunctions };
 export { WriterFunctionOrValue } from "./structurePrinters/Writers";
 
 import { Node } from "./compiler";
-/**
- * @deprecated Use static methods on `Node`.
- */
+/** @deprecated Use static methods on `Node`. */
 export const TypeGuards = Node;

@@ -168,11 +168,6 @@ export class Project {
         return Array.from(sourceFiles.values());
     }
 
-    /** @deprecated Use `addDirectoryAtPathIfExists` */
-    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
-        return this.addDirectoryAtPathIfExists(dirPath, options);
-    }
-
     /**
      * Adds an existing directory from the path or returns undefined if it doesn't exist.
      *
@@ -186,11 +181,6 @@ export class Project {
             this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath),
             { ...options, markInProject: true }
         );
-    }
-
-    /** @deprecated Use `addDirectoryAtPath`. */
-    addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}): Directory {
-        return this.addDirectoryAtPath(dirPath, options);
     }
 
     /**
@@ -271,26 +261,12 @@ export class Project {
     }
 
     /**
-     * @deprecated Use `addSourceFilesAtPaths`.
-     */
-    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
-        return this.addSourceFilesAtPaths(fileGlobs);
-    }
-
-    /**
      * Adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
     addSourceFilesAtPaths(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
         return this._context.directoryCoordinator.addSourceFilesAtPaths(fileGlobs, { markInProject: true });
-    }
-
-    /**
-     * @deprecated Use `addSourceFileAtPathIfExists`.
-     */
-    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
-        return this.addSourceFileAtPathIfExists(filePath);
     }
 
     /**
@@ -303,13 +279,6 @@ export class Project {
     addSourceFileAtPathIfExists(filePath: string): SourceFile | undefined {
         return this._context.directoryCoordinator.addSourceFileAtPathIfExists(this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath),
             { markInProject: true });
-    }
-
-    /**
-     * @deprecated Use `addSourceFileAtPath`.
-     */
-    addExistingSourceFile(filePath: string): SourceFile {
-        return this.addSourceFileAtPath(filePath);
     }
 
     /**
