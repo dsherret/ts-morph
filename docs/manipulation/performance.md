@@ -29,7 +29,7 @@ Example:
 ```ts
 // this code will get a structure from declarations.ts, make all the descendants not be exported,
 // then create a new file called private.ts from that structure
-import { StructureTypeGuards, forEachStructureChild, SourceFileStructure, StructureKind,
+import { Structures, forEachStructureChild, SourceFileStructure, StructureKind,
     Structures } from "ts-morph";
 
 const project = new Project({ tsConfigFilePath: "tsconfig.json" });
@@ -43,7 +43,7 @@ project.createSourceFile("private.ts", classesFileStructure);
 function removeExports(structure: Structures) {
     forEachStructureChild(structure, removeExports);
 
-    if (StructureTypeGuards.isExportable(structure))
+    if (Structure.isExportable(structure))
         structure.isExported = false;
 }
 ```

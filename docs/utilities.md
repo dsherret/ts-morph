@@ -21,14 +21,14 @@ result.errors;  // diagnostics
 
 ### Type Guards
 
-There is a collection of type guard functions that are useful for finding out the type of a Node:
+There is a collection of type guard functions that are useful for finding out the type of a node:
 
 ```ts
-import { TypeGuards } from "ts-morph";
+import { Node } from "ts-morph";
 
 // ... some code here that gets a node ...
 
-if (TypeGuards.isClassDeclaration(node)) {
+if (Node.isClassDeclaration(node)) {
     // node is of type ClassDeclaration in here
 }
 ```

@@ -1,6 +1,6 @@
 {
   "name": "ts-morph",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/ts-morph.js",
   "typings": "lib/ts-morph.d.ts",

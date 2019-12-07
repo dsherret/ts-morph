@@ -63,18 +63,18 @@ sourceFile.addClass({ name: "NewClass", ...classDeclaration.getStructure() });
 
 ### Traversing structures
 
-#### `StructureTypeGuards`
+#### `Structure` type guards
 
-Similar to `TypeGuards`, there is also a `StructureTypeGuards` export that you can use to check certain information about a structure.
+Similar to static methods found on `Node`, there is also a `Structure` export that you can use to check certain information about a structure.
 
 For example:
 
 ```ts setup: const structure: Structures;
-import { StructureTypeGuards } from "ts-morph";
+import { Structure } from "ts-morph";
 
 // ...etc...
 
-if (StructureTypeGuards.isExportable(structure))
+if (Structure.isExportable(structure))
     structure.isExported = false;
 ```
 
@@ -85,7 +85,7 @@ Similar to the compiler API's `forEachChild`, there is a `forEachStructureChild`
 For example:
 
 ```ts
-import { StructureTypeGuards, forEachStructureChild, SourceFileStructure } from "ts-morph";
+import { Structure, forEachStructureChild, SourceFileStructure } from "ts-morph";
 
 const structure: SourceFileStructure = {
     kind: StructureKind.SourceFile,
@@ -97,7 +97,7 @@ const structure: SourceFileStructure = {
 };
 
 forEachStructureChild(structure, child => {
-    if (StructureTypeGuards.hasName(child))
+    if (Structure.hasName(child))
         console.log(child.name);
 });
 ```
@@ -114,5 +114,5 @@ Note that unlike ts-morph's `forEachChild`, this function acts like the `forEach
 
 ```ts setup: const structure: SourceFileStructure;
 const firstClassDecStructure = forEachStructureChild(structure,
-    child => StructureTypeGuards.isClass(child) ? child : undefined);
+    child => Structure.isClass(child) ? child : undefined);
 ```

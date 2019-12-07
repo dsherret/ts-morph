@@ -47,7 +47,7 @@ If you want the old behaviour, you can specify to skip loading them by providing
 import { Project, FileSystemHost } from "ts-morph";
 
 const project = new Project({
-    inMemoryFileSystem: true,
+    useInMemoryFileSystem: true,
     skipLoadingLibFiles: true
 });
 

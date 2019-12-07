@@ -2,6 +2,70 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.0.0"></a>
+# [6.0.0](https://github.com/dsherret/ts-morph/compare/5.0.0...6.0.0) (2019-12-07)
+
+
+### Bug Fixes
+
+* **common:** Fix running in the browser. ([7d81e98](https://github.com/dsherret/ts-morph/commit/7d81e98))
+* Fix bug where `Project#getRootDirectories()` might return a directory not in the project. ([e9878b1](https://github.com/dsherret/ts-morph/commit/e9878b1))
+* Getting symbol exports by name should call `ts.escapeLeadingUnderscores` on the name. ([d2694ba](https://github.com/dsherret/ts-morph/commit/d2694ba))
+
+
+### Code Refactoring
+
+* [#767](https://github.com/dsherret/ts-morph/issues/767) - Rename `StructureTypeGuards` -> `Structure` ([b28ed73](https://github.com/dsherret/ts-morph/commit/b28ed73))
+* `FileSystemHost#glob` is now asynchronous. A `globSync` method was added. ([942db7a](https://github.com/dsherret/ts-morph/commit/942db7a))
+
+
+### Features
+
+* [#764](https://github.com/dsherret/ts-morph/issues/764) - Prefer writing single line JS docs. Add JSDoc#isMultiLine(). ([59c8d38](https://github.com/dsherret/ts-morph/commit/59c8d38))
+* **bootstrap:** Rename addSourceFiles -> addSourceFilesByPaths to match ts-morph. ([439a0d5](https://github.com/dsherret/ts-morph/commit/439a0d5))
+* [#710](https://github.com/dsherret/ts-morph/issues/710) - Manipulation error now throws a custom error object. ([a8881d7](https://github.com/dsherret/ts-morph/commit/a8881d7))
+* [#741](https://github.com/dsherret/ts-morph/issues/741) - `Directory#getSourceFiles` now accepts globs. ([b78cd39](https://github.com/dsherret/ts-morph/commit/b78cd39))
+* [#750](https://github.com/dsherret/ts-morph/issues/750) - Creating an in-memory file system now loads the lib files by default. ([b1ff3ef](https://github.com/dsherret/ts-morph/commit/b1ff3ef))
+* [#750](https://github.com/dsherret/ts-morph/issues/750) - The virtual file system host will have lib files loaded by default. ([8a8cf93](https://github.com/dsherret/ts-morph/commit/8a8cf93))
+* [#760](https://github.com/dsherret/ts-morph/issues/760) - Move TypeGuards to be static members of Node (methods still exist on TypeGuards, but will be removed later). ([9b1e659](https://github.com/dsherret/ts-morph/commit/9b1e659)), closes [#728](https://github.com/dsherret/ts-morph/issues/728)
+* [#763](https://github.com/dsherret/ts-morph/issues/763) - Add Directory#clear(). ([df93db3](https://github.com/dsherret/ts-morph/commit/df93db3))
+* [#765](https://github.com/dsherret/ts-morph/issues/765) - Add QuestionDotTokenableNode. ([b620848](https://github.com/dsherret/ts-morph/commit/b620848))
+* `SourceFile#applyTextChanges` now accepts objects of type `ts.TextChange`. ([e72c3f0](https://github.com/dsherret/ts-morph/commit/e72c3f0))
+* Add `getTypeExpressionOrThrow()` to `JSDocReturnTag` and `JSDocPropertyLikeTag` ([8102360](https://github.com/dsherret/ts-morph/commit/8102360))
+* Add `JSDoc#insertTags` and similar methods. ([67a2a66](https://github.com/dsherret/ts-morph/commit/67a2a66))
+* Add `JSDocTag#remove()`. ([8b037aa](https://github.com/dsherret/ts-morph/commit/8b037aa))
+* Add `JSDocTag#setTagName` ([688b783](https://github.com/dsherret/ts-morph/commit/688b783))
+* Add JSDocTagStructure. ([aab3e9c](https://github.com/dsherret/ts-morph/commit/aab3e9c))
+* Expose `InMemoryFileSystemHost`. ([2176f2c](https://github.com/dsherret/ts-morph/commit/2176f2c))
+* Rename `useVirtualFileSystem` to `useInMemoryFileSystem` ([b69750c](https://github.com/dsherret/ts-morph/commit/b69750c))
+* Support declare keyword on class properties. ([7a0c1ab](https://github.com/dsherret/ts-morph/commit/7a0c1ab))
+* Upgrade to code-block-writer 10.1.0. ([5eaf5ff](https://github.com/dsherret/ts-morph/commit/5eaf5ff))
+* Wrap `BigIntLiteral`. ([85eaa12](https://github.com/dsherret/ts-morph/commit/85eaa12))
+
+
+### performance
+
+* [#702](https://github.com/dsherret/ts-morph/issues/702) - Fix Project#addSourceFileAtPaths being needlessly slow in some scenarios. ([6db6f60](https://github.com/dsherret/ts-morph/commit/6db6f60))
+
+
+### BREAKING CHANGES
+
+* `JSDoc#setComment(...)` and `#getComment(...)` are now `setDescription(...)` and `getDescription()`. They also work according to #764.
+* `StructureTypeGuards` is now `Structure`.
+* PropertyDeclarationDeclaration and PropertyDeclarationStructure now can have a `declare` keyword (new in TS 3.7).
+* JS docs will be written as a single line unless multi-line or starting with a newline. Additionally, getting a JS doc structure will have a newline at the start if the JS doc description is one line, but the JS doc is multi-line.
+* `ProjectOptions#useVirtualFileSystem` is now `useInMemoryFileSystem`. This is a more accurate name.
+* Creating a Project with `useVirtualFileSystem: true` will now load in the lib files into the `node_modules/typescript/lib` folder.
+* Due to the fix for #702, when using `Project#addSourceFileAtPaths` directories that do not have an ancestor directory with a source file included in the results will no longer be added to the project. If you want to ensure that a directory and all its subfolders are added, use `Project#addDirectoryAtPath(path, { recursive: true })`.
+* `FileSystemHost#glob` is now asynchronous and `#globSync` was added.
+* Renamed `Directory/Project#addExistingSourceFile` -> `addSourceFileAtPath`
+* Renamed `Directory/Project#addExistingSourceFileIfExists` -> `addSourceFileAtPathIfExists`
+* Renamed `Directory/Project#addExistingSourceFiles` -> `addSourceFilesAtPaths`
+* Renamed `Directory/Project#addExistingDirectory` -> `addDirectoryAtPath`
+* Renamed `Directory/Project#addExistingDirectoryIfExists` -> `addDirectoryAtPathIfExists`
+
+
+
 <a name="5.0.0"></a>
 # [5.0.0](https://github.com/dsherret/ts-morph/compare/4.3.3...5.0.0) (2019-11-08)
 

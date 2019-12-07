@@ -38,7 +38,7 @@ node.forEachChild(node => {
 });
 
 const classDec = node.forEachChild(node => {
-    if (TypeGuards.isClassDeclaration(node))
+    if (Node.isClassDeclaration(node))
         return node; // stops iterating over the children and returns this value
     return undefined; // return a falsy value or no value to continue iterating
 });

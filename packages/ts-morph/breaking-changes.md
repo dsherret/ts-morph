@@ -2,6 +2,31 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 6
+
+Renames:
+
+* `StructureTypeGuards` -> `Structure`
+* `TypeGuards` -> `Node` (Soft deprecation... will be deprecated in next major)
+* `ProjectOptions#useVirtualFileSystem` -> `useInMemoryFileSystem`
+* `FileSystemHost#glob` -> `globSync`
+* `Directory/Project#addExistingSourceFile` -> `addSourceFileAtPath`
+* `Directory/Project#addExistingSourceFileIfExists` -> `addSourceFileAtPathIfExists`
+* `Directory/Project#addExistingSourceFiles` -> `addSourceFilesAtPaths`
+* `Directory/Project#addExistingDirectory` -> `addDirectoryAtPath`
+* `Directory/Project#addExistingDirectoryIfExists` -> `addDirectoryAtPathIfExists`
+
+Removed:
+
+* `JSDoc#setComment(...)` and `#getComment()`. These are now `setDescription(...)` and `getDescription()` and work according to [#764](https://github.com/dsherret/ts-morph/issues/764).
+
+Other:
+
+* PropertyDeclarationDeclaration and PropertyDeclarationStructure now can have a `declare` keyword (new in TS 3.7).
+* Creating a Project with `useInMemoryFileSystem: true` will now load in the lib files into the `node_modules/typescript/lib` folder. If you want the old behaviour, specify `{ skipLoadingLibFiles: true }` in the `Project`'s constructor.
+* Due to the fix for [#702](https://github.com/dsherret/ts-morph/issues/702), when using `Project#addSourceFileAtPaths` directories that do not have an ancestor directory with a source file included in the results will no longer be added to the project. If you want to ensure that a directory and all its subfolders are added, use `Project#addDirectoryAtPath(path, { recursive: true })`.
+* JS docs will be written as a single line unless multi-line or starting with a newline. Additionally, getting a JS doc structure will have a newline at the start if the JS doc description is one line, but the JS doc is multi-line.
+
 ## Version 5
 
 * TypeScript 3.7.x support only.

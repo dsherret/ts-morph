@@ -98,7 +98,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
      * Adds JS doc tags.
      * @param structures - Tag structures to add.
      */
-    addTags(structures: OptionalKind<JSDocTagStructure>[]) {
+    addTags(structures: ReadonlyArray<OptionalKind<JSDocTagStructure>>) {
         return this.insertTags(this.compilerNode.tags?.length ?? 0, structures);
     }
 
@@ -116,7 +116,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
      * @param index - Index to insert at.
      * @param structures - Tag structures to insert.
      */
-    insertTags(index: number, structures: OptionalKind<JSDocTagStructure>[]) {
+    insertTags(index: number, structures: ReadonlyArray<OptionalKind<JSDocTagStructure>>) {
         if (ArrayUtils.isNullOrEmpty(structures))
             return [];
 
@@ -129,7 +129,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
             this.replaceWithText(writer => {
                 structurePrinter.printText(writer, {
                     description: this.getDescription(),
-                    tags: structures
+                    tags: structures as OptionalKind<JSDocTagStructure>[]
                 });
             });
         }

@@ -5365,7 +5365,7 @@ export declare class JSDoc extends JSDocBase<ts.JSDoc> {
      * Adds JS doc tags.
      * @param structures - Tag structures to add.
      */
-    addTags(structures: OptionalKind<JSDocTagStructure>[]): JSDocTag<ts.JSDocTag>[];
+    addTags(structures: ReadonlyArray<OptionalKind<JSDocTagStructure>>): JSDocTag<ts.JSDocTag>[];
     /**
      * Inserts a JS doc tag at the specified index.
      * @param index - Index to insert at.
@@ -5377,7 +5377,7 @@ export declare class JSDoc extends JSDocBase<ts.JSDoc> {
      * @param index - Index to insert at.
      * @param structures - Tag structures to insert.
      */
-    insertTags(index: number, structures: OptionalKind<JSDocTagStructure>[]): JSDocTag<ts.JSDocTag>[];
+    insertTags(index: number, structures: ReadonlyArray<OptionalKind<JSDocTagStructure>>): JSDocTag<ts.JSDocTag>[];
     /**
      * Removes this JSDoc.
      */
