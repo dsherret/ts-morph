@@ -172,6 +172,18 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
 }
 
+/**
+ * Asynchronously creates a new collection of source files to analyze.
+ * @param options Options for creating the project.
+ */
+export declare function createProject(options?: ProjectOptions): Promise<Project>;
+
+/**
+ * Synchronously creates a new collection of source files to analyze.
+ * @param options Options for creating the project.
+ */
+export declare function createProjectSync(options?: ProjectOptions): Project;
+
 /** Options for creating a project. */
 export interface ProjectOptions {
     /** Compiler options */
@@ -197,28 +209,13 @@ export interface ProjectOptions {
 
 /** Project that holds source files. */
 export declare class Project {
-    /**
-     * Initializes a new instance.
-     * @param options - Optional options.
-     */
-    constructor(options?: ProjectOptions);
+    private constructor();
     /** Gets the compiler options for modification. */
     readonly compilerOptions: CompilerOptionsContainer;
     /** Gets the file system host used for this project. */
     readonly fileSystem: FileSystemHost;
     /**
-     * Adds a source file from a file path if it exists or returns undefined.
-     *
-     * Will return the source file if it was already added.
-     * @param filePath - File path to get the file from.
-     * @param options - Options for adding the file.
-     * @skipOrThrowCheck
-     */
-    addSourceFileAtPathIfExists(filePath: string, options?: {
-        scriptKind?: ts.ScriptKind;
-    }): ts.SourceFile | undefined;
-    /**
-     * Adds an existing source file from a file path or throws if it doesn't exist.
+     * Asynchronously adds an existing source file from a file path or throws if it doesn't exist.
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
@@ -227,21 +224,69 @@ export declare class Project {
      */
     addSourceFileAtPath(filePath: string, options?: {
         scriptKind?: ts.ScriptKind;
+    }): Promise<ts.SourceFile>;
+    /**
+     * Synchronously adds an existing source file from a file path or throws if it doesn't exist.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @param options - Options for adding the file.
+     * @throws FileNotFoundError when the file is not found.
+     */
+    addSourceFileAtPathSync(filePath: string, options?: {
+        scriptKind?: ts.ScriptKind;
     }): ts.SourceFile;
     /**
-     * Adds source files based on file globs.
+     * Asynchronously adds a source file from a file path if it exists or returns undefined.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @param options - Options for adding the file.
+     * @skipOrThrowCheck
+     */
+    addSourceFileAtPathIfExists(filePath: string, options?: {
+        scriptKind?: ts.ScriptKind;
+    }): Promise<ts.SourceFile | undefined>;
+    /**
+     * Synchronously adds a source file from a file path if it exists or returns undefined.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @param options - Options for adding the file.
+     * @skipOrThrowCheck
+     */
+    addSourceFileAtPathIfExistsSync(filePath: string, options?: {
+        scriptKind?: ts.ScriptKind;
+    }): ts.SourceFile | undefined;
+    /**
+     * Asynchronously adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addSourceFilesByPaths(fileGlobs: string | ReadonlyArray<string>): ts.SourceFile[];
+    addSourceFilesByPaths(fileGlobs: string | ReadonlyArray<string>): Promise<ts.SourceFile[]>;
     /**
-     * Adds all the source files from the specified tsconfig.json.
+     * Synchronously adds source files based on file globs.
+     * @param fileGlobs - File glob or globs to add files based on.
+     * @returns The matched source files.
+     * @remarks This is much slower than the asynchronous version.
+     */
+    addSourceFilesByPathsSync(fileGlobs: string | ReadonlyArray<string>): ts.SourceFile[];
+    /**
+     * Asynchronously adds all the source files from the specified tsconfig.json.
      *
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
      * addFilesFromTsConfig option to false.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string): ts.SourceFile[];
+    addSourceFilesFromTsConfig(tsConfigFilePath: string): Promise<ts.SourceFile[]>;
+    /**
+     * Synchronously adds all the source files from the specified tsconfig.json.
+     *
+     * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
+     * addFilesFromTsConfig option to false.
+     * @param tsConfigFilePath - File path to the tsconfig.json file.
+     */
+    addSourceFilesFromTsConfigSync(tsConfigFilePath: string): ts.SourceFile[];
     /**
      * Creates a source file at the specified file path with the specified text.
      *

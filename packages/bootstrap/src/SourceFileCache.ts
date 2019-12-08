@@ -33,7 +33,20 @@ export class SourceFileCache implements TsSourceFileContainer {
         return this.sourceFilesByFilePath.get(filePath);
     }
 
-    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined; }): ts.SourceFile | undefined {
+    async addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined; }): Promise<ts.SourceFile | undefined> {
+        let sourceFile = this.sourceFilesByFilePath.get(filePath);
+        if (sourceFile == null && await this.fileSystemWrapper.fileExists(filePath)) {
+            sourceFile = this.createSourceFileFromText(
+                filePath,
+                await this.fileSystemWrapper.readFile(filePath, this.compilerOptions.getEncoding()),
+                options
+            );
+        }
+
+        return sourceFile;
+    }
+
+    addOrGetSourceFileFromFilePathSync(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined; }): ts.SourceFile | undefined {
         let sourceFile = this.sourceFilesByFilePath.get(filePath);
         if (sourceFile == null && this.fileSystemWrapper.fileExistsSync(filePath)) {
             sourceFile = this.createSourceFileFromText(

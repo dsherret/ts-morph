@@ -25,6 +25,89 @@ export interface ProjectOptions {
     resolutionHost?: ResolutionHostFactory;
 }
 
+/**
+ * Asynchronously creates a new collection of source files to analyze.
+ * @param options Options for creating the project.
+ */
+export async function createProject(options: ProjectOptions = {}): Promise<Project> {
+    const { project, tsConfigResolver } = createProjectCommon(options);
+
+    // add any file paths from the tsconfig if necessary
+    if (tsConfigResolver != null && options.addFilesFromTsConfig !== false) {
+        await project._addSourceFilesForTsConfigResolver(tsConfigResolver, project.compilerOptions.get());
+
+        if (!options.skipFileDependencyResolution)
+            project.resolveSourceFileDependencies();
+    }
+
+    return project;
+}
+
+/**
+ * Synchronously creates a new collection of source files to analyze.
+ * @param options Options for creating the project.
+ */
+export function createProjectSync(options: ProjectOptions = {}): Project {
+    const { project, tsConfigResolver } = createProjectCommon(options);
+
+    // add any file paths from the tsconfig if necessary
+    if (tsConfigResolver != null && options.addFilesFromTsConfig !== false) {
+        project._addSourceFilesForTsConfigResolverSync(tsConfigResolver, project.compilerOptions.get());
+
+        if (!options.skipFileDependencyResolution)
+            project.resolveSourceFileDependencies();
+    }
+
+    return project;
+}
+
+function createProjectCommon(options: ProjectOptions) {
+    verifyOptions();
+
+    const fileSystem = getFileSystem();
+    const fileSystemWrapper = new TransactionalFileSystem(fileSystem);
+
+    // get tsconfig info
+    const tsConfigResolver = options.tsConfigFilePath == null
+        ? undefined
+        : new TsConfigResolver(
+            fileSystemWrapper,
+            fileSystemWrapper.getStandardizedAbsolutePath(options.tsConfigFilePath),
+            getEncodingFromProvidedOptions()
+        );
+
+    const project = new Project({
+        fileSystem,
+        fileSystemWrapper,
+        tsConfigResolver
+    }, options);
+
+    return { project, tsConfigResolver };
+
+    function verifyOptions() {
+        if (options.fileSystem != null && options.useInMemoryFileSystem)
+            throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use an in-memory file system.");
+        if (options.skipLoadingLibFiles && !options.useInMemoryFileSystem) {
+            throw new errors.InvalidOperationError(
+                `The ${nameof(options.skipLoadingLibFiles)} option can only be true when ${nameof(options.useInMemoryFileSystem)} is true.`
+            );
+        }
+    }
+
+    function getFileSystem() {
+        if (options.useInMemoryFileSystem)
+            return new InMemoryFileSystemHost({ skipLoadingLibFiles: options.skipLoadingLibFiles });
+        return options.fileSystem ?? new RealFileSystemHost();
+    }
+
+    function getEncodingFromProvidedOptions() {
+        const defaultEncoding = "utf-8";
+        if (options.compilerOptions != null)
+            return options.compilerOptions.charset || defaultEncoding;
+        return defaultEncoding;
+    }
+}
+
 /** Project that holds source files. */
 export class Project {
     /** @internal */
@@ -36,24 +119,15 @@ export class Project {
     /** @internal */
     private readonly compilerHost: ts.CompilerHost;
 
-    /**
-     * Initializes a new instance.
-     * @param options - Optional options.
-     */
-    constructor(options: ProjectOptions = {}) {
-        verifyOptions();
-
-        this.fileSystem = getFileSystem();
-        this._fileSystemWrapper = new TransactionalFileSystem(this.fileSystem);
-
-        // get tsconfig info
-        const tsConfigResolver = options.tsConfigFilePath == null
-            ? undefined
-            : new TsConfigResolver(
-                this._fileSystemWrapper,
-                this._fileSystemWrapper.getStandardizedAbsolutePath(options.tsConfigFilePath),
-                getEncodingFromProvidedOptions()
-            );
+    /** @private */
+    constructor(objs: {
+        fileSystem: FileSystemHost;
+        fileSystemWrapper: TransactionalFileSystem;
+        tsConfigResolver: TsConfigResolver | undefined;
+    }, options: ProjectOptions) {
+        const { tsConfigResolver } = objs;
+        this.fileSystem = objs.fileSystem;
+        this._fileSystemWrapper = objs.fileSystemWrapper
 
         // initialize the compiler options
         const tsCompilerOptions = getCompilerOptions();
@@ -67,7 +141,6 @@ export class Project {
         const resolutionHost = !options.resolutionHost
             ? undefined
             : options.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get());
-
         // setup context
         const newLineKind = "\n";
         const { languageServiceHost, compilerHost } = createHosts({
@@ -79,30 +152,6 @@ export class Project {
         });
         this.languageServiceHost = languageServiceHost;
         this.compilerHost = compilerHost;
-
-        // add any file paths from the tsconfig if necessary
-        if (tsConfigResolver != null && options.addFilesFromTsConfig !== false) {
-            this._addSourceFilesForTsConfigResolver(tsConfigResolver, tsCompilerOptions);
-
-            if (!options.skipFileDependencyResolution)
-                this.resolveSourceFileDependencies();
-        }
-
-        function verifyOptions() {
-            if (options.fileSystem != null && options.useInMemoryFileSystem)
-                throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use an in-memory file system.");
-            if (options.skipLoadingLibFiles && !options.useInMemoryFileSystem) {
-                throw new errors.InvalidOperationError(
-                    `The ${nameof(options.skipLoadingLibFiles)} option can only be true when ${nameof(options.useInMemoryFileSystem)} is true.`
-                );
-            }
-        }
-
-        function getFileSystem() {
-            if (options.useInMemoryFileSystem)
-                return new InMemoryFileSystemHost({ skipLoadingLibFiles: options.skipLoadingLibFiles });
-            return options.fileSystem ?? new RealFileSystemHost();
-        }
 
         function getCompilerOptions(): ts.CompilerOptions {
             return {
@@ -116,13 +165,6 @@ export class Project {
                 return {};
             return tsConfigResolver.getCompilerOptions();
         }
-
-        function getEncodingFromProvidedOptions() {
-            const defaultEncoding = "utf-8";
-            if (options.compilerOptions != null)
-                return options.compilerOptions.charset || defaultEncoding;
-            return defaultEncoding;
-        }
     }
 
     /** Gets the compiler options for modification. */
@@ -132,47 +174,100 @@ export class Project {
     readonly fileSystem: FileSystemHost;
 
     /**
-     * Adds a source file from a file path if it exists or returns undefined.
-     *
-     * Will return the source file if it was already added.
-     * @param filePath - File path to get the file from.
-     * @param options - Options for adding the file.
-     * @skipOrThrowCheck
-     */
-    addSourceFileAtPathIfExists(filePath: string, options?: { scriptKind?: ts.ScriptKind; }): ts.SourceFile | undefined {
-        return this._sourceFileCache.addOrGetSourceFileFromFilePath(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
-            scriptKind: options && options.scriptKind
-        });
-    }
-
-    /**
-     * Adds an existing source file from a file path or throws if it doesn't exist.
+     * Asynchronously adds an existing source file from a file path or throws if it doesn't exist.
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
      * @param options - Options for adding the file.
      * @throws FileNotFoundError when the file is not found.
      */
-    addSourceFileAtPath(filePath: string, options?: { scriptKind?: ts.ScriptKind; }): ts.SourceFile {
-        const sourceFile = this.addSourceFileAtPathIfExists(filePath, options);
+    async addSourceFileAtPath(filePath: string, options?: { scriptKind?: ts.ScriptKind; }): Promise<ts.SourceFile> {
+        const sourceFile = await this.addSourceFileAtPathIfExists(filePath, options);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath));
         return sourceFile;
     }
 
     /**
-     * Adds source files based on file globs.
+     * Synchronously adds an existing source file from a file path or throws if it doesn't exist.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @param options - Options for adding the file.
+     * @throws FileNotFoundError when the file is not found.
+     */
+    addSourceFileAtPathSync(filePath: string, options?: { scriptKind?: ts.ScriptKind; }): ts.SourceFile {
+        const sourceFile = this.addSourceFileAtPathIfExistsSync(filePath, options);
+        if (sourceFile == null)
+            throw new errors.FileNotFoundError(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath));
+        return sourceFile;
+    }
+
+    /**
+     * Asynchronously adds a source file from a file path if it exists or returns undefined.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @param options - Options for adding the file.
+     * @skipOrThrowCheck
+     */
+    addSourceFileAtPathIfExists(filePath: string, options?: { scriptKind?: ts.ScriptKind; }): Promise<ts.SourceFile | undefined> {
+        return this._sourceFileCache.addOrGetSourceFileFromFilePath(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
+            scriptKind: options && options.scriptKind
+        });
+    }
+
+    /**
+     * Synchronously adds a source file from a file path if it exists or returns undefined.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @param options - Options for adding the file.
+     * @skipOrThrowCheck
+     */
+    addSourceFileAtPathIfExistsSync(filePath: string, options?: { scriptKind?: ts.ScriptKind; }): ts.SourceFile | undefined {
+        return this._sourceFileCache.addOrGetSourceFileFromFilePathSync(this._fileSystemWrapper.getStandardizedAbsolutePath(filePath), {
+            scriptKind: options && options.scriptKind
+        });
+    }
+
+    /**
+     * Asynchronously adds source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addSourceFilesByPaths(fileGlobs: string | ReadonlyArray<string>): ts.SourceFile[] {
+    async addSourceFilesByPaths(fileGlobs: string | ReadonlyArray<string>): Promise<ts.SourceFile[]> {
+        if (typeof fileGlobs === "string")
+            fileGlobs = [fileGlobs];
+
+        const sourceFilePromises: Promise<void>[] = [];
+        const sourceFiles: ts.SourceFile[] = [];
+
+        for await (const filePath of this._fileSystemWrapper.glob(fileGlobs)) {
+            sourceFilePromises.push(this.addSourceFileAtPathIfExists(filePath).then(sourceFile => {
+                if (sourceFile != null)
+                    sourceFiles.push(sourceFile);
+            }));
+        }
+
+        await Promise.all(sourceFilePromises);
+        return sourceFiles;
+    }
+
+    /**
+     * Synchronously adds source files based on file globs.
+     * @param fileGlobs - File glob or globs to add files based on.
+     * @returns The matched source files.
+     * @remarks This is much slower than the asynchronous version.
+     */
+    addSourceFilesByPathsSync(fileGlobs: string | ReadonlyArray<string>): ts.SourceFile[] {
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
 
         const sourceFiles: ts.SourceFile[] = [];
 
         for (const filePath of this._fileSystemWrapper.globSync(fileGlobs)) {
-            const sourceFile = this.addSourceFileAtPathIfExists(filePath);
+            const sourceFile = this.addSourceFileAtPathIfExistsSync(filePath);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
         }
@@ -181,16 +276,33 @@ export class Project {
     }
 
     /**
-     * Adds all the source files from the specified tsconfig.json.
+     * Asynchronously adds all the source files from the specified tsconfig.json.
      *
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
      * addFilesFromTsConfig option to false.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string): ts.SourceFile[] {
-        const standardizedFilePath = this._fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
-        const resolver = new TsConfigResolver(this._fileSystemWrapper, standardizedFilePath, this.compilerOptions.getEncoding());
+    addSourceFilesFromTsConfig(tsConfigFilePath: string): Promise<ts.SourceFile[]> {
+        const resolver = this._getTsConfigResolover(tsConfigFilePath);
         return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
+    }
+
+    /**
+     * Synchronously adds all the source files from the specified tsconfig.json.
+     *
+     * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
+     * addFilesFromTsConfig option to false.
+     * @param tsConfigFilePath - File path to the tsconfig.json file.
+     */
+    addSourceFilesFromTsConfigSync(tsConfigFilePath: string): ts.SourceFile[] {
+        const resolver = this._getTsConfigResolover(tsConfigFilePath);
+        return this._addSourceFilesForTsConfigResolverSync(resolver, resolver.getCompilerOptions());
+    }
+
+    /** @internal */
+    private _getTsConfigResolover(tsConfigFilePath: string) {
+        const standardizedFilePath = this._fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
+        return new TsConfigResolver(this._fileSystemWrapper, standardizedFilePath, this.compilerOptions.getEncoding());
     }
 
     /**
@@ -283,11 +395,18 @@ export class Project {
     }
 
     /** @internal */
-    private _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions) {
-        const paths = tsConfigResolver.getPaths(compilerOptions);
+    async _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions) {
+        const sourceFiles: ts.SourceFile[] = [];
+        await Promise.all(
+            tsConfigResolver.getPaths(compilerOptions).filePaths
+                .map(p => this.addSourceFileAtPath(p).then(s => sourceFiles.push(s)))
+        );
+        return sourceFiles;
+    }
 
-        const addedSourceFiles = paths.filePaths.map(p => this.addSourceFileAtPath(p));
-        return addedSourceFiles;
+    /** @internal */
+    _addSourceFilesForTsConfigResolverSync(tsConfigResolver: TsConfigResolver, compilerOptions: ts.CompilerOptions) {
+        return tsConfigResolver.getPaths(compilerOptions).filePaths.map(p => this.addSourceFileAtPathSync(p));
     }
 
     /** @internal */
