@@ -23,20 +23,16 @@ describe(nameof(StringUtils), () => {
             expect(StringUtils.getLineNumberAtPos(str, pos)).to.equal(3);
         }
 
-        it("should get the line position for the specified pos when using \r newlines", () => {
-            doTest("\r");
-        });
-
-        it("should get the line position for the specified pos when using \n newlines", () => {
+        it("should get the line position for the specified pos when using \\n newlines", () => {
             doTest("\n");
         });
 
-        it("should get the line position for the specified pos when using \r\n newlines", () => {
+        it("should get the line position for the specified pos when using \\r\\n newlines", () => {
             doTest("\r\n");
         });
 
         it("should get the line position for the specified pos when right after the newline when mixing newlines", () => {
-            let str = "testing\r\nthis\nout\rmore\r\nandmore\n";
+            let str = "testing\r\nthis\nout\nmore\r\nandmore\n";
             const pos = str.length;
             str += "out\r\nmore and more";
             expect(StringUtils.getLineNumberAtPos(str, pos)).to.equal(6);

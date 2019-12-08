@@ -73,17 +73,13 @@ export class StringUtils {
     }
 
     static getLineNumberAtPos(str: string, pos: number) {
-        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
         // do not allocate a string in this method
+        errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
         let count = 0;
 
         for (let i = 0; i < pos; i++) {
-            if (
-                str.charCodeAt(i) === CharCodes.NEWLINE
-                || (str.charCodeAt(i) === CharCodes.CARRIAGE_RETURN && str.charCodeAt(i + 1) === CharCodes.NEWLINE)
-            ) {
+            if (str.charCodeAt(i) === CharCodes.NEWLINE)
                 count++;
-            }
         }
 
         return count + 1; // convert count to line number
