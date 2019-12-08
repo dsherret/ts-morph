@@ -235,5 +235,10 @@ describe(nameof(JSDocTag), () => {
             // necessary because of inconsistencies with js doc tag with in the compiler
             doTest("/** @example Something\n * Other. */\nfunction test() {}", { tagName: "example", text: "Something\nOther." });
         });
+
+        it("should get if the text starts with a new line", () => {
+            // necessary because of inconsistencies with js doc tag with in the compiler
+            doTest("/** @example\n * Something\n * Other. */\nfunction test() {}", { tagName: "example", text: "\nSomething\nOther." });
+        });
     });
 });

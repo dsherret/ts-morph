@@ -126,7 +126,11 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
 }
 
 function getText(jsDocTag: JSDocTag) {
-    return getTextWithoutStars(jsDocTag.getSourceFile().getFullText().substring(jsDocTag.getTagNameNode().getEnd(), getTagEnd(jsDocTag)).trim());
+    const text = jsDocTag.getSourceFile().getFullText();
+    const nameEnd = jsDocTag.getTagNameNode().getEnd();
+    const tagEnd = getTagEnd(jsDocTag);
+    const startPos = Math.min(text.charCodeAt(nameEnd) === CharCodes.SPACE ? nameEnd + 1 : nameEnd, tagEnd);
+    return getTextWithoutStars(text.substring(startPos, tagEnd));
 }
 
 function getTagEnd(jsDocTag: JSDocTag) {
