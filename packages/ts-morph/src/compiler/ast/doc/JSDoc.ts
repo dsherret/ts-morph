@@ -41,14 +41,32 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
      * @remarks This will contain a leading newline if the jsdoc is multi-line.
      */
     getDescription() {
-        const description = this.compilerNode.comment ?? "";
+        const sourceFileText = this.getSourceFile().getFullText();
+        const endSearchStart = this.getTags()[0]?.getStart() ?? this.getEnd() - 2; // -2 for star slash
+        const start = getStart(this);
 
-        // If the jsdoc text is like /**\n * Some description.\n*/ then force its
-        // description to start with a newline so that ts-morph will later make this multi-line.
-        if (this.isMultiLine() && !description.includes("\n"))
-            return this._context.manipulationSettings.getNewLineKindAsString() + description;
-        else
-            return description;
+        return getTextWithoutStars(sourceFileText.substring(start, Math.max(start, getEndPos())));
+
+        function getStart(jsDoc: JSDoc) {
+            const startOrSpacePos = jsDoc.getStart() + 3; // +3 for slash star star
+            if (sourceFileText.charCodeAt(startOrSpacePos) === CharCodes.SPACE)
+                return startOrSpacePos + 1;
+            return startOrSpacePos;
+        }
+
+        function getEndPos() {
+            const endOrNewLinePos = getPreviousMatchingPos(
+                sourceFileText,
+                endSearchStart,
+                charCode => charCode === CharCodes.NEWLINE || !StringUtils.isWhitespaceCharCode(charCode) && charCode !== CharCodes.ASTERISK
+            );
+
+            return getPreviousMatchingPos(
+                sourceFileText,
+                endOrNewLinePos,
+                charCode => charCode !== CharCodes.NEWLINE && charCode !== CharCodes.CARRIAGE_RETURN
+            );
+        }
     }
 
     /**
@@ -187,10 +205,17 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
     set(structure: Partial<JSDocStructure>) {
         callBaseSet(JSDocBase.prototype, this, structure);
 
-        if (structure.description != null)
+        if (structure.tags != null) {
+            return this.replaceWithText(writer => {
+                this._context.structurePrinterFactory.forJSDoc().printText(writer, {
+                    description: structure.description ?? this.getDescription(),
+                    tags: structure.tags
+                });
+            });
+        }
+        else if (structure.description != null) {
             this.setDescription(structure.description);
-        if (structure.tags != null)
-            throw new errors.NotImplementedError("Setting JS doc tags has not been implemented yet.");
+        }
 
         return this;
     }

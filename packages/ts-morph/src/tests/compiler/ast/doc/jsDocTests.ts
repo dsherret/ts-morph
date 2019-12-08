@@ -68,6 +68,10 @@ describe(nameof(JSDoc), () => {
         it("should be empty when empty", () => {
             doTest("/** */function identifier() {}", "");
         });
+
+        it("should get when has trailing newline", () => {
+            doTest("/**\n * Test.\n *\n * @remarks\n */function identifier() {}", "\nTest.\n");
+        });
     });
 
     describe(nameof<JSDoc>(d => d.setDescription), () => {
@@ -321,6 +325,25 @@ describe(nameof(JSDoc), () => {
         it("should change description when single-line", () => {
             doTest("/**\n * Test\n */\nclass Test {}", { description: "New" }, "/** New */\nclass Test {}");
         });
+
+        it("should change description when single-line", () => {
+            doTest("/**\n * Test\n *\n */\nclass Test {}", { description: "New" }, "/** New */\nclass Test {}");
+        });
+
+        it("should set when has a blank line before the tags", () => {
+            doTest(
+                "/**\n * Test\n */\nclass t {}",
+                {
+                    kind: StructureKind.JSDoc,
+                    description: "\nTest.\n",
+                    tags: [{
+                        tagName: "remarks",
+                        text: "Testing.\n\nTest."
+                    }]
+                },
+                "/**\n * Test.\n *\n * @remarks Testing.\n *\n * Test.\n */\nclass t {}",
+            );
+        });
     });
 
     describe(nameof<JSDoc>(n => n.getStructure), () => {
@@ -341,10 +364,21 @@ describe(nameof(JSDoc), () => {
         it("should get when has everything", () => {
             doTest("/** Test\n * @param p - Testing\n */\nfunction t() {}", {
                 kind: StructureKind.JSDoc,
-                description: "\nTest",
+                description: "Test",
                 tags: [{
                     tagName: "param",
                     text: "p - Testing"
+                }]
+            });
+        });
+
+        it("should get when description has a blank line before tags", () => {
+            doTest("/**\n * Test.\n *\n * @remarks Testing.\n *\n * Test.\n */\nfunction t() {}", {
+                kind: StructureKind.JSDoc,
+                description: "\nTest.\n",
+                tags: [{
+                    tagName: "remarks",
+                    text: "Testing.\n\nTest."
                 }]
             });
         });

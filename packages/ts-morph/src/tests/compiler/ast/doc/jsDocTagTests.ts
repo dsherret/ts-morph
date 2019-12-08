@@ -219,6 +219,14 @@ describe(nameof(JSDocTag), () => {
                 "/**\n * @example\n * testing this\n */\nfunction test() {}"
             );
         });
+
+        it("should set when the text has a blank line", () => {
+            doTest(
+                "/**\n * The script kind.\n *\n @remarks\n */\nfunction test() {}",
+                { text: "\ntesting this\n\nout" },
+                "/**\n * The script kind.\n *\n @remarks\n * testing this\n *\n * out\n */\nfunction test() {}"
+            );
+        });
     });
 
     describe(nameof<JSDocTag>(d => d.getStructure), () => {
@@ -247,6 +255,11 @@ describe(nameof(JSDocTag), () => {
         it("should get if the text starts with a new line", () => {
             // necessary because of inconsistencies with js doc tag with in the compiler
             doTest("/** @example\n * Something\n * Other. */\nfunction test() {}", { tagName: "example", text: "\nSomething\nOther." });
+        });
+
+        it("should get when it contains a blank line", () => {
+            // necessary because of inconsistencies with js doc tag with in the compiler
+            doTest("/** @remarks\n * Something\n *\n * Other. */\nfunction test() {}", { tagName: "remarks", text: "\nSomething\n\nOther." });
         });
     });
 });
