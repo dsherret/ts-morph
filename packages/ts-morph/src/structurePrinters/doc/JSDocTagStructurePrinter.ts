@@ -4,6 +4,7 @@ import { WriterFunction } from "../../types";
 import { printTextFromStringOrWriter } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
 import { StructurePrinterFactory } from "../../factories";
+import { StringUtils } from "@ts-morph/common";
 
 export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagStructure> | string | WriterFunction> {
     constructor(factory: StructurePrinterFactory, private readonly options: { printStarsOnNewLine: boolean; }) {
@@ -52,7 +53,8 @@ export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagS
             else {
                 if (structure.text)
                     printTextFromStringOrWriter(tempWriter, structure.text);
-                tempWriter.unsafeInsert(0, `@${structure.tagName}` + (tempWriter.getLength() > 0 ? " " : ""));
+                const currentText = tempWriter.toString();
+                tempWriter.unsafeInsert(0, `@${structure.tagName}` + (currentText.length > 0 && !StringUtils.startsWithNewLine(currentText) ? " " : ""));
             }
 
             return tempWriter.toString();

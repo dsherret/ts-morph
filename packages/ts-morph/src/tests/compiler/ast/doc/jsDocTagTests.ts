@@ -211,6 +211,14 @@ describe(nameof(JSDocTag), () => {
                 "/**\n * @param testing this\n */\nfunction test() {}"
             );
         });
+
+        it("should allow setting text immediately on a new line", () => {
+            doTest(
+                "/**\n * @example\n */\nfunction test() {}",
+                { text: "\ntesting this" },
+                "/**\n * @example\n * testing this\n */\nfunction test() {}"
+            );
+        });
     });
 
     describe(nameof<JSDocTag>(d => d.getStructure), () => {
