@@ -5,7 +5,7 @@ import { EnumDeclarationStructure, EnumMemberStructure } from "./enum";
 import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, ParameterDeclarationStructure } from "./function";
 import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure,
     MethodSignatureStructure, PropertySignatureStructure } from "./interface";
-import { JSDocStructure } from "./doc";
+import { JSDocStructure, JSDocTagStructure } from "./doc";
 import { PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "./expression";
 import { JsxAttributeStructure, JsxElementStructure, JsxSpreadAttributeStructure, JsxSelfClosingElementStructure } from "./jsx";
 import { NamespaceDeclarationStructure, SourceFileStructure, ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure,
@@ -33,4 +33,5 @@ export type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure 
 export type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures
     | ObjectLiteralExpressionPropertyStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure
     | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure
-    | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | DecoratorStructure;
+    | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | JSDocTagStructure
+    | DecoratorStructure;
