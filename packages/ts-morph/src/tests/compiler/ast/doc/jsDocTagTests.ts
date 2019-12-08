@@ -230,5 +230,10 @@ describe(nameof(JSDocTag), () => {
         it("should get when there is multi-line text following the tag name", () => {
             doTest("/** @param t - Test\n * Other. */\nfunction test() {}", { tagName: "param", text: "t - Test\nOther." });
         });
+
+        it("should get the text for non-param tags", () => {
+            // necessary because of inconsistencies with js doc tag with in the compiler
+            doTest("/** @example Something\n * Other. */\nfunction test() {}", { tagName: "example", text: "Something\nOther." });
+        });
     });
 });

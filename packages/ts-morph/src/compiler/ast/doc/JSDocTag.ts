@@ -126,7 +126,7 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
 }
 
 function getText(jsDocTag: JSDocTag) {
-    return getTextWithoutStars(jsDocTag.getSourceFile().getFullText().substring(jsDocTag.getTagNameNode().getEnd(), jsDocTag.getEnd()).trim());
+    return getTextWithoutStars(jsDocTag.getSourceFile().getFullText().substring(jsDocTag.getTagNameNode().getEnd(), getTagEnd(jsDocTag)).trim());
 }
 
 function getTagEnd(jsDocTag: JSDocTag) {
