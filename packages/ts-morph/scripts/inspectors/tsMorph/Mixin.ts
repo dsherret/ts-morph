@@ -12,7 +12,7 @@ export class Mixin {
 
     @Memoize
     getMixins() {
-        const baseInterfaces = this.node.getBaseDeclarations().filter(d => tsMorph.TypeGuards.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
+        const baseInterfaces = this.node.getBaseDeclarations().filter(d => tsMorph.Node.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
         return baseInterfaces.map(i => this.wrapperFactory.getMixin(i));
     }
 

@@ -26,7 +26,7 @@ export function createStructureTypeGuards(inspector: TsMorphInspector) {
 function clearPreviouslyGeneratedMethods(typeGuardsExpr: tsMorph.ObjectLiteralExpression) {
     // remove all the methods that start with "is"
     for (const prop of typeGuardsExpr.getProperties()) {
-        if (tsMorph.TypeGuards.isMethodDeclaration(prop) && prop.getName().startsWith("is"))
+        if (tsMorph.Node.isMethodDeclaration(prop) && prop.getName().startsWith("is"))
             prop.remove();
     }
 }

@@ -27,13 +27,13 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
                     throw new Error(`Unexpected scenario where source file was from: ${filePath}`);
             }
 
-            if (tsMorph.TypeGuards.isVariableDeclaration(declaration)) {
+            if (tsMorph.Node.isVariableDeclaration(declaration)) {
                 statements.push({
                     ...declaration.getVariableStatementOrThrow().getStructure(),
                     declarations: [declaration.getStructure()]
                 });
             }
-            else if (tsMorph.TypeGuards.isStatement(declaration))
+            else if (tsMorph.Node.isStatement(declaration))
                 statements.push((declaration as any).getStructure()); // todo: improve
             else
                 throw new Error(`Not handled scenario for ${declaration.getKindName()}`);

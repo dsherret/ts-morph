@@ -55,7 +55,7 @@ All notable changes to this project will be documented in this file. See [standa
 * PropertyDeclarationDeclaration and PropertyDeclarationStructure now can have a `declare` keyword (new in TS 3.7).
 * JS docs will be written as a single line unless multi-line or starting with a newline. Additionally, getting a JS doc structure will have a newline at the start if the JS doc description is one line, but the JS doc is multi-line.
 * `ProjectOptions#useVirtualFileSystem` is now `useInMemoryFileSystem`. This is a more accurate name.
-* Creating a Project with `useVirtualFileSystem: true` will now load in the lib files into the `node_modules/typescript/lib` folder.
+* Creating a Project with `useInMemoryFileSystem: true` will now load in the lib files into the `node_modules/typescript/lib` folder.
 * Due to the fix for #702, when using `Project#addSourceFileAtPaths` directories that do not have an ancestor directory with a source file included in the results will no longer be added to the project. If you want to ensure that a directory and all its subfolders are added, use `Project#addDirectoryAtPath(path, { recursive: true })`.
 * `FileSystemHost#glob` is now asynchronous and `#globSync` was added.
 * Renamed `Directory/Project#addExistingSourceFile` -> `addSourceFileAtPath`

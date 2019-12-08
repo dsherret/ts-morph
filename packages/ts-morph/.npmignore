@@ -12,7 +12,6 @@
 /obj
 /temp
 /bin
-/lib
 /.nyc_output
 azure-pipelines.yml
 mocha.opts

@@ -55,7 +55,7 @@ export class WrappedNode {
         const baseTypes = this.node.getBaseTypes();
         for (const intersectionType of ArrayUtils.flatten(baseTypes.map(t => t.getIntersectionTypes()))) {
             const interfaces = intersectionType.getSymbolOrThrow().getDeclarations()
-                .filter(d => tsMorph.TypeGuards.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
+                .filter(d => tsMorph.Node.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
             mixins.push(...interfaces.map(i => this.wrapperFactory.getMixin(i)));
         }
         return mixins;
@@ -66,7 +66,7 @@ export class WrappedNode {
         const node = this.node;
 
         return getFromExtends().map(n => {
-            if (!tsMorph.TypeGuards.isInterfaceDeclaration(n) && !tsMorph.TypeGuards.isClassDeclaration(n))
+            if (!tsMorph.Node.isInterfaceDeclaration(n) && !tsMorph.Node.isClassDeclaration(n))
                 throw new Error(`(${node.getName()}): Unexpected node kind: ${n.getKindName()}`);
             return this.wrapperFactory.getTsNode(n);
         });

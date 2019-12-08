@@ -1,4 +1,5 @@
 import { errors } from "../errors";
+import { CharCodes } from "./CharCodes";
 
 const regExWhitespaceSet = new Set([" ", "\f", "\n", "\r", "\t", "\v", "\u00A0", "\u2028", "\u2029"].map(c => c.charCodeAt(0)));
 
@@ -15,7 +16,7 @@ export class StringUtils {
             return false;
 
         for (let i = 0; i < text.length; i++) {
-            if (text[i] !== " ")
+            if (text.charCodeAt(i) !== CharCodes.SPACE)
                 return false;
         }
 
@@ -55,13 +56,13 @@ export class StringUtils {
     static startsWithNewLine(str: string | undefined) {
         if (str == null)
             return false;
-        return str[0] === "\n" || str[0] === "\r" && str[1] === "\n";
+        return str.charCodeAt(0) === CharCodes.NEWLINE || str.charCodeAt(0) === CharCodes.CARRIAGE_RETURN && str.charCodeAt(1) === CharCodes.NEWLINE;
     }
 
     static endsWithNewLine(str: string | undefined) {
         if (str == null)
             return false;
-        return str[str.length - 1] === "\n";
+        return str.charCodeAt(str.length - 1) === CharCodes.NEWLINE;
     }
 
     static insertAtLastNonWhitespace(str: string, insertText: string) {
@@ -77,8 +78,12 @@ export class StringUtils {
         let count = 0;
 
         for (let i = 0; i < pos; i++) {
-            if (str[i] === "\n" || (str[i] === "\r" && str[i + 1] !== "\n"))
+            if (
+                str.charCodeAt(i) === CharCodes.NEWLINE
+                || (str.charCodeAt(i) === CharCodes.CARRIAGE_RETURN && str.charCodeAt(i + 1) === CharCodes.NEWLINE)
+            ) {
                 count++;
+            }
         }
 
         return count + 1; // convert count to line number
@@ -93,8 +98,8 @@ export class StringUtils {
         errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
 
         while (pos > 0) {
-            const previousChar = str[pos - 1];
-            if (previousChar === "\n" || previousChar === "\r")
+            const previousCharCode = str.charCodeAt(pos - 1);
+            if (previousCharCode === CharCodes.NEWLINE || previousCharCode === CharCodes.CARRIAGE_RETURN)
                 break;
             pos--;
         }
@@ -106,8 +111,8 @@ export class StringUtils {
         errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
 
         while (pos < str.length) {
-            const currentChar = str[pos];
-            if (currentChar === "\n" || currentChar === "\r")
+            const currentChar = str.charCodeAt(pos);
+            if (currentChar === CharCodes.NEWLINE || currentChar === CharCodes.CARRIAGE_RETURN)
                 break;
             pos++;
         }
@@ -145,11 +150,11 @@ export class StringUtils {
         return buildString();
 
         function analyze() {
-            let isAtStartOfLine = str[0] === " " || str[0] === "\t";
+            let isAtStartOfLine = str.charCodeAt(0) === CharCodes.SPACE || str.charCodeAt(0) === CharCodes.TAB;
 
             for (let i = 0; i < str.length; i++) {
                 if (!isAtStartOfLine) {
-                    if (str[i] === "\n" && !isInStringAtPos(i + 1))
+                    if (str.charCodeAt(i) === CharCodes.NEWLINE && !isInStringAtPos(i + 1))
                         isAtStartOfLine = true;
                     continue;
                 }
@@ -160,9 +165,9 @@ export class StringUtils {
                 let tabsCount = 0;
 
                 while (true) {
-                    if (str[i] === " ")
+                    if (str.charCodeAt(i) === CharCodes.SPACE)
                         spacesCount++;
-                    else if (str[i] === "\t")
+                    else if (str.charCodeAt(i) === CharCodes.TAB)
                         tabsCount++;
                     else
                         break;
@@ -199,9 +204,9 @@ export class StringUtils {
                 for (pos = startPosition; pos < endPosition; pos++) {
                     if (indentCount >= deindentWidth)
                         break;
-                    if (str[pos] === " ")
+                    if (str.charCodeAt(pos) === CharCodes.SPACE)
                         indentCount++;
-                    else if (str[pos] === "\t")
+                    else if (str.charCodeAt(pos) === CharCodes.TAB)
                         indentCount += indentSizeInSpaces;
                 }
 
@@ -229,7 +234,7 @@ export class StringUtils {
 
         for (let i = 0; i < str.length; i++) {
             lineStart = i;
-            while (i < str.length && str[i] !== "\n")
+            while (i < str.length && str.charCodeAt(i) !== CharCodes.NEWLINE)
                 i++;
             lineEnd = i === str.length ? i : i + 1;
             appendLine();
@@ -249,9 +254,9 @@ export class StringUtils {
                     if (indentSpaces >= totalIndentSpaces)
                         break;
 
-                    if (str[start] === " ")
+                    if (str.charCodeAt(start) === CharCodes.SPACE)
                         indentSpaces++;
-                    else if (str[start] === "\t")
+                    else if (str.charCodeAt(start) === CharCodes.TAB)
                         indentSpaces += indentSizeInSpaces;
                     else
                         break;

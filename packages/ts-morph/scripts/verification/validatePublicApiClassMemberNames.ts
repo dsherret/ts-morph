@@ -5,7 +5,7 @@
  * and internal members of a class have a underscore prefix.
  * ----------------------------------------------------------
  */
-import { TypeGuards, ClassMemberTypes, ParameterDeclaration, Scope, ClassDeclaration } from "ts-morph";
+import { Node, ClassMemberTypes, ParameterDeclaration, Scope, ClassDeclaration } from "ts-morph";
 import { TsMorphInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
@@ -17,7 +17,7 @@ export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, a
     }
 
     function validateNode(node: ClassMemberTypes | ParameterDeclaration) {
-        if (TypeGuards.isConstructorDeclaration(node)) {
+        if (Node.isConstructorDeclaration(node)) {
             node.getParameters().forEach(validateNode);
             return;
         }

@@ -1,14 +1,14 @@
-import { StructureTypeGuards, Structures, forEachStructureChild, WriterFunction } from "ts-morph";
+import { Structure, Structures, forEachStructureChild, WriterFunction } from "ts-morph";
 
 export function forEachTypeText(structure: Structures, func: (typeText: string) => string) {
     forEachChild(structure);
 
     function forEachChild(child: Structures) {
-        if (StructureTypeGuards.isTyped(child) && child.type != null)
+        if (Structure.isTyped(child) && child.type != null)
             child.type = withType(child.type);
-        if (StructureTypeGuards.isReturnTyped(child) && child.returnType != null)
+        if (Structure.isReturnTyped(child) && child.returnType != null)
             child.returnType = withType(child.returnType);
-        if (StructureTypeGuards.isTypeParameter(child) && child.constraint != null)
+        if (Structure.isTypeParameter(child) && child.constraint != null)
             child.constraint = withType(child.constraint);
 
         forEachStructureChild(child, forEachChild);

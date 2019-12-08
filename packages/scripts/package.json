@@ -12,7 +12,7 @@
     "rollup": "rollup --config"
   },
   "dependencies": {
-    "ts-morph": "npm:ts-morph@5.0.0"
+    "ts-morph": "npm:ts-morph@6.0.1"
   },
   "devDependencies": {
     "@types/ts-nameof": "^4.0.0",

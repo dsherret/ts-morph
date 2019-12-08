@@ -39,6 +39,8 @@ export async function createDeclarationFile() {
     ];
     log("Hiding specific structures...");
     hideSpecificStructures();
+    log("Make JS docs one line if possible...");
+    makeJsDocsOneLineIfPossible();
     log("Hiding extension types...");
     hideExtensionTypes();
     log("Hiding specific declarations...");
@@ -77,6 +79,29 @@ export async function createDeclarationFile() {
             .filter(s => s.kind === tsMorph.StructureKind.Interface && s.name.endsWith("SpecificStructure")) as tsMorph.InterfaceDeclarationStructure[];
         for (const structure of specificStructures)
             structure.isExported = false;
+    }
+
+    function makeJsDocsOneLineIfPossible() {
+        statements.forEach(handleStructure);
+
+        function handleStructure(structure: tsMorph.Structures) {
+            if (tsMorph.Structure.isJSDocable(structure) && structure.docs) {
+                for (const doc of structure.docs) {
+                    if (typeof doc === "string")
+                        continue;
+                    if (typeof doc.description === "string")
+                        doc.description = doc.description.trimLeft();
+                    if (doc.tags) {
+                        for (const tag of doc.tags) {
+                            if (typeof tag.text === "string")
+                                tag.text = tag.text.trimLeft()
+                        }
+                    }
+                }
+            }
+
+            tsMorph.forEachStructureChild(structure, handleStructure);
+        }
     }
 
     function hideExtensionTypes() {

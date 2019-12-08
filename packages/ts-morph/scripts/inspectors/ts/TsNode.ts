@@ -47,10 +47,10 @@ export class TsNode {
         return getProperties().map(p => this.wrapperFactory.getTsNodeProperty(p));
 
         function getProperties(): (tsMorph.PropertyDeclaration | tsMorph.PropertySignature)[] {
-            if (tsMorph.TypeGuards.isClassDeclaration(node)) {
+            if (tsMorph.Node.isClassDeclaration(node)) {
                 const result: (tsMorph.PropertyDeclaration | tsMorph.PropertySignature)[] = [];
                 for (const prop of node.getInstanceProperties()) {
-                    if (tsMorph.TypeGuards.isPropertyDeclaration(prop))
+                    if (tsMorph.Node.isPropertyDeclaration(prop))
                         result.push(prop);
                     else
                         throw new Error("Unhandled scenario where node was: " + prop.getKindName());

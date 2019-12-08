@@ -25,7 +25,7 @@ export class TsInspector {
 
             if (hasDescendantBaseType(exportSymbol.getDeclaredType(), checkingType => checkingType.getText().endsWith("Node"))) {
                 const declarations = exportSymbol.getDeclarations();
-                for (const interfaceDec of declarations.filter(tsMorph.TypeGuards.isInterfaceDeclaration))
+                for (const interfaceDec of declarations.filter(tsMorph.Node.isInterfaceDeclaration))
                     interfaces.push(interfaceDec);
             }
         }

@@ -4,7 +4,7 @@ import { getInfoFromText } from "../../testHelpers";
 import { Node, ClassDeclaration } from "../../../../compiler";
 
 describe(nameof(Node), () => {
-    // most of the code in TypeGuards is not worth the effort to test... it's auto generated from code so it should be close to correct
+    // most of the type guards are not worth the effort to test... it's auto generated from code so it should be close to correct
 
     describe(nameof(Node.hasExpression), () => {
         it("should have an expression when it's a function call", () => {

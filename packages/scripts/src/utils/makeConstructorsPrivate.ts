@@ -1,4 +1,4 @@
-import { SourceFile, Node, TypeGuards, ClassDeclaration, Scope } from "ts-morph";
+import { SourceFile, Node, ClassDeclaration, Scope } from "ts-morph";
 
 export function makeConstructorsPrivate(mainFile: SourceFile) {
     forEachDescendant(mainFile);
@@ -6,10 +6,10 @@ export function makeConstructorsPrivate(mainFile: SourceFile) {
     function forEachDescendant(node: Node) {
         node.forEachChild(forEachDescendant);
 
-        if (TypeGuards.isClassDeclaration(node))
+        if (Node.isClassDeclaration(node))
             withClass(node);
 
-        if (!TypeGuards.isSourceFile(node))
+        if (!Node.isSourceFile(node))
             node.forget();
 
         function withClass(classDec: ClassDeclaration) {

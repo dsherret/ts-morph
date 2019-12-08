@@ -85,12 +85,12 @@ export class TsMorphInspector {
 
     @Memoize
     getPublicClasses(): tsMorph.ClassDeclaration[] {
-        return this.getPublicDeclarations().filter(d => tsMorph.TypeGuards.isClassDeclaration(d)) as tsMorph.ClassDeclaration[];
+        return this.getPublicDeclarations().filter(d => tsMorph.Node.isClassDeclaration(d)) as tsMorph.ClassDeclaration[];
     }
 
     @Memoize
     getPublicInterfaces(): tsMorph.InterfaceDeclaration[] {
-        return this.getPublicDeclarations().filter(d => tsMorph.TypeGuards.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
+        return this.getPublicDeclarations().filter(d => tsMorph.Node.isInterfaceDeclaration(d)) as tsMorph.InterfaceDeclaration[];
     }
 
     @Memoize
@@ -112,7 +112,7 @@ export class TsMorphInspector {
         const sourceFile = this.project.getSourceFileOrThrow("kindToWrapperMappings.ts");
         const kindToWrapperMappings = sourceFile.getVariableDeclaration("kindToWrapperMappings")!;
         const initializer = kindToWrapperMappings.getInitializer()!;
-        const propertyAssignments = initializer.getDescendants().filter(d => tsMorph.TypeGuards.isPropertyAssignment(d)) as tsMorph.PropertyAssignment[];
+        const propertyAssignments = initializer.getDescendants().filter(d => tsMorph.Node.isPropertyAssignment(d)) as tsMorph.PropertyAssignment[];
         const result: { [wrapperName: string]: KindToWrapperMapping; } = {};
 
         for (const assignment of propertyAssignments) {
@@ -146,22 +146,22 @@ export class TsMorphInspector {
         const error = `Exepcted all ImplementedKindToNodeMappings members to be [SyntaxKind.xxx]: compiler.yyy.`;
 
         mappings.getMembers().forEach(member => {
-            if (!tsMorph.TypeGuards.isPropertySignature(member))
+            if (!tsMorph.Node.isPropertySignature(member))
                 throw new Error(error);
 
             const nameNode = member.getNameNode();
-            if (!tsMorph.TypeGuards.isComputedPropertyName(nameNode))
+            if (!tsMorph.Node.isComputedPropertyName(nameNode))
                 throw new Error(error);
             const nameNodeExpression = nameNode.getExpression();
-            if (!tsMorph.TypeGuards.isPropertyAccessExpression(nameNodeExpression))
+            if (!tsMorph.Node.isPropertyAccessExpression(nameNodeExpression))
                 throw new Error(error);
             const syntaxKind = nameNodeExpression.getName();
 
             const typeNode = member.getTypeNodeOrThrow();
-            if (!tsMorph.TypeGuards.isTypeReferenceNode(typeNode))
+            if (!tsMorph.Node.isTypeReferenceNode(typeNode))
                 throw new Error(error);
             const typeNodeName = typeNode.getTypeName();
-            if (!tsMorph.TypeGuards.isQualifiedName(typeNodeName))
+            if (!tsMorph.Node.isQualifiedName(typeNodeName))
                 throw new Error(error);
             const compilerNodeName = typeNodeName.getRight().getText();
 

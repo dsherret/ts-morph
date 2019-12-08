@@ -48,8 +48,8 @@ export class Structure {
 
     @Memoize
     getBaseStructures() {
-        return this.node.getBaseDeclarations().filter(d => !(tsMorph.TypeGuards.isVariableDeclaration(d) && d.getName() === "Structure")).map(d => {
-            if (!tsMorph.TypeGuards.isInterfaceDeclaration(d))
+        return this.node.getBaseDeclarations().filter(d => !(tsMorph.Node.isVariableDeclaration(d) && d.getName() === "Structure")).map(d => {
+            if (!tsMorph.Node.isInterfaceDeclaration(d))
                 throw new Error(`Unexpected kind: ${d.getKindName()}`);
             return this.wrapperFactory.getStructure(d);
         });

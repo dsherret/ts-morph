@@ -3,9 +3,7 @@ import { Memoize } from "@ts-morph/common";
 import * as structurePrinters from "../structurePrinters";
 import { SupportedFormatCodeSettings } from "../options";
 
-/**
- * Cached lazy factory for StructurePrinters.
- */
+/** Cached lazy factory for StructurePrinters. */
 export class StructurePrinterFactory {
     constructor(private readonly _getFormatCodeSettings: () => SupportedFormatCodeSettings) {
     }

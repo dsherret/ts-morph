@@ -45,7 +45,7 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
         const structurePrinters = ArrayUtils.flatten(Array.from(project.getSourceFileOrThrow("./src/structurePrinters/index.ts")
             .getExportedDeclarations()
             .values()))
-            .filter(tsMorph.TypeGuards.isClassDeclaration)
+            .filter(tsMorph.Node.isClassDeclaration)
             .filter(c => isAllowedStructurePrinter(c.getNameOrThrow()));
         const methods: tsMorph.MethodDeclarationStructure[] = [];
 

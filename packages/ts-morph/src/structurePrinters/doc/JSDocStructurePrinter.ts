@@ -56,7 +56,7 @@ export class JSDocStructurePrinter extends NodePrinter<OptionalKind<JSDocStructu
                     printTextFromStringOrWriter(tempWriter, structure.description);
                 if (structure.tags && structure.tags.length > 0) {
                     if (tempWriter.getLength() > 0)
-                        tempWriter.newLineIfLastNot();
+                        tempWriter.newLine();
                     jsdocPrinter.factory.forJSDocTag({ printStarsOnNewLine: false }).printTexts(tempWriter, structure.tags);
                 }
             }

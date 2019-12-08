@@ -197,7 +197,14 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
             parameters: [{ name: "node", type: "compiler.Node" }],
             returnType: `node is compiler.Node & { getStructure(): Structure; }`,
             statements: writer => {
-                writeSyntaxKinds(writer, nodesWithGetStructure.map(n => kindToWrapperMappings.find(m => m.wrapperName === n.getName())!.syntaxKindNames[0]));
+                writeSyntaxKinds(writer, ArrayUtils.flatten(nodesWithGetStructure.map(n => {
+                    const item = kindToWrapperMappings.find(m => m.wrapperName === n.getName());
+                    if (item == null) {
+                        console.warn(`Could not find syntax kinds for ${n.getName()}`);
+                        return [];
+                    }
+                    return item.syntaxKindNames;
+                })));
             }
         });
     }
