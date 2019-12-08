@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.0.1"></a>
+## [6.0.1](https://github.com/dsherret/ts-morph/compare/6.0.0...6.0.1) (2019-12-07)
+
+I unpublished 6.0.0 and published this version instead.
+
+### Bug Fixes
+
+* `JSDocTag#getStructure()` was not including newlines at the start in the text. ([543c7e6](https://github.com/dsherret/ts-morph/commit/543c7e6))
+* `Structures` should contain `JSDocTagStructure` ([f9f8bbc](https://github.com/dsherret/ts-morph/commit/f9f8bbc))
+* Fix JSDoc being printed without blank lines. ([8a84ddf](https://github.com/dsherret/ts-morph/commit/8a84ddf))
+* Fix JSDocTag printing an immediate text newline with a trailing whitespace. ([be44781](https://github.com/dsherret/ts-morph/commit/be44781))
+* Fix JSDocTag#getStructure() not returning the whole tag text. ([c096d30](https://github.com/dsherret/ts-morph/commit/c096d30))
+
 <a name="6.0.0"></a>
 # [6.0.0](https://github.com/dsherret/ts-morph/compare/5.0.0...6.0.0) (2019-12-07)
 
