@@ -44,7 +44,7 @@ export function createHosts(options: CreateHostsOptions) {
             const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
             if (!fileExistsSync(filePath))
                 return undefined;
-            return ts.ScriptSnapshot.fromString(sourceFileContainer.addOrGetSourceFileFromFilePath(filePath, {
+            return ts.ScriptSnapshot.fromString(sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
                 markInProject: false,
                 scriptKind: undefined
             })!.getFullText());
@@ -82,7 +82,7 @@ export function createHosts(options: CreateHostsOptions) {
         getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
             // todo: use languageVersion here?
             const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
-            return sourceFileContainer.addOrGetSourceFileFromFilePath(filePath, {
+            return sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
                 markInProject: false,
                 scriptKind: undefined
             });

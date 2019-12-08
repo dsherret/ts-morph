@@ -20,12 +20,23 @@ export interface TsSourceFileContainer {
      */
     getSourceFileFromCacheFromFilePath(filePath: StandardizedFilePath): ts.SourceFile | undefined;
     /**
-     * Adds or gets a source file from a file path.
+     * Asynchronously adds or gets a source file from a file path.
      * @param filePath - File path to get.
      * @param opts - Options for adding or getting the file.
      */
-    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, opts: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): ts.SourceFile
-        | undefined;
+    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, opts: {
+        markInProject: boolean;
+        scriptKind: ScriptKind | undefined;
+    }): Promise<ts.SourceFile | undefined>;
+    /**
+     * Synchronously adds or gets a source file from a file path.
+     * @param filePath - File path to get.
+     * @param opts - Options for adding or getting the file.
+     */
+    addOrGetSourceFileFromFilePathSync(filePath: StandardizedFilePath, opts: {
+        markInProject: boolean;
+        scriptKind: ScriptKind | undefined;
+    }): ts.SourceFile | undefined;
     /**
      * Gets the source file version of the specified source file.
      * @param sourceFile - Source file to inspect.

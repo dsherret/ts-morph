@@ -12,9 +12,9 @@ This library is separate from [ts-morph](../ts-morph), but uses some of its unde
 ## Example
 
 ```ts
-import { Project, ts } from "@ts-morph/bootstrap";
+import { createProject, ts } from "@ts-morph/bootstrap";
 
-const project = new Project();
+const project = await createProject(); // or createProjectSync
 
 // these are typed as ts.SourceFile
 const myClassFile = project.createSourceFile(
@@ -41,21 +41,27 @@ const moduleResolutionHost = project.getModuleResolutionHost();
 Generally:
 
 ```ts
-const project = new Project({ tsConfigFilePath: "tsconfig.json" });
+const project = await createProject({ tsConfigFilePath: "tsconfig.json" });
+```
+
+Or use the synchronous API:
+
+```ts
+const project = createProjectSync({ tsConfigFilePath: "tsconfig.json" });
 ```
 
 ### File Systems
 
 ```ts
 // will use a real file system
-const project = new Project();
+const project = await createProject();
 
 // in memory file system
-const project2 = new Project({ useInMemoryFileSystem: true });
+const project2 = await createProject({ useInMemoryFileSystem: true });
 
 // custom file system
 const fileSystem: FileSystemHost = { ...etc... };
-const project = new Project({ fileSystem });
+const project = await createProject({ fileSystem });
 ```
 
 To access the file system after creating a project, you can use the `fileSystem` property:
@@ -67,7 +73,7 @@ project.fileSystem.writeFileSync("MyClass.ts", "class MyClass {}");
 ### Compiler options
 
 ```ts
-const project = new Project({
+const project = await createProject({
     compilerOptions: {
         target: ts.ScriptTarget.ES3
     }
@@ -79,7 +85,7 @@ const project = new Project({
 If you would like to manually specify the path to a tsconfig.json file then specify that:
 
 ```ts
-const project = new Project({
+const project = await createProject({
     tsConfigFilePath: "packages/my-library/tsconfig.json"
 });
 
@@ -92,7 +98,7 @@ console.log(project.getSourceFiles().map(s => s.fileName));
 For your convenience, this will automatically add all the associated source files from the tsconfig.json. If you don't wish to do that, then you will need to explicitly set `addFilesFromTsConfig` to `false`:
 
 ```ts
-const project = new Project({
+const project = await createProject({
     tsConfigFilePath: "path/to/tsconfig.json",
     addFilesFromTsConfig: false
 });
@@ -105,11 +111,11 @@ Custom module resolution can be specified by providing a resolution host factory
 For example:
 
 ```ts
-import { Project, ts } from "ts-morph";
+import { createProject, ts } from "ts-morph";
 
 // This is deno style module resolution.
 // Ex. `import { MyClass } from "./MyClass.ts"`;
-const project = new Project({
+const project = await createProject({
     resolutionHost: (moduleResolutionHost, getCompilerOptions) => {
         return {
             resolveModuleNames: (moduleNames, containingFile) => {
@@ -145,9 +151,11 @@ const project = new Project({
 
 Use the following methods:
 
-* `const sourceFiles = project.addSourceFilesByPaths("**/*.ts");` or provide an array of file globs.
-* `const sourceFile = project.addSourceFileAtPath("src/my-file.ts");` or use `addSourceFileAtPathIfExists(filePath)`
-* `const sourceFiles = project.addSourceFilesFromTsConfig("path/to/tsconfig.json")`
+* `const sourceFiles = await project.addSourceFilesByPaths("**/*.ts");` or provide an array of file globs.
+* `const sourceFile = await project.addSourceFileAtPath("src/my-file.ts");` or use `addSourceFileAtPathIfExists(filePath)`
+* `const sourceFiles = await project.addSourceFilesFromTsConfig("path/to/tsconfig.json")`
+
+Or use the corresponding `-Sync` suffix methods for a synchronous API (though it will be much slower).
 
 ## Creating Source Files
 
@@ -180,9 +188,9 @@ project.removeSourceFile(sourceFile);
 ## Formatting Diagnostics
 
 ```ts
-import { Project, ts } from "@ts-morph/bootstrap";
+import { createProject, ts } from "@ts-morph/bootstrap";
 
-const project = new Project({ useInMemoryFileSystem: true });
+const project = await createProject({ useInMemoryFileSystem: true });
 project.createSourceFile("test.ts", "const t: string = 5;");
 
 const program = project.createProgram();

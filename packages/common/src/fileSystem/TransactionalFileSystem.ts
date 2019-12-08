@@ -552,13 +552,25 @@ export class TransactionalFileSystem {
         }
     }
 
-    fileExistsSync(filePath: StandardizedFilePath) {
-        if (this.isPathQueuedForDeletion(filePath))
+    fileExists(filePath: StandardizedFilePath) {
+        if (this._fileDeletedInMemory(filePath))
             return false;
-        const parentDir = this.getParentDirectoryIfExists(filePath);
-        if (parentDir != null && parentDir.getWasEverDeleted())
+        return this.fileSystem.fileExists(filePath);
+    }
+
+    fileExistsSync(filePath: StandardizedFilePath) {
+        if (this._fileDeletedInMemory(filePath))
             return false;
         return this.fileSystem.fileExistsSync(filePath);
+    }
+
+    private _fileDeletedInMemory(filePath: StandardizedFilePath) {
+        if (this.isPathQueuedForDeletion(filePath))
+            return true;
+        const parentDir = this.getParentDirectoryIfExists(filePath);
+        if (parentDir != null && parentDir.getWasEverDeleted())
+            return true;
+        return false;
     }
 
     directoryExistsSync(dirPath: StandardizedFilePath) {
@@ -573,11 +585,20 @@ export class TransactionalFileSystem {
     }
 
     readFileSync(filePath: StandardizedFilePath, encoding: string | undefined) {
+        this._verifyCanReadFile(filePath);
+        return this.fileSystem.readFileSync(filePath, encoding);
+    }
+
+    readFile(filePath: StandardizedFilePath, encoding: string | undefined) {
+        this._verifyCanReadFile(filePath);
+        return this.fileSystem.readFile(filePath, encoding);
+    }
+
+    private _verifyCanReadFile(filePath: StandardizedFilePath) {
         if (this.isPathQueuedForDeletion(filePath))
             throw new errors.InvalidOperationError(`Cannot read file at ${filePath} when it is queued for deletion.`);
         if (this.getOrCreateParentDirectory(filePath).getWasEverDeleted())
             throw new errors.InvalidOperationError(`Cannot read file at ${filePath} because one of its ancestor directories was once deleted or moved.`);
-        return this.fileSystem.readFileSync(filePath, encoding);
     }
 
     readDirSync(dirPath: StandardizedFilePath) {

@@ -166,8 +166,10 @@ export class ProjectContext {
     getSourceFileContainer(): TsSourceFileContainer {
         return {
             addOrGetSourceFileFromFilePath: (filePath, opts) => {
-                const sourceFile = this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts);
-                return sourceFile?.compilerNode;
+                return Promise.resolve(this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)?.compilerNode);
+            },
+            addOrGetSourceFileFromFilePathSync: (filePath, opts) => {
+                return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)?.compilerNode;
             },
             containsDirectoryAtPath: dirPath => this.compilerFactory.containsDirectoryAtPath(dirPath),
             containsSourceFileAtPath: filePath => this.compilerFactory.containsSourceFileAtPath(filePath),
