@@ -105,7 +105,7 @@ Custom module resolution can be specified by providing a resolution host factory
 For example:
 
 ```ts
-import { Project, ts } from "ts-morph";
+import { Project, ts } from "@ts-morph/bootstrap";
 
 // This is deno style module resolution.
 // Ex. `import { MyClass } from "./MyClass.ts"`;
