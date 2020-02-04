@@ -341,7 +341,7 @@ describe(nameof(JSDoc), () => {
                         text: "Testing.\n\nTest."
                     }]
                 },
-                "/**\n * Test.\n *\n * @remarks Testing.\n *\n * Test.\n */\nclass t {}",
+                "/**\n * Test.\n *\n * @remarks Testing.\n *\n * Test.\n */\nclass t {}"
             );
         });
     });

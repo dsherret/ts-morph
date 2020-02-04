@@ -33,5 +33,4 @@ export type JsxStructures = JsxAttributeStructure | JsxSpreadAttributeStructure 
 export type Structures = StatementStructures | ClassMemberStructures | EnumMemberStructure | InterfaceMemberStructures
     | ObjectLiteralExpressionPropertyStructures | JsxStructures | FunctionDeclarationOverloadStructure | MethodDeclarationOverloadStructure
     | ConstructorDeclarationOverloadStructure | ParameterDeclarationStructure | TypeParameterDeclarationStructure | SourceFileStructure
-    | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | JSDocTagStructure
-    | DecoratorStructure;
+    | ExportSpecifierStructure | ImportSpecifierStructure | VariableDeclarationStructure | JSDocStructure | JSDocTagStructure | DecoratorStructure;

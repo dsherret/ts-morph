@@ -10,6 +10,9 @@ module.exports.config = {
         new TypeScriptPlugin({
             useBraces: "preferNone",
             singleBodyPosition: "nextLine",
+            nextControlFlowPosition: "nextLine",
+            preferHangingArguments: true,
+            preferHangingParameters: true,
             "tryStatement.nextControlFlowPosition": "sameLine"
         }),
         new JsoncPlugin({

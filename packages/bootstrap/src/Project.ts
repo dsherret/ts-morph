@@ -127,7 +127,7 @@ export class Project {
     }, options: ProjectOptions) {
         const { tsConfigResolver } = objs;
         this.fileSystem = objs.fileSystem;
-        this._fileSystemWrapper = objs.fileSystemWrapper
+        this._fileSystemWrapper = objs.fileSystemWrapper;
 
         // initialize the compiler options
         const tsCompilerOptions = getCompilerOptions();

@@ -94,7 +94,7 @@ export async function createDeclarationFile() {
                     if (doc.tags) {
                         for (const tag of doc.tags) {
                             if (typeof tag.text === "string")
-                                tag.text = tag.text.trimLeft()
+                                tag.text = tag.text.trimLeft();
                         }
                     }
                 }

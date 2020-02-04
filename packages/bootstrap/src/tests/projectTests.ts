@@ -136,8 +136,8 @@ describe(nameof(Project), () => {
                 it("should support when renaming with the language service", async () => {
                     // this test indicates that the language service was passed the custom module resolution
                     const { testFile, languageService } = await setup();
-                    const results = languageService.findRenameLocations(testFile.fileName, (testFile.statements[0] as ts.ClassDeclaration).name!.getStart(), false,
-                        false);
+                    const results = languageService.findRenameLocations(testFile.fileName, (testFile.statements[0] as ts.ClassDeclaration).name!.getStart(),
+                        false, false);
                     expect(results!.map(r => r.fileName).sort()).to.deep.equal([
                         "/Test.ts",
                         "/main.ts",
@@ -163,7 +163,8 @@ describe(nameof(Project), () => {
                                     const resolvedTypeReferenceDirectives: ts.ResolvedTypeReferenceDirective[] = [];
 
                                     for (const typeDirectiveName of typeDirectiveNames.map(replaceAsdfExtension)) {
-                                        const result = ts.resolveTypeReferenceDirective(typeDirectiveName, containingFile, compilerOptions, moduleResolutionHost);
+                                        const result = ts.resolveTypeReferenceDirective(typeDirectiveName, containingFile, compilerOptions,
+                                            moduleResolutionHost);
                                         if (result.resolvedTypeReferenceDirective)
                                             resolvedTypeReferenceDirectives.push(result.resolvedTypeReferenceDirective);
                                     }
@@ -336,7 +337,8 @@ describe(nameof(Project), () => {
         describe("async", () => doTestsForMethod((project, filePath, options) => project.addSourceFileAtPathIfExists(filePath, options)));
         describe("sync", () => doTestsForMethod((project, filePath, options) => Promise.resolve(project.addSourceFileAtPathIfExists(filePath, options))));
 
-        function doTestsForMethod(action: (project: Project, filePath: string, options?: { scriptKind?: ts.ScriptKind; }) => Promise<ts.SourceFile | undefined>) {
+        function doTestsForMethod(action: (project: Project, filePath: string, options?: { scriptKind?: ts.ScriptKind; })
+        => Promise<ts.SourceFile | undefined>) {
             it("should add files that exist", async () => {
                 const { project } = setup();
                 project.fileSystem.writeFileSync("/file1.ts", "class Test {}");
@@ -414,7 +416,8 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(p => p.resolveSourceFileDependencies), () => {
         it("should resolve file dependencies once specified and include those in the node_modules folder", async () => {
-            const { project, initialFiles, resolvedFiles, nodeModuleFiles } = await fileDependencyResolutionSetup({ skipFileDependencyResolution: true }, createProject);
+            const { project, initialFiles, resolvedFiles, nodeModuleFiles } = await fileDependencyResolutionSetup({ skipFileDependencyResolution: true },
+                createProject);
             expect(project.getSourceFiles().map(s => s.fileName)).to.deep.equal([...initialFiles]);
             project.resolveSourceFileDependencies();
             assertProjectHasSourceFilePaths(project, [...initialFiles, ...resolvedFiles, ...nodeModuleFiles]);
