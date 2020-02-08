@@ -90,7 +90,7 @@
     "ts-nameof": "^4.1.0",
     "ts-node": "8.4.1",
     "ttypescript": "1.5.8",
-    "typescript": "3.7.2"
+    "typescript": "3.7.5"
   },
   "standard-version": {
     "tagPrefix": "",

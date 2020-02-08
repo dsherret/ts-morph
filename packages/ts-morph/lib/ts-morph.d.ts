@@ -3421,6 +3421,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     getCombinedModifierFlags(): ts.ModifierFlags;
     /** Gets the source file. */
     getSourceFile(): SourceFile;
+    /** Gets the project. */
+    getProject(): Project;
     /**
      * Gets a compiler node property wrapped in a Node.
      * @param propertyName - Property name.

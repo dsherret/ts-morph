@@ -1,12 +1,13 @@
 import { expect } from "chai";
 import { assert, IsExact, IsNullable } from "conditional-type-checks";
+import { errors, NewLineKind, SyntaxKind, ts, SymbolFlags } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, FunctionDeclaration, Identifier, InterfaceDeclaration, Node,
     PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachDescendantTraversalControl, VariableStatement, ForStatement,
     ForOfStatement, ForInStatement, NumericLiteral, StringLiteral, ExpressionStatement, NodeParentType } from "../../../../compiler";
 import { hasParsedTokens } from "../../../../compiler/ast/utils";
 import { Project } from "../../../../Project";
-import { errors, NewLineKind, SyntaxKind, ts, SymbolFlags } from "@ts-morph/common";
+import { createWrappedNode } from "../../../../utils/compiler/createWrappedNode";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -2165,6 +2166,21 @@ class MyClass {
                 SymbolFlags.BlockScopedVariable,
                 ["c"]
             );
+        });
+    });
+
+    describe(nameof<Node>(n => n.getProject), () => {
+        it("should get the project", () => {
+            const project = new Project({ useInMemoryFileSystem: true });
+            const sourceFile = project.createSourceFile("test.ts", "");
+            expect(sourceFile.getProject()).to.equal(project);
+        });
+
+        it("should throw if the node was created via createWrappedNode", () => {
+            const project = new Project({ useInMemoryFileSystem: true });
+            const sourceFile = project.createSourceFile("test.ts", "");
+            const node = createWrappedNode(sourceFile.compilerNode);
+            expect(() => node.getProject()).to.throw();
         });
     });
 });

@@ -1,6 +1,7 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { errors, ArrayUtils, StoredComparer, getSyntaxKindName, StringUtils, ts, SyntaxKind, SymbolFlags } from "@ts-morph/common";
 import { ProjectContext } from "../../../ProjectContext";
+import { Project } from "../../../Project";
 import * as compiler from "../../../compiler";
 import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePos, getPreviousMatchingPos, getTextFromTextChanges, insertIntoParentTextRange,
     replaceSourceFileTextForFormatting, replaceSourceFileTextStraight, hasNewLineInRange } from "../../../manipulation";
@@ -1059,11 +1060,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         return ts.getCombinedModifierFlags(this.compilerNode as any as ts.Declaration);
     }
 
-    /**
-     * Gets the source file.
-     */
+    /** Gets the source file. */
     getSourceFile(): SourceFile {
         return this._sourceFile;
+    }
+
+    /** Gets the project. */
+    getProject(): Project {
+        return this._context.project;
     }
 
     /**
