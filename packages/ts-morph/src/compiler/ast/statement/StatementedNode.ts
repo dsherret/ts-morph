@@ -990,7 +990,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             writeStructures: () => void,
             opts: StandardWriteOptions = {}
         ) {
-            if (info.previousMember != null && (opts.previousNewLine == null || !opts.previousNewLine(info.previousMember)))
+            if (info.previousMember != null && (opts.previousNewLine == null || !opts.previousNewLine(info.previousMember)) && !Node.isCommentNode(info.previousMember))
                 writer.blankLine();
             else if (!info.isStartOfFile)
                 writer.newLineIfLastNot();

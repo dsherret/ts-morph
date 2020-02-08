@@ -308,6 +308,7 @@ export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node>(
     const startChildren = opts.getIndexedChildren();
     const parentSyntaxList = opts.parent.getChildSyntaxListOrThrow();
     const index = verifyAndGetIndex(opts.index, startChildren.length);
+    const previousJsDocCount = getPreviousJsDocCount(); // the inserting node will take ownership
 
     insertIntoBracesOrSourceFile({
         parent: opts.parent,
@@ -316,7 +317,7 @@ export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node>(
         write: opts.write
     });
 
-    return getRangeWithoutCommentsFromArray<TNode>(opts.getIndexedChildren(), opts.index, opts.structures.length, opts.expectedKind);
+    return getRangeWithoutCommentsFromArray<TNode>(opts.getIndexedChildren(), opts.index - previousJsDocCount, opts.structures.length, opts.expectedKind);
 
     function getChildIndex() {
         if (index === 0)
@@ -324,6 +325,25 @@ export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node>(
 
         // get the previous member in order to get the implementation signature + 1
         return startChildren[index - 1].getChildIndex() + 1;
+    }
+
+    function getPreviousJsDocCount() {
+        let commentCount = 0;
+        let count = 0;
+        for (let i = index - 1; i >= 0; i--) {
+            const node = startChildren[i];
+            if (Node.isCommentNode(node)) {
+                commentCount++;
+
+                if (node.getText().startsWith("/**"))
+                    count = commentCount;
+            }
+            else {
+                break;
+            }
+        }
+
+        return count;
     }
 }
 

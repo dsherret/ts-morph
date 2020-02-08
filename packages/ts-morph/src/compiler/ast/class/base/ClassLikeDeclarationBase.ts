@@ -670,7 +670,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                 structures,
                 expectedKind: SyntaxKind.Constructor,
                 write: (writer, info) => {
-                    if (!isAmbient && info.previousMember != null)
+                    if (!isAmbient && info.previousMember != null && !Node.isCommentNode(info.previousMember))
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
@@ -705,7 +705,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                 structures,
                 expectedKind: SyntaxKind.GetAccessor,
                 write: (writer, info) => {
-                    if (info.previousMember != null)
+                    if (info.previousMember != null && !Node.isCommentNode(info.previousMember))
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
@@ -740,7 +740,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                 structures,
                 expectedKind: SyntaxKind.SetAccessor,
                 write: (writer, info) => {
-                    if (info.previousMember != null)
+                    if (info.previousMember != null && !Node.isCommentNode(info.previousMember))
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
@@ -808,7 +808,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return insertChildren<MethodDeclaration>(this, {
                 index,
                 write: (writer, info) => {
-                    if (!isAmbient && info.previousMember != null)
+                    if (!isAmbient && info.previousMember != null && !Node.isCommentNode(info.previousMember))
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();

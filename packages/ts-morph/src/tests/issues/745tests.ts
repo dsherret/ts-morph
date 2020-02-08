@@ -12,7 +12,7 @@ describe("tests for issue #45", () => {
             statements: "console.log('test');"
         });
 
-        expect(sourceFile.getFullText()).to.equal("class Foo {\n//\n\n    constructor() {\n        console.log('test');\n    }\n}");
+        expect(sourceFile.getFullText()).to.equal("class Foo {\n//\n    constructor() {\n        console.log('test');\n    }\n}");
     });
 
     it("should not error when there is a comment on the close brace token", () => {
@@ -25,6 +25,6 @@ describe("tests for issue #45", () => {
             statements: "console.log('test');"
         });
 
-        expect(sourceFile.getFullText()).to.equal("class Foo {\n//\n\n    constructor() {\n        console.log('test');\n    }\n\n/*b*/}");
+        expect(sourceFile.getFullText()).to.equal("class Foo {\n//\n    constructor() {\n        console.log('test');\n    }\n\n/*b*/}");
     });
 });
