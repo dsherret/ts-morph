@@ -342,6 +342,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
 
     /**
      * Removes all the named imports.
+     * @remarks To remove a single named import, get the named import and call `#remove()` on it.
      */
     removeNamedImports(): this {
         const importClause = this.getImportClause();

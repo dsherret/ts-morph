@@ -6690,7 +6690,10 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
     insertNamedImports(index: number, namedImports: ReadonlyArray<OptionalKind<ImportSpecifierStructure> | string | WriterFunction> | WriterFunction): ImportSpecifier[];
     /** Gets the named imports. */
     getNamedImports(): ImportSpecifier[];
-    /** Removes all the named imports. */
+    /**
+     * Removes all the named imports.
+     * @remarks To remove a single named import, get the named import and call `#remove()` on it.
+     */
     removeNamedImports(): this;
     /** Gets the import clause or throws if it doesn't exist. */
     getImportClauseOrThrow(): ImportClause;
