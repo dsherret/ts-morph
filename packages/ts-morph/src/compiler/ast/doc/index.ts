@@ -9,6 +9,8 @@ export * from "./JSDocReturnTag";
 export * from "./JSDocSignature";
 export * from "./JSDocTag";
 export * from "./JSDocTagInfo";
+export * from "./JSDocTemplateTag";
+export * from "./JSDocThisTag";
 export * from "./JSDocType";
 export * from "./JSDocTypedefTag";
 export * from "./JSDocTypeTag";

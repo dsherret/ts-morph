@@ -1,14 +1,14 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { JSDocReturnTag } from "../../../../compiler";
+import { JSDocThisTag } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(JSDocReturnTag), () => {
+describe(nameof(JSDocThisTag), () => {
     function getInfo(text: string) {
-        return getInfoFromTextWithDescendant<JSDocReturnTag>(text, SyntaxKind.JSDocReturnTag);
+        return getInfoFromTextWithDescendant<JSDocThisTag>(text, SyntaxKind.JSDocThisTag);
     }
 
-    describe(nameof<JSDocReturnTag>(d => d.getTypeExpression), () => {
+    describe(nameof<JSDocThisTag>(d => d.getTypeExpression), () => {
         function doTest(text: string, expectedValue: string | undefined) {
             const { descendant } = getInfo(text);
             expect(descendant.getTypeExpression()?.getTypeNode().getText()).to.equal(expectedValue);
@@ -19,11 +19,11 @@ describe(nameof(JSDocReturnTag), () => {
         }
 
         it("should get undefined when there is no type given", () => {
-            doTest("/** @returns t - String */\nfunction test() {}", undefined);
+            doTest("/** @this */\nfunction test() {}", undefined);
         });
 
         it("should get when type is given", () => {
-            doTest("/** @returns {boolean} t - String */\nfunction test() {}", "boolean");
+            doTest("/** @this {boolean} - String */\nfunction test() {}", "boolean");
         });
     });
 });

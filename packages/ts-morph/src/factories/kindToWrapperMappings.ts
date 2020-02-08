@@ -74,6 +74,8 @@ export const kindToWrapperMappings: { [key: number]: unknown; } = {
     [SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag,
     [SyntaxKind.JSDocSignature]: compiler.JSDocSignature,
     [SyntaxKind.JSDocTag]: compiler.JSDocUnknownTag,
+    [SyntaxKind.JSDocTemplateTag]: compiler.JSDocTemplateTag,
+    [SyntaxKind.JSDocThisTag]: compiler.JSDocThisTag,
     [SyntaxKind.JSDocTypeExpression]: compiler.JSDocTypeExpression,
     [SyntaxKind.JSDocTypeTag]: compiler.JSDocTypeTag,
     [SyntaxKind.JSDocTypedefTag]: compiler.JSDocTypedefTag,
