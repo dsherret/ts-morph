@@ -35,9 +35,9 @@ Formerly `ts-simple-ast`.
 
 This library is still under active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do. Please open an issue if you find a feature missing, bug, or question that isn't in the issue tracker.
 
-* [Breaking changes](breaking-changes.md)
-* [Change log](CHANGELOG.md)
-* [Wrapped nodes progress report](wrapped-nodes.md)
+* [Breaking changes](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/breaking-changes.md)
+* [Change log](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/CHANGELOG.md)
+* [Wrapped nodes progress report](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/wrapped-nodes.md)
 
 ## Example
 

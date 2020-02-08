@@ -5,9 +5,9 @@
 
 A library for quickly getting set up with the [TypeScript](https://github.com/Microsoft/TypeScript) Compiler API.
 
-This library is separate from [ts-morph](../ts-morph), but uses some of its underlying infrastructure.
+This library is separate from [ts-morph](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/), but uses some of its underlying infrastructure.
 
-* [Declarations](lib/ts-morph-bootstrap.d.ts)
+* [Declarations](https://github.com/dsherret/ts-morph/blob/latest/packages/bootstrap/lib/ts-morph-bootstrap.d.ts)
 
 ## Example
 
