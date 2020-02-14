@@ -112,7 +112,7 @@
     "typescript-3.1.6": "npm:typescript@3.1.6",
     "typescript-3.2.4": "npm:typescript@3.2.4",
     "typescript-3.3.1": "npm:typescript@3.3.1",
-    "typescript-3.4.1": "npm:typescript@3.4.1",
+    "typescript-3.4.5": "npm:typescript@3.4.5",
     "typescript-3.5.3": "npm:typescript@3.5.3"
   },
   "standard-version": {
