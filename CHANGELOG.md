@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.5"></a>
+## [1.3.5](https://github.com/dsherret/ts-morph/compare/1.3.3...1.3.5) (2020-02-14)
+
+
+### Bug Fixes
+
+* backport to 1.3.x [#685](https://github.com/dsherret/ts-morph/issues/685) - Fix `applyTextChanges` in node 11 and 12. ([#785](https://github.com/dsherret/ts-morph/issues/785)) ([3e65664](https://github.com/dsherret/ts-morph/commit/3e65664))
+
+
+
 <a name="1.3.3"></a>
 ## [1.3.3](https://github.com/dsherret/ts-morph/compare/1.3.2...1.3.3) (2019-04-01)
 
