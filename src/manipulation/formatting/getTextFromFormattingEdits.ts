@@ -2,19 +2,19 @@
 
 export function getTextFromFormattingEdits(sourceFile: SourceFile, formattingEdits: ReadonlyArray<TextChange>) {
     // reverse the order
-    formattingEdits = [...formattingEdits].sort((a, b) => {
-        const aStart = a.getSpan().getStart();
-        const bStart = b.getSpan().getStart();
+    const reversedFormattingEdits = formattingEdits.map((edit, index) => ({ edit, index })).sort((a, b) => {
+        const aStart = a.edit.getSpan().getStart();
+        const bStart = b.edit.getSpan().getStart();
         const difference = bStart - aStart;
-
-        return difference === 0 ? 1 : difference; // reverse when equal
+        if (difference === 0)
+            return a.index < b.index ? 1 : -1;
+        return difference > 0 ? 1 : -1;
     });
+
     let text = sourceFile.getFullText();
-
-    for (const textChange of formattingEdits) {
-        const span = textChange.getSpan();
-        text = text.slice(0, span.getStart()) + textChange.getNewText() + text.slice(span.getEnd());
+    for (const { edit } of reversedFormattingEdits) {
+        const span = edit.getSpan();
+        text = text.slice(0, span.getStart()) + edit.getNewText() + text.slice(span.getEnd());
     }
-
     return text;
 }
