@@ -20,7 +20,8 @@ export class ImportClause extends ImportClauseBase<ts.ImportClause> {
                 insertPos: this.getStart(),
                 newText: "type "
             });
-        } else {
+        }
+        else {
             const typeKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword);
             removeChildren({
                 children: [typeKeyword],

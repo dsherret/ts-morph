@@ -337,8 +337,9 @@ describe(nameof(Project), () => {
         describe("async", () => doTestsForMethod((project, filePath, options) => project.addSourceFileAtPathIfExists(filePath, options)));
         describe("sync", () => doTestsForMethod((project, filePath, options) => Promise.resolve(project.addSourceFileAtPathIfExists(filePath, options))));
 
-        function doTestsForMethod(action: (project: Project, filePath: string, options?: { scriptKind?: ts.ScriptKind; })
-        => Promise<ts.SourceFile | undefined>) {
+        function doTestsForMethod(
+            action: (project: Project, filePath: string, options?: { scriptKind?: ts.ScriptKind; }) => Promise<ts.SourceFile | undefined>
+        ) {
             it("should add files that exist", async () => {
                 const { project } = setup();
                 project.fileSystem.writeFileSync("/file1.ts", "class Test {}");

@@ -31,7 +31,7 @@ describe(nameof(ImportDeclarationStructurePrinter), () => {
                 "An import declaration cannot have both a namespace import and a named import."
             );
         });
-    })
+    });
 
     describe("insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces", () => {
         it("should write named imports with surrounding spaces by default", () => {

@@ -29,7 +29,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 insertPos: (this.getNodeProperty("exportClause") ?? this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken)).getStart(),
                 newText: "type "
             });
-        } else {
+        }
+        else {
             const typeKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword);
             removeChildren({
                 children: [typeKeyword],
@@ -66,9 +67,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 }
             });
         }
-        else if (Node.isNamespaceExport(exportClause)) {
+        else if (Node.isNamespaceExport(exportClause))
             exportClause.getNameNode().replaceWithText(name);
-        }
         else {
             insertIntoParentTextRange({
                 insertPos: exportClause.getStart(),

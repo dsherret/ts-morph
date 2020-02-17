@@ -25,7 +25,9 @@ export class ParameterDeclarationStructurePrinter extends NodePrinter<OptionalKi
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<ParameterDeclarationStructure>) {
         if (structure.name == null) {
             throw new errors
-                .NotImplementedError("Not implemented scenario where parameter declaration structure doesn't have a name. Please open an issue if you need this.");
+                .NotImplementedError(
+                "Not implemented scenario where parameter declaration structure doesn't have a name. Please open an issue if you need this."
+            );
         }
 
         this.factory.forDecorator().printTextsInline(writer, structure.decorators);

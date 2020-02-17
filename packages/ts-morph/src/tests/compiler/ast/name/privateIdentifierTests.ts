@@ -26,9 +26,8 @@ describe(nameof(PrivateIdentifier), () => {
             const { sourceFile, firstProp } = getInfoFromTextWithFirstProperty(text);
             const identifier = (firstProp.getNameNode() as PrivateIdentifier);
             identifier.rename(newName);
-            if (!newName.startsWith("#")) {
+            if (!newName.startsWith("#"))
                 expect(identifier.wasForgotten()).to.be.true;
-            }
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 

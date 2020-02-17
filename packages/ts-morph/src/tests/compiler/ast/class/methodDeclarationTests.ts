@@ -120,8 +120,11 @@ describe(nameof(MethodDeclaration), () => {
             });
 
             it("should remove when the nodes all have js docs", () => {
-                doTest("class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method2 */\n    method2(){}\n\n    /** Method3 */\n    method3() {}\n}",
-                    "method2", "class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method3 */\n    method3() {}\n}");
+                doTest(
+                    "class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method2 */\n    method2(){}\n\n    /** Method3 */\n    method3() {}\n}",
+                    "method2",
+                    "class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method3 */\n    method3() {}\n}"
+                );
             });
 
             it("should remove when it's the last method", () => {

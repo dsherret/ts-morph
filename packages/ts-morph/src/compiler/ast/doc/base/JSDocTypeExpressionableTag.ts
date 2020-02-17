@@ -18,7 +18,9 @@ export interface JSDocTypeExpressionableTag {
     getTypeExpressionOrThrow(): JSDocTypeExpression;
 }
 
-export function JSDocTypeExpressionableTag<T extends Constructor<JSDocTypeExpressionableTagExtensionType>>(Base: T): Constructor<JSDocTypeExpressionableTag> & T {
+export function JSDocTypeExpressionableTag<T extends Constructor<JSDocTypeExpressionableTagExtensionType>>(Base: T): Constructor<JSDocTypeExpressionableTag>
+    & T
+{
     return class extends Base implements JSDocTypeExpressionableTag {
         getTypeExpression() {
             const result = this._getNodeFromCompilerNodeIfExists(this.compilerNode.typeExpression);

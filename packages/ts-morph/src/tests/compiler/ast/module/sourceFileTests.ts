@@ -1403,7 +1403,8 @@ function myFunction(param: MyClass) {
 
         it("should add missing imports when some exist", () => {
             const startText = `import MyClass from "./MyClass";\n\nconst t = new MyClass();\nconst u: MyInterface = {};`;
-            const expectedText = `import MyClass from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\nconst u: MyInterface = {};`;
+            const expectedText =
+                `import MyClass from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\nconst u: MyInterface = {};`;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
                 { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
@@ -1411,7 +1412,8 @@ function myFunction(param: MyClass) {
         });
 
         it("should do nothing when both exist", () => {
-            const startText = `import MyClass from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\nconst u: MyInterface = {};`;
+            const startText =
+                `import MyClass from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\nconst u: MyInterface = {};`;
             const expectedText = startText;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
@@ -1420,9 +1422,11 @@ function myFunction(param: MyClass) {
         });
 
         it("should add missing ones in existing named imports", () => {
-            const startText = `import { MyClass } from "./MyClass";\n\nconst t = new MyClass();\nconst u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
-            const expectedText = `import { MyClass, MyClass2, MyClass3 } from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\n`
-                + `const u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
+            const startText =
+                `import { MyClass } from "./MyClass";\n\nconst t = new MyClass();\nconst u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
+            const expectedText =
+                `import { MyClass, MyClass2, MyClass3 } from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\n`
+                    + `const u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export class MyClass {} export class MyClass2 {} export class MyClass3 {}" },
                 { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
@@ -1430,7 +1434,8 @@ function myFunction(param: MyClass) {
         });
 
         it("should not forget nodes", () => {
-            const startText = `import { MyClass } from "./MyClass";\n\nconst t = new MyClass();\nconst u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
+            const startText =
+                `import { MyClass } from "./MyClass";\n\nconst t = new MyClass();\nconst u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
             const { sourceFile, project } = getInfoFromText(startText);
             project.createSourceFile("/MyClass.ts", "export class MyClass {} export class MyClass2 {} export class MyClass3 {}");
             project.createSourceFile("/MyInterface.ts", "export interface MyInterface {}");
