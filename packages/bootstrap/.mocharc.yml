@@ -1,0 +1,5 @@
+require: 'ts-node/register'
+recursive: true
+reporter: progress
+timeout: 10000
+spec: src/tests/**/*.ts

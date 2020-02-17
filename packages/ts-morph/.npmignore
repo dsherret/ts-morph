@@ -14,7 +14,7 @@
 /bin
 /.nyc_output
 azure-pipelines.yml
-mocha.opts
+.mocharc.yml
 *.suo
 *.csproj
 *.csproj.user

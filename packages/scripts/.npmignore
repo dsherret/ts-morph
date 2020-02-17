@@ -1,7 +1,7 @@
 /scripts
 /src
 azure-pipelines.yml
-mocha.opts
+.mocharc.yml
 .npmignore
 CHANGELOG.md
 rollup.config.js
