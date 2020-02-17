@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 180
+**Total:** 183
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -107,6 +107,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: isExportEquals
     * :heavy_check_mark: expression
 * [ExportDeclaration](src/compiler/ast/module/ExportDeclaration.ts)
+    * :heavy_check_mark: isTypeOnly
     * :heavy_check_mark: exportClause
     * :heavy_check_mark: moduleSpecifier
 * [ExportSpecifier](src/compiler/ast/module/ExportSpecifier.ts)
@@ -145,16 +146,17 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: token
     * :heavy_check_mark: types
 * [Identifier](src/compiler/ast/name/Identifier.ts)
+    * :heavy_check_mark: text
+* [Identifier](src/compiler/ast/name/Identifier.ts)
     * :x: escapedText
     * :x: originalKeywordKind
     * :x: isInJSDocNamespace
-* [Identifier](src/compiler/ast/name/Identifier.ts)
-    * :heavy_check_mark: text
 * [IfStatement](src/compiler/ast/statement/IfStatement.ts)
     * :heavy_check_mark: expression
     * :heavy_check_mark: thenStatement
     * :heavy_check_mark: elseStatement
 * [ImportClause](src/compiler/ast/module/ImportClause.ts)
+    * :heavy_check_mark: isTypeOnly
     * :heavy_check_mark: name
     * :x: namedBindings
 * [ImportDeclaration](src/compiler/ast/module/ImportDeclaration.ts)
@@ -275,6 +277,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [NamespaceDeclaration](src/compiler/ast/module/NamespaceDeclaration.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: body
+* [NamespaceExport](src/compiler/ast/module/NamespaceExport.ts)
+    * :heavy_check_mark: name
 * [NamespaceImport](src/compiler/ast/module/NamespaceImport.ts)
     * :heavy_check_mark: name
 * [NewExpression](src/compiler/ast/expression/NewExpression.ts)
@@ -314,6 +318,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: operator
     * :heavy_check_mark: operand
 * [PrimaryExpression](src/compiler/ast/expression/PrimaryExpression.ts)
+* [PrivateIdentifier](src/compiler/ast/name/PrivateIdentifier.ts)
+    * :heavy_check_mark: text
+* [PrivateIdentifier](src/compiler/ast/name/PrivateIdentifier.ts)
+    * :x: escapedText
 * [PropertyAccessExpression](src/compiler/ast/expression/PropertyAccessExpression.ts)
     * :heavy_check_mark: expression
     * :heavy_check_mark: questionDotToken
@@ -350,6 +358,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: objectAssignmentInitializer
 * SignatureDeclarationBase - Implemented via mixin.
 * [SourceFile](src/compiler/ast/module/SourceFile.ts)
+* [SourceFile](src/compiler/ast/module/SourceFile.ts)
     * :heavy_check_mark: statements
     * :x: endOfFileToken
     * :heavy_check_mark: fileName
@@ -363,7 +372,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: isDeclarationFile
     * :x: hasNoDefaultLib
     * :heavy_check_mark: languageVersion
-* [SourceFile](src/compiler/ast/module/SourceFile.ts)
 * [SpreadAssignment](src/compiler/ast/expression/object/SpreadAssignment.ts)
     * :heavy_check_mark: expression
 * [SpreadElement](src/compiler/ast/expression/SpreadElement.ts)
@@ -455,7 +463,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 54
+**Total:** 58
 
 * Bundle
 * CallChain
@@ -474,7 +482,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * JSDocNonNullableType
 * JSDocNullableType
 * JSDocOptionalType
+* JSDocPrivateTag
 * JSDocPropertyLikeTag
+* JSDocProtectedTag
+* JSDocPublicTag
+* JSDocReadonlyTag
 * JSDocTypeLiteral
 * JSDocUnknownType
 * JSDocVariadicType
