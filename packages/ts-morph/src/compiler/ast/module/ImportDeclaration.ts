@@ -13,6 +13,25 @@ import { Node } from "../common";
 
 export const ImportDeclarationBase = Statement;
 export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
+    /** Gets if this import declaration is type only. */
+    isTypeOnly() {
+        return this.getImportClause()?.isTypeOnly() ?? false;
+    }
+
+    /** Sets if this import declaration is type only. */
+    setIsTypeOnly(value: boolean) {
+        const importClause = this.getImportClause();
+        if (importClause == null) {
+            if (!value)
+                return this;
+            else
+                throw new errors.InvalidOperationError("Cannot set an import as type only when there is no import clause.");
+        }
+
+        importClause.setIsTypeOnly(value);
+        return this;
+    }
+
     /**
      * Sets the import specifier.
      * @param text - Text to set as the module specifier.
@@ -409,6 +428,9 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         if (structure.moduleSpecifier != null)
             this.setModuleSpecifier(structure.moduleSpecifier);
 
+        if (structure.isTypeOnly != null)
+            this.setIsTypeOnly(structure.isTypeOnly);
+
         return this;
     }
 
@@ -421,6 +443,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
 
         return callBaseGetStructure<ImportDeclarationSpecificStructure>(ImportDeclarationBase.prototype, this, {
             kind: StructureKind.ImportDeclaration,
+            isTypeOnly: this.isTypeOnly(),
             defaultImport: defaultImport ? defaultImport.getText() : undefined,
             moduleSpecifier: this.getModuleSpecifier().getLiteralText(),
             namedImports: this.getNamedImports().map(node => node.getStructure()),

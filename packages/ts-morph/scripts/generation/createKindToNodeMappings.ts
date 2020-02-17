@@ -17,7 +17,8 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
 
     // add imports
     kindToNodeMappingsFile.insertText(0, writer => writer
-        .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while."));
+        .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts")
+        .writeLine("// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead."));
     kindToNodeMappingsFile.addImportDeclarations([{
         namedImports: ["SyntaxKind", "ts"],
         moduleSpecifier: "@ts-morph/common"

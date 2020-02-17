@@ -18,6 +18,10 @@ export class ImportDeclarationStructurePrinter extends NodePrinter<OptionalKind<
             throw new errors.InvalidOperationError("An import declaration cannot have both a namespace import and a named import.");
 
         writer.write("import");
+
+        // type only
+        if (structure.isTypeOnly)
+            writer.write(" type");
         // default import
         if (structure.defaultImport != null) {
             writer.write(` ${structure.defaultImport}`);

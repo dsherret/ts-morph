@@ -12,6 +12,7 @@ export * from "./NamedImports";
 export * from "./NamespaceChildableNode";
 export * from "./NamespaceDeclaration";
 export * from "./NamespaceDeclarationKind";
+export * from "./NamespaceExport";
 export * from "./NamespaceImport";
 export * from "./results";
 export * from "./SourceFile";

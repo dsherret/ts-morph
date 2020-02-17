@@ -3334,6 +3334,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         return node.getKind() === SyntaxKind.ModuleDeclaration;
     }
 
+    /** Gets if the node is a NamespaceExport. */
+    static readonly isNamespaceExport: (node: compiler.Node) => node is compiler.NamespaceExport = Node.is(SyntaxKind.NamespaceExport);
     /** Gets if the node is a NamespaceImport. */
     static readonly isNamespaceImport: (node: compiler.Node) => node is compiler.NamespaceImport = Node.is(SyntaxKind.NamespaceImport);
     /** Gets if the node is a NeverKeyword. */
@@ -3468,6 +3470,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         }
     }
 
+    /** Gets if the node is a PrivateIdentifier. */
+    static readonly isPrivateIdentifier: (node: compiler.Node) => node is compiler.PrivateIdentifier = Node.is(SyntaxKind.PrivateIdentifier);
     /** Gets if the node is a PropertyAccessExpression. */
     static readonly isPropertyAccessExpression: (node: compiler.Node) => node is compiler.PropertyAccessExpression = Node.is(SyntaxKind.PropertyAccessExpression);
     /** Gets if the node is a PropertyAssignment. */
@@ -3577,6 +3581,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.Identifier:
+            case SyntaxKind.PrivateIdentifier:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:
@@ -3617,8 +3622,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JsxAttribute:
             case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.NamespaceExport:
             case SyntaxKind.NamespaceImport:
             case SyntaxKind.Identifier:
+            case SyntaxKind.PrivateIdentifier:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:

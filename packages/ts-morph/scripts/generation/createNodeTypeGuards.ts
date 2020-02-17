@@ -321,7 +321,13 @@ function writeSyntaxKinds(writer: tsMorph.CodeBlockWriter, kinds: string[]) {
 function isAllowedName(name: string) {
     if (name === "Node" || name.endsWith("Specific") || name.endsWith("SpecificBase"))
         return false;
-    return true;
+
+    switch (name) {
+        case "CommonIdentifierBase":
+            return false;
+        default:
+            return true;
+    }
 }
 
 function isAllowedClass(name: string) {

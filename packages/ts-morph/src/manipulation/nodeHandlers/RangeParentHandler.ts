@@ -127,9 +127,13 @@ export class RangeParentHandler implements NodeHandler {
 
 // this is sadly necessary due to TS issue #35455 where a JSDocTag node's end will not actually be the end
 function getRealEnd(node: ts.Node, sourceFile: ts.SourceFile) {
-    return getPreviousMatchingPos(
-        sourceFile.text,
-        node.end,
-        charCode => charCode !== CharCodes.ASTERISK && !StringUtils.isWhitespaceCharCode(charCode)
-    );
+    if (node.kind >= ts.SyntaxKind.FirstJSDocNode && node.kind <= ts.SyntaxKind.LastJSDocNode) {
+        return getPreviousMatchingPos(
+            sourceFile.text,
+            node.end,
+            charCode => charCode !== CharCodes.ASTERISK && !StringUtils.isWhitespaceCharCode(charCode)
+        );
+    }
+
+    return node.end;
 }

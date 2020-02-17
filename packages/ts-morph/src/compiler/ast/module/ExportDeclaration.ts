@@ -13,6 +13,76 @@ import { callBaseSet } from "../callBaseSet";
 
 export const ExportDeclarationBase = Statement;
 export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaration> {
+    /** Gets if this export declaration is type only. */
+    isTypeOnly() {
+        return this.compilerNode.isTypeOnly;
+    }
+
+    /** Sets if this export declaration is type only. */
+    setIsTypeOnly(value: boolean) {
+        if (this.isTypeOnly() === value)
+            return this;
+
+        if (value) {
+            insertIntoParentTextRange({
+                parent: this,
+                insertPos: (this.getNodeProperty("exportClause") ?? this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken)).getStart(),
+                newText: "type "
+            });
+        } else {
+            const typeKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword);
+            removeChildren({
+                children: [typeKeyword],
+                removeFollowingSpaces: true
+            });
+        }
+
+        return this;
+    }
+
+    /** Gets the namespace export or returns undefined if it doesn't exist. (ex. `* as ns`, but not `*`). */
+    getNamespaceExport() {
+        const exportClause = this.getNodeProperty("exportClause");
+        return exportClause != null && Node.isNamespaceExport(exportClause) ? exportClause : undefined;
+    }
+
+    /** Gets the namespace export or throws if it doesn't exist. (ex. `* as ns`, but not `*`) */
+    getNamespaceExportOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getNamespaceExport(), "Expected to find a namespace export.");
+    }
+
+    /** Sets the namespace export name. */
+    setNamespaceExport(name: string) {
+        const exportClause = this.getNodeProperty("exportClause");
+        const newText = StringUtils.isNullOrWhitespace(name) ? "*" : `* as ${name}`;
+        if (exportClause == null) {
+            const asteriskToken = this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
+            insertIntoParentTextRange({
+                insertPos: asteriskToken.getStart(),
+                parent: this,
+                newText,
+                replacing: {
+                    textLength: 1
+                }
+            });
+        }
+        else if (Node.isNamespaceExport(exportClause)) {
+            exportClause.getNameNode().replaceWithText(name);
+        }
+        else {
+            insertIntoParentTextRange({
+                insertPos: exportClause.getStart(),
+                parent: this,
+                newText,
+                replacing: {
+                    textLength: exportClause.getWidth()
+                }
+            });
+        }
+
+        return this;
+    }
+
     /**
      * Sets the import specifier.
      * @param text - Text to set as the module specifier.
@@ -136,7 +206,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      * Gets if the export declaration has named exports.
      */
     hasNamedExports() {
-        return this.compilerNode.exportClause != null;
+        return this.compilerNode.exportClause?.kind === SyntaxKind.NamedExports;
     }
 
     /**
@@ -179,7 +249,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
 
         index = verifyAndGetIndex(index, originalNamedExports.length);
 
-        if (this.getNodeProperty("exportClause") == null) {
+        const exportClause = this.getNodeProperty("exportClause");
+        if (exportClause == null) {
             namedExportStructurePrinter.printTextsWithBraces(writer, namedExports);
             const asteriskToken = this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
             insertIntoParentTextRange({
@@ -188,6 +259,17 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 newText: writer.toString(),
                 replacing: {
                     textLength: 1
+                }
+            });
+        }
+        else if (exportClause.getKind() === SyntaxKind.NamespaceExport) {
+            namedExportStructurePrinter.printTextsWithBraces(writer, namedExports);
+            insertIntoParentTextRange({
+                insertPos: exportClause.getStart(),
+                parent: this,
+                newText: writer.toString(),
+                replacing: {
+                    textLength: exportClause.getWidth()
                 }
             });
         }
@@ -212,7 +294,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
      */
     getNamedExports(): ExportSpecifier[] {
         const namedExports = this.compilerNode.exportClause;
-        if (namedExports == null)
+        if (namedExports == null || ts.isNamespaceExport(namedExports))
             return [];
         return namedExports.elements.map(e => this._getNodeFromCompilerNode(e));
     }
@@ -262,6 +344,12 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
         if (structure.namedExports == null && structure.hasOwnProperty(nameof(structure.namedExports)))
             this.toNamespaceExport();
 
+        if (structure.namespaceExport != null)
+            this.setNamespaceExport(structure.namespaceExport);
+
+        if (structure.isTypeOnly != null)
+            this.setIsTypeOnly(structure.isTypeOnly);
+
         return this;
     }
 
@@ -272,8 +360,10 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
         const moduleSpecifier = this.getModuleSpecifier();
         return callBaseGetStructure<ExportDeclarationSpecificStructure>(ExportDeclarationBase.prototype, this, {
             kind: StructureKind.ExportDeclaration,
-            moduleSpecifier: moduleSpecifier ? moduleSpecifier.getLiteralText() : undefined,
-            namedExports: this.getNamedExports().map(node => node.getStructure())
+            isTypeOnly: this.isTypeOnly(),
+            moduleSpecifier: moduleSpecifier?.getLiteralText(),
+            namedExports: this.getNamedExports().map(node => node.getStructure()),
+            namespaceExport: this.getNamespaceExport()?.getName()
         });
     }
 }

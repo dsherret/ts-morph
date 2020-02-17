@@ -99,9 +99,9 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.renameAlias), () => {
         function doTest(text: string, newAlias: string, expected: string, expectedImportName: string) {
-            const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text);
-            const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
-            const importingFile = project.createSourceFile("importingFile.ts", `import { name } from './testFile';`);
+            const { sourceFile, project } = getInfoFromText<ExportDeclaration>(text, { filePath: "/b.ts" });
+            const otherSourceFile = project.createSourceFile("a.ts", "export class name {}");
+            const importingFile = project.createSourceFile("c.ts", `import { name } from './b';`);
             const namedImport = sourceFile.getExportDeclarations()[0].getNamedExports()[0];
             namedImport.renameAlias(newAlias);
             expect(sourceFile.getText()).to.equal(expected);
@@ -112,6 +112,10 @@ describe(nameof(ExportSpecifier), () => {
         it("should rename existing alias", () => {
             doTest("import {name as alias} from './file'; export { alias as name };", "newAlias",
                 "import {name as alias} from './file'; export { alias as newAlias };", "newAlias");
+        });
+
+        it("should rename when export alias is the same", () => {
+            doTest("import { name } from './a'; export { name as name };", "newAlias", "import { name } from './a'; export { name as newAlias };", "newAlias");
         });
 
         it("should add new alias and update all usages to the new alias", () => {

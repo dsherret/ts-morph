@@ -7,6 +7,69 @@ import { ImportSpecifierStructure, ImportDeclarationStructure, StructureKind, Op
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ImportDeclaration), () => {
+    describe(nameof<ImportDeclaration>(n => n.isTypeOnly), () => {
+        function doTest(text: string, expected: boolean) {
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+            expect(firstChild.isTypeOnly()).to.equal(expected);
+        }
+
+        it("should be when is", () => {
+            doTest("import type { Test } from './test'", true);
+        });
+
+        it("should not be when not", () => {
+            doTest("import { Test } from './test'", false);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.setIsTypeOnly), () => {
+        function doTest(text: string, value: boolean, expectedText: string) {
+            const { sourceFile, firstChild } = getInfoFromText<ImportDeclaration>(text);
+            firstChild.setIsTypeOnly(value);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should leave alone when setting the same for named imports", () => {
+            doTest("import type { Test } from './test'", true, "import type { Test } from './test'");
+            doTest("import { Test } from './test'", false, "import { Test } from './test'");
+            doTest("import * as test from './test'", false, "import * as test from './test'");
+        });
+
+        it("should set when not for named imports", () => {
+            doTest("import { Test } from './test'", true, "import type { Test } from './test'");
+        });
+
+        it("should set not when is for named imports", () => {
+            doTest("import type { Test } from './test'", false, "import { Test } from './test'");
+        });
+
+        it("should leave alone when setting the same for default import", () => {
+            doTest("import type Test from './test'", true, "import type Test from './test'");
+            doTest("import Test from './test'", false, "import Test from './test'");
+        });
+
+        it("should set when not for default import", () => {
+            doTest("import Test from './test'", true, "import type Test from './test'");
+        });
+
+        it("should set not when is for default import", () => {
+            doTest("import type Test from './test'", false, "import Test from './test'");
+        });
+
+        it("should leave alone when setting the same for namespace import", () => {
+            doTest("import type * as test from './test'", true, "import type * as test from './test'");
+            doTest("import * as test from './test'", false, "import * as test from './test'");
+        });
+
+        it("should set when not for namespace import", () => {
+            doTest("import * as test from './test'", true, "import type * as test from './test'");
+        });
+
+        it("should set not when is for namespace import", () => {
+            doTest("import type * as test from './test'", false, "import * as test from './test'");
+        });
+    });
+
     describe(nameof<ImportDeclaration>(n => n.setModuleSpecifier), () => {
         function doTest(text: string, newModuleSpecifier: string, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
@@ -643,12 +706,13 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should set everything when specified", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<ImportDeclarationStructure>> = {
+                isTypeOnly: true,
                 defaultImport: "asdf",
                 moduleSpecifier: "new",
                 namedImports: undefined,
                 namespaceImport: "test"
             };
-            doTest("import 'test';", structure, "import asdf, * as test from 'new';");
+            doTest("import 'test';", structure, "import type asdf, * as test from 'new';");
         });
 
         function doThrowTest(text: string, structure: Partial<ImportDeclarationStructure>) {
@@ -671,9 +735,21 @@ describe(nameof(ImportDeclaration), () => {
             expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }
 
+        it("should work when is type only", () => {
+            doTest(`import type { } from 'foo'`, {
+                kind: StructureKind.ImportDeclaration,
+                isTypeOnly: true,
+                defaultImport: undefined,
+                moduleSpecifier: "foo",
+                namedImports: [],
+                namespaceImport: undefined
+            });
+        });
+
         it("should work when has named imports", () => {
             doTest(`import { a } from 'foo'`, {
                 kind: StructureKind.ImportDeclaration,
+                isTypeOnly: false,
                 defaultImport: undefined,
                 moduleSpecifier: "foo",
                 namedImports: [{
@@ -688,6 +764,7 @@ describe(nameof(ImportDeclaration), () => {
         it("should work when is a namespace import", () => {
             doTest(`import * as ts from 'typescript'`, {
                 kind: StructureKind.ImportDeclaration,
+                isTypeOnly: false,
                 defaultImport: undefined,
                 moduleSpecifier: "typescript",
                 namedImports: [],
@@ -698,6 +775,7 @@ describe(nameof(ImportDeclaration), () => {
         it("should work for default imports", () => {
             doTest(`import bar from 'foo'`, {
                 kind: StructureKind.ImportDeclaration,
+                isTypeOnly: false,
                 defaultImport: "bar",
                 moduleSpecifier: "foo",
                 namedImports: [],
@@ -708,6 +786,7 @@ describe(nameof(ImportDeclaration), () => {
         it("should work for default with named imports", () => {
             doTest(`import bar, {test} from 'foo'`, {
                 kind: StructureKind.ImportDeclaration,
+                isTypeOnly: false,
                 defaultImport: "bar",
                 moduleSpecifier: "foo",
                 namedImports: [{

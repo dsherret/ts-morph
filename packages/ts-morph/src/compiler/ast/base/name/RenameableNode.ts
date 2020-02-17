@@ -24,7 +24,7 @@ export function RenameableNode<T extends Constructor<RenameableNodeExtensionType
             return this;
 
             function getNodeToRename(thisNode: Node) {
-                if (Node.isIdentifier(thisNode))
+                if (Node.isIdentifier(thisNode) || Node.isPrivateIdentifier(thisNode))
                     return thisNode;
                 else if ((thisNode as any).getNameNode != null) {
                     const node = (thisNode as any).getNameNode() as Node;

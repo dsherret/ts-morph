@@ -1,7 +1,36 @@
 import { errors, ts } from "@ts-morph/common";
 import { Node } from "../common";
+import { removeChildren, insertIntoParentTextRange } from "../../../manipulation";
+
 export const ImportClauseBase = Node;
 export class ImportClause extends ImportClauseBase<ts.ImportClause> {
+    /** Gets if this import clause is type only. */
+    isTypeOnly() {
+        return this.compilerNode.isTypeOnly;
+    }
+
+    /** Sets if this import declaration is type only. */
+    setIsTypeOnly(value: boolean) {
+        if (this.isTypeOnly() === value)
+            return this;
+
+        if (value) {
+            insertIntoParentTextRange({
+                parent: this,
+                insertPos: this.getStart(),
+                newText: "type "
+            });
+        } else {
+            const typeKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword);
+            removeChildren({
+                children: [typeKeyword],
+                removeFollowingSpaces: true
+            });
+        }
+
+        return this;
+    }
+
     /**
      * Gets the default import or throws if it doesn't exit.
      */

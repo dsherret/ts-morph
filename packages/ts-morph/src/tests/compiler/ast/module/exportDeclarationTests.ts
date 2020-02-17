@@ -7,6 +7,112 @@ import { ExportSpecifierStructure, ExportDeclarationStructure, StructureKind, Op
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {
+    describe(nameof<ExportDeclaration>(n => n.isTypeOnly), () => {
+        function doTest(text: string, expected: boolean) {
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
+            expect(firstChild.isTypeOnly()).to.equal(expected);
+        }
+
+        it("should be when is", () => {
+            doTest("export type { Test } from './test'", true);
+        });
+
+        it("should not be when not", () => {
+            doTest("export { Test } from './test'", false);
+        });
+    });
+
+    describe(nameof<ExportDeclaration>(n => n.setIsTypeOnly), () => {
+        function doTest(text: string, value: boolean, expectedText: string) {
+            const { sourceFile, firstChild } = getInfoFromText<ExportDeclaration>(text);
+            firstChild.setIsTypeOnly(value);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should leave alone when setting the same for named exports", () => {
+            doTest("export type { Test } from './test'", true, "export type { Test } from './test'");
+            doTest("export { Test } from './test'", false, "export { Test } from './test'");
+            doTest("export * as test from './test'", false, "export * as test from './test'");
+        });
+
+        it("should set when not for named exports", () => {
+            doTest("export { Test } from './test'", true, "export type { Test } from './test'");
+        });
+
+        it("should set not when is for named exports", () => {
+            doTest("export type { Test } from './test'", false, "export { Test } from './test'");
+        });
+
+        it("should leave alone when setting the same for namespace export", () => {
+            doTest("export type * as test from './test'", true, "export type * as test from './test'");
+            doTest("export * as test from './test'", false, "export * as test from './test'");
+        });
+
+        it("should set when not for namespace export", () => {
+            doTest("export * as test from './test'", true, "export type * as test from './test'");
+        });
+
+        it("should set not when is for namespace export", () => {
+            doTest("export type * as test from './test'", false, "export * as test from './test'");
+        });
+
+        it("should leave alone when setting the same for namespace export with no name", () => {
+            doTest("export type * from './test'", true, "export type * from './test'");
+            doTest("export * from './test'", false, "export * from './test'");
+        });
+
+        it("should set when not for namespace export with no name", () => {
+            doTest("export * from './test'", true, "export type * from './test'");
+        });
+
+        it("should set not when is for namespace export with no name", () => {
+            doTest("export type * from './test'", false, "export * from './test'");
+        });
+    });
+
+    describe(nameof<ExportDeclaration>(n => n.setNamespaceExport), () => {
+        function doTest(text: string, value: string, expected: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
+            firstChild.setNamespaceExport(value);
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should set the namespace export when a * export", () => {
+            doTest("export * from 'test';", "ns", "export * as ns from 'test';");
+        });
+
+        it("should set the namespace export when a * as ns export", () => {
+            doTest("export * as ns from 'test';", "ns2", "export * as ns2 from 'test';");
+        });
+
+        it("should set the namespace export when a named export", () => {
+            doTest("export { test } from 'test';", "ns", "export * as ns from 'test';");
+        });
+    });
+
+    describe(nameof<ExportDeclaration>(n => n.getNamespaceExport), () => {
+        function doTest(text: string, expected: string | undefined) {
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
+            expect(firstChild.getNamespaceExport()?.getText()).to.equal(expected);
+            if (expected == null)
+                expect(() => firstChild.getNamespaceExportOrThrow()).to.throw();
+            else
+                expect(firstChild.getNamespaceExportOrThrow().getText()).to.equal(expected);
+        }
+
+        it("should be undefined for * export", () => {
+            doTest("export * from 'test';", undefined);
+        });
+
+        it("should be undefined for named exports", () => {
+            doTest("export { test } from 'test';", undefined);
+        });
+
+        it("should get for * as ns export", () => {
+            doTest("export * as ns from 'test';", "* as ns");
+        });
+    });
+
     describe(nameof<ExportDeclaration>(n => n.isNamespaceExport), () => {
         function doTest(text: string, expected: boolean) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
@@ -15,6 +121,10 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should be a namespace export when is one", () => {
             doTest("export * from './test'", true);
+        });
+
+        it("should be a namespace export when is one with a name", () => {
+            doTest("export * as ns from './test'", true);
         });
 
         it("should not be a namespace export when is a named export", () => {
@@ -30,6 +140,10 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should not have any named exports when is a namespace export", () => {
             doTest("export * from './test'", false);
+        });
+
+        it("should not have any named exports when is a namespace export with a name", () => {
+            doTest("export * as ns from './test'", false);
         });
 
         it("should have named exports when has one", () => {
@@ -279,6 +393,10 @@ describe(nameof(ExportDeclaration), () => {
             doTest(`export * from "./test";`, 0, [{ name: "name", alias: "alias" }], `export { name as alias } from "./test";`);
         });
 
+        it("should insert named exports when doing a namespace export with a name", () => {
+            doTest(`export * as ns from "./test";`, 0, [{ name: "name", alias: "alias" }], `export { name as alias } from "./test";`);
+        });
+
         it("should insert named exports at the start", () => {
             doTest(
                 `export { name3 } from "./test";`,
@@ -443,12 +561,18 @@ describe(nameof(ExportDeclaration), () => {
             doTest("export {};", { namedExports: undefined, moduleSpecifier: "test" }, `export * from "test";`);
         });
 
+        it("should add the namespace export when specifying", () => {
+            doTest("export {};", { namespaceExport: "ns", moduleSpecifier: "test" }, `export * as ns from "test";`);
+        });
+
         it("should set everything when specified", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<ExportDeclarationStructure>> = {
+                isTypeOnly: true,
                 namedExports: [{ name: "test" }, { name: "test2", alias: "alias" }],
+                namespaceExport: undefined,
                 moduleSpecifier: "asdf"
             };
-            doTest("export * from 'test';", structure, "export { test, test2 as alias } from 'asdf';");
+            doTest("export * from 'test';", structure, "export type { test, test2 as alias } from 'asdf';");
         });
 
         function doThrowTest(text: string, structure: Partial<ExportDeclarationStructure>) {
@@ -471,19 +595,43 @@ describe(nameof(ExportDeclaration), () => {
             expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }
 
+        it("should work with is type only", () => {
+            doTest(`export type { } from "./test";`, {
+                kind: StructureKind.ExportDeclaration,
+                isTypeOnly: true,
+                moduleSpecifier: "./test",
+                namedExports: [],
+                namespaceExport: undefined
+            });
+        });
+
         it("should work with named export declarations", () => {
             doTest(`export { name } from "./test";`, {
                 kind: StructureKind.ExportDeclaration,
+                isTypeOnly: false,
                 moduleSpecifier: "./test",
-                namedExports: [{ kind: StructureKind.ExportSpecifier, alias: undefined, name: "name" }]
+                namedExports: [{ kind: StructureKind.ExportSpecifier, alias: undefined, name: "name" }],
+                namespaceExport: undefined
             });
         });
 
         it("should work with namespace export declarations", () => {
             doTest(`export * from "./test";`, {
                 kind: StructureKind.ExportDeclaration,
+                isTypeOnly: false,
                 moduleSpecifier: "./test",
-                namedExports: []
+                namedExports: [],
+                namespaceExport: undefined
+            });
+        });
+
+        it("should work with namespace export declarations with a name", () => {
+            doTest(`export * as ns from "./test";`, {
+                kind: StructureKind.ExportDeclaration,
+                isTypeOnly: false,
+                moduleSpecifier: "./test",
+                namedExports: [],
+                namespaceExport: "ns"
             });
         });
     });

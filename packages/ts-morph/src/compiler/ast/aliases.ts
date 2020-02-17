@@ -3,7 +3,7 @@ import { AssertTrue, IsExact } from "conditional-type-checks";
 import { ArrayBindingPattern, ObjectBindingPattern, BindingElement } from "./binding";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration, ClassDeclaration } from "./class";
 import { Node } from "./common";
-import { ComputedPropertyName, Identifier, QualifiedName } from "./name";
+import { ComputedPropertyName, Identifier, QualifiedName, PrivateIdentifier } from "./name";
 import { Decorator } from "./decorator";
 import { EnumDeclaration } from "./enum";
 import { Expression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ThisExpression, OmittedExpression,
@@ -20,7 +20,7 @@ import { TypeAliasDeclaration } from "./type";
 
 type WrappedToCompilerNodeType<T extends Node> = T["compilerNode"];
 
-export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
+export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
 type _PropertyNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<PropertyName>, ts.PropertyName>>;
 
 export type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
@@ -43,8 +43,8 @@ type _EntityNameExpressionTest = AssertTrue<IsExact<WrappedToCompilerNodeType<En
 // not going to support this brand at this time
 type MapPropAccessEntityNameExpr<T> = T extends ts.PropertyAccessEntityNameExpression ? ts.PropertyAccessExpression : T;
 
-export type DeclarationName = Identifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern
-    | EntityNameExpression;
+export type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression
+    | BindingPattern | EntityNameExpression;
 type _DeclarationNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<DeclarationName>, MapPropAccessEntityNameExpr<ts.DeclarationName>>>;
 
 export type EntityName = Identifier | QualifiedName;

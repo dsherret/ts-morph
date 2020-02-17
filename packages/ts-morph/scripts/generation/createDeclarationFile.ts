@@ -112,10 +112,15 @@ export async function createDeclarationFile() {
     }
 
     function hideSpecificDeclarations() {
-        (statements.find(s => s.kind === tsMorph.StructureKind.Function
-            && s.name === "ClassLikeDeclarationBaseSpecific") as tsMorph.FunctionDeclarationStructure).isExported = false;
-        (statements.find(s => s.kind === tsMorph.StructureKind.Interface
-            && s.name === "ClassLikeDeclarationBaseSpecific") as tsMorph.InterfaceDeclarationStructure).isExported = false;
+        for (const statement of statements) {
+            if (tsMorph.Structure.isFunction(statement) || tsMorph.Structure.isInterface(statement)) {
+                switch (statement.name) {
+                    case "ClassLikeDeclarationBaseSpecific":
+                    case "CommonIdentifierBase":
+                        statement.isExported = false;
+                }
+            }
+        }
     }
 
     function hideBaseDeclarations() {

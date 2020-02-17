@@ -1,7 +1,8 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import * as compiler from "./index";
 
-// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while.
+// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts
+// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead.
 
 export interface ImplementedKindToNodeMappings {
     [SyntaxKind.SourceFile]: compiler.SourceFile;
@@ -100,6 +101,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ModuleDeclaration]: compiler.NamespaceDeclaration;
     [SyntaxKind.NamedExports]: compiler.NamedExports;
     [SyntaxKind.NamedImports]: compiler.NamedImports;
+    [SyntaxKind.NamespaceExport]: compiler.NamespaceExport;
     [SyntaxKind.NamespaceImport]: compiler.NamespaceImport;
     [SyntaxKind.NewExpression]: compiler.NewExpression;
     [SyntaxKind.NonNullExpression]: compiler.NonNullExpression;
@@ -115,6 +117,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.PartiallyEmittedExpression]: compiler.PartiallyEmittedExpression;
     [SyntaxKind.PostfixUnaryExpression]: compiler.PostfixUnaryExpression;
     [SyntaxKind.PrefixUnaryExpression]: compiler.PrefixUnaryExpression;
+    [SyntaxKind.PrivateIdentifier]: compiler.PrivateIdentifier;
     [SyntaxKind.PropertyAccessExpression]: compiler.PropertyAccessExpression;
     [SyntaxKind.PropertyAssignment]: compiler.PropertyAssignment;
     [SyntaxKind.PropertyDeclaration]: compiler.PropertyDeclaration;

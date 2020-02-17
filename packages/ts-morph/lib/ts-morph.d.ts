@@ -841,14 +841,14 @@ declare const WriterFunctions: typeof Writers;
 export declare type WriterFunctionOrValue = string | number | WriterFunction;
 /** @deprecated Use static methods on `Node`. */
 export declare const TypeGuards: typeof Node;
-export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
+export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
 export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
 export declare type ArrayBindingElement = BindingElement | OmittedExpression;
 export declare type BindingName = Identifier | BindingPattern;
 export declare type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 export declare type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
 export declare type EntityNameExpression = Identifier | PropertyAccessExpression;
-export declare type DeclarationName = Identifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern | EntityNameExpression;
+export declare type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern | EntityNameExpression;
 export declare type EntityName = Identifier | QualifiedName;
 export declare type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
 export declare type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
@@ -2168,7 +2168,7 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
      *
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNode(): Identifier | NumericLiteral | StringLiteral | ComputedPropertyName | undefined;
+    getPropertyNameNode(): Identifier | NumericLiteral | StringLiteral | PrivateIdentifier | ComputedPropertyName | undefined;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.BindingElement>;
     /** @inheritdoc **/
@@ -2988,6 +2988,10 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocReturnTag: (node: Node) => node is JSDocReturnTag;
     /** Gets if the node is a JSDocSignature. */
     static readonly isJSDocSignature: (node: Node) => node is JSDocSignature;
+    /** Gets if the node is a JSDocTemplateTag. */
+    static readonly isJSDocTemplateTag: (node: Node) => node is JSDocTemplateTag;
+    /** Gets if the node is a JSDocThisTag. */
+    static readonly isJSDocThisTag: (node: Node) => node is JSDocThisTag;
     /** Gets if the node is a JSDocTypeExpression. */
     static readonly isJSDocTypeExpression: (node: Node) => node is JSDocTypeExpression;
     /** Gets if the node is a JSDocTypeTag. */
@@ -3030,6 +3034,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isNamedExports: (node: Node) => node is NamedExports;
     /** Gets if the node is a NamedImports. */
     static readonly isNamedImports: (node: Node) => node is NamedImports;
+    /** Gets if the node is a NamespaceExport. */
+    static readonly isNamespaceExport: (node: Node) => node is NamespaceExport;
     /** Gets if the node is a NamespaceImport. */
     static readonly isNamespaceImport: (node: Node) => node is NamespaceImport;
     /** Gets if the node is a NeverKeyword. */
@@ -3062,6 +3068,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isPostfixUnaryExpression: (node: Node) => node is PostfixUnaryExpression;
     /** Gets if the node is a PrefixUnaryExpression. */
     static readonly isPrefixUnaryExpression: (node: Node) => node is PrefixUnaryExpression;
+    /** Gets if the node is a PrivateIdentifier. */
+    static readonly isPrivateIdentifier: (node: Node) => node is PrivateIdentifier;
     /** Gets if the node is a PropertyAccessExpression. */
     static readonly isPropertyAccessExpression: (node: Node) => node is PropertyAccessExpression;
     /** Gets if the node is a PropertyAssignment. */
@@ -3948,6 +3956,16 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isJSDocType(node: Node): node is JSDocType;
     /**
+     * Gets if the node is a JSDocTypeExpressionableTag.
+     * @param node - Node to check.
+     */
+    static isJSDocTypeExpressionableTag<T extends Node>(node: T): node is JSDocTypeExpressionableTag & JSDocTypeExpressionableTagExtensionType & T;
+    /**
+     * Gets if the node is a JSDocTypeParameteredTag.
+     * @param node - Node to check.
+     */
+    static isJSDocTypeParameteredTag<T extends Node>(node: T): node is JSDocTypeParameteredTag & JSDocTypeParameteredTagExtensionType & T;
+    /**
      * Gets if the node is a JSDocUnknownTag.
      * @param node - Node to check.
      */
@@ -4423,6 +4441,28 @@ export interface JSDocPropertyLikeTag {
 }
 
 declare type JSDocPropertyLikeTagExtensionType = Node<ts.JSDocPropertyLikeTag> & JSDocTag;
+export declare function JSDocTypeExpressionableTag<T extends Constructor<JSDocTypeExpressionableTagExtensionType>>(Base: T): Constructor<JSDocTypeExpressionableTag> & T;
+
+export interface JSDocTypeExpressionableTag {
+    /** Gets the type expression node of the JS doc tag if it exists. */
+    getTypeExpression(): JSDocTypeExpression | undefined;
+    /** Gets the type expression node of the JS doc tag or throws if it doesn't exist. */
+    getTypeExpressionOrThrow(): JSDocTypeExpression;
+}
+
+declare type JSDocTypeExpressionableTagExtensionType = Node<ts.Node & {
+        typeExpression: ts.JSDocTypeExpression | undefined;
+    }> & JSDocTag;
+export declare function JSDocTypeParameteredTag<T extends Constructor<JSDocTypeParameteredTagExtensionType>>(Base: T): Constructor<JSDocTypeParameteredTag> & T;
+
+export interface JSDocTypeParameteredTag {
+    /** Gets the type parameters. */
+    getTypeParameters(): TypeParameterDeclaration[];
+}
+
+declare type JSDocTypeParameteredTagExtensionType = Node<ts.Node & {
+        typeParameters: ts.NodeArray<ts.TypeParameterDeclaration>;
+    }> & JSDocTag;
 declare const JSDocBase: typeof Node;
 
 /** JS doc node. */
@@ -4526,12 +4566,10 @@ export declare class JSDocPropertyTag extends JSDocPropertyTagBase<ts.JSDocPrope
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocPropertyTag>>;
 }
 
+declare const JSDocReturnTagBase: Constructor<JSDocTypeExpressionableTag> & typeof JSDocTag;
+
 /** JS doc return tag node. */
-export declare class JSDocReturnTag extends JSDocTag<ts.JSDocReturnTag> {
-    /** Gets the type expression node of the JS doc return tag if it exists. */
-    getTypeExpression(): JSDocTypeExpression | undefined;
-    /** Gets the type expression node of the JS doc return tag or throws if it doesn't exist. */
-    getTypeExpressionOrThrow(): JSDocTypeExpression;
+export declare class JSDocReturnTag extends JSDocReturnTagBase<ts.JSDocReturnTag> {
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.JSDocReturnTag>;
     /** @inheritdoc **/
@@ -4588,6 +4626,30 @@ export declare class JSDocTagInfo {
     getName(): string;
     /** Gets the text. */
     getText(): string | undefined;
+}
+
+declare const JSDocTemplateTagBase: Constructor<JSDocTypeParameteredTag> & typeof JSDocTag;
+
+/** JS doc template tag node. */
+export declare class JSDocTemplateTag extends JSDocTemplateTagBase<ts.JSDocTemplateTag> {
+    /** Gets the template tag's constraint if it exists or returns undefined. */
+    getConstraint(): JSDocTypeExpression | undefined;
+    /** Gets the template tag's constraint if it exists or throws otherwise. */
+    getConstraintOrThrow(): JSDocTypeExpression;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocTemplateTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocTemplateTag>>;
+}
+
+declare const JSDocThisTagBase: Constructor<JSDocTypeExpressionableTag> & typeof JSDocTag;
+
+/** JS doc this tag node. */
+export declare class JSDocThisTag extends JSDocThisTagBase<ts.JSDocThisTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocThisTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocThisTag>>;
 }
 
 /** JS doc type node. */
@@ -6050,6 +6112,8 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
     [SyntaxKind.JSDocSignature]: JSDocSignature;
     [SyntaxKind.JSDocTag]: JSDocUnknownTag;
+    [SyntaxKind.JSDocTemplateTag]: JSDocTemplateTag;
+    [SyntaxKind.JSDocThisTag]: JSDocThisTag;
     [SyntaxKind.JSDocTypeExpression]: JSDocTypeExpression;
     [SyntaxKind.JSDocTypeTag]: JSDocTypeTag;
     [SyntaxKind.JSDocTypedefTag]: JSDocTypedefTag;
@@ -6075,6 +6139,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ModuleDeclaration]: NamespaceDeclaration;
     [SyntaxKind.NamedExports]: NamedExports;
     [SyntaxKind.NamedImports]: NamedImports;
+    [SyntaxKind.NamespaceExport]: NamespaceExport;
     [SyntaxKind.NamespaceImport]: NamespaceImport;
     [SyntaxKind.NewExpression]: NewExpression;
     [SyntaxKind.NonNullExpression]: NonNullExpression;
@@ -6090,6 +6155,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.PartiallyEmittedExpression]: PartiallyEmittedExpression;
     [SyntaxKind.PostfixUnaryExpression]: PostfixUnaryExpression;
     [SyntaxKind.PrefixUnaryExpression]: PrefixUnaryExpression;
+    [SyntaxKind.PrivateIdentifier]: PrivateIdentifier;
     [SyntaxKind.PropertyAccessExpression]: PropertyAccessExpression;
     [SyntaxKind.PropertyAssignment]: PropertyAssignment;
     [SyntaxKind.PropertyDeclaration]: PropertyDeclaration;
@@ -6877,6 +6943,21 @@ export declare enum NamespaceDeclarationKind {
     Global = "global"
 }
 
+declare const NamespaceExportBase: Constructor<RenameableNode> & typeof Node;
+
+export declare class NamespaceExport extends NamespaceExportBase<ts.NamespaceExport> {
+    /** Sets the name of the namespace export. */
+    setName(name: string): this;
+    /** Gets the name of the namespace export. */
+    getName(): string;
+    /** Gets the namespace export's name node. */
+    getNameNode(): Identifier;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.NamespaceExport>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.NamespaceExport>>;
+}
+
 declare const NamespaceImportBase: Constructor<RenameableNode> & typeof Node;
 
 export declare class NamespaceImport extends NamespaceImportBase<ts.NamespaceImport> {
@@ -7198,19 +7279,10 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.SourceFile>>;
 }
 
-export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
-    /** Gets the expression. */
-    getExpression(): Expression;
-    /** @inheritdoc **/
-    getParent(): NodeParentType<ts.ComputedPropertyName>;
-    /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.ComputedPropertyName>>;
-}
+declare function CommonIdentifierBase<T extends Constructor<CommonIdentifierBaseExtensionType>>(Base: T): Constructor<CommonIdentifierBase> & T;
 
-declare const IdentifierBase: Constructor<ReferenceFindableNode> & Constructor<RenameableNode> & typeof PrimaryExpression;
-
-export declare class Identifier extends IdentifierBase<ts.Identifier> {
-    /** Gets the text for the identifier. */
+interface CommonIdentifierBase {
+    /** Gets the text for the private identifier. */
     getText(): string;
     /**
      * Gets the definition nodes of the identifier.
@@ -7228,10 +7300,37 @@ export declare class Identifier extends IdentifierBase<ts.Identifier> {
      * This is similar to "go to implementation."
      */
     getImplementations(): ImplementationLocation[];
+}
+
+declare type CommonIdentifierBaseExtensionType = Node<ts.Node & {
+        text: string;
+    }>;
+
+export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
+    /** Gets the expression. */
+    getExpression(): Expression;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.ComputedPropertyName>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.ComputedPropertyName>>;
+}
+
+declare const IdentifierBase: Constructor<CommonIdentifierBase> & Constructor<ReferenceFindableNode> & Constructor<RenameableNode> & typeof PrimaryExpression;
+
+export declare class Identifier extends IdentifierBase<ts.Identifier> {
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.Identifier>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.Identifier>>;
+}
+
+declare const PrivateIdentifierBase: Constructor<CommonIdentifierBase> & Constructor<ReferenceFindableNode> & Constructor<RenameableNode> & typeof Node;
+
+export declare class PrivateIdentifier extends PrivateIdentifierBase<ts.PrivateIdentifier> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.PrivateIdentifier>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.PrivateIdentifier>>;
 }
 
 export declare class QualifiedName extends Node<ts.QualifiedName> {

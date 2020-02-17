@@ -47,6 +47,7 @@ export namespace fillStructures {
     }
 
     export function importDeclaration(structure: OptionalKind<ImportDeclarationStructure>): ImportDeclarationStructure {
+        setIfNull(structure, "isTypeOnly", false);
         setIfNull(structure, "defaultImport", undefined);
         setIfNull(structure, "namespaceImport", undefined);
 

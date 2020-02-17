@@ -8,6 +8,7 @@ export interface ImportDeclarationStructure extends Structure, ImportDeclaration
 }
 
 export interface ImportDeclarationSpecificStructure extends KindedStructure<StructureKind.ImportDeclaration> {
+    isTypeOnly?: boolean;
     defaultImport?: string;
     namespaceImport?: string;
     namedImports?: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction;
