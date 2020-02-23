@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.0.0"></a>
+# [7.0.0](https://github.com/dsherret/ts-morph/compare/6.0.2...7.0.0) (2020-02-23)
+
+
+### Bug Fixes
+
+* [#778](https://github.com/dsherret/ts-morph/issues/778) - Fixes error being thrown when inserting after a jsdoc and the jsdoc is the last member or statement. ([e069eff](https://github.com/dsherret/ts-morph/commit/e069eff))
+* [#783](https://github.com/dsherret/ts-morph/issues/783) - Fix broken documentation links on npm. ([c997339](https://github.com/dsherret/ts-morph/commit/c997339))
+
+
+### Code Refactoring
+
+* Only support Node 10+. ([2339210](https://github.com/dsherret/ts-morph/commit/2339210))
+
+
+### Features
+
+* [#779](https://github.com/dsherret/ts-morph/issues/779) - Implement JSDocTemplateTag and JSDocThisTag. ([9bfc32e](https://github.com/dsherret/ts-morph/commit/9bfc32e))
+* [#782](https://github.com/dsherret/ts-morph/issues/782) - Add `Node#getProject()` ([35f6bcf](https://github.com/dsherret/ts-morph/commit/35f6bcf))
+* Support TypeScript 3.8. ([a2785b4](https://github.com/dsherret/ts-morph/commit/a2785b4))
+
+### BREAKING CHANGES
+
+* Only Node 10+ has full support. Some functionality might not work on older versions of Node.
+* Update to TypeScript 3.8.
+
+
 <a name="6.0.2"></a>
 ## [6.0.2](https://github.com/dsherret/ts-morph/compare/6.0.1...6.0.2) (2019-12-08)
 
