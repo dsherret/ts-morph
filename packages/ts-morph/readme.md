@@ -90,7 +90,7 @@ myClass.addProperty({
 project.getSourceFileOrThrow("src/ExistingFile.ts").delete();
 
 // asynchronously save all the changes above
-project.save().then(() => console.log("Saved!"));
+await project.save();
 
 // get underlying compiler node from the typescript AST from any node
 const compilerNode = myClassFile.compilerNode;

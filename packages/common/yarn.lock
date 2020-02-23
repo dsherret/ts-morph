@@ -1020,13 +1020,13 @@ type-detect@^4.0.0, type-detect@^4.0.5:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
 
-typescript@3.9.0-dev.20200215:
-  version "3.9.0-dev.20200215"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.0-dev.20200215.tgz#6bf2b4e8241582541c915032dd0f6a535f46adeb"
-
 typescript@^3.5.3, typescript@~3.7.2:
   version "3.7.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.5.tgz#0692e21f65fd4108b9330238aac11dd2e177a1ae"
+
+typescript@~3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.8.2.tgz#91d6868aaead7da74f493c553aeff76c0c0b1d5a"
 
 unc-path-regex@^0.1.2:
   version "0.1.2"

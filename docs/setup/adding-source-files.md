@@ -141,5 +141,5 @@ Adding source files to the project from a structure, writer function, or text wi
 
 ```ts
 // save it to the disk if you wish:
-sourceFile.save(); // or saveSync();
+await sourceFile.save(); // or saveSync();
 ```

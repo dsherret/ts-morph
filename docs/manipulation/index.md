@@ -18,7 +18,7 @@ const project = new Project();
 // ...lots of code here that manipulates, copies, moves, and deletes files...
 
 // when you're all done, call this and it will save everything to the file system
-project.save();
+await project.save();
 ```
 
 The above is recommended because it means if your code errors halfway through, the files won't be in a halfway state. However, there's always a way to save, move, copy, and delete while immediately having these changes happen on the underlying file system. For example:

@@ -69,7 +69,7 @@ project.getSourceFileOrThrow("someFile.ts").delete();
 project.getSourceFileOrThrow("someOtherFile.ts").delete();
 
 // after you're all done, finally save your changes to the file system
-project.save();
+await project.save();
 ```
 
 #### Deleting Immediately

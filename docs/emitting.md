@@ -142,7 +142,7 @@ for (const file of result.getFiles()) {
 // ...manipulate the javascript files here...
 
 // save the new files to the file system
-newProject.save();
+await newProject.save();
 ```
 
 ...but consider using the custom transformers discussed above if you want it to be faster.
