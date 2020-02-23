@@ -6522,6 +6522,16 @@ export declare class ExportAssignment extends ExportAssignmentBase<ts.ExportAssi
 declare const ExportDeclarationBase: typeof Statement;
 
 export declare class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaration> {
+    /** Gets if this export declaration is type only. */
+    isTypeOnly(): boolean;
+    /** Sets if this export declaration is type only. */
+    setIsTypeOnly(value: boolean): this;
+    /** Gets the namespace export or returns undefined if it doesn't exist. (ex. `* as ns`, but not `*`). */
+    getNamespaceExport(): NamespaceExport | undefined;
+    /** Gets the namespace export or throws if it doesn't exist. (ex. `* as ns`, but not `*`) */
+    getNamespaceExportOrThrow(): NamespaceExport;
+    /** Sets the namespace export name. */
+    setNamespaceExport(name: string): this;
     /**
      * Sets the import specifier.
      * @param text - Text to set as the module specifier.
@@ -6660,6 +6670,10 @@ export declare class ExternalModuleReference extends Node<ts.ExternalModuleRefer
 declare const ImportClauseBase: typeof Node;
 
 export declare class ImportClause extends ImportClauseBase<ts.ImportClause> {
+    /** Gets if this import clause is type only. */
+    isTypeOnly(): boolean;
+    /** Sets if this import declaration is type only. */
+    setIsTypeOnly(value: boolean): this;
     /** Gets the default import or throws if it doesn't exit. */
     getDefaultImportOrThrow(): Identifier;
     /** Gets the default import or returns undefined if it doesn't exist. */
@@ -6683,6 +6697,10 @@ export declare class ImportClause extends ImportClauseBase<ts.ImportClause> {
 declare const ImportDeclarationBase: typeof Statement;
 
 export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
+    /** Gets if this import declaration is type only. */
+    isTypeOnly(): boolean;
+    /** Sets if this import declaration is type only. */
+    setIsTypeOnly(value: boolean): this;
     /**
      * Sets the import specifier.
      * @param text - Text to set as the module specifier.
@@ -7282,7 +7300,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
 declare function CommonIdentifierBase<T extends Constructor<CommonIdentifierBaseExtensionType>>(Base: T): Constructor<CommonIdentifierBase> & T;
 
 interface CommonIdentifierBase {
-    /** Gets the text for the private identifier. */
+    /** Gets the text for the identifier. */
     getText(): string;
     /**
      * Gets the definition nodes of the identifier.
@@ -7294,12 +7312,6 @@ interface CommonIdentifierBase {
      * @remarks This is similar to "go to definition." Use `.getDefinitionNodes()` if you only care about the nodes.
      */
     getDefinitions(): DefinitionInfo[];
-    /**
-     * Gets the implementations of the identifier.
-     *
-     * This is similar to "go to implementation."
-     */
-    getImplementations(): ImplementationLocation[];
 }
 
 declare type CommonIdentifierBaseExtensionType = Node<ts.Node & {
@@ -7318,6 +7330,12 @@ export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> 
 declare const IdentifierBase: Constructor<CommonIdentifierBase> & Constructor<ReferenceFindableNode> & Constructor<RenameableNode> & typeof PrimaryExpression;
 
 export declare class Identifier extends IdentifierBase<ts.Identifier> {
+    /**
+     * Gets the implementations of the identifier.
+     *
+     * This is similar to "go to implementation."
+     */
+    getImplementations(): ImplementationLocation[];
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.Identifier>;
     /** @inheritdoc **/
@@ -9889,6 +9907,8 @@ export interface ExportDeclarationStructure extends Structure, ExportDeclaration
 }
 
 interface ExportDeclarationSpecificStructure extends KindedStructure<StructureKind.ExportDeclaration> {
+    isTypeOnly?: boolean;
+    namespaceExport?: string;
     namedExports?: (string | OptionalKind<ExportSpecifierStructure> | WriterFunction)[] | WriterFunction;
     moduleSpecifier?: string;
 }
@@ -9905,6 +9925,7 @@ export interface ImportDeclarationStructure extends Structure, ImportDeclaration
 }
 
 interface ImportDeclarationSpecificStructure extends KindedStructure<StructureKind.ImportDeclaration> {
+    isTypeOnly?: boolean;
     defaultImport?: string;
     namespaceImport?: string;
     namedImports?: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction;

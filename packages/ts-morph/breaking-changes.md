@@ -2,6 +2,11 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 7
+
+* Only Node 10+ has full support. Some functionality might not work on older versions of Node.
+* Update to TypeScript 3.8.
+
 ## Version 6
 
 Renames:
