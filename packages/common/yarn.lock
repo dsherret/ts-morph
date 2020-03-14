@@ -39,6 +39,12 @@
     multimatch "^4.0.0"
     typescript "~3.7.2"
 
+"@ts-morph/scripts@~0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@ts-morph/scripts/-/scripts-0.2.0.tgz#09221d13e3d0d38fac389019d3e74ad14c1475bc"
+  dependencies:
+    ts-morph "npm:ts-morph@5.0.0"
+
 "@ts-nameof/common@^4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@ts-nameof/common/-/common-4.2.0.tgz#a48d280e92ae1788c2067a5c4b5b1af846b42f52"
@@ -111,8 +117,8 @@
   resolved "https://registry.yarnpkg.com/@types/ts-nameof/-/ts-nameof-4.2.1.tgz#21bd84748601f3a220812152dc9bae7dc3051fa0"
 
 acorn@^7.1.0:
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.1.0.tgz#949d36f2c292535da602283586c2477c57eb2d6c"
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.1.1.tgz#e35668de0b402f359de515c5482a1ab9f89a69bf"
 
 ansi-colors@3.2.3:
   version "3.2.3"
