@@ -114,7 +114,8 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
 }
 
 function addNameNode(node: Node, newName: string) {
-    const openParenToken = node.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken);
+    const beginToken = Node.isClassDeclaration(node) ? SyntaxKind.OpenBraceToken : SyntaxKind.OpenParenToken;
+    const openParenToken = node.getFirstChildByKindOrThrow(beginToken);
     insertIntoParentTextRange({
         insertPos: openParenToken.getStart(),
         newText: " " + newName,
