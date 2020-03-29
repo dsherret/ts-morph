@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.0.1"></a>
+## [7.0.1](https://github.com/dsherret/ts-morph/compare/7.0.0...7.0.1) (2020-03-29)
+
+
+### Bug Fixes
+
+* [#799](https://github.com/dsherret/ts-morph/issues/799) - Support renaming anonymous class declarations ([253a43f](https://github.com/dsherret/ts-morph/commit/253a43f))
+
+
+
 <a name="7.0.0"></a>
 # [7.0.0](https://github.com/dsherret/ts-morph/compare/6.0.2...7.0.0) (2020-02-23)
 
