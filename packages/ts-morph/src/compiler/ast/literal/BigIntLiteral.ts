@@ -31,7 +31,7 @@ export class BigIntLiteral extends BigIntLiteralBase<ts.BigIntLiteral> {
             sourceFile: this._sourceFile,
             start: this.getStart(),
             replacingLength: this.getWidth(),
-            newText: value.toString() + "n"
+            newText: value.toString() + "n",
         });
         return this;
     }

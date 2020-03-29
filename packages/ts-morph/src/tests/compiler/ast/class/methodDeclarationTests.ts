@@ -12,7 +12,7 @@ describe(nameof(MethodDeclaration), () => {
             index: number,
             structures: OptionalKind<MethodDeclarationOverloadStructure>[],
             expectedCode: string,
-            methodIndex = 0
+            methodIndex = 0,
         ) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[methodIndex] as MethodDeclaration;
@@ -123,7 +123,7 @@ describe(nameof(MethodDeclaration), () => {
                 doTest(
                     "class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method2 */\n    method2(){}\n\n    /** Method3 */\n    method3() {}\n}",
                     "method2",
-                    "class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method3 */\n    method3() {}\n}"
+                    "class Identifier {\n    /** Method1 */\n    method1(){}\n\n    /** Method3 */\n    method3() {}\n}",
                 );
             });
 
@@ -177,7 +177,7 @@ describe(nameof(MethodDeclaration), () => {
                     "class Identifier {\n    method(first): void;\n    method(second): void;\n    method(third): void;\n    method(param) {}\n}",
                     "method",
                     1,
-                    "class Identifier {\n    method(first): void;\n    method(third): void;\n    method(param) {}\n}"
+                    "class Identifier {\n    method(first): void;\n    method(third): void;\n    method(param) {}\n}",
                 );
             });
 
@@ -213,14 +213,14 @@ describe(nameof(MethodDeclaration), () => {
 
         it("should replace existing overloads when changed", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<MethodDeclarationSpecificStructure>> = {
-                overloads: [{ parameters: [{ name: "param" }] }]
+                overloads: [{ parameters: [{ name: "param" }] }],
             };
             doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure, "class identifier {\n    method(param);\n    method() {}\n}");
         });
 
         it("should remove existing overloads when specifying an empty array", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<MethodDeclarationSpecificStructure>> = {
-                overloads: []
+                overloads: [],
             };
             doTest("class identifier {\n    method(): string;\n    method() {}\n}", structure, "class identifier {\n    method() {}\n}");
         });
@@ -256,7 +256,7 @@ describe(nameof(MethodDeclaration), () => {
                 parameters: [],
                 returnType: undefined,
                 scope: undefined,
-                typeParameters: []
+                typeParameters: [],
             }]);
         });
 
@@ -275,7 +275,7 @@ describe(nameof(MethodDeclaration), () => {
                 parameters: [],
                 returnType: undefined,
                 scope: undefined,
-                typeParameters: []
+                typeParameters: [],
             };
 
             doTest("declare class Test { method();\nmethod(); }", [structure, structure]);
@@ -313,12 +313,12 @@ class Test {
                     parameters: [{ name: "p" }],
                     typeParameters: [{ name: "T" }],
                     isAbstract: false,
-                    hasQuestionToken: false
+                    hasQuestionToken: false,
                 }],
                 parameters: [{ name: "param" }],
                 returnType: "string",
                 scope: Scope.Protected,
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             }]);
         });
     });

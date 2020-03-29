@@ -18,12 +18,12 @@ describe(nameof(StatementedNode), () => {
                 declarationKind: VariableDeclarationKind.Var,
                 declarations: [{
                     name: "Identifier",
-                    initializer: `'test'`
+                    initializer: `'test'`,
                 }, {
                     name: "Identifier2",
                     type: "number",
-                    initializer: writer => writer.write("5")
-                }]
+                    initializer: writer => writer.write("5"),
+                }],
             }], "export var Identifier = 'test', Identifier2: number = 5;\n");
         });
 
@@ -63,7 +63,7 @@ describe(nameof(StatementedNode), () => {
                 hasExclamationToken: true,
                 name: "v",
                 initializer: "5",
-                type: "number"
+                type: "number",
             };
             const structure: OptionalKindAndTrivia<MakeRequired<VariableStatementStructure>> = {
                 docs: [{ description: "Testing" }],
@@ -71,7 +71,7 @@ describe(nameof(StatementedNode), () => {
                 declarationKind: VariableDeclarationKind.Var,
                 declarations: [varStructure],
                 isDefaultExport: false,
-                isExported: true
+                isExported: true,
             };
             const expectedText = "/** Testing */\nexport var v!: number = 5;\n";
             doTest("", 0, [structure], expectedText);

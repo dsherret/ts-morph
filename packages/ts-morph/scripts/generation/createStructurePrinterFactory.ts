@@ -16,13 +16,13 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
     // add imports
     sourceFile.addImportDeclarations([{
         namedImports: ["Memoize"],
-        moduleSpecifier: "@ts-morph/common"
+        moduleSpecifier: "@ts-morph/common",
     }, {
         namespaceImport: "structurePrinters",
-        moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/structurePrinters/index.ts"))
+        moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/structurePrinters/index.ts")),
     }, {
         namedImports: ["SupportedFormatCodeSettings"],
-        moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/options/index.ts"))
+        moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/options/index.ts")),
     }]);
 
     sourceFile.addClass({
@@ -30,13 +30,13 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
         isExported: true,
         name: "StructurePrinterFactory",
         ctors: [{
-            parameters: [{ isReadonly: true, scope: tsMorph.Scope.Private, name: "_getFormatCodeSettings", type: "() => SupportedFormatCodeSettings" }]
+            parameters: [{ isReadonly: true, scope: tsMorph.Scope.Private, name: "_getFormatCodeSettings", type: "() => SupportedFormatCodeSettings" }],
         }],
         methods: [{
             name: "getFormatCodeSettings",
             returnType: "SupportedFormatCodeSettings",
-            statements: ["return this._getFormatCodeSettings();"]
-        }, ...getMethods()]
+            statements: ["return this._getFormatCodeSettings();"],
+        }, ...getMethods()],
     });
 
     sourceFile.insertText(0, writer => writer.writeLine("// DO NOT EDIT - Automatically maintained by createStructurePrinterFactory.ts"));
@@ -63,8 +63,8 @@ export function createStructurePrinterFactory(inspector: TsMorphInspector) {
                 parameters: exposedCtorParams.map(p => ({
                     name: p.getName(),
                     type: getTypeText(p),
-                    hasQuestionToken: p.isOptional()
-                }))
+                    hasQuestionToken: p.isOptional(),
+                })),
             });
         }
 

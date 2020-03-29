@@ -55,7 +55,7 @@ export class TsConfigResolver {
 
         return {
             filePaths: Array.from(files.values()),
-            directoryPaths: Array.from(directories.values())
+            directoryPaths: Array.from(directories.values()),
         };
 
         function dirInProject(dirPath: StandardizedFilePath) {

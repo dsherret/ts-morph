@@ -7,7 +7,7 @@ export function parseMarkDown(markDownFile: MarkDownFile) {
     const chars = {
         LineFeed: "\n",
         CarriageReturn: "\r",
-        BackTick: "`"
+        BackTick: "`",
     };
     const codeBlocks: CodeBlock[] = [];
     const isAlphaTest = /^[A-Z]+$/i;
@@ -33,7 +33,7 @@ export function parseMarkDown(markDownFile: MarkDownFile) {
             firstLineOptions: firstLineResult == null || firstLineResult.options.length === 0 ? undefined : firstLineResult.options,
             inline: isInline,
             text: blockText,
-            position
+            position,
         }));
 
         function getFirstLine() {

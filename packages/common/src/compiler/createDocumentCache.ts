@@ -51,7 +51,7 @@ export interface FileSystemSpecificDocumentCache {
         filePath: StandardizedFilePath,
         scriptSnapshot: ts.IScriptSnapshot,
         scriptTarget: ScriptTarget | undefined,
-        scriptKind: ScriptKind | undefined
+        scriptKind: ScriptKind | undefined,
     ): ts.SourceFile | undefined;
 }
 
@@ -69,7 +69,7 @@ class FileSystemDocumentCache implements FileSystemSpecificDocumentCache {
         filePath: StandardizedFilePath,
         scriptSnapshot: ts.IScriptSnapshot,
         scriptTarget: ScriptTarget | undefined,
-        scriptKind: ScriptKind | undefined
+        scriptKind: ScriptKind | undefined,
     ) {
         const originalFilePath = this.absoluteToOriginalPath.get(filePath);
         if (originalFilePath == null)
@@ -103,7 +103,7 @@ class InternalDocumentCache implements DocumentCache {
         absoluteFilePath: StandardizedFilePath,
         scriptSnapshot: ts.IScriptSnapshot,
         scriptTarget: ScriptTarget | undefined,
-        scriptKind: ScriptKind | undefined
+        scriptKind: ScriptKind | undefined,
     ) {
         const fileText = this._fileTexts.get(filePath);
         if (fileText == null)
@@ -119,7 +119,7 @@ class InternalDocumentCache implements DocumentCache {
         absoluteFilePath: StandardizedFilePath,
         scriptSnapshot: ts.IScriptSnapshot,
         scriptTarget: ScriptTarget | undefined,
-        scriptKind: ScriptKind | undefined
+        scriptKind: ScriptKind | undefined,
     ) {
         const documentKey = this._getKey(filePath, scriptTarget, scriptKind);
         let document = this._documents.get(documentKey);

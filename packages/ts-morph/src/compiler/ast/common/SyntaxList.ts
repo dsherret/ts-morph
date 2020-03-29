@@ -31,7 +31,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
         const isInline = this !== parent.getChildSyntaxList();
         let insertText = getTextFromStringOrWriter(
             isInline ? parent._getWriterWithQueuedChildIndentation() : parent._getWriterWithChildIndentation(),
-            textOrWriterFunction
+            textOrWriterFunction,
         );
 
         if (insertText.length === 0)
@@ -62,7 +62,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
         insertIntoParentTextRange({
             insertPos,
             newText: insertText,
-            parent: this
+            parent: this,
         });
 
         // get inserted children

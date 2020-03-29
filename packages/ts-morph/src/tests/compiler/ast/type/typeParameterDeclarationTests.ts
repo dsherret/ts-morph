@@ -234,7 +234,7 @@ describe(nameof(TypeParameterDeclaration), () => {
                 kind: StructureKind.TypeParameter,
                 name: "T",
                 constraint: undefined,
-                default: undefined
+                default: undefined,
             });
         });
 
@@ -243,7 +243,7 @@ describe(nameof(TypeParameterDeclaration), () => {
                 kind: StructureKind.TypeParameter,
                 name: "T",
                 constraint: "string",
-                default: "number"
+                default: "number",
             });
         });
 
@@ -252,7 +252,7 @@ describe(nameof(TypeParameterDeclaration), () => {
                 kind: StructureKind.TypeParameter,
                 name: "T",
                 constraint: "{\n    prop: string;\n}",
-                default: "{\n}"
+                default: "{\n}",
             });
         });
     });

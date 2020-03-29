@@ -8,7 +8,7 @@ const fileSystem = new RealFileSystemHost();
 function getTextForLibFile(fileName: string) {
     return {
         filePath: path.join("node_modules/typescript/lib", fileName),
-        text: fileSystem.readFileSync(path.join(getCompilerLibFolder(ts.version), fileName))
+        text: fileSystem.readFileSync(path.join(getCompilerLibFolder(ts.version), fileName)),
     };
 }
 
@@ -50,7 +50,7 @@ const libFileNames = [
     "lib.es2015.reflect.d.ts",
     "lib.es2015.symbol.d.ts",
     "lib.es2015.symbol.wellknown.d.ts",
-    "lib.es5.d.ts"
+    "lib.es5.d.ts",
 ];
 const libFiles = libFileNames.map(name => getTextForLibFile(name));
 
@@ -85,7 +85,7 @@ export function getInfoFromText<TFirstChild extends Node = Node>(text: string, o
 
     return {
         ...info,
-        firstChild: info.sourceFile.forEachChild(child => child) as any
+        firstChild: info.sourceFile.forEachChild(child => child) as any,
     };
 }
 
@@ -93,12 +93,12 @@ export function getInfoFromText<TFirstChild extends Node = Node>(text: string, o
 export function getInfoFromTextWithDescendant<TDescendant extends Node>(
     text: string,
     descendantKind: SyntaxKind,
-    opts?: GetInfoFromTextOptions
+    opts?: GetInfoFromTextOptions,
 ): GetInfoFromTextWithDescendantResult<TDescendant> {
     const info = getInfoFromTextInternal(text, opts);
     return {
         ...info,
-        descendant: info.sourceFile.getFirstDescendantByKindOrThrow(descendantKind) as any
+        descendant: info.sourceFile.getFirstDescendantByKindOrThrow(descendantKind) as any,
     };
 }
 
@@ -110,7 +110,7 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
         host = new InMemoryFileSystemHost({ skipLoadingLibFiles: true }),
         disableErrorCheck = false,
         compilerOptions = undefined,
-        includeLibDts = false
+        includeLibDts = false,
     } = opts || {};
 
     if (includeLibDts) {

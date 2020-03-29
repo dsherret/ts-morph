@@ -78,7 +78,7 @@ describe(nameof(JsxSpreadAttribute), () => {
 
         it("should change when all set", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<JsxSpreadAttributeStructure>> = {
-                expression: "newExpr"
+                expression: "newExpr",
             };
             doTest("const v = <div {...attr} />", structure, "const v = <div {...newExpr} />");
         });
@@ -94,7 +94,7 @@ describe(nameof(JsxSpreadAttribute), () => {
         it("should get the structure", () => {
             doTest(`var t = (<jsx {...a1} />`, {
                 kind: StructureKind.JsxSpreadAttribute,
-                expression: "a1"
+                expression: "a1",
             });
         });
     });

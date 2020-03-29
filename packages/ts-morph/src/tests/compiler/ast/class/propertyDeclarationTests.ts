@@ -37,7 +37,7 @@ describe(nameof(PropertyDeclaration), () => {
                 isAbstract: true,
                 isReadonly: true,
                 isStatic: true,
-                scope: Scope.Public
+                scope: Scope.Public,
             };
 
             doTest("class Identifier {\n    prop: string;\n}", structure,
@@ -66,7 +66,7 @@ describe(nameof(PropertyDeclaration), () => {
                 isStatic: false,
                 name: "prop",
                 scope: undefined,
-                type: undefined
+                type: undefined,
             });
         });
 
@@ -90,7 +90,7 @@ class T {
                 isStatic: true,
                 name: "prop",
                 scope: Scope.Public,
-                type: "number"
+                type: "number",
             });
         });
 
@@ -108,7 +108,7 @@ class T {
                 isStatic: false,
                 name: "prop",
                 scope: undefined,
-                type: undefined
+                type: undefined,
             });
         });
     });

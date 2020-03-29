@@ -67,7 +67,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
 
         getStructure() {
             return callBaseGetStructure<AmbientableNodeStructure>(Base.prototype, this, {
-                hasDeclareKeyword: this.hasDeclareKeyword()
+                hasDeclareKeyword: this.hasDeclareKeyword(),
             });
         }
     };

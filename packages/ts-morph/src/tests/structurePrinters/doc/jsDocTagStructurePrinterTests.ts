@@ -20,28 +20,28 @@ describe(nameof(JSDocTagStructurePrinter), () => {
         it("should write with only tag name", () => {
             doTest(
                 { tagName: "param" },
-                `@param`
+                `@param`,
             );
         });
 
         it("should write with tag name and text", () => {
             doTest(
                 { tagName: "param", text: "p - Test" },
-                `@param p - Test`
+                `@param p - Test`,
             );
         });
 
         it("should write with tag name and text with writer function", () => {
             doTest(
                 { tagName: "param", text: writer => writer.write("p - Test") },
-                `@param p - Test`
+                `@param p - Test`,
             );
         });
 
         it("should write multi-line text with stars when specified", () => {
             doTest(
                 { tagName: "param", text: "p - Test\nother" },
-                `@param p - Test\n * other`
+                `@param p - Test\n * other`,
             );
         });
 
@@ -49,7 +49,7 @@ describe(nameof(JSDocTagStructurePrinter), () => {
             doTest(
                 { tagName: "param", text: "p - Test\nother" },
                 `@param p - Test\nother`,
-                { printStarsOnNewLine: false }
+                { printStarsOnNewLine: false },
             );
         });
     });

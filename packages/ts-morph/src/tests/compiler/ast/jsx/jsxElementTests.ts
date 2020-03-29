@@ -107,7 +107,7 @@ describe(nameof(JsxElement), () => {
                 attributes: [{ name: "attr" }],
                 bodyText: "<newElement />",
                 children: undefined,
-                name: "newName"
+                name: "newName",
             };
             doTest("const v = <div a1 a2><inner /></div>", structure, "const v = <newName attr>\n    <newElement />\n</newName>");
         });
@@ -130,7 +130,7 @@ describe(nameof(JsxElement), () => {
                 attributes: [],
                 children: undefined,
                 bodyText: "",
-                name: "div"
+                name: "div",
             });
         });
 
@@ -140,7 +140,7 @@ describe(nameof(JsxElement), () => {
                 attributes: [{ name: "a" }],
                 children: undefined,
                 bodyText: "<Inner />",
-                name: "div"
+                name: "div",
             });
         });
 
@@ -155,7 +155,7 @@ const v = <div>
                 attributes: [],
                 children: undefined,
                 bodyText: "<Inner />\n<div></div>",
-                name: "div"
+                name: "div",
             });
         });
     });

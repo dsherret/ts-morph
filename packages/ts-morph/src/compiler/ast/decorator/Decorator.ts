@@ -33,7 +33,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
             if (!Node.isIdentifier(identifier)) {
                 throw new errors.NotImplementedError(
                     `Expected the decorator expression '${identifier.getText()}' to be an identifier, `
-                        + `but it wasn't. Please report this as a bug.`
+                        + `but it wasn't. Please report this as a bug.`,
                 );
             }
             return identifier;
@@ -80,12 +80,12 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
                 insertPos: expression.getStart(),
                 newText: `${expressionText}()`,
                 replacing: {
-                    textLength: expressionText.length
+                    textLength: expressionText.length,
                 },
                 customMappings: newParent => {
                     // the expression will move into the call expression
                     return [{ currentNode: expression, newNode: ((newParent as ts.Decorator).expression as ts.CallExpression).expression }];
-                }
+                },
             });
         }
         else {
@@ -98,12 +98,12 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
                 insertPos: callExpression.getStart(),
                 newText: `${expressionText}`,
                 replacing: {
-                    textLength: callExpression.getWidth()
+                    textLength: callExpression.getWidth(),
                 },
                 customMappings: newParent => {
                     // the expression will move out of the call expression
                     return [{ currentNode: expression, newNode: (newParent as ts.Decorator).expression }];
-                }
+                },
             });
         }
 
@@ -265,13 +265,13 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         if (previousDecorator != null && previousDecorator.getStartLinePos() === thisStartLinePos) {
             removeChildren({
                 children: [this],
-                removePrecedingSpaces: true
+                removePrecedingSpaces: true,
             });
         }
         else {
             removeChildrenWithFormattingFromCollapsibleSyntaxList({
                 children: [this],
-                getSiblingFormatting: (parent, sibling) => sibling.getStartLinePos() === thisStartLinePos ? FormattingKind.Space : FormattingKind.Newline
+                getSiblingFormatting: (parent, sibling) => sibling.getStartLinePos() === thisStartLinePos ? FormattingKind.Space : FormattingKind.Newline,
             });
         }
     }
@@ -308,7 +308,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
             kind: StructureKind.Decorator,
             name: this.getName(),
             arguments: isDecoratorFactory ? this.getArguments().map(arg => arg.getText()) : undefined,
-            typeArguments: isDecoratorFactory ? this.getTypeArguments().map(arg => arg.getText()) : undefined
+            typeArguments: isDecoratorFactory ? this.getTypeArguments().map(arg => arg.getText()) : undefined,
         }) as DecoratorStructure;
     }
 }

@@ -10,7 +10,7 @@ describe(nameof(ShorthandPropertyAssignment), () => {
         const shorthandPropertyAssignment = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ShorthandPropertyAssignment);
         return {
             shorthandPropertyAssignment,
-            ...opts
+            ...opts,
         };
     }
 
@@ -152,7 +152,7 @@ describe(nameof(ShorthandPropertyAssignment), () => {
 
         it("should set when everything is specified", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<ShorthandPropertyAssignmentStructure>> = {
-                name: "NewName"
+                name: "NewName",
             };
             test("const t = { prop1 };", structure, "const t = { NewName };");
         });
@@ -167,7 +167,7 @@ describe(nameof(ShorthandPropertyAssignment), () => {
         it("should get the structure", () => {
             test("const t = { prop1 };", {
                 kind: StructureKind.ShorthandPropertyAssignment,
-                name: "prop1"
+                name: "prop1",
             });
         });
     });

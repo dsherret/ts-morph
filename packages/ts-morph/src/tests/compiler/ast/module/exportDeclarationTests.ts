@@ -376,7 +376,7 @@ describe(nameof(ExportDeclaration), () => {
             index: number,
             structures: (OptionalKind<ExportSpecifierStructure> | string | WriterFunction)[] | WriterFunction,
             expected: string,
-            surroundWithSpaces = true
+            surroundWithSpaces = true,
         ) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ExportDeclaration>(text, SyntaxKind.ExportDeclaration);
             if (!surroundWithSpaces)
@@ -402,7 +402,7 @@ describe(nameof(ExportDeclaration), () => {
                 `export { name3 } from "./test";`,
                 0,
                 [{ name: "name1" }, writer => writer.write("name2")],
-                `export { name1, name2, name3 } from "./test";`
+                `export { name1, name2, name3 } from "./test";`,
             );
         });
 
@@ -570,7 +570,7 @@ describe(nameof(ExportDeclaration), () => {
                 isTypeOnly: true,
                 namedExports: [{ name: "test" }, { name: "test2", alias: "alias" }],
                 namespaceExport: undefined,
-                moduleSpecifier: "asdf"
+                moduleSpecifier: "asdf",
             };
             doTest("export * from 'test';", structure, "export type { test, test2 as alias } from 'asdf';");
         });
@@ -601,7 +601,7 @@ describe(nameof(ExportDeclaration), () => {
                 isTypeOnly: true,
                 moduleSpecifier: "./test",
                 namedExports: [],
-                namespaceExport: undefined
+                namespaceExport: undefined,
             });
         });
 
@@ -611,7 +611,7 @@ describe(nameof(ExportDeclaration), () => {
                 isTypeOnly: false,
                 moduleSpecifier: "./test",
                 namedExports: [{ kind: StructureKind.ExportSpecifier, alias: undefined, name: "name" }],
-                namespaceExport: undefined
+                namespaceExport: undefined,
             });
         });
 
@@ -621,7 +621,7 @@ describe(nameof(ExportDeclaration), () => {
                 isTypeOnly: false,
                 moduleSpecifier: "./test",
                 namedExports: [],
-                namespaceExport: undefined
+                namespaceExport: undefined,
             });
         });
 
@@ -631,7 +631,7 @@ describe(nameof(ExportDeclaration), () => {
                 isTypeOnly: false,
                 moduleSpecifier: "./test",
                 namedExports: [],
-                namespaceExport: "ns"
+                namespaceExport: "ns",
             });
         });
     });

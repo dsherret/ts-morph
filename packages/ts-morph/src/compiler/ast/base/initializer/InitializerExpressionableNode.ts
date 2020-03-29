@@ -23,7 +23,7 @@ export interface InitializerExpressionableNode extends InitializerExpressionGeta
 }
 
 export function InitializerExpressionableNode<T extends Constructor<InitializerExpressionableNodeExtensionType>>(
-    Base: T
+    Base: T,
 ): Constructor<InitializerExpressionableNode> & T {
     return apply(InitializerExpressionGetableNode(Base));
 }
@@ -38,7 +38,7 @@ function apply<T extends Constructor<InitializerExpressionableNodeExtensionType 
 
             removeChildren({
                 children: [previousSibling, initializer],
-                removePrecedingSpaces: true
+                removePrecedingSpaces: true,
             });
             return this;
         }
@@ -55,7 +55,7 @@ function apply<T extends Constructor<InitializerExpressionableNodeExtensionType 
             insertIntoParentTextRange({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
                 parent: this,
-                newText: ` = ${text}`
+                newText: ` = ${text}`,
             });
             return this;
         }
@@ -74,7 +74,7 @@ function apply<T extends Constructor<InitializerExpressionableNodeExtensionType 
         getStructure() {
             const initializer = this.getInitializer();
             return callBaseGetStructure<InitializerExpressionableNodeStructure>(Base.prototype, this, {
-                initializer: initializer ? initializer.getText() : undefined
+                initializer: initializer ? initializer.getText() : undefined,
             });
         }
     };

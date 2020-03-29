@@ -84,7 +84,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                 insertIntoParentTextRange({
                     insertPos: identifier.getEnd(),
                     parent: this,
-                    newText: `<${argumentTexts.join(", ")}>`
+                    newText: `<${argumentTexts.join(", ")}>`,
                 });
             }
             else {
@@ -93,7 +93,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                     currentNodes: typeArguments,
                     insertIndex: index,
                     newText: argumentTexts.join(", "),
-                    useTrailingCommas: false
+                    useTrailingCommas: false,
                 });
             }
 
@@ -114,8 +114,8 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                     children: [
                         childSyntaxList.getPreviousSiblingIfKindOrThrow(SyntaxKind.LessThanToken),
                         childSyntaxList,
-                        childSyntaxList.getNextSiblingIfKindOrThrow(SyntaxKind.GreaterThanToken)
-                    ]
+                        childSyntaxList.getNextSiblingIfKindOrThrow(SyntaxKind.GreaterThanToken),
+                    ],
                 });
             }
             else {

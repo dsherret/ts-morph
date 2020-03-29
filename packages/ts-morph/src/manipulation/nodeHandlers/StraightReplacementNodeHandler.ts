@@ -33,7 +33,7 @@ export class StraightReplacementNodeHandler implements NodeHandler {
         if (currentChildren.length !== newChildren.length) {
             throw new Error(
                 `Error replacing tree: The children of the old and new trees were expected to have the `
-                    + `same count (${currentChildren.length}:${newChildren.length}).`
+                    + `same count (${currentChildren.length}:${newChildren.length}).`,
             );
         }
 

@@ -27,7 +27,7 @@ export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, a
                 addProblem({
                     filePath: node.getSourceFile().getFilePath(),
                     lineNumber: node.getStartLineNumber(),
-                    message: `Class member "${node.getName()}" should have an underscore prefix because it is not public.`
+                    message: `Class member "${node.getName()}" should have an underscore prefix because it is not public.`,
                 });
             }
         }
@@ -35,7 +35,7 @@ export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, a
             addProblem({
                 filePath: node.getSourceFile().getFilePath(),
                 lineNumber: node.getStartLineNumber(),
-                message: `Class member "${node.getName()}" should NOT have an underscore prefix because it is public.`
+                message: `Class member "${node.getName()}" should NOT have an underscore prefix because it is public.`,
             });
         }
     }

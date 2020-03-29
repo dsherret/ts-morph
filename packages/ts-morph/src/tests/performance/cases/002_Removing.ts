@@ -30,7 +30,7 @@ export class RemovingPerformanceTest extends PerformanceTestTemplate<SetupData> 
 
         return {
             statements: sourceFile.getStatements(),
-            params: sourceFile.getFunctionOrThrow("f").getParameters()
+            params: sourceFile.getFunctionOrThrow("f").getParameters(),
         };
     }
 

@@ -107,7 +107,7 @@ function addNewFunctions(sourceFile: tsMorph.SourceFile, structureInfos: Structu
 
                     writer.write(text);
                 }
-            }
+            },
         });
     }
 
@@ -141,7 +141,7 @@ function getStructureInfos(inspector: TsMorphInspector) {
             name: structure.getName(),
             baseStructures: [],
             members: [],
-            structureKind: structure.getStructureKindName()
+            structureKind: structure.getStructureKindName(),
         };
         infos.set(structure, info);
 
@@ -190,7 +190,7 @@ function getStructureInfos(inspector: TsMorphInspector) {
                 info.members.push({
                     name: property.getName(),
                     syntaxKind: kinds.length > 1 ? undefined : kinds[0],
-                    allStructure
+                    allStructure,
                 });
             }
 

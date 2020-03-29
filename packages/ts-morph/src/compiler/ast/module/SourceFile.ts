@@ -39,7 +39,7 @@ export interface SourceFileReferences {
 
 // todo: not sure why I need to explicitly type this in order to get TS to not complain... (TS 2.4.1)
 export const SourceFileBase: Constructor<ModuledNode> & Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node = ModuledNode(
-    TextInsertableNode(StatementedNode(Node))
+    TextInsertableNode(StatementedNode(Node)),
 );
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
@@ -68,7 +68,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     constructor(
         context: ProjectContext,
-        node: ts.SourceFile
+        node: ts.SourceFile,
     ) {
         super(context, node, undefined);
         // typescript doesn't allow calling `super` with `this`, so set this after
@@ -169,7 +169,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const fullText = this.getFullText();
         return {
             line: StringUtils.getLineNumberAtPos(fullText, pos),
-            column: StringUtils.getLengthFromLineStartAtPos(fullText, pos) + 1
+            column: StringUtils.getLengthFromLineStartAtPos(fullText, pos) + 1,
         };
     }
 
@@ -346,7 +346,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         replaceSourceFileForFilePathMove({
             newFilePath: filePath,
-            sourceFile: this
+            sourceFile: this,
         });
 
         if (markAsInProject)
@@ -361,7 +361,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     _getReferencesForMoveInternal(): SourceFileReferences {
         return {
             literalReferences: Array.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries()),
-            referencingLiterals: Array.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles())
+            referencingLiterals: Array.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles()),
         };
     }
 
@@ -712,12 +712,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const correctedText = StringUtils.indent(sourceFileText.substring(startLinePos, endLinePos), times, {
             indentText: this._context.manipulationSettings.getIndentationText(),
             indentSizeInSpaces: this._context.manipulationSettings._getIndentSizeInSpaces(),
-            isInStringAtPos: pos => this.isInStringAtPos(pos + startLinePos)
+            isInStringAtPos: pos => this.isInStringAtPos(pos + startLinePos),
         });
 
         replaceSourceFileTextForFormatting({
             sourceFile: this,
-            newText: sourceFileText.substring(0, startLinePos) + correctedText + sourceFileText.substring(endLinePos)
+            newText: sourceFileText.substring(0, startLinePos) + correctedText + sourceFileText.substring(endLinePos),
         });
 
         return this;
@@ -752,7 +752,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     formatText(settings: FormatCodeSettings = {}) {
         replaceSourceFileTextForFormatting({
             sourceFile: this,
-            newText: this._context.languageService.getFormattedDocumentText(this.getFilePath(), settings)
+            newText: this._context.languageService.getFormattedDocumentText(this.getFilePath(), settings),
         });
     }
 
@@ -905,7 +905,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 insertIntoTextRange({
                     sourceFile,
                     insertPos,
-                    newText
+                    newText,
                 });
 
                 addedLength += newText.length;
@@ -929,7 +929,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             sourceFile: this._sourceFile,
             start: 0,
             replacingLength: this.getFullWidth(),
-            newText: getTextFromTextChanges(this, textChanges)
+            newText: getTextFromTextChanges(this, textChanges),
         });
         return this;
     }
@@ -949,7 +949,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getStructure(): SourceFileStructure {
         return callBaseGetStructure<SourceFileSpecificStructure>(SourceFileBase.prototype, this, {
-            kind: StructureKind.SourceFile
+            kind: StructureKind.SourceFile,
         });
     }
 

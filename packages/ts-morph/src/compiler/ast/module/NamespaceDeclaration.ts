@@ -11,11 +11,12 @@ import { NamespaceChildableNode } from "./NamespaceChildableNode";
 import { NamespaceDeclarationKind } from "./NamespaceDeclarationKind";
 import { Node } from "../common";
 
-const createBase = <T extends typeof Statement>(ctor: T) => ModuledNode(UnwrappableNode(
-    TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(AmbientableNode(
-        ExportableNode(ModifierableNode(NamedNode(ctor)))
-    ))))))
-));
+const createBase = <T extends typeof Statement>(ctor: T) =>
+    ModuledNode(UnwrappableNode(
+        TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(AmbientableNode(
+            ExportableNode(ModifierableNode(NamedNode(ctor))),
+        )))))),
+    ));
 export const NamespaceDeclarationBase = createBase(Statement);
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
@@ -50,7 +51,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         const nameNodes = this.getNameNodes();
         if (nameNodes.length > 1) {
             throw new errors.NotSupportedError(
-                `Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`
+                `Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`,
             );
         }
         if (newName.indexOf(".") >= 0)
@@ -105,7 +106,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
                 removeChildren({
                     children: [declarationKindKeyword],
                     removeFollowingNewLines: true,
-                    removeFollowingSpaces: true
+                    removeFollowingSpaces: true,
                 });
             }
         }
@@ -118,7 +119,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
                 insertIntoParentTextRange({
                     parent: this,
                     insertPos: this.getNameNode().getStart(),
-                    newText: kind + " "
+                    newText: kind + " ",
                 });
             }
         }
@@ -140,8 +141,10 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets the namespace or module keyword or returns undefined if it's global.
      */
     getDeclarationKindKeyword() {
-        return this.getFirstChild(child => child.getKind() === SyntaxKind.NamespaceKeyword
-            || child.getKind() === SyntaxKind.ModuleKeyword);
+        return this.getFirstChild(child =>
+            child.getKind() === SyntaxKind.NamespaceKeyword
+                || child.getKind() === SyntaxKind.ModuleKeyword
+        );
     }
 
     /**
@@ -166,7 +169,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     getStructure(): NamespaceDeclarationStructure {
         return callBaseGetStructure<NamespaceDeclarationSpecificStructure>(NamespaceDeclarationBase.prototype, this, {
             kind: StructureKind.Namespace,
-            declarationKind: this.getDeclarationKind()
+            declarationKind: this.getDeclarationKind(),
         });
     }
 

@@ -14,7 +14,7 @@ describe(nameof(StatementedNode), () => {
 
         it("should insert to an empty file", () => {
             doTest("", 0, [{
-                name: "Identifier"
+                name: "Identifier",
             }], "function Identifier() {\n}\n");
         });
 
@@ -50,7 +50,7 @@ describe(nameof(StatementedNode), () => {
             const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertFunctions(0, [{
-                name: "Identifier"
+                name: "Identifier",
             }]);
 
             expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    function Identifier() {\n    }\n}\n");
@@ -68,7 +68,7 @@ describe(nameof(StatementedNode), () => {
             const { sourceFile } = getInfoFromText("declare namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertFunctions(0, [{
-                name: "Identifier"
+                name: "Identifier",
             }]);
 
             expect(sourceFile.getFullText()).to.equal("declare namespace Namespace {\n    function Identifier();\n}\n");
@@ -87,7 +87,7 @@ describe(nameof(StatementedNode), () => {
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
                 isExported: true,
-                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"],
             };
 
             doTest(
@@ -96,7 +96,7 @@ describe(nameof(StatementedNode), () => {
                 [structure],
                 "export function f();\n/** Test */\nexport async function* f<T>(param): string {\n"
                     + "    class C {\n    }\n\n    console.log('here');\n"
-                    + "}\n"
+                    + "}\n",
             );
         });
     });

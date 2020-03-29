@@ -97,7 +97,7 @@ function apply<T extends Constructor<ExportableNodeExtensionType & ExportGetable
         getStructure() {
             return callBaseGetStructure<ExportableNodeStructure>(Base.prototype, this, {
                 isExported: this.hasExportKeyword(),
-                isDefaultExport: this.hasDefaultKeyword()
+                isDefaultExport: this.hasDefaultKeyword(),
             });
         }
     };

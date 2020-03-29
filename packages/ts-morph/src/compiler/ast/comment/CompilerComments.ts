@@ -6,7 +6,7 @@ export enum CommentNodeKind {
     ClassElement,
     TypeElement,
     ObjectLiteralElement,
-    EnumMember
+    EnumMember,
 }
 
 export abstract class CompilerCommentNode implements ts.Node {
@@ -21,7 +21,7 @@ export abstract class CompilerCommentNode implements ts.Node {
         end: number,
         kind: SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia,
         sourceFile: ts.SourceFile,
-        parent: ts.Node
+        parent: ts.Node,
     ) {
         this._fullStart = fullStart;
         this._start = pos; // pos and start are the same for comments

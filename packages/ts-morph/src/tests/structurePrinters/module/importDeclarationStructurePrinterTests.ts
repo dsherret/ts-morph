@@ -28,7 +28,7 @@ describe(nameof(ImportDeclarationStructurePrinter), () => {
         it("should throw when specifying a namespace import and a named import", () => {
             doThrowTest(
                 { namespaceImport: "t", namedImports: ["test"], moduleSpecifier: "test" },
-                "An import declaration cannot have both a namespace import and a named import."
+                "An import declaration cannot have both a namespace import and a named import.",
             );
         });
     });
@@ -42,7 +42,7 @@ describe(nameof(ImportDeclarationStructurePrinter), () => {
             doTest(
                 { namedImports: ["test"], moduleSpecifier: "test" },
                 `import {test} from "test";`,
-                { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false }
+                { insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false },
             );
         });
     });

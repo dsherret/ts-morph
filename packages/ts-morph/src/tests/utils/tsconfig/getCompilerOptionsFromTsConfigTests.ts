@@ -17,10 +17,10 @@ describe(nameof(getCompilerOptionsFromTsConfig), () => {
     it("should get the error when specifying an invalid compiler option", () => {
         const host = testHelpers.getFileSystemHostWithFiles([{
             filePath: "tsconfig.json",
-            text: `{ "compilerOptions": { "target": "FUN" } }`
+            text: `{ "compilerOptions": { "target": "FUN" } }`,
         }, {
             filePath: "main.ts",
-            text: ""
+            text: "",
         }]);
         doTest(host, { options: { target: undefined, configFilePath: "/tsconfig.json" }, errorCount: 1 });
     });

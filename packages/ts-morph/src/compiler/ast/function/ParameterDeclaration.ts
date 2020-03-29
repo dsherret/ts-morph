@@ -8,9 +8,10 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createBase = <T extends typeof Node>(ctor: T) => QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
-    TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor)))
-)))));
+const createBase = <T extends typeof Node>(ctor: T) =>
+    QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
+        TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor))),
+    )))));
 export const ParameterDeclarationBase = createBase(Node);
 export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
     /**
@@ -47,7 +48,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
             insertIntoParentTextRange({
                 insertPos: this.getNameNode().getStart(),
                 parent: this,
-                newText: "..."
+                newText: "...",
             });
         }
         else {
@@ -90,7 +91,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
     getStructure(): ParameterDeclarationStructure {
         return callBaseGetStructure<ParameterDeclarationSpecificStructure>(ParameterDeclarationBase.prototype, this, {
             kind: StructureKind.Parameter,
-            isRestParameter: this.isRestParameter()
+            isRestParameter: this.isRestParameter(),
         }) as any as ParameterDeclarationStructure;
     }
 
@@ -148,11 +149,11 @@ function addParensIfNecessary(parameter: Node) {
             insertPos: parameter.getStart(),
             newText: `(${paramText})`,
             replacing: {
-                textLength: paramText.length
+                textLength: paramText.length,
             },
             customMappings: newParent => {
                 return [{ currentNode: parameter, newNode: (newParent as ts.ArrowFunction).parameters[0] }];
-            }
+            },
         });
     }
 }

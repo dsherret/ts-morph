@@ -14,7 +14,7 @@ describe(nameof(ObjectLiteralExpression), () => {
         const objectLiteralExpression = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression);
         return {
             objectLiteralExpression,
-            ...opts
+            ...opts,
         };
     }
 
@@ -101,36 +101,36 @@ describe(nameof(ObjectLiteralExpression), () => {
             doTest("const o = {\n};", 0, [{
                 kind: StructureKind.PropertyAssignment,
                 name: "p1",
-                initializer: "5"
+                initializer: "5",
             }, {
                 kind: StructureKind.ShorthandPropertyAssignment,
-                name: "p2"
+                name: "p2",
             }, {
                 kind: StructureKind.SpreadAssignment,
-                expression: "p3"
+                expression: "p3",
             }, {
                 kind: StructureKind.Method,
-                name: "m1"
+                name: "m1",
             }, {
                 kind: StructureKind.GetAccessor,
-                name: "g1"
+                name: "g1",
             }, {
                 kind: StructureKind.SetAccessor,
-                name: "s1"
+                name: "s1",
             }, "//1", writer => writer.write("//2")], expectedText);
         });
 
         it("should support trailing commas when inserting a single node", () => {
             doTest("const o = {\n};", 0, [{
                 kind: StructureKind.ShorthandPropertyAssignment,
-                name: "p1"
+                name: "p1",
             }], "const o = {\n    p1,\n};", { useTrailingCommas: true });
         });
 
         it("should support trailing when inserting after another node", () => {
             doTest("const o = {\n    p1,\n};", 1, [{
                 kind: StructureKind.ShorthandPropertyAssignment,
-                name: "p2"
+                name: "p2",
             }], "const o = {\n    p1,\n    p2,\n};", { useTrailingCommas: true });
         });
     });
@@ -149,7 +149,7 @@ describe(nameof(ObjectLiteralExpression), () => {
 
             doTest("const o = {\n    p1: 5\n    // 2\n};", 1, {
                 kind: StructureKind.ShorthandPropertyAssignment,
-                name: "p2"
+                name: "p2",
             }, expectedText);
         });
     });
@@ -168,7 +168,7 @@ describe(nameof(ObjectLiteralExpression), () => {
 
             doTest("const o = {\n    p1: 5\n};", {
                 kind: StructureKind.ShorthandPropertyAssignment,
-                name: "p2"
+                name: "p2",
             }, expectedText);
         });
     });
@@ -187,10 +187,10 @@ describe(nameof(ObjectLiteralExpression), () => {
 
             doTest("const o = {\n    p1: 5\n};", [{
                 kind: StructureKind.ShorthandPropertyAssignment,
-                name: "p2"
+                name: "p2",
             }, {
                 kind: StructureKind.SpreadAssignment,
-                expression: "p3"
+                expression: "p3",
             }, "//1"], expectedText);
         });
     });
@@ -214,7 +214,7 @@ describe(nameof(ObjectLiteralExpression), () => {
             doTest(
                 "const t = {\n    prop1: 5,\n    myMethod() {},\n    prop2: 6\n};",
                 1,
-                "const t = {\n    prop1: 5,\n    prop2: 6\n};"
+                "const t = {\n    prop1: 5,\n    prop2: 6\n};",
             );
         });
     });
@@ -234,7 +234,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {};",
                 0,
                 [{ name: "prop1", initializer: "4", leadingTrivia: "//1" }, { name: "prop2", initializer: writer => writer.write("5") }],
-                "const t = {\n    //1\n    prop1: 4,\n    prop2: 5\n};"
+                "const t = {\n    //1\n    prop1: 4,\n    prop2: 5\n};",
             );
         });
 
@@ -243,7 +243,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n};",
                 0,
                 [{ name: "prop", initializer: "5" }],
-                "const t = {\n    prop: 5\n};"
+                "const t = {\n    prop: 5\n};",
             );
         });
 
@@ -252,7 +252,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n    prop: 5\n};",
                 0,
                 [{ name: "prop1", initializer: `"test"` }],
-                `const t = {\n    prop1: "test",\n    prop: 5\n};`
+                `const t = {\n    prop1: "test",\n    prop: 5\n};`,
             );
         });
 
@@ -266,7 +266,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n    prop: 5\n};",
                 1,
                 [{ name: "prop1", initializer: "4" }],
-                "const t = {\n    prop: 5,\n    prop1: 4\n};"
+                "const t = {\n    prop: 5,\n    prop1: 4\n};",
             );
         });
     });
@@ -284,7 +284,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n    prop2: 5\n};",
                 0,
                 { name: "prop1", initializer: "4" },
-                "const t = {\n    prop1: 4,\n    prop2: 5\n};"
+                "const t = {\n    prop1: 4,\n    prop2: 5\n};",
             );
         });
     });
@@ -315,7 +315,7 @@ describe(nameof(ObjectLiteralExpression), () => {
             doTest(
                 "const t = {\n    prop1: 5\n};",
                 { name: "prop2", initializer: "2" },
-                "const t = {\n    prop1: 5,\n    prop2: 2\n};"
+                "const t = {\n    prop1: 5,\n    prop2: 2\n};",
             );
         });
     });
@@ -349,7 +349,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n    prop2: 5\n};",
                 0,
                 { name: "prop1" },
-                "const t = {\n    prop1,\n    prop2: 5\n};"
+                "const t = {\n    prop1,\n    prop2: 5\n};",
             );
         });
     });
@@ -366,7 +366,7 @@ describe(nameof(ObjectLiteralExpression), () => {
             doTest(
                 "const t = {\n    prop1: 5\n};",
                 [{ name: "prop2" }, { name: "prop3" }],
-                "const t = {\n    prop1: 5,\n    prop2,\n    prop3\n};"
+                "const t = {\n    prop1: 5,\n    prop2,\n    prop3\n};",
             );
         });
     });
@@ -383,7 +383,7 @@ describe(nameof(ObjectLiteralExpression), () => {
             doTest(
                 "const t = {\n    prop1: 5\n};",
                 { name: "prop2" },
-                "const t = {\n    prop1: 5,\n    prop2\n};"
+                "const t = {\n    prop1: 5,\n    prop2\n};",
             );
         });
     });
@@ -417,7 +417,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n    prop2: 5\n};",
                 0,
                 { expression: "prop1" },
-                "const t = {\n    ...prop1,\n    prop2: 5\n};"
+                "const t = {\n    ...prop1,\n    prop2: 5\n};",
             );
         });
     });
@@ -448,7 +448,7 @@ describe(nameof(ObjectLiteralExpression), () => {
             doTest(
                 "const t = {\n    prop1: 5\n};",
                 { expression: "prop2" },
-                "const t = {\n    prop1: 5,\n    ...prop2\n};"
+                "const t = {\n    prop1: 5,\n    ...prop2\n};",
             );
         });
     });
@@ -482,7 +482,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n    prop2: 5\n};",
                 0,
                 { name: "prop1" },
-                "const t = {\n    prop1() {\n    },\n    prop2: 5\n};"
+                "const t = {\n    prop1() {\n    },\n    prop2: 5\n};",
             );
         });
     });
@@ -513,7 +513,7 @@ describe(nameof(ObjectLiteralExpression), () => {
             doTest(
                 "const t = {\n    prop1: 5\n};",
                 { name: "prop2" },
-                "const t = {\n    prop1: 5,\n    prop2() {\n    }\n};"
+                "const t = {\n    prop1: 5,\n    prop2() {\n    }\n};",
             );
         });
     });
@@ -547,7 +547,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n    prop2: 5\n};",
                 0,
                 { name: "prop1" },
-                "const t = {\n    get prop1() {\n    },\n    prop2: 5\n};"
+                "const t = {\n    get prop1() {\n    },\n    prop2: 5\n};",
             );
         });
     });
@@ -578,7 +578,7 @@ describe(nameof(ObjectLiteralExpression), () => {
             doTest(
                 "const t = {\n    prop1: 5\n};",
                 { name: "prop2" },
-                "const t = {\n    prop1: 5,\n    get prop2() {\n    }\n};"
+                "const t = {\n    prop1: 5,\n    get prop2() {\n    }\n};",
             );
         });
     });
@@ -612,7 +612,7 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n    prop2: 5\n};",
                 0,
                 { name: "prop1" },
-                "const t = {\n    set prop1() {\n    },\n    prop2: 5\n};"
+                "const t = {\n    set prop1() {\n    },\n    prop2: 5\n};",
             );
         });
     });
@@ -643,7 +643,7 @@ describe(nameof(ObjectLiteralExpression), () => {
             doTest(
                 "const t = {\n    prop1: 5\n};",
                 { name: "prop2" },
-                "const t = {\n    prop1: 5,\n    set prop2() {\n    }\n};"
+                "const t = {\n    prop1: 5,\n    set prop2() {\n    }\n};",
             );
         });
     });

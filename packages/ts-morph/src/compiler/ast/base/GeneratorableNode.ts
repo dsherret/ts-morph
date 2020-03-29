@@ -54,13 +54,13 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
                 insertIntoParentTextRange({
                     insertPos: getAsteriskInsertPos(this),
                     parent: this,
-                    newText: "*"
+                    newText: "*",
                 });
             }
             else {
                 removeChildrenWithFormatting({
                     children: [asteriskToken],
-                    getSiblingFormatting: () => FormattingKind.Space
+                    getSiblingFormatting: () => FormattingKind.Space,
                 });
             }
 
@@ -78,7 +78,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
 
         getStructure() {
             return callBaseGetStructure<GeneratorableNodeStructure>(Base.prototype, this, {
-                isGenerator: this.isGenerator()
+                isGenerator: this.isGenerator(),
             });
         }
     };

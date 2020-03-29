@@ -53,13 +53,13 @@ export function AwaitableNode<T extends Constructor<AwaitableNodeExtensionType>>
                 insertIntoParentTextRange({
                     insertPos: getAwaitInsertPos(this),
                     parent: this,
-                    newText: " await"
+                    newText: " await",
                 });
             }
             else {
                 removeChildren({
                     children: [awaitModifier],
-                    removePrecedingSpaces: true
+                    removePrecedingSpaces: true,
                 });
             }
 

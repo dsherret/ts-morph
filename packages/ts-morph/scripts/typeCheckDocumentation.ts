@@ -10,7 +10,7 @@ const errorCodes = {
     NoMultipleExportAssignments: 2309,
     ImportDeclarationConflictsWithLocalDeclaration: 2440,
     ExportAssignmentCannotBeUsedTargetingESModules: 1203,
-    FileNotUnderRootDir: 6059
+    FileNotUnderRootDir: 6059,
 };
 const errorCodesToIgnore = [errorCodes.CannotRedeclareVariable, errorCodes.CannotFindModule, errorCodes.DuplicateIdentifier,
     errorCodes.AwaitOnlyAllowedInAsyncFunc, errorCodes.NoMultipleExportAssignments, errorCodes.ImportDeclarationConflictsWithLocalDeclaration,
@@ -38,10 +38,10 @@ const markDownFilesWithCodeBlocks = markDownFiles
                 tempSourceFile: templatesDir.createSourceFile(
                     `tempFile${i}_${j}.ts`,
                     "let any = undefined as any;\n" + mainTemplate.getText() + getInitializedSetupText(codeBlock.getSetupText())
-                        + getInitializedFileText(codeBlock.text)
+                        + getInitializedFileText(codeBlock.text),
                 ),
-                codeBlock
-            }))
+                codeBlock,
+            })),
     }));
 
 // collect diagnostics

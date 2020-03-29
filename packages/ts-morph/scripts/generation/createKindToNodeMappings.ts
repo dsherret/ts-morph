@@ -16,22 +16,23 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
     kindToNodeMappingsFile.removeText();
 
     // add imports
-    kindToNodeMappingsFile.insertText(0, writer => writer
-        .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts")
-        .writeLine("// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead."));
+    kindToNodeMappingsFile.insertText(0, writer =>
+        writer
+            .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts")
+            .writeLine("// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead."));
     kindToNodeMappingsFile.addImportDeclarations([{
         namedImports: ["SyntaxKind", "ts"],
-        moduleSpecifier: "@ts-morph/common"
+        moduleSpecifier: "@ts-morph/common",
     }, {
         namespaceImport: "compiler",
-        moduleSpecifier: kindToNodeMappingsFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/compiler/ast/index.ts"))
+        moduleSpecifier: kindToNodeMappingsFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/compiler/ast/index.ts")),
     }]);
 
     addTypeForSubSet("ImplementedKindToNodeMappings", project.getSourceFileOrThrow("Node.ts").getClassOrThrow("Node"));
     addDefaultIndexSignature(kindToNodeMappingsFile.addInterface({
         isExported: true,
         name: "KindToNodeMappings",
-        extends: ["ImplementedKindToNodeMappings"]
+        extends: ["ImplementedKindToNodeMappings"],
     }));
     addDefaultIndexSignature(addTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression")));
 
@@ -40,7 +41,7 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
         const addingProperties: tsMorph.PropertySignatureStructure[] = [];
         const newInterface = kindToNodeMappingsFile.addInterface({
             isExported: true,
-            name
+            name,
         });
 
         for (const mapping of kindToWrapperMappings) {
@@ -51,7 +52,7 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
                     addingProperties.push({
                         kind: tsMorph.StructureKind.PropertySignature,
                         name: `[SyntaxKind.${possibleKindName}]`,
-                        type: getNodeType(mapping.wrapperName, kindName)
+                        type: getNodeType(mapping.wrapperName, kindName),
                     });
                 }
             }
@@ -79,7 +80,7 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
         interfaceDec.insertIndexSignature(0, {
             keyName: "kind",
             keyType: "number",
-            returnType: "compiler.Node"
+            returnType: "compiler.Node",
         });
     }
 }

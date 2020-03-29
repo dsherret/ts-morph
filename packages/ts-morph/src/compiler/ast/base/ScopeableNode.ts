@@ -65,7 +65,7 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
 
         getStructure() {
             return callBaseGetStructure<ScopeableNodeStructure>(Base.prototype, this, {
-                scope: this.getScope()
+                scope: this.getScope(),
             });
         }
     };

@@ -9,7 +9,7 @@ export class CommentEnumMember extends Node<CompilerCommentEnumMember> {
     remove() {
         removeChildrenWithFormatting({
             children: [this],
-            getSiblingFormatting: () => FormattingKind.Newline
+            getSiblingFormatting: () => FormattingKind.Newline,
         });
     }
 }

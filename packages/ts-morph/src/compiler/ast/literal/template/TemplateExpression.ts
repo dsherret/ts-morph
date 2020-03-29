@@ -34,7 +34,7 @@ export class TemplateExpression extends TemplateExpressionBase<ts.TemplateExpres
             sourceFile: this._sourceFile,
             start: this.getStart() + 1,
             replacingLength: this.getWidth() - 2,
-            newText: value
+            newText: value,
         });
 
         return parent.getChildAtIndex(childIndex) as TemplateLiteral;

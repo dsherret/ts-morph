@@ -14,7 +14,7 @@ describe(nameof(StatementedNode), () => {
 
         it("should insert to an empty file", () => {
             doTest("", 0, [{
-                name: "Identifier"
+                name: "Identifier",
             }], "interface Identifier {\n}\n");
         });
 
@@ -40,7 +40,7 @@ describe(nameof(StatementedNode), () => {
             const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertInterfaces(0, [{
-                name: "Identifier"
+                name: "Identifier",
             }]);
 
             expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    interface Identifier {\n    }\n}\n");
@@ -59,7 +59,7 @@ describe(nameof(StatementedNode), () => {
                 constructSignatures: [{}],
                 indexSignatures: [{ returnType: "string" }],
                 properties: [{ name: "p" }],
-                methods: [{ name: "m" }]
+                methods: [{ name: "m" }],
             };
             const expectedText = "/** Test */\nexport default interface I<T> extends IBase, IBase2 {\n"
                 + "    (): void;\n"

@@ -43,7 +43,7 @@ import { myExport } from "my-package";
 }`);
         const project = new Project({
             fileSystem,
-            tsConfigFilePath: "/dir/tsconfig.json"
+            tsConfigFilePath: "/dir/tsconfig.json",
         });
 
         const diagnostics = project.getPreEmitDiagnostics().filter(d => d.getCode() !== 2318);

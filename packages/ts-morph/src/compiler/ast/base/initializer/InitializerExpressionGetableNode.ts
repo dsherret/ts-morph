@@ -30,7 +30,7 @@ export interface InitializerExpressionGetableNode {
 }
 
 export function InitializerExpressionGetableNode<T extends Constructor<InitializerExpressionGetableNodeExtensionType>>(
-    Base: T
+    Base: T,
 ): Constructor<InitializerExpressionGetableNode> & T {
     return class extends Base implements InitializerExpressionGetableNode {
         hasInitializer() {

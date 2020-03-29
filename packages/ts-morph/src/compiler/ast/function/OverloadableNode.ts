@@ -121,7 +121,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     insertIntoParentTextRange({
         parent: parentSyntaxList,
         insertPos: (overloads[index] || implementationNode).getNonWhitespaceStart(),
-        newText: writer.toString()
+        newText: writer.toString(),
     });
 
     return getRangeWithoutCommentsFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);

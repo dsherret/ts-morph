@@ -99,7 +99,7 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
             name: openingElement.getTagNameNode().getText(),
             attributes: openingElement.getAttributes().map(a => a.getStructure()),
             children: undefined,
-            bodyText: getBodyTextWithoutLeadingIndentation(this)
+            bodyText: getBodyTextWithoutLeadingIndentation(this),
         });
         delete structure.children;
         return structure;
@@ -115,7 +115,7 @@ function setText(element: JsxElement, newText: string) {
         newText,
         parent: element.getChildSyntaxListOrThrow(),
         replacing: {
-            textLength: closingElement.getStart() - openingElement.getEnd()
-        }
+            textLength: closingElement.getStart() - openingElement.getEnd(),
+        },
     });
 }

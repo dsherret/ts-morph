@@ -10,7 +10,7 @@ describe(nameof(SpreadAssignment), () => {
         const spreadAssignment = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.SpreadAssignment);
         return {
             spreadAssignment,
-            ...opts
+            ...opts,
         };
     }
 
@@ -68,7 +68,7 @@ describe(nameof(SpreadAssignment), () => {
 
         it("should set everything", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<SpreadAssignmentStructure>> = {
-                expression: "newExpression"
+                expression: "newExpression",
             };
             test("const t = { ...assignment };", structure, "const t = { ...newExpression };");
         });
@@ -84,7 +84,7 @@ describe(nameof(SpreadAssignment), () => {
         it("should get", () => {
             doTest("const t = { ...assignment };", {
                 kind: StructureKind.SpreadAssignment,
-                expression: "assignment"
+                expression: "assignment",
             });
         });
     });

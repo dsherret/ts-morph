@@ -45,7 +45,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
         insertIntoParentTextRange({
             parent: this,
             insertPos: nameNode.getEnd(),
-            newText: ` extends ${text}`
+            newText: ` extends ${text}`,
         });
 
         return this;
@@ -94,7 +94,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
         insertIntoParentTextRange({
             parent: this,
             insertPos: insertAfterNode.getEnd(),
-            newText: ` = ${text}`
+            newText: ` = ${text}`,
         });
 
         return this;
@@ -124,7 +124,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
             const children = [
                 parentSyntaxList.getPreviousSiblingIfKindOrThrow(SyntaxKind.LessThanToken),
                 parentSyntaxList,
-                parentSyntaxList.getNextSiblingIfKindOrThrow(SyntaxKind.GreaterThanToken)
+                parentSyntaxList.getNextSiblingIfKindOrThrow(SyntaxKind.GreaterThanToken),
             ];
 
             removeChildren({ children });
@@ -161,7 +161,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
         return callBaseGetStructure<TypeParameterDeclarationSpecificStructure>(TypeParameterDeclarationBase.prototype, this, {
             kind: StructureKind.TypeParameter,
             constraint: constraintNode != null ? constraintNode.getText({ trimLeadingIndentation: true }) : undefined,
-            default: defaultNode ? defaultNode.getText({ trimLeadingIndentation: true }) : undefined
+            default: defaultNode ? defaultNode.getText({ trimLeadingIndentation: true }) : undefined,
         });
     }
 }
@@ -172,6 +172,6 @@ function removeConstraintOrDefault(nodeToRemove: Node | undefined, siblingKind: 
 
     removeChildren({
         children: [nodeToRemove.getPreviousSiblingIfKindOrThrow(siblingKind), nodeToRemove],
-        removePrecedingSpaces: true
+        removePrecedingSpaces: true,
     });
 }

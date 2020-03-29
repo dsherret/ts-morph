@@ -46,7 +46,7 @@ describe(nameof(JsxSelfClosingElement), () => {
         it("should change when all set", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<JsxSelfClosingElementStructure>> = {
                 attributes: [{ name: "attr" }],
-                name: "newName"
+                name: "newName",
             };
             doTest("const v = <div a1 a2 />", structure, "const v = <newName attr />");
         });
@@ -64,7 +64,7 @@ describe(nameof(JsxSelfClosingElement), () => {
             doTest(`var t = (<jsx attrib1 />);`, {
                 kind: StructureKind.JsxSelfClosingElement,
                 attributes: [{ name: "attrib1" }],
-                name: "jsx"
+                name: "jsx",
             });
         });
     });

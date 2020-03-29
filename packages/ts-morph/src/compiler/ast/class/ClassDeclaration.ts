@@ -16,9 +16,10 @@ import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { MethodDeclaration } from "./MethodDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
-const createBase = <T extends typeof Statement>(ctor: T) => NamespaceChildableNode(AmbientableNode(ExportableNode(
-    ClassLikeDeclarationBase(ctor)
-)));
+const createBase = <T extends typeof Statement>(ctor: T) =>
+    NamespaceChildableNode(AmbientableNode(ExportableNode(
+        ClassLikeDeclarationBase(ctor),
+    )));
 export const ClassDeclarationBase = createBase(Statement);
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
@@ -70,7 +71,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             properties: this.getProperties().map(property => property.getStructure()),
             extends: getExtends ? getExtends.getText() : undefined,
             getAccessors: this.getGetAccessors().map(getAccessor => getAccessor.getStructure()),
-            setAccessors: this.getSetAccessors().map(accessor => accessor.getStructure())
+            setAccessors: this.getSetAccessors().map(accessor => accessor.getStructure()),
         }) as any as ClassDeclarationStructure;
     }
 
@@ -100,13 +101,13 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                         name: p.getName()!,
                         type: p.getType().getText(p),
                         hasQuestionToken: p.hasQuestionToken(),
-                        isReadonly: p.isReadonly()
+                        isReadonly: p.isReadonly(),
                     };
                 }),
                 ...properties.map(getExtractedInterfacePropertyStructure),
-                ...accessors.map(getExtractedInterfaceAccessorStructure)
+                ...accessors.map(getExtractedInterfaceAccessorStructure),
             ],
-            methods: methods.map(getExtractedInterfaceMethodStructure)
+            methods: methods.map(getExtractedInterfaceMethodStructure),
         };
     }
 
@@ -123,7 +124,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             name,
             properties: [
                 ...properties.map(getExtractedInterfacePropertyStructure),
-                ...accessors.map(getExtractedInterfaceAccessorStructure)
+                ...accessors.map(getExtractedInterfaceAccessorStructure),
             ],
             methods: methods.map(getExtractedInterfaceMethodStructure),
             constructSignatures: constructors.map(c => ({
@@ -132,10 +133,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                 parameters: c.getParameters().map(p => ({
                     ...getExtractedInterfaceParameterStructure(p),
                     scope: undefined,
-                    isReadonly: false
+                    isReadonly: false,
                 })),
-                returnType: instanceName
-            }))
+                returnType: instanceName,
+            })),
         };
     }
 }
@@ -174,7 +175,7 @@ function getExtractedInterfacePropertyStructure(prop: PropertyDeclaration): Prop
         name: prop.getName()!,
         type: prop.getType().getText(prop),
         hasQuestionToken: prop.hasQuestionToken(),
-        isReadonly: prop.isReadonly()
+        isReadonly: prop.isReadonly(),
     };
 }
 
@@ -185,7 +186,7 @@ function getExtractedInterfaceAccessorStructure(getAndSet: (GetAccessorDeclarati
         name: getAndSet[0].getName(),
         type: getAndSet[0].getType().getText(getAndSet[0]),
         hasQuestionToken: false,
-        isReadonly: getAndSet.every(Node.isGetAccessorDeclaration)
+        isReadonly: getAndSet.every(Node.isGetAccessorDeclaration),
     };
 }
 
@@ -197,13 +198,13 @@ function getExtractedInterfaceMethodStructure(method: MethodDeclaration): Method
         hasQuestionToken: method.hasQuestionToken(),
         returnType: method.getReturnType().getText(method),
         parameters: method.getParameters().map(getExtractedInterfaceParameterStructure),
-        typeParameters: method.getTypeParameters().map(p => p.getStructure())
+        typeParameters: method.getTypeParameters().map(p => p.getStructure()),
     };
 }
 
 function getExtractedInterfaceParameterStructure(param: ParameterDeclaration): ParameterDeclarationStructure {
     return {
         ...param.getStructure(),
-        decorators: []
+        decorators: [],
     };
 }

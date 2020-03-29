@@ -118,7 +118,7 @@ describe(nameof(CompilerCommentNode), () => {
             parent: sourceFile.compilerNode,
             sourceFile: sourceFile.compilerNode,
             start: 2,
-            text: "//a "
+            text: "//a ",
         });
     });
 
@@ -139,7 +139,7 @@ describe(nameof(CompilerCommentNode), () => {
             parent: sourceFile.compilerNode,
             sourceFile: sourceFile.compilerNode,
             start: 2,
-            text: "/*1*/"
+            text: "/*1*/",
         });
     });
 });

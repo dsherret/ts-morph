@@ -35,14 +35,14 @@ describe(nameof(ManipulationSettingsContainer), () => {
             indentationText: IndentationText.FourSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
             usePrefixAndSuffixTextForRename: false,
-            useTrailingCommas: false
+            useTrailingCommas: false,
         });
     });
 
     it("should set the settings when partially setting them", () => {
         const settings = new ManipulationSettingsContainer();
         settings.set({
-            quoteKind: QuoteKind.Single
+            quoteKind: QuoteKind.Single,
         });
 
         checkSettings(settings, {
@@ -51,7 +51,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
             indentationText: IndentationText.FourSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
             usePrefixAndSuffixTextForRename: false,
-            useTrailingCommas: false
+            useTrailingCommas: false,
         });
     });
 
@@ -62,7 +62,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false,
-            usePrefixAndSuffixTextForRename: true
+            usePrefixAndSuffixTextForRename: true,
         });
 
         checkSettings(settings, {
@@ -71,7 +71,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
             indentationText: IndentationText.EightSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false,
             usePrefixAndSuffixTextForRename: true,
-            useTrailingCommas: false
+            useTrailingCommas: false,
         });
     });
 
@@ -86,7 +86,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
                 newLineCharacter: "\n",
                 indentStyle: ts.IndentStyle.Smart,
                 indentSize: 4,
-                tabSize: 4
+                tabSize: 4,
             });
         });
 
@@ -95,7 +95,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
             container.getEditorSettings(); // fill the internal cache
             container.set({
                 indentationText: IndentationText.Tab,
-                newLineKind: NewLineKind.CarriageReturnLineFeed
+                newLineKind: NewLineKind.CarriageReturnLineFeed,
             });
 
             doTest(container.getEditorSettings(), {
@@ -103,7 +103,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
                 newLineCharacter: "\r\n",
                 indentStyle: ts.IndentStyle.Smart,
                 indentSize: 1,
-                tabSize: 1
+                tabSize: 1,
             });
         });
     });
@@ -116,7 +116,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
         it("should get the default preferences", () => {
             doTest(new ManipulationSettingsContainer().getUserPreferences(), {
                 quotePreference: "double",
-                providePrefixAndSuffixTextForRename: false
+                providePrefixAndSuffixTextForRename: false,
             });
         });
 
@@ -124,12 +124,12 @@ describe(nameof(ManipulationSettingsContainer), () => {
             const container = new ManipulationSettingsContainer();
             container.set({
                 quoteKind: QuoteKind.Single,
-                usePrefixAndSuffixTextForRename: true
+                usePrefixAndSuffixTextForRename: true,
             });
 
             doTest(container.getUserPreferences(), {
                 quotePreference: "single",
-                providePrefixAndSuffixTextForRename: true
+                providePrefixAndSuffixTextForRename: true,
             });
         });
     });

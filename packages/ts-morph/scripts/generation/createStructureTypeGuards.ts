@@ -59,7 +59,7 @@ function getStructureInfos(inspector: TsMorphInspector) {
             structureInfo = {
                 name: structure.getName(),
                 kind: structure.getStructureKindName(),
-                kinds: new Set<string>()
+                kinds: new Set<string>(),
             };
             infos.set(structure, structureInfo);
         }
@@ -97,7 +97,7 @@ function addNewMethods(typeGuardsExpr: tsMorph.ObjectLiteralExpression, structur
                     writer.indent().write("return false;").newLine();
                 });
             }
-        }
+        },
     })));
 
     function getTypeParameters(info: StructureInfo): tsMorph.OptionalKind<tsMorph.TypeParameterDeclarationStructure>[] {

@@ -1,8 +1,8 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import { removeOverloadableStatementedNodeChild } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { FunctionDeclarationOverloadStructure, FunctionDeclarationOverloadSpecificStructure, FunctionDeclarationStructure,
-    FunctionDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationOverloadSpecificStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure,
+    StructureKind, OptionalKind } from "../../../structures";
 import { AmbientableNode, AsyncableNode, BodyableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode, TextInsertableNode, UnwrappableNode,
     SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
@@ -12,17 +12,19 @@ import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createBase = <T extends typeof Statement>(ctor: T) => UnwrappableNode(TextInsertableNode(OverloadableNode(
-    BodyableNode(AsyncableNode(GeneratorableNode(AmbientableNode(ExportableNode(FunctionLikeDeclaration(
-        NamespaceChildableNode(NameableNode(ctor))
-    ))))))
-)));
+const createBase = <T extends typeof Statement>(ctor: T) =>
+    UnwrappableNode(TextInsertableNode(OverloadableNode(
+        BodyableNode(AsyncableNode(GeneratorableNode(AmbientableNode(ExportableNode(FunctionLikeDeclaration(
+            NamespaceChildableNode(NameableNode(ctor)),
+        )))))),
+    )));
 export const FunctionDeclarationBase = createBase(Statement);
-const createOverloadBase = <T extends typeof Statement>(ctor: T) => UnwrappableNode(TextInsertableNode(
-    AsyncableNode(GeneratorableNode(SignaturedDeclaration(AmbientableNode(NamespaceChildableNode(JSDocableNode(
-        TypeParameteredNode(ExportableNode(ModifierableNode(ctor)))
-    ))))))
-));
+const createOverloadBase = <T extends typeof Statement>(ctor: T) =>
+    UnwrappableNode(TextInsertableNode(
+        AsyncableNode(GeneratorableNode(SignaturedDeclaration(AmbientableNode(NamespaceChildableNode(JSDocableNode(
+            TypeParameteredNode(ExportableNode(ModifierableNode(ctor))),
+        )))))),
+    ));
 export const FunctionDeclarationOverloadBase = createOverloadBase(Statement);
 
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
@@ -59,7 +61,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
     insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>>) {
         const thisName = this.getName();
         const printer = this._context.structurePrinterFactory.forFunctionDeclaration({
-            isAmbient: this.isAmbient()
+            isAmbient: this.isAmbient(),
         });
 
         return insertOverloads<FunctionDeclaration, OptionalKind<FunctionDeclarationOverloadStructure>>({
@@ -70,7 +72,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
                 printer.printOverload(writer, thisName, structure);
             },
             getThisStructure: getStructureFuncs.fromFunctionDeclarationOverload,
-            expectedSyntaxKind: SyntaxKind.FunctionDeclaration
+            expectedSyntaxKind: SyntaxKind.FunctionDeclaration,
         });
     }
 
@@ -121,7 +123,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
                 else {
                     return {
                         kind: StructureKind.Function,
-                        overloads: thisNode.getOverloads().map(o => o.getStructure() as FunctionDeclarationOverloadStructure)
+                        overloads: thisNode.getOverloads().map(o => o.getStructure() as FunctionDeclarationOverloadStructure),
                     };
                 }
             }

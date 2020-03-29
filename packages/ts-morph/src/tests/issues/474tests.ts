@@ -7,10 +7,10 @@ describe("tests for issue #474", () => {
         const classDec = sourceFile.getClassOrThrow("MyClass");
 
         classDec.addProperties([{
-            name: "prop1"
+            name: "prop1",
         }, {
             leadingTrivia: writer => writer.newLine(),
-            name: "prop2"
+            name: "prop2",
         }]);
 
         expect(classDec.getText()).to.equal(`class MyClass {

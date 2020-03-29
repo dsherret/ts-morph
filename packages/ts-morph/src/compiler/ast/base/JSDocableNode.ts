@@ -74,7 +74,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             insertIntoParentTextRange({
                 insertPos,
                 parent: this,
-                newText: code
+                newText: code,
             });
 
             return getNodesToReturn(nodes, this.getJsDocs(), index, false);
@@ -93,7 +93,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
 
         getStructure() {
             return callBaseGetStructure<JSDocableNodeStructure>(Base.prototype, this, {
-                docs: this.getJsDocs().map(jsdoc => jsdoc.getStructure())
+                docs: this.getJsDocs().map(jsdoc => jsdoc.getStructure()),
             });
         }
     };

@@ -66,7 +66,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/** @param t - String */\nfunction test() {}",
                 0,
-                "/***/\nfunction test() {}"
+                "/***/\nfunction test() {}",
             );
         });
 
@@ -74,7 +74,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @param t - String */\nfunction test() {}",
                 0,
-                "/***/\nfunction test() {}"
+                "/***/\nfunction test() {}",
             );
         });
 
@@ -82,7 +82,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * Description.\n * @param t - String\n */\nfunction test() {}",
                 0,
-                "/**\n * Description.\n */\nfunction test() {}"
+                "/**\n * Description.\n */\nfunction test() {}",
             );
         });
 
@@ -90,7 +90,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @param t - String\n * @param u\n */\nfunction test() {}",
                 0,
-                "/**\n * @param u\n */\nfunction test() {}"
+                "/**\n * @param u\n */\nfunction test() {}",
             );
         });
 
@@ -98,7 +98,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @param t - String\n * @param u\n * @param v\n */\nfunction test() {}",
                 1,
-                "/**\n * @param t - String\n * @param v\n */\nfunction test() {}"
+                "/**\n * @param t - String\n * @param v\n */\nfunction test() {}",
             );
         });
 
@@ -106,7 +106,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @param t - String\n * @param u\n */\nfunction test() {}",
                 1,
-                "/**\n * @param t - String\n */\nfunction test() {}"
+                "/**\n * @param t - String\n */\nfunction test() {}",
             );
         });
 
@@ -114,7 +114,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/** @param t - String\n * @param u\n */\nfunction test() {}",
                 0,
-                "/**\n * @param u\n */\nfunction test() {}"
+                "/**\n * @param u\n */\nfunction test() {}",
             );
         });
 
@@ -123,7 +123,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/** @param t - String\n * @param u\n */\nfunction test() {}",
                 1,
-                "/** @param t - String\n */\nfunction test() {}"
+                "/** @param t - String\n */\nfunction test() {}",
             );
         });
 
@@ -131,7 +131,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "function test() {\n    /**\n     * @param t - String\n     * @param u\n     */\nfunction test() {} }",
                 0,
-                "function test() {\n    /**\n     * @param u\n     */\nfunction test() {} }"
+                "function test() {\n    /**\n     * @param u\n     */\nfunction test() {} }",
             );
         });
 
@@ -139,7 +139,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @example - String\n * @example other\n *\n testing\n */\nfunction test() {}",
                 0,
-                "/**\n * @example other\n *\n testing\n */\nfunction test() {}"
+                "/**\n * @example other\n *\n testing\n */\nfunction test() {}",
             );
         });
 
@@ -148,7 +148,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @example - String\n * @example other\n *\n testing\n * @example testing\n */\nfunction test() {}",
                 1,
-                "/**\n * @example - String\n * @example testing\n */\nfunction test() {}"
+                "/**\n * @example - String\n * @example testing\n */\nfunction test() {}",
             );
         });
 
@@ -156,7 +156,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @example - String\n * @example other\n *\n testing\n */\nfunction test() {}",
                 1,
-                "/**\n * @example - String\n */\nfunction test() {}"
+                "/**\n * @example - String\n */\nfunction test() {}",
             );
         });
     });
@@ -184,7 +184,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/** @param - other */\nfunction test() {}",
                 { tagName: "asdf", text: "t - test\nOther." },
-                "/** @asdf t - test\n * Other. */\nfunction test() {}"
+                "/** @asdf t - test\n * Other. */\nfunction test() {}",
             );
         });
 
@@ -192,7 +192,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/** @param */\nfunction test() {}",
                 { tagName: "other", text: "asdf testing" },
-                "/** @other asdf testing */\nfunction test() {}"
+                "/** @other asdf testing */\nfunction test() {}",
             );
         });
 
@@ -200,7 +200,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @param testing this\n */\nfunction test() {}",
                 { tagName: "other", text: "asdf testing" },
-                "/**\n * @other asdf testing\n */\nfunction test() {}"
+                "/**\n * @other asdf testing\n */\nfunction test() {}",
             );
         });
 
@@ -208,7 +208,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @other asdf testing\n */\nfunction test() {}",
                 { tagName: "param", text: "testing this" },
-                "/**\n * @param testing this\n */\nfunction test() {}"
+                "/**\n * @param testing this\n */\nfunction test() {}",
             );
         });
 
@@ -216,7 +216,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * @example\n */\nfunction test() {}",
                 { text: "\ntesting this" },
-                "/**\n * @example\n * testing this\n */\nfunction test() {}"
+                "/**\n * @example\n * testing this\n */\nfunction test() {}",
             );
         });
 
@@ -224,7 +224,7 @@ describe(nameof(JSDocTag), () => {
             doTest(
                 "/**\n * The script kind.\n *\n @remarks\n */\nfunction test() {}",
                 { text: "\ntesting this\n\nout" },
-                "/**\n * The script kind.\n *\n @remarks\n * testing this\n *\n * out\n */\nfunction test() {}"
+                "/**\n * The script kind.\n *\n @remarks\n * testing this\n *\n * out\n */\nfunction test() {}",
             );
         });
     });

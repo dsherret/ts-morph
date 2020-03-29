@@ -6,9 +6,10 @@ import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createBase = <T extends typeof Node>(ctor: T) => ExportGetableNode(ExclamationTokenableNode(
-    TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor)))
-));
+const createBase = <T extends typeof Node>(ctor: T) =>
+    ExportGetableNode(ExclamationTokenableNode(
+        TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor))),
+    ));
 export const VariableDeclarationBase = createBase(Node);
 export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
     /**
@@ -42,9 +43,9 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
                 children: [
                     node.getPreviousSiblingIfKindOrThrow(SyntaxKind.OpenParenToken),
                     node,
-                    node.getNextSiblingIfKindOrThrow(SyntaxKind.CloseParenToken)
+                    node.getNextSiblingIfKindOrThrow(SyntaxKind.CloseParenToken),
                 ],
-                removePrecedingSpaces: true
+                removePrecedingSpaces: true,
             });
         }
     }
@@ -78,7 +79,7 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
      */
     getStructure(): VariableDeclarationStructure {
         return callBaseGetStructure<VariableDeclarationSpecificStructure>(VariableDeclarationBase.prototype, this, {
-            kind: StructureKind.VariableDeclaration
+            kind: StructureKind.VariableDeclaration,
         }) as any as VariableDeclarationStructure;
     }
 }

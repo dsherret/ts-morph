@@ -110,7 +110,7 @@ describe(nameof(GetAccessorDeclaration), () => {
                 parameters: [{ name: "p" }],
                 returnType: "string",
                 scope: Scope.Public,
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             };
 
             const expectedCode = `
@@ -153,7 +153,7 @@ class Identifier {
                 decorators: [],
                 isAbstract: true,
                 isStatic: false,
-                name: "test"
+                name: "test",
             });
         });
 
@@ -177,7 +177,7 @@ class T {
                 decorators: [{ name: "dec" }],
                 isAbstract: false,
                 isStatic: true,
-                name: "test"
+                name: "test",
             });
         });
     });

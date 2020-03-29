@@ -3,25 +3,27 @@ import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFu
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure, StructureKind, OptionalKind,
     MethodDeclarationOverloadSpecificStructure } from "../../../structures";
 import { isNodeAmbientOrInAmbientContext } from "../../../utils";
-import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode,
-    TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode, QuestionTokenableNode } from "../base";
+import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode,
+    SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode, QuestionTokenableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassElement } from "./ClassElement";
 
-const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(OverloadableNode(
-    BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(QuestionTokenableNode(StaticableNode(AsyncableNode(
-        GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(ctor)))
-    )))))))
-)));
+const createBase = <T extends typeof ClassElement>(ctor: T) =>
+    ChildOrderableNode(TextInsertableNode(OverloadableNode(
+        BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(QuestionTokenableNode(StaticableNode(AsyncableNode(
+            GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(ctor))),
+        ))))))),
+    )));
 export const MethodDeclarationBase = createBase(ClassElement);
-const createOverloadBase = <T extends typeof ClassElement>(ctor: T) => JSDocableNode(ChildOrderableNode(
-    TextInsertableNode(ScopedNode(TypeParameteredNode(AbstractableNode(QuestionTokenableNode(StaticableNode(AsyncableNode(
-        ModifierableNode(GeneratorableNode(SignaturedDeclaration(ctor)))
-    )))))))
-));
+const createOverloadBase = <T extends typeof ClassElement>(ctor: T) =>
+    JSDocableNode(ChildOrderableNode(
+        TextInsertableNode(ScopedNode(TypeParameteredNode(AbstractableNode(QuestionTokenableNode(StaticableNode(AsyncableNode(
+            ModifierableNode(GeneratorableNode(SignaturedDeclaration(ctor))),
+        ))))))),
+    ));
 export const MethodDeclarationOverloadBase = createOverloadBase(ClassElement);
 
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
@@ -73,7 +75,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
     insertOverloads(index: number, structures: ReadonlyArray<OptionalKind<MethodDeclarationOverloadStructure>>) {
         const thisName = this.getName();
         const printer = this._context.structurePrinterFactory.forMethodDeclaration({
-            isAmbient: isNodeAmbientOrInAmbientContext(this)
+            isAmbient: isNodeAmbientOrInAmbientContext(this),
         });
 
         return insertOverloads<MethodDeclaration, OptionalKind<MethodDeclarationOverloadStructure>>({
@@ -84,7 +86,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
                 printer.printOverload(writer, thisName, structure);
             },
             getThisStructure: getStructureFuncs.fromMethodDeclarationOverload,
-            expectedSyntaxKind: SyntaxKind.MethodDeclaration
+            expectedSyntaxKind: SyntaxKind.MethodDeclaration,
         });
     }
 
@@ -99,7 +101,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
         return callBaseGetStructure<any>(
             basePrototype,
             this,
-            getStructure(this)
+            getStructure(this),
         ) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;
 
         function getStructure(thisNode: MethodDeclaration) {
@@ -117,7 +119,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
                 else {
                     return {
                         kind: StructureKind.Method,
-                        overloads: thisNode.getOverloads().map(o => o.getStructure() as MethodDeclarationOverloadStructure)
+                        overloads: thisNode.getOverloads().map(o => o.getStructure() as MethodDeclarationOverloadStructure),
                     };
                 }
             }

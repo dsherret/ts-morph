@@ -14,7 +14,7 @@ async function run() {
 
             await Promise.all([
                 execNpmScript("ensure-no-declaration-file-errors", rootFolder),
-                execNpmScript("test", rootFolder)
+                execNpmScript("test", rootFolder),
             ]);
         }
 

@@ -10,7 +10,7 @@ class Identifier {
 }`;
         const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
         (firstChild.getInstancePropertyOrThrow("prop") as PropertyDeclaration).addDecorator({
-            name: "dec"
+            name: "dec",
         });
 
         expect(sourceFile.getFullText()).to.equal(`

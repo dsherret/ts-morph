@@ -67,8 +67,8 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
                 parent: childSyntaxList.getParentOrThrow(),
                 replacing: {
                     textLength: end - pos,
-                    nodes: [childSyntaxList]
-                }
+                    nodes: [childSyntaxList],
+                },
             });
 
             return this;

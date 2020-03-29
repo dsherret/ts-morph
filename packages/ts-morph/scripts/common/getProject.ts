@@ -8,8 +8,8 @@ export function getProject() {
         addFilesFromTsConfig: false,
         manipulationSettings: {
             newLineKind: tsMorph.NewLineKind.CarriageReturnLineFeed,
-            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
-        }
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
+        },
     });
     project.addSourceFilesAtPaths(path.join(rootFolder, "src/**/*{.d.ts,.ts}"));
     project.addSourceFileAtPath(path.join(rootFolder, "node_modules/typescript/lib/typescript.d.ts"));

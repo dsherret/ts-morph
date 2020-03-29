@@ -15,7 +15,7 @@ describe(nameof(StatementedNode), () => {
         it("should insert to an empty file", () => {
             doTest("", 0, [{
                 name: "Identifier",
-                type: "string"
+                type: "string",
             }], "type Identifier = string;\n");
         });
 
@@ -47,7 +47,7 @@ describe(nameof(StatementedNode), () => {
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertTypeAliases(0, [{
                 name: "Identifier",
-                type: "string"
+                type: "string",
             }]);
 
             expect(sourceFile.getFullText()).to.equal("namespace Identifier {\n    type Identifier = string;\n}\n");
@@ -61,7 +61,7 @@ describe(nameof(StatementedNode), () => {
                 type: "number",
                 isDefaultExport: false,
                 isExported: true,
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             };
             const expectedText = "/** Testing */\nexport type Name<T> = number;\n";
             doTest("", 0, [structure], expectedText);

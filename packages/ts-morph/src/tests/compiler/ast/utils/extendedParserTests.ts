@@ -15,7 +15,7 @@ describe(nameof(ExtendedParser), () => {
                 SyntaxKind.MultiLineCommentTrivia,
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.SingleLineCommentTrivia,
-                SyntaxKind.EndOfFileToken
+                SyntaxKind.EndOfFileToken,
             ]);
         });
     });

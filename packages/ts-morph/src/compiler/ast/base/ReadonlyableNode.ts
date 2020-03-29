@@ -58,7 +58,7 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
 
         getStructure() {
             return callBaseGetStructure<ReadonlyableNodeStructure>(Base.prototype, this, {
-                isReadonly: this.isReadonly()
+                isReadonly: this.isReadonly(),
             });
         }
     };

@@ -23,7 +23,7 @@ export class NumericLiteral extends NumericLiteralBase<ts.NumericLiteral> {
             sourceFile: this._sourceFile,
             start: this.getStart(),
             replacingLength: this.getWidth(),
-            newText: value.toString(10)
+            newText: value.toString(10),
         });
         return this;
     }

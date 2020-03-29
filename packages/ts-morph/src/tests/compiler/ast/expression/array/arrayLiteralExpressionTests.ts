@@ -10,7 +10,7 @@ describe(nameof(ArrayLiteralExpression), () => {
         const declaration = opts.firstChild.getDeclarations()[0];
         return {
             arrayLiteralExpression: declaration.getFirstChildByKindOrThrow(SyntaxKind.ArrayLiteralExpression),
-            ...opts
+            ...opts,
         };
     }
 

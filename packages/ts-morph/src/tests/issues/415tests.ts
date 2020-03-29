@@ -8,8 +8,8 @@ describe("tests for issue #415", () => {
             compilerOptions: {
                 target: ScriptTarget.ES5,
                 rootDir: "src",
-                typeRoots: ["typings"]
-            }
+                typeRoots: ["typings"],
+            },
         });
         const fileSystem = project.getFileSystem();
 

@@ -69,7 +69,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
                 insertIndex: index,
                 newText: writer.toString(),
                 useNewLines,
-                useTrailingCommas: useNewLines && node._context.manipulationSettings.getUseTrailingCommas()
+                useTrailingCommas: useNewLines && node._context.manipulationSettings.getUseTrailingCommas(),
             });
 
             const newElements = node.getElements();

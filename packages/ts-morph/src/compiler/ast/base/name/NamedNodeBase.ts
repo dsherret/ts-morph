@@ -19,7 +19,7 @@ export interface NamedNodeSpecificBase<TNode extends Node> {
 
 export type NamedNodeBaseExtensionType<TCompilerNode extends ts.Node> = Node<ts.Node & { name: TCompilerNode; }>;
 export function NamedNodeBase<TCompilerNode extends ts.Node, U extends Constructor<NamedNodeBaseExtensionType<TCompilerNode>>>(
-    Base: U
+    Base: U,
 ): Constructor<NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>>> & U {
     return class extends Base implements NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>> {
         getNameNode() {
@@ -42,7 +42,7 @@ export function NamedNodeBase<TCompilerNode extends ts.Node, U extends Construct
 
         getStructure() {
             return callBaseGetStructure<NamedNodeStructure>(Base.prototype, this, {
-                name: this.getName()
+                name: this.getName(),
             });
         }
     };

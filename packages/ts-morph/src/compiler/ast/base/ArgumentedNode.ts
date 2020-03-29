@@ -88,7 +88,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
                 currentNodes: originalArgs,
                 insertIndex: index,
                 newText: writer.toString(),
-                useTrailingCommas: false
+                useTrailingCommas: false,
             });
 
             return getNodesToReturn(originalArgs, this.getArguments(), index, false);

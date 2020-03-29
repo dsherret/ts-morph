@@ -58,7 +58,7 @@ let t: MyInterface;
 `);
 
             expect(signature.getDocumentationComments().map(c => ({ text: c.getText(), kind: c.getKind() }))).to.deep.equal([
-                { text: "Docs", kind: "text" }
+                { text: "Docs", kind: "text" },
             ]);
         });
     });
@@ -92,7 +92,7 @@ let t: MyInterface;
 `);
 
             expect(signature.getJsDocTags().map(c => ({ name: c.getName(), text: c.getText() }))).to.deep.equal([
-                { name: "property", text: "Testing." }
+                { name: "property", text: "Testing." },
             ]);
         });
     });

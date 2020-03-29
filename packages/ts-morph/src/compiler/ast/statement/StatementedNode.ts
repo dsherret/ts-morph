@@ -21,8 +21,9 @@ import { VariableDeclaration } from "../variable";
 import { TypeAliasDeclaration } from "../type";
 import { ExtendedParser, StatementContainerNodes } from "../utils";
 
-export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause
-    | ts.DefaultClause | ts.ModuleBlock>;
+export type StatementedNodeExtensionType = Node<
+    ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause | ts.ModuleBlock
+>;
 
 export interface KindToNodeMappingsWithCommentStatements extends ImplementedKindToNodeMappings {
     [kind: number]: Node;
@@ -448,7 +449,7 @@ export interface StatementedNode {
         writer: CodeBlockWriter,
         info: InsertIntoBracesOrSourceFileOptionsWriteInfo,
         writeStructures: () => void,
-        opts?: StandardWriteOptions
+        opts?: StandardWriteOptions,
     ): void;
     /** @internal */
     _getCompilerStatementsWithComments(): ts.Statement[];
@@ -563,7 +564,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                         this._context.structurePrinterFactory.forClassDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) })
                             .printTexts(writer, structures);
                     });
-                }
+                },
             });
         }
 
@@ -583,7 +584,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getClassOrThrow(nameOrFindFunction: string | ((declaration: ClassDeclaration) => boolean)): ClassDeclaration {
             return errors.throwIfNullOrUndefined(
                 this.getClass(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("class", nameOrFindFunction)
+                () => getNotFoundErrorMessageForNameOrFindFunction("class", nameOrFindFunction),
             );
         }
 
@@ -610,7 +611,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forEnumDeclaration().printTexts(writer, structures);
                     });
-                }
+                },
             });
         }
 
@@ -630,7 +631,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getEnumOrThrow(nameOrFindFunction: string | ((declaration: EnumDeclaration) => boolean)): EnumDeclaration {
             return errors.throwIfNullOrUndefined(
                 this.getEnum(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("enum", nameOrFindFunction)
+                () => getNotFoundErrorMessageForNameOrFindFunction("enum", nameOrFindFunction),
             );
         }
 
@@ -656,17 +657,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forFunctionDeclaration({
-                            isAmbient: isNodeAmbientOrInAmbientContext(this)
+                            isAmbient: isNodeAmbientOrInAmbientContext(this),
                         }).printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => structures[0].hasDeclareKeyword === true
-                            && Node.isFunctionDeclaration(previousMember)
-                            && previousMember.getBody() == null,
-                        nextNewLine: nextMember => structures[structures.length - 1].hasDeclareKeyword === true
-                            && Node.isFunctionDeclaration(nextMember)
-                            && nextMember.getBody() == null
+                        previousNewLine: previousMember =>
+                            structures[0].hasDeclareKeyword === true
+                                && Node.isFunctionDeclaration(previousMember)
+                                && previousMember.getBody() == null,
+                        nextNewLine: nextMember =>
+                            structures[structures.length - 1].hasDeclareKeyword === true
+                                && Node.isFunctionDeclaration(nextMember)
+                                && nextMember.getBody() == null,
                     });
-                }
+                },
             });
         }
 
@@ -686,7 +689,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getFunctionOrThrow(nameOrFindFunction: string | ((declaration: FunctionDeclaration) => boolean)): FunctionDeclaration {
             return errors.throwIfNullOrUndefined(
                 this.getFunction(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("function", nameOrFindFunction)
+                () => getNotFoundErrorMessageForNameOrFindFunction("function", nameOrFindFunction),
             );
         }
 
@@ -713,7 +716,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this._context.structurePrinterFactory.forInterfaceDeclaration().printTexts(writer, structures);
                     });
-                }
+                },
             });
         }
 
@@ -733,7 +736,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getInterfaceOrThrow(nameOrFindFunction: string | ((declaration: InterfaceDeclaration) => boolean)): InterfaceDeclaration {
             return errors.throwIfNullOrUndefined(
                 this.getInterface(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("interface", nameOrFindFunction)
+                () => getNotFoundErrorMessageForNameOrFindFunction("interface", nameOrFindFunction),
             );
         }
 
@@ -761,7 +764,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                         this._context.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) })
                             .printTexts(writer, structures);
                     });
-                }
+                },
             });
         }
 
@@ -781,7 +784,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getNamespaceOrThrow(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration {
             return errors.throwIfNullOrUndefined(
                 this.getNamespace(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction)
+                () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction),
             );
         }
 
@@ -809,9 +812,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                         this._context.structurePrinterFactory.forTypeAliasDeclaration().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => Node.isTypeAliasDeclaration(previousMember),
-                        nextNewLine: nextMember => Node.isTypeAliasDeclaration(nextMember)
+                        nextNewLine: nextMember => Node.isTypeAliasDeclaration(nextMember),
                     });
-                }
+                },
             });
         }
 
@@ -831,7 +834,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getTypeAliasOrThrow(nameOrFindFunction: string | ((declaration: TypeAliasDeclaration) => boolean)): TypeAliasDeclaration {
             return errors.throwIfNullOrUndefined(
                 this.getTypeAlias(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("type alias", nameOrFindFunction)
+                () => getNotFoundErrorMessageForNameOrFindFunction("type alias", nameOrFindFunction),
             );
         }
 
@@ -854,7 +857,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getVariableStatementOrThrow(nameOrFindFunction: string | ((statement: VariableStatement) => boolean)): VariableStatement {
             return errors.throwIfNullOrUndefined(
                 this.getVariableStatement(nameOrFindFunction),
-                "Expected to find a variable statement that matched the provided condition."
+                "Expected to find a variable statement that matched the provided condition.",
             );
         }
 
@@ -880,9 +883,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                         this._context.structurePrinterFactory.forVariableStatement().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => Node.isVariableStatement(previousMember),
-                        nextNewLine: nextMember => Node.isVariableStatement(nextMember)
+                        nextNewLine: nextMember => Node.isVariableStatement(nextMember),
                     });
-                }
+                },
             });
         }
 
@@ -980,7 +983,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 index: opts.index,
                 parent: this,
                 structures: opts.structures,
-                write: (writer, info) => opts.write(writer, info)
+                write: (writer, info) => opts.write(writer, info),
             });
         }
 
@@ -988,7 +991,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             writer: CodeBlockWriter,
             info: InsertIntoBracesOrSourceFileOptionsWriteInfo,
             writeStructures: () => void,
-            opts: StandardWriteOptions = {}
+            opts: StandardWriteOptions = {},
         ) {
             if (info.previousMember != null && (opts.previousNewLine == null || !opts.previousNewLine(info.previousMember))
                 && !Node.isCommentNode(info.previousMember))

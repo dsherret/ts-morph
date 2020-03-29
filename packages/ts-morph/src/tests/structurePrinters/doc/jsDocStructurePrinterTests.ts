@@ -49,35 +49,35 @@ describe(nameof(JSDocStructurePrinter), () => {
             it("should write with single line description and tag", () => {
                 doTest(
                     { description: "Test", tags: [{ tagName: "param", text: "p - Test" }] },
-                    `/**\n * Test\n * @param p - Test\n */`
+                    `/**\n * Test\n * @param p - Test\n */`,
                 );
             });
 
             it("should write with multi-line description and tag", () => {
                 doTest(
                     { description: "\nTest", tags: [{ tagName: "param", text: "p - Test" }] },
-                    `/**\n * Test\n * @param p - Test\n */`
+                    `/**\n * Test\n * @param p - Test\n */`,
                 );
             });
 
             it("should write with description and tags", () => {
                 doTest(
                     { description: "Test.\nOther.", tags: [{ tagName: "param", text: "p - Test" }, { tagName: "param", text: "other" }] },
-                    `/**\n * Test.\n * Other.\n * @param p - Test\n * @param other\n */`
+                    `/**\n * Test.\n * Other.\n * @param p - Test\n * @param other\n */`,
                 );
             });
 
             it("should write with only tags", () => {
                 doTest(
                     { tags: [{ tagName: "param", text: "p - Test" }, { tagName: "param" }] },
-                    `/**\n * @param p - Test\n * @param\n */`
+                    `/**\n * @param p - Test\n * @param\n */`,
                 );
             });
 
             it("should write tag that is multi-line", () => {
                 doTest(
                     { tags: [{ tagName: "param", text: "p - Test\nOther." }] },
-                    `/**\n * @param p - Test\n * Other.\n */`
+                    `/**\n * @param p - Test\n * Other.\n */`,
                 );
             });
         });

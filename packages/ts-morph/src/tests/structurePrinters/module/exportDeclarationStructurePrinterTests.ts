@@ -36,7 +36,7 @@ describe(nameof(ExportDeclarationStructurePrinter), () => {
         it("should throw when specifying a namespace export and named exports", () => {
             doThrowTest(
                 { namespaceExport: "ns", namedExports: ["test"], moduleSpecifier: "test" },
-                "An export declaration cannot have both a namespace export and a named export"
+                "An export declaration cannot have both a namespace export and a named export",
             );
         });
     });

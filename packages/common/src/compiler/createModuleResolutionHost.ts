@@ -56,6 +56,6 @@ export function createModuleResolutionHost(options: CreateModuleResolutionHostOp
                 dirs.add(childDirPath);
             return Array.from(dirs);
         },
-        realpath: path => transactionalFileSystem.realpathSync(transactionalFileSystem.getStandardizedAbsolutePath(path))
+        realpath: path => transactionalFileSystem.realpathSync(transactionalFileSystem.getStandardizedAbsolutePath(path)),
     };
 }

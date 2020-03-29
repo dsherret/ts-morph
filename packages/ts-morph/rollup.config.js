@@ -4,16 +4,16 @@ export default {
     input: "./src/main.ts",
     external: [
         "code-block-writer",
-        "@ts-morph/common"
+        "@ts-morph/common",
     ],
     output: {
         file: "./dist/ts-morph.js",
-        format: "cjs"
+        format: "cjs",
     },
     plugins: [
         typescript({
             typescript: require("ttypescript"),
-            tsconfig: "tsconfig.rollup.json"
-        })
-    ]
+            tsconfig: "tsconfig.rollup.json",
+        }),
+    ],
 };

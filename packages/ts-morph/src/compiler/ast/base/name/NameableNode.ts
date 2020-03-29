@@ -107,7 +107,7 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
 
         getStructure() {
             return callBaseGetStructure<NameableNodeStructure>(Base.prototype, this, {
-                name: this.getName()
+                name: this.getName(),
             });
         }
     };
@@ -118,6 +118,6 @@ function addNameNode(node: Node, newName: string) {
     insertIntoParentTextRange({
         insertPos: openParenToken.getStart(),
         newText: " " + newName,
-        parent: node
+        parent: node,
     });
 }

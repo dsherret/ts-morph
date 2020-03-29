@@ -94,7 +94,7 @@ describe(nameof(ExtendsClauseableNode), () => {
                 "interface Identifier extends Base, Base1 {}",
                 1,
                 ["Base2", writer => writer.write("Base3")],
-                "interface Identifier extends Base, Base2, Base3, Base1 {}"
+                "interface Identifier extends Base, Base2, Base3, Base1 {}",
             );
         });
 

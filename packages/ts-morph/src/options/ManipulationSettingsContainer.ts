@@ -11,7 +11,7 @@ export enum IndentationText {
     /** Eight spaces */
     EightSpaces = "        ",
     /** Tab */
-    Tab = "\t"
+    Tab = "\t",
 }
 
 /**
@@ -69,7 +69,7 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
             quoteKind: QuoteKind.Double,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
             usePrefixAndSuffixTextForRename: false,
-            useTrailingCommas: false
+            useTrailingCommas: false,
         });
     }
 
@@ -92,7 +92,7 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
         if (this._formatCodeSettings == null) {
             this._formatCodeSettings = {
                 ...this.getEditorSettings(),
-                insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: this._settings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+                insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: this._settings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,
             };
         }
 
@@ -106,7 +106,7 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
         if (this._userPreferences == null) {
             this._userPreferences = {
                 quotePreference: this.getQuoteKind() === QuoteKind.Double ? "double" : "single",
-                providePrefixAndSuffixTextForRename: this.getUsePrefixAndSuffixTextForRename()
+                providePrefixAndSuffixTextForRename: this.getUsePrefixAndSuffixTextForRename(),
             };
         }
         return { ...this._userPreferences };

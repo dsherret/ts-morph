@@ -20,7 +20,7 @@ describe(nameof(TypeElementMemberedNode), () => {
             const expectedText = "interface i {\n    // test\n    p1;\n    p2;\n    p3;\n}";
             doTest("interface i {\n    // test\n    p1;\n    p2;\n}", {
                 kind: StructureKind.PropertySignature,
-                name: "p3"
+                name: "p3",
             }, expectedText);
         });
     });
@@ -38,10 +38,10 @@ describe(nameof(TypeElementMemberedNode), () => {
             const expectedText = "interface i {\n    // test\n    p1;\n    p2;\n    p3;\n    m4();\n}";
             doTest("interface i {\n    // test\n    p1;\n    p2;\n}", [{
                 kind: StructureKind.PropertySignature,
-                name: "p3"
+                name: "p3",
             }, {
                 kind: StructureKind.MethodSignature,
-                name: "m4"
+                name: "m4",
             }], expectedText, 2);
         });
     });
@@ -58,7 +58,7 @@ describe(nameof(TypeElementMemberedNode), () => {
             const expectedText = "interface i {\n    p1;\n    p2;\n    p3;\n}";
             doTest("interface i {\n    p1;\n    p3;\n}", 1, {
                 kind: StructureKind.PropertySignature,
-                name: "p2"
+                name: "p2",
             }, expectedText);
         });
     });
@@ -83,17 +83,17 @@ describe(nameof(TypeElementMemberedNode), () => {
         it("should insert all the different kinds of members", () => {
             const expectedText = `interface i {\n    new();\n    p1;\n    m1();\n    [key: string];\n    (): void;\n    // testing\n}`;
             doTest("interface i {\n}", 0, [{
-                kind: StructureKind.ConstructSignature
+                kind: StructureKind.ConstructSignature,
             }, {
                 kind: StructureKind.PropertySignature,
-                name: "p1"
+                name: "p1",
             }, {
                 kind: StructureKind.MethodSignature,
-                name: "m1"
+                name: "m1",
             }, {
-                kind: StructureKind.IndexSignature
+                kind: StructureKind.IndexSignature,
             }, {
-                kind: StructureKind.CallSignature
+                kind: StructureKind.CallSignature,
             }, "// testing"], expectedText, 6);
         });
 
@@ -101,7 +101,7 @@ describe(nameof(TypeElementMemberedNode), () => {
             const expectedText = "interface i {\n    p1;\n    p2;\n    p3;\n}";
             doTest("interface i {\n    p1;\n    p3;\n}", 1, [{
                 kind: StructureKind.PropertySignature,
-                name: "p2"
+                name: "p2",
             }], expectedText, 1);
         });
     });
@@ -111,7 +111,7 @@ describe(nameof(TypeElementMemberedNode), () => {
             startCode: string,
             insertIndex: number,
             structures: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>[],
-            expectedCode: string
+            expectedCode: string,
         ) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertConstructSignatures(insertIndex, structures);
@@ -133,7 +133,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 docs: [{ description: "Test" }],
                 parameters: [{ name: "param" }],
                 returnType: "T",
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             };
             doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    new<T>(param): T;\n}");
         });
@@ -144,7 +144,7 @@ describe(nameof(TypeElementMemberedNode), () => {
             startCode: string,
             insertIndex: number,
             structure: OptionalKindAndTrivia<ConstructSignatureDeclarationStructure>,
-            expectedCode: string
+            expectedCode: string,
         ) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertConstructSignature(insertIndex, structure);
@@ -234,7 +234,7 @@ describe(nameof(TypeElementMemberedNode), () => {
             startCode: string,
             insertIndex: number,
             structures: OptionalKindAndTrivia<IndexSignatureDeclarationStructure>[],
-            expectedCode: string
+            expectedCode: string,
         ) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startCode);
             const result = firstChild.insertIndexSignatures(insertIndex, structures);
@@ -258,7 +258,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 returnType: "string",
                 isReadonly: true,
                 keyName: "keyName",
-                keyType: "number"
+                keyType: "number",
             };
             doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    readonly [keyName: number]: string;\n}");
         });
@@ -373,7 +373,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 docs: [{ description: "Test" }],
                 parameters: [{ name: "param" }],
                 returnType: "T",
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             };
             doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    <T>(param): T;\n}");
         });
@@ -481,7 +481,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 "interface i {\n    method1();\n    method4();\n}",
                 1,
                 [{ name: "method2", hasQuestionToken: true, returnType: "string" }, { name: "method3" }],
-                "interface i {\n    method1();\n    method2?(): string;\n    method3();\n    method4();\n}"
+                "interface i {\n    method1();\n    method2?(): string;\n    method3();\n    method4();\n}",
             );
         });
 
@@ -492,7 +492,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 hasQuestionToken: true,
                 returnType: "number",
                 parameters: [{ name: "param" }],
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             };
             doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    method?<T>(param): number;\n}");
         });
@@ -581,7 +581,7 @@ describe(nameof(TypeElementMemberedNode), () => {
 
         describe("has methods", () => {
             const {
-                firstChild
+                firstChild,
             } = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n    prop: string;\n    method1():void;\n    method2():string;\n}\n");
 
             it("should get the right number of methods", () => {
@@ -618,7 +618,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 docs: [{ description: "Test" }],
                 hasQuestionToken: true,
                 type: "number",
-                initializer: "5" // doesn't make sense
+                initializer: "5", // doesn't make sense
             };
             doTest("interface i {\n}", 0, [structure], "interface i {\n    /** Test */\n    readonly prop?: number = 5;\n}");
         });
@@ -738,7 +738,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 "//a",
                 "/*b*/",
                 "prop;",
-                "//c"
+                "//c",
             ]);
         });
 
@@ -783,12 +783,12 @@ describe(nameof(TypeElementMemberedNode), () => {
                 constructSignatures: [{ returnType: "string" }],
                 indexSignatures: [{ keyName: "key", keyType: "string", returnType: "number" }],
                 properties: [{ name: "p" }],
-                methods: [{ name: "m" }]
+                methods: [{ name: "m" }],
             };
             doTest(
                 "interface Identifier {\n    (p): string;\n    new(p): string;\n    [other: string]: number;\n    pOld;\n    mOld();\n}",
                 structure,
-                "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}"
+                "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}",
             );
         });
 
@@ -798,7 +798,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 constructSignatures: [],
                 indexSignatures: [],
                 properties: [],
-                methods: []
+                methods: [],
             };
             const code = "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}";
             doTest(code, structure, "interface Identifier {\n}");
@@ -822,7 +822,7 @@ describe(nameof(TypeElementMemberedNode), () => {
                 constructSignatures: [],
                 indexSignatures: [],
                 methods: [],
-                properties: []
+                properties: [],
             });
         });
 
@@ -839,14 +839,14 @@ describe(nameof(TypeElementMemberedNode), () => {
                     docs: [],
                     parameters: [],
                     returnType: "void",
-                    typeParameters: []
+                    typeParameters: [],
                 }],
                 constructSignatures: [{
                     kind: StructureKind.ConstructSignature,
                     docs: [],
                     parameters: [],
                     returnType: "string",
-                    typeParameters: []
+                    typeParameters: [],
                 }],
                 indexSignatures: [{
                     kind: StructureKind.IndexSignature,
@@ -854,10 +854,10 @@ describe(nameof(TypeElementMemberedNode), () => {
                     isReadonly: false,
                     keyName: "test",
                     keyType: "string",
-                    returnType: "string"
+                    returnType: "string",
                 }],
                 methods: [{ kind: StructureKind.MethodSignature, name: "method" }],
-                properties: [{ kind: StructureKind.PropertySignature, name: "prop" }]
+                properties: [{ kind: StructureKind.PropertySignature, name: "prop" }],
             });
         });
     });

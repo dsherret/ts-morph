@@ -13,7 +13,7 @@ export interface LeftHandSideExpressionedNode {
 }
 
 export function LeftHandSideExpressionedNode<T extends Constructor<LeftHandSideExpressionedNodeExtensionType>>(
-    Base: T
+    Base: T,
 ): Constructor<LeftHandSideExpressionedNode> & T {
     return class extends Base implements LeftHandSideExpressionedNode {
         getExpression() {

@@ -22,13 +22,12 @@ import { TextRange } from "./TextRange";
 import { SyntaxList } from "./SyntaxList";
 import { ForEachDescendantTraversalControl, TransformTraversalControl } from "./TraversalControl";
 
-export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType,
-    NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined
-    ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined
-    : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[]
-    : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]>
-    : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined
-    : NodeType[KeyName];
+export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
+    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined
+        : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[]
+        : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]>
+        : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined
+        : NodeType[KeyName];
 
 export type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? undefined
     : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined
@@ -82,7 +81,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     constructor(
         context: ProjectContext,
         node: NodeType,
-        sourceFile: SourceFile | undefined
+        sourceFile: SourceFile | undefined,
     ) {
         if (context == null || context.compilerFactory == null) {
             throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export "
@@ -653,7 +652,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     forEachDescendant<T>(
         cbNode: (node: Node, traversal: ForEachDescendantTraversalControl) => T | undefined,
-        cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => T | undefined
+        cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => T | undefined,
     ): T | undefined {
         const stopReturnValue: any = {};
         const upReturnValue: any = {};
@@ -661,7 +660,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         let up = false;
         const traversal = {
             stop: () => stop = true,
-            up: () => up = true
+            up: () => up = true,
         };
         const nodeCallback: (node: Node) => T | undefined = (node: Node) => {
             if (stop)
@@ -671,7 +670,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
             const returnValue = cbNode(node, {
                 ...traversal,
-                skip: () => skip = true
+                skip: () => skip = true,
             });
 
             if (returnValue)
@@ -695,7 +694,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
             const returnValue = cbNodeArray(nodes, {
                 ...traversal,
-                skip: () => skip = true
+                skip: () => skip = true,
             });
 
             if (returnValue)
@@ -1037,7 +1036,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (trimLeadingIndentation) {
             return StringUtils.removeIndentation(text, {
                 isInStringAtPos: pos => this._sourceFile.isInStringAtPos(pos + startPos),
-                indentSizeInSpaces: this._context.manipulationSettings._getIndentSizeInSpaces()
+                indentSizeInSpaces: this._context.manipulationSettings._getIndentSizeInSpaces(),
             });
         }
         else {
@@ -1076,7 +1075,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getNodeProperty<
         KeyType extends keyof LocalNodeType,
-        LocalNodeType extends ts.Node = NodeType // necessary to make the compiler less strict when assigning "this" to Node<NodeType>
+        LocalNodeType extends ts.Node = NodeType, // necessary to make the compiler less strict when assigning "this" to Node<NodeType>
     >(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType> {
         const property = (this.compilerNode as any)[propertyName] as any | any[];
 
@@ -1371,8 +1370,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             insertPos: start,
             newText,
             replacing: {
-                textLength: this.getEnd() - start
-            }
+                textLength: this.getEnd() - start,
+            },
         });
 
         return parent.getChildren()[childIndex];
@@ -1402,12 +1401,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const formattingEdits = this._context.languageService.getFormattingEditsForRange(
             this._sourceFile.getFilePath(),
             [this.getStart(true), this.getEnd()],
-            settings
+            settings,
         );
 
         replaceSourceFileTextForFormatting({
             sourceFile: this._sourceFile,
-            newText: getTextFromTextChanges(this._sourceFile, formattingEdits)
+            newText: getTextFromTextChanges(this._sourceFile, formattingEdits),
         });
     }
 
@@ -1437,7 +1436,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const compilerFactory = this._context.compilerFactory;
         const printer = ts.createPrinter({
             newLine: this._context.manipulationSettings.getNewLineKind(),
-            removeComments: false
+            removeComments: false,
         });
         const transformations: { start: number; end: number; compilerNode: ts.Node; }[] = [];
         const compilerSourceFile = this._sourceFile.compilerNode;
@@ -1450,7 +1449,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
         replaceSourceFileTextStraight({
             sourceFile: this._sourceFile,
-            newText: getTransformedText()
+            newText: getTransformedText(),
         });
 
         return this;
@@ -1461,7 +1460,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
                     node = ts.visitEachChild(node, child => innerVisit(child, context), context);
                     return node;
                 },
-                currentNode: node
+                currentNode: node,
             };
             const resultNode = visitNode(traversal);
             handleTransformation(node, resultNode);
@@ -1484,7 +1483,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             transformations.push({
                 start,
                 end,
-                compilerNode: newNode
+                compilerNode: newNode,
             });
 
             // It's very difficult and expensive to tell about changes that could have happened to the descendants
@@ -2040,7 +2039,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     _getNodeFromCompilerNode<LocalCompilerNodeType extends ts.Node = ts.Node>(
-        compilerNode: LocalCompilerNodeType
+        compilerNode: LocalCompilerNodeType,
     ): CompilerNodeToWrappedType<LocalCompilerNodeType> {
         return this._context.compilerFactory.getNodeFromCompilerNode(compilerNode, this._sourceFile);
     }
@@ -2050,7 +2049,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     _getNodeFromCompilerNodeIfExists<LocalCompilerNodeType extends ts.Node = ts.Node>(
-        compilerNode: LocalCompilerNodeType | undefined
+        compilerNode: LocalCompilerNodeType | undefined,
     ): CompilerNodeToWrappedType<LocalCompilerNodeType> | undefined {
         return compilerNode == null ? undefined : this._getNodeFromCompilerNode<LocalCompilerNodeType>(compilerNode);
     }
@@ -2105,8 +2104,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /** Gets if the provided node is a comment node. */
-    static isCommentNode(node: compiler.Node): node is compiler.CommentStatement | compiler.CommentClassElement | compiler.CommentTypeElement
-        | compiler.CommentObjectLiteralElement | compiler.CommentEnumMember
+    static isCommentNode(
+        node: compiler.Node,
+    ): node is compiler.CommentStatement | compiler.CommentClassElement | compiler.CommentTypeElement | compiler.CommentObjectLiteralElement
+        | compiler.CommentEnumMember
     {
         const kind = node.getKind();
         return kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia;
@@ -2394,7 +2395,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isClassLikeDeclarationBase<T extends compiler.Node>(node: T): node is compiler.ClassLikeDeclarationBase
-        & compiler.ClassLikeDeclarationBaseExtensionType & T
+        & compiler.ClassLikeDeclarationBaseExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
@@ -2490,7 +2492,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isExclamationTokenableNode<T extends compiler.Node>(node: T): node is compiler.ExclamationTokenableNode
-        & compiler.ExclamationTokenableNodeExtensionType & T
+        & compiler.ExclamationTokenableNodeExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.PropertyDeclaration:
@@ -2619,7 +2622,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isExpressionStatement: (node: compiler.Node) => node is compiler.ExpressionStatement = Node.is(SyntaxKind.ExpressionStatement);
     /** Gets if the node is an ExpressionWithTypeArguments. */
     static readonly isExpressionWithTypeArguments: (node: compiler.Node) => node is compiler.ExpressionWithTypeArguments = Node.is(
-        SyntaxKind.ExpressionWithTypeArguments
+        SyntaxKind.ExpressionWithTypeArguments,
     );
 
     /**
@@ -2645,9 +2648,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is an ExtendsClauseableNode.
      * @param node - Node to check.
      */
-    static isExtendsClauseableNode<T extends compiler.Node>(node: T): node is compiler.ExtendsClauseableNode & compiler.ExtendsClauseableNodeExtensionType
-        & T
-    {
+    static isExtendsClauseableNode<T extends compiler.Node>(node: T): node is compiler.ExtendsClauseableNode & compiler.ExtendsClauseableNodeExtensionType & T {
         return node.getKind() === SyntaxKind.InterfaceDeclaration;
     }
 
@@ -2671,7 +2672,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isFunctionLikeDeclaration<T extends compiler.Node>(node: T): node is compiler.FunctionLikeDeclaration
-        & compiler.FunctionLikeDeclarationExtensionType & T
+        & compiler.FunctionLikeDeclarationExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
@@ -2725,9 +2727,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a HeritageClauseableNode.
      * @param node - Node to check.
      */
-    static isHeritageClauseableNode<T extends compiler.Node>(node: T): node is compiler.HeritageClauseableNode & compiler.HeritageClauseableNodeExtensionType
-        & T
-    {
+    static isHeritageClauseableNode<T extends compiler.Node>(
+        node: T,
+    ): node is compiler.HeritageClauseableNode & compiler.HeritageClauseableNodeExtensionType & T {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
@@ -2748,7 +2750,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isImplementsClauseableNode<T extends compiler.Node>(node: T): node is compiler.ImplementsClauseableNode
-        & compiler.ImplementsClauseableNodeExtensionType & T
+        & compiler.ImplementsClauseableNodeExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
@@ -2817,7 +2820,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isInitializerExpressionGetableNode<T extends compiler.Node>(node: T): node is compiler.InitializerExpressionGetableNode
-        & compiler.InitializerExpressionGetableNodeExtensionType & T
+        & compiler.InitializerExpressionGetableNodeExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
@@ -2839,7 +2843,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isInitializerExpressionableNode<T extends compiler.Node>(node: T): node is compiler.InitializerExpressionableNode
-        & compiler.InitializerExpressionableNodeExtensionType & T
+        & compiler.InitializerExpressionableNodeExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
@@ -2969,7 +2974,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isJSDocTypeExpressionableTag<T extends compiler.Node>(node: T): node is compiler.JSDocTypeExpressionableTag
-        & compiler.JSDocTypeExpressionableTagExtensionType & T
+        & compiler.JSDocTypeExpressionableTagExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.JSDocReturnTag:
@@ -2985,7 +2991,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isJSDocTypeParameteredTag<T extends compiler.Node>(node: T): node is compiler.JSDocTypeParameteredTag
-        & compiler.JSDocTypeParameteredTagExtensionType & T
+        & compiler.JSDocTypeParameteredTagExtensionType
+        & T
     {
         return node.getKind() === SyntaxKind.JSDocTemplateTag;
     }
@@ -3139,7 +3146,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isLeftHandSideExpressionedNode<T extends compiler.Node>(node: T): node is compiler.LeftHandSideExpressionedNode
-        & compiler.LeftHandSideExpressionedNodeExtensionType & T
+        & compiler.LeftHandSideExpressionedNodeExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.CallExpression:
@@ -3338,9 +3346,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a NamespaceChildableNode.
      * @param node - Node to check.
      */
-    static isNamespaceChildableNode<T extends compiler.Node>(node: T): node is compiler.NamespaceChildableNode & compiler.NamespaceChildableNodeExtensionType
-        & T
-    {
+    static isNamespaceChildableNode<T extends compiler.Node>(
+        node: T,
+    ): node is compiler.NamespaceChildableNode & compiler.NamespaceChildableNodeExtensionType & T {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
@@ -3372,7 +3380,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isNewExpression: (node: compiler.Node) => node is compiler.NewExpression = Node.is(SyntaxKind.NewExpression);
     /** Gets if the node is a NoSubstitutionTemplateLiteral. */
     static readonly isNoSubstitutionTemplateLiteral: (node: compiler.Node) => node is compiler.NoSubstitutionTemplateLiteral = Node.is(
-        SyntaxKind.NoSubstitutionTemplateLiteral
+        SyntaxKind.NoSubstitutionTemplateLiteral,
     );
     /** Gets if the node is a NonNullExpression. */
     static readonly isNonNullExpression: (node: compiler.Node) => node is compiler.NonNullExpression = Node.is(SyntaxKind.NonNullExpression);
@@ -3461,7 +3469,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a PartiallyEmittedExpression. */
     static readonly isPartiallyEmittedExpression: (node: compiler.Node) => node is compiler.PartiallyEmittedExpression = Node.is(
-        SyntaxKind.PartiallyEmittedExpression
+        SyntaxKind.PartiallyEmittedExpression,
     );
     /** Gets if the node is a PostfixUnaryExpression. */
     static readonly isPostfixUnaryExpression: (node: compiler.Node) => node is compiler.PostfixUnaryExpression = Node.is(SyntaxKind.PostfixUnaryExpression);
@@ -3506,7 +3514,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isPrivateIdentifier: (node: compiler.Node) => node is compiler.PrivateIdentifier = Node.is(SyntaxKind.PrivateIdentifier);
     /** Gets if the node is a PropertyAccessExpression. */
     static readonly isPropertyAccessExpression: (node: compiler.Node) => node is compiler.PropertyAccessExpression = Node.is(
-        SyntaxKind.PropertyAccessExpression
+        SyntaxKind.PropertyAccessExpression,
     );
     /** Gets if the node is a PropertyAssignment. */
     static readonly isPropertyAssignment: (node: compiler.Node) => node is compiler.PropertyAssignment = Node.is(SyntaxKind.PropertyAssignment);
@@ -3543,7 +3551,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isQuestionDotTokenableNode<T extends compiler.Node>(node: T): node is compiler.QuestionDotTokenableNode
-        & compiler.QuestionDotTokenableNodeExtensionType & T
+        & compiler.QuestionDotTokenableNodeExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.CallExpression:
@@ -3559,9 +3568,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a QuestionTokenableNode.
      * @param node - Node to check.
      */
-    static isQuestionTokenableNode<T extends compiler.Node>(node: T): node is compiler.QuestionTokenableNode & compiler.QuestionTokenableNodeExtensionType
-        & T
-    {
+    static isQuestionTokenableNode<T extends compiler.Node>(node: T): node is compiler.QuestionTokenableNode & compiler.QuestionTokenableNodeExtensionType & T {
         switch (node.getKind()) {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
@@ -3596,9 +3603,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a ReferenceFindableNode.
      * @param node - Node to check.
      */
-    static isReferenceFindableNode<T extends compiler.Node>(node: T): node is compiler.ReferenceFindableNode & compiler.ReferenceFindableNodeExtensionType
-        & T
-    {
+    static isReferenceFindableNode<T extends compiler.Node>(node: T): node is compiler.ReferenceFindableNode & compiler.ReferenceFindableNodeExtensionType & T {
         switch (node.getKind()) {
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
@@ -3635,7 +3640,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a RegularExpressionLiteral. */
     static readonly isRegularExpressionLiteral: (node: compiler.Node) => node is compiler.RegularExpressionLiteral = Node.is(
-        SyntaxKind.RegularExpressionLiteral
+        SyntaxKind.RegularExpressionLiteral,
     );
 
     /**
@@ -3746,16 +3751,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a ShorthandPropertyAssignment. */
     static readonly isShorthandPropertyAssignment: (node: compiler.Node) => node is compiler.ShorthandPropertyAssignment = Node.is(
-        SyntaxKind.ShorthandPropertyAssignment
+        SyntaxKind.ShorthandPropertyAssignment,
     );
 
     /**
      * Gets if the node is a SignaturedDeclaration.
      * @param node - Node to check.
      */
-    static isSignaturedDeclaration<T extends compiler.Node>(node: T): node is compiler.SignaturedDeclaration & compiler.SignaturedDeclarationExtensionType
-        & T
-    {
+    static isSignaturedDeclaration<T extends compiler.Node>(node: T): node is compiler.SignaturedDeclaration & compiler.SignaturedDeclarationExtensionType & T {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
@@ -3888,7 +3891,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isSyntaxList: (node: compiler.Node) => node is compiler.SyntaxList = Node.is(SyntaxKind.SyntaxList);
     /** Gets if the node is a TaggedTemplateExpression. */
     static readonly isTaggedTemplateExpression: (node: compiler.Node) => node is compiler.TaggedTemplateExpression = Node.is(
-        SyntaxKind.TaggedTemplateExpression
+        SyntaxKind.TaggedTemplateExpression,
     );
     /** Gets if the node is a TemplateExpression. */
     static readonly isTemplateExpression: (node: compiler.Node) => node is compiler.TemplateExpression = Node.is(SyntaxKind.TemplateExpression);
@@ -4009,7 +4012,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isTypeElementMemberedNode<T extends compiler.Node>(node: T): node is compiler.TypeElementMemberedNode
-        & compiler.TypeElementMemberedNodeExtensionType & T
+        & compiler.TypeElementMemberedNodeExtensionType
+        & T
     {
         switch (node.getKind()) {
             case SyntaxKind.InterfaceDeclaration:
@@ -4183,9 +4187,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a UnaryExpressionedNode.
      * @param node - Node to check.
      */
-    static isUnaryExpressionedNode<T extends compiler.Node>(node: T): node is compiler.UnaryExpressionedNode & compiler.UnaryExpressionedNodeExtensionType
-        & T
-    {
+    static isUnaryExpressionedNode<T extends compiler.Node>(node: T): node is compiler.UnaryExpressionedNode & compiler.UnaryExpressionedNodeExtensionType & T {
         switch (node.getKind()) {
             case SyntaxKind.AwaitExpression:
             case SyntaxKind.DeleteExpression:
@@ -4337,7 +4339,7 @@ function insertWhiteSpaceTextAtPos(node: Node, insertPos: number, textOrWriterFu
     insertIntoParentTextRange({
         parent,
         insertPos,
-        newText
+        newText,
     });
 }
 

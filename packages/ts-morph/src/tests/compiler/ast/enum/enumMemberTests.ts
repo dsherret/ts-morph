@@ -104,7 +104,7 @@ describe(nameof(EnumMember), () => {
 
         it("should change when specifying", () => {
             const structure: OptionalKind<MakeRequired<EnumMemberSpecificStructure>> = {
-                value: 5
+                value: 5,
             };
             doTest("enum Identifier { member }", structure, "enum Identifier { member = 5 }");
         });
@@ -124,7 +124,7 @@ describe(nameof(EnumMember), () => {
                 name: "member",
                 initializer: undefined,
                 docs: [],
-                value: undefined
+                value: undefined,
             });
         });
 
@@ -139,7 +139,7 @@ enum b {
                 name: "\'str\'",
                 initializer: "3.14",
                 docs: [{ description: "Test" }],
-                value: undefined
+                value: undefined,
             });
         });
     });

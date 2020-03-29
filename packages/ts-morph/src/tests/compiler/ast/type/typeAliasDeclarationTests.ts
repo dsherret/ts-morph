@@ -52,7 +52,7 @@ describe(nameof(TypeAliasDeclaration), () => {
                 isExported: false,
                 name: "Identifier",
                 type: "OtherType",
-                typeParameters: []
+                typeParameters: [],
             });
         });
 
@@ -69,7 +69,7 @@ export declare type Identifier<T> = string;
                 isExported: true,
                 name: "Identifier",
                 type: "string",
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             });
         });
     });

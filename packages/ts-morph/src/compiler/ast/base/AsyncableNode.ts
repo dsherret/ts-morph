@@ -58,7 +58,7 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
 
         getStructure() {
             return callBaseGetStructure<AsyncableNodeStructure>(Base.prototype, this, {
-                isAsync: this.isAsync()
+                isAsync: this.isAsync(),
             });
         }
     };

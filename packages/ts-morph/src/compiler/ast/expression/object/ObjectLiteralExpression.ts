@@ -29,7 +29,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
     getPropertyOrThrow(nameOrFindFunction: string | ((property: ObjectLiteralElementLike) => boolean)): ObjectLiteralElementLike {
         return errors.throwIfNullOrUndefined(
             this.getProperty(nameOrFindFunction),
-            () => getNotFoundErrorMessageForNameOrFindFunction("property", nameOrFindFunction)
+            () => getNotFoundErrorMessageForNameOrFindFunction("property", nameOrFindFunction),
         );
     }
 
@@ -136,7 +136,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
             insertIndex: index,
             newText: writer.toString(),
             useNewLines: true,
-            useTrailingCommas: this._context.manipulationSettings.getUseTrailingCommas()
+            useTrailingCommas: this._context.manipulationSettings.getUseTrailingCommas(),
         });
 
         // get the properties
@@ -215,7 +215,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         return this._insertProperty(
             index,
             structures,
-            () => this._context.structurePrinterFactory.forShorthandPropertyAssignment()
+            () => this._context.structurePrinterFactory.forShorthandPropertyAssignment(),
         ) as ShorthandPropertyAssignment[];
     }
 
@@ -291,7 +291,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         return this._insertProperty(
             index,
             structures,
-            () => this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient: false })
+            () => this._context.structurePrinterFactory.forMethodDeclaration({ isAmbient: false }),
         ) as MethodDeclaration[];
     }
 
@@ -331,7 +331,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         return this._insertProperty(
             index,
             structures,
-            () => this._context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: false })
+            () => this._context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: false }),
         ) as GetAccessorDeclaration[];
     }
 
@@ -371,7 +371,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         return this._insertProperty(
             index,
             structures,
-            () => this._context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false })
+            () => this._context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false }),
         ) as SetAccessorDeclaration[];
     }
 
@@ -392,7 +392,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
             insertIndex: index,
             newText: writer.toString(),
             useNewLines: true,
-            useTrailingCommas: this._context.manipulationSettings.getUseTrailingCommas()
+            useTrailingCommas: this._context.manipulationSettings.getUseTrailingCommas(),
         });
 
         return getNodesToReturn(oldProperties, this.getPropertiesWithComments(), index, false);

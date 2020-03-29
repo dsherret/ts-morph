@@ -38,5 +38,5 @@ export enum StructureKind {
     TypeAlias,
     TypeParameter,
     VariableDeclaration,
-    VariableStatement
+    VariableStatement,
 }

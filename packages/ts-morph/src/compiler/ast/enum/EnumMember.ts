@@ -47,7 +47,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
             childrenToRemove.push(commaToken);
         removeChildrenWithFormatting({
             children: childrenToRemove,
-            getSiblingFormatting: () => FormattingKind.Newline
+            getSiblingFormatting: () => FormattingKind.Newline,
         });
     }
 
@@ -73,7 +73,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
         return callBaseGetStructure<EnumMemberSpecificStructure>(EnumMemberBase.prototype, this, {
             kind: StructureKind.EnumMember,
             // never return the value, only return the initializer
-            value: undefined
+            value: undefined,
         }) as EnumMemberStructure;
     }
 }

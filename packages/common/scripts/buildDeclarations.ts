@@ -2,13 +2,13 @@ import * as path from "path";
 import { createDeclarationProject, makeConstructorsPrivate, tsMorph } from "@ts-morph/scripts";
 
 const declarationProject = createDeclarationProject({
-    tsConfigFilePath: path.join(__dirname, "../tsconfig.json")
+    tsConfigFilePath: path.join(__dirname, "../tsconfig.json"),
 });
 const emitMainFile = declarationProject.getSourceFileOrThrow("./dist/index.d.ts");
 const writeProject = new tsMorph.Project({
     manipulationSettings: {
-        newLineKind: tsMorph.NewLineKind.CarriageReturnLineFeed
-    }
+        newLineKind: tsMorph.NewLineKind.CarriageReturnLineFeed,
+    },
 });
 const declarationFile = writeProject.addSourceFileAtPath("lib/ts-morph-common.d.ts");
 

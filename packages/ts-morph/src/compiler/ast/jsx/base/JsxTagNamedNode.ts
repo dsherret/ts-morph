@@ -35,7 +35,7 @@ export function JsxTagNamedNode<T extends Constructor<JsxTagNamedNodeExtensionTy
 
         getStructure(): JsxTagNamedNodeStructure {
             return callBaseGetStructure<JsxTagNamedNodeStructure>(Base.prototype, this, {
-                name: this.getTagNameNode().getText()
+                name: this.getTagNameNode().getText(),
             });
         }
     };

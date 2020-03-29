@@ -120,7 +120,7 @@ export class CompilerFactory {
     createSourceFile(
         filePath: StandardizedFilePath,
         sourceFileText: string | OptionalKind<SourceFileStructure> | WriterFunction,
-        options: SourceFileCreateOptions & { markInProject: boolean; }
+        options: SourceFileCreateOptions & { markInProject: boolean; },
     ) {
         sourceFileText = sourceFileText instanceof Function ? getTextFromStringOrWriter(this.context.createWriter(), sourceFileText) : sourceFileText || "";
         if (typeof sourceFileText === "string")
@@ -128,7 +128,7 @@ export class CompilerFactory {
 
         const writer = this.context.createWriter();
         const structurePrinter = this.context.structurePrinterFactory.forSourceFile({
-            isAmbient: FileUtils.getExtension(filePath) === ".d.ts"
+            isAmbient: FileUtils.getExtension(filePath) === ".d.ts",
         });
         structurePrinter.printText(writer, sourceFileText);
 
@@ -166,7 +166,7 @@ export class CompilerFactory {
     private createOrOverwriteSourceFileFromText(
         filePath: StandardizedFilePath,
         sourceText: string,
-        options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }
+        options: { markInProject: boolean; scriptKind: ScriptKind | undefined; },
     ) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
@@ -192,7 +192,8 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }): SourceFile
+    addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }):
+        | SourceFile
         | undefined
     {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
@@ -326,7 +327,7 @@ export class CompilerFactory {
     private createSourceFileFromTextInternal(
         filePath: StandardizedFilePath,
         text: string,
-        options: { markInProject: boolean; scriptKind: ScriptKind | undefined; }
+        options: { markInProject: boolean; scriptKind: ScriptKind | undefined; },
     ): SourceFile {
         const hasBom = StringUtils.hasBom(text);
         if (hasBom)

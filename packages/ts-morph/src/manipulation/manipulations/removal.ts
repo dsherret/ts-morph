@@ -28,8 +28,8 @@ export function removeChildren(opts: RemoveChildrenOptions) {
         new NodeHandlerFactory().getForChildIndex({
             parent: children[0].getParentSyntaxList() || children[0].getParentOrThrow(),
             childIndex: children[0].getChildIndex(),
-            childCount: -1 * children.length
-        })
+            childCount: -1 * children.length,
+        }),
     );
 }
 
@@ -47,7 +47,7 @@ export function removeChildrenWithFormattingFromCollapsibleSyntaxList<TNode exte
     if (syntaxList.getChildCount() === children.length) {
         removeChildrenWithFormatting({
             children: [syntaxList],
-            getSiblingFormatting: () => FormattingKind.None
+            getSiblingFormatting: () => FormattingKind.None,
         });
     }
     else {
@@ -62,11 +62,11 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
 
     doManipulation(children[0]._sourceFile, new RemoveChildrenWithFormattingTextManipulator<TNode>({
         children,
-        getSiblingFormatting
+        getSiblingFormatting,
     }), new NodeHandlerFactory().getForChildIndex({
         parent: children[0].getParentSyntaxList() || children[0].getParentOrThrow(),
         childIndex: children[0].getChildIndex(),
-        childCount: -1 * children.length
+        childCount: -1 * children.length,
     }));
 }
 
@@ -90,7 +90,7 @@ export function removeClassMember(classMember: Node) {
 export function removeClassMembers(classMembers: Node[]) {
     removeChildrenWithFormatting({
         getSiblingFormatting: getClassMemberFormatting,
-        children: classMembers
+        children: classMembers,
     });
 }
 
@@ -101,7 +101,7 @@ export function removeInterfaceMember(interfaceMember: Node) {
 export function removeInterfaceMembers(interfaceMembers: Node[]) {
     removeChildrenWithFormatting({
         getSiblingFormatting: getInterfaceMemberFormatting,
-        children: interfaceMembers
+        children: interfaceMembers,
     });
 }
 
@@ -118,7 +118,7 @@ export function removeCommaSeparatedChild(child: Node) {
         removePrecedingSpaces: !isRemovingFirstChild || syntaxList.getChildren().length === childrenToRemove.length && childrenToRemove[0].isFirstNodeOnLine(),
         removeFollowingSpaces: isRemovingFirstChild,
         removePrecedingNewLines: !isRemovingFirstChild,
-        removeFollowingNewLines: isRemovingFirstChild
+        removeFollowingNewLines: isRemovingFirstChild,
     });
 
     function addNextCommaIfAble() {
@@ -152,7 +152,7 @@ export function removeStatementedNodeChild(node: Node) {
 export function removeStatementedNodeChildren(nodes: Node[]) {
     removeChildrenWithFormatting({
         getSiblingFormatting: getStatementedNodeChildFormatting,
-        children: nodes
+        children: nodes,
     });
 }
 
@@ -163,7 +163,7 @@ export function removeClausedNodeChild(node: Node) {
 export function removeClausedNodeChildren(nodes: Node[]) {
     removeChildrenWithFormatting({
         getSiblingFormatting: getClausedNodeChildFormatting,
-        children: nodes
+        children: nodes,
     });
 }
 
@@ -171,6 +171,6 @@ export function unwrapNode(node: Node) {
     doManipulation(
         node._sourceFile,
         new UnwrapTextManipulator(node),
-        new NodeHandlerFactory().getForUnwrappingNode(node)
+        new NodeHandlerFactory().getForUnwrappingNode(node),
     );
 }

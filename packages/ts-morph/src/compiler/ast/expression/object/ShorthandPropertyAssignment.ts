@@ -12,9 +12,10 @@ import { ObjectLiteralElement } from "./ObjectLiteralElement";
 // This node only has an object assignment initializer, equals token, and question token, in order to tell the user about bad code
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)
 
-const createBase = <T extends typeof ObjectLiteralElement>(ctor: T) => InitializerExpressionGetableNode(
-    QuestionTokenableNode(NamedNode(ctor))
-);
+const createBase = <T extends typeof ObjectLiteralElement>(ctor: T) =>
+    InitializerExpressionGetableNode(
+        QuestionTokenableNode(NamedNode(ctor)),
+    );
 export const ShorthandPropertyAssignmentBase = createBase(ObjectLiteralElement);
 export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase<ts.ShorthandPropertyAssignment> {
     /**
@@ -66,7 +67,7 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
 
         removeChildren({
             children: [this.getEqualsTokenOrThrow(), this.getObjectAssignmentInitializerOrThrow()],
-            removePrecedingSpaces: true
+            removePrecedingSpaces: true,
         });
 
         return this;
@@ -87,8 +88,8 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
             newText: this.getText() + `: ${text}`,
             parent,
             replacing: {
-                textLength: this.getWidth()
-            }
+                textLength: this.getWidth(),
+            },
         });
 
         return parent.getChildAtIndexIfKindOrThrow(childIndex, SyntaxKind.PropertyAssignment) as PropertyAssignment;
@@ -109,7 +110,7 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
      */
     getStructure(): ShorthandPropertyAssignmentStructure {
         const structure = callBaseGetStructure<ShorthandPropertyAssignmentSpecificStructure>(ShorthandPropertyAssignmentBase.prototype, this, {
-            kind: StructureKind.ShorthandPropertyAssignment
+            kind: StructureKind.ShorthandPropertyAssignment,
         }) as any as ShorthandPropertyAssignmentStructure;
 
         // remove since this is only used to tell the user about incorrect code

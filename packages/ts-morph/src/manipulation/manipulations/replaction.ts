@@ -20,9 +20,9 @@ export function replaceNodeText(opts: ReplaceNodeTextOptions) {
         new InsertionTextManipulator({
             insertPos: opts.start,
             newText: opts.newText,
-            replacingLength: opts.replacingLength
+            replacingLength: opts.replacingLength,
         }),
-        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile._context.compilerFactory)
+        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile._context.compilerFactory),
     );
 }
 
@@ -43,7 +43,7 @@ export function replaceSourceFileTextStraight(opts: { sourceFile: SourceFile; ne
     doManipulation(
         sourceFile,
         new FullReplacementTextManipulator(newText),
-        new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory)
+        new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory),
     );
 }
 
@@ -57,7 +57,7 @@ export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; r
     doManipulation(
         sourceFile,
         new RenameLocationTextManipulator(renameLocations, newName),
-        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForRename(sourceFile._context.compilerFactory))
+        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForRename(sourceFile._context.compilerFactory)),
     );
 }
 
@@ -77,11 +77,11 @@ export function replaceTextPossiblyCreatingChildNodes(opts: ReplaceTextPossiblyC
     doManipulation(parent._sourceFile, new InsertionTextManipulator({
         insertPos: replacePos,
         replacingLength,
-        newText
+        newText,
     }), new NodeHandlerFactory().getForParentRange({
         parent,
         start: replacePos,
-        end: replacePos + newText.length
+        end: replacePos + newText.length,
     }));
 }
 
@@ -100,7 +100,7 @@ export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFileP
         sourceFile,
         new UnchangedTextManipulator(),
         new NodeHandlerFactory().getForStraightReplacement(sourceFile._context.compilerFactory),
-        newFilePath
+        newFilePath,
     );
 }
 

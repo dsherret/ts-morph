@@ -16,7 +16,7 @@ describe(nameof(StatementedNode), () => {
             doTest("", 0, [{
                 name: "MyEnum",
                 members: [{ name: "member" }],
-                isConst: true
+                isConst: true,
             }], "const enum MyEnum {\n    member\n}\n");
         });
 
@@ -41,7 +41,7 @@ describe(nameof(StatementedNode), () => {
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertEnums(0, [{
                 name: "MyEnum",
-                members: [{ name: "member" }]
+                members: [{ name: "member" }],
             }]);
 
             expect(sourceFile.getFullText()).to.equal("namespace MyNamespace {\n    enum MyEnum {\n        member\n    }\n}\n");
@@ -55,7 +55,7 @@ describe(nameof(StatementedNode), () => {
                 isConst: true,
                 isDefaultExport: false,
                 isExported: true,
-                members: [{ name: "member1" }, { name: "member2" }]
+                members: [{ name: "member1" }, { name: "member2" }],
             };
             const expectedText = "/** Testing */\nexport const enum Enum {\n    member1,\n    member2\n}\n";
             doTest("", 0, [structure], expectedText);

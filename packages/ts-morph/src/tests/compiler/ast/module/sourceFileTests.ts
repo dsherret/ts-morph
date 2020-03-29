@@ -238,7 +238,7 @@ describe(nameof(SourceFile), () => {
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const file1 = project.createSourceFile(
                 "/file.ts",
-                `import {MyInterface} from "./MyInterface";\nasync function t() { const test = await import('./MyInterface'); }`
+                `import {MyInterface} from "./MyInterface";\nasync function t() { const test = await import('./MyInterface'); }`,
             );
             const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "../MyInterface";\nimport "./../MyInterface";`);
             const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\nimport t = require("./../MyInterface");`);
@@ -331,7 +331,7 @@ describe(nameof(SourceFile), () => {
             const { sourceFile, project } = getInfoFromText(fileText, { filePath: "/dir/MyInterface.ts" });
             const otherFile = project.createSourceFile(
                 "/dir/OtherInterface.ts",
-                `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`
+                `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`,
             );
             sourceFile.move("NewFile.ts");
             expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../dir/OtherInterface";\n`
@@ -640,11 +640,11 @@ describe(nameof(SourceFile), () => {
                 {
                     filePath: "node_modules/library/package.json",
                     text: `{ "name": "library", "version": "0.0.1", "main": "index.js", `
-                        + `"typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`
+                        + `"typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`,
                 },
                 { filePath: "node_modules/library/index.js", text: "export class Test {}" },
                 { filePath: "node_modules/library/index.d.ts", text: "export class Test {}" },
-                { filePath: "node_modules/other/referenced-file.d.ts", text: "declare function nameof(): void;" }
+                { filePath: "node_modules/other/referenced-file.d.ts", text: "declare function nameof(): void;" },
             ], ["node_modules", "node_modules/library"]);
             const fileText = "/// <reference path='node_modules/other/referenced-file.d.ts' />\n\nimport { Test } from 'library';";
             const { sourceFile, project } = getInfoFromText(fileText, { host: fileSystem });
@@ -718,7 +718,7 @@ describe(nameof(SourceFile), () => {
         it("should only emit the declaration file when specified", () => {
             const project = new Project({
                 compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 },
-                useInMemoryFileSystem: true
+                useInMemoryFileSystem: true,
             });
             const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput({ emitOnlyDtsFiles: true });
@@ -749,8 +749,8 @@ describe(nameof(SourceFile), () => {
                     { kind: StructureKind.Class, name: "C" },
                     "console.log()",
                     { kind: StructureKind.ExportDeclaration, moduleSpecifier: "export-module" },
-                    { kind: StructureKind.ExportAssignment, expression: "5" }
-                ]
+                    { kind: StructureKind.ExportAssignment, expression: "5" },
+                ],
             };
             doTest("", structure, `import "module";\n\nclass C {\n}\n\nconsole.log()\nexport * from "export-module";\nexport = 5;\n`);
         });
@@ -761,7 +761,7 @@ describe(nameof(SourceFile), () => {
             startingCode: string,
             expectedCode: string,
             manipulationSettings: Partial<ManipulationSettings> = {},
-            settings: FormatCodeSettings = {}
+            settings: FormatCodeSettings = {},
         ) {
             const { project, sourceFile } = getInfoFromText(startingCode);
             project.manipulationSettings.set(manipulationSettings);
@@ -785,7 +785,7 @@ describe(nameof(SourceFile), () => {
             doTest(
                 "class MyClass {\n    myMethod() {\n    }\n}",
                 "class MyClass {\n        myMethod() {\n        }\n}\n",
-                { indentationText: IndentationText.EightSpaces }
+                { indentationText: IndentationText.EightSpaces },
             );
         });
 
@@ -793,7 +793,7 @@ describe(nameof(SourceFile), () => {
             doTest(
                 "class MyClass {\n    myMethod() {\n    }\n}",
                 "class MyClass {\n    myMethod() {\n    }\n}\n",
-                { indentationText: IndentationText.FourSpaces }
+                { indentationText: IndentationText.FourSpaces },
             );
         });
 
@@ -801,7 +801,7 @@ describe(nameof(SourceFile), () => {
             doTest(
                 "class MyClass {\n    myMethod() {\n        console.log(t);\n    }\n}",
                 "class MyClass {\n  myMethod() {\n    console.log(t);\n  }\n}\n",
-                { indentationText: IndentationText.TwoSpaces }
+                { indentationText: IndentationText.TwoSpaces },
             );
         });
 
@@ -809,7 +809,7 @@ describe(nameof(SourceFile), () => {
             doTest(
                 "class MyClass {\n    myMethod() {\n    }\n}",
                 "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
-                { indentationText: IndentationText.Tab }
+                { indentationText: IndentationText.Tab },
             );
         });
 
@@ -817,7 +817,7 @@ describe(nameof(SourceFile), () => {
             doTest(
                 "class MyClass {\n\tmyMethod() {\n\t}\n}",
                 "class MyClass {\n  myMethod() {\n  }\n}\n",
-                { indentationText: IndentationText.TwoSpaces }
+                { indentationText: IndentationText.TwoSpaces },
             );
         });
 
@@ -825,7 +825,7 @@ describe(nameof(SourceFile), () => {
             doTest(
                 "class MyClass {\n    myMethod() {\n    }\n}",
                 "class MyClass {\r\n\tmyMethod() {\r\n\t}\r\n}\r\n",
-                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.CarriageReturnLineFeed }
+                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.CarriageReturnLineFeed },
             );
         });
 
@@ -833,7 +833,7 @@ describe(nameof(SourceFile), () => {
             doTest(
                 "class MyClass {\r\n    myMethod() {\r\n    }\r\n}",
                 "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
-                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.LineFeed }
+                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.LineFeed },
             );
         });
 
@@ -841,7 +841,7 @@ describe(nameof(SourceFile), () => {
             doTest(
                 "class MyClass {\n    myMethod() {\n        const t = `\nt`;\n    }\n}",
                 "class MyClass {\n  myMethod() {\n    const t = `\nt`;\n  }\n}\n",
-                { indentationText: IndentationText.TwoSpaces }
+                { indentationText: IndentationText.TwoSpaces },
             );
         });
 
@@ -849,7 +849,7 @@ describe(nameof(SourceFile), () => {
             doTest(
                 "class MyClass {\n    myMethod() {\n        const t = `\n    t`;\n    }\n}",
                 "class MyClass {\n\tmyMethod() {\n\t\tconst t = `\n    t`;\n\t}\n}\n",
-                { indentationText: IndentationText.Tab }
+                { indentationText: IndentationText.Tab },
             );
         });
 
@@ -912,7 +912,7 @@ function myFunction(param: MyClass) {
                 3,
                 `class MyClass {
                 test;
-}`
+}`,
             );
         });
 
@@ -924,7 +924,7 @@ function myFunction(param: MyClass) {
                 1,
                 `    class MyClass {
         test;
-}`
+}`,
             );
         });
 
@@ -1177,7 +1177,7 @@ function myFunction(param: MyClass) {
                 .to.deep.equal([
                     ...[...file1.getImportDeclarations(), ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()),
                     `import test = require("../MyInterface");`,
-                    `import("../MyInterface")`
+                    `import("../MyInterface")`,
                 ].sort());
         });
 
@@ -1190,7 +1190,7 @@ function myFunction(param: MyClass) {
             expect(referencing.map(r => r.getText()).sort())
                 .to.deep.equal([
                     ...file1.getExportDeclarations(),
-                    ...file2.getImportDeclarations()
+                    ...file2.getImportDeclarations(),
                 ].map(d => d.getText()).sort());
         });
 
@@ -1226,7 +1226,7 @@ function myFunction(param: MyClass) {
                     ...[...file1.getImportDeclarations(), ...file2.getImportDeclarations(), ...file3.getExportDeclarations()]
                         .map(d => d.getModuleSpecifier()!.getText()),
                     `"../MyInterface"`,
-                    `"../MyInterface"`
+                    `"../MyInterface"`,
                 ].sort());
         });
     });
@@ -1367,7 +1367,7 @@ function myFunction(param: MyClass) {
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
                 { path: "/MyInterface.ts", text: "export default interface MyInterface {}" },
-                { path: "/UnusedInterface.ts", text: "export default interface MyUnusedInterface {}" }
+                { path: "/UnusedInterface.ts", text: "export default interface MyUnusedInterface {}" },
             ], expectedText);
         });
     });
@@ -1386,7 +1386,7 @@ function myFunction(param: MyClass) {
             const expectedText = `import MyClass from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\n${startText}`;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
-                { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
+                { path: "/MyInterface.ts", text: "export interface MyInterface {}" },
             ], expectedText);
         });
 
@@ -1395,9 +1395,9 @@ function myFunction(param: MyClass) {
             const expectedText = `import MyClass from "./MyClass";\r\nimport { MyInterface } from "./MyInterface";\r\n\r\n${startText}`;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
-                { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
+                { path: "/MyInterface.ts", text: "export interface MyInterface {}" },
             ], expectedText, {
-                newLineCharacter: "\r\n"
+                newLineCharacter: "\r\n",
             });
         });
 
@@ -1407,7 +1407,7 @@ function myFunction(param: MyClass) {
                 `import MyClass from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\nconst u: MyInterface = {};`;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
-                { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
+                { path: "/MyInterface.ts", text: "export interface MyInterface {}" },
             ], expectedText);
         });
 
@@ -1417,7 +1417,7 @@ function myFunction(param: MyClass) {
             const expectedText = startText;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
-                { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
+                { path: "/MyInterface.ts", text: "export interface MyInterface {}" },
             ], expectedText);
         });
 
@@ -1429,7 +1429,7 @@ function myFunction(param: MyClass) {
                     + `const u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export class MyClass {} export class MyClass2 {} export class MyClass3 {}" },
-                { path: "/MyInterface.ts", text: "export interface MyInterface {}" }
+                { path: "/MyInterface.ts", text: "export interface MyInterface {}" },
             ], expectedText);
         });
 
@@ -1512,7 +1512,7 @@ function myFunction(param: MyClass) {
             const { sourceFile } = getInfoFromText("test;");
             sourceFile.applyTextChanges([
                 { newText: "console;", span: { start: 0, length: 0 } },
-                { newText: "asdf;", span: { start: 0, length: 5 } }
+                { newText: "asdf;", span: { start: 0, length: 5 } },
             ]);
             expect(sourceFile.getText()).to.equal("console;asdf;");
         });
@@ -1557,49 +1557,49 @@ const t = 5;`;
                 kind: StructureKind.SourceFile,
                 statements: [fillStructures.importDeclaration({
                     namedImports: [fillStructures.importSpecifier({ name: "I" })],
-                    moduleSpecifier: "./I"
+                    moduleSpecifier: "./I",
                 }), fillStructures.classDeclaration({
                     isExported: true,
                     name: "A",
-                    implements: ["I"]
+                    implements: ["I"],
                 }), fillStructures.classDeclaration({
                     name: "B",
-                    extends: "A"
+                    extends: "A",
                 }), fillStructures.interfaceDeclaration({
                     isExported: true,
                     name: "J",
-                    extends: ["I"]
+                    extends: ["I"],
                 }), fillStructures.interfaceDeclaration({
                     name: "K",
-                    extends: ["J"]
+                    extends: ["J"],
                 }), fillStructures.functionDeclaration({
                     isExported: true,
                     name: "f",
                     overloads: [],
-                    statements: []
+                    statements: [],
                 }), fillStructures.functionDeclaration({
                     name: "g",
                     overloads: [],
-                    statements: []
+                    statements: [],
                 }), fillStructures.typeAlias({
                     isExported: true,
                     name: "T",
-                    type: "any"
+                    type: "any",
                 }), fillStructures.enumDeclaration({
                     isExported: true,
-                    name: "U"
+                    name: "U",
                 }), fillStructures.namespaceDeclaration({
                     name: "ns",
                     statements: [fillStructures.interfaceDeclaration({
-                        name: "nsi"
-                    })]
+                        name: "nsi",
+                    })],
                 }), fillStructures.variableStatement({
                     declarationKind: VariableDeclarationKind.Const,
                     declarations: [fillStructures.variableDeclaration({
                         name: "t",
-                        initializer: "5"
-                    })]
-                })]
+                        initializer: "5",
+                    })],
+                })],
             });
         });
     });

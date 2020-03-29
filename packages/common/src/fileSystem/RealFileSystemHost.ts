@@ -176,7 +176,7 @@ export class RealFileSystemHost implements FileSystemHost {
     glob(patterns: ReadonlyArray<string>) {
         return this.fastGlob(backSlashesToForward(patterns), {
             cwd: this.getCurrentDirectory(),
-            absolute: true
+            absolute: true,
         });
     }
 
@@ -184,7 +184,7 @@ export class RealFileSystemHost implements FileSystemHost {
     globSync(patterns: ReadonlyArray<string>) {
         return this.fastGlob.sync(backSlashesToForward(patterns), {
             cwd: this.getCurrentDirectory(),
-            absolute: true
+            absolute: true,
         });
     }
 

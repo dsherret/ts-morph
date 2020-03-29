@@ -16,7 +16,7 @@ describe(nameof(FileTextChanges), () => {
             const change = new FileTextChanges(project._context, {
                 fileName: "test.ts",
                 isNewFile: true,
-                textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }]
+                textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }],
             });
 
             // ensure this is using the more descriptive error message
@@ -30,7 +30,7 @@ describe(nameof(FileTextChanges), () => {
             const change = new FileTextChanges(project._context, {
                 fileName: "test.ts",
                 isNewFile: true,
-                textChanges: [{ newText: "console;", span: { start: 0, length: 3 } }]
+                textChanges: [{ newText: "console;", span: { start: 0, length: 3 } }],
             });
             change.applyChanges({ overwrite: true });
             expect(project.getSourceFileOrThrow("test.ts").getText()).to.equal("console;");
@@ -40,7 +40,7 @@ describe(nameof(FileTextChanges), () => {
             const project = setup();
             const change = new FileTextChanges(project._context, {
                 fileName: "nonExistent.ts",
-                textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }]
+                textChanges: [{ newText: "new text", span: { start: 0, length: 3 } }],
             });
             expect(() => change.applyChanges()).to.throw(errors.InvalidOperationError);
         });
@@ -50,7 +50,7 @@ describe(nameof(FileTextChanges), () => {
             const change = new FileTextChanges(project._context, {
                 fileName: "newFile.ts",
                 isNewFile: true,
-                textChanges: [{ newText: "new text", span: { start: 0, length: 0 } }]
+                textChanges: [{ newText: "new text", span: { start: 0, length: 0 } }],
             });
             change.applyChanges();
             change.applyChanges(); // should do nothing if called twice
@@ -62,7 +62,7 @@ describe(nameof(FileTextChanges), () => {
             const change = new FileTextChanges(project._context, {
                 fileName: "test.ts",
                 isNewFile: false,
-                textChanges: [{ newText: "text; ", span: { start: 0, length: 0 } }]
+                textChanges: [{ newText: "text; ", span: { start: 0, length: 0 } }],
             });
             change.applyChanges();
             change.applyChanges(); // should do nothing if called twice
@@ -74,7 +74,7 @@ describe(nameof(FileTextChanges), () => {
             const change = new FileTextChanges(project._context, {
                 fileName: "test.ts",
                 isNewFile: false,
-                textChanges: [{ newText: "text; ", span: { start: 0, length: 0 } }, { newText: "", span: { start: 0, length: 9 } }]
+                textChanges: [{ newText: "text; ", span: { start: 0, length: 0 } }, { newText: "", span: { start: 0, length: 9 } }],
             });
             change.applyChanges();
             expect(change.getSourceFile()!.getText()).to.equal("text; const u;");

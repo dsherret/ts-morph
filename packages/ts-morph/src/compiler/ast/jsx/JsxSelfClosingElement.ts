@@ -22,7 +22,7 @@ export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfC
      */
     getStructure(): JsxSelfClosingElementStructure {
         return callBaseGetStructure<JsxSelfClosingElementSpecificStructure>(JsxSelfClosingElementBase.prototype, this, {
-            kind: StructureKind.JsxSelfClosingElement
+            kind: StructureKind.JsxSelfClosingElement,
         });
     }
 }

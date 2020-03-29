@@ -63,7 +63,7 @@ describe(nameof(SyntaxList), () => {
                 "function a() {}\nfunction b() {}",
                 "newText;\nsecondText;",
                 2,
-                "function a() {}\nfunction b() {}\nnewText;\nsecondText;"
+                "function a() {}\nfunction b() {}\nnewText;\nsecondText;",
             );
         });
     });

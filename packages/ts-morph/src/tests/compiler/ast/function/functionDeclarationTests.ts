@@ -126,7 +126,7 @@ describe(nameof(FunctionDeclaration), () => {
                 "function I() {}\n\nfunction J(): void;\nfunction J() {}\n\nfunction K() {}",
                 1,
                 0,
-                "function I() {}\n\nfunction J() {}\n\nfunction K() {}"
+                "function I() {}\n\nfunction J() {}\n\nfunction K() {}",
             );
         });
 
@@ -135,7 +135,7 @@ describe(nameof(FunctionDeclaration), () => {
                 "function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}",
                 1,
                 1,
-                "function I() {}\n\nfunction J(first): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}"
+                "function I() {}\n\nfunction J(first): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}",
             );
         });
         it("should remove the function declaration overload when last", () => {
@@ -158,23 +158,23 @@ describe(nameof(FunctionDeclaration), () => {
 
         it("should replace overloads when changed", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<FunctionDeclarationSpecificStructure>> = {
-                overloads: [{ returnType: "string" }]
+                overloads: [{ returnType: "string" }],
             };
             doTest(
                 "function identifier(p): number;\nfunction identifier() {\n}",
                 structure,
-                "function identifier(): string;\nfunction identifier() {\n}"
+                "function identifier(): string;\nfunction identifier() {\n}",
             );
         });
 
         it("should remove overloads when specifying an empty array", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<FunctionDeclarationSpecificStructure>> = {
-                overloads: []
+                overloads: [],
             };
             doTest(
                 "function identifier(p): number;\nfunction identifier() {\n}",
                 structure,
-                "function identifier() {\n}"
+                "function identifier() {\n}",
             );
         });
     });
@@ -207,7 +207,7 @@ describe(nameof(FunctionDeclaration), () => {
                 overloads: [],
                 parameters: [],
                 returnType: undefined,
-                typeParameters: []
+                typeParameters: [],
             }]);
         });
 
@@ -224,7 +224,7 @@ describe(nameof(FunctionDeclaration), () => {
                 name: "test",
                 parameters: [],
                 returnType: "void",
-                typeParameters: []
+                typeParameters: [],
             };
 
             const structures = [structure, structure];
@@ -250,7 +250,7 @@ export default async function *test<T>(param): string {
                 isGenerator: true,
                 parameters: [{ name: "p" }],
                 returnType: "number",
-                typeParameters: [{ name: "U" }]
+                typeParameters: [{ name: "U" }],
             };
 
             doTest(code, [{
@@ -266,7 +266,7 @@ export default async function *test<T>(param): string {
                 overloads: [overloadStructure],
                 parameters: [{ name: "param" }],
                 returnType: "string",
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             }]);
         });
     });

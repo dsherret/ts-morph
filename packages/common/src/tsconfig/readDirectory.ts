@@ -8,7 +8,7 @@ export function readDirectory(
     extensions: ReadonlyArray<string>,
     excludes: ReadonlyArray<string> | undefined,
     includes: ReadonlyArray<string>,
-    depth?: number
+    depth?: number,
 ) {
     const currentDir = fileSystemWrapper.getCurrentDirectory();
     const directories: StandardizedFilePath[] = [];
@@ -36,9 +36,9 @@ export function readDirectory(
                     directories.push(standardizedPath);
                 return getFileSystemEntries(standardizedPath, fileSystemWrapper);
             },
-            path => fileSystemWrapper.realpathSync(fileSystemWrapper.getStandardizedAbsolutePath(path))
+            path => fileSystemWrapper.realpathSync(fileSystemWrapper.getStandardizedAbsolutePath(path)),
         ),
-        directories
+        directories,
     };
 
     function dirPathMatches(absoluteName: string) {

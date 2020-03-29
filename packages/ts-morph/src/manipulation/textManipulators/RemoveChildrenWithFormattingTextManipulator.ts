@@ -45,7 +45,7 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
                 previousSibling,
                 nextSibling,
                 newLineKind,
-                getSiblingFormatting
+                getSiblingFormatting,
             });
         }
 

@@ -46,7 +46,7 @@ export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
             insertIntoParentTextRange({
                 insertPos: paren.getEnd(),
                 parent: this,
-                newText: this._getWriterWithQueuedIndentation().write(".").write(text).toString()
+                newText: this._getWriterWithQueuedIndentation().write(".").write(text).toString(),
             });
         }
 

@@ -120,7 +120,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
             insertIntoParentTextRange({
                 parent: modifiers.length === 0 ? this : modifiers[0].getParentSyntaxListOrThrow(),
                 insertPos,
-                newText
+                newText,
             });
 
             return this.getModifiers().find(m => m.getStart() === startPos) as Node<ts.Modifier>;
@@ -161,7 +161,7 @@ export function ModifierableNode<T extends Constructor<ModifierableNodeExtension
 
             removeChildren({
                 children: [modifiers.length === 1 ? modifier.getParentSyntaxListOrThrow() : modifier],
-                removeFollowingSpaces: true
+                removeFollowingSpaces: true,
             });
 
             return true;

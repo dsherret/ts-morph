@@ -4,9 +4,10 @@ import { Node } from "../common";
 import { Expression } from "../expression";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 
-const createBase = <T extends typeof Expression>(ctor: T) => TextInsertableNode(BodiedNode(AsyncableNode(
-    FunctionLikeDeclaration(ctor)
-)));
+const createBase = <T extends typeof Expression>(ctor: T) =>
+    TextInsertableNode(BodiedNode(AsyncableNode(
+        FunctionLikeDeclaration(ctor),
+    )));
 export const ArrowFunctionBase = createBase(Expression);
 export class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     /**

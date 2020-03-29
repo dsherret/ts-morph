@@ -123,7 +123,7 @@ describe(nameof(Node), () => {
                 false,
                 true,
                 false,
-                false
+                false,
             ]);
         });
 
@@ -401,7 +401,7 @@ describe(nameof(Node), () => {
                 `function e() {\n        //3\n        const f = "";\n    }`,
                 `const f = "";`,
                 `class MyClass {\n    prop = () => console.log("here");\n}`,
-                `console.log("here")`
+                `console.log("here")`,
             ];
             doTest(`//1
 /*2*/
@@ -869,7 +869,7 @@ class MyClass {
             selectNode: (sourceFile: SourceFile) => Node,
             kind: SyntaxKind,
             descendantTexts: string[],
-            additionalChecks?: (sourceFile: SourceFile) => void
+            additionalChecks?: (sourceFile: SourceFile) => void,
         ) {
             const { sourceFile } = getInfoFromText(text);
             const node = selectNode(sourceFile);
@@ -896,7 +896,7 @@ class MyClass {
                 sourceFile => {
                     expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
                     expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
-                }
+                },
             );
         });
 
@@ -936,7 +936,7 @@ class MyClass {
             selectNode: (sourceFile: SourceFile) => Node,
             kind: SyntaxKind,
             descendantText: string | undefined,
-            additionalChecks?: (sourceFile: SourceFile) => void
+            additionalChecks?: (sourceFile: SourceFile) => void,
         ) {
             const { sourceFile } = getInfoFromText(text);
             const node = selectNode(sourceFile);
@@ -964,7 +964,7 @@ class MyClass {
                     expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
                     expect(hasParsedTokens(sourceFile.getClassOrThrow("C").compilerNode)).to.be.false;
                     expect(hasParsedTokens(sourceFile.getInterfaceOrThrow("I").compilerNode)).to.be.false;
-                }
+                },
             );
         });
 
@@ -987,7 +987,7 @@ class MyClass {
                 sourceFile => {
                     // todo: in the future it would be better for this to be false and only parse the tokens on JSDoc nodes
                     expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;
-                }
+                },
             );
         });
     });
@@ -1040,7 +1040,7 @@ class MyClass {
             expect(
                 sourceFile.getInterfaces()[2]
                     .getPreviousSiblingOrThrow(s => Node.isInterfaceDeclaration(s) && s.getName() === "Interface1")
-                    .getText()
+                    .getText(),
             ).to.equal("interface Interface1 {}");
         });
 
@@ -1272,8 +1272,8 @@ class MyClass {
                 "class Test{\n\tprop:string;\n}\n/** Testing */\nclass Test2 {\n  prop: string;\n}\n",
                 {
                     convertTabsToSpaces: true,
-                    indentSize: 2
-                }
+                    indentSize: 2,
+                },
             );
         });
     });
@@ -1292,7 +1292,7 @@ class MyClass {
                 "class Test{\n  prop:string;\n}",
                 f => f.getClassOrThrow("Test").getProperties()[0],
                 "  \t\n ",
-                "class Test{\n    \t\n     prop:string;\n}"
+                "class Test{\n    \t\n     prop:string;\n}",
             );
         });
 
@@ -1301,7 +1301,7 @@ class MyClass {
                 "class Test{\n  prop:string;\n}",
                 f => f.getClassOrThrow("Test").getProperties()[0],
                 writer => writer.space(),
-                "class Test{\n   prop:string;\n}"
+                "class Test{\n   prop:string;\n}",
             );
         });
 
@@ -1325,7 +1325,7 @@ class MyClass {
                 "class Test{\n  prop:string;\n}",
                 f => f.getClassOrThrow("Test").getProperties()[0],
                 "  \t\n ",
-                "class Test{\n  prop:string;  \t\n     \n}"
+                "class Test{\n  prop:string;  \t\n     \n}",
             );
         });
 
@@ -1334,7 +1334,7 @@ class MyClass {
                 "class Test{\n  prop:string;\n}",
                 f => f.getClassOrThrow("Test").getProperties()[0],
                 writer => writer.space(),
-                "class Test{\n  prop:string; \n}"
+                "class Test{\n  prop:string; \n}",
             );
         });
 
@@ -1503,7 +1503,7 @@ class MyClass {
             const { firstChild } = getInfoFromText("export class Test { prop: string; method() {} }");
             doNodeArrayCbSyntaxKindTest(firstChild, [SyntaxKind.Identifier], [
                 [SyntaxKind.ExportKeyword],
-                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration]
+                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
             ]);
         });
 
@@ -1547,7 +1547,7 @@ class MyClass {
 
             expect(nodeTexts).to.deep.equal([
                 "t",
-                "5"
+                "5",
             ]);
         });
 
@@ -1562,7 +1562,7 @@ class MyClass {
             });
 
             expect(nodeTexts).to.deep.equal([
-                "t"
+                "t",
             ]);
         });
     });
@@ -1572,7 +1572,7 @@ class MyClass {
             node: Node,
             expectedKinds: SyntaxKind[],
             callback?: (node: Node, stop: ForEachDescendantTraversalControl) => unknown,
-            expectedReturnValue?: Node
+            expectedReturnValue?: Node,
         ) {
             const foundKinds: SyntaxKind[] = [];
             const returnValue = node.forEachDescendant<unknown>((child, traversal) => {
@@ -1594,7 +1594,7 @@ class MyClass {
                 SyntaxKind.Identifier,
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.Identifier,
-                SyntaxKind.EndOfFileToken
+                SyntaxKind.EndOfFileToken,
             ]);
         });
 
@@ -1603,7 +1603,7 @@ class MyClass {
             doNodeCbSyntaxKindTest(sourceFile, [
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.Identifier,
-                SyntaxKind.InterfaceDeclaration
+                SyntaxKind.InterfaceDeclaration,
             ], (node, traversal) => {
                 if (node.getKind() === SyntaxKind.InterfaceDeclaration)
                     traversal.stop();
@@ -1614,7 +1614,7 @@ class MyClass {
             const { sourceFile } = getInfoFromText("class Test {} interface Interface {}");
             doNodeCbSyntaxKindTest(sourceFile, [
                 SyntaxKind.ClassDeclaration,
-                SyntaxKind.Identifier
+                SyntaxKind.Identifier,
             ], (node, traversal) => {
                 if (node.getKind() === SyntaxKind.Identifier)
                     traversal.stop();
@@ -1625,7 +1625,7 @@ class MyClass {
             const { sourceFile } = getInfoFromText("class Test {} interface Interface {}");
             doNodeCbSyntaxKindTest(sourceFile, [
                 SyntaxKind.ClassDeclaration,
-                SyntaxKind.Identifier
+                SyntaxKind.Identifier,
             ], node => {
                 if (node.getKind() === SyntaxKind.Identifier)
                     return node;
@@ -1639,7 +1639,7 @@ class MyClass {
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.Identifier,
-                SyntaxKind.EndOfFileToken
+                SyntaxKind.EndOfFileToken,
             ], (node, traversal) => {
                 if (node.getKind() === SyntaxKind.ClassDeclaration)
                     traversal.skip();
@@ -1654,7 +1654,7 @@ class MyClass {
                 SyntaxKind.PropertyDeclaration,
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.Identifier,
-                SyntaxKind.EndOfFileToken
+                SyntaxKind.EndOfFileToken,
             ], (node, traversal) => {
                 if (node.getKind() === SyntaxKind.PropertyDeclaration)
                     traversal.up();
@@ -1667,7 +1667,7 @@ class MyClass {
             expectedArrayKinds: SyntaxKind[][],
             arrayCallback?: (children: Node[], traversal: ForEachDescendantTraversalControl) => unknown,
             nodeCallback?: (node: Node, traversal: ForEachDescendantTraversalControl) => unknown,
-            expectedReturnValue?: Node
+            expectedReturnValue?: Node,
         ) {
             const foundNodeKinds: SyntaxKind[] = [];
             const foundArrayKinds: SyntaxKind[][] = [];
@@ -1702,15 +1702,15 @@ class MyClass {
                     [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
                     [SyntaxKind.ExportKeyword],
                     [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
-                    [SyntaxKind.PropertySignature]
-                ]
+                    [SyntaxKind.PropertySignature],
+                ],
             );
         });
 
         it("should stop iteration when calling stop in an array callback at the child level", () => {
             const { sourceFile } = getInfoFromText("export class Test { prop: string; method() {} } interface Test { prop: string; }");
             doNodeArrayCbSyntaxKindTest(sourceFile, [], [
-                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration]
+                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
             ], (nodes, traversal) => {
                 if (nodes.some(n => n.getKind() === SyntaxKind.ClassDeclaration))
                     traversal.stop();
@@ -1722,7 +1722,7 @@ class MyClass {
             doNodeArrayCbSyntaxKindTest(sourceFile, [SyntaxKind.Identifier], [
                 [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
                 [SyntaxKind.ExportKeyword],
-                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration]
+                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
             ], (nodes, traversal) => {
                 if (nodes.some(n => n.getKind() === SyntaxKind.PropertyDeclaration))
                     traversal.stop();
@@ -1734,7 +1734,7 @@ class MyClass {
             doNodeArrayCbSyntaxKindTest(sourceFile, [SyntaxKind.Identifier], [
                 [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
                 [SyntaxKind.ExportKeyword],
-                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration]
+                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
             ], nodes => {
                 return nodes.find(n => n.getKind() === SyntaxKind.PropertyDeclaration);
             }, undefined, sourceFile.getClassOrThrow("Test").getPropertyOrThrow("prop"));
@@ -1748,12 +1748,12 @@ class MyClass {
                 [
                     [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
                     [SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration],
-                    [SyntaxKind.PropertySignature]
+                    [SyntaxKind.PropertySignature],
                 ],
                 (nodes, traversal) => {
                     if (nodes.some(n => n.getKind() === SyntaxKind.PropertyDeclaration))
                         traversal.skip();
-                }
+                },
             );
         });
 
@@ -1764,13 +1764,13 @@ class MyClass {
                 [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.StringKeyword, SyntaxKind.EndOfFileToken],
                 [
                     [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
-                    [SyntaxKind.PropertySignature]
+                    [SyntaxKind.PropertySignature],
                 ],
                 undefined,
                 (node, traversal) => {
                     if (node.getText() === "Test")
                         traversal.up();
-                }
+                },
             );
         });
 
@@ -1790,7 +1790,7 @@ class MyClass {
                 "t",
                 "any",
                 "5",
-                "" // end of file token
+                "", // end of file token
             ]);
         });
 
@@ -1810,7 +1810,7 @@ class MyClass {
                 "let t: any = 5",
                 "t",
                 "t",
-                "" // end of file token
+                "", // end of file token
             ]);
         });
 
@@ -1827,7 +1827,7 @@ class MyClass {
                 "class Test {}",
                 "interface Test2 {}",
                 "Test2",
-                "" // end of file token
+                "", // end of file token
             ]);
         });
     });
@@ -1844,7 +1844,7 @@ class MyClass {
             runTest(
                 "class T {} interface I {}",
                 sourceFile => sourceFile,
-                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]
+                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken],
             );
         });
 
@@ -1852,7 +1852,7 @@ class MyClass {
             runTest(
                 "// testing\nclass T {}",
                 sourceFile => sourceFile,
-                [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken]
+                [SyntaxKind.ClassDeclaration, SyntaxKind.EndOfFileToken],
             );
         });
 
@@ -1860,7 +1860,7 @@ class MyClass {
             runTest(
                 "class T { prop1: string; prop2: number; }",
                 sourceFile => sourceFile.getClassOrThrow("T"),
-                [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration]
+                [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration, SyntaxKind.PropertyDeclaration],
             );
         });
     });
@@ -1877,7 +1877,7 @@ class MyClass {
             runTest(
                 "class T {} interface I {}",
                 sourceFile => sourceFile,
-                [SyntaxKind.ClassDeclaration, SyntaxKind.Identifier, SyntaxKind.InterfaceDeclaration, SyntaxKind.Identifier, SyntaxKind.EndOfFileToken]
+                [SyntaxKind.ClassDeclaration, SyntaxKind.Identifier, SyntaxKind.InterfaceDeclaration, SyntaxKind.Identifier, SyntaxKind.EndOfFileToken],
             );
         });
     });
@@ -2001,7 +2001,7 @@ class MyClass {
             selectNode: (sourceFile: SourceFile) => Node,
             visitNode: (traversal: { visitChildren(): ts.Node; currentNode: ts.Node; }) => ts.Node,
             expectedText: string,
-            additionalChecks?: (sourceFile: SourceFile) => void
+            additionalChecks?: (sourceFile: SourceFile) => void,
         ) {
             const { sourceFile } = getInfoFromText(text);
             const node = selectNode(sourceFile);
@@ -2164,7 +2164,7 @@ class MyClass {
                 "const var = 5; function a() { function b() {} const c = ''; function e() { function f() {} } }",
                 sourceFile => sourceFile.getFunctionOrThrow("a").getVariableDeclarationOrThrow("c"),
                 SymbolFlags.BlockScopedVariable,
-                ["c"]
+                ["c"],
             );
         });
     });

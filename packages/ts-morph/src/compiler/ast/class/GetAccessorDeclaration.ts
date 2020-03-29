@@ -9,9 +9,10 @@ import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
 import { Node } from "../common";
 
-const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(TextInsertableNode(DecoratableNode(
-    AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor))))))
-)));
+const createBase = <T extends typeof ClassElement>(ctor: T) =>
+    ChildOrderableNode(TextInsertableNode(DecoratableNode(
+        AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(ctor)))))),
+    )));
 export const GetAccessorDeclarationBase = createBase(ClassElement);
 export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAccessorDeclaration> {
     /**
@@ -49,7 +50,7 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      */
     getStructure(): GetAccessorDeclarationStructure {
         return callBaseGetStructure<GetAccessorDeclarationSpecificStructure>(GetAccessorDeclarationBase.prototype, this, {
-            kind: StructureKind.GetAccessor
+            kind: StructureKind.GetAccessor,
         }) as any as GetAccessorDeclarationStructure;
     }
 }

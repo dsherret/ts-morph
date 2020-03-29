@@ -23,7 +23,7 @@ export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {
             sourceFile: this._sourceFile,
             start: this.getStart() + 1,
             replacingLength: this.getWidth() - 2,
-            newText: StringUtils.escapeForWithinString(value, this.getQuoteKind())
+            newText: StringUtils.escapeForWithinString(value, this.getQuoteKind()),
         });
         return this;
     }

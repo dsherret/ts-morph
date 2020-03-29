@@ -17,11 +17,11 @@
   "devDependencies": {
     "@types/ts-nameof": "^4.2.1",
     "rimraf": "^3.0.2",
-    "rollup": "^1.31.1",
-    "rollup-plugin-typescript2": "^0.26.0",
+    "rollup": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.27.0",
     "ts-nameof": "^4.2.2",
     "ttypescript": "^1.5.10",
-    "typescript": "~3.8.2"
+    "typescript": "~3.8.3"
   },
   "publishConfig": {
     "access": "public"

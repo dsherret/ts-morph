@@ -27,7 +27,7 @@ export interface TypeElementMemberedNode {
      * @param members - Collection of members to add.
      */
     addMembers(
-        members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>
+        members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>,
     ): (TypeElementTypes | CommentTypeElement)[];
     /**
      * Inserts a member.
@@ -42,7 +42,7 @@ export interface TypeElementMemberedNode {
      */
     insertMembers(
         index: number,
-        members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>
+        members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>,
     ): (TypeElementTypes | CommentTypeElement)[];
     /**
      * Add construct signature.
@@ -268,8 +268,10 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.addMembers([member])[0];
         }
 
-        addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (TypeElementTypes
-        | CommentTypeElement)[] {
+        addMembers(members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>): (
+            | TypeElementTypes
+            | CommentTypeElement
+        )[] {
             return this.insertMembers(getEndIndexFromArray(this.getMembersWithComments()), members);
         }
 
@@ -279,7 +281,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         insertMembers(
             index: number,
-            members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>
+            members: string | WriterFunction | ReadonlyArray<string | WriterFunction | TypeElementMemberStructures>,
         ): (TypeElementTypes | CommentTypeElement)[] {
             return insertIntoBracesOrSourceFileWithGetChildrenWithComments({
                 getIndexedChildren: () => this.getMembersWithComments(),
@@ -296,7 +298,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                     writer.write(memberWriter.toString());
 
                     writer.newLineIfLastNot();
-                }
+                },
             }) as (TypeElementTypes | CommentTypeElement)[];
         }
 
@@ -314,14 +316,14 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         insertConstructSignatures(
             index: number,
-            structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>
+            structures: ReadonlyArray<OptionalKind<ConstructSignatureDeclarationStructure>>,
         ): ConstructSignatureDeclaration[] {
             return insertChildren({
                 thisNode: this,
                 index,
                 structures,
                 expectedKind: SyntaxKind.ConstructSignature,
-                createStructurePrinter: () => this._context.structurePrinterFactory.forConstructSignatureDeclaration()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forConstructSignatureDeclaration(),
             });
         }
 
@@ -332,7 +334,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         getConstructSignatureOrThrow(findFunction: (member: ConstructSignatureDeclaration) => boolean) {
             return errors.throwIfNullOrUndefined(
                 this.getConstructSignature(findFunction),
-                "Expected to find a construct signature with the provided condition."
+                "Expected to find a construct signature with the provided condition.",
             );
         }
 
@@ -359,7 +361,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.CallSignature,
-                createStructurePrinter: () => this._context.structurePrinterFactory.forCallSignatureDeclaration()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forCallSignatureDeclaration(),
             });
         }
 
@@ -394,7 +396,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.IndexSignature,
-                createStructurePrinter: () => this._context.structurePrinterFactory.forIndexSignatureDeclaration()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forIndexSignatureDeclaration(),
             });
         }
 
@@ -429,7 +431,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.MethodSignature,
-                createStructurePrinter: () => this._context.structurePrinterFactory.forMethodSignature()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forMethodSignature(),
             });
         }
 
@@ -465,7 +467,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.PropertySignature,
-                createStructurePrinter: () => this._context.structurePrinterFactory.forPropertySignature()
+                createStructurePrinter: () => this._context.structurePrinterFactory.forPropertySignature(),
             });
         }
 
@@ -526,7 +528,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 constructSignatures: this.getConstructSignatures().map(node => node.getStructure()),
                 indexSignatures: this.getIndexSignatures().map(node => node.getStructure()),
                 methods: this.getMethods().map(node => node.getStructure()),
-                properties: this.getProperties().map(node => node.getStructure())
+                properties: this.getProperties().map(node => node.getStructure()),
             });
         }
     };
@@ -549,6 +551,6 @@ function insertChildren<TNode extends Node, TStructure extends Structure>(opts: 
             writer.newLineIfLastNot();
             opts.createStructurePrinter().printTexts(writer, opts.structures);
             writer.newLineIfLastNot();
-        }
+        },
     });
 }

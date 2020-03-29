@@ -69,7 +69,7 @@ describe(nameof(DecoratableNode), () => {
                 doTest("class MyClass {}", 0, [
                     { name: "dec", arguments: [] },
                     { name: "dec2", arguments: ["1"] },
-                    { name: "dec3", arguments: ["1", writer => writer.write("2")] }
+                    { name: "dec3", arguments: ["1", writer => writer.write("2")] },
                 ], "@dec()\n@dec2(1)\n@dec3(1, 2)\nclass MyClass {}");
             });
 
@@ -96,7 +96,7 @@ describe(nameof(DecoratableNode), () => {
                     "namespace N {\n    @dec\n    @dec5\nclass MyClass {}\n}",
                     1,
                     [{ name: "dec2" }, { name: "dec3" }, { name: "dec4" }],
-                    "namespace N {\n    @dec\n    @dec2\n    @dec3\n    @dec4\n    @dec5\nclass MyClass {}\n}"
+                    "namespace N {\n    @dec\n    @dec2\n    @dec3\n    @dec4\n    @dec5\nclass MyClass {}\n}",
                 );
             });
 
@@ -105,7 +105,7 @@ describe(nameof(DecoratableNode), () => {
                     "    @dec @dec3\n    class MyClass {}",
                     1,
                     [{ name: "dec2" }],
-                    "    @dec @dec2 @dec3\n    class MyClass {}"
+                    "    @dec @dec2 @dec3\n    class MyClass {}",
                 );
             });
 
@@ -127,7 +127,7 @@ describe(nameof(DecoratableNode), () => {
                     "class MyClass { myMethod(param) {} }",
                     0,
                     [{ name: "dec" }],
-                    "class MyClass { myMethod(@dec param) {} }"
+                    "class MyClass { myMethod(@dec param) {} }",
                 );
             });
 
@@ -136,7 +136,7 @@ describe(nameof(DecoratableNode), () => {
                     "class MyClass { myMethod(@dec2 param) {} }",
                     0,
                     [{ name: "dec1" }],
-                    "class MyClass { myMethod(@dec1 @dec2 param) {} }"
+                    "class MyClass { myMethod(@dec1 @dec2 param) {} }",
                 );
             });
 
@@ -145,7 +145,7 @@ describe(nameof(DecoratableNode), () => {
                     "class MyClass { myMethod(@dec1 param) {} }",
                     1,
                     [{ name: "dec2" }],
-                    "class MyClass { myMethod(@dec1 @dec2 param) {} }"
+                    "class MyClass { myMethod(@dec1 @dec2 param) {} }",
                 );
             });
         });

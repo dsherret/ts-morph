@@ -253,7 +253,7 @@ describe(nameof(ImportSpecifier), () => {
             doTest(`import { a } from 'foo'`, {
                 kind: StructureKind.ImportSpecifier,
                 name: "a",
-                alias: undefined
+                alias: undefined,
             });
         });
 
@@ -261,7 +261,7 @@ describe(nameof(ImportSpecifier), () => {
             doTest(`import { a as alias } from 'foo'`, {
                 kind: StructureKind.ImportSpecifier,
                 name: "a",
-                alias: "alias"
+                alias: "alias",
             });
         });
     });

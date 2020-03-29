@@ -8,7 +8,7 @@ describe(nameof(Type), () => {
         return getInfoFromText<T>(text, {
             host: new InMemoryFileSystemHost({ skipLoadingLibFiles: true }),
             includeLibDts: true,
-            compilerOptions: { strictNullChecks: true }
+            compilerOptions: { strictNullChecks: true },
         });
     }
 

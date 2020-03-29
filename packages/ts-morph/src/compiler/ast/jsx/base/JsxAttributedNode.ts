@@ -55,7 +55,7 @@ export interface JsxAttributedNode {
      */
     insertAttributes(
         index: number,
-        attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>
+        attributes: ReadonlyArray<OptionalKind<JsxAttributeStructure> | OptionalKind<JsxSpreadAttributeStructure>>,
     ): JsxAttributeLike[];
 }
 
@@ -101,7 +101,7 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
             insertIntoParentTextRange({
                 insertPos,
                 newText: " " + writer.toString(),
-                parent: this.getNodeProperty("attributes").getFirstChildByKindOrThrow(SyntaxKind.SyntaxList)
+                parent: this.getNodeProperty("attributes").getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
             });
 
             return getNodesToReturn(originalChildrenCount, this.getAttributes(), index, false);
@@ -120,7 +120,7 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
 
         getStructure(): JsxAttributedNodeStructure {
             return callBaseGetStructure<JsxAttributedNodeStructure>(Base.prototype, this, {
-                attributes: this.getAttributes().map(a => a.getStructure())
+                attributes: this.getAttributes().map(a => a.getStructure()),
             });
         }
     };

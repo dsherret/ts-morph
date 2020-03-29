@@ -18,14 +18,14 @@ export class ImportClause extends ImportClauseBase<ts.ImportClause> {
             insertIntoParentTextRange({
                 parent: this,
                 insertPos: this.getStart(),
-                newText: "type "
+                newText: "type ",
             });
         }
         else {
             const typeKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword);
             removeChildren({
                 children: [typeKeyword],
-                removeFollowingSpaces: true
+                removeFollowingSpaces: true,
             });
         }
 

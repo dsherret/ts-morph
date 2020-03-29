@@ -28,14 +28,14 @@ export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions
     doManipulation(parent._sourceFile, new InsertionTextManipulator({
         insertPos,
         newText,
-        replacingLength: opts.replacing?.textLength
+        replacingLength: opts.replacing?.textLength,
     }), new NodeHandlerFactory().getForParentRange({
         parent,
         start: insertPos,
         end: insertPos + newText.length,
         replacingLength: opts.replacing?.textLength,
         replacingNodes: opts.replacing?.nodes,
-        customMappings: opts.customMappings
+        customMappings: opts.customMappings,
     }));
 }
 
@@ -53,11 +53,11 @@ export function insertIntoTextRange(opts: InsertIntoTextRangeOptions) {
 
     doManipulation(sourceFile, new InsertionTextManipulator({
         insertPos,
-        newText
+        newText,
     }), new NodeHandlerFactory().getForRange({
         sourceFile,
         start: insertPos,
-        end: insertPos + newText.length
+        end: insertPos + newText.length,
     }));
 }
 
@@ -101,7 +101,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
             insertPos,
             newText,
             parent,
-            replacing: { textLength: nextEndStart - insertPos }
+            replacing: { textLength: nextEndStart - insertPos },
         });
     }
     else if (nextNode != null) {
@@ -118,7 +118,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
             insertPos,
             newText,
             parent,
-            replacing: { textLength: nextNode.getStart(true) - insertPos }
+            replacing: { textLength: nextNode.getStart(true) - insertPos },
         });
     }
     else {
@@ -138,7 +138,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
             insertPos: parent.getPos(),
             newText,
             parent,
-            replacing: { textLength: parent.getNextSiblingOrThrow().getStart() - parent.getPos() }
+            replacing: { textLength: parent.getNextSiblingOrThrow().getStart() - parent.getPos() },
         });
     }
 
@@ -260,7 +260,7 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
         parent: childSyntaxList,
         start: insertPos,
         end: insertPos + newText.length,
-        replacingLength
+        replacingLength,
     }));
 
     function getNewText() {
@@ -269,7 +269,7 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
         opts.write(writer, {
             previousMember: getChild(children[index - 1]),
             nextMember: getChild(children[index]),
-            isStartOfFile: insertPos === 0
+            isStartOfFile: insertPos === 0,
         });
         return writer.toString();
 
@@ -300,7 +300,7 @@ export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions {
  * @param opts - Options to do this operation.
  */
 export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node>(
-    opts: InsertIntoBracesOrSourceFileWithGetChildrenOptions
+    opts: InsertIntoBracesOrSourceFileWithGetChildrenOptions,
 ) {
     if (opts.structures.length === 0)
         return [];
@@ -314,7 +314,7 @@ export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node>(
         parent: opts.parent,
         index: getChildIndex(),
         children: parentSyntaxList.getChildren(),
-        write: opts.write
+        write: opts.write,
     });
 
     return getRangeWithoutCommentsFromArray<TNode>(opts.getIndexedChildren(), opts.index - previousJsDocCount, opts.structures.length, opts.expectedKind);
@@ -363,7 +363,7 @@ export function insertIntoBracesOrSourceFileWithGetChildrenWithComments(opts: In
         parent: opts.parent,
         index: getChildIndex(),
         children: parentSyntaxList.getChildren(),
-        write: opts.write
+        write: opts.write,
     });
 
     return getNodesToReturn(startChildren, opts.getIndexedChildren(), index, true);

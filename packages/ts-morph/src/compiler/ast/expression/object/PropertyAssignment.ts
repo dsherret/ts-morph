@@ -12,9 +12,10 @@ import { ObjectLiteralElement } from "./ObjectLiteralElement";
 // This node only has a question token in order to tell the user about bad code.
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)
 
-const createBase = <T extends typeof ObjectLiteralElement>(ctor: T) => InitializerExpressionGetableNode(
-    QuestionTokenableNode(PropertyNamedNode(ctor))
-);
+const createBase = <T extends typeof ObjectLiteralElement>(ctor: T) =>
+    InitializerExpressionGetableNode(
+        QuestionTokenableNode(PropertyNamedNode(ctor)),
+    );
 export const PropertyAssignmentBase = createBase(ObjectLiteralElement);
 export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**
@@ -36,8 +37,8 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
             newText,
             parent,
             replacing: {
-                textLength: this.getWidth()
-            }
+                textLength: this.getWidth(),
+            },
         });
 
         return parent.getChildAtIndexIfKindOrThrow(childIndex, SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
@@ -55,8 +56,8 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
             newText: getTextFromStringOrWriter(this._getWriterWithQueuedChildIndentation(), textOrWriterFunction),
             parent: this,
             replacing: {
-                textLength: initializer.getWidth()
-            }
+                textLength: initializer.getWidth(),
+            },
         });
         return this;
     }
@@ -83,7 +84,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
         const initializer = this.getInitializerOrThrow();
         const structure = callBaseGetStructure<PropertyAssignmentSpecificStructure>(PropertyAssignmentBase.prototype, this, {
             kind: StructureKind.PropertyAssignment,
-            initializer: initializer.getText()
+            initializer: initializer.getText(),
         }) as any as PropertyAssignmentStructure;
 
         // only has a question token for bad code. Don't include it in the structure.

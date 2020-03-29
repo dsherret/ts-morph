@@ -13,8 +13,8 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         return {
             ...info,
             classNode: info.sourceFile.getFirstDescendantOrThrow(
-                d => Node.isClassExpression(d) || Node.isClassDeclaration(d)
-            ) as Node & ClassLikeDeclarationBase
+                d => Node.isClassExpression(d) || Node.isClassDeclaration(d),
+            ) as Node & ClassLikeDeclarationBase,
         };
     }
 
@@ -121,7 +121,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const expectedText = "class c {\n    // test\n    p1;\n    p2;\n    p3;\n}";
             doTest("class c {\n    // test\n    p1;\n    p2;\n}", {
                 kind: StructureKind.Property,
-                name: "p3"
+                name: "p3",
             }, expectedText);
         });
     });
@@ -139,10 +139,10 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const expectedText = "class c {\n    // test\n    p1;\n    p2;\n    p3;\n\n    m4() {\n    }\n}";
             doTest("class c {\n    // test\n    p1;\n    p2;\n}", [{
                 kind: StructureKind.Property,
-                name: "p3"
+                name: "p3",
             }, {
                 kind: StructureKind.Method,
-                name: "m4"
+                name: "m4",
             }], expectedText, 2);
         });
     });
@@ -159,7 +159,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const expectedText = "class c {\n    p1;\n    p2;\n    p3;\n}";
             doTest("class c {\n    p1;\n    p3;\n}", 1, {
                 kind: StructureKind.Property,
-                name: "p2"
+                name: "p2",
             }, expectedText);
         });
     });
@@ -185,22 +185,22 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const expectedText = `class c {\n    constructor() {\n    }\n\n    p1;\n    p2;\n\n`
                 + `    m1() {\n    }\n\n    get g1() {\n    }\n\n    set s1() {\n    }\n\n    // testing\n}`;
             doTest("class c {\n}", 0, [{
-                kind: StructureKind.Constructor
+                kind: StructureKind.Constructor,
             }, {
                 kind: StructureKind.Property,
-                name: "p1"
+                name: "p1",
             }, {
                 kind: StructureKind.Property,
-                name: "p2"
+                name: "p2",
             }, {
                 kind: StructureKind.Method,
-                name: "m1"
+                name: "m1",
             }, {
                 kind: StructureKind.GetAccessor,
-                name: "g1"
+                name: "g1",
             }, {
                 kind: StructureKind.SetAccessor,
-                name: "s1"
+                name: "s1",
             }, "// testing"], expectedText, 7);
         });
 
@@ -208,7 +208,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const expectedText = "class c {\n    p1;\n    p2;\n    p3;\n}";
             doTest("class c {\n    p1;\n    p3;\n}", 1, [{
                 kind: StructureKind.Property,
-                name: "p2"
+                name: "p2",
             }], expectedText, 1);
         });
 
@@ -216,7 +216,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const expectedText = "class c {\n    p1;\n\n    m2() {\n    }\n\n    p3;\n}";
             doTest("class c {\n    p1;\n    p3;\n}", 1, [{
                 kind: StructureKind.Method,
-                name: "m2"
+                name: "m2",
             }], expectedText, 1);
         });
 
@@ -224,7 +224,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const expectedText = "class c {\n    m1() {\n    }\n\n    p2;\n\n    m3() {\n    }\n}";
             doTest("class c {\n    m1() {\n    }\n\n    m3() {\n    }\n}", 1, [{
                 kind: StructureKind.Property,
-                name: "p2"
+                name: "p2",
             }], expectedText, 1);
         });
 
@@ -232,7 +232,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const expectedText = "class c {\n    m1() {\n    }\n\n    m2() {\n    }\n\n    m3() {\n    }\n}";
             doTest("class c {\n    m1() {\n    }\n\n    m3() {\n    }\n}", 1, [{
                 kind: StructureKind.Method,
-                name: "m2"
+                name: "m2",
             }], expectedText, 1);
         });
     });
@@ -269,23 +269,23 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 statements: [{
                     kind: StructureKind.TypeAlias,
                     name: "T",
-                    type: "string"
+                    type: "string",
                 }, {
                     kind: StructureKind.Interface,
-                    name: "I"
+                    name: "I",
                 }, {
                     kind: StructureKind.Enum,
-                    name: "E"
+                    name: "E",
                 }, {
                     kind: StructureKind.Function,
-                    name: "F"
+                    name: "F",
                 }, {
                     kind: StructureKind.Class,
-                    name: "C"
+                    name: "C",
                 }, {
                     kind: StructureKind.Namespace,
-                    name: "N"
-                }, "console.log('here');"]
+                    name: "N",
+                }, "console.log('here');"],
             };
             doTest("class c {\n}", 0, structure,
                 "class c {\n    public constructor();\n    private constructor();\n    /** Test */\n    public constructor<T>(param) {\n"
@@ -399,7 +399,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 parameters: [{ name: "param" }],
                 returnType: "number",
                 typeParameters: [{ name: "T" }],
-                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"],
             };
             doTest("class c {\n}", 0, [structure], "class c {\n    /** Test */\n    @dec\n    public static get prop<T>(param): number {\n"
                 + "        class C {\n        }\n\n        console.log('here');\n"
@@ -486,7 +486,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 hasDeclareKeyword: true,
                 initializer: "5",
                 isAbstract: false,
-                isReadonly: true
+                isReadonly: true,
             };
             doTest("class c {\n}", 0, [structure, { name: "other", hasExclamationToken: true }],
                 "class c {\n    /** Test */\n    @dec\n    declare public static readonly prop?: number = 5;\n    other!;\n"
@@ -643,7 +643,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 parameters: [{ name: "param" }],
                 returnType: "number",
                 typeParameters: [{ name: "T" }],
-                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"],
             };
             doTest("class c {\n}", 0, [structure], "class c {\n    /** Test */\n    @dec\n    public static set prop<T>(param): number {\n"
                 + "        class C {\n        }\n\n        console.log('here');\n"
@@ -887,7 +887,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 parameters: [{ name: "param" }],
                 returnType: "number",
                 typeParameters: [{ name: "T" }],
-                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"],
             };
             doTest("class c {\n}", 0, [structure], "class c {\n    public static myMethod?();\n    private myMethod();\n"
                 + "    /** Test */\n    @dec\n    public static async myMethod?<T>(param): number {\n"
@@ -1053,7 +1053,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
 
         describe("has static methods", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>(
-                "class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n"
+                "class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n",
             );
 
             it("should get the right number of static methods", () => {
@@ -1113,7 +1113,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMembers), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>(
             "class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
-                + "prop2: number;method1() {}\n}\n"
+                + "prop2: number;method1() {}\n}\n",
         );
         it("should get the right number of instance members", () => {
             expect(firstChild.getInstanceMembers().length).to.equal(4);
@@ -1172,7 +1172,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
     describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMembers), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>(
             "class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
-                + "prop2: number;method1() {}\n}\n"
+                + "prop2: number;method1() {}\n}\n",
         );
         it("should get the right number of static members", () => {
             expect(firstChild.getStaticMembers().length).to.equal(2);
@@ -1254,7 +1254,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             const members = firstChild.getMembersWithComments();
             expect(members.map(m => m.getText())).to.deep.equal([
                 "//a",
-                "/*b*/"
+                "/*b*/",
             ]);
             expect(members[0]).to.be.instanceOf(CommentClassElement);
             expect(members[1]).to.be.instanceOf(CommentClassElement);
@@ -1267,7 +1267,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             expect(members.map(m => m.getText())).to.deep.equal([
                 "//a",
                 "p;",
-                "/*b*/"
+                "/*b*/",
             ]);
         });
     });
@@ -1377,7 +1377,7 @@ class c {
     describe(nameof<ClassLikeDeclarationBase>(d => d.getBaseTypes), () => {
         function doTest(text: string, className: string, expectedNames: string[]) {
             const { sourceFile } = getInfoFromText(text, {
-                includeLibDts: true // need to include the lib files... see TS issue #34963
+                includeLibDts: true, // need to include the lib files... see TS issue #34963
             });
             const types = sourceFile.getClassOrThrow(className).getBaseTypes();
             expect(types.map(c => c.getText())).to.deep.equal(expectedNames);
@@ -1419,7 +1419,7 @@ class Child extends Mixin(Base) {}
     describe(nameof<ClassLikeDeclarationBase>(d => d.getBaseClass), () => {
         function doTest(text: string, className: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(text, {
-                includeLibDts: true // need to include the lib files... see TS issue #34963
+                includeLibDts: true, // need to include the lib files... see TS issue #34963
             });
             const c = sourceFile.getClassOrThrow(className).getBaseClass();
             if (typeof expectedName === "undefined")
@@ -1485,7 +1485,7 @@ class Child extends Mixin(Base) {}
             doTest(
                 "class Base {} class Child1 extends Base {} class Child2 extends Base {} class Grandchild1<T> extends Child1 {} class GreatGrandChild1<T> extends Grandchild1<T> {}",
                 "Base",
-                ["Child1", "Child2", "Grandchild1", "GreatGrandChild1"]
+                ["Child1", "Child2", "Grandchild1", "GreatGrandChild1"],
             );
         });
 

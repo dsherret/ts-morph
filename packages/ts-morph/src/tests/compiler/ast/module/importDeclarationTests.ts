@@ -480,7 +480,7 @@ describe(nameof(ImportDeclaration), () => {
             index: number,
             structuresOrNames: (OptionalKind<ImportSpecifierStructure> | string | WriterFunction)[] | WriterFunction,
             expected: string,
-            surroundWithSpaces = true
+            surroundWithSpaces = true,
         ) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             if (!surroundWithSpaces)
@@ -710,7 +710,7 @@ describe(nameof(ImportDeclaration), () => {
                 defaultImport: "asdf",
                 moduleSpecifier: "new",
                 namedImports: undefined,
-                namespaceImport: "test"
+                namespaceImport: "test",
             };
             doTest("import 'test';", structure, "import type asdf, * as test from 'new';");
         });
@@ -742,7 +742,7 @@ describe(nameof(ImportDeclaration), () => {
                 defaultImport: undefined,
                 moduleSpecifier: "foo",
                 namedImports: [],
-                namespaceImport: undefined
+                namespaceImport: undefined,
             });
         });
 
@@ -755,9 +755,9 @@ describe(nameof(ImportDeclaration), () => {
                 namedImports: [{
                     kind: StructureKind.ImportSpecifier,
                     name: "a",
-                    alias: undefined
+                    alias: undefined,
                 }],
-                namespaceImport: undefined
+                namespaceImport: undefined,
             });
         });
 
@@ -768,7 +768,7 @@ describe(nameof(ImportDeclaration), () => {
                 defaultImport: undefined,
                 moduleSpecifier: "typescript",
                 namedImports: [],
-                namespaceImport: "ts"
+                namespaceImport: "ts",
             });
         });
 
@@ -779,7 +779,7 @@ describe(nameof(ImportDeclaration), () => {
                 defaultImport: "bar",
                 moduleSpecifier: "foo",
                 namedImports: [],
-                namespaceImport: undefined
+                namespaceImport: undefined,
             });
         });
 
@@ -792,9 +792,9 @@ describe(nameof(ImportDeclaration), () => {
                 namedImports: [{
                     kind: StructureKind.ImportSpecifier,
                     name: "test",
-                    alias: undefined
+                    alias: undefined,
                 }],
-                namespaceImport: undefined
+                namespaceImport: undefined,
             });
         });
     });

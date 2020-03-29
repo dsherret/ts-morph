@@ -35,7 +35,7 @@ export async function createDeclarationFile() {
     log("Getting statements...");
     const statements = [
         ...getDeclarationFileStatements(mainFile),
-        ...getCodeBlockWriterStatements(project)
+        ...getCodeBlockWriterStatements(project),
     ];
     log("Hiding specific structures...");
     hideSpecificStructures();
@@ -48,17 +48,20 @@ export async function createDeclarationFile() {
     log("Hiding base declarations...");
     hideBaseDeclarations();
     log("Removing import types...");
-    statements.forEach(statement => forEachTypeText(
-        statement,
-        typeText => typeText
-            .replace(/compiler\.([A-Za-z]+)/g, "$1")
-            .replace(/ts\.(SyntaxKind)/g, "$1")
-            .replace(/import\([^\)]+\)\./g, "")
-    ));
+    statements.forEach(statement =>
+        forEachTypeText(
+            statement,
+            typeText =>
+                typeText
+                    .replace(/compiler\.([A-Za-z]+)/g, "$1")
+                    .replace(/ts\.(SyntaxKind)/g, "$1")
+                    .replace(/import\([^\)]+\)\./g, ""),
+        )
+    );
 
     log("Printing...");
     mainFile.set({
-        statements
+        statements,
     });
 
     // todo: will work on improving the rest of this later
@@ -125,8 +128,10 @@ export async function createDeclarationFile() {
 
     function hideBaseDeclarations() {
         const baseStatements = statements
-            .filter(s => s.kind === tsMorph.StructureKind.VariableStatement
-                && s.declarations.some(d => d.name.endsWith("Base"))) as tsMorph.VariableStatementStructure[];
+            .filter(s =>
+                s.kind === tsMorph.StructureKind.VariableStatement
+                    && s.declarations.some(d => d.name.endsWith("Base"))
+            ) as tsMorph.VariableStatementStructure[];
 
         for (const statement of baseStatements) {
             if (statement.declarations.length > 1)

@@ -26,7 +26,7 @@ describe(nameof<Writers>(), () => {
                 key2: 5,
                 key3: undefined,
                 key4: writer => writer.write("6"),
-                key5: "undefined"
+                key5: "undefined",
             }, `{
     key1: 'testing',
     key2: 5,
@@ -48,7 +48,7 @@ describe(nameof<Writers>(), () => {
 
         it("should write an object type with only properties", () => {
             doTest({
-                properties: [{ name: "prop" }]
+                properties: [{ name: "prop" }],
             }, `{
     prop;
 }`);
@@ -56,7 +56,7 @@ describe(nameof<Writers>(), () => {
 
         it("should write an object type with only methods", () => {
             doTest({
-                methods: [{ name: "method" }]
+                methods: [{ name: "method" }],
             }, `{
     method();
 }`);
@@ -64,7 +64,7 @@ describe(nameof<Writers>(), () => {
 
         it("should write an object type with only call signatures", () => {
             doTest({
-                callSignatures: [{}]
+                callSignatures: [{}],
             }, `{
     (): void;
 }`);
@@ -72,7 +72,7 @@ describe(nameof<Writers>(), () => {
 
         it("should write an object type with only construct signatures", () => {
             doTest({
-                constructSignatures: [{}]
+                constructSignatures: [{}],
             }, `{
     new();
 }`);
@@ -80,7 +80,7 @@ describe(nameof<Writers>(), () => {
 
         it("should write an object type with only index signatures", () => {
             doTest({
-                indexSignatures: [{}]
+                indexSignatures: [{}],
             }, `{
     [key: string];
 }`);
@@ -92,7 +92,7 @@ describe(nameof<Writers>(), () => {
                 constructSignatures: [{}],
                 indexSignatures: [{}],
                 properties: [{ name: "prop" }],
-                methods: [{ name: "method" }]
+                methods: [{ name: "method" }],
             };
 
             doTest(structure, `{
@@ -151,7 +151,7 @@ describe(nameof<Writers>(), () => {
         it("should not write with hanging indentation when using a block", () => {
             doWriterTest(
                 (writer, { returnStatement }) => returnStatement(() => writer.inlineBlock(() => writer.write("prop")))(writer),
-                "return {\n    prop\n};"
+                "return {\n    prop\n};",
             );
         });
     });

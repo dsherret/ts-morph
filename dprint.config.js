@@ -12,19 +12,20 @@ module.exports.config = {
             singleBodyPosition: "nextLine",
             preferHanging: true,
             nextControlFlowPosition: "nextLine",
-            "arrowFunctionExpression.useParentheses": "preferNone",
+            "arrowFunction.useParentheses": "preferNone",
             "tryStatement.nextControlFlowPosition": "sameLine",
-            quoteStyle: "alwaysDouble"
+            quoteStyle: "alwaysDouble",
+            semiColons: "always",
         }),
         new JsoncPlugin({
-            indentWidth: 2
-        })
+            indentWidth: 2,
+        }),
     ],
     includes: [
-        "**/*{.ts,.json,.js}"
+        "**/*{.ts,.json,.js}",
     ],
     excludes: [
         "packages/*/dist/**/*.*",
-        "packages/*/lib/*.ts"
-    ]
+        "packages/*/lib/*.ts",
+    ],
 };

@@ -50,7 +50,7 @@ describe(nameof(EnumDeclaration), () => {
             expect(members).to.deep.equal([
                 "member1 = 1",
                 "member2",
-                "//a"
+                "//a",
             ]);
         });
     });
@@ -102,7 +102,7 @@ describe(nameof(EnumDeclaration), () => {
                 "enum MyEnum {\n    member1,\n    member3\n}\n",
                 1,
                 [{ name: "member2" }],
-                "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n"
+                "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n",
             );
         });
 
@@ -113,9 +113,9 @@ describe(nameof(EnumDeclaration), () => {
                 [
                     { leadingTrivia: "// a", name: "member1", trailingTrivia: " // testing" },
                     { name: "member2", value: 2, docs: [{ description: "description" }] },
-                    { name: "member3" }
+                    { name: "member3" },
                 ],
-                "enum MyEnum {\n    // a\n    member1, // testing\n    /** description */\n    member2 = 2,\n    member3\n}\n"
+                "enum MyEnum {\n    // a\n    member1, // testing\n    /** description */\n    member2 = 2,\n    member3\n}\n",
             );
         });
 
@@ -124,13 +124,13 @@ describe(nameof(EnumDeclaration), () => {
                 docs: [{ description: "testing" }],
                 initializer: "5",
                 value: 5,
-                name: "member"
+                name: "member",
             };
             doTest(
                 "enum MyEnum {\n}\n",
                 0,
                 [structure],
-                "enum MyEnum {\n    /** testing */\n    member = 5\n}\n"
+                "enum MyEnum {\n    /** testing */\n    member = 5\n}\n",
             );
         });
 
@@ -140,7 +140,7 @@ describe(nameof(EnumDeclaration), () => {
             index: number,
             structures: WriterStructureType,
             expectedCode: string,
-            options?: { useTrailingCommas?: boolean; }
+            options?: { useTrailingCommas?: boolean; },
         ) {
             const { firstChild, sourceFile, project } = getInfoFromText<EnumDeclaration>(startCode);
             if (options && options.useTrailingCommas)
@@ -163,7 +163,7 @@ describe(nameof(EnumDeclaration), () => {
                 "enum MyEnum {\n}\n",
                 0,
                 writer => writer.write("// testing"),
-                "enum MyEnum {\n    // testing\n}\n"
+                "enum MyEnum {\n    // testing\n}\n",
             );
         });
 
@@ -172,7 +172,7 @@ describe(nameof(EnumDeclaration), () => {
                 "enum MyEnum {\n}\n",
                 0,
                 "// testing",
-                "enum MyEnum {\n    // testing\n}\n"
+                "enum MyEnum {\n    // testing\n}\n",
             );
         });
 
@@ -182,7 +182,7 @@ describe(nameof(EnumDeclaration), () => {
                 0,
                 "member",
                 "enum MyEnum {\n    member,\n}\n",
-                { useTrailingCommas: true }
+                { useTrailingCommas: true },
             );
         });
     });
@@ -225,7 +225,7 @@ describe(nameof(EnumDeclaration), () => {
             doTest(
                 "enum MyEnum {\n    member1\n}\n",
                 [{ name: "member2" }, { name: "member3" }],
-                "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n"
+                "enum MyEnum {\n    member1,\n    member2,\n    member3\n}\n",
             );
         });
     });
@@ -290,8 +290,8 @@ describe(nameof(EnumDeclaration), () => {
             const structure: OptionalKindAndTrivia<MakeRequired<EnumDeclarationSpecificStructure>> = {
                 isConst: true,
                 members: [{
-                    name: "member"
-                }]
+                    name: "member",
+                }],
             };
             doTest("enum Identifier {\n    m\n}", structure, "const enum Identifier {\n    member\n}");
         });
@@ -299,7 +299,7 @@ describe(nameof(EnumDeclaration), () => {
         it("should remove existing members when specifying an empty array", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<EnumDeclarationSpecificStructure>> = {
                 isConst: true,
-                members: []
+                members: [],
             };
             doTest("enum Identifier {\n    m\n}", structure, "const enum Identifier {\n}");
         });
@@ -333,7 +333,7 @@ describe(nameof(EnumDeclaration), () => {
                 hasDeclareKeyword: true,
                 docs: [],
                 isConst: false,
-                members: []
+                members: [],
             });
         });
 
@@ -352,7 +352,7 @@ export const enum Enum {
                 hasDeclareKeyword: false,
                 docs: [{ description: "test" }],
                 isConst: true,
-                members: [{ name: "member" }]
+                members: [{ name: "member" }],
             });
         });
     });

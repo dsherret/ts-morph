@@ -6,9 +6,10 @@ import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createBase = <T extends typeof TypeElement>(ctor: T) => ChildOrderableNode(JSDocableNode(ReadonlyableNode(
-    QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(ctor)))))
-)));
+const createBase = <T extends typeof TypeElement>(ctor: T) =>
+    ChildOrderableNode(JSDocableNode(ReadonlyableNode(
+        QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(ctor))))),
+    )));
 export const PropertySignatureBase = createBase(TypeElement);
 export class PropertySignature extends PropertySignatureBase<ts.PropertySignature> {
     /**
@@ -26,7 +27,7 @@ export class PropertySignature extends PropertySignatureBase<ts.PropertySignatur
      */
     getStructure(): PropertySignatureStructure {
         return callBaseGetStructure<PropertySignatureSpecificStructure>(PropertySignatureBase.prototype, this, {
-            kind: StructureKind.PropertySignature
+            kind: StructureKind.PropertySignature,
         });
     }
 }

@@ -58,7 +58,7 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
 
         getStructure() {
             return callBaseGetStructure<AbstractableNodeStructure>(Base.prototype, this, {
-                isAbstract: this.isAbstract()
+                isAbstract: this.isAbstract(),
             });
         }
     };

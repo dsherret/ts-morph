@@ -26,7 +26,7 @@ export function ChildOrderableNode<T extends Constructor<ChildOrderableNodeExten
                 parent,
                 getSiblingFormatting: getGeneralFormatting,
                 oldIndex: childIndex,
-                newIndex: order
+                newIndex: order,
             });
             return this;
         }

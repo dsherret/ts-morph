@@ -60,7 +60,7 @@ export class TsMorphInspector {
             const dependencyNode: DependencyNode = {
                 node,
                 childNodes: [],
-                parentNodes: []
+                parentNodes: [],
             };
             nodes.set(node, dependencyNode);
             return dependencyNode;

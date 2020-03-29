@@ -8,7 +8,7 @@ export class SourceFileCache implements TsSourceFileContainer {
 
     constructor(
         private readonly fileSystemWrapper: TransactionalFileSystem,
-        private readonly compilerOptions: CompilerOptionsContainer
+        private readonly compilerOptions: CompilerOptionsContainer,
     ) {
         this.documentRegistry = new DocumentRegistry(fileSystemWrapper);
     }
@@ -33,15 +33,13 @@ export class SourceFileCache implements TsSourceFileContainer {
         return this.sourceFilesByFilePath.get(filePath);
     }
 
-    async addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath,
-        options: { scriptKind: ScriptKind | undefined; }): Promise<ts.SourceFile | undefined>
-    {
+    async addOrGetSourceFileFromFilePath(filePath: StandardizedFilePath, options: { scriptKind: ScriptKind | undefined; }): Promise<ts.SourceFile | undefined> {
         let sourceFile = this.sourceFilesByFilePath.get(filePath);
         if (sourceFile == null && await this.fileSystemWrapper.fileExists(filePath)) {
             sourceFile = this.createSourceFileFromText(
                 filePath,
                 await this.fileSystemWrapper.readFile(filePath, this.compilerOptions.getEncoding()),
-                options
+                options,
             );
         }
 
@@ -54,7 +52,7 @@ export class SourceFileCache implements TsSourceFileContainer {
             sourceFile = this.createSourceFileFromText(
                 filePath,
                 this.fileSystemWrapper.readFileSync(filePath, this.compilerOptions.getEncoding()),
-                options
+                options,
             );
         }
 
@@ -64,7 +62,7 @@ export class SourceFileCache implements TsSourceFileContainer {
     createSourceFileFromText(
         filePath: StandardizedFilePath,
         text: string,
-        options: { scriptKind: ScriptKind | undefined; }
+        options: { scriptKind: ScriptKind | undefined; },
     ): ts.SourceFile {
         filePath = this.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         const hasBom = StringUtils.hasBom(text);
@@ -85,7 +83,7 @@ export class SourceFileCache implements TsSourceFileContainer {
             this.compilerOptions.get(),
             ts.ScriptSnapshot.fromString(sourceFile.text),
             this.getSourceFileVersion(sourceFile),
-            (sourceFile as any)["scriptKind"] as ts.ScriptKind
+            (sourceFile as any)["scriptKind"] as ts.ScriptKind,
         );
 
         this.fileSystemWrapper.queueMkdir(FileUtils.getDirPath(standardizedFilePath));

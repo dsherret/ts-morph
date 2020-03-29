@@ -73,7 +73,7 @@ describe(nameof(TsConfigResolver), () => {
         function doTest(fileSystem: FileSystemHost, expectedPaths: { files: string[]; dirs: string[]; }) {
             expect(getPaths(fileSystem)).to.deep.equal({
                 filePaths: expectedPaths.files.sort(),
-                directoryPaths: expectedPaths.dirs.sort()
+                directoryPaths: expectedPaths.dirs.sort(),
             });
         }
 
@@ -82,7 +82,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
             doTest(fs, {
                 files: [],
-                dirs: ["/test"]
+                dirs: ["/test"],
             });
         });
 
@@ -93,7 +93,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/file.ts", "");
             doTest(fs, {
                 files: ["/otherFile.ts", "/test/file.ts"],
-                dirs: ["/", "/test"]
+                dirs: ["/", "/test"],
             });
         });
 
@@ -105,7 +105,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test2/file2.ts", "");
             doTest(fs, {
                 files: ["/otherFile.ts", "/test/file.ts"],
-                dirs: ["/", "/test"]
+                dirs: ["/", "/test"],
             });
         });
 
@@ -117,7 +117,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test2/file2.ts", "");
             doTest(fs, {
                 files: ["/otherFile.ts", "/test/file.ts"],
-                dirs: ["/", "/test"]
+                dirs: ["/", "/test"],
             });
         });
 
@@ -131,7 +131,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/src/file2.ts", "");
             doTest(fs, {
                 files: ["/src/file1.ts"],
-                dirs: ["/src"]
+                dirs: ["/src"],
             });
         });
 
@@ -143,7 +143,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test2/file2.ts", "");
             doTest(fs, {
                 files: ["/test2/file2.ts"],
-                dirs: ["/test2"]
+                dirs: ["/test2"],
             });
         });
 
@@ -155,7 +155,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/test2/file2.ts", "");
             doTest(fs, {
                 files: ["/test/file.ts", "/test/test2/file2.ts"],
-                dirs: ["/test", "/test/test2"]
+                dirs: ["/test", "/test/test2"],
             });
         });
 
@@ -168,7 +168,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/test2/sub/file3.ts", "");
             doTest(fs, {
                 files: ["/test/test1/file1.ts", "/test/test2/file2.ts", "/test/test2/sub/file3.ts"],
-                dirs: ["/test/test1", "/test/test2", "/test/test2/sub"]
+                dirs: ["/test/test1", "/test/test2", "/test/test2/sub"],
             });
         });
 
@@ -180,7 +180,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/test2/file2.ts", "");
             doTest(fs, {
                 files: ["/test/test1/file1.ts", "/test/test2/file2.ts"],
-                dirs: ["/test/test1", "/test/test2"]
+                dirs: ["/test/test1", "/test/test2"],
             });
         });
 
@@ -196,8 +196,8 @@ describe(nameof(TsConfigResolver), () => {
             doTest(fs, {
                 files: ["/file1.ts", "/file2.ts"],
                 dirs: [
-                    "/"
-                ]
+                    "/",
+                ],
             });
         });
 
@@ -211,7 +211,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/src/file2.ts", "");
             doTest(fs, {
                 files: ["/src/file1.ts", "/src/file2.ts"],
-                dirs: ["/src"]
+                dirs: ["/src"],
             });
         });
 
@@ -227,7 +227,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/test2/file2.ts", "");
             doTest(fs, {
                 files: [],
-                dirs: ["/test/test1", "/test/test2"]
+                dirs: ["/test/test1", "/test/test2"],
             });
         });
 
@@ -239,7 +239,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test2/file2.ts", "");
             doTest(fs, {
                 files: ["/test/file.ts"],
-                dirs: ["/test"]
+                dirs: ["/test"],
             });
         });
     });

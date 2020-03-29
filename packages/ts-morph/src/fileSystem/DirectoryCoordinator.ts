@@ -39,7 +39,7 @@ export class DirectoryCoordinator {
     addSourceFileAtPathIfExists(filePath: StandardizedFilePath, options: { markInProject: boolean; }): SourceFile | undefined {
         return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, {
             markInProject: options.markInProject,
-            scriptKind: undefined
+            scriptKind: undefined,
         });
     }
 

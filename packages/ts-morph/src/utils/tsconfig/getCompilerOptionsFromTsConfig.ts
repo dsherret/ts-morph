@@ -20,6 +20,6 @@ export function getCompilerOptionsFromTsConfig(filePath: string, options: Compil
     const result = coreGetCompilerOptionsFromTsConfig(filePath, options);
     return {
         options: result.options,
-        errors: result.errors.map(error => new Diagnostic(undefined, error))
+        errors: result.errors.map(error => new Diagnostic(undefined, error)),
     };
 }

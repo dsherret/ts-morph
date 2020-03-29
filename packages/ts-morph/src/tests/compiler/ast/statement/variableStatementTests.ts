@@ -173,7 +173,7 @@ describe(nameof(VariableStatement), () => {
                 hasDeclareKeyword: true,
                 docs: [],
                 declarationKind: VariableDeclarationKind.Const,
-                declarations: [{ name: "a" }]
+                declarations: [{ name: "a" }],
             });
         });
 
@@ -189,7 +189,7 @@ export var test;
                 hasDeclareKeyword: false,
                 docs: [{ description: "Test" }],
                 declarationKind: VariableDeclarationKind.Var,
-                declarations: [{ name: "test" }]
+                declarations: [{ name: "test" }],
             });
         });
     });

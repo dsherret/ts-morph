@@ -7,7 +7,7 @@ describe(nameof(NamedImports), () => {
         const info = getInfoFromText(text);
         return {
             descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isNamedImports),
-            ...info
+            ...info,
         };
     }
 

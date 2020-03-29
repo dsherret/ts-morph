@@ -61,8 +61,8 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
             newText: type,
             parent: this,
             replacing: {
-                textLength: keyword.getWidth()
-            }
+                textLength: keyword.getWidth(),
+            },
         });
 
         return this;
@@ -112,7 +112,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
             currentNodes: this.getDeclarations(),
             insertIndex: index,
             newText: writer.toString(),
-            useTrailingCommas: false
+            useTrailingCommas: false,
         });
 
         return getNodesToReturn(originalChildrenCount, this.getDeclarations(), index, false);

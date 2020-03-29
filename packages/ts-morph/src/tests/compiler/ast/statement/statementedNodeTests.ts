@@ -138,7 +138,7 @@ describe(nameof(StatementedNode), () => {
             index: number,
             statements: string | WriterFunction | StatementStructures[],
             expectedLength: number,
-            expectedCode: string
+            expectedCode: string,
         ) {
             const { sourceFile } = getInfoFromText(code);
             const nodes = sourceFile.insertStatements(index, statements);
@@ -154,7 +154,7 @@ describe(nameof(StatementedNode), () => {
                 0,
                 "newText;\nsecondText;",
                 2,
-                "newText;\nsecondText;\n"
+                "newText;\nsecondText;\n",
             );
         });
 
@@ -186,7 +186,7 @@ describe(nameof(StatementedNode), () => {
             sourceFile.insertStatements(0, [
                 writer => writer.writeLine("statements;"),
                 "// other",
-                writer => writer.writeLine("test;")
+                writer => writer.writeLine("test;"),
             ]);
             expect(sourceFile.getFullText()).to.equal("statements;\n// other\ntest;\n");
         });
@@ -197,7 +197,7 @@ describe(nameof(StatementedNode), () => {
                 0,
                 "newText;\nsecondText;",
                 2,
-                "newText;\nsecondText;\nfunction i() {}"
+                "newText;\nsecondText;\nfunction i() {}",
             );
         });
 
@@ -207,7 +207,7 @@ describe(nameof(StatementedNode), () => {
                 1,
                 "newText;\nsecondText;",
                 2,
-                "function a() {}\nnewText;\nsecondText;\nfunction b() {}"
+                "function a() {}\nnewText;\nsecondText;\nfunction b() {}",
             );
         });
 
@@ -217,7 +217,7 @@ describe(nameof(StatementedNode), () => {
                 2,
                 "newText;\nsecondText;",
                 2,
-                "function a() {}\nfunction b() {}\nnewText;\nsecondText;"
+                "function a() {}\nfunction b() {}\nnewText;\nsecondText;",
             );
         });
 
@@ -227,7 +227,7 @@ describe(nameof(StatementedNode), () => {
                 0,
                 [{ kind: StructureKind.Function, name: "f" }],
                 1,
-                "function f() {\n}\n"
+                "function f() {\n}\n",
             );
         });
 
@@ -237,7 +237,7 @@ describe(nameof(StatementedNode), () => {
             statements: string,
             expectedLength: number,
             expectedCode: string,
-            kind?: SyntaxKind
+            kind?: SyntaxKind,
         ) {
             const { sourceFile, firstChild } = getInfoFromTextWithSyntax<T>(code, kind);
             const nodes = (firstChild as any as StatementedNode).insertStatements(index, statements);
@@ -252,7 +252,7 @@ describe(nameof(StatementedNode), () => {
                 0,
                 "statement;",
                 1,
-                "function i() {\n    statement;\n}\n"
+                "function i() {\n    statement;\n}\n",
             );
         });
 
@@ -262,7 +262,7 @@ describe(nameof(StatementedNode), () => {
                 0,
                 "statement;",
                 1,
-                "function i() {\n    statement;\n}\n"
+                "function i() {\n    statement;\n}\n",
             );
         });
 
@@ -287,7 +287,7 @@ describe(nameof(StatementedNode), () => {
                 1,
                 "newText;",
                 1,
-                "function i() { var t;\n    newText;var m; }"
+                "function i() { var t;\n    newText;var m; }",
             );
         });
 
@@ -346,7 +346,7 @@ describe(nameof(StatementedNode), () => {
                 0,
                 "// comment",
                 1,
-                "function f() {\n    // comment\n}"
+                "function f() {\n    // comment\n}",
             );
         });
     });
@@ -365,7 +365,7 @@ describe(nameof(StatementedNode), () => {
                 "function a() {}\nfunction b() {}",
                 "newText;\nsecondText;",
                 2,
-                "function a() {}\nfunction b() {}\nnewText;\nsecondText;"
+                "function a() {}\nfunction b() {}\nnewText;\nsecondText;",
             );
         });
     });
@@ -485,8 +485,8 @@ describe(nameof(StatementedNode), () => {
                     isExported: true,
                     properties: [fillStructures.property({
                         name: "prop",
-                        type: "string"
-                    })]
+                        type: "string",
+                    })],
                 })]);
             });
         });
@@ -517,9 +517,9 @@ describe(nameof(StatementedNode), () => {
                     writer => writer.writeLine("console.log;"),
                     {
                         kind: StructureKind.Class,
-                        name: "MyClass"
-                    }
-                ]
+                        name: "MyClass",
+                    },
+                ],
             }, `var myVar;\nconsole.log;\n\nclass MyClass {\n}\n`);
         });
 
@@ -546,7 +546,7 @@ describe(nameof(StatementedNode), () => {
                 doBodyableTest(
                     "function myFunction() {\n}",
                     { statements: [writer => writer.writeLine("var myVar;")] },
-                    "function myFunction() {\n    var myVar;\n}"
+                    "function myFunction() {\n    var myVar;\n}",
                 );
             });
 

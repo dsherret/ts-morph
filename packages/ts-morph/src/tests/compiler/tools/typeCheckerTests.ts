@@ -17,8 +17,10 @@ describe(nameof(TypeChecker), () => {
     interface JQueryStatic {
         test: string;
     }`);
-            fileSystem.writeFileSync("/node_modules/@types/jquery/package.json",
-                `{ "name": "@types/jquery", "version": "1.0.0", "typeScriptVersion": "2.3" }`);
+            fileSystem.writeFileSync(
+                "/node_modules/@types/jquery/package.json",
+                `{ "name": "@types/jquery", "version": "1.0.0", "typeScriptVersion": "2.3" }`,
+            );
 
             const ambientModules = project.getTypeChecker().getAmbientModules();
             expect(ambientModules.length).to.equal(1);
@@ -80,7 +82,7 @@ describe(nameof(TypeChecker), () => {
                 "function a() { function b() {} const c = ''; function e() { function f() {} } }",
                 sourceFile => sourceFile.getFunctionOrThrow("a").getVariableDeclarationOrThrow("c"),
                 SymbolFlags.Function,
-                ["a", "b", "e"]
+                ["a", "b", "e"],
             );
         });
     });

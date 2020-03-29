@@ -71,7 +71,7 @@ export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> 
         return callBaseGetStructure<ExportAssignmentSpecificStructure>(Statement.prototype, this, {
             kind: StructureKind.ExportAssignment,
             expression: this.getExpression().getText(),
-            isExportEquals: this.isExportEquals()
+            isExportEquals: this.isExportEquals(),
         }) as any as ExportAssignmentStructure;
     }
 }

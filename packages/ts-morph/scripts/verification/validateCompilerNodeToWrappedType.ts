@@ -26,7 +26,7 @@ export function validateCompilerNodeToWrappedType(inspector: TsMorphInspector, a
             structures.push({
                 kind: tsMorph.StructureKind.TypeAlias,
                 name: `${wrapper.getName()}_test`,
-                type: `CompilerNodeToWrappedType<${nodes[0].isTsMorphTsNode() ? "" : "ts."}${nodes[0].getNameForType()}>`
+                type: `CompilerNodeToWrappedType<${nodes[0].isTsMorphTsNode() ? "" : "ts."}${nodes[0].getNameForType()}>`,
             });
         }
 
@@ -45,7 +45,7 @@ export function validateCompilerNodeToWrappedType(inspector: TsMorphInspector, a
                 addProblem({
                     filePath: sourceFile.getFilePath(),
                     lineNumber: sourceFile.getTypeAliasOrThrow("CompilerNodeToWrappedType").getStartLineNumber(),
-                    message: `Could not get wrapped type from node "${nodeText.replace("compiler.", "")}". Got "${typeText}".`
+                    message: `Could not get wrapped type from node "${nodeText.replace("compiler.", "")}". Got "${typeText}".`,
                 });
             }
         }

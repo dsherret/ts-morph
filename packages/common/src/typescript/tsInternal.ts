@@ -10,7 +10,7 @@ export function matchFiles(
     currentDirectory: string,
     depth: number | undefined,
     getEntries: (path: string) => FileSystemEntries,
-    realpath: (path: string) => string
+    realpath: (path: string) => string,
 ): string[] {
     return (ts as any).matchFiles.apply(this, arguments);
 }
@@ -31,7 +31,7 @@ export function getFileMatcherPatterns(
     excludes: ReadonlyArray<string>,
     includes: ReadonlyArray<string>,
     useCaseSensitiveFileNames: boolean,
-    currentDirectory: string
+    currentDirectory: string,
 ): FileMatcherPatterns {
     return (ts as any).getFileMatcherPatterns.apply(this, arguments);
 }

@@ -56,7 +56,7 @@ export function RenameableNode<T extends Constructor<RenameableNodeExtensionType
                     replaceSourceFileTextForRename({
                         sourceFile,
                         renameLocations: locations,
-                        newName
+                        newName,
                     });
                 }
             }

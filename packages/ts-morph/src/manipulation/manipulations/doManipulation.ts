@@ -14,7 +14,7 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
         const replacementSourceFile = sourceFile._context.compilerFactory.createCompilerSourceFileFromText(
             newFilePath || sourceFile.getFilePath(),
             newFileText,
-            sourceFile.getScriptKind()
+            sourceFile.getScriptKind(),
         );
         nodeHandler.handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
     } catch (err) {
@@ -29,7 +29,7 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
             throwError(
                 "Manipulation error: " + "A syntax error was inserted." + "\n\n"
                     + sourceFile._context.project.formatDiagnosticsWithColorAndContext(diagnostics, { newLineChar: "\n" })
-                    + "\n" + errorDetails
+                    + "\n" + errorDetails,
             );
         }
 
@@ -40,7 +40,7 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
                 sourceFile.getFilePath(),
                 oldFileText,
                 newFileText,
-                message
+                message,
             );
         }
     }

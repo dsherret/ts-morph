@@ -58,7 +58,7 @@ describe(nameof(JSDocableNode), () => {
             insertIndex: number,
             structures: (OptionalKind<JSDocStructure> | string | WriterFunction)[],
             expectedCode: string,
-            syntaxKind = SyntaxKind.FunctionDeclaration
+            syntaxKind = SyntaxKind.FunctionDeclaration,
         ) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant(startCode, syntaxKind);
             const result = (descendant as any as JSDocableNode).insertJsDocs(insertIndex, structures);
@@ -83,7 +83,7 @@ describe(nameof(JSDocableNode), () => {
                 "function identifier() {}",
                 0,
                 [{ description: "Description\nOther" }],
-                "/**\n * Description\n * Other\n */\nfunction identifier() {}"
+                "/**\n * Description\n * Other\n */\nfunction identifier() {}",
             );
         });
 
@@ -131,7 +131,7 @@ describe(nameof(JSDocableNode), () => {
                 "/**\n * Desc2\n */\nfunction identifier() {}",
                 0,
                 { description: "Desc1" },
-                "/** Desc1 */\n/**\n * Desc2\n */\nfunction identifier() {}"
+                "/** Desc1 */\n/**\n * Desc2\n */\nfunction identifier() {}",
             );
         });
     });

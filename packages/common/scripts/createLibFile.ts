@@ -27,6 +27,6 @@ fastGlob(`${rootDir.replace(/\\/g, "/")}/node_modules/typescript/lib/lib*.d.ts`)
     fs.writeFileSync(
         libFilesFilePath,
         libFileText,
-        { encoding: "utf8" }
+        { encoding: "utf8" },
     );
 });

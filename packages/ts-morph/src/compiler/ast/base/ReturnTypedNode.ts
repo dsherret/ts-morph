@@ -70,7 +70,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
             insertIntoParentTextRange({
                 parent: this,
                 insertPos: getEndNode(this).getEnd(),
-                newText: `: ${text}`
+                newText: `: ${text}`,
             });
 
             return this;
@@ -113,7 +113,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
         getStructure() {
             const returnTypeNode = this.getReturnTypeNode();
             return callBaseGetStructure<ReturnTypedNodeStructure>(Base.prototype, this, {
-                returnType: returnTypeNode ? returnTypeNode.getText({ trimLeadingIndentation: true }) : undefined
+                returnType: returnTypeNode ? returnTypeNode.getText({ trimLeadingIndentation: true }) : undefined,
             });
         }
     };

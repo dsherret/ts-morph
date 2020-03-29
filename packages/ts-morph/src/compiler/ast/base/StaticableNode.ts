@@ -58,7 +58,7 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
 
         getStructure() {
             return callBaseGetStructure<StaticableNodeStructure>(Base.prototype, this, {
-                isStatic: this.isStatic()
+                isStatic: this.isStatic(),
             });
         }
     };

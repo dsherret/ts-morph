@@ -54,7 +54,7 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
             children: [this],
             customRemovalPos: removalStart,
             customRemovalEnd: getNextTagStartOrDocEnd(this, nextJsDocTag),
-            replaceTrivia: getReplaceTrivia.call(this)
+            replaceTrivia: getReplaceTrivia.call(this),
         });
 
         function getRemovalStart(this: JSDocTag) {
@@ -84,7 +84,7 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
             return this.replaceWithText(writer => {
                 this._context.structurePrinterFactory.forJSDocTag({ printStarsOnNewLine: true }).printText(writer, {
                     tagName: structure.tagName ?? this.getTagName(),
-                    text: structure.text != null ? structure.text : getText(this)
+                    text: structure.text != null ? structure.text : getText(this),
                 });
             });
         }
@@ -105,8 +105,8 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
             insertPos: start,
             newText,
             replacing: {
-                textLength: getTagEnd(this) - start
-            }
+                textLength: getTagEnd(this) - start,
+            },
         });
 
         return parent.getChildren()[childIndex];
@@ -120,7 +120,7 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
         return callBaseGetStructure<JSDocTagSpecificStructure>(JSDocTagBase.prototype, this, {
             kind: StructureKind.JSDocTag,
             tagName: this.getTagName(),
-            text: text.length === 0 ? undefined : text
+            text: text.length === 0 ? undefined : text,
         });
     }
 }

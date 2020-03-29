@@ -49,7 +49,7 @@ export class MetricsReaderWriter {
         testCase.runs.push({
             dateTime: this.currentDateTime,
             duration: runInfo.duration,
-            version: this.version
+            version: this.version,
         });
     }
 
@@ -61,7 +61,7 @@ export class MetricsReaderWriter {
     private getOrCreateTestCase(runInfo: RunInfo) {
         return this.metricsData[runInfo.id] = this.metricsData[runInfo.id] || {
             name: runInfo.name,
-            runs: []
+            runs: [],
         };
     }
 }

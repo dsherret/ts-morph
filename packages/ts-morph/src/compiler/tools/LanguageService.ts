@@ -42,7 +42,7 @@ export class LanguageService {
             sourceFileContainer: this._context.getSourceFileContainer(),
             compilerOptions: this._context.compilerOptions,
             getNewLine: () => this._context.manipulationSettings.getNewLineKindAsString(),
-            resolutionHost
+            resolutionHost,
         });
 
         this._compilerHost = compilerHost;
@@ -159,7 +159,7 @@ export class LanguageService {
             node.getStart(),
             options.renameInStrings || false,
             options.renameInComments || false,
-            usePrefixAndSuffixText
+            usePrefixAndSuffixText,
         ) || [];
         return renameLocations.map(l => new RenameLocation(this._context, l));
     }
@@ -185,7 +185,7 @@ export class LanguageService {
             filePath,
             range[0],
             range[1],
-            this._getFilledSettings(formatSettings)
+            this._getFilledSettings(formatSettings),
         ) || []).map(e => new TextChange(e));
     }
 
@@ -291,11 +291,11 @@ export class LanguageService {
     organizeImports(
         filePathOrSourceFile: string | SourceFile,
         formatSettings: FormatCodeSettings = {},
-        userPreferences: UserPreferences = {}
+        userPreferences: UserPreferences = {},
     ): FileTextChanges[] {
         const scope: ts.OrganizeImportsScope = {
             type: "file",
-            fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
+            fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
         };
         return this.compilerObject.organizeImports(scope, this._getFilledSettings(formatSettings), this._getFilledUserPreferences(userPreferences))
             .map(fileTextChanges => new FileTextChanges(this._context, fileTextChanges));
@@ -316,7 +316,7 @@ export class LanguageService {
         positionOrRange: number | { getPos(): number; getEnd(): number; },
         refactorName: string,
         actionName: string,
-        preferences: UserPreferences = {}
+        preferences: UserPreferences = {},
     ): RefactorEditInfo | undefined {
         const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
         const position = typeof positionOrRange === "number" ? positionOrRange : { pos: positionOrRange.getPos(), end: positionOrRange.getEnd() };
@@ -326,7 +326,7 @@ export class LanguageService {
             position,
             refactorName,
             actionName,
-            this._getFilledUserPreferences(preferences)
+            this._getFilledUserPreferences(preferences),
         );
 
         return compilerObject != null ? new RefactorEditInfo(this._context, compilerObject) : undefined;
@@ -342,7 +342,7 @@ export class LanguageService {
     getCombinedCodeFix(filePathOrSourceFile: string | SourceFile, fixId: {}, formatSettings: FormatCodeSettings = {}, preferences: UserPreferences = {}) {
         const compilerResult = this.compilerObject.getCombinedCodeFix({
             type: "file",
-            fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
+            fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
         }, fixId, this._getFilledSettings(formatSettings), this._getFilledUserPreferences(preferences || {}));
 
         return new CombinedCodeActions(this._context, compilerResult);
@@ -367,7 +367,7 @@ export class LanguageService {
             end,
             errorCodes,
             this._getFilledSettings(formatOptions),
-            this._getFilledUserPreferences(preferences || {})
+            this._getFilledUserPreferences(preferences || {}),
         );
 
         return compilerResult.map(compilerObject => new CodeFixAction(this._context, compilerObject));

@@ -52,7 +52,7 @@ describe(nameof(PropertyAssignment), () => {
             doTest(
                 "const t = { prop1: 1, prop2: 2, prop3: 3 };",
                 "prop3",
-                "{ prop1: 1, prop2: 2 }"
+                "{ prop1: 1, prop2: 2 }",
             );
         });
 
@@ -60,7 +60,7 @@ describe(nameof(PropertyAssignment), () => {
             doTest(
                 `const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`,
                 "prop1",
-                `{\n    prop2: 2,\n    prop3: 3\n}`
+                `{\n    prop2: 2,\n    prop3: 3\n}`,
             );
         });
 
@@ -68,7 +68,7 @@ describe(nameof(PropertyAssignment), () => {
             doTest(
                 `const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`,
                 "prop2",
-                `{\n    prop1: 1,\n    prop3: 3\n}`
+                `{\n    prop1: 1,\n    prop3: 3\n}`,
             );
         });
 
@@ -76,7 +76,7 @@ describe(nameof(PropertyAssignment), () => {
             doTest(
                 `const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`,
                 "prop3",
-                `{\n    prop1: 1,\n    prop2: 2\n}`
+                `{\n    prop1: 1,\n    prop2: 2\n}`,
             );
         });
     });
@@ -96,7 +96,7 @@ describe(nameof(PropertyAssignment), () => {
         it("should set when everything is specified", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<PropertyAssignmentStructure>> = {
                 name: "NewName",
-                initializer: "5"
+                initializer: "5",
             };
             test("const t = { prop1: 1 };", structure, "const t = { NewName: 5 };");
         });
@@ -116,7 +116,7 @@ describe(nameof(PropertyAssignment), () => {
             test("const t = { prop1: 1};", {
                 kind: StructureKind.PropertyAssignment,
                 name: "prop1",
-                initializer: "1"
+                initializer: "1",
             });
         });
     });

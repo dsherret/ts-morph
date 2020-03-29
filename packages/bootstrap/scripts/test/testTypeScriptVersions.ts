@@ -13,7 +13,7 @@ async function run() {
             console.log(`Type checking declaration files and running tests...`);
             await Promise.all([
                 // execNpmScript("ensure-no-declaration-file-errors", rootFolder),
-                execNpmScript("test", rootFolder)
+                execNpmScript("test", rootFolder),
             ]);
         }
 

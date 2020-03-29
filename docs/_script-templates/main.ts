@@ -1,9 +1,9 @@
 import { Project, FunctionDeclaration, ClassDeclaration, Node, SourceFile, MethodDeclaration, Decorator, EnumDeclaration, EnumMember, ExportDeclaration,
     ExportSpecifier, ImportDeclaration, ImportSpecifier, InterfaceDeclaration, ShorthandPropertyAssignment, SpreadAssignment, ObjectLiteralExpression,
-    ParameterDeclaration, Type, Symbol, Signature, TypeFormatFlags, NamespaceDeclaration, Directory, Diagnostic, DiagnosticMessageChain,
-    GetAccessorDeclaration, SetAccessorDeclaration, PropertyDeclaration, TypeNode, JSDoc, ExportAssignment, ExpressionWithTypeArguments, CallExpression,
-    SyntaxKind, Identifier, VariableDeclaration, ConstructSignatureDeclaration, CallSignatureDeclaration, IndexSignatureDeclaration, MethodSignature,
-    PropertySignature, TypeAliasDeclaration, NumericLiteral, VariableStatement, VariableDeclarationKind, IndentationText, QuoteKind, ts, createWrappedNode,
+    ParameterDeclaration, Type, Symbol, Signature, TypeFormatFlags, NamespaceDeclaration, Directory, Diagnostic, DiagnosticMessageChain, GetAccessorDeclaration,
+    SetAccessorDeclaration, PropertyDeclaration, TypeNode, JSDoc, ExportAssignment, ExpressionWithTypeArguments, CallExpression, SyntaxKind, Identifier,
+    VariableDeclaration, ConstructSignatureDeclaration, CallSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature,
+    TypeAliasDeclaration, NumericLiteral, VariableStatement, VariableDeclarationKind, IndentationText, QuoteKind, ts, createWrappedNode,
     PropertyAccessExpression, LanguageService, Program, TypeChecker, FileSystemHost, TypeParameterDeclaration, NamespaceDeclarationKind, CallLikeExpression,
     StructureKind, forEachStructureChild, Structures, ClassDeclarationStructure, SourceFileStructure, Structure } from "../../packages/ts-morph/src/main";
 

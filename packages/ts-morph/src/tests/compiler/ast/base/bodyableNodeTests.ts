@@ -18,7 +18,7 @@ describe(nameof(BodyableNode), () => {
                     writer => {
                         writer.writeLine("test;").writeLine("test2;");
                     },
-                    "function myFunction() {\n    test;\n    test2;\n}"
+                    "function myFunction() {\n    test;\n    test2;\n}",
                 );
             });
 
@@ -28,7 +28,7 @@ describe(nameof(BodyableNode), () => {
                     writer => {
                         writer.writeLine("test;").write("test2;");
                     },
-                    "function myFunction() {\n    test;\n    test2;\n}"
+                    "function myFunction() {\n    test;\n    test2;\n}",
                 );
             });
         });

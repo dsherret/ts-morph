@@ -33,13 +33,13 @@ describe(nameof(PropertyDeclarationStructurePrinter), () => {
                 isStatic: true,
                 name: "prop",
                 scope: Scope.Public,
-                type: "number"
+                type: "number",
             };
 
             doTest(structure, [
                 "/** test */",
                 "@dec",
-                "declare public abstract static readonly prop?: number = 5;"
+                "declare public abstract static readonly prop?: number = 5;",
             ].join("\n"));
         });
     });

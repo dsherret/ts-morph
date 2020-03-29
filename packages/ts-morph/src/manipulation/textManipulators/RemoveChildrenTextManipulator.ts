@@ -29,7 +29,7 @@ export class RemoveChildrenTextManipulator implements TextManipulator {
             removeFollowingSpaces = false,
             removePrecedingNewLines = false,
             removeFollowingNewLines = false,
-            replaceTrivia = ""
+            replaceTrivia = "",
         } = opts;
         const sourceFile = children[0].getSourceFile();
         const fullText = sourceFile.getFullText();

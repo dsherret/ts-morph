@@ -66,7 +66,7 @@ describe(nameof(Directory), () => {
             expect(dir.getSourceFiles("**/*.ts").map(f => f.getFilePath())).to.deep.equal([
                 "/dir/file.ts",
                 "/dir/file2.ts",
-                "/dir/subDir/file3.ts"
+                "/dir/subDir/file3.ts",
             ]);
         });
 
@@ -83,7 +83,7 @@ describe(nameof(Directory), () => {
 
             expect(dir.getSourceFiles(["subDir/*.ts", "subDir2/*.js"]).map(f => f.getFilePath())).to.deep.equal([
                 "/dir/subDir/file3.ts",
-                "/dir/subDir2/file.js"
+                "/dir/subDir2/file.js",
             ]);
         });
     });
@@ -187,9 +187,9 @@ describe(nameof(Directory), () => {
                     directory: project.getDirectoryOrThrow("dir1"),
                     children: [{
                         directory: project.getDirectoryOrThrow("dir1/dir2"),
-                        sourceFiles: [lowerSourceFile]
-                    }]
-                }]
+                        sourceFiles: [lowerSourceFile],
+                    }],
+                }],
             });
         });
 
@@ -204,11 +204,11 @@ describe(nameof(Directory), () => {
                 sourceFiles: [file1],
                 children: [{
                     directory: file2.getDirectory(),
-                    sourceFiles: [file2]
+                    sourceFiles: [file2],
                 }, {
                     directory: file3.getDirectory(),
-                    sourceFiles: [file3]
-                }]
+                    sourceFiles: [file3],
+                }],
             });
         });
 
@@ -223,11 +223,11 @@ describe(nameof(Directory), () => {
                 sourceFiles: [file1],
                 children: [{
                     directory: file2.getDirectory(),
-                    sourceFiles: [file2]
+                    sourceFiles: [file2],
                 }, {
                     directory: file3.getDirectory(),
-                    sourceFiles: [file3]
-                }]
+                    sourceFiles: [file3],
+                }],
             });
         });
 
@@ -242,8 +242,8 @@ describe(nameof(Directory), () => {
                 sourceFiles: [file1, file2],
                 children: [{
                     directory: file3.getDirectory(),
-                    sourceFiles: [file3]
-                }]
+                    sourceFiles: [file3],
+                }],
             });
         });
     });
@@ -285,7 +285,7 @@ describe(nameof(Directory), () => {
                 project.createSourceFile("someDir/otherDir/deeper/test.ts"),
                 project.createSourceFile("someDir/test.ts"),
                 project.createSourceFile("someDir/childDir/deeper/test.ts"),
-                project.createSourceFile("final.ts")
+                project.createSourceFile("final.ts"),
             ];
 
             const finalFile = project.getSourceFileOrThrow("final.ts");
@@ -305,7 +305,7 @@ describe(nameof(Directory), () => {
                 rootDir.createDirectory("someDir/otherDir"),
                 rootDir.createDirectory("someDir/otherDir/deeper"),
                 rootDir.createDirectory("someDir/test"),
-                rootDir.createDirectory("someDir/childDir")
+                rootDir.createDirectory("someDir/childDir"),
             ];
 
             expect(rootDir.getDescendantDirectories().map(d => d.getPath()).sort()).to.deep.equal(directories.map(d => d.getPath()).sort());
@@ -471,8 +471,8 @@ describe(nameof(Directory), () => {
                 testDirectoryTree(project.getDirectoryOrThrow("some/path"), {
                     directory: project.getDirectoryOrThrow("some/path"),
                     children: [{
-                        directory: project.getDirectoryOrThrow("some/path/child")
-                    }]
+                        directory: project.getDirectoryOrThrow("some/path/child"),
+                    }],
                 });
             });
 
@@ -482,9 +482,9 @@ describe(nameof(Directory), () => {
                     children: [{
                         directory: project.getDirectoryOrThrow("dir/other/deep"),
                         children: [{
-                            directory: project.getDirectoryOrThrow("dir/other/deep/path")
-                        }]
-                    }]
+                            directory: project.getDirectoryOrThrow("dir/other/deep/path"),
+                        }],
+                    }],
                 });
             });
 
@@ -550,10 +550,10 @@ describe(nameof(Directory), () => {
                 directory: directory.getParentOrThrow(),
                 children: [{
                     directory,
-                    children: [{ directory: project.getDirectoryOrThrow("dir/child") }]
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child") }],
                 }, {
-                    directory: project.getDirectoryOrThrow("dir2")
-                }]
+                    directory: project.getDirectoryOrThrow("dir2"),
+                }],
             });
         });
 
@@ -568,10 +568,10 @@ describe(nameof(Directory), () => {
                 directory: project.getDirectoryOrThrow("dir"),
                 children: [{
                     directory: project.getDirectoryOrThrow("dir/child1"),
-                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }]
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }],
                 }, {
-                    directory: project.getDirectoryOrThrow("dir/child2")
-                }]
+                    directory: project.getDirectoryOrThrow("dir/child2"),
+                }],
             }, project.getDirectoryOrThrow("/"));
         });
 
@@ -628,10 +628,10 @@ describe(nameof(Directory), () => {
                 directory: project.getDirectoryOrThrow("dir"),
                 children: [{
                     directory: project.getDirectoryOrThrow("dir/child1"),
-                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }]
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }],
                 }, {
-                    directory: project.getDirectoryOrThrow("dir/child2")
-                }]
+                    directory: project.getDirectoryOrThrow("dir/child2"),
+                }],
             }, project.getDirectoryOrThrow("/"));
         });
 
@@ -794,9 +794,9 @@ describe(nameof(Directory), () => {
                     directory: project.getDirectoryOrThrow("mainDir/newDir/dir2"),
                     children: [{
                         directory: project.getDirectoryOrThrow("mainDir/newDir/dir2/nested"),
-                        sourceFiles: [project.getSourceFileOrThrow("mainDir/newDir/dir2/nested/file2.ts")]
-                    }]
-                }]
+                        sourceFiles: [project.getSourceFileOrThrow("mainDir/newDir/dir2/nested/file2.ts")],
+                    }],
+                }],
             }, mainDir);
         });
 
@@ -814,8 +814,8 @@ describe(nameof(Directory), () => {
                 directory: copyDir,
                 sourceFiles: [project.getSourceFileOrThrow("mainDir/newDir/file.ts")],
                 children: [{
-                    directory: project.getDirectoryOrThrow("mainDir/newDir/child")
-                }]
+                    directory: project.getDirectoryOrThrow("mainDir/newDir/child"),
+                }],
             }, mainDir);
         });
 
@@ -998,9 +998,9 @@ describe(nameof(Directory), () => {
                     directory: project.getDirectoryOrThrow("dir/child"),
                     children: [{
                         directory: subDir,
-                        sourceFiles: [dirSubDirFile, dirSubDirFile2]
-                    }]
-                }]
+                        sourceFiles: [dirSubDirFile, dirSubDirFile2],
+                    }],
+                }],
             });
 
             expect(dirFile.getFullText()).to.equal("export default class Identifier {}\nexport * from './child/grand/file2';");
@@ -1029,7 +1029,7 @@ describe(nameof(Directory), () => {
 
             testDirectoryTree(dir, {
                 directory: dir,
-                sourceFiles: [file1, file2]
+                sourceFiles: [file1, file2],
             });
 
             expect(originalDir.wasForgotten()).to.be.true;
@@ -1245,8 +1245,8 @@ describe(nameof(Directory), () => {
                 directory: Directory,
                 toPath: string,
                 options: DirectoryCopyOptions | undefined,
-                doChecks: (err?: any) => void
-            ) => void
+                doChecks: (err?: any) => void,
+            ) => void,
         ) {
             it("should copy the entire directory to the new directory", () => {
                 const project = getProject([{ filePath: "/dir/test.ts", text: "" }]);
@@ -1407,8 +1407,8 @@ describe(nameof(Directory), () => {
                 directory: Directory,
                 toPath: string,
                 options: DirectoryMoveOptions | undefined,
-                doChecks: (err?: any) => void
-            ) => void
+                doChecks: (err?: any) => void,
+            ) => void,
         ) {
             it("should move the directory to the new directory", () => {
                 const project = getProject([{ filePath: "/dir/test.ts", text: "" }]);
@@ -1657,7 +1657,7 @@ describe(nameof(Directory), () => {
                 declarationDir + "/file1.d.ts",
                 outDir + "/subDir/file2.js.map",
                 outDir + "/subDir/file2.js",
-                declarationDir + "/subDir/file2.d.ts"
+                declarationDir + "/subDir/file2.d.ts",
             ].sort());
         }
 

@@ -19,10 +19,10 @@ describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
 
         it("should write the text with brackets and use a hanging indent", () => {
             doTest([{
-                name: "MyName"
+                name: "MyName",
             }, {
                 name: "MyNextName",
-                constraint: writer => writer.write("{").newLine().indent().write("prop: string;").newLine().write("}")
+                constraint: writer => writer.write("{").newLine().indent().write("prop: string;").newLine().write("}"),
             }], "<MyName, MyNextName extends {\n        prop: string;\n    }>");
         });
     });

@@ -7,9 +7,10 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 
 // todo: type node should not be able to return undefined
 
-const createBase = <T extends typeof Statement>(ctor: T) => TypeParameteredNode(TypedNode(JSDocableNode(AmbientableNode(
-    ExportableNode(ModifierableNode(NamedNode(ctor)))
-))));
+const createBase = <T extends typeof Statement>(ctor: T) =>
+    TypeParameteredNode(TypedNode(JSDocableNode(AmbientableNode(
+        ExportableNode(ModifierableNode(NamedNode(ctor))),
+    ))));
 export const TypeAliasDeclarationBase = createBase(Statement);
 export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {
     /**
@@ -28,7 +29,7 @@ export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasD
     getStructure(): TypeAliasDeclarationStructure {
         return callBaseGetStructure<TypeAliasDeclarationSpecificStructure>(TypeAliasDeclarationBase.prototype, this, {
             kind: StructureKind.TypeAlias,
-            type: this.getTypeNodeOrThrow().getText()
+            type: this.getTypeNodeOrThrow().getText(),
         });
     }
 }

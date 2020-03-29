@@ -73,8 +73,8 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
                 insertPos: semiColon == null ? this.getEnd() : semiColon.getStart(),
                 newText: this._getWriterWithQueuedIndentation().space().block().toString(),
                 replacing: {
-                    textLength: semiColon?.getFullWidth() ?? 0
-                }
+                    textLength: semiColon?.getFullWidth() ?? 0,
+                },
             });
 
             return this;
@@ -90,8 +90,8 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
                 insertPos: body.getPos(),
                 newText: ";",
                 replacing: {
-                    textLength: body.getFullWidth()
-                }
+                    textLength: body.getFullWidth(),
+                },
             });
 
             return this;

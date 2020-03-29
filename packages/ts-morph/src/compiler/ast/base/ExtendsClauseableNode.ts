@@ -63,7 +63,8 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
 
         insertExtends(index: number, texts: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
         insertExtends(index: number, text: string): ExpressionWithTypeArguments;
-        insertExtends(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[]
+        insertExtends(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction):
+            | ExpressionWithTypeArguments[]
             | ExpressionWithTypeArguments
         {
             const originalExtends = this.getExtends();
@@ -91,7 +92,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                     currentNodes: originalExtends,
                     insertIndex: index,
                     newText: writer.toString(),
-                    useTrailingCommas: false
+                    useTrailingCommas: false,
                 });
             }
             else {
@@ -105,7 +106,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 insertIntoParentTextRange({
                     parent: this,
                     insertPos: openBraceStart,
-                    newText: insertText
+                    newText: insertText,
                 });
             }
 
@@ -137,7 +138,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
 
         getStructure() {
             return callBaseGetStructure<ExtendsClauseableNodeStructure>(Base.prototype, this, {
-                extends: this.getExtends().map(e => e.getText())
+                extends: this.getExtends().map(e => e.getText()),
             });
         }
     };

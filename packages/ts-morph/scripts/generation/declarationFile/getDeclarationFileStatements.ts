@@ -8,7 +8,7 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
     statements.push({
         kind: tsMorph.StructureKind.ImportDeclaration,
         namedImports: ["errors", "ts", "StandardizedFilePath"],
-        moduleSpecifier: "@ts-morph/common"
+        moduleSpecifier: "@ts-morph/common",
     });
 
     for (const [name, declarations] of mainFile.getExportedDeclarations()) {
@@ -30,7 +30,7 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
             if (tsMorph.Node.isVariableDeclaration(declaration)) {
                 statements.push({
                     ...declaration.getVariableStatementOrThrow().getStructure(),
-                    declarations: [declaration.getStructure()]
+                    declarations: [declaration.getStructure()],
                 });
             }
             else if (tsMorph.Node.isStatement(declaration))
@@ -43,11 +43,11 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
     statements.push({
         kind: tsMorph.StructureKind.ImportDeclaration,
         namedImports: tsNames,
-        moduleSpecifier: "@ts-morph/common"
+        moduleSpecifier: "@ts-morph/common",
     });
     statements.push({
         kind: tsMorph.StructureKind.ExportDeclaration,
-        namedExports: ["ts", ...tsNames]
+        namedExports: ["ts", ...tsNames],
     });
 
     return statements;

@@ -42,7 +42,7 @@ export function ensureArrayInputsReadonly(inspector: TsMorphInspector, addProble
             addProblem({
                 filePath: node.getSourceFile().getFilePath(),
                 lineNumber: node.getStartLineNumber(),
-                message: `Found input array type (${node.getText()}).`
+                message: `Found input array type (${node.getText()}).`,
             });
         });
     }

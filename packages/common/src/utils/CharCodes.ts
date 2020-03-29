@@ -4,5 +4,5 @@ export const CharCodes = {
     CARRIAGE_RETURN: "\r".charCodeAt(0),
     SPACE: " ".charCodeAt(0),
     TAB: "\t".charCodeAt(0),
-    CLOSE_BRACE: "}".charCodeAt(0)
+    CLOSE_BRACE: "}".charCodeAt(0),
 };

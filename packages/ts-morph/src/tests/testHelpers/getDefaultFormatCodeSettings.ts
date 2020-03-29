@@ -13,7 +13,7 @@ export function getDefaultFormatCodeSettings(settings: FormatCodeSettings = {}):
 export function getStructureFactoryAndWriter(settings?: FormatCodeSettings) {
     return {
         writer: new CodeBlockWriter(),
-        factory: getStructureFactory(settings)
+        factory: getStructureFactory(settings),
     };
 }
 

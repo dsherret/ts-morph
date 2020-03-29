@@ -102,13 +102,13 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                 indentationText: this.getIndentationText(),
                 getSeparator: () => formattingKind,
                 previousFormattingKind: previousDecorator == null ? FormattingKind.None : formattingKind,
-                nextFormattingKind: previousDecorator == null ? formattingKind : FormattingKind.None
+                nextFormattingKind: previousDecorator == null ? formattingKind : FormattingKind.None,
             });
 
             insertIntoParentTextRange({
                 parent: decorators.length === 0 ? this : decorators[0].getParentSyntaxListOrThrow(),
                 insertPos: decorators[index - 1] == null ? this.getStart() : decorators[index - 1].getEnd(),
-                newText: decoratorCode
+                newText: decoratorCode,
             });
 
             return getNodesToReturn(decorators, this.getDecorators(), index, false);
@@ -127,7 +127,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
 
         getStructure() {
             return callBaseGetStructure<DecoratableNodeStructure>(Base.prototype, this, {
-                decorators: this.getDecorators().map(d => d.getStructure())
+                decorators: this.getDecorators().map(d => d.getStructure()),
             });
         }
     };

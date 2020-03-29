@@ -218,7 +218,7 @@ describe(nameof(NamespaceDeclaration), () => {
 
         it("should modify when changed", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<NamespaceDeclarationSpecificStructure>> = {
-                declarationKind: NamespaceDeclarationKind.Module
+                declarationKind: NamespaceDeclarationKind.Module,
             };
             doTest("namespace Identifier {\n}", structure, "module Identifier {\n}");
         });
@@ -252,7 +252,7 @@ describe(nameof(NamespaceDeclaration), () => {
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
                 isExported: false,
-                name: "Identifier"
+                name: "Identifier",
             });
         });
 
@@ -269,14 +269,14 @@ export declare module Identifier {
                     declarationKind: VariableDeclarationKind.Const,
                     declarations: [{
                         name: "t",
-                        initializer: "5"
-                    }]
+                        initializer: "5",
+                    }],
                 })],
                 docs: [{ description: "Test" }],
                 hasDeclareKeyword: true,
                 isDefaultExport: false,
                 isExported: true,
-                name: "Identifier"
+                name: "Identifier",
             });
         });
 
@@ -289,7 +289,7 @@ export declare module Identifier {
                 hasDeclareKeyword: false,
                 isDefaultExport: false,
                 isExported: false,
-                name: "global"
+                name: "global",
             });
         });
     });

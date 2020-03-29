@@ -40,7 +40,7 @@ export interface ClassLikeDeclarationBase
 
 export function ClassLikeDeclarationBase<T extends Constructor<ClassLikeDeclarationBaseExtensionType>>(Base: T): Constructor<ClassLikeDeclarationBase> & T {
     return ClassLikeDeclarationBaseSpecific(NameableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(
-        AbstractableNode(JSDocableNode(TypeParameteredNode(DecoratableNode(ModifierableNode(Base)))))
+        AbstractableNode(JSDocableNode(TypeParameteredNode(DecoratableNode(ModifierableNode(Base))))),
     )))));
 }
 
@@ -87,7 +87,7 @@ export interface ClassLikeDeclarationBaseSpecific {
      */
     insertMembers(
         index: number,
-        members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>
+        members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>,
     ): (ClassMemberTypes | CommentClassElement)[];
     /**
      * Adds a constructor.
@@ -523,7 +523,7 @@ export interface ClassLikeDeclarationBaseSpecific {
 }
 
 export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLikeDeclarationBaseSpecificExtensionType>>(
-    Base: T
+    Base: T,
 ): Constructor<ClassLikeDeclarationBaseSpecific> & T {
     return class extends Base implements ClassLikeDeclarationBaseSpecific {
         setExtends(text: string | WriterFunction) {
@@ -542,8 +542,8 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                     newText: text,
                     insertPos: childSyntaxListStart,
                     replacing: {
-                        textLength: childSyntaxList.getEnd() - childSyntaxListStart
-                    }
+                        textLength: childSyntaxList.getEnd() - childSyntaxListStart,
+                    },
                 });
             }
             else {
@@ -562,7 +562,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                 insertIntoParentTextRange({
                     parent: implementsClause == null ? this : implementsClause.getParentSyntaxListOrThrow(),
                     insertPos,
-                    newText
+                    newText,
                 });
             }
 
@@ -604,7 +604,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
 
         insertMembers(
             index: number,
-            members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>
+            members: string | WriterFunction | ReadonlyArray<string | WriterFunction | ClassMemberStructures>,
         ): (ClassMemberTypes | CommentClassElement)[] {
             const isAmbient = isNodeAmbientOrInAmbientContext(this);
             return insertIntoBracesOrSourceFileWithGetChildrenWithComments({
@@ -635,7 +635,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                }
+                },
             }) as (ClassMemberTypes | CommentClassElement)[];
 
             function structureHasBody(value: unknown) {
@@ -679,7 +679,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                }
+                },
             });
         }
 
@@ -711,14 +711,14 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.newLineIfLastNot();
 
                     this._context.structurePrinterFactory.forGetAccessorDeclaration({
-                        isAmbient: isNodeAmbientOrInAmbientContext(this)
+                        isAmbient: isNodeAmbientOrInAmbientContext(this),
                     }).printTexts(writer, structures);
 
                     if (info.nextMember != null)
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                }
+                },
             });
         }
 
@@ -746,14 +746,14 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.newLineIfLastNot();
 
                     this._context.structurePrinterFactory.forSetAccessorDeclaration({
-                        isAmbient: isNodeAmbientOrInAmbientContext(this)
+                        isAmbient: isNodeAmbientOrInAmbientContext(this),
                     }).printTexts(writer, structures);
 
                     if (info.nextMember != null)
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                }
+                },
             });
         }
 
@@ -784,7 +784,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.blankLineIfLastNot();
                     else
                         writer.newLineIfLastNot();
-                }
+                },
             });
         }
 
@@ -819,7 +819,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
                         writer.newLineIfLastNot();
                 },
                 structures,
-                expectedKind: SyntaxKind.MethodDeclaration
+                expectedKind: SyntaxKind.MethodDeclaration,
             });
         }
 
@@ -1057,7 +1057,7 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
         getMemberOrThrow(nameOrFindFunction: string | ((member: ClassMemberTypes) => boolean)): ClassMemberTypes {
             return errors.throwIfNullOrUndefined(
                 this.getMember(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("class member", nameOrFindFunction)
+                () => getNotFoundErrorMessageForNameOrFindFunction("class member", nameOrFindFunction),
             );
         }
 
@@ -1163,6 +1163,6 @@ function insertChildren<TNode extends Node>(classDeclaration: ClassLikeDeclarati
     return insertIntoBracesOrSourceFileWithGetChildren<TNode>({
         getIndexedChildren: () => classDeclaration.getMembersWithComments(),
         parent: classDeclaration,
-        ...opts
+        ...opts,
     });
 }

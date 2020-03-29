@@ -58,13 +58,13 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
             const endOrNewLinePos = getPreviousMatchingPos(
                 sourceFileText,
                 endSearchStart,
-                charCode => charCode === CharCodes.NEWLINE || !StringUtils.isWhitespaceCharCode(charCode) && charCode !== CharCodes.ASTERISK
+                charCode => charCode === CharCodes.NEWLINE || !StringUtils.isWhitespaceCharCode(charCode) && charCode !== CharCodes.ASTERISK,
             );
 
             return getPreviousMatchingPos(
                 sourceFileText,
                 endOrNewLinePos,
-                charCode => charCode !== CharCodes.NEWLINE && charCode !== CharCodes.CARRIAGE_RETURN
+                charCode => charCode !== CharCodes.NEWLINE && charCode !== CharCodes.CARRIAGE_RETURN,
             );
         }
     }
@@ -84,7 +84,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
             parent: this,
             newText: getNewText.call(this),
             replacePos: startEditPos,
-            replacingLength: endEditPos - startEditPos
+            replacingLength: endEditPos - startEditPos,
         });
 
         return this;
@@ -147,7 +147,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
             this.replaceWithText(writer => {
                 structurePrinter.printText(writer, {
                     description: this.getDescription(),
-                    tags: structures as OptionalKind<JSDocTagStructure>[]
+                    tags: structures as OptionalKind<JSDocTagStructure>[],
                 });
             });
         }
@@ -165,7 +165,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
                 parent: this,
                 insertPos: replaceStart,
                 replacing: { textLength: replaceEnd - replaceStart },
-                newText: writer.toString()
+                newText: writer.toString(),
             });
         }
 
@@ -176,7 +176,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
             return getPreviousMatchingPos(
                 this.getSourceFile().getFullText(),
                 searchStart,
-                charCode => !StringUtils.isWhitespaceCharCode(charCode) && charCode !== CharCodes.ASTERISK
+                charCode => !StringUtils.isWhitespaceCharCode(charCode) && charCode !== CharCodes.ASTERISK,
             );
         }
 
@@ -194,7 +194,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
         removeChildren({
             children: [this],
             removeFollowingSpaces: true,
-            removeFollowingNewLines: true
+            removeFollowingNewLines: true,
         });
     }
 
@@ -209,7 +209,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
             return this.replaceWithText(writer => {
                 this._context.structurePrinterFactory.forJSDoc().printText(writer, {
                     description: structure.description ?? this.getDescription(),
-                    tags: structure.tags
+                    tags: structure.tags,
                 });
             });
         }
@@ -227,7 +227,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
         return callBaseGetStructure<JSDocSpecificStructure>(JSDocBase.prototype, this, {
             kind: StructureKind.JSDoc,
             description: this.getDescription(),
-            tags: this.getTags().map(t => t.getStructure())
+            tags: this.getTags().map(t => t.getStructure()),
         });
     }
 }

@@ -38,7 +38,7 @@ export class RegularExpressionLiteral extends RegularExpressionLiteralBase<ts.Re
             sourceFile: this._sourceFile,
             start: this.getStart(),
             replacingLength: this.getWidth(),
-            newText: `/${pattern}/${flags || ""}`
+            newText: `/${pattern}/${flags || ""}`,
         });
 
         return this;

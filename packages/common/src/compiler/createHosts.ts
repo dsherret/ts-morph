@@ -27,8 +27,9 @@ export interface CreateHostsOptions {
 export function createHosts(options: CreateHostsOptions) {
     const { transactionalFileSystem, sourceFileContainer, compilerOptions, getNewLine, resolutionHost } = options;
     let version = 0;
-    const fileExistsSync = (path: StandardizedFilePath) => sourceFileContainer.containsSourceFileAtPath(path)
-        || transactionalFileSystem.fileExistsSync(path);
+    const fileExistsSync = (path: StandardizedFilePath) =>
+        sourceFileContainer.containsSourceFileAtPath(path)
+            || transactionalFileSystem.fileExistsSync(path);
     const languageServiceHost: ts.LanguageServiceHost = {
         getCompilationSettings: () => compilerOptions.get(),
         getNewLine,
@@ -46,7 +47,7 @@ export function createHosts(options: CreateHostsOptions) {
                 return undefined;
             return ts.ScriptSnapshot.fromString(sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
                 markInProject: false,
-                scriptKind: undefined
+                scriptKind: undefined,
             })!.getFullText());
         },
         getCurrentDirectory: () => transactionalFileSystem.getCurrentDirectory(),
@@ -56,7 +57,7 @@ export function createHosts(options: CreateHostsOptions) {
             else {
                 return FileUtils.pathJoin(
                     transactionalFileSystem.getCurrentDirectory(),
-                    "node_modules/typescript/lib/" + ts.getDefaultLibFileName(options)
+                    "node_modules/typescript/lib/" + ts.getDefaultLibFileName(options),
                 );
             }
         },
@@ -75,7 +76,7 @@ export function createHosts(options: CreateHostsOptions) {
         },
         resolveModuleNames: resolutionHost.resolveModuleNames,
         resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives,
-        getResolvedModuleWithFailedLookupLocationsFromCache: resolutionHost.getResolvedModuleWithFailedLookupLocationsFromCache
+        getResolvedModuleWithFailedLookupLocationsFromCache: resolutionHost.getResolvedModuleWithFailedLookupLocationsFromCache,
     };
 
     const compilerHost: ts.CompilerHost = {
@@ -84,7 +85,7 @@ export function createHosts(options: CreateHostsOptions) {
             const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
             return sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
                 markInProject: false,
-                scriptKind: undefined
+                scriptKind: undefined,
             });
         },
         // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
@@ -104,7 +105,7 @@ export function createHosts(options: CreateHostsOptions) {
         getEnvironmentVariable: (name: string) => process.env[name],
         directoryExists: dirName => languageServiceHost.directoryExists!(dirName),
         resolveModuleNames: resolutionHost.resolveModuleNames,
-        resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives
+        resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives,
     };
 
     return { languageServiceHost, compilerHost };

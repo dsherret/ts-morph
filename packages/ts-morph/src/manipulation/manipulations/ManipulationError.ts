@@ -6,7 +6,7 @@ export class ManipulationError extends errors.InvalidOperationError {
         public readonly filePath: string,
         public readonly oldText: string,
         public readonly newText: string,
-        errorMessage: string
+        errorMessage: string,
     ) {
         super(errorMessage);
     }

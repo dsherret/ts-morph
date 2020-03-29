@@ -52,7 +52,7 @@ class Directory {
     getExternalOperations() {
         return [
             ...ArrayUtils.flatten(this.getAncestors().map(a => getMoveCopyOrDeleteOperations(a))).filter(o => isAncestorAffectedOperation(this, o)),
-            ...ArrayUtils.flatten([this, ...this.getDescendants()].map(d => getMoveOrCopyOperations(d))).filter(o => !isInternalOperation(this, o))
+            ...ArrayUtils.flatten([this, ...this.getDescendants()].map(d => getMoveOrCopyOperations(d))).filter(o => !isInternalOperation(this, o)),
         ];
 
         function isInternalOperation(thisDir: Directory, operation: MoveDirectoryOperation | CopyDirectoryOperation) {
@@ -217,7 +217,7 @@ export class TransactionalFileSystem {
         parentDir.operations.push({
             kind: "deleteFile",
             index: this.getNextOperationIndex(),
-            filePath
+            filePath,
         });
         this.pathCasingMaintainer.removePath(filePath);
     }
@@ -233,7 +233,7 @@ export class TransactionalFileSystem {
         parentDir.operations.push({
             kind: "mkdir",
             index: this.getNextOperationIndex(),
-            dir
+            dir,
         });
     }
 
@@ -244,7 +244,7 @@ export class TransactionalFileSystem {
         parentDir.operations.push({
             kind: "deleteDir",
             index: this.getNextOperationIndex(),
-            dir
+            dir,
         });
         this.pathCasingMaintainer.removePath(dirPath);
     }
@@ -259,7 +259,7 @@ export class TransactionalFileSystem {
             kind: "move",
             index: this.getNextOperationIndex(),
             oldDir: moveDir,
-            newDir: destinationDir
+            newDir: destinationDir,
         };
         parentDir.operations.push(moveOperation);
         (destinationDir.getParent() || destinationDir).inboundOperations.push(moveOperation);
@@ -276,7 +276,7 @@ export class TransactionalFileSystem {
             kind: "copy",
             index: this.getNextOperationIndex(),
             oldDir: copyDir,
-            newDir: destinationDir
+            newDir: destinationDir,
         };
         parentDir.operations.push(copyOperation);
         (destinationDir.getParent() || destinationDir).inboundOperations.push(copyOperation);

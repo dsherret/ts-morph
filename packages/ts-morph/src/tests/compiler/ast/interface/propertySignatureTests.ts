@@ -31,12 +31,12 @@ describe(nameof(PropertySignature), () => {
                 name: "name",
                 type: "number",
                 initializer: "5",
-                isReadonly: true
+                isReadonly: true,
             };
             doTest(
                 "interface Identifier {\n    prop: string;\n}",
                 structure,
-                "interface Identifier {\n    /** test */\n    readonly name?: number = 5;\n}"
+                "interface Identifier {\n    /** test */\n    readonly name?: number = 5;\n}",
             );
         });
     });
@@ -66,7 +66,7 @@ describe(nameof(PropertySignature), () => {
             doTest(
                 "interface Identifier {\n    member: string;\n    member2: string;\n}",
                 "member2",
-                "interface Identifier {\n    member: string;\n}"
+                "interface Identifier {\n    member: string;\n}",
             );
         });
     });
@@ -86,7 +86,7 @@ describe(nameof(PropertySignature), () => {
                 initializer: undefined,
                 isReadonly: false,
                 name: "prop",
-                type: undefined
+                type: undefined,
             });
         });
 
@@ -103,7 +103,7 @@ interface Identifier {
                 initializer: "5",
                 isReadonly: true,
                 name: "prop",
-                type: "number"
+                type: "number",
             });
         });
     });

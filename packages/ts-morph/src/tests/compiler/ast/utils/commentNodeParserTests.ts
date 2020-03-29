@@ -9,7 +9,7 @@ describe(nameof(CommentNodeParser), () => {
     function assertEqual(
         expectedNodes: { kind: SyntaxKind; pos: number; end: number; }[],
         actualNodes: { kind: SyntaxKind; pos: number; end: number; }[],
-        message?: string
+        message?: string,
     ) {
         expect(actualNodes.map(n => ({ kind: n.kind, pos: n.pos, end: n.end }))).to.deep.equal(expectedNodes, message);
     }
@@ -38,7 +38,7 @@ describe(nameof(CommentNodeParser), () => {
                 const adjustedExpectedNodes = expectedNodes.map(n => ({
                     kind: n.kind,
                     pos: (n.pos === 0 && !isComment(n) ? leadingText.length - 1 : leadingText.length) + n.pos,
-                    end: n.end + leadingText.length
+                    end: n.end + leadingText.length,
                 }));
                 assertEqual(adjustedExpectedNodes, result, message);
             }
@@ -48,15 +48,15 @@ describe(nameof(CommentNodeParser), () => {
             doStatementedTests("// a\nlet a;\n//b", [{
                 kind: ts.SyntaxKind.SingleLineCommentTrivia,
                 pos: 0,
-                end: 4
+                end: 4,
             }, {
                 kind: ts.SyntaxKind.VariableStatement,
                 pos: 0,
-                end: 11
+                end: 11,
             }, {
                 kind: ts.SyntaxKind.SingleLineCommentTrivia,
                 pos: 12,
-                end: 15
+                end: 15,
             }]);
         });
 
@@ -64,7 +64,7 @@ describe(nameof(CommentNodeParser), () => {
             doStatementedTests("/// a\n", [{
                 kind: ts.SyntaxKind.SingleLineCommentTrivia,
                 pos: 0,
-                end: 5
+                end: 5,
             }]);
         });
 
@@ -72,15 +72,15 @@ describe(nameof(CommentNodeParser), () => {
             doStatementedTests("/*a*/\nlet a;\n/*b*/", [{
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,
                 pos: 0,
-                end: 5
+                end: 5,
             }, {
                 kind: ts.SyntaxKind.VariableStatement,
                 pos: 0,
-                end: 12
+                end: 12,
             }, {
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,
                 pos: 13,
-                end: 18
+                end: 18,
             }]);
         });
 
@@ -88,7 +88,7 @@ describe(nameof(CommentNodeParser), () => {
             doStatementedTests("/* a */let a; /* b */ // c", [{
                 kind: ts.SyntaxKind.VariableStatement,
                 pos: 0,
-                end: 13
+                end: 13,
             }]);
         });
 
@@ -96,7 +96,7 @@ describe(nameof(CommentNodeParser), () => {
             doStatementedTests("/*\na\n*/let a;", [{
                 kind: ts.SyntaxKind.VariableStatement,
                 pos: 0,
-                end: 13
+                end: 13,
             }]);
         });
 
@@ -104,11 +104,11 @@ describe(nameof(CommentNodeParser), () => {
             doStatementedTests("/*a*/let a;/*b*/let b;", [{
                 kind: ts.SyntaxKind.VariableStatement,
                 pos: 0,
-                end: 11
+                end: 11,
             }, {
                 kind: ts.SyntaxKind.VariableStatement,
                 pos: 11,
-                end: 22
+                end: 22,
             }]);
         });
 
@@ -116,11 +116,11 @@ describe(nameof(CommentNodeParser), () => {
             doStatementedTests("/t/g;let t;", [{
                 kind: ts.SyntaxKind.ExpressionStatement,
                 pos: 0,
-                end: 5
+                end: 5,
             }, {
                 kind: ts.SyntaxKind.VariableStatement,
                 pos: 5,
-                end: 11
+                end: 11,
             }]);
         });
 
@@ -129,11 +129,11 @@ describe(nameof(CommentNodeParser), () => {
             doStatementedTests(text, [{
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,
                 pos: 0,
-                end: 5
+                end: 5,
             }, {
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,
                 pos: 10,
-                end: 15
+                end: 15,
             }]);
         });
 
@@ -143,7 +143,7 @@ describe(nameof(CommentNodeParser), () => {
             assertEqual([{
                 kind: ts.SyntaxKind.ExpressionStatement,
                 pos: 0,
-                end: 2
+                end: 2,
             }], result);
         });
 
@@ -153,7 +153,7 @@ describe(nameof(CommentNodeParser), () => {
             assertEqual([{
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,
                 pos: 15,
-                end: 20
+                end: 20,
             }], result);
         });
 
@@ -163,7 +163,7 @@ describe(nameof(CommentNodeParser), () => {
             assertEqual([{
                 kind: ts.SyntaxKind.ExpressionStatement,
                 pos: 14,
-                end: 17
+                end: 17,
             }], result);
         });
 
@@ -172,7 +172,7 @@ describe(nameof(CommentNodeParser), () => {
                 doStatementedTests("/** a */\nlet a;", [{
                     kind: ts.SyntaxKind.VariableStatement,
                     pos: 0,
-                    end: 15
+                    end: 15,
                 }]);
             });
 
@@ -180,7 +180,7 @@ describe(nameof(CommentNodeParser), () => {
                 doStatementedTests("/** a */", [{
                     kind: ts.SyntaxKind.MultiLineCommentTrivia,
                     pos: 0,
-                    end: 8
+                    end: 8,
                 }]);
             });
 
@@ -188,11 +188,11 @@ describe(nameof(CommentNodeParser), () => {
                 doStatementedTests("let a;\n/** a */", [{
                     kind: ts.SyntaxKind.VariableStatement,
                     pos: 0,
-                    end: 6
+                    end: 6,
                 }, {
                     kind: ts.SyntaxKind.MultiLineCommentTrivia,
                     pos: 7,
-                    end: 15
+                    end: 15,
                 }]);
             });
         });
@@ -227,7 +227,7 @@ describe(nameof(CommentNodeParser), () => {
             doTest("class c {\n/*a*/p;/*b*/ //c\n}", [{
                 kind: ts.SyntaxKind.PropertyDeclaration,
                 pos: 9,
-                end: 17
+                end: 17,
             }]);
         });
 
@@ -235,7 +235,7 @@ describe(nameof(CommentNodeParser), () => {
             doTest("interface i { // test\np;\n }", [{
                 kind: ts.SyntaxKind.PropertySignature,
                 pos: 13,
-                end: 24
+                end: 24,
             }]);
         });
 
@@ -243,15 +243,15 @@ describe(nameof(CommentNodeParser), () => {
             doTest("enum e {\n/*a*/\na/*b*/\n//c\n}", [{
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,
                 pos: 9,
-                end: 14
+                end: 14,
             }, {
                 kind: ts.SyntaxKind.EnumMember,
                 pos: 8,
-                end: 16
+                end: 16,
             }, {
                 kind: ts.SyntaxKind.SingleLineCommentTrivia,
                 pos: 22,
-                end: 25
+                end: 25,
             }]);
         });
 
@@ -259,7 +259,7 @@ describe(nameof(CommentNodeParser), () => {
             doTest("const c = class {\n//c\n};", [{
                 kind: ts.SyntaxKind.SingleLineCommentTrivia,
                 pos: 18,
-                end: 21
+                end: 21,
             }]);
         });
 
@@ -267,7 +267,7 @@ describe(nameof(CommentNodeParser), () => {
             doTest("type t = {\n/**a*/\n};", [{
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,
                 pos: 11,
-                end: 17
+                end: 17,
             }]);
         });
 
@@ -275,11 +275,11 @@ describe(nameof(CommentNodeParser), () => {
             doTest("const o = {\nprop: 5\n/**a*/\n};", [{
                 kind: ts.SyntaxKind.PropertyAssignment,
                 pos: 11,
-                end: 19
+                end: 19,
             }, {
                 kind: ts.SyntaxKind.MultiLineCommentTrivia,
                 pos: 20,
-                end: 26
+                end: 26,
             }]);
         });
 
@@ -288,11 +288,11 @@ describe(nameof(CommentNodeParser), () => {
             doTest("const o = {\nprop: 5,\n// 1\n};", [{
                 kind: ts.SyntaxKind.PropertyAssignment,
                 pos: 11,
-                end: 19
+                end: 19,
             }, {
                 kind: ts.SyntaxKind.SingleLineCommentTrivia,
                 pos: 21,
-                end: 25
+                end: 25,
             }]);
         });
 
@@ -300,7 +300,7 @@ describe(nameof(CommentNodeParser), () => {
             doTest("switch (a) {\ncase 5:\n//a\n}", [{
                 kind: ts.SyntaxKind.SingleLineCommentTrivia,
                 pos: 21,
-                end: 24
+                end: 24,
             }]);
         });
 
@@ -308,7 +308,7 @@ describe(nameof(CommentNodeParser), () => {
             doTest("switch (a) {\ncase 5: {\n//a\n}}", [{
                 kind: ts.SyntaxKind.Block,
                 pos: 20,
-                end: 28
+                end: 28,
             }]);
         });
 
@@ -316,7 +316,7 @@ describe(nameof(CommentNodeParser), () => {
             doTest("switch (a) {\ndefault:\n//a\n}", [{
                 kind: ts.SyntaxKind.SingleLineCommentTrivia,
                 pos: 22,
-                end: 25
+                end: 25,
             }]);
         });
 
@@ -324,7 +324,7 @@ describe(nameof(CommentNodeParser), () => {
             doTest("switch (a) {\ndefault: {\n//a\n}}", [{
                 kind: ts.SyntaxKind.Block,
                 pos: 21,
-                end: 29
+                end: 29,
             }]);
         });
     });

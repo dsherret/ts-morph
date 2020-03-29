@@ -106,7 +106,7 @@ describe(nameof(VariableDeclaration), () => {
                 name: "t",
                 initializer: undefined,
                 type: undefined,
-                hasExclamationToken: false
+                hasExclamationToken: false,
             });
         });
 
@@ -116,7 +116,7 @@ describe(nameof(VariableDeclaration), () => {
                 name: "t",
                 initializer: "5",
                 type: "number",
-                hasExclamationToken: true
+                hasExclamationToken: true,
             });
         });
     });

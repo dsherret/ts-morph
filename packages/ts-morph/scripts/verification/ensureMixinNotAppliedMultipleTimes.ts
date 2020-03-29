@@ -25,7 +25,7 @@ export function ensureMixinNotAppliedMultipleTimes(inspector: TsMorphInspector, 
                 addProblem({
                     filePath: node.getFilePath(),
                     lineNumber: node.getStartLineNumber(),
-                    message: `Node ${node.getName()} has mixin ${mixin.getName()} applied multiple times.`
+                    message: `Node ${node.getName()} has mixin ${mixin.getName()} applied multiple times.`,
                 });
             }
             else {

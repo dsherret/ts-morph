@@ -3,7 +3,7 @@ import { exec } from "child_process";
 export function execScript(command: string, cwd: string) {
     return new Promise<string>((resolve, reject) => {
         exec(command, {
-            cwd
+            cwd,
         }, (err, stdout, stderr) => {
             if (err) {
                 console.log(stdout);

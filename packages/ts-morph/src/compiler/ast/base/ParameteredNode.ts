@@ -104,7 +104,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 currentNodes: parameters,
                 insertIndex: index,
                 newText: writer.toString(),
-                useTrailingCommas: false
+                useTrailingCommas: false,
             });
 
             return getNodesToReturn(parameters, this.getParameters(), index, false);
@@ -123,7 +123,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
 
         getStructure() {
             return callBaseGetStructure<ParameteredNodeStructure>(Base.prototype, this, {
-                parameters: this.getParameters().map(p => p.getStructure())
+                parameters: this.getParameters().map(p => p.getStructure()),
             });
         }
     };

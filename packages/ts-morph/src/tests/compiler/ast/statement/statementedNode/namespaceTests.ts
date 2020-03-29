@@ -16,7 +16,7 @@ describe(nameof(StatementedNode), () => {
         it("should insert to an empty file", () => {
             doTest("", 0, [{
                 name: "Identifier",
-                declarationKind: NamespaceDeclarationKind.Module
+                declarationKind: NamespaceDeclarationKind.Module,
             }], "module Identifier {\n}\n");
         });
 
@@ -42,7 +42,7 @@ describe(nameof(StatementedNode), () => {
             const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertNamespaces(0, [{
-                name: "Identifier"
+                name: "Identifier",
             }]);
 
             expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    namespace Identifier {\n    }\n}\n");
@@ -56,7 +56,7 @@ describe(nameof(StatementedNode), () => {
                 declarationKind: NamespaceDeclarationKind.Module,
                 isDefaultExport: false,
                 isExported: true,
-                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"]
+                statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"],
             };
 
             doTest(
@@ -65,7 +65,7 @@ describe(nameof(StatementedNode), () => {
                 [structure],
                 "/** Test */\nexport module n {\n"
                     + "    class C {\n    }\n\n    console.log('here');\n"
-                    + "}\n"
+                    + "}\n",
             );
         });
 
@@ -77,8 +77,8 @@ describe(nameof(StatementedNode), () => {
                 statements: [{
                     kind: StructureKind.Class,
                     name: "Identifier",
-                    methods: [{ name: "myMethod" }]
-                }]
+                    methods: [{ name: "myMethod" }],
+                }],
             }]);
 
             expect(sourceFile.getFullText())
@@ -89,14 +89,14 @@ describe(nameof(StatementedNode), () => {
         it("should insert a global module", () => {
             doTest("", 0, [{
                 name: "global",
-                declarationKind: NamespaceDeclarationKind.Global
+                declarationKind: NamespaceDeclarationKind.Global,
             }], "global {\n}\n");
         });
 
         it("should insert a global module and ignore value in the name property", () => {
             doTest("", 0, [{
                 name: "somethingElse",
-                declarationKind: NamespaceDeclarationKind.Global // priority
+                declarationKind: NamespaceDeclarationKind.Global, // priority
             }], "global {\n}\n");
         });
 

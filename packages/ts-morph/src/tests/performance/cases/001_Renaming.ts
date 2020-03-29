@@ -17,8 +17,8 @@ export class RenamingPerformanceTest extends PerformanceTestTemplate<ClassDeclar
         sourceFile.set({
             statements: [{
                 kind: StructureKind.Class,
-                name: "MyClass"
-            }, ...assignmentStatements]
+                name: "MyClass",
+            }, ...assignmentStatements],
         });
 
         return sourceFile.getClassOrThrow("MyClass");

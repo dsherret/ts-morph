@@ -56,7 +56,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 insertIntoParentTextRange({
                     insertPos: getInsertPos.call(this),
                     parent: this,
-                    newText: "?"
+                    newText: "?",
                 });
             }
             else {
@@ -92,7 +92,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
 
         getStructure() {
             return callBaseGetStructure<QuestionTokenableNodeStructure>(Base.prototype, this, {
-                hasQuestionToken: this.hasQuestionToken()
+                hasQuestionToken: this.hasQuestionToken(),
             });
         }
     };

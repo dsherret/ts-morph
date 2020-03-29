@@ -48,7 +48,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
         insertIntoParentTextRange({
             insertPos: this.getNameNode().getEnd(),
             parent: this,
-            newText: `=${text}`
+            newText: `=${text}`,
         });
 
         return this;
@@ -65,7 +65,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
         removeChildren({
             children: [initializer.getPreviousSiblingIfKindOrThrow(SyntaxKind.EqualsToken), initializer],
             removePrecedingSpaces: true,
-            removePrecedingNewLines: true
+            removePrecedingNewLines: true,
         });
 
         return this;
@@ -78,7 +78,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
         removeChildren({
             children: [this],
             removePrecedingNewLines: true,
-            removePrecedingSpaces: true
+            removePrecedingSpaces: true,
         });
     }
 
@@ -104,7 +104,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
         const initializer = this.getInitializer();
         return callBaseGetStructure<JsxAttributeSpecificStructure>(JsxAttributeBase.prototype, this, {
             kind: StructureKind.JsxAttribute,
-            initializer: initializer?.getText()
+            initializer: initializer?.getText(),
         });
     }
 }

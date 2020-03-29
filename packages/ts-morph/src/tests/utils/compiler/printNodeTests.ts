@@ -52,7 +52,7 @@ describe(nameof(printNode), () => {
             /*typeParameters*/ undefined,
             /*parameters*/ [],
             /*returnType*/ ts.createKeywordTypeNode(SyntaxKind.NumberKeyword),
-            ts.createBlock([ts.createReturn(ts.createLiteral(5))], /*multiline*/ true)
+            ts.createBlock([ts.createReturn(ts.createLiteral(5))], /*multiline*/ true),
         );
         expect(printNode(tsFunctionDeclaration)).to.equal("export function myFunction(): number {\n    return 5;\n}");
     });

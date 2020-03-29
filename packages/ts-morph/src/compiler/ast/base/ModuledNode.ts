@@ -221,9 +221,9 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                         this._context.structurePrinterFactory.forImportDeclaration().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => Node.isImportDeclaration(previousMember) || isComment(previousMember.compilerNode),
-                        nextNewLine: nextMember => Node.isImportDeclaration(nextMember)
+                        nextNewLine: nextMember => Node.isImportDeclaration(nextMember),
                     });
-                }
+                },
             });
         }
 
@@ -241,7 +241,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         getImportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((importDeclaration: ImportDeclaration) => boolean)) {
             return errors.throwIfNullOrUndefined(
                 this.getImportDeclaration(conditionOrModuleSpecifier),
-                "Expected to find an import with the provided condition."
+                "Expected to find an import with the provided condition.",
             );
         }
 
@@ -272,9 +272,9 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                         this._context.structurePrinterFactory.forExportDeclaration().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => Node.isExportDeclaration(previousMember) || isComment(previousMember.compilerNode),
-                        nextNewLine: nextMember => Node.isExportDeclaration(nextMember)
+                        nextNewLine: nextMember => Node.isExportDeclaration(nextMember),
                     });
-                }
+                },
             });
         }
 
@@ -292,7 +292,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
         getExportDeclarationOrThrow(conditionOrModuleSpecifier: string | ((exportDeclaration: ExportDeclaration) => boolean)) {
             return errors.throwIfNullOrUndefined(
                 this.getExportDeclaration(conditionOrModuleSpecifier),
-                "Expected to find an export declaration with the provided condition."
+                "Expected to find an export declaration with the provided condition.",
             );
         }
 
@@ -323,9 +323,9 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                         this._context.structurePrinterFactory.forExportAssignment().printTexts(writer, structures);
                     }, {
                         previousNewLine: previousMember => Node.isExportAssignment(previousMember) || isComment(previousMember.compilerNode),
-                        nextNewLine: nextMember => Node.isExportAssignment(nextMember)
+                        nextNewLine: nextMember => Node.isExportAssignment(nextMember),
                     });
-                }
+                },
             });
         }
 

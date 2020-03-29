@@ -89,7 +89,7 @@ describe(nameof(ExportAssignment), () => {
         it("should set everything when specified", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<ExportAssignmentStructure>> = {
                 expression: "6",
-                isExportEquals: false
+                isExportEquals: false,
             };
             doTest("export = 5;", structure, "export default 6;");
         });
@@ -105,7 +105,7 @@ describe(nameof(ExportAssignment), () => {
             doTest("export = 5;", {
                 kind: StructureKind.ExportAssignment,
                 expression: "5",
-                isExportEquals: true
+                isExportEquals: true,
             });
         });
 
@@ -113,7 +113,7 @@ describe(nameof(ExportAssignment), () => {
             doTest("export default 5;", {
                 kind: StructureKind.ExportAssignment,
                 expression: "5",
-                isExportEquals: false
+                isExportEquals: false,
             });
         });
     });

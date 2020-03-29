@@ -34,8 +34,8 @@ export class TaggedTemplateExpression extends MemberExpression<ts.TaggedTemplate
             newText: this.getTemplate().getText(),
             replacing: {
                 textLength: this.getWidth(),
-                nodes: [this]
-            }
+                nodes: [this],
+            },
         });
 
         return parent.getChildAtIndex(index) as TemplateLiteral;

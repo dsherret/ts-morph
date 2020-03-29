@@ -71,8 +71,8 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
                 insertPos,
                 newText,
                 replacing: {
-                    textLength: typeNode == null ? 0 : typeNode.getWidth()
-                }
+                    textLength: typeNode == null ? 0 : typeNode.getWidth(),
+                },
             });
 
             return this;
@@ -120,7 +120,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         getStructure() {
             const typeNode = this.getTypeNode();
             return callBaseGetStructure<TypedNodeStructure>(Base.prototype, this, {
-                type: typeNode ? typeNode.getText({ trimLeadingIndentation: true }) : undefined
+                type: typeNode ? typeNode.getText({ trimLeadingIndentation: true }) : undefined,
             });
         }
     };

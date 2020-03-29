@@ -59,7 +59,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 `{\n        name2\n    }`,
                 0,
                 writer => writer.newLine().writeLine("name1"),
-                `{\n        name1,\n        name2\n    }`
+                `{\n        name1,\n        name2\n    }`,
             );
         });
 
@@ -110,7 +110,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 `[\n        name2\n    ]`,
                 0,
                 writer => writer.newLine().writeLine("name1"),
-                `[\n        name1,\n        name2\n    ]`
+                `[\n        name1,\n        name2\n    ]`,
             );
         });
 
@@ -124,7 +124,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 `[\n        name1\n    ]`,
                 1,
                 writer => writer.newLine().writeLine("name2"),
-                `[\n        name1,\n        name2\n    ]`
+                `[\n        name1,\n        name2\n    ]`,
             );
         });
 
@@ -142,7 +142,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
         const objectLiteralExpression = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression);
         return {
             objectLiteralExpression,
-            ...opts
+            ...opts,
         };
     }
 
@@ -159,7 +159,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 "const t = {\n    // test\n};",
                 1,
                 [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    // test\n    prop2: 4\n};"
+                "const t = {\n    // test\n    prop2: 4\n};",
             );
         });
 
@@ -168,7 +168,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 "const t = {\n    prop1\n    // test\n};",
                 2,
                 [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    prop1,\n    // test\n    prop2: 4\n};"
+                "const t = {\n    prop1,\n    // test\n    prop2: 4\n};",
             );
         });
 
@@ -177,7 +177,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 "const t = {\n    prop1\n    /* 1 */ // 2\n};",
                 2,
                 [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    prop1,\n    /* 1 */ // 2\n    prop2: 4\n};"
+                "const t = {\n    prop1,\n    /* 1 */ // 2\n    prop2: 4\n};",
             );
         });
 
@@ -186,7 +186,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 "const t = {\n    // test\n    prop1: 5\n};",
                 2,
                 [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    // test\n    prop1: 5,\n    prop2: 4\n};"
+                "const t = {\n    // test\n    prop1: 5,\n    prop2: 4\n};",
             );
         });
 
@@ -195,7 +195,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 "const t = {\n    // test\n};",
                 0,
                 [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    prop2: 4\n    // test\n};"
+                "const t = {\n    prop2: 4\n    // test\n};",
             );
         });
 
@@ -204,7 +204,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 "const t = {\n    // test\n    p};",
                 0,
                 [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    prop2: 4,\n    // test\n    p};"
+                "const t = {\n    prop2: 4,\n    // test\n    p};",
             );
         });
 
@@ -213,7 +213,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
                 "const t = {\n    p\n    // test\n};",
                 1,
                 [{ name: "prop2", initializer: "4" }],
-                "const t = {\n    p,\n    prop2: 4\n    // test\n};"
+                "const t = {\n    p,\n    prop2: 4\n    // test\n};",
             );
         });
     });

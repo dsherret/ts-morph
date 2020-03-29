@@ -56,7 +56,7 @@ export class ProjectContext {
         this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, fileSystemWrapper);
         this._languageService = opts.createLanguageService
             ? new LanguageService(this, {
-                resolutionHost: opts.resolutionHost && opts.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get())
+                resolutionHost: opts.resolutionHost && opts.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get()),
             })
             : undefined;
 
@@ -146,7 +146,7 @@ export class ProjectContext {
             newLine: this.manipulationSettings.getNewLineKindAsString(),
             indentNumberOfSpaces: indentationText === IndentationText.Tab ? undefined : indentationText.length,
             useTabs: indentationText === IndentationText.Tab,
-            useSingleQuote: this.manipulationSettings.getQuoteKind() === QuoteKind.Single
+            useSingleQuote: this.manipulationSettings.getQuoteKind() === QuoteKind.Single,
         });
     }
 
@@ -184,7 +184,7 @@ export class ProjectContext {
                 for (const dir of this.compilerFactory.getChildDirectoriesOfDirectory(dirPath))
                     result.push(dir.getPath());
                 return result;
-            }
+            },
         };
     }
 
@@ -193,7 +193,7 @@ export class ProjectContext {
         return createModuleResolutionHost({
             transactionalFileSystem: this.fileSystemWrapper,
             getEncoding: () => this.getEncoding(),
-            sourceFileContainer: this.getSourceFileContainer()
+            sourceFileContainer: this.getSourceFileContainer(),
         });
     }
 

@@ -23,7 +23,7 @@ export class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> 
     getStructure(): SpreadAssignmentStructure {
         return callBaseGetStructure<SpreadAssignmentSpecificStructure & ExpressionedNodeStructure>(SpreadAssignmentBase.prototype, this, {
             kind: StructureKind.SpreadAssignment,
-            expression: this.getExpression().getText() // todo: should this be moved down to the base? if not, explain in a comment here
+            expression: this.getExpression().getText(), // todo: should this be moved down to the base? if not, explain in a comment here
         }) as any as SpreadAssignmentStructure;
     }
 }

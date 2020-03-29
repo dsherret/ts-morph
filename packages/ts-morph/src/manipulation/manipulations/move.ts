@@ -21,6 +21,6 @@ export function changeChildOrder<TParentNode extends Node>(opts: ChangeChildOrde
     doManipulation(
         parent._sourceFile,
         new ChangingChildOrderTextManipulator(opts),
-        new NodeHandlerFactory().getForChangingChildOrder(opts)
+        new NodeHandlerFactory().getForChangingChildOrder(opts),
     );
 }

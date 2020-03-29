@@ -18,8 +18,8 @@ describe(nameof(Project), () => {
         it("should set the manipulation settings if provided", () => {
             const project = new Project({
                 manipulationSettings: {
-                    indentationText: IndentationText.EightSpaces
-                }
+                    indentationText: IndentationText.EightSpaces,
+                },
             });
 
             expect(project.manipulationSettings.getIndentationText()).to.equal(IndentationText.EightSpaces);
@@ -74,28 +74,32 @@ describe(nameof(Project), () => {
 
         describe("custom module resolution", () => {
             it("should not throw if getting the compiler options not within a method", () => {
-                expect(() => new Project({
-                    useInMemoryFileSystem: true,
-                    resolutionHost: (_, getCompilerOptions) => {
-                        // this should be allowed now
-                        expect(getCompilerOptions()).to.deep.equal({ allowJs: true });
-                        return {};
-                    },
-                    compilerOptions: {
-                        allowJs: true
-                    }
-                })).to.not.throw();
+                expect(() =>
+                    new Project({
+                        useInMemoryFileSystem: true,
+                        resolutionHost: (_, getCompilerOptions) => {
+                            // this should be allowed now
+                            expect(getCompilerOptions()).to.deep.equal({ allowJs: true });
+                            return {};
+                        },
+                        compilerOptions: {
+                            allowJs: true,
+                        },
+                    })
+                ).to.not.throw();
             });
 
             it("should not throw if using the module resolution host not within a method", () => {
-                expect(() => new Project({
-                    useInMemoryFileSystem: true,
-                    resolutionHost: moduleResolutionHost => {
-                        // this is now allowed here, but used to not be
-                        moduleResolutionHost.fileExists("./test.ts");
-                        return {};
-                    }
-                })).to.not.throw();
+                expect(() =>
+                    new Project({
+                        useInMemoryFileSystem: true,
+                        resolutionHost: moduleResolutionHost => {
+                            // this is now allowed here, but used to not be
+                            moduleResolutionHost.fileExists("./test.ts");
+                            return {};
+                        },
+                    })
+                ).to.not.throw();
             });
 
             function setup() {
@@ -115,7 +119,7 @@ describe(nameof(Project), () => {
                                 }
 
                                 return resolvedModules;
-                            }
+                            },
                         };
 
                         function removeTsExtension(moduleName: string) {
@@ -123,7 +127,7 @@ describe(nameof(Project), () => {
                                 return moduleName.slice(0, -3);
                             return moduleName;
                         }
-                    }
+                    },
                 });
 
                 const testFile = project.createSourceFile("/Test.ts", "export class Test {}");
@@ -178,14 +182,14 @@ describe(nameof(Project), () => {
                                 }
 
                                 return resolvedTypeReferenceDirectives;
-                            }
+                            },
                         };
 
                         function replaceAsdfExtension(moduleName: string) {
                             return moduleName.replace("asdf", "");
                         }
                     },
-                    tsConfigFilePath: "/dir/tsconfig.json"
+                    tsConfigFilePath: "/dir/tsconfig.json",
                 });
 
                 const mainFile = project.getSourceFileOrThrow("main.ts");
@@ -241,7 +245,7 @@ describe(nameof(Project), () => {
                 initialFiles,
                 resolvedFiles,
                 initialDirectories,
-                resolvedDirectories
+                resolvedDirectories,
             } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
             expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles], "initial");
             project.getSourceFiles()[0].addStatements("console.log(5);");
@@ -261,7 +265,7 @@ describe(nameof(Project), () => {
                 nodeModuleFiles,
                 initialDirectories,
                 resolvedDirectories,
-                nodeModuleDirectories
+                nodeModuleDirectories,
             } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
 
             expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([...initialFiles], "initial");
@@ -279,7 +283,7 @@ describe(nameof(Project), () => {
                 resolvedFiles,
                 nodeModuleFiles,
                 initialDirectories,
-                resolvedDirectories
+                resolvedDirectories,
             } = fileDependencyResolutionSetup({ skipFileDependencyResolution: true });
             project.addDirectoryAtPath("/node_modules/library");
             const result = project.resolveSourceFileDependencies();
@@ -342,7 +346,7 @@ describe(nameof(Project), () => {
             resolvedFiles: ["/other/referenced-file.d.ts"],
             resolvedDirectories: ["/other"],
             nodeModuleFiles: ["/node_modules/library/index.d.ts"],
-            nodeModuleDirectories: ["/node_modules", "/node_modules/library"]
+            nodeModuleDirectories: ["/node_modules", "/node_modules/library"],
         };
     }
 
@@ -356,7 +360,7 @@ describe(nameof(Project), () => {
         it(`should not get the compiler options from tsconfig.json when not providing anything and a tsconfig exists`, () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{
                 filePath: "tsconfig.json",
-                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
+                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`,
             }]);
             const project = new Project({ fileSystem });
             expect(project.getCompilerOptions()).to.deep.equal({});
@@ -371,16 +375,16 @@ describe(nameof(Project), () => {
         function doTsConfigTest(addFilesFromTsConfig: boolean) {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{
                 filePath: "tsconfig.json",
-                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
+                text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`,
             }]);
             const project = new Project({
                 tsConfigFilePath: "tsconfig.json",
                 compilerOptions: {
                     target: 2,
-                    allowJs: true
+                    allowJs: true,
                 },
                 addFilesFromTsConfig, // the behaviour changes based on this value so it's good to test both of these
-                fileSystem
+                fileSystem,
             });
             expect(project.getCompilerOptions()).to.deep.equal({ rootDir: "/test", target: 2, allowJs: true, configFilePath: "/tsconfig.json" });
         }
@@ -418,10 +422,10 @@ describe(nameof(Project), () => {
                 directory: project.getDirectoryOrThrow("dir"),
                 children: [{
                     directory: project.getDirectoryOrThrow("dir/child1"),
-                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }]
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }],
                 }, {
-                    directory: project.getDirectoryOrThrow("dir/child2")
-                }]
+                    directory: project.getDirectoryOrThrow("dir/child2"),
+                }],
             }, project.getDirectoryOrThrow("/"));
         });
 
@@ -469,10 +473,10 @@ describe(nameof(Project), () => {
                 directory: project.getDirectoryOrThrow("dir"),
                 children: [{
                     directory: project.getDirectoryOrThrow("dir/child1"),
-                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }]
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }],
                 }, {
-                    directory: project.getDirectoryOrThrow("dir/child2")
-                }]
+                    directory: project.getDirectoryOrThrow("dir/child2"),
+                }],
             }, project.getDirectoryOrThrow("/"));
         });
 
@@ -590,7 +594,7 @@ describe(nameof(Project), () => {
             expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal([
                 project.getDirectoryOrThrow("/dir/sub"),
                 project.getDirectoryOrThrow("/dir/sub2"),
-                project.getDirectoryOrThrow("/dir/sub3/child")
+                project.getDirectoryOrThrow("/dir/sub3/child"),
             ].map(d => d.getPath()));
         });
 
@@ -600,7 +604,7 @@ describe(nameof(Project), () => {
             expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal([
                 project.getDirectoryOrThrow("/dir/sub"),
                 project.getDirectoryOrThrow("/dir/sub2"),
-                project.getDirectoryOrThrow("/dir/sub3/child")
+                project.getDirectoryOrThrow("/dir/sub3/child"),
             ].map(d => d.getPath()));
         });
 
@@ -611,7 +615,7 @@ describe(nameof(Project), () => {
             expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal([
                 project.getDirectoryOrThrow("/dir/sub"),
                 project.getDirectoryOrThrow("/dir/sub2"),
-                project.getDirectoryOrThrow("/dir/sub3/child")
+                project.getDirectoryOrThrow("/dir/sub3/child"),
             ].map(d => d.getPath()));
         });
     });
@@ -631,7 +635,7 @@ describe(nameof(Project), () => {
                 "/dir2",
                 "/dir3/child", // sorted here because it's an orphan directory
                 "/dir/child",
-                "/dir2/child"
+                "/dir2/child",
             ]);
         });
 
@@ -767,13 +771,13 @@ describe(nameof(Project), () => {
                     sourceFiles: [project.getSourceFileOrThrow("/dir/child/test.ts")],
                     children: [{
                         directory: project.getDirectoryOrThrow("/dir/child/grandChild"),
-                        sourceFiles: [project.getSourceFileOrThrow("/dir/child/grandChild/test.ts")]
-                    }]
-                }]
+                        sourceFiles: [project.getSourceFileOrThrow("/dir/child/grandChild/test.ts")],
+                    }],
+                }],
             });
             testHelpers.testDirectoryTree(project.getDirectoryOrThrow("/dir3"), {
                 directory: project.getDirectoryOrThrow("/dir3"),
-                sourceFiles: [project.getSourceFileOrThrow("/dir3/test.ts")]
+                sourceFiles: [project.getSourceFileOrThrow("/dir3/test.ts")],
             });
         });
 
@@ -843,15 +847,15 @@ describe(nameof(Project), () => {
             const sourceFile = project.createSourceFile("MyFile.ts", {
                 statements: [{
                     kind: StructureKind.Enum,
-                    name: "MyEnum"
-                }]
+                    name: "MyEnum",
+                }],
             });
             expect(sourceFile.getFullText()).to.equal(`enum MyEnum {\n}\n`);
         });
 
         it("should add for everything in the structure", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<SourceFileStructure>> = {
-                statements: ["console.log('here');"]
+                statements: ["console.log('here');"],
             };
             const sourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile("MyFile.ts", structure);
             const expectedText = "console.log('here');\n";
@@ -875,7 +879,7 @@ describe(nameof(Project), () => {
             const enumDef = sourceFile.getEnums()[0];
             enumDef.rename("NewName");
             const addedEnum = sourceFile.addEnum({
-                name: "MyNewEnum"
+                name: "MyNewEnum",
             });
             addedEnum.rename("MyOtherNewName");
             const enumMember = enumDef.getMembers()[0];
@@ -893,7 +897,7 @@ describe(nameof(Project), () => {
             project.addSourceFilesAtPaths(`${testFilesDirPath}/**/*.ts`);
             project.createSourceFile(
                 path.join(testFilesDirPath, "variableTestFile.ts"),
-                `import * as testClasses from "./testClasses";\n\nlet myVar = new testClasses.TestClass().name;\n`
+                `import * as testClasses from "./testClasses";\n\nlet myVar = new testClasses.TestClass().name;\n`,
             );
             return project;
         }
@@ -1039,8 +1043,8 @@ describe(nameof(Project), () => {
 
             await project.emit({
                 customTransformers: {
-                    before: [context => sourceFile => visitSourceFile(sourceFile, context, numericLiteralToStringLiteral)]
-                }
+                    before: [context => sourceFile => visitSourceFile(sourceFile, context, numericLiteralToStringLiteral)],
+                },
             });
 
             const writeLog = fileSystem.getWriteLog();
@@ -1139,7 +1143,7 @@ describe(nameof(Project), () => {
         it("should throw when it can't find the source file based on a provided file name", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow("fileName.ts")).to.throw(
-                "Could not find source file in project with the provided file name: fileName.ts"
+                "Could not find source file in project with the provided file name: fileName.ts",
             );
         });
 
@@ -1147,21 +1151,21 @@ describe(nameof(Project), () => {
             const project = new Project({ useInMemoryFileSystem: true });
             // this should show the absolute path in the error message
             expect(() => project.getSourceFileOrThrow("src/fileName.ts")).to.throw(
-                "Could not find source file in project at the provided path: /src/fileName.ts"
+                "Could not find source file in project at the provided path: /src/fileName.ts",
             );
         });
 
         it("should throw when it can't find the source file based on a provided absolute path", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow("/fileName.ts")).to.throw(
-                "Could not find source file in project at the provided path: /fileName.ts"
+                "Could not find source file in project at the provided path: /fileName.ts",
             );
         });
 
         it("should throw when it can't find the source file based on a provided condition", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow(() => false)).to.throw(
-                "Could not find source file in project based on the provided condition."
+                "Could not find source file in project based on the provided condition.",
             );
         });
 
@@ -1185,7 +1189,7 @@ describe(nameof(Project), () => {
                 "/file1.ts",
                 "/file2.ts",
                 "/dir/file.ts",
-                "/dir/child/file.ts"
+                "/dir/child/file.ts",
             ]);
         });
 
@@ -1206,31 +1210,31 @@ describe(nameof(Project), () => {
                     "/src/test/file1.ts",
                     "/src/test/file2.ts",
                     "/src/test/file3.ts",
-                    "/src/test/folder/file.ts"
+                    "/src/test/folder/file.ts",
                 ]);
             });
 
             it("should be able to do a file glob with a relative path", () => {
                 expect(project.getSourceFiles("src/test/folder/*.ts").map(s => s.getFilePath())).to.deep.equal([
-                    "/src/test/folder/file.ts"
+                    "/src/test/folder/file.ts",
                 ]);
             });
 
             it("should be able to do a file glob with a relative path with a dot", () => {
                 expect(project.getSourceFiles("./src/test/folder/*.ts").map(s => s.getFilePath())).to.deep.equal([
-                    "/src/test/folder/file.ts"
+                    "/src/test/folder/file.ts",
                 ]);
             });
 
             it("should be able to do a file glob with an absolute path", () => {
                 expect(project.getSourceFiles("/src/test/folder/*.ts").map(s => s.getFilePath())).to.deep.equal([
-                    "/src/test/folder/file.ts"
+                    "/src/test/folder/file.ts",
                 ]);
             });
 
             it("should be able to do a file glob with multiple patterns", () => {
                 expect(project.getSourceFiles(["**/src/**/*.ts", "!**/src/test/**/*.ts", "!**/*.d.ts"]).map(s => s.getFilePath())).to.deep.equal([
-                    "/src/file.ts"
+                    "/src/file.ts",
                 ]);
             });
         });
@@ -1304,9 +1308,11 @@ describe(nameof(Project), () => {
                 expect(() => remember(classDec)).to.throw(errors.InvalidOperationError);
             });
 
-            expect(() => project.forgetNodesCreatedInBlock(() => {
-                throw new Error("");
-            })).to.throw();
+            expect(() =>
+                project.forgetNodesCreatedInBlock(() => {
+                    throw new Error("");
+                })
+            ).to.throw();
             const result = project.forgetNodesCreatedInBlock(() => 5);
             assert<IsExact<typeof result, number>>(true);
             expect(result).to.equal(5);
@@ -1366,8 +1372,10 @@ describe(nameof(Project), () => {
     interface JQueryStatic {
         test: string;
     }`);
-            fileSystem.writeFileSync("/node_modules/@types/jquery/package.json",
-                `{ "name": "@types/jquery", "version": "1.0.0", "typeScriptVersion": "2.3" }`);
+            fileSystem.writeFileSync(
+                "/node_modules/@types/jquery/package.json",
+                `{ "name": "@types/jquery", "version": "1.0.0", "typeScriptVersion": "2.3" }`,
+            );
 
             project.createSourceFile("test.ts", "import * as ts from 'jquery';");
             return project;
@@ -1470,7 +1478,7 @@ describe(nameof(Project), () => {
             return {
                 project,
                 fileSystem: project.getFileSystem(),
-                moduleResolutionHost
+                moduleResolutionHost,
             };
         }
 
@@ -1531,7 +1539,7 @@ describe(nameof(Project), () => {
             expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
                 "/dir1",
                 "/dir2",
-                "/node_modules"
+                "/node_modules",
             ]);
         });
 
@@ -1544,7 +1552,7 @@ describe(nameof(Project), () => {
                 "/dir1",
                 "/dir2",
                 "/dir3",
-                "/node_modules"
+                "/node_modules",
             ]);
         });
 

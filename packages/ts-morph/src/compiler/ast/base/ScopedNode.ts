@@ -51,7 +51,7 @@ export function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base:
 
         getStructure() {
             return callBaseGetStructure<ScopedNodeStructure>(Base.prototype, this, {
-                scope: this.hasScopeKeyword() ? this.getScope() : undefined
+                scope: this.hasScopeKeyword() ? this.getScope() : undefined,
             });
         }
     };

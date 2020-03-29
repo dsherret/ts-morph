@@ -313,7 +313,7 @@ export class Directory {
         const dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsoluteDirPath, this.getPath());
         return this._context.directoryCoordinator.addDirectoryAtPathIfExists(
             dirPath,
-            { ...options, markInProject: this._isInProject() }
+            { ...options, markInProject: this._isInProject() },
         );
     }
 
@@ -328,7 +328,7 @@ export class Directory {
         const dirPath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsoluteDirPath, this.getPath());
         return this._context.directoryCoordinator.addDirectoryAtPath(
             dirPath,
-            { ...options, markInProject: this._isInProject() }
+            { ...options, markInProject: this._isInProject() },
         );
     }
 
@@ -353,7 +353,7 @@ export class Directory {
     createSourceFile(
         relativeFilePath: string,
         sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
-        options?: SourceFileCreateOptions
+        options?: SourceFileCreateOptions,
     ) {
         const filePath = this._context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
         return this._context.compilerFactory.createSourceFile(filePath, sourceFileText || "", { ...(options || {}), markInProject: this._isInProject() });
@@ -434,12 +434,14 @@ export class Directory {
         const isJsFile = options.outDir == null ? undefined : /\.js$/i;
         const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
         const isDtsFile = options.declarationDir == null && options.outDir == null ? undefined : /\.d\.ts$/i;
-        const getStandardizedPath = (path: string | undefined) => path == null
-            ? undefined
-            : this._context.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
-        const getSubDirPath = (path: StandardizedFilePath | undefined, dir: Directory) => path == null
-            ? undefined
-            : FileUtils.pathJoin(path, dir.getBaseName());
+        const getStandardizedPath = (path: string | undefined) =>
+            path == null
+                ? undefined
+                : this._context.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
+        const getSubDirPath = (path: StandardizedFilePath | undefined, dir: Directory) =>
+            path == null
+                ? undefined
+                : FileUtils.pathJoin(path, dir.getBaseName());
         const hasDeclarationDir = this._context.compilerOptions.get().declarationDir != null || options.declarationDir != null;
 
         return emitDirectory(this, getStandardizedPath(options.outDir), getStandardizedPath(options.declarationDir));
@@ -447,7 +449,7 @@ export class Directory {
         function* emitDirectory(
             directory: Directory,
             outDir?: StandardizedFilePath,
-            declarationDir?: StandardizedFilePath
+            declarationDir?: StandardizedFilePath,
         ): IterableIterator<StandardizedFilePath | { filePath: StandardizedFilePath; fileText: string; }> {
             for (const sourceFile of directory.getSourceFiles()) {
                 const output = sourceFile.getEmitOutput({ emitOnlyDtsFiles });
@@ -564,12 +566,12 @@ export class Directory {
 
         const { fileSystemWrapper: fileSystem, compilerFactory } = this._context;
         const copyingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
-            newDirPath: directory === this ? newPath : fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(directory), newPath)
+            newDirPath: directory === this ? newPath : fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(directory), newPath),
         }));
         const copyingSourceFiles = this.getDescendantSourceFiles().map(sourceFile => ({
             sourceFile,
             newFilePath: fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(sourceFile), newPath),
-            references: this._getReferencesForCopy(sourceFile)
+            references: this._getReferencesForCopy(sourceFile),
         }));
 
         // copy directories
@@ -673,12 +675,12 @@ export class Directory {
         const movingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
             directory,
             oldPath: directory.getPath(),
-            newDirPath: directory === this ? newPath : fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(directory), newPath)
+            newDirPath: directory === this ? newPath : fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(directory), newPath),
         }));
         const movingSourceFiles = this.getDescendantSourceFiles().map(sourceFile => ({
             sourceFile,
             newFilePath: fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(sourceFile), newPath),
-            references: this._getReferencesForMove(sourceFile)
+            references: this._getReferencesForMove(sourceFile),
         }));
 
         // update directories
@@ -932,7 +934,7 @@ export class Directory {
         const { literalReferences, referencingLiterals } = sourceFile._getReferencesForMoveInternal();
         return {
             literalReferences: literalReferences.filter(r => !this.isAncestorOf(r[1])),
-            referencingLiterals: referencingLiterals.filter(l => !this.isAncestorOf(l._sourceFile))
+            referencingLiterals: referencingLiterals.filter(l => !this.isAncestorOf(l._sourceFile)),
         };
     }
 

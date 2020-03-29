@@ -18,8 +18,8 @@ export function getCodeBlockWriterStatements(project: tsMorph.Project): tsMorph.
         ...classDec.getStructure(),
         hasDeclareKeyword: true,
         isDefaultExport: false,
-        isExported: true
+        isExported: true,
     }, {
-        ...optionsInterface.getStructure()
+        ...optionsInterface.getStructure(),
     }];
 }

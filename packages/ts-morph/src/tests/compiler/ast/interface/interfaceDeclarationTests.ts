@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { InterfaceDeclaration } from "../../../../compiler";
-import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure,
-    StructureKind } from "../../../../structures";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
@@ -115,7 +114,7 @@ describe(nameof(InterfaceDeclaration), () => {
                 methods: [],
                 name: "Test",
                 properties: [],
-                typeParameters: []
+                typeParameters: [],
             });
         });
 
@@ -143,7 +142,7 @@ export default interface Test<T> extends Test2 {
                 methods: [{ name: "method", returnType: "void" }],
                 name: "Test",
                 properties: [{ name: "property", type: "string" }],
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             });
         });
     });

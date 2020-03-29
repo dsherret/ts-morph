@@ -9,7 +9,7 @@ describe(nameof(NodePrinter), () => {
             const { sourceFile } = getInfoFromText("");
             sourceFile.addClass({
                 leadingTrivia,
-                name: "MyClass"
+                name: "MyClass",
             });
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -57,7 +57,7 @@ describe(nameof(NodePrinter), () => {
             const { sourceFile } = getInfoFromText("");
             sourceFile.addClass({
                 trailingTrivia,
-                name: "MyClass"
+                name: "MyClass",
             });
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

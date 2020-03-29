@@ -20,7 +20,7 @@ describe(nameof(forEachStructureChild), () => {
         const structure: InterfaceDeclarationStructure = {
             kind: StructureKind.Interface,
             name: "MyInterface",
-            properties: [{ name: "p1" }, { name: "p2" }, { name: "p3" }]
+            properties: [{ name: "p1" }, { name: "p2" }, { name: "p3" }],
         };
         const propertyStructure = forEachStructureChild(structure, child => {
             return child.kind === StructureKind.PropertySignature && child.name === "p2" ? child : undefined;
@@ -38,10 +38,10 @@ describe(nameof(forEachStructureChild), () => {
     it("should handle a passed in array", () => {
         const structures: Structures[] = [{
             kind: StructureKind.Interface,
-            name: "I"
+            name: "I",
         }, {
             kind: StructureKind.Class,
-            name: "C"
+            name: "C",
         }];
         const structure = forEachStructureChild(structures, child => {
             return child.kind === StructureKind.Class ? child : undefined;

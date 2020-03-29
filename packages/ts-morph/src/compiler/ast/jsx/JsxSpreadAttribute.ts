@@ -31,7 +31,7 @@ export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttri
         removeChildren({
             children: [this],
             removePrecedingNewLines: true,
-            removePrecedingSpaces: true
+            removePrecedingSpaces: true,
         });
     }
 
@@ -54,7 +54,7 @@ export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttri
     getStructure(): JsxSpreadAttributeStructure {
         return callBaseGetStructure<JsxSpreadAttributeSpecificStructure>(JsxSpreadAttributeBase.prototype, this, {
             kind: StructureKind.JsxSpreadAttribute,
-            expression: this.getExpression().getText()
+            expression: this.getExpression().getText(),
         });
     }
 }

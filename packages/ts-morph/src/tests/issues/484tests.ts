@@ -23,7 +23,7 @@ export class Food {
 
         lionFile.addImportDeclaration({
             moduleSpecifier: "../foo",
-            namedImports: [{ name: "Foo" }]
+            namedImports: [{ name: "Foo" }],
         });
         lionFile.organizeImports();
         expect(lionFile.getText()).to.equal(`import { Food } from '../../food/Food';

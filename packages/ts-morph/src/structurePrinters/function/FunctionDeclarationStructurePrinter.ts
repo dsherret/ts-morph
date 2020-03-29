@@ -58,7 +58,7 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
     private printOverloads(
         writer: CodeBlockWriter,
         name: string | undefined,
-        structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>> | undefined
+        structures: ReadonlyArray<OptionalKind<FunctionDeclarationOverloadStructure>> | undefined,
     ) {
         if (structures == null || structures.length === 0)
             return;
@@ -77,7 +77,7 @@ export class FunctionDeclarationStructurePrinter extends NodePrinter<OptionalKin
     private printHeader(
         writer: CodeBlockWriter,
         name: string | undefined,
-        structure: OptionalKind<FunctionDeclarationOverloadStructure> | OptionalKind<FunctionDeclarationStructure>
+        structure: OptionalKind<FunctionDeclarationOverloadStructure> | OptionalKind<FunctionDeclarationStructure>,
     ) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
 

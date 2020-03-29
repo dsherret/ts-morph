@@ -8,7 +8,7 @@ describe(nameof(RefactorEditInfo), () => {
         it("should apply the refactor 'Move to a new file'", () => {
             const {
                 sourceFile,
-                project
+                project,
             } = getInfoFromText("function z(a: number, b: string) { return `${b} ${a}`; }\nexport const c = z(1, 'a')", { filePath: "/f.ts" });
             const languageService = project.getLanguageService();
             expect(project.getSourceFile("z.ts")).to.be.undefined;
@@ -29,7 +29,7 @@ describe(nameof(RefactorEditInfo), () => {
                 node,
                 "Add or remove braces in an arrow function",
                 "Remove braces from arrow function",
-                {}
+                {},
             )!;
             edits.applyChanges();
             expect(sourceFile.getFullText()).to.equal("const b = 1; const f = (a:any) => 1");

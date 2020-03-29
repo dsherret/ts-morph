@@ -105,7 +105,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                 insertIntoParentTextRange({
                     insertPos: getInsertPos(this),
                     parent: this,
-                    newText: `<${writer.toString()}>`
+                    newText: `<${writer.toString()}>`,
                 });
             }
             else {
@@ -114,7 +114,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                     currentNodes: typeParameters,
                     insertIndex: index,
                     newText: writer.toString(),
-                    useTrailingCommas: false
+                    useTrailingCommas: false,
                 });
             }
 
@@ -134,7 +134,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
 
         getStructure() {
             return callBaseGetStructure<TypeParameteredNodeStructure>(Base.prototype, this, {
-                typeParameters: this.getTypeParameters().map(p => p.getStructure())
+                typeParameters: this.getTypeParameters().map(p => p.getStructure()),
             });
         }
     };

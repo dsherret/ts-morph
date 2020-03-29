@@ -108,7 +108,7 @@ export class NodeHandlerFactory {
             isFirstChild,
             childCount,
             replacingNodes,
-            customMappings
+            customMappings,
         });
     }
 

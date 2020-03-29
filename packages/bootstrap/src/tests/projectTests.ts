@@ -47,7 +47,7 @@ describe(nameof(Project), () => {
             describe("skipFileDependencyResolution", () => {
                 it("should not skip dependency resolution when false", async () => {
                     const { project, initialFiles, resolvedFiles, nodeModuleFiles } = await fileDependencyResolutionSetup({
-                        skipFileDependencyResolution: false
+                        skipFileDependencyResolution: false,
                     }, create);
                     expect(project.getSourceFiles().map(s => s.fileName)).to.deep.equal([...initialFiles, ...resolvedFiles, ...nodeModuleFiles]);
                 });
@@ -69,8 +69,8 @@ describe(nameof(Project), () => {
                                 return {};
                             },
                             compilerOptions: {
-                                allowJs: true
-                            }
+                                allowJs: true,
+                            },
                         });
                     } catch {
                         expect.fail("should not throw");
@@ -85,7 +85,7 @@ describe(nameof(Project), () => {
                                 // this is now allowed here, but used to not be
                                 moduleResolutionHost.fileExists("./test.ts");
                                 return {};
-                            }
+                            },
                         });
                     } catch {
                         expect.fail("should not throw");
@@ -109,7 +109,7 @@ describe(nameof(Project), () => {
                                     }
 
                                     return resolvedModules;
-                                }
+                                },
                             };
 
                             function removeTsExtension(moduleName: string) {
@@ -117,7 +117,7 @@ describe(nameof(Project), () => {
                                     return moduleName.slice(0, -3);
                                 return moduleName;
                             }
-                        }
+                        },
                     });
 
                     const testFile = project.createSourceFile("/Test.ts", "export class Test {}");
@@ -141,7 +141,7 @@ describe(nameof(Project), () => {
                     expect(results!.map(r => r.fileName).sort()).to.deep.equal([
                         "/Test.ts",
                         "/main.ts",
-                        "/main.ts"
+                        "/main.ts",
                     ]);
                 });
             });
@@ -170,14 +170,14 @@ describe(nameof(Project), () => {
                                     }
 
                                     return resolvedTypeReferenceDirectives;
-                                }
+                                },
                             };
 
                             function replaceAsdfExtension(moduleName: string) {
                                 return moduleName.replace("asdf", "");
                             }
                         },
-                        tsConfigFilePath: "/dir/tsconfig.json"
+                        tsConfigFilePath: "/dir/tsconfig.json",
                     });
 
                     const mainFile = project.getSourceFileOrThrow("main.ts");
@@ -203,7 +203,7 @@ describe(nameof(Project), () => {
                     expect(result.length).to.equal(2);
                     expect(result.map(r => r.fileName).sort()).to.deep.equal([
                         mainFile.fileName,
-                        testFilePath
+                        testFilePath,
                     ]);
                 });
             });
@@ -237,7 +237,7 @@ describe(nameof(Project), () => {
             const project = createProjectSync({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
             const sourceFiles = [
                 project.createSourceFile("/test.ts", "class Test {}"),
-                project.createSourceFile("/test2.ts", "export class Other {}")
+                project.createSourceFile("/test2.ts", "export class Other {}"),
             ].sort();
 
             assertProjectHasSourceFiles(project, sourceFiles);
@@ -249,7 +249,7 @@ describe(nameof(Project), () => {
             const { project } = setup();
             const sourceFiles = [
                 project.createSourceFile("/test.ts", "class Test {}"),
-                project.createSourceFile("/test2.ts", "export class Other {}")
+                project.createSourceFile("/test2.ts", "export class Other {}"),
             ].sort();
             project.createProgram();
             project.removeSourceFile(sourceFiles[1]);
@@ -260,7 +260,7 @@ describe(nameof(Project), () => {
             const { project } = setup();
             const sourceFiles = [
                 project.createSourceFile("/test.ts", "class Test {}"),
-                project.createSourceFile("/test2.ts", "export class Other {}")
+                project.createSourceFile("/test2.ts", "export class Other {}"),
             ].sort();
             project.removeSourceFile(sourceFiles[0].fileName);
             assertProjectHasSourceFiles(project, [sourceFiles[1]]);
@@ -338,7 +338,7 @@ describe(nameof(Project), () => {
         describe("sync", () => doTestsForMethod((project, filePath, options) => Promise.resolve(project.addSourceFileAtPathIfExists(filePath, options))));
 
         function doTestsForMethod(
-            action: (project: Project, filePath: string, options?: { scriptKind?: ts.ScriptKind; }) => Promise<ts.SourceFile | undefined>
+            action: (project: Project, filePath: string, options?: { scriptKind?: ts.ScriptKind; }) => Promise<ts.SourceFile | undefined>,
         ) {
             it("should add files that exist", async () => {
                 const { project } = setup();
@@ -450,7 +450,7 @@ describe(nameof(Project), () => {
             resolvedFiles: ["/other/referenced-file.d.ts"],
             resolvedDirectories: ["/other"],
             nodeModuleFiles: ["/node_modules/library/index.d.ts"],
-            nodeModuleDirectories: ["/node_modules", "/node_modules/library"]
+            nodeModuleDirectories: ["/node_modules", "/node_modules/library"],
         };
     }
 
@@ -498,7 +498,7 @@ describe(nameof(Project), () => {
             return {
                 project,
                 fileSystem: project.fileSystem,
-                moduleResolutionHost
+                moduleResolutionHost,
             };
         }
 
@@ -559,7 +559,7 @@ describe(nameof(Project), () => {
             expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
                 "/dir1",
                 "/dir2",
-                "/node_modules"
+                "/node_modules",
             ]);
         });
 
@@ -572,7 +572,7 @@ describe(nameof(Project), () => {
                 "/dir1",
                 "/dir2",
                 "/dir3",
-                "/node_modules"
+                "/node_modules",
             ]);
         });
 
@@ -670,7 +670,7 @@ describe(nameof(Project), () => {
         it("should throw when it can't find the source file based on a provided file name", () => {
             const project = createProjectSync({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow("fileName.ts")).to.throw(
-                "Could not find source file in project with the provided file name: fileName.ts"
+                "Could not find source file in project with the provided file name: fileName.ts",
             );
         });
 
@@ -678,21 +678,21 @@ describe(nameof(Project), () => {
             const project = createProjectSync({ useInMemoryFileSystem: true });
             // this should show the absolute path in the error message
             expect(() => project.getSourceFileOrThrow("src/fileName.ts")).to.throw(
-                "Could not find source file in project at the provided path: /src/fileName.ts"
+                "Could not find source file in project at the provided path: /src/fileName.ts",
             );
         });
 
         it("should throw when it can't find the source file based on a provided absolute path", () => {
             const project = createProjectSync({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow("/fileName.ts")).to.throw(
-                "Could not find source file in project at the provided path: /fileName.ts"
+                "Could not find source file in project at the provided path: /fileName.ts",
             );
         });
 
         it("should throw when it can't find the source file based on a provided condition", () => {
             const project = createProjectSync({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow(() => false)).to.throw(
-                "Could not find source file in project based on the provided condition."
+                "Could not find source file in project based on the provided condition.",
             );
         });
 

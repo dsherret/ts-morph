@@ -7,7 +7,7 @@ describe("tsInternal", () => {
             moduleResolution: ModuleResolutionKind | undefined,
             module: ModuleKind | undefined,
             target: ScriptTarget | undefined,
-            expectedKind: ModuleResolutionKind
+            expectedKind: ModuleResolutionKind,
         ) {
             const moduleResolutionText = moduleResolution == null ? "no module resolution" : ModuleResolutionKind[moduleResolution];
             const moduleText = module == null ? "no module" : ModuleKind[module];

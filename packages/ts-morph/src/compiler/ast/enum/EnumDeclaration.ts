@@ -13,9 +13,10 @@ import { ExtendedParser } from "../utils";
 import { WriterFunction } from "../../../types";
 import { Node } from "../common";
 
-const createBase = <T extends typeof Statement>(ctor: T) => TextInsertableNode(NamespaceChildableNode(JSDocableNode(
-    AmbientableNode(ExportableNode(ModifierableNode(NamedNode(ctor))))
-)));
+const createBase = <T extends typeof Statement>(ctor: T) =>
+    TextInsertableNode(NamespaceChildableNode(JSDocableNode(
+        AmbientableNode(ExportableNode(ModifierableNode(NamedNode(ctor)))),
+    )));
 export const EnumDeclarationBase = createBase(Statement);
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
@@ -59,7 +60,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param structures - Structures of the enums.
      */
     addMembers(
-        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | string | WriterFunction
+        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | string | WriterFunction,
     ): (EnumMember | CommentEnumMember)[];
     addMembers(structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction>) {
         return this.insertMembers(this.getMembers().length, structures);
@@ -94,7 +95,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      */
     insertMembers(
         index: number,
-        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string
+        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string,
     ): (EnumMember | CommentEnumMember)[];
     insertMembers(index: number, structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string) {
         if (structures.length === 0)
@@ -116,7 +117,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
             insertIndex: index,
             newText: writer.toString(),
             useNewLines: true,
-            useTrailingCommas: this._context.manipulationSettings.getUseTrailingCommas()
+            useTrailingCommas: this._context.manipulationSettings.getUseTrailingCommas(),
         });
 
         // get the members
@@ -205,7 +206,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         return callBaseGetStructure<EnumDeclarationSpecificStructure>(EnumDeclarationBase.prototype, this, {
             kind: StructureKind.Enum,
             isConst: this.isConstEnum(),
-            members: this.getMembers().map(member => member.getStructure())
+            members: this.getMembers().map(member => member.getStructure()),
         }) as EnumDeclarationStructure;
     }
 }

@@ -5,16 +5,18 @@ import { CompilerCommentNode, CompilerCommentStatement, CompilerCommentClassElem
 enum CommentKind {
     SingleLine,
     MultiLine,
-    JsDoc
+    JsDoc,
 }
 
-export type StatementContainerNodes = ts.SourceFile
+export type StatementContainerNodes =
+    | ts.SourceFile
     | ts.Block
     | ts.ModuleBlock
     | ts.CaseClause
     | ts.DefaultClause;
 
-export type ContainerNodes = StatementContainerNodes
+export type ContainerNodes =
+    | StatementContainerNodes
     | ts.ClassDeclaration
     | ts.InterfaceDeclaration
     | ts.EnumDeclaration
@@ -35,7 +37,7 @@ const commentNodeParserKinds = new Set<SyntaxKind>([
     SyntaxKind.EnumDeclaration,
     SyntaxKind.ClassExpression,
     SyntaxKind.TypeLiteral,
-    SyntaxKind.ObjectLiteralExpression
+    SyntaxKind.ObjectLiteralExpression,
 ]);
 
 export class CommentNodeParser {

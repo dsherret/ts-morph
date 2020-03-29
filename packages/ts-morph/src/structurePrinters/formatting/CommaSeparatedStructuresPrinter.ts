@@ -18,7 +18,7 @@ export function printTextWithSeparator<T>(
     printer: Printer<T | WriterFunction | string>,
     writer: CodeBlockWriter,
     structures: ReadonlyArray<T | WriterFunction | string> | WriterFunction | string | undefined,
-    separator: () => void
+    separator: () => void,
 ) {
     if (structures == null)
         return;

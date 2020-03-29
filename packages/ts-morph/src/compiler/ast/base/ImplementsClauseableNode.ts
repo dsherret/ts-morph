@@ -63,7 +63,8 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
 
         insertImplements(index: number, text: ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments[];
         insertImplements(index: number, text: string): ExpressionWithTypeArguments;
-        insertImplements(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction): ExpressionWithTypeArguments
+        insertImplements(index: number, texts: string | ReadonlyArray<string | WriterFunction> | WriterFunction):
+            | ExpressionWithTypeArguments
             | ExpressionWithTypeArguments[]
         {
             const originalImplements = this.getImplements();
@@ -92,7 +93,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                     currentNodes: originalImplements,
                     insertIndex: index,
                     newText: writer.toString(),
-                    useTrailingCommas: false
+                    useTrailingCommas: false,
                 });
             }
             else {
@@ -107,7 +108,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 insertIntoParentTextRange({
                     parent: heritageClauses.length === 0 ? this : heritageClauses[0].getParentSyntaxListOrThrow(),
                     insertPos: openBraceStart,
-                    newText: insertText
+                    newText: insertText,
                 });
             }
 
@@ -139,7 +140,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
 
         getStructure() {
             return callBaseGetStructure<ImplementsClauseableNodeStructure>(Base.prototype, this, {
-                implements: this.getImplements().map(node => node.getText())
+                implements: this.getImplements().map(node => node.getText()),
             });
         }
     };

@@ -13,8 +13,8 @@ describe(nameof(LanguageService), () => {
                     outputFiles: [{
                         fileName: "/" + sourceFile.getBaseName().replace(".ts", ".js"),
                         text: "var t = 5;\n",
-                        writeByteOrderMark: false
-                    }]
+                        writeByteOrderMark: false,
+                    }],
                 });
             }
 
@@ -32,8 +32,8 @@ describe(nameof(LanguageService), () => {
                 outputFiles: [{
                     fileName: "/" + sourceFile.getBaseName().replace(".ts", ".js"),
                     text: "var t = 5;\n",
-                    writeByteOrderMark: false
-                }]
+                    writeByteOrderMark: false,
+                }],
             });
         });
 
@@ -45,8 +45,8 @@ describe(nameof(LanguageService), () => {
                 outputFiles: [{
                     fileName: "/" + sourceFile.getBaseName().replace(".ts", ".d.ts"),
                     text: "declare const t = 5;\n",
-                    writeByteOrderMark: false
-                }]
+                    writeByteOrderMark: false,
+                }],
             });
         });
 
@@ -56,7 +56,7 @@ describe(nameof(LanguageService), () => {
 
             checkOutput(output, {
                 emitSkipped: true,
-                outputFiles: []
+                outputFiles: [],
             });
         });
 
@@ -75,11 +75,11 @@ describe(nameof(LanguageService), () => {
                 fileName: "/file.ts",
                 textChanges: [{
                     newText: "",
-                    span: { start: 0, length: 32 }
+                    span: { start: 0, length: 32 },
                 }, {
                     newText: "",
-                    span: { start: 32, length: 31 }
-                }]
+                    span: { start: 32, length: 31 },
+                }],
             });
         });
 
@@ -96,14 +96,14 @@ describe(nameof(LanguageService), () => {
                 fileName: "/main.ts",
                 textChanges: [{
                     newText: "import MyClass from './MyClass';\nimport MyInterface from './MyInterface';\n",
-                    span: { start: 0, length: 41 }
+                    span: { start: 0, length: 41 },
                 }, {
                     newText: "",
-                    span: { start: 41, length: 33 }
+                    span: { start: 41, length: 33 },
                 }, {
                     newText: "",
-                    span: { start: 74, length: 49 }
-                }]
+                    span: { start: 74, length: 49 },
+                }],
             });
         });
     });
@@ -127,19 +127,19 @@ describe(nameof(LanguageService), () => {
                 fileName: "/file.ts",
                 textChanges: [{
                     newText: "import { A } from \"./A\";\n\n",
-                    span: { start: 0, length: 0 }
+                    span: { start: 0, length: 0 },
                 }, {
                     newText: "",
-                    span: { start: 0, length: 18 }
-                }]
+                    span: { start: 0, length: 18 },
+                }],
             });
 
             checkFileTextChanges(edit2!, {
                 fileName: "/A.ts",
                 textChanges: [{
                     newText: "export class A {\n}\n",
-                    span: { start: 0, length: 0 }
-                }]
+                    span: { start: 0, length: 0 },
+                }],
             });
         });
 
@@ -169,9 +169,9 @@ describe(nameof(LanguageService), () => {
                     newText: `import { Node } from "./Node";\n\n`,
                     span: {
                         length: 0,
-                        start: 0
-                    }
-                }]
+                        start: 0,
+                    },
+                }],
             }]);
         });
     });
@@ -184,7 +184,7 @@ describe(nameof(LanguageService), () => {
                 sourceFile,
                 variableDeclaration.getStart(),
                 variableDeclaration.getEnd(),
-                [80001]
+                [80001],
             );
 
             expect(results).to.lengthOf(1);
@@ -198,8 +198,8 @@ describe(nameof(LanguageService), () => {
                 fileName: "/file.ts",
                 textChanges: [{
                     newText: "import moment from 'moment';",
-                    span: { start: 0, length: 33 }
-                }]
+                    span: { start: 0, length: 33 },
+                }],
             });
         });
 
@@ -229,7 +229,7 @@ describe(nameof(LanguageService), () => {
 
 function checkOutput(
     output: EmitOutput,
-    expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; }
+    expected: { emitSkipped: boolean; outputFiles: { fileName: string; text: string; writeByteOrderMark: boolean; }[]; },
 ) {
     expect(output.getEmitSkipped()).to.equal(expected.emitSkipped, "emit skipped");
     expect(output.getOutputFiles().length).to.equal(expected.outputFiles.length, "output files length");

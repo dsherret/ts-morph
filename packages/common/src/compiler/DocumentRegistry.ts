@@ -28,7 +28,7 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         fileName: StandardizedFilePath,
         compilationSettings: CompilerOptions,
         scriptSnapshot: ts.IScriptSnapshot,
-        scriptKind: ScriptKind | undefined
+        scriptKind: ScriptKind | undefined,
     ) {
         let sourceFile = this.sourceFileCacheByFilePath.get(fileName);
         if (sourceFile == null)
@@ -52,7 +52,7 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         compilationSettings: CompilerOptions,
         scriptSnapshot: ts.IScriptSnapshot,
         version: string,
-        scriptKind: ScriptKind | undefined
+        scriptKind: ScriptKind | undefined,
     ): ts.SourceFile {
         const standardizedFilePath = this.transactionalFileSystem.getStandardizedAbsolutePath(fileName);
         let sourceFile = this.sourceFileCacheByFilePath.get(standardizedFilePath);
@@ -69,7 +69,7 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         key: ts.DocumentRegistryBucketKey,
         scriptSnapshot: ts.IScriptSnapshot,
         version: string,
-        scriptKind: ScriptKind | undefined
+        scriptKind: ScriptKind | undefined,
     ): ts.SourceFile {
         // ignore the key because we only ever keep track of one key
         return this.acquireDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);
@@ -91,7 +91,7 @@ export class DocumentRegistry implements ts.DocumentRegistry {
         key: ts.DocumentRegistryBucketKey,
         scriptSnapshot: ts.IScriptSnapshot,
         version: string,
-        scriptKind: ScriptKind | undefined
+        scriptKind: ScriptKind | undefined,
     ): ts.SourceFile {
         // ignore the key because we only ever keep track of one key
         return this.updateDocument(fileName, compilationSettings, scriptSnapshot, version, scriptKind);

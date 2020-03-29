@@ -24,7 +24,7 @@
   "devDependencies": {
     "dprint": "^0.9.0",
     "dprint-plugin-jsonc": "^0.4.0",
-    "dprint-plugin-typescript": "^0.12.0",
+    "dprint-plugin-typescript": "^0.15.4",
     "lerna": "^3.20.2"
   }
 }

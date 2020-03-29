@@ -6,9 +6,9 @@ export function getDeclarationProject() {
     const project = new tsMorph.Project({
         tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
         manipulationSettings: {
-            newLineKind: tsMorph.NewLineKind.CarriageReturnLineFeed
+            newLineKind: tsMorph.NewLineKind.CarriageReturnLineFeed,
         },
-        addFilesFromTsConfig: false
+        addFilesFromTsConfig: false,
     });
     project.addSourceFilesAtPaths(path.join(rootFolder, "lib/**/*.d.ts"));
     return project;
@@ -16,6 +16,6 @@ export function getDeclarationProject() {
 
 export function createDeclarationProject() {
     return scriptsCreateDeclarationProject({
-        tsConfigFilePath: path.join(rootFolder, "tsconfig.declarations.json")
+        tsConfigFilePath: path.join(rootFolder, "tsconfig.declarations.json"),
     });
 }

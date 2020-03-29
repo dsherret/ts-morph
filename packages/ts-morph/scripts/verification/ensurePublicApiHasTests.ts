@@ -54,7 +54,7 @@ export function ensurePublicApiHasTests(inspector: TsMorphInspector, addProblem:
             addProblem({
                 filePath: node.getSourceFile().getFilePath(),
                 lineNumber: node.getStartLineNumber(),
-                message: `Node "${tsMorph.Node.hasName(node) ? node.getName() : node.getText()}" is not referenced in the tests`
+                message: `Node "${tsMorph.Node.hasName(node) ? node.getName() : node.getText()}" is not referenced in the tests`,
             });
         }
     }

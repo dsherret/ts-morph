@@ -11,13 +11,13 @@ describe("tests for issue #344", () => {
 
         ole.addPropertyAssignments([{
             name: `"test"`,
-            initializer: "5"
+            initializer: "5",
         }, {
             name: `"with-dash"`,
-            initializer: "5"
+            initializer: "5",
         }, {
             name: `'single-quotes'`,
-            initializer: "5"
+            initializer: "5",
         }]);
 
         expect(sourceFile.getFullText()).to.equal(`const t = {\n    "test": 5,\n    "with-dash": 5,\n    'single-quotes': 5\n};`);

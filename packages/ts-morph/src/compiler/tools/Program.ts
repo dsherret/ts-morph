@@ -119,7 +119,7 @@ export class Program {
                 promises
                     .push(fileSystemWrapper.writeFile(fileSystemWrapper.getStandardizedAbsolutePath(filePath), writeByteOrderMark ? "\uFEFF" + text : text));
             },
-            ...options
+            ...options,
         });
         await Promise.all(promises);
         return new EmitResult(this._context, emitResult);
@@ -146,10 +146,10 @@ export class Program {
                 sourceFiles.push({
                     filePath: fileSystemWrapper.getStandardizedAbsolutePath(filePath),
                     text,
-                    writeByteOrderMark: writeByteOrderMark || false
+                    writeByteOrderMark: writeByteOrderMark || false,
                 });
             },
-            ...options
+            ...options,
         });
         return new MemoryEmitResult(this._context, emitResult, sourceFiles);
     }

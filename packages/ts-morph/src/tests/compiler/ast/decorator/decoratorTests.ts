@@ -450,7 +450,7 @@ describe(nameof(Decorator), () => {
             const structure: OptionalKindAndTrivia<MakeRequired<DecoratorStructure>> = {
                 name: "NewName",
                 arguments: ["1"],
-                typeArguments: ["T"]
+                typeArguments: ["T"],
             };
             doTest("@dec class T {}", structure, "@NewName<T>(1) class T {}");
         });
@@ -468,7 +468,7 @@ describe(nameof(Decorator), () => {
                 kind: StructureKind.Decorator,
                 name: "dec",
                 arguments: undefined,
-                typeArguments: undefined
+                typeArguments: undefined,
             });
         });
 
@@ -477,7 +477,7 @@ describe(nameof(Decorator), () => {
                 kind: StructureKind.Decorator,
                 name: "dec",
                 arguments: ["test"],
-                typeArguments: ["T"]
+                typeArguments: ["T"],
             });
         });
     });

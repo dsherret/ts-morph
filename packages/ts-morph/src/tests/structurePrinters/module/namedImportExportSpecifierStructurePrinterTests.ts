@@ -15,7 +15,7 @@ describe(nameof(NamedImportExportSpecifierStructurePrinter), () => {
         function doTest(
             structure: OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>,
             expectedOutput: string,
-            options: Options = {}
+            options: Options = {},
         ) {
             const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
             factory.forNamedImportExportSpecifier().printText(writer, structure);
@@ -39,7 +39,7 @@ describe(nameof(NamedImportExportSpecifierStructurePrinter), () => {
         function doTest(
             structures: (OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>)[],
             expectedOutput: string,
-            options: Options = {}
+            options: Options = {},
         ) {
             const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
             factory.forNamedImportExportSpecifier().printTextsWithBraces(writer, structures);

@@ -147,7 +147,7 @@ describe(nameof(JSDoc), () => {
                 "/**\n * Description\n */\nfunction test() {}",
                 0,
                 [{ tagName: "name" }],
-                "/**\n * Description\n * @name\n */\nfunction test() {}"
+                "/**\n * Description\n * @name\n */\nfunction test() {}",
             );
         });
 
@@ -156,7 +156,7 @@ describe(nameof(JSDoc), () => {
                 "/** Description */\nfunction test() {}",
                 0,
                 [{ tagName: "name" }],
-                "/**\n * Description\n * @name\n */\nfunction test() {}"
+                "/**\n * Description\n * @name\n */\nfunction test() {}",
             );
         });
 
@@ -165,7 +165,7 @@ describe(nameof(JSDoc), () => {
                 "/** Description\n * Other. */\nfunction test() {}",
                 0,
                 [{ tagName: "name" }],
-                "/** Description\n * Other.\n * @name\n */\nfunction test() {}"
+                "/** Description\n * Other.\n * @name\n */\nfunction test() {}",
             );
         });
 
@@ -174,7 +174,7 @@ describe(nameof(JSDoc), () => {
                 "/**\n * Description\n * @name\n */\nfunction test() {}",
                 0,
                 [{ tagName: "other" }],
-                "/**\n * Description\n * @other\n * @name\n */\nfunction test() {}"
+                "/**\n * Description\n * @other\n * @name\n */\nfunction test() {}",
             );
         });
 
@@ -183,7 +183,7 @@ describe(nameof(JSDoc), () => {
                 "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}",
                 1,
                 [{ tagName: "middle", text: "some description" }],
-                "/**\n * Description\n * @name\n * @middle some description\n * @other\n */\nfunction test() {}"
+                "/**\n * Description\n * @name\n * @middle some description\n * @other\n */\nfunction test() {}",
             );
         });
 
@@ -192,7 +192,7 @@ describe(nameof(JSDoc), () => {
                 "/**\n * Description\n * @name\n */\nfunction test() {}",
                 1,
                 [{ tagName: "other" }],
-                "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}"
+                "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}",
             );
         });
 
@@ -201,7 +201,7 @@ describe(nameof(JSDoc), () => {
                 "/**\n * Description\n * @other\n */\nfunction test() {}",
                 0,
                 [{ tagName: "name" }, { tagName: "test", text: "some text" }],
-                "/**\n * Description\n * @name\n * @test some text\n * @other\n */\nfunction test() {}"
+                "/**\n * Description\n * @name\n * @test some text\n * @other\n */\nfunction test() {}",
             );
         });
     });
@@ -220,7 +220,7 @@ describe(nameof(JSDoc), () => {
                 "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}",
                 1,
                 { tagName: "middle", text: "some description" },
-                "/**\n * Description\n * @name\n * @middle some description\n * @other\n */\nfunction test() {}"
+                "/**\n * Description\n * @name\n * @middle some description\n * @other\n */\nfunction test() {}",
             );
         });
     });
@@ -238,7 +238,7 @@ describe(nameof(JSDoc), () => {
             doTest(
                 "/**\n * Description\n * @name\n */\nfunction test() {}",
                 [{ tagName: "test", text: "some text" }, { tagName: "other" }],
-                "/**\n * Description\n * @name\n * @test some text\n * @other\n */\nfunction test() {}"
+                "/**\n * Description\n * @name\n * @test some text\n * @other\n */\nfunction test() {}",
             );
         });
     });
@@ -256,7 +256,7 @@ describe(nameof(JSDoc), () => {
             doTest(
                 "/**\n * Description\n * @name\n */\nfunction test() {}",
                 { tagName: "other" },
-                "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}"
+                "/**\n * Description\n * @name\n * @other\n */\nfunction test() {}",
             );
         });
     });
@@ -338,10 +338,10 @@ describe(nameof(JSDoc), () => {
                     description: "\nTest.\n",
                     tags: [{
                         tagName: "remarks",
-                        text: "Testing.\n\nTest."
-                    }]
+                        text: "Testing.\n\nTest.",
+                    }],
                 },
-                "/**\n * Test.\n *\n * @remarks Testing.\n *\n * Test.\n */\nclass t {}"
+                "/**\n * Test.\n *\n * @remarks Testing.\n *\n * Test.\n */\nclass t {}",
             );
         });
     });
@@ -357,7 +357,7 @@ describe(nameof(JSDoc), () => {
             doTest("/** */function t() {}", {
                 kind: StructureKind.JSDoc,
                 description: "",
-                tags: []
+                tags: [],
             });
         });
 
@@ -367,8 +367,8 @@ describe(nameof(JSDoc), () => {
                 description: "Test",
                 tags: [{
                     tagName: "param",
-                    text: "p - Testing"
-                }]
+                    text: "p - Testing",
+                }],
             });
         });
 
@@ -378,8 +378,8 @@ describe(nameof(JSDoc), () => {
                 description: "\nTest.\n",
                 tags: [{
                     tagName: "remarks",
-                    text: "Testing.\n\nTest."
-                }]
+                    text: "Testing.\n\nTest.",
+                }],
             });
         });
     });

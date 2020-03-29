@@ -84,7 +84,7 @@ describe(nameof(VariableDeclarationList), () => {
                 "var v1, v4;",
                 1,
                 [{ name: "v2" }, { name: "v3", type: "number", initializer: "5" }],
-                "var v1, v2, v3: number = 5, v4;"
+                "var v1, v2, v3: number = 5, v4;",
             );
         });
 
@@ -93,7 +93,7 @@ describe(nameof(VariableDeclarationList), () => {
                 "var v1;",
                 1,
                 [{ name: "v2" }, { name: "v3" }],
-                "var v1, v2, v3;"
+                "var v1, v2, v3;",
             );
         });
     });

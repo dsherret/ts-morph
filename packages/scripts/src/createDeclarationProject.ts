@@ -9,12 +9,12 @@ export function createDeclarationProject(opts: CreateDeclarationProjectOptions) 
     const project = new Project({
         tsConfigFilePath: opts.tsConfigFilePath,
         manipulationSettings: {
-            newLineKind: NewLineKind.CarriageReturnLineFeed
+            newLineKind: NewLineKind.CarriageReturnLineFeed,
         },
         compilerOptions: {
-            declaration: true
+            declaration: true,
         },
-        addFilesFromTsConfig: true
+        addFilesFromTsConfig: true,
     });
 
     const emitResult = project.emitToMemory({ emitOnlyDtsFiles: true });
@@ -27,9 +27,9 @@ export function createDeclarationProject(opts: CreateDeclarationProjectOptions) 
     const declarationProject = new Project({
         tsConfigFilePath: opts.tsConfigFilePath,
         manipulationSettings: {
-            newLineKind: NewLineKind.CarriageReturnLineFeed
+            newLineKind: NewLineKind.CarriageReturnLineFeed,
         },
-        addFilesFromTsConfig: false
+        addFilesFromTsConfig: false,
     });
 
     for (const file of emitResult.getFiles())

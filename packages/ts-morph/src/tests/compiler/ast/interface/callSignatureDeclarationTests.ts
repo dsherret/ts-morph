@@ -29,7 +29,7 @@ describe(nameof(CallSignatureDeclaration), () => {
                 docs: ["test"],
                 parameters: [{ name: "param" }],
                 typeParameters: ["T"],
-                returnType: "string"
+                returnType: "string",
             };
             doTest("interface Identifier {\n    (): any;\n}", structure, "interface Identifier {\n    /** test */\n    <T>(param): string;\n}");
         });
@@ -48,7 +48,7 @@ describe(nameof(CallSignatureDeclaration), () => {
                 docs: [],
                 parameters: [],
                 returnType: undefined,
-                typeParameters: []
+                typeParameters: [],
             });
         });
 
@@ -64,7 +64,7 @@ interface Identifier {
                 docs: [{ description: "Test" }],
                 parameters: [{ name: "p" }],
                 returnType: "string",
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             });
         });
     });

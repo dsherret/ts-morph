@@ -56,7 +56,7 @@ export function printNode(node: ts.Node, sourceFileOrOptions?: PrintNodeOptions 
 
     const printer = ts.createPrinter({
         newLine: options.newLineKind ?? NewLineKind.LineFeed,
-        removeComments: options.removeComments || false
+        removeComments: options.removeComments || false,
     });
 
     if (sourceFile == null)

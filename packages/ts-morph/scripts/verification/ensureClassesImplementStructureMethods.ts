@@ -26,7 +26,7 @@ export function ensureClassesImplementStructureMethods(inspector: TsMorphInspect
             addProblem({
                 filePath: node.getFilePath(),
                 lineNumber: node.getStartLineNumber(),
-                message: `${node.getName()} does not have a .${name}() function.`
+                message: `${node.getName()} does not have a .${name}() function.`,
             });
         }
     }

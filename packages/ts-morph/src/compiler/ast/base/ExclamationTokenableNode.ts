@@ -60,7 +60,7 @@ export function ExclamationTokenableNode<T extends Constructor<ExclamationTokena
                 insertIntoParentTextRange({
                     insertPos: colonNode.getStart(),
                     parent: this,
-                    newText: "!"
+                    newText: "!",
                 });
             }
             else {
@@ -81,7 +81,7 @@ export function ExclamationTokenableNode<T extends Constructor<ExclamationTokena
 
         getStructure() {
             return callBaseGetStructure<ExclamationTokenableNodeStructure>(Base.prototype, this, {
-                hasExclamationToken: this.hasExclamationToken()
+                hasExclamationToken: this.hasExclamationToken(),
             });
         }
     };

@@ -11,11 +11,12 @@ import { ImplementationLocation } from "../../tools";
 import { TypeAliasDeclaration } from "../type";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createBase = <T extends typeof Statement>(ctor: T) => TypeElementMemberedNode(TextInsertableNode(
-    ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(JSDocableNode(AmbientableNode(
-        NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(ctor))))
-    )))))
-));
+const createBase = <T extends typeof Statement>(ctor: T) =>
+    TypeElementMemberedNode(TextInsertableNode(
+        ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(JSDocableNode(AmbientableNode(
+            NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(ctor)))),
+        ))))),
+    ));
 export const InterfaceDeclarationBase = createBase(Statement);
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**
@@ -57,7 +58,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getStructure(): InterfaceDeclarationStructure {
         return callBaseGetStructure<InterfaceDeclarationSpecificStructure>(InterfaceDeclarationBase.prototype, this, {
-            kind: StructureKind.Interface
+            kind: StructureKind.Interface,
         });
     }
 }

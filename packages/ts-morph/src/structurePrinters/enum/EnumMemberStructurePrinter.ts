@@ -9,7 +9,7 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
 
     printTexts(
         writer: CodeBlockWriter,
-        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string | undefined
+        structures: ReadonlyArray<OptionalKind<EnumMemberStructure> | WriterFunction | string> | WriterFunction | string | undefined,
     ) {
         this.multipleWriter.printText(writer, structures);
     }

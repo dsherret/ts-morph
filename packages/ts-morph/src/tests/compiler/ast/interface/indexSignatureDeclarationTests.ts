@@ -217,7 +217,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
                 keyName: "newKeyName",
                 keyType: "number",
                 returnType: "Date",
-                isReadonly: true
+                isReadonly: true,
             };
             doTest("interface Identifier {\n    [key: string]: SomeReference;\n}", allProps,
                 "interface Identifier {\n    /** Desc */\n    readonly [newKeyName: number]: Date;\n}");
@@ -244,7 +244,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
                 keyName: "key",
                 keyType: "OtherType",
                 docs: [],
-                returnType: "MyType"
+                returnType: "MyType",
             });
         });
 
@@ -255,7 +255,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
                 keyName: "key",
                 keyType: "string",
                 docs: [],
-                returnType: undefined
+                returnType: undefined,
             });
         });
 
@@ -271,7 +271,7 @@ interface Identifier {
                 keyName: "key",
                 keyType: "string",
                 docs: [{ description: "Test" }],
-                returnType: "number"
+                returnType: "number",
             });
         });
     });

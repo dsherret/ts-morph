@@ -28,7 +28,7 @@ export function ensureStructuresMatchClasses(inspector: TsMorphInspector, addPro
                 addProblem({
                     filePath: structure.getFilePath(),
                     lineNumber: structure.getStartLineNumber(),
-                    message: `${structure.getName()} does not have ${mixinStructureName}.`
+                    message: `${structure.getName()} does not have ${mixinStructureName}.`,
                 });
             }
         }
@@ -41,7 +41,7 @@ export function ensureStructuresMatchClasses(inspector: TsMorphInspector, addPro
                 addProblem({
                     filePath: structure.getFilePath(),
                     lineNumber: structure.getStartLineNumber(),
-                    message: `${structure.getName()} has ${baseStructure.getName()}, but it shouldn't.`
+                    message: `${structure.getName()} has ${baseStructure.getName()}, but it shouldn't.`,
                 });
             }
         }

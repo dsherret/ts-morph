@@ -110,7 +110,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
             insertIntoParentTextRange({
                 insertPos: importKeyword.getEnd(),
                 parent: this,
-                newText: ` ${text} from`
+                newText: ` ${text} from`,
             });
             return this;
         }
@@ -119,7 +119,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         insertIntoParentTextRange({
             insertPos: importKeyword.getEnd(),
             parent: importClause,
-            newText: ` ${text},`
+            newText: ` ${text},`,
         });
         return this;
     }
@@ -179,7 +179,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
             insertIntoParentTextRange({
                 insertPos: defaultImport.getEnd(),
                 parent: this.getImportClause()!,
-                newText: `, * as ${text}`
+                newText: `, * as ${text}`,
             });
             return this;
         }
@@ -187,7 +187,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         insertIntoParentTextRange({
             insertPos: this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
             parent: this,
-            newText: ` * as ${text} from`
+            newText: ` * as ${text} from`,
         });
 
         return this;
@@ -204,7 +204,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
         removeChildren({
             children: getChildrenToRemove.call(this),
             removePrecedingSpaces: true,
-            removePrecedingNewLines: true
+            removePrecedingNewLines: true,
         });
 
         return this;
@@ -235,14 +235,14 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
             removeChildren({
                 children: [importClause, importClause.getNextSiblingIfKindOrThrow(SyntaxKind.FromKeyword)],
                 removePrecedingSpaces: true,
-                removePrecedingNewLines: true
+                removePrecedingNewLines: true,
             });
         }
         else {
             removeChildren({
                 children: [defaultImport, defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken)],
                 removePrecedingSpaces: true,
-                removePrecedingNewLines: true
+                removePrecedingNewLines: true,
             });
         }
 
@@ -309,7 +309,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
                 insertIntoParentTextRange({
                     insertPos: this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
                     parent: this,
-                    newText: ` ${writer.toString()} from`
+                    newText: ` ${writer.toString()} from`,
                 });
             }
             else if (this.getNamespaceImport() != null)
@@ -319,17 +319,17 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
                 insertIntoParentTextRange({
                     insertPos: namedBindings.getStart(),
                     replacing: {
-                        textLength: namedBindings.getWidth()
+                        textLength: namedBindings.getWidth(),
                     },
                     parent: importClause,
-                    newText: writer.toString()
+                    newText: writer.toString(),
                 });
             }
             else {
                 insertIntoParentTextRange({
                     insertPos: this.getDefaultImport()!.getEnd(),
                     parent: importClause,
-                    newText: `, ${writer.toString()}`
+                    newText: `, ${writer.toString()}`,
                 });
             }
         }
@@ -344,7 +344,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
                 insertIndex: index,
                 newText: writer.toString(),
                 surroundWithSpaces: this._context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,
-                useTrailingCommas: false
+                useTrailingCommas: false,
             });
         }
 
@@ -447,7 +447,7 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
             defaultImport: defaultImport ? defaultImport.getText() : undefined,
             moduleSpecifier: this.getModuleSpecifier().getLiteralText(),
             namedImports: this.getNamedImports().map(node => node.getStructure()),
-            namespaceImport: namespaceImport ? namespaceImport.getText() : undefined
+            namespaceImport: namespaceImport ? namespaceImport.getText() : undefined,
         });
     }
 }
@@ -466,7 +466,7 @@ function setEmptyNamedImport(node: ImportDeclaration) {
         insertIntoParentTextRange({
             insertPos: node.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
             parent: node,
-            newText: ` ${emptyBracesText} from`
+            newText: ` ${emptyBracesText} from`,
         });
         return;
     }
@@ -478,8 +478,8 @@ function setEmptyNamedImport(node: ImportDeclaration) {
             newText: emptyBracesText,
             insertPos: replaceNode.getStart(),
             replacing: {
-                textLength: replaceNode.getWidth()
-            }
+                textLength: replaceNode.getWidth(),
+            },
         });
         return;
     }
@@ -489,7 +489,7 @@ function setEmptyNamedImport(node: ImportDeclaration) {
         insertIntoParentTextRange({
             insertPos: defaultImport.getEnd(),
             parent: importClause,
-            newText: `, ${emptyBracesText}`
+            newText: `, ${emptyBracesText}`,
         });
         return;
     }

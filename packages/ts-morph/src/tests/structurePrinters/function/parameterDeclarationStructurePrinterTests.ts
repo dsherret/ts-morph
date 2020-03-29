@@ -18,7 +18,7 @@ describe(nameof(ParameterDeclarationStructurePrinter), () => {
         it("should handle when there are newlines in the type", () => {
             doTest(
                 [{ name: "p", type: writer => writer.write("string").newLine().write("| number") }, { name: "p1" }],
-                "(p: string\n    | number, p1)"
+                "(p: string\n    | number, p1)",
             );
         });
     });

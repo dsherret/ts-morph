@@ -408,19 +408,19 @@ describe(nameof(InMemoryFileSystemHost), () => {
             expect(fs.globSync(["/dir/**/*.ts", "/**/*.txt", "!/**/*.d.ts"])).to.deep.equal([
                 "/dir/file1.ts",
                 "/dir/subDir/file2.ts",
-                "/dir2/file5.txt"
+                "/dir2/file5.txt",
             ]);
         });
 
         it("should match all the patterns provided for a relative path", () => {
             expect(fs.globSync(["dir/subDir/**/*.ts"])).to.deep.equal([
-                "/dir/subDir/file2.ts"
+                "/dir/subDir/file2.ts",
             ]);
         });
 
         it("should match all the patterns provided for a relative path with a dot", () => {
             expect(fs.globSync(["./dir/subDir/**/*.ts"])).to.deep.equal([
-                "/dir/subDir/file2.ts"
+                "/dir/subDir/file2.ts",
             ]);
         });
     });

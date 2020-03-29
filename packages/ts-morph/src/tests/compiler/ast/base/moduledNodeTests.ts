@@ -12,7 +12,7 @@ describe(nameof(ModuledNode), () => {
             index: number,
             structures: OptionalKind<ImportDeclarationStructure>[],
             expectedCode: string,
-            useSingleQuotes = false
+            useSingleQuotes = false,
         ) {
             const { sourceFile, project } = getInfoFromText(startCode);
             if (useSingleQuotes)
@@ -29,14 +29,14 @@ describe(nameof(ModuledNode), () => {
                 { defaultImport: "identifier", namespaceImport: "name", moduleSpecifier: "./test" },
                 { defaultImport: "identifier", namedImports: ["name1", { name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
                 { namedImports: ["name"], moduleSpecifier: "./test" },
-                { namespaceImport: "name", moduleSpecifier: "./test" }
+                { namespaceImport: "name", moduleSpecifier: "./test" },
             ], [
                 `import "./test";`,
                 `import identifier from "./test";`,
                 `import identifier, * as name from "./test";`,
                 `import identifier, { name1, name, name as alias } from "./test";`,
                 `import { name } from "./test";`,
-                `import * as name from "./test";`
+                `import * as name from "./test";`,
             ].join("\n") + "\n");
         });
 
@@ -208,12 +208,12 @@ describe(nameof(ModuledNode), () => {
                 { moduleSpecifier: "./test" },
                 { namedExports: ["name1", { name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
                 { namedExports: ["name"] },
-                {}
+                {},
             ], [
                 `export * from "./test";`,
                 `export { name1, name, name as alias } from "./test";`,
                 `export { name };`,
-                `export { };`
+                `export { };`,
             ].join("\n") + "\n");
         });
 
@@ -363,11 +363,11 @@ describe(nameof(ModuledNode), () => {
             doTest("", 0, [
                 { expression: "5" },
                 { isExportEquals: true, expression: writer => writer.write("6") },
-                { isExportEquals: false, expression: "name" }
+                { isExportEquals: false, expression: "name" },
             ], [
                 `export = 5;`,
                 `export = 6;`,
-                `export default name;`
+                `export default name;`,
             ].join("\n") + "\n");
         });
 
@@ -493,7 +493,7 @@ describe(nameof(ModuledNode), () => {
             const mainSourceFile = project.createSourceFile(
                 "main.ts",
                 `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n`
-                    + "export class MainFileClass {}\nexport default MainFileClass;"
+                    + "export class MainFileClass {}\nexport default MainFileClass;",
             );
             project.createSourceFile("class.ts", `export class Class {} export class MyClass {}`);
             project.createSourceFile("otherClass.ts", `export class OtherClass {}\nexport class InnerClass {}`);
@@ -501,7 +501,7 @@ describe(nameof(ModuledNode), () => {
             project.createSourceFile(
                 "subBarrel.ts",
                 `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n`
-                    + `export {default as SubClass3} from "./subFile3"`
+                    + `export {default as SubClass3} from "./subFile3"`,
             );
             project.createSourceFile("subFile.ts", `export class SubClass {}`);
             project.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
@@ -515,7 +515,7 @@ describe(nameof(ModuledNode), () => {
                 ["MyClass", ["export class MyClass {}"]],
                 ["SubClass", ["export class SubClass {}"]],
                 ["Test", ["export class SubClass2 {}"]],
-                ["SubClass3", ["class SubClass3 {}"]]
+                ["SubClass3", ["class SubClass3 {}"]],
             ], mainSourceFile.getExportedDeclarations());
         });
 
@@ -525,7 +525,7 @@ describe(nameof(ModuledNode), () => {
             project.createSourceFile("Test.ts", `export class Test {}`);
 
             assertMapsEqual([
-                ["Test", ["export class Test {}"]]
+                ["Test", ["export class Test {}"]],
             ], mainSourceFile.getExportedDeclarations());
         });
 
@@ -535,7 +535,7 @@ describe(nameof(ModuledNode), () => {
             project.createSourceFile("Test.ts", `export class Test {}`);
 
             assertMapsEqual([
-                ["NewTest", ["export class Test {}"]]
+                ["NewTest", ["export class Test {}"]],
             ], mainSourceFile.getExportedDeclarations());
         });
 
@@ -545,7 +545,7 @@ describe(nameof(ModuledNode), () => {
             project.createSourceFile("Test.ts", `export class Test {}`);
 
             assertMapsEqual([
-                ["ts", ["export class Test {}"]]
+                ["ts", ["export class Test {}"]],
             ], mainSourceFile.getExportedDeclarations());
         });
 
@@ -562,8 +562,8 @@ export = ts;`);
             assertMapsEqual([
                 ["ts", [
                     "declare namespace ts { const version: string; }",
-                    "declare namespace ts { const version2: string; }"
-                ]]
+                    "declare namespace ts { const version2: string; }",
+                ]],
             ], mainSourceFile.getExportedDeclarations());
         });
 
@@ -573,7 +573,7 @@ export = ts;`);
             project.createSourceFile("Test.ts", `export default class Test {}`);
 
             assertMapsEqual([
-                ["Test", ["export default class Test {}"]]
+                ["Test", ["export default class Test {}"]],
             ], mainSourceFile.getExportedDeclarations());
         });
 
@@ -586,38 +586,38 @@ export = ts;`);
 
         it("should get when there's only a default export using an export assignment", () => {
             doTest("class MainFileClass {}\nexport default MainFileClass;", [
-                ["default", ["class MainFileClass {}"]]
+                ["default", ["class MainFileClass {}"]],
             ]);
         });
 
         it("should get when the same declaration is exported twice as a named export and default export", () => {
             doTest("export class MainFileClass {}\nexport default MainFileClass;", [
                 ["MainFileClass", ["export class MainFileClass {}"]],
-                ["default", ["export class MainFileClass {}"]]
+                ["default", ["export class MainFileClass {}"]],
             ]);
         });
 
         it("should get when exporting a string literal as a default export", () => {
             doTest("export default 'test';", [
-                ["default", ["'test'"]]
+                ["default", ["'test'"]],
             ]);
         });
 
         it("should get when exporting a numeric literal as a default export", () => {
             doTest("export default 5;", [
-                ["default", ["5"]]
+                ["default", ["5"]],
             ]);
         });
 
         it("should get when exporting an object literal expression", () => {
             doTest("export default {};", [
-                ["default", ["{}"]]
+                ["default", ["{}"]],
             ]);
         });
 
         it("should get when there's an interface and function with the same name", () => {
             doTest("export interface MyItem {}\nexport function MyItem() {}", [
-                ["MyItem", ["export function MyItem() {}", "export interface MyItem {}"]]
+                ["MyItem", ["export function MyItem() {}", "export interface MyItem {}"]],
             ]);
         });
 
@@ -634,7 +634,7 @@ export = ts;`);
 
         it("should get from namespace when there's a default export using an export assignment", () => {
             doNamespaceTest("declare module 'test' { class Test {} export default Test; }", [
-                ["default", ["class Test {}"]]
+                ["default", ["class Test {}"]],
             ]);
         });
 

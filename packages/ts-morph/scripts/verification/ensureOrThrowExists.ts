@@ -23,7 +23,7 @@ export function ensureOrThrowExists(inspector: TsMorphInspector, addProblem: (pr
                 addProblem({
                     filePath: c.getSourceFile().getFilePath(),
                     lineNumber: method.getStartLineNumber(),
-                    message: `Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`
+                    message: `Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`,
                 });
             }
         }
@@ -39,7 +39,7 @@ export function ensureOrThrowExists(inspector: TsMorphInspector, addProblem: (pr
                 addProblem({
                     filePath: i.getSourceFile().getFilePath(),
                     lineNumber: method.getStartLineNumber(),
-                    message: `Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`
+                    message: `Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`,
                 });
             }
         }

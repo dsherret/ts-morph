@@ -27,7 +27,7 @@ export class NoSubstitutionTemplateLiteral extends NoSubstitutionTemplateLiteral
             sourceFile: this._sourceFile,
             start: this.getStart() + 1,
             replacingLength: this.getWidth() - 2,
-            newText: value
+            newText: value,
         });
 
         return parent.getChildAtIndex(childIndex) as (NoSubstitutionTemplateLiteral | TemplateExpression);

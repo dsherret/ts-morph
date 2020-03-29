@@ -107,7 +107,7 @@ describe(nameof(ParameterDeclaration), () => {
 
         it("should modify when setting", () => {
             const structure: OptionalKind<MakeRequired<ParameterDeclarationSpecificStructure>> = {
-                isRestParameter: true
+                isRestParameter: true,
             };
             doTest("function func(param: string) {}", structure, "function func(...param: string) {}");
         });
@@ -155,7 +155,7 @@ describe(nameof(ParameterDeclaration), () => {
                 scope: undefined,
                 isReadonly: false,
                 decorators: [],
-                initializer: undefined
+                initializer: undefined,
             });
         });
 
@@ -170,7 +170,7 @@ describe(nameof(ParameterDeclaration), () => {
                 initializer: "true",
                 isReadonly: true,
                 decorators: [{ name: "dec" }],
-                isRestParameter: true
+                isRestParameter: true,
             });
         });
     });

@@ -77,7 +77,7 @@ export class Project {
         // setup context
         this._context = new ProjectContext(this, fileSystemWrapper, compilerOptionsContainer, {
             createLanguageService: true,
-            resolutionHost: options.resolutionHost
+            resolutionHost: options.resolutionHost,
         });
 
         // initialize manipulation settings
@@ -97,7 +97,7 @@ export class Project {
                 throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use an in-memory file system.");
             if (options.skipLoadingLibFiles && !options.useInMemoryFileSystem) {
                 throw new errors.InvalidOperationError(
-                    `The ${nameof(options.skipLoadingLibFiles)} option can only be true when ${nameof(options.useInMemoryFileSystem)} is true.`
+                    `The ${nameof(options.skipLoadingLibFiles)} option can only be true when ${nameof(options.useInMemoryFileSystem)} is true.`,
                 );
             }
         }
@@ -111,7 +111,7 @@ export class Project {
         function getCompilerOptions(): CompilerOptions {
             return {
                 ...getTsConfigCompilerOptions(),
-                ...(options.compilerOptions ?? {}) as CompilerOptions
+                ...(options.compilerOptions ?? {}) as CompilerOptions,
             };
         }
 
@@ -179,7 +179,7 @@ export class Project {
     addDirectoryAtPathIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
         return this._context.directoryCoordinator.addDirectoryAtPathIfExists(
             this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath),
-            { ...options, markInProject: true }
+            { ...options, markInProject: true },
         );
     }
 
@@ -194,7 +194,7 @@ export class Project {
     addDirectoryAtPath(dirPath: string, options: DirectoryAddOptions = {}): Directory {
         return this._context.directoryCoordinator.addDirectoryAtPath(
             this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath),
-            { ...options, markInProject: true }
+            { ...options, markInProject: true },
         );
     }
 
@@ -205,7 +205,7 @@ export class Project {
     createDirectory(dirPath: string): Directory {
         return this._context.directoryCoordinator.createDirectoryOrAddIfExists(
             this._context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath),
-            { markInProject: true }
+            { markInProject: true },
         );
     }
 
@@ -304,7 +304,7 @@ export class Project {
         const resolver = new TsConfigResolver(
             this._context.fileSystemWrapper,
             this._context.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath),
-            this._context.getEncoding()
+            this._context.getEncoding(),
         );
         return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
     }
@@ -331,12 +331,12 @@ export class Project {
     createSourceFile(
         filePath: string,
         sourceFileText?: string | OptionalKind<SourceFileStructure> | WriterFunction,
-        options?: SourceFileCreateOptions
+        options?: SourceFileCreateOptions,
     ): SourceFile {
         return this._context.compilerFactory.createSourceFile(
             this._context.fileSystemWrapper.getStandardizedAbsolutePath(filePath),
             sourceFileText ?? "",
-            { ...(options ?? {}), markInProject: true }
+            { ...(options ?? {}), markInProject: true },
         );
     }
 
@@ -646,7 +646,7 @@ export class Project {
         return ts.formatDiagnosticsWithColorAndContext(diagnostics.map(d => d.compilerObject), {
             getCurrentDirectory: () => this._context.fileSystemWrapper.getCurrentDirectory(),
             getCanonicalFileName: fileName => fileName,
-            getNewLine: () => opts.newLineChar ?? require("os").EOL
+            getNewLine: () => opts.newLineChar ?? require("os").EOL,
         });
     }
 

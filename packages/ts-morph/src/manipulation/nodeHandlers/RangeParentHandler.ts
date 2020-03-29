@@ -131,7 +131,7 @@ function getRealEnd(node: ts.Node, sourceFile: ts.SourceFile) {
         return getPreviousMatchingPos(
             sourceFile.text,
             node.end,
-            charCode => charCode !== CharCodes.ASTERISK && !StringUtils.isWhitespaceCharCode(charCode)
+            charCode => charCode !== CharCodes.ASTERISK && !StringUtils.isWhitespaceCharCode(charCode),
         );
     }
 

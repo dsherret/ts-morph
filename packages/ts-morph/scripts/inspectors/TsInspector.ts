@@ -77,7 +77,7 @@ export class TsInspector {
             return {
                 name: e.getName(),
                 value,
-                isAlias
+                isAlias,
             };
         });
     }

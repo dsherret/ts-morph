@@ -29,7 +29,7 @@ export class NodeHandlerHelper {
         const children = this.getCompilerChildren(currentNode, newNode, newSourceFile);
         return [
             new AdvancedIterator(ArrayUtils.toIterator(children[0])),
-            new AdvancedIterator(ArrayUtils.toIterator(children[1]))
+            new AdvancedIterator(ArrayUtils.toIterator(children[1])),
         ];
     }
 
@@ -39,7 +39,7 @@ export class NodeHandlerHelper {
 
         return [
             ExtendedParser.getCompilerChildren(currentCompilerNode, currentSourceFile),
-            ExtendedParser.getCompilerChildren(newNode, newSourceFile)
+            ExtendedParser.getCompilerChildren(newNode, newSourceFile),
         ];
     }
 
@@ -52,14 +52,14 @@ export class NodeHandlerHelper {
         if (hasParsedTokens(currentCompilerNode)) {
             return [
                 ExtendedParser.getCompilerChildren(currentCompilerNode, currentSourceFile),
-                ExtendedParser.getCompilerChildren(newNode, newSourceFile)
+                ExtendedParser.getCompilerChildren(newNode, newSourceFile),
             ];
         }
 
         // great, we don't have to parse the tokens and can instead just use ts.forEachChild (faster)
         return [
             ExtendedParser.getCompilerForEachChildren(currentCompilerNode, currentSourceFile),
-            ExtendedParser.getCompilerForEachChildren(newNode, newSourceFile)
+            ExtendedParser.getCompilerForEachChildren(newNode, newSourceFile),
         ];
     }
 }

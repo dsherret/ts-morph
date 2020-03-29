@@ -16,7 +16,7 @@ describe("tests for issue #57", () => {
         firstChild.addProperty({
             isStatic: true,
             name: "prop",
-            type: "string"
+            type: "string",
         });
         expect(sourceFile.getFullText()).to.equal(`
 export class Class {

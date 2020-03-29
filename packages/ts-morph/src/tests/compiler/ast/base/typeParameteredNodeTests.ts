@@ -140,7 +140,7 @@ describe(nameof(TypeParameteredNode), () => {
             const structure: OptionalKindAndTrivia<MakeRequired<TypeParameterDeclarationStructure>> = {
                 name: "V",
                 constraint: "string",
-                default: "number"
+                default: "number",
             };
             doTest("function identifier() {}", 0, structure, "function identifier<V extends string = number>() {}");
         });
@@ -151,7 +151,7 @@ describe(nameof(TypeParameteredNode), () => {
             startCode: string,
             insertIndex: number,
             structures: (OptionalKind<TypeParameterDeclarationStructure> | string)[],
-            expectedCode: string
+            expectedCode: string,
         ) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertTypeParameters(insertIndex, structures);

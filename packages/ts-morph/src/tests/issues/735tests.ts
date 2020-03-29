@@ -6,7 +6,7 @@ describe("tests for issue #735", () => {
         const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile(
             "./sample.ts",
-            "//  aaaa bbbb \n namespace Foo {\n\texport class Bar {\n \t\tconstructor(){}\n \t\tsayHello(){return 'hello';}\n\t}\n}\n"
+            "//  aaaa bbbb \n namespace Foo {\n\texport class Bar {\n \t\tconstructor(){}\n \t\tsayHello(){return 'hello';}\n\t}\n}\n",
         );
 
         sourceFile.getNamespaces().forEach(ns => ns.unwrap());

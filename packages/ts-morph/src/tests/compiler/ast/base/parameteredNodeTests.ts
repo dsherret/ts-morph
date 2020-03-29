@@ -134,7 +134,7 @@ describe(nameof(ParameteredNode), () => {
                 isReadonly: true,
                 scope: Scope.Public,
                 isRestParameter: true,
-                type: "number[]"
+                type: "number[]",
             };
             doTest("function identifier() {}", 0, [structure], "function identifier(@dec public readonly ...param?: number[] = [5]) {}");
         });

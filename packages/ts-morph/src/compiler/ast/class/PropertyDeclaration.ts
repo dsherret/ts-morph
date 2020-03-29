@@ -7,11 +7,12 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
 
-const createBase = <T extends typeof ClassElement>(ctor: T) => ChildOrderableNode(AmbientableNode(DecoratableNode(AbstractableNode(ScopedNode(
-    StaticableNode(JSDocableNode(ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(
-        TypedNode(PropertyNamedNode(ModifierableNode(ctor)))
-    ))))))
-)))));
+const createBase = <T extends typeof ClassElement>(ctor: T) =>
+    ChildOrderableNode(AmbientableNode(DecoratableNode(AbstractableNode(ScopedNode(
+        StaticableNode(JSDocableNode(ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(
+            TypedNode(PropertyNamedNode(ModifierableNode(ctor))),
+        )))))),
+    )))));
 export const PropertyDeclarationBase = createBase(ClassElement);
 export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
     /**
@@ -44,7 +45,7 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
      */
     getStructure(): PropertyDeclarationStructure {
         return callBaseGetStructure<PropertyDeclarationSpecificStructure>(PropertyDeclarationBase.prototype, this, {
-            kind: StructureKind.Property
+            kind: StructureKind.Property,
         }) as any as PropertyDeclarationStructure;
     }
 }

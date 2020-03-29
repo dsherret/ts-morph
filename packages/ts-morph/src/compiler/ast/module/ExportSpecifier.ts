@@ -73,7 +73,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
             insertIntoParentTextRange({
                 insertPos: this.getNameNode().getEnd(),
                 parent: this,
-                newText: ` as ${alias}`
+                newText: ` as ${alias}`,
             });
         }
         else {
@@ -95,7 +95,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
         removeChildren({
             children: [this.getFirstChildByKindOrThrow(SyntaxKind.AsKeyword), aliasIdentifier],
             removePrecedingSpaces: true,
-            removePrecedingNewLines: true
+            removePrecedingNewLines: true,
         });
 
         return this;
@@ -193,7 +193,7 @@ export class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecifier> {
         return callBaseGetStructure<ExportSpecifierSpecificStructure>(Node.prototype, this, {
             kind: StructureKind.ExportSpecifier,
             alias: alias ? alias.getText() : undefined,
-            name: this.getNameNode().getText()
+            name: this.getNameNode().getText(),
         });
     }
 }

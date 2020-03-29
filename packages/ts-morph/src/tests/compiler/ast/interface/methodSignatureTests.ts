@@ -31,12 +31,12 @@ describe(nameof(MethodSignature), () => {
                 name: "name",
                 parameters: [{ name: "param" }],
                 typeParameters: ["T"],
-                returnType: "number"
+                returnType: "number",
             };
             doTest(
                 "interface Identifier {\n    method(): string;\n}",
                 structure,
-                "interface Identifier {\n    /** test */\n    name?<T>(param): number;\n}"
+                "interface Identifier {\n    /** test */\n    name?<T>(param): number;\n}",
             );
         });
     });
@@ -88,7 +88,7 @@ describe(nameof(MethodSignature), () => {
                 name: "method",
                 parameters: [],
                 returnType: undefined,
-                typeParameters: []
+                typeParameters: [],
             });
         });
 
@@ -105,7 +105,7 @@ interface Identifier {
                 name: "method",
                 parameters: [{ name: "p" }],
                 returnType: "string",
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             });
         });
     });

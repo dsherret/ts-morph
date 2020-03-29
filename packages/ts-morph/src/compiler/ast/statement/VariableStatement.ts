@@ -1,6 +1,5 @@
 import { ts } from "@ts-morph/common";
-import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure, StructureKind,
-    OptionalKind } from "../../../structures";
+import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";
@@ -8,9 +7,10 @@ import { Statement } from "./Statement";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../variable";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-const createBase = <T extends typeof Statement>(ctor: T) => NamespaceChildableNode(JSDocableNode(AmbientableNode(
-    ExportableNode(ModifierableNode(ctor))
-)));
+const createBase = <T extends typeof Statement>(ctor: T) =>
+    NamespaceChildableNode(JSDocableNode(AmbientableNode(
+        ExportableNode(ModifierableNode(ctor)),
+    )));
 export const VariableStatementBase = createBase(Statement);
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /**
@@ -108,7 +108,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
         return callBaseGetStructure<VariableStatementSpecificStructure>(VariableStatementBase.prototype, this, {
             kind: StructureKind.VariableStatement,
             declarationKind: this.getDeclarationKind(),
-            declarations: this.getDeclarations().map(declaration => declaration.getStructure())
+            declarations: this.getDeclarations().map(declaration => declaration.getStructure()),
         }) as any as VariableStatementStructure;
     }
 }

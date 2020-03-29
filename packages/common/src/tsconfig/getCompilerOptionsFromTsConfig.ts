@@ -23,6 +23,6 @@ export function getCompilerOptionsFromTsConfig(filePath: string, options: Compil
     const tsConfigResolver = new TsConfigResolver(fileSystemWrapper, fileSystemWrapper.getStandardizedAbsolutePath(filePath), options.encoding || "utf-8");
     return {
         options: tsConfigResolver.getCompilerOptions(),
-        errors: tsConfigResolver.getErrors()
+        errors: tsConfigResolver.getErrors(),
     };
 }

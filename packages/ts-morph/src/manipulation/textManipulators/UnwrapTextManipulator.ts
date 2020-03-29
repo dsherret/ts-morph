@@ -7,7 +7,7 @@ export class UnwrapTextManipulator extends InsertionTextManipulator {
         super({
             insertPos: node.getStart(true),
             newText: getReplacementText(node),
-            replacingLength: node.getWidth(true)
+            replacingLength: node.getWidth(true),
         });
     }
 }
@@ -20,6 +20,6 @@ function getReplacementText(node: Node) {
     return StringUtils.indent(childSyntaxList.getFullText(), -1, {
         indentText: sourceFile._context.manipulationSettings.getIndentationText(),
         indentSizeInSpaces: sourceFile._context.manipulationSettings._getIndentSizeInSpaces(),
-        isInStringAtPos: pos => sourceFile.isInStringAtPos(startPos + pos)
+        isInStringAtPos: pos => sourceFile.isInStringAtPos(startPos + pos),
     }).trimLeft();
 }

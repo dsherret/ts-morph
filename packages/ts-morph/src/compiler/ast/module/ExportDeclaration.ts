@@ -27,14 +27,14 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
             insertIntoParentTextRange({
                 parent: this,
                 insertPos: (this.getNodeProperty("exportClause") ?? this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken)).getStart(),
-                newText: "type "
+                newText: "type ",
             });
         }
         else {
             const typeKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword);
             removeChildren({
                 children: [typeKeyword],
-                removeFollowingSpaces: true
+                removeFollowingSpaces: true,
             });
         }
 
@@ -63,8 +63,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 parent: this,
                 newText,
                 replacing: {
-                    textLength: 1
-                }
+                    textLength: 1,
+                },
             });
         }
         else if (Node.isNamespaceExport(exportClause))
@@ -75,8 +75,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 parent: this,
                 newText,
                 replacing: {
-                    textLength: exportClause.getWidth()
-                }
+                    textLength: exportClause.getWidth(),
+                },
             });
         }
 
@@ -109,7 +109,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
             insertIntoParentTextRange({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
                 parent: this,
-                newText: ` from ${quoteKind}${text}${quoteKind}`
+                newText: ` from ${quoteKind}${text}${quoteKind}`,
             });
         }
         else {
@@ -183,7 +183,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
         removeChildren({
             children: [this.getFirstChildByKindOrThrow(SyntaxKind.FromKeyword), moduleSpecifier],
             removePrecedingNewLines: true,
-            removePrecedingSpaces: true
+            removePrecedingSpaces: true,
         });
         return this;
     }
@@ -258,8 +258,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 parent: this,
                 newText: writer.toString(),
                 replacing: {
-                    textLength: 1
-                }
+                    textLength: 1,
+                },
             });
         }
         else if (exportClause.getKind() === SyntaxKind.NamespaceExport) {
@@ -269,8 +269,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 parent: this,
                 newText: writer.toString(),
                 replacing: {
-                    textLength: exportClause.getWidth()
-                }
+                    textLength: exportClause.getWidth(),
+                },
             });
         }
         else {
@@ -281,7 +281,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
                 insertIndex: index,
                 newText: writer.toString(),
                 surroundWithSpaces: this._context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces,
-                useTrailingCommas: false
+                useTrailingCommas: false,
             });
         }
 
@@ -315,8 +315,8 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
             newText: "*",
             insertPos: namedExportsNode.getStart(),
             replacing: {
-                textLength: namedExportsNode.getWidth()
-            }
+                textLength: namedExportsNode.getWidth(),
+            },
         });
         return this;
     }
@@ -363,7 +363,7 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
             isTypeOnly: this.isTypeOnly(),
             moduleSpecifier: moduleSpecifier?.getLiteralText(),
             namedExports: this.getNamedExports().map(node => node.getStructure()),
-            namespaceExport: this.getNamespaceExport()?.getName()
+            namespaceExport: this.getNamespaceExport()?.getName(),
         });
     }
 }
@@ -386,7 +386,7 @@ function setEmptyNamedExport(node: ExportDeclaration) {
         newText: "{ }",
         insertPos: replaceNode.getStart(),
         replacing: {
-            textLength: replaceNode.getWidth()
-        }
+            textLength: replaceNode.getWidth(),
+        },
     });
 }

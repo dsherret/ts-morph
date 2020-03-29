@@ -29,7 +29,7 @@ describe(nameof(ClassDeclaration), () => {
         function doTest(
             startingCode: string,
             structure: OptionalKindAndTrivia<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>,
-            expectedCode: string
+            expectedCode: string,
         ) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
@@ -82,7 +82,7 @@ class Identifier extends Other {
                 properties: [{ name: "p" }],
                 getAccessors: [{ name: "g" }],
                 setAccessors: [{ name: "s", parameters: [{ name: "value", type: "string" }] }],
-                methods: [{ name: "m" }]
+                methods: [{ name: "m" }],
             };
             doTest(code, structure, expectedCode);
         });
@@ -107,7 +107,7 @@ class Identifier {
                 properties: [],
                 getAccessors: [],
                 setAccessors: [],
-                methods: []
+                methods: [],
             };
             doTest(code, structure, expectedCode);
         });
@@ -137,7 +137,7 @@ class Identifier {
                 name: "Identifier",
                 properties: [],
                 setAccessors: [],
-                typeParameters: []
+                typeParameters: [],
             });
         });
 
@@ -168,7 +168,7 @@ class Identifier {
                 name: "Identifier",
                 properties: [{ name: "prop", type: "string" }],
                 setAccessors: [{ name: "setAccessor", parameters: [{ name: "value", type: "string" }], statements: [] }],
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             });
         });
 
@@ -200,7 +200,7 @@ declare class Identifier {
                 name: "Identifier",
                 properties: [{ name: "prop", type: "string" }],
                 setAccessors: [{ name: "setAccessor", parameters: [{ name: "value", type: "string" }] }],
-                typeParameters: []
+                typeParameters: [],
             });
         });
     });
@@ -272,7 +272,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                 docs: [{ kind: StructureKind.JSDoc, description: "Test", tags: [] }],
                 typeParameters: [
                     { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
-                    { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined }
+                    { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined },
                 ],
                 properties: [{
                     kind: StructureKind.PropertySignature,
@@ -280,56 +280,56 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                     type: "string",
                     hasQuestionToken: false,
                     isReadonly: false,
-                    docs: [{ kind: StructureKind.JSDoc, description: "Test description." }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "Test description." }],
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "param2",
                     type: "number",
                     hasQuestionToken: true,
                     isReadonly: true,
-                    docs: []
+                    docs: [],
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "param3",
                     type: "string",
                     hasQuestionToken: false,
                     isReadonly: true,
-                    docs: []
+                    docs: [],
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "prop1",
                     type: "string",
                     hasQuestionToken: false,
                     isReadonly: false,
-                    docs: [{ kind: StructureKind.JSDoc, description: "Description", tags: [] }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "Description", tags: [] }],
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "prop2",
                     type: "number",
                     hasQuestionToken: true,
                     isReadonly: true,
-                    docs: []
+                    docs: [],
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "myGet",
                     type: "number",
                     hasQuestionToken: false,
                     isReadonly: true,
-                    docs: [{ kind: StructureKind.JSDoc, description: "MyGet", tags: [] }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "MyGet", tags: [] }],
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "myGetAndSet",
                     type: "string",
                     hasQuestionToken: false,
                     isReadonly: false,
-                    docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get", tags: [] }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get", tags: [] }],
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "mySet",
                     type: "string",
                     hasQuestionToken: false,
                     isReadonly: false,
-                    docs: [{ kind: StructureKind.JSDoc, description: "MySet", tags: [] }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "MySet", tags: [] }],
                 }],
                 methods: [{
                     kind: StructureKind.MethodSignature,
@@ -346,12 +346,12 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                         isRestParameter: false,
                         name: "param1",
                         type: "string",
-                        scope: undefined
+                        scope: undefined,
                     }],
                     typeParameters: [
                         { kind: StructureKind.TypeParameter, name: "T", constraint: "string", default: "number" },
-                        { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined }
-                    ]
+                        { kind: StructureKind.TypeParameter, name: "U", constraint: undefined, default: undefined },
+                    ],
                 }, {
                     kind: StructureKind.MethodSignature,
                     docs: [],
@@ -367,9 +367,9 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                         isRestParameter: false,
                         name: "str",
                         type: "string",
-                        scope: undefined
+                        scope: undefined,
                     }],
-                    typeParameters: []
+                    typeParameters: [],
                 }, {
                     kind: StructureKind.MethodSignature,
                     docs: [],
@@ -377,7 +377,7 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                     returnType: "string",
                     hasQuestionToken: false,
                     parameters: [],
-                    typeParameters: []
+                    typeParameters: [],
                 }, {
                     kind: StructureKind.MethodSignature,
                     docs: [],
@@ -385,8 +385,8 @@ abstract class Test<T extends string = number, U> extends Base implements IBase 
                     returnType: "number",
                     hasQuestionToken: true,
                     parameters: [],
-                    typeParameters: []
-                }]
+                    typeParameters: [],
+                }],
             });
         });
 
@@ -420,14 +420,14 @@ class Test {
                     type: "string",
                     hasQuestionToken: false,
                     isReadonly: false,
-                    docs: [{ kind: StructureKind.JSDoc, description: "Test." }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "Test." }],
                 }, {
                     kind: StructureKind.PropertySignature,
                     name: "param2",
                     type: "number",
                     hasQuestionToken: false,
                     isReadonly: false,
-                    docs: [{ kind: StructureKind.JSDoc, description: "Test2." }]
+                    docs: [{ kind: StructureKind.JSDoc, description: "Test2." }],
                 }],
                 methods: [{
                     kind: StructureKind.MethodSignature,
@@ -444,9 +444,9 @@ class Test {
                         isRestParameter: false,
                         name: "param1",
                         type: "string",
-                        scope: undefined
+                        scope: undefined,
                     }],
-                    typeParameters: []
+                    typeParameters: [],
                 }, {
                     kind: StructureKind.MethodSignature,
                     docs: [{ kind: StructureKind.JSDoc, description: "Description2.", tags: [] }],
@@ -462,10 +462,10 @@ class Test {
                         isRestParameter: false,
                         name: "param2",
                         type: "number",
-                        scope: undefined
+                        scope: undefined,
                     }],
-                    typeParameters: []
-                }]
+                    typeParameters: [],
+                }],
             });
         });
     });
@@ -485,10 +485,10 @@ class Test {
                     kind: StructureKind.ConstructSignature,
                     docs: [],
                     parameters: [],
-                    returnType: "File_42$"
+                    returnType: "File_42$",
                 }],
                 methods: [],
-                properties: []
+                properties: [],
             }, "/dir/File^_4#2$.ts");
         });
 
@@ -541,7 +541,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             isRestParameter: false,
                             name: "param1",
                             type: "string",
-                            scope: undefined
+                            scope: undefined,
                         }, {
                             kind: StructureKind.Parameter,
                             decorators: [],
@@ -551,7 +551,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             isRestParameter: false,
                             name: "param2",
                             type: "number",
-                            scope: undefined
+                            scope: undefined,
                         }, {
                             kind: StructureKind.Parameter,
                             decorators: [],
@@ -561,7 +561,7 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             isRestParameter: false,
                             name: "param3",
                             type: "string",
-                            scope: undefined
+                            scope: undefined,
                         }, {
                             kind: StructureKind.Parameter,
                             decorators: [],
@@ -571,9 +571,9 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             isRestParameter: false,
                             name: "param4",
                             type: undefined,
-                            scope: undefined
+                            scope: undefined,
                         }],
-                        returnType: "Test"
+                        returnType: "Test",
                     }],
                     properties: [{
                         kind: StructureKind.PropertySignature,
@@ -581,35 +581,35 @@ class Test<T extends string = number, U> extends Base implements IBase {
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "Description", tags: [] }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "Description", tags: [] }],
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "prop2",
                         type: "number",
                         hasQuestionToken: true,
                         isReadonly: true,
-                        docs: []
+                        docs: [],
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "myGet",
                         type: "number",
                         hasQuestionToken: false,
                         isReadonly: true,
-                        docs: [{ kind: StructureKind.JSDoc, description: "MyGet", tags: [] }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MyGet", tags: [] }],
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "myGetAndSet",
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get", tags: [] }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MyGetAndSet Get", tags: [] }],
                     }, {
                         kind: StructureKind.PropertySignature,
                         name: "mySet",
                         type: "string",
                         hasQuestionToken: false,
                         isReadonly: false,
-                        docs: [{ kind: StructureKind.JSDoc, description: "MySet", tags: [] }]
+                        docs: [{ kind: StructureKind.JSDoc, description: "MySet", tags: [] }],
                     }],
                     methods: [{
                         kind: StructureKind.MethodSignature,
@@ -626,19 +626,19 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             isRestParameter: false,
                             name: "param1",
                             type: "string",
-                            scope: undefined
+                            scope: undefined,
                         }],
                         typeParameters: [{
                             kind: StructureKind.TypeParameter,
                             name: "T",
                             constraint: "string",
-                            default: "number"
+                            default: "number",
                         }, {
                             kind: StructureKind.TypeParameter,
                             name: "U",
                             constraint: undefined,
-                            default: undefined
-                        }]
+                            default: undefined,
+                        }],
                     }, {
                         kind: StructureKind.MethodSignature,
                         docs: [],
@@ -654,9 +654,9 @@ class Test<T extends string = number, U> extends Base implements IBase {
                             isRestParameter: false,
                             name: "str",
                             type: "string",
-                            scope: undefined
+                            scope: undefined,
                         }],
-                        typeParameters: []
+                        typeParameters: [],
                     }, {
                         kind: StructureKind.MethodSignature,
                         docs: [],
@@ -664,8 +664,8 @@ class Test<T extends string = number, U> extends Base implements IBase {
                         returnType: "string",
                         hasQuestionToken: false,
                         parameters: [],
-                        typeParameters: []
-                    }]
+                        typeParameters: [],
+                    }],
                 });
         });
 
@@ -705,9 +705,9 @@ class Test {
                             isRestParameter: false,
                             name: "param",
                             type: "string",
-                            scope: undefined
+                            scope: undefined,
                         }],
-                        returnType: "Test"
+                        returnType: "Test",
                     }, {
                         kind: StructureKind.ConstructSignature,
                         docs: [{ kind: StructureKind.JSDoc, description: "\nTest2.", tags: [] }],
@@ -720,9 +720,9 @@ class Test {
                             isRestParameter: false,
                             name: "param2",
                             type: "number",
-                            scope: undefined
+                            scope: undefined,
                         }],
-                        returnType: "Test"
+                        returnType: "Test",
                     }],
                     properties: [],
                     methods: [{
@@ -740,9 +740,9 @@ class Test {
                             isRestParameter: false,
                             name: "param1",
                             type: "string",
-                            scope: undefined
+                            scope: undefined,
                         }],
-                        typeParameters: []
+                        typeParameters: [],
                     }, {
                         kind: StructureKind.MethodSignature,
                         docs: [{ kind: StructureKind.JSDoc, description: "Description2.", tags: [] }],
@@ -758,10 +758,10 @@ class Test {
                             isRestParameter: false,
                             name: "param2",
                             type: "number",
-                            scope: undefined
+                            scope: undefined,
                         }],
-                        typeParameters: []
-                    }]
+                        typeParameters: [],
+                    }],
                 });
         });
     });

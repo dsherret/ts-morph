@@ -26,7 +26,7 @@ export class ParameterDeclarationStructurePrinter extends NodePrinter<OptionalKi
         if (structure.name == null) {
             throw new errors
                 .NotImplementedError(
-                "Not implemented scenario where parameter declaration structure doesn't have a name. Please open an issue if you need this."
+                "Not implemented scenario where parameter declaration structure doesn't have a name. Please open an issue if you need this.",
             );
         }
 

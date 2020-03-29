@@ -276,7 +276,7 @@ describe(nameof(StringUtils), () => {
         function doTest(input: string, expectedOutput: string, options: { indentSizeInSpaces?: number; isInStringAtPos?: (pos: number) => boolean; } = {}) {
             const actualResult = StringUtils.removeIndentation(input, {
                 indentSizeInSpaces: options.indentSizeInSpaces || 4,
-                isInStringAtPos: options.isInStringAtPos || (() => false)
+                isInStringAtPos: options.isInStringAtPos || (() => false),
             });
 
             expect(actualResult).to.equal(expectedOutput);
@@ -344,7 +344,7 @@ describe(nameof(StringUtils), () => {
             const actualResult = StringUtils.indent(input, times, {
                 indentSizeInSpaces: options.indentSizeInSpaces || 4,
                 indentText: options.indentText || "    ",
-                isInStringAtPos: options.isInStringAtPos || (() => false)
+                isInStringAtPos: options.isInStringAtPos || (() => false),
             });
 
             expect(actualResult).to.equal(expectedOutput);
@@ -379,7 +379,7 @@ describe(nameof(StringUtils), () => {
             text += "\nt";
 
             doTest(text, 1, "    t`\nt`\n    t", {
-                isInStringAtPos: p => p >= pos && p < end
+                isInStringAtPos: p => p >= pos && p < end,
             });
         });
 
@@ -403,7 +403,7 @@ describe(nameof(StringUtils), () => {
             text += "\n    t";
 
             doTest(text, -1, "t`\n    t`\nt", {
-                isInStringAtPos: p => p >= pos && p < end
+                isInStringAtPos: p => p >= pos && p < end,
             });
         });
     });

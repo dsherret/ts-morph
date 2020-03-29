@@ -86,7 +86,7 @@ export class ChangingChildOrderTextManipulator<TParentNode extends Node> impleme
 
             fillSpacingCommon({
                 previousSibling: childrenInNewOrder[oldIndex - 1],
-                nextSibling: childrenInNewOrder[oldIndex]
+                nextSibling: childrenInNewOrder[oldIndex],
             });
         }
 
@@ -96,14 +96,14 @@ export class ChangingChildOrderTextManipulator<TParentNode extends Node> impleme
 
             fillSpacingCommon({
                 previousSibling: childrenInNewOrder[newIndex - 1],
-                nextSibling: childrenInNewOrder[newIndex]
+                nextSibling: childrenInNewOrder[newIndex],
             });
         }
 
         function fillSpacingAfterInsertion() {
             fillSpacingCommon({
                 previousSibling: childrenInNewOrder[newIndex],
-                nextSibling: childrenInNewOrder[newIndex + 1]
+                nextSibling: childrenInNewOrder[newIndex + 1],
             });
         }
 
@@ -113,7 +113,7 @@ export class ChangingChildOrderTextManipulator<TParentNode extends Node> impleme
                 getSiblingFormatting,
                 newLineKind,
                 previousSibling: spacingOpts.previousSibling,
-                nextSibling: spacingOpts.nextSibling
+                nextSibling: spacingOpts.nextSibling,
             });
 
             const twoNewLines = newLineKind + newLineKind;

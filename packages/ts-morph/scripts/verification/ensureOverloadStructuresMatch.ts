@@ -38,7 +38,7 @@ export function ensureOverloadStructuresMatch(inspector: TsMorphInspector, addPr
             addProblem({
                 filePath: overloadStructure.getFilePath(),
                 lineNumber: overloadStructure.getStartLineNumber(),
-                message: `${overloadStructure.getName()} does not have overload extension of ${remainingOverload.getName()}.`
+                message: `${overloadStructure.getName()} does not have overload extension of ${remainingOverload.getName()}.`,
             });
         }
 
@@ -46,7 +46,7 @@ export function ensureOverloadStructuresMatch(inspector: TsMorphInspector, addPr
             addProblem({
                 filePath: overloadStructure.getFilePath(),
                 lineNumber: overloadStructure.getStartLineNumber(),
-                message: `${overloadStructure.getName()} does not have structure extension of ${remainingStructure.getName()}`
+                message: `${overloadStructure.getName()} does not have structure extension of ${remainingStructure.getName()}`,
             });
         }
     }

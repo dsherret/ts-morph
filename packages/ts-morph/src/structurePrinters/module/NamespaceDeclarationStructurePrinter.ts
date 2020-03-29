@@ -30,7 +30,7 @@ export class NamespaceDeclarationStructurePrinter extends NodePrinter<OptionalKi
 
         writer.inlineBlock(() => {
             this.factory.forStatementedNode({
-                isAmbient: structure.hasDeclareKeyword || this.options.isAmbient
+                isAmbient: structure.hasDeclareKeyword || this.options.isAmbient,
             }).printText(writer, structure);
         });
     }

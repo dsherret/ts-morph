@@ -13,7 +13,7 @@ import { Problem } from "./Problem";
 export function validateCodeFences(
     tsMorphInspector: TsMorphInspector,
     tsInspector: TsInspector,
-    addProblem: (problem: Problem) => void
+    addProblem: (problem: Problem) => void,
 ) {
     for (const disallowedReferenceNode of getDisallowedReferenceNodes()) {
         const leadingComments = getLeadingCommentRanges(disallowedReferenceNode);
@@ -22,7 +22,7 @@ export function validateCodeFences(
             addProblem({
                 filePath: disallowedReferenceNode.getSourceFile().getFilePath(),
                 lineNumber: disallowedReferenceNode.getStartLineNumber(),
-                message: `Found not allowed reference \`${disallowedReferenceNode.getText()}\``
+                message: `Found not allowed reference \`${disallowedReferenceNode.getText()}\``,
             });
         }
     }
@@ -33,8 +33,10 @@ export function validateCodeFences(
 
         // limit to the references in the src folder and ignore the test folder
         return [...forGetChildren()]
-            .filter(n => srcDir.isAncestorOf(n.getSourceFile())
-                && !testDir.isAncestorOf(n.getSourceFile()));
+            .filter(n =>
+                srcDir.isAncestorOf(n.getSourceFile())
+                    && !testDir.isAncestorOf(n.getSourceFile())
+            );
 
         // todo: add more functions here in the future
         function forGetChildren() {

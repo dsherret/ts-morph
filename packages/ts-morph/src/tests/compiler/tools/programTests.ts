@@ -60,10 +60,10 @@ describe(nameof(Program), () => {
                 {
                     filePath: "node_modules/library/package.json",
                     text: `{ "name": "library", "version": "0.0.1", "main": "index.js", `
-                        + `"typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`
+                        + `"typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`,
                 },
                 { filePath: "node_modules/library/index.js", text: "export class Test {}" },
-                { filePath: "node_modules/library/index.d.ts", text: "export class Test {}" }
+                { filePath: "node_modules/library/index.d.ts", text: "export class Test {}" },
             ], ["node_modules", "node_modules/library"]);
             const { sourceFile, project } = getInfoFromText("import { Test } from 'library';", { host: fileSystem });
             const librarySourceFile = sourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow();

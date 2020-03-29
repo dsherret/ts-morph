@@ -17,7 +17,7 @@ export function setBodyTextForNode(body: Node, textOrWriterFunction: string | Wr
         newText,
         parent: body,
         replacing: {
-            textLength: closeBrace.getStart() - openBrace.getEnd()
-        }
+            textLength: closeBrace.getStart() - openBrace.getEnd(),
+        },
     });
 }

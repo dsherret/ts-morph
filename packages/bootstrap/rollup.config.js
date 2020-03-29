@@ -5,12 +5,12 @@ export default {
     external: [],
     output: {
         file: "./dist/ts-morph-bootstrap.js",
-        format: "cjs"
+        format: "cjs",
     },
     plugins: [
         typescript({
             typescript: require("ttypescript"),
-            tsconfig: "tsconfig.rollup.json"
-        })
-    ]
+            tsconfig: "tsconfig.rollup.json",
+        }),
+    ],
 };

@@ -24,30 +24,30 @@ describe(nameof(ClassDeclarationStructurePrinter), () => {
                 const structure: OptionalKind<ClassDeclarationStructure> = {
                     name: "C",
                     properties: [{
-                        name: "pNoKeyword"
+                        name: "pNoKeyword",
                     }, {
                         scope: Scope.Public,
-                        name: "pPublic"
+                        name: "pPublic",
                     }, {
                         scope: Scope.Private,
-                        name: "pPrivate"
+                        name: "pPrivate",
                     }, {
                         scope: Scope.Protected,
-                        name: "pProtected"
+                        name: "pProtected",
                     }],
                     ctors: [{}],
                     methods: [{
                         scope: Scope.Private,
-                        name: "m1"
+                        name: "m1",
                     }, {
                         scope: Scope.Protected,
-                        name: "m2"
+                        name: "m2",
                     }, {
                         scope: Scope.Public,
-                        name: "m3"
+                        name: "m3",
                     }],
                     getAccessors: [{ name: "g" }],
-                    setAccessors: [{ name: "s" }]
+                    setAccessors: [{ name: "s" }],
                 };
 
                 doTest(structure, `class C {
@@ -81,21 +81,21 @@ describe(nameof(ClassDeclarationStructurePrinter), () => {
             it("should write implements", () => {
                 doTest(
                     { name: "C", implements: ["Base1", writer => writer.write("Base2")] },
-                    `class C implements Base1, Base2 {\n}`
+                    `class C implements Base1, Base2 {\n}`,
                 );
             });
 
             it("should write with a writer with queued child indentation", () => {
                 doTest(
                     { name: "C", implements: writer => writer.writeLine("Base1,").write("Base2") },
-                    `class C implements Base1,\n    Base2 {\n}`
+                    `class C implements Base1,\n    Base2 {\n}`,
                 );
             });
 
             it("should not write if empty", () => {
                 doTest(
                     { name: "C", implements: _ => {} },
-                    `class C {\n}`
+                    `class C {\n}`,
                 );
             });
         });
@@ -104,21 +104,21 @@ describe(nameof(ClassDeclarationStructurePrinter), () => {
             it("should write with string", () => {
                 doTest(
                     { name: "C", extends: "Base" },
-                    `class C extends Base {\n}`
+                    `class C extends Base {\n}`,
                 );
             });
 
             it("should write with writer and queued child indentation", () => {
                 doTest(
                     { name: "C", extends: writer => writer.writeLine("string |").write("number") },
-                    `class C extends string |\n    number {\n}`
+                    `class C extends string |\n    number {\n}`,
                 );
             });
 
             it("should not write if empty", () => {
                 doTest(
                     { name: "C", extends: _ => {} },
-                    `class C {\n}`
+                    `class C {\n}`,
                 );
             });
         });

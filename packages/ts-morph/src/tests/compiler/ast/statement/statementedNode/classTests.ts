@@ -14,7 +14,7 @@ describe(nameof(StatementedNode), () => {
 
         it("should insert to an empty file", () => {
             doTest("", 0, [{
-                name: "Identifier"
+                name: "Identifier",
             }], "class Identifier {\n}\n");
         });
 
@@ -44,7 +44,7 @@ describe(nameof(StatementedNode), () => {
             const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertClasses(0, [{
-                name: "Identifier"
+                name: "Identifier",
             }]);
 
             expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    class Identifier {\n    }\n}\n");
@@ -66,7 +66,7 @@ describe(nameof(StatementedNode), () => {
                 properties: [{ name: "p", type: writer => writer.write("number") }],
                 methods: [{ name: "m" }],
                 getAccessors: [{ name: "g" }, { name: "s" }, { name: "g2" }, { name: "g3" }],
-                setAccessors: [{ name: "s" }, { name: "g" }, { name: "s2" }]
+                setAccessors: [{ name: "s" }, { name: "g" }, { name: "s2" }],
             };
             const expectedText = "/** Test */\n@D\nexport default abstract class C<T> extends Base implements IBase, IBase2 {\n"
                 + "    p: number;\n\n"
@@ -84,7 +84,7 @@ describe(nameof(StatementedNode), () => {
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertClasses(0, [{
                 name: "Identifier",
-                methods: [{ name: "myMethod" }]
+                methods: [{ name: "myMethod" }],
             }]);
 
             expect(sourceFile.getFullText()).to.equal("declare module Namespace {\n    class Identifier {\n        myMethod();\n    }\n}\n");

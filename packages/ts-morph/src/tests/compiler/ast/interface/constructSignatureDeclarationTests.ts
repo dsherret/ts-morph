@@ -29,12 +29,12 @@ describe(nameof(ConstructSignatureDeclaration), () => {
                 docs: ["test"],
                 parameters: [{ name: "param" }],
                 returnType: "string",
-                typeParameters: undefined
+                typeParameters: undefined,
             };
             doTest(
                 "interface Identifier {\n    new(): any;\n}",
                 structure,
-                "interface Identifier {\n    /** test */\n    new(param): string;\n}"
+                "interface Identifier {\n    /** test */\n    new(param): string;\n}",
             );
         });
     });
@@ -64,7 +64,7 @@ describe(nameof(ConstructSignatureDeclaration), () => {
             doTest(
                 "interface Identifier {\n    new(): string;\n    new(): number;\n}",
                 1,
-                "interface Identifier {\n    new(): string;\n}"
+                "interface Identifier {\n    new(): string;\n}",
             );
         });
 
@@ -87,7 +87,7 @@ describe(nameof(ConstructSignatureDeclaration), () => {
                 docs: [],
                 parameters: [],
                 returnType: undefined,
-                typeParameters: []
+                typeParameters: [],
             });
         });
 
@@ -102,7 +102,7 @@ interface Identifier {
                 docs: [{ description: "Test" }],
                 parameters: [{ name: "p" }],
                 returnType: "Test",
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             });
         });
     });

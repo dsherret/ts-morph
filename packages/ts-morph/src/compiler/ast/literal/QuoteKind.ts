@@ -3,5 +3,5 @@ export enum QuoteKind {
     /** Single quote */
     Single = "'",
     /** Double quote */
-    Double = "\""
+    Double = "\"",
 }

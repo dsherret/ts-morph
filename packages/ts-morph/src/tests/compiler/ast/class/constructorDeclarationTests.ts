@@ -137,7 +137,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
         it("should replace existing overloads when changed", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
-                overloads: [{ parameters: [{ name: "param" }] }]
+                overloads: [{ parameters: [{ name: "param" }] }],
             };
             doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure,
                 "class identifier {\n    constructor(param);\n    constructor() {}\n}");
@@ -145,7 +145,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
         it("should remove existing overloads when specifying an empty array", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<ConstructorDeclarationSpecificStructure>> = {
-                overloads: []
+                overloads: [],
             };
             doTest("class identifier {\n    constructor(): string;\n    constructor() {}\n}", structure, "class identifier {\n    constructor() {}\n}");
         });
@@ -167,7 +167,7 @@ describe(nameof(ConstructorDeclaration), () => {
                 parameters: [],
                 returnType: undefined,
                 scope: undefined,
-                typeParameters: []
+                typeParameters: [],
             });
         });
 
@@ -196,13 +196,13 @@ class T {
                         kind: StructureKind.TypeParameter,
                         name: "T",
                         constraint: undefined,
-                        default: undefined
-                    }]
+                        default: undefined,
+                    }],
                 }],
                 parameters: [{ name: "p" }],
                 returnType: undefined,
                 scope: Scope.Public,
-                typeParameters: [{ name: "T" }]
+                typeParameters: [{ name: "T" }],
             });
         });
     });

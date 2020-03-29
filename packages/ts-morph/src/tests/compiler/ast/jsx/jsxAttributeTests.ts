@@ -158,7 +158,7 @@ describe(nameof(JsxAttribute), () => {
         it("should set everything when provided", () => {
             const structure: OptionalKindAndTrivia<MakeRequired<JsxAttributeStructure>> = {
                 initializer: "{6}",
-                name: "newName"
+                name: "newName",
             };
             doTest(`var t = (<jsx a1={5} />);`, structure, `var t = (<jsx newName={6} />);`);
         });
@@ -179,7 +179,7 @@ describe(nameof(JsxAttribute), () => {
             doTest(`var t = (<jsx a1 />`, {
                 kind: StructureKind.JsxAttribute,
                 name: "a1",
-                initializer: undefined
+                initializer: undefined,
             });
         });
 
@@ -187,7 +187,7 @@ describe(nameof(JsxAttribute), () => {
             doTest(`var t = (<jsx a1="1" />`, {
                 kind: StructureKind.JsxAttribute,
                 name: "a1",
-                initializer: `"1"`
+                initializer: `"1"`,
             });
         });
 
@@ -195,7 +195,7 @@ describe(nameof(JsxAttribute), () => {
             doTest(`var t = (<jsx a1={1} />`, {
                 kind: StructureKind.JsxAttribute,
                 name: "a1",
-                initializer: `{1}`
+                initializer: `{1}`,
             });
         });
     });
