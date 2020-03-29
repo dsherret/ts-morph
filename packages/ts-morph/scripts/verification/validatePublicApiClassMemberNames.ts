@@ -5,7 +5,7 @@
  * and internal members of a class have a underscore prefix.
  * ----------------------------------------------------------
  */
-import { Node, ClassMemberTypes, ParameterDeclaration, Scope, ClassDeclaration } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
@@ -16,13 +16,13 @@ export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, a
             validateNode(member);
     }
 
-    function validateNode(node: ClassMemberTypes | ParameterDeclaration) {
-        if (Node.isConstructorDeclaration(node)) {
+    function validateNode(node: tsMorph.ClassMemberTypes | tsMorph.ParameterDeclaration) {
+        if (tsMorph.Node.isConstructorDeclaration(node)) {
             node.getParameters().forEach(validateNode);
             return;
         }
 
-        if (node.getScope() === Scope.Protected || node.getScope() === Scope.Private || hasInternalDocTag(node)) {
+        if (node.getScope() === tsMorph.Scope.Protected || node.getScope() === tsMorph.Scope.Private || hasInternalDocTag(node)) {
             if (!node.getName().startsWith("_")) {
                 addProblem({
                     filePath: node.getSourceFile().getFilePath(),
@@ -40,7 +40,7 @@ export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, a
         }
     }
 
-    function isClassToAllow(classDec: ClassDeclaration) {
+    function isClassToAllow(classDec: tsMorph.ClassDeclaration) {
         switch (classDec.getName()) {
             case "CodeBlockWriter":
             case "CompilerCommentStatement":

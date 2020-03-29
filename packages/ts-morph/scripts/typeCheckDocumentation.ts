@@ -23,7 +23,7 @@ project.addSourceFilesAtPaths("../../docs/_script-templates/**/*.ts");
 const mainTemplate = templatesDir.getSourceFileOrThrow("main.ts");
 addAnyInitializers(mainTemplate);
 
-const markDownFiles = fileSystem.glob(["../../docs/**/*.md", "./README.md"]).map(filePath => new MarkDownFile(filePath, fileSystem.readFileSync(filePath)));
+const markDownFiles = fileSystem.globSync(["../../docs/**/*.md", "./README.md"]).map(filePath => new MarkDownFile(filePath, fileSystem.readFileSync(filePath)));
 
 console.log("Checking documentation for compile errors...");
 const errors: { diagnostic: tsMorph.Diagnostic; codeBlock: CodeBlock; }[] = [];
