@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ClassDeclaration, FunctionExpression, NameableNode, VariableStatement } from "../../../../../compiler";
+import { InterfaceDeclaration, ClassDeclaration, FunctionExpression, NameableNode, VariableStatement } from "../../../../../compiler";
 import { NameableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
@@ -11,26 +11,43 @@ describe(nameof(NameableNode), () => {
     }
 
     describe(nameof<NameableNode>(n => n.rename), () => {
-        function doTest(startCode: string, newName: string, expectedCode: string) {
+        function testFunction(startCode: string, newName: string, expectedCode: string) {
             const { funcExpr, sourceFile } = getFunctionExpression(startCode);
             funcExpr.rename(newName);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
+        function testClass(startCode: string, newName: string, expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration | InterfaceDeclaration>(startCode);
+            firstChild.rename(newName);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
 
         it("should set the name if it doesn't exist", () => {
-            doTest("const v = function() { return 2; };", "newName", "const v = function newName() { return 2; };");
+            testFunction("const v = function() { return 2; };", "newName", "const v = function newName() { return 2; };");
         });
 
         it("should remove the name when providing an empty string", () => {
-            doTest("const v = function name() { return 2; };", "", "const v = function() { return 2; };");
+            testFunction("const v = function name() { return 2; };", "", "const v = function() { return 2; };");
         });
 
         it("should do nothing when no name and an empty string", () => {
-            doTest("const v = function() { return 2; };", "", "const v = function() { return 2; };");
+            testFunction("const v = function() { return 2; };", "", "const v = function() { return 2; };");
         });
 
         it("should rename the name", () => {
-            doTest("const v = function oldName() { return 2; };", "newName", "const v = function newName() { return 2; };");
+            testFunction("const v = function oldName() { return 2; };", "newName", "const v = function newName() { return 2; };");
+        });
+
+        it("should rename interface", () => {
+            testClass("interface Foo {}", "newName", "interface newName {}");
+        });
+
+        it("should rename class", () => {
+            testClass("class Foo {}", "newName", "class newName {}");
+        });
+
+        it("should add name if class name not defined", () => {
+            testClass("export default class {}", "newName", "export default class  newName{}");
         });
     });
 
