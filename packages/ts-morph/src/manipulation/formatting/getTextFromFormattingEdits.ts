@@ -12,12 +12,20 @@ export function getTextFromTextChanges(sourceFile: SourceFile, textChanges: Read
         return difference > 0 ? 1 : -1;
     });
 
-    let text = sourceFile.getFullText();
+    const text = sourceFile.getFullText();
+    let start = 0;
+    let end = text.length;
+    const editResult: Array<string> = [];
     for (const { edit } of reversedFormattingEdits) {
         const span = edit.getSpan();
-        text = text.slice(0, span.getStart()) + edit.getNewText() + text.slice(span.getEnd());
+        start = span.getEnd();
+        const afterResult = text.slice(start, end);
+        end = span.getStart();
+        editResult.push(afterResult);
+        editResult.push(edit.getNewText());
     }
-    return text;
+    editResult.push(text.slice(0, end));
+    return editResult.reverse().join('');
 
     function toWrappedTextChange(change: TextChange | ts.TextChange) {
         if (change instanceof TextChange)
