@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.0.2"></a>
+## [7.0.2](https://github.com/dsherret/ts-morph/compare/7.0.1...7.0.2) (2020-04-08)
+
+
+### Performance Improvements
+
+* **manipulation:** [#807](https://github.com/dsherret/ts-morph/issues/807) - Optimise getTextFromTextChanges performance ([d6f461f](https://github.com/dsherret/ts-morph/commit/d6f461f))
+
+
+
 <a name="7.0.1"></a>
 ## [7.0.1](https://github.com/dsherret/ts-morph/compare/7.0.0...7.0.1) (2020-03-29)
 
