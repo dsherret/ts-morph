@@ -662,12 +662,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     }, {
                         previousNewLine: previousMember =>
                             structures[0].hasDeclareKeyword === true
-                                && Node.isFunctionDeclaration(previousMember)
-                                && previousMember.getBody() == null,
+                            && Node.isFunctionDeclaration(previousMember)
+                            && previousMember.getBody() == null,
                         nextNewLine: nextMember =>
                             structures[structures.length - 1].hasDeclareKeyword === true
-                                && Node.isFunctionDeclaration(nextMember)
-                                && nextMember.getBody() == null,
+                            && Node.isFunctionDeclaration(nextMember)
+                            && nextMember.getBody() == null,
                     });
                 },
             });

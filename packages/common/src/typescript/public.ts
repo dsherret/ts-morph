@@ -19,5 +19,5 @@ export {
     TypeFormatFlags,
     DiagnosticCategory,
     CompilerOptions,
-    EditorSettings
+    EditorSettings,
 };

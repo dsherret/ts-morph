@@ -35,7 +35,7 @@ export function validateCodeFences(
         return [...forGetChildren()]
             .filter(n =>
                 srcDir.isAncestorOf(n.getSourceFile())
-                    && !testDir.isAncestorOf(n.getSourceFile())
+                && !testDir.isAncestorOf(n.getSourceFile())
             );
 
         // todo: add more functions here in the future

@@ -143,7 +143,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     getDeclarationKindKeyword() {
         return this.getFirstChild(child =>
             child.getKind() === SyntaxKind.NamespaceKeyword
-                || child.getKind() === SyntaxKind.ModuleKeyword
+            || child.getKind() === SyntaxKind.ModuleKeyword
         );
     }
 

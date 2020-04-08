@@ -1426,7 +1426,7 @@ function myFunction(param: MyClass) {
                 `import { MyClass } from "./MyClass";\n\nconst t = new MyClass();\nconst u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
             const expectedText =
                 `import { MyClass, MyClass2, MyClass3 } from "./MyClass";\nimport { MyInterface } from "./MyInterface";\n\nconst t = new MyClass();\n`
-                    + `const u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
+                + `const u: MyInterface = {};\nconst v = new MyClass2();\nconst w = new MyClass3()`;
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export class MyClass {} export class MyClass2 {} export class MyClass3 {}" },
                 { path: "/MyInterface.ts", text: "export interface MyInterface {}" },

@@ -6,7 +6,7 @@ export function getTextFromTextChanges(sourceFile: SourceFile, textChanges: Read
     let start = 0;
     let end = 0;
     const editResult: Array<string> = [];
-    for (const textChange  of textChanges) {
+    for (const textChange of textChanges) {
         const edit = toWrappedTextChange(textChange);
         const span = edit.getSpan();
         end = span.getStart();
@@ -16,7 +16,7 @@ export function getTextFromTextChanges(sourceFile: SourceFile, textChanges: Read
         editResult.push(edit.getNewText());
     }
     editResult.push(text.slice(start));
-    return editResult.join('');
+    return editResult.join("");
 
     function toWrappedTextChange(change: TextChange | ts.TextChange) {
         if (change instanceof TextChange)

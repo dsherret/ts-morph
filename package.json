@@ -22,9 +22,9 @@
   },
   "homepage": "https://github.com/dsherret/ts-morph#readme",
   "devDependencies": {
-    "dprint": "^0.9.0",
+    "dprint": "^0.9.1",
     "dprint-plugin-jsonc": "^0.4.0",
-    "dprint-plugin-typescript": "^0.15.4",
+    "dprint-plugin-typescript": "^0.15.5",
     "lerna": "^3.20.2"
   }
 }

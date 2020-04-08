@@ -29,7 +29,7 @@ export function createHosts(options: CreateHostsOptions) {
     let version = 0;
     const fileExistsSync = (path: StandardizedFilePath) =>
         sourceFileContainer.containsSourceFileAtPath(path)
-            || transactionalFileSystem.fileExistsSync(path);
+        || transactionalFileSystem.fileExistsSync(path);
     const languageServiceHost: ts.LanguageServiceHost = {
         getCompilationSettings: () => compilerOptions.get(),
         getNewLine,

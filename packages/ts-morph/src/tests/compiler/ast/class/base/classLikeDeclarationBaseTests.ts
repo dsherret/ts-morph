@@ -834,7 +834,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         describe("has static properties", () => {
             const code =
                 "class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n"
-                    + "\nstatic get prop(): string { return ''; }\nstatic set prop(val: string) {}\n}";
+                + "\nstatic get prop(): string { return ''; }\nstatic set prop(val: string) {}\n}";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of static properties", () => {

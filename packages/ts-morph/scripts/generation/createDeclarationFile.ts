@@ -130,7 +130,7 @@ export async function createDeclarationFile() {
         const baseStatements = statements
             .filter(s =>
                 s.kind === tsMorph.StructureKind.VariableStatement
-                    && s.declarations.some(d => d.name.endsWith("Base"))
+                && s.declarations.some(d => d.name.endsWith("Base"))
             ) as tsMorph.VariableStatementStructure[];
 
         for (const statement of baseStatements) {
