@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Performance Improvements
 
-* **manipulation:** [#807](https://github.com/dsherret/ts-morph/issues/807) - Optimise getTextFromTextChanges performance ([d6f461f](https://github.com/dsherret/ts-morph/commit/d6f461f))
+* **manipulation:** [#807](https://github.com/dsherret/ts-morph/issues/807) - Optimise getTextFromTextChanges performance ([d6f461f](https://github.com/dsherret/ts-morph/commit/d6f461f)) - Thanks [@killagu](https://github.com/killagu)!
 
 
 
