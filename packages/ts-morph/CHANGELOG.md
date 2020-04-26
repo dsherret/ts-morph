@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.0.3"></a>
+## [7.0.3](https://github.com/dsherret/ts-morph/compare/7.0.2...7.0.3) (2020-04-26)
+
+
+### Bug Fixes
+
+* [#808](https://github.com/dsherret/ts-morph/issues/808) - Unwrap would throw an error if body starts or ends with comments. ([eba6037](https://github.com/dsherret/ts-morph/commit/eba6037))
+
+
+
 <a name="7.0.2"></a>
 ## [7.0.2](https://github.com/dsherret/ts-morph/compare/7.0.1...7.0.2) (2020-04-08)
 
