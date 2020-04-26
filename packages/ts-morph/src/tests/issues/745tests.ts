@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Project } from "../../Project";
 
-describe("tests for issue #45", () => {
+describe("tests for issue #745", () => {
     it("should not error when adding a constructor and the class only has an empty comment in the body", () => {
         const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile("src/MyClass.ts", `class Foo {

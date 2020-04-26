@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { getInfoFromText } from "../compiler/testHelpers";
 
-describe("tests for issue #654", () => {
+describe("tests for issue #778", () => {
     it("should add a new member where there exists a js doc comment before at the end of the class", () => {
         const { sourceFile } = getInfoFromText(`
 class Foo {

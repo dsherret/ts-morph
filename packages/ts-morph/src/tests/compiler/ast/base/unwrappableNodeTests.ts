@@ -59,5 +59,21 @@ var v = \`some text
     var t: string;
 }`, `var t: string;`);
         });
+
+        it("should unwrap a namespace with statements surrounded by comments", () => {
+            doTest(`
+namespace Some {
+    // test
+    class Whatever {}
+    // Some comment.
+    /* This one too. */
+}
+`, `
+// test
+class Whatever {}
+// Some comment.
+/* This one too. */
+`);
+        });
     });
 });
