@@ -194,15 +194,15 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@dprint/core@~0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@dprint/core/-/core-0.6.0.tgz#93b1949385a92f75602923610ab471190e7290d5"
+"@dprint/core@~0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@dprint/core/-/core-0.9.0.tgz#5685a16f645043a6a8149324bd3ae714b54e06fb"
   dependencies:
-    "@dprint/types" "~0.2.0"
+    "@dprint/types" "~0.4.0"
 
-"@dprint/types@~0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@dprint/types/-/types-0.2.0.tgz#4d123f7aefe8a336cc99373e2ca0277220ead13c"
+"@dprint/types@~0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@dprint/types/-/types-0.4.0.tgz#ad36acb6776a26dd42fcf4ac3e462c1df3cf1486"
 
 "@evocateur/libnpmaccess@^3.1.2":
   version "3.1.2"
@@ -1782,30 +1782,29 @@ dot-prop@^4.2.0:
   dependencies:
     is-obj "^1.0.0"
 
-dprint-plugin-jsonc@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/dprint-plugin-jsonc/-/dprint-plugin-jsonc-0.4.0.tgz#02585bd25e20477354bda27c2fca4d9e66e9389a"
+dprint-plugin-jsonc@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/dprint-plugin-jsonc/-/dprint-plugin-jsonc-0.7.0.tgz#a31d759dc69938436dcd64c3e46e9e6ecd74bc5c"
   dependencies:
-    "@dprint/core" "~0.6.0"
-    "@dprint/types" "~0.2.0"
-    jsonc-parser "^2.2.0"
+    "@dprint/core" "~0.9.0"
+    "@dprint/types" "~0.4.0"
 
-dprint-plugin-typescript@^0.15.5:
-  version "0.15.5"
-  resolved "https://registry.yarnpkg.com/dprint-plugin-typescript/-/dprint-plugin-typescript-0.15.5.tgz#8527a858e848291ad46cc3c8280077bacbcccb81"
+dprint-plugin-typescript@^0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/dprint-plugin-typescript/-/dprint-plugin-typescript-0.18.0.tgz#bf40606b6d70694d7939a4726ed5e0a00aa6d070"
   dependencies:
     "@babel/core" "^7.9.0"
     "@babel/parser" "^7.9.4"
     "@babel/preset-typescript" "^7.9.0"
-    "@dprint/core" "~0.6.0"
-    "@dprint/types" "~0.2.0"
+    "@dprint/core" "~0.9.0"
+    "@dprint/types" "~0.4.0"
 
-dprint@^0.9.1:
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.9.1.tgz#3c41529a216bea35576de0927dbd0a284049b033"
+dprint@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.12.0.tgz#95eb125c592954a74e3118cb34081a3b30ac0222"
   dependencies:
-    "@dprint/core" "~0.6.0"
-    "@dprint/types" "~0.2.0"
+    "@dprint/core" "~0.9.0"
+    "@dprint/types" "~0.4.0"
     fast-glob "^3.2.2"
     minimist "^1.2.5"
 
@@ -2728,10 +2727,6 @@ json5@^2.1.2:
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.1.3.tgz#c9b0f7fa9233bfe5807fe66fcf3a5617ed597d43"
   dependencies:
     minimist "^1.2.5"
-
-jsonc-parser@^2.2.0:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/jsonc-parser/-/jsonc-parser-2.2.1.tgz#db73cd59d78cce28723199466b2a03d1be1df2bc"
 
 jsonfile@^4.0.0:
   version "4.0.0"
