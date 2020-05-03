@@ -2394,7 +2394,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a ClassLikeDeclarationBase.
      * @param node - Node to check.
      */
-    static isClassLikeDeclarationBase<T extends compiler.Node>(node: T): node is compiler.ClassLikeDeclarationBase
+    static isClassLikeDeclarationBase<T extends compiler.Node>(node: T): node is
+        & compiler.ClassLikeDeclarationBase
         & compiler.ClassLikeDeclarationBaseExtensionType
         & T
     {
@@ -2491,7 +2492,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is an ExclamationTokenableNode.
      * @param node - Node to check.
      */
-    static isExclamationTokenableNode<T extends compiler.Node>(node: T): node is compiler.ExclamationTokenableNode
+    static isExclamationTokenableNode<T extends compiler.Node>(node: T): node is
+        & compiler.ExclamationTokenableNode
         & compiler.ExclamationTokenableNodeExtensionType
         & T
     {
@@ -2671,7 +2673,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a FunctionLikeDeclaration.
      * @param node - Node to check.
      */
-    static isFunctionLikeDeclaration<T extends compiler.Node>(node: T): node is compiler.FunctionLikeDeclaration
+    static isFunctionLikeDeclaration<T extends compiler.Node>(node: T): node is
+        & compiler.FunctionLikeDeclaration
         & compiler.FunctionLikeDeclarationExtensionType
         & T
     {
@@ -2749,7 +2752,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a ImplementsClauseableNode.
      * @param node - Node to check.
      */
-    static isImplementsClauseableNode<T extends compiler.Node>(node: T): node is compiler.ImplementsClauseableNode
+    static isImplementsClauseableNode<T extends compiler.Node>(node: T): node is
+        & compiler.ImplementsClauseableNode
         & compiler.ImplementsClauseableNodeExtensionType
         & T
     {
@@ -2819,7 +2823,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a InitializerExpressionGetableNode.
      * @param node - Node to check.
      */
-    static isInitializerExpressionGetableNode<T extends compiler.Node>(node: T): node is compiler.InitializerExpressionGetableNode
+    static isInitializerExpressionGetableNode<T extends compiler.Node>(node: T): node is
+        & compiler.InitializerExpressionGetableNode
         & compiler.InitializerExpressionGetableNodeExtensionType
         & T
     {
@@ -2842,7 +2847,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a InitializerExpressionableNode.
      * @param node - Node to check.
      */
-    static isInitializerExpressionableNode<T extends compiler.Node>(node: T): node is compiler.InitializerExpressionableNode
+    static isInitializerExpressionableNode<T extends compiler.Node>(node: T): node is
+        & compiler.InitializerExpressionableNode
         & compiler.InitializerExpressionableNodeExtensionType
         & T
     {
@@ -2973,7 +2979,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a JSDocTypeExpressionableTag.
      * @param node - Node to check.
      */
-    static isJSDocTypeExpressionableTag<T extends compiler.Node>(node: T): node is compiler.JSDocTypeExpressionableTag
+    static isJSDocTypeExpressionableTag<T extends compiler.Node>(node: T): node is
+        & compiler.JSDocTypeExpressionableTag
         & compiler.JSDocTypeExpressionableTagExtensionType
         & T
     {
@@ -2990,7 +2997,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a JSDocTypeParameteredTag.
      * @param node - Node to check.
      */
-    static isJSDocTypeParameteredTag<T extends compiler.Node>(node: T): node is compiler.JSDocTypeParameteredTag
+    static isJSDocTypeParameteredTag<T extends compiler.Node>(node: T): node is
+        & compiler.JSDocTypeParameteredTag
         & compiler.JSDocTypeParameteredTagExtensionType
         & T
     {
@@ -3145,7 +3153,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a LeftHandSideExpressionedNode.
      * @param node - Node to check.
      */
-    static isLeftHandSideExpressionedNode<T extends compiler.Node>(node: T): node is compiler.LeftHandSideExpressionedNode
+    static isLeftHandSideExpressionedNode<T extends compiler.Node>(node: T): node is
+        & compiler.LeftHandSideExpressionedNode
         & compiler.LeftHandSideExpressionedNodeExtensionType
         & T
     {
@@ -3550,7 +3559,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a QuestionDotTokenableNode.
      * @param node - Node to check.
      */
-    static isQuestionDotTokenableNode<T extends compiler.Node>(node: T): node is compiler.QuestionDotTokenableNode
+    static isQuestionDotTokenableNode<T extends compiler.Node>(node: T): node is
+        & compiler.QuestionDotTokenableNode
         & compiler.QuestionDotTokenableNodeExtensionType
         & T
     {
@@ -4011,7 +4021,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a TypeElementMemberedNode.
      * @param node - Node to check.
      */
-    static isTypeElementMemberedNode<T extends compiler.Node>(node: T): node is compiler.TypeElementMemberedNode
+    static isTypeElementMemberedNode<T extends compiler.Node>(node: T): node is
+        & compiler.TypeElementMemberedNode
         & compiler.TypeElementMemberedNodeExtensionType
         & T
     {

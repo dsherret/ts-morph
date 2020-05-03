@@ -1789,9 +1789,9 @@ dprint-plugin-jsonc@^0.7.0:
     "@dprint/core" "~0.9.0"
     "@dprint/types" "~0.4.0"
 
-dprint-plugin-typescript@^0.18.0:
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/dprint-plugin-typescript/-/dprint-plugin-typescript-0.18.0.tgz#bf40606b6d70694d7939a4726ed5e0a00aa6d070"
+dprint-plugin-typescript@^0.19.1:
+  version "0.19.1"
+  resolved "https://registry.yarnpkg.com/dprint-plugin-typescript/-/dprint-plugin-typescript-0.19.1.tgz#7dd9fca801b04f86551cb32dc88ce9abbbf25e0a"
   dependencies:
     "@babel/core" "^7.9.0"
     "@babel/parser" "^7.9.4"

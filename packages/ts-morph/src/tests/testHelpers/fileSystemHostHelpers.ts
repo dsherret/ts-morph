@@ -12,7 +12,8 @@ export interface CustomFileSystemProps {
 export function getFileSystemHostWithFiles(
     initialFiles: { filePath: string; text: string; }[],
     initialDirectories: string[] = [],
-): FileSystemHost
+):
+    & FileSystemHost
     & CustomFileSystemProps
 {
     initialDirectories = initialDirectories.map(d => d[0] === "/" ? d : "/" + d);

@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/ts-nameof": "^4.2.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.3.4",
+    "rollup": "^2.7.6",
     "rollup-plugin-typescript2": "^0.27.0",
     "ts-nameof": "^4.2.2",
     "ttypescript": "^1.5.10",
