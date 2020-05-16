@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.1.0"></a>
+# [7.1.0](https://github.com/dsherret/ts-morph/compare/7.0.2...7.1.0) (2020-05-16)
+
+
+### Bug Fixes
+
+* [#817](https://github.com/dsherret/ts-morph/issues/817) - Fix addJsDoc failing when there's no non-whitespace/asterisk characters in the jsdoc. ([6ba8f5a](https://github.com/dsherret/ts-morph/commit/6ba8f5a))
+
+
+### Features
+
+* [#816](https://github.com/dsherret/ts-morph/issues/816) - Update Typescript 3.9.2 ([ce8ac9c](https://github.com/dsherret/ts-morph/commit/ce8ac9c))
+
+
+
 <a name="7.0.3"></a>
 ## [7.0.3](https://github.com/dsherret/ts-morph/compare/7.0.2...7.0.3) (2020-04-26)
 
