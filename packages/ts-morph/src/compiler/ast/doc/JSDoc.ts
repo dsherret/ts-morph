@@ -161,6 +161,7 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
 
             const replaceStart = getReplaceStart.call(this);
             const replaceEnd = getReplaceEnd.call(this);
+
             insertIntoParentTextRange({
                 parent: this,
                 insertPos: replaceStart,
@@ -173,11 +174,12 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
 
         function getReplaceStart(this: JSDoc) {
             const searchStart = index < tags.length ? tags[index].getStart() : this.getEnd() - 2; // -2 for star slash
-            return getPreviousMatchingPos(
+            const maxMin = this.getStart() + 3; // +3 for star star slash
+            return Math.max(maxMin, getPreviousMatchingPos(
                 this.getSourceFile().getFullText(),
                 searchStart,
                 charCode => !StringUtils.isWhitespaceCharCode(charCode) && charCode !== CharCodes.ASTERISK,
-            );
+            ));
         }
 
         function getReplaceEnd(this: JSDoc) {
