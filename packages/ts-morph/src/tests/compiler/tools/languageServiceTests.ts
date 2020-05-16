@@ -137,7 +137,7 @@ describe(nameof(LanguageService), () => {
             checkFileTextChanges(edit2!, {
                 fileName: "/A.ts",
                 textChanges: [{
-                    newText: "export class A {\n}\n",
+                    newText: "export class A { }\n",
                     span: { start: 0, length: 0 },
                 }],
             });

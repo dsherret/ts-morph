@@ -21,7 +21,7 @@
     "rollup-plugin-typescript2": "^0.27.0",
     "ts-nameof": "^4.2.2",
     "ttypescript": "^1.5.10",
-    "typescript": "~3.8.3"
+    "typescript": "~3.9.2"
   },
   "publishConfig": {
     "access": "public"
