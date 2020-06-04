@@ -118,10 +118,7 @@ export class CommentNodeParser {
 
         function getTokenEnd(node: ts.Node, kind: SyntaxKind.OpenBraceToken | SyntaxKind.ColonToken) {
             // @code-fence-allow(getChildren): Ok, not searching for comments.
-            const token = node.getChildren(sourceFile).find(c => c.kind === kind);
-            if (token == null)
-                throw new errors.NotImplementedError(`Unexpected scenario where a(n) ${getSyntaxKindName(kind)} was not found.`);
-            return token.end;
+            return node.getChildren(sourceFile).find(c => c.kind === kind)?.end;
         }
     }
 }
@@ -132,8 +129,10 @@ function* getNodes(container: ContainerNodes, sourceFile: ts.SourceFile): Iterab
     const createComment = getCreationFunction();
 
     if (childNodes.length === 0) {
+        // it might not have a position if the code has syntax errors, so just ignore
         const bodyStartPos = CommentNodeParser.getContainerBodyPos(container, sourceFile);
-        yield* getCommentNodes(bodyStartPos, false); // do not skip js docs because they won't have a node to be attached to
+        if (bodyStartPos != null)
+            yield* getCommentNodes(bodyStartPos, false); // do not skip js docs because they won't have a node to be attached to
     }
     else {
         for (const childNode of childNodes) {
