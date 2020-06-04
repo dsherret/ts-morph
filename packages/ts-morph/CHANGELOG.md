@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.1.1"></a>
+## [7.1.1](https://github.com/dsherret/ts-morph/compare/7.1.0...7.1.1) (2020-06-04)
+
+
+### Bug Fixes
+
+* [#823](https://github.com/dsherret/ts-morph/issues/823) - SourceFile#replaceWithText would sometimes throw when previous code had syntax errors. ([cc66fc0](https://github.com/dsherret/ts-morph/commit/cc66fc0))
+
+
+
 <a name="7.1.0"></a>
 # [7.1.0](https://github.com/dsherret/ts-morph/compare/7.0.2...7.1.0) (2020-05-16)
 
