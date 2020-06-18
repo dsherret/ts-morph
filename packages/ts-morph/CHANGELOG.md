@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.1.2"></a>
+## [7.1.2](https://github.com/dsherret/ts-morph/compare/7.1.1...7.1.2) (2020-06-18)
+
+
+### Bug Fixes
+
+* [#827](https://github.com/dsherret/ts-morph/issues/827) - `realpathSync` should not throw ([f427e57](https://github.com/dsherret/ts-morph/commit/f427e57))
+
+
+
 <a name="7.1.1"></a>
 ## [7.1.1](https://github.com/dsherret/ts-morph/compare/7.1.0...7.1.1) (2020-06-04)
 
