@@ -8,7 +8,7 @@ class MyClass {
 }`);
         const classDec = sourceFile.getClassOrThrow("MyClass");
         const jsDoc = classDec.addJsDoc({ description: "\n" });
-        jsDoc.addTag({ tagName: "myTag", text: "my text" })
+        jsDoc.addTag({ tagName: "myTag", text: "my text" });
         expect(sourceFile.getFullText()).to.equal(`
 /**
  * @myTag my text

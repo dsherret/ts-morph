@@ -1,42 +1,42 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Run ts-morph tests",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "--prefix", "packages/ts-morph", "test:debug"],
-            "port": 9229,
-            "stopOnEntry": false
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Run common tests",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "--prefix", "packages/common", "test:debug"],
-            "port": 9229,
-            "stopOnEntry": false
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Run bootstrap tests",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "--prefix", "packages/bootstrap", "test:debug"],
-            "port": 9229,
-            "stopOnEntry": false
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach",
-            "port": 9229,
-            "stopOnEntry": false
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run ts-morph tests",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "--prefix", "packages/ts-morph", "test:debug"],
+      "port": 9229,
+      "stopOnEntry": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run common tests",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "--prefix", "packages/common", "test:debug"],
+      "port": 9229,
+      "stopOnEntry": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run bootstrap tests",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "--prefix", "packages/bootstrap", "test:debug"],
+      "port": 9229,
+      "stopOnEntry": false
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach",
+      "port": 9229,
+      "stopOnEntry": false
+    }
+  ]
 }
