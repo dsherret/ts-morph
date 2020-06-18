@@ -1,0 +1,11 @@
+# force lf newlines
+* text=auto eol=lf
+
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+
+*.jpg binary
+*.png binary

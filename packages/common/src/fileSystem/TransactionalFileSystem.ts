@@ -648,7 +648,13 @@ export class TransactionalFileSystem {
     }
 
     realpathSync(path: StandardizedFilePath) {
-        return this.getStandardizedAbsolutePath(this.fileSystem.realpathSync(path));
+        // The TypeScript compiler does a try catch in ts.sys.realpathSync, so do that here too.
+        // (See issue #827 for more details)
+        try {
+            return this.getStandardizedAbsolutePath(this.fileSystem.realpathSync(path));
+        } catch {
+            return path;
+        }
     }
 
     getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string): StandardizedFilePath {
