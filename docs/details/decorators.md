@@ -50,10 +50,9 @@ Get the decorator's arguments by calling `.getArguments()`:
 ```ts
 const args = decorator.getArguments(); // returns: Expression[]
 ```
+
 ```
-
 Add and insert via `.addArgument(...)`, `.insertArguments(...)`, `.addArgument(...)`, or `.addArguments(...)`.
-
 ```ts
 const args = decorator.insertArguments(1, ["5", "6"]);
 ```
@@ -107,7 +106,7 @@ For example:
 ```ts
 classDeclaration.addDecorator({
     name: "MyDecorator",
-    arguments: ["3", `"some string"`]
+    arguments: ["3", `"some string"`],
 });
 ```
 

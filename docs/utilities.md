@@ -16,7 +16,7 @@ import { getCompilerOptionsFromTsConfig } from "ts-morph";
 const result = getCompilerOptionsFromTsConfig("file/path/to/tsconfig.json");
 
 result.options; // compiler options
-result.errors;  // diagnostics
+result.errors; // diagnostics
 ```
 
 ### Type Guards
@@ -49,7 +49,7 @@ import { printNode, ts } from "ts-morph";
 // Source: https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
 const tsFunctionDeclaration = ts.createFunctionDeclaration(
     /*decorators*/ undefined,
-    /*modifiers*/[ts.createToken(SyntaxKind.ExportKeyword)],
+    /*modifiers*/ [ts.createToken(SyntaxKind.ExportKeyword)],
     /*asteriskToken*/ undefined,
     "myFunction",
     /*typeParameters*/ undefined,

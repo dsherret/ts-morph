@@ -20,8 +20,8 @@ Add or insert enums to a source file, namespace, or function like declarations b
 const enumDeclaration = sourceFile.addEnum({
     name: "EnumName",
     members: [{
-        name: "member"
-    }]
+        name: "member",
+    }],
 });
 ```
 
@@ -57,7 +57,7 @@ Members can be added by calling `addMember()`, `addMembers()`, `insertMember()`,
 ```ts
 const member = enumDeclaration.addMember({
     name: "newMember",
-    value: 10
+    value: 10,
 });
 ```
 

@@ -33,21 +33,19 @@ For example:
 ```ts
 // adds /** Some description... */
 const docNode = classDeclaration.addJsDoc({
-    description: "Some description..."
+    description: "Some description...",
 });
-
 // or to force it to be multi-line, add a newline to the front of the string
 classDeclaration.addJsDoc({
-    description: "\nSome description..."
+    description: "\nSome description...",
 });
-
 // or with tags
 classDeclaration.addJsDoc({
     description: "Some description...",
     tags: [{
         tagName: "param",
-        text: "value - My value."
-    }]
+        text: "value - My value.",
+    }],
 });
 ```
 

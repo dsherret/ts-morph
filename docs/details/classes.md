@@ -30,7 +30,7 @@ Add or insert classes to a source file, namespace, or function like declarations
 
 ```ts
 const classDeclaration = sourceFile.addClass({
-    name: "ClassName"
+    name: "ClassName",
 });
 ```
 
@@ -126,7 +126,9 @@ const constructors = classDeclaration.getConstructors();
 Add or insert a constructor or constructors by calling `addConstructor()`, `addConstructors()`, `insertConstructor()`, or `insertConstructors()`.
 
 ```ts
-const ctor = classDeclaration.addConstructor({ /* options like parameters may go here */ });
+const ctor = classDeclaration.addConstructor({
+    /* options like parameters may go here */
+});
 ```
 
 ### Methods
@@ -167,6 +169,7 @@ method.remove();
 
 Get the instance properties (includes parameter properties):
 
+<!-- dprint-ignore -->
 ```ts
 const instanceProperties = classDeclaration.getInstanceProperties();
 const myProperty = classDeclaration.getInstanceProperty("myProperty");
@@ -176,6 +179,7 @@ const myStringProperty = classDeclaration.getInstanceProperty(p =>
 
 Get the static properties:
 
+<!-- dprint-ignore -->
 ```ts
 const staticProperties = classDeclaration.getStaticProperties();
 const myStaticProperty = classDeclaration.getStaticProperty("myStaticProperty");
@@ -188,19 +192,31 @@ const myStaticStringProperty = classDeclaration.getStaticProperty(p =>
 Add or insert properties by using `insertProperties()`, `insertProperty`, `addProperty`, or `addProperties`:
 
 ```ts
-const property = classDeclaration.addProperty({ isStatic: true, name: "prop", type: "string" });
+const property = classDeclaration.addProperty({
+    isStatic: true,
+    name: "prop",
+    type: "string",
+});
 ```
 
 Add or insert get accessors by using `insertGetAccessors()`, `insertGetAccessor`, `addGetAccessor`, or `addGetAccessors`:
 
 ```ts
-const getAccessor = classDeclaration.addGetAccessor({ name: "someNumber", returnType: "number", statements: ["return 5;"] });
+const getAccessor = classDeclaration.addGetAccessor({
+    name: "someNumber",
+    returnType: "number",
+    statements: ["return 5;"],
+});
 ```
 
 Add or insert set accessors by using `insertSetAccessors()`, `insertSetAccessor`, `addSetAccessor`, or `addSetAccessors`:
 
 ```ts
-const setAccessor = classDeclaration.addSetAccessor({ name: "someNumber", parameters: [{ name: "value", type: "number" }], statements: ["_someNumber = value;"] });
+const setAccessor = classDeclaration.addSetAccessor({
+    name: "someNumber",
+    parameters: [{ name: "value", type: "number" }],
+    statements: ["_someNumber = value;"],
+});
 ```
 
 #### Remove
@@ -265,7 +281,7 @@ method.getAbstractKeyword(); // returns: node | undefined
 Set if abstract:
 
 ```ts
-method.setIsAbstract(true);  // set as abstract
+method.setIsAbstract(true); // set as abstract
 method.setIsAbstract(false); // set as not abstract
 ```
 

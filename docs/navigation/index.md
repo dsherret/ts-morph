@@ -23,8 +23,8 @@ In general, you can easily navigate the tree by using methods such as `.getClass
 
 In the compiler API, there exists a `node.getChildren()` method and `ts.forEachChild(node, child => { })`/`node.forEachChild(child => { })` function/method.
 
-* `.getChildren()` - Returns all the children including the all the tokens (ex. `OpenBraceToken`, `SemiColonToken` etc.).
-* `.forEachChild(child => {})` - Iterates all the child nodes that are properties of the node.
+- `.getChildren()` - Returns all the children including the all the tokens (ex. `OpenBraceToken`, `SemiColonToken` etc.).
+- `.forEachChild(child => {})` - Iterates all the child nodes that are properties of the node.
 
 [![getChildren vs forEachChild](images/getChildrenVsForEachChild.gif)](http://ts-ast-viewer.com)
 

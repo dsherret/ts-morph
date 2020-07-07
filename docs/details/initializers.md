@@ -9,7 +9,9 @@ title: Initializers
 For example, given the following code:
 
 ```ts
-const add = function(a: number, b: number) { return a + b; };
+const add = function(a: number, b: number) {
+    return a + b;
+};
 ```
 
 The initializer can be retrieved in any of these ways:

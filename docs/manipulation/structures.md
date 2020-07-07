@@ -4,7 +4,7 @@ title: Structures
 
 ## Structures
 
-Simplified AST representations called *structures* can be retreived from and used to set many `Node` objects.
+Simplified AST representations called _structures_ can be retreived from and used to set many `Node` objects.
 
 ### Getting structure
 
@@ -92,8 +92,8 @@ const structure: SourceFileStructure = {
     statements: [{
         kind: StructureKind.Function,
         name: "myFunction",
-        parameters: [{ name: "myParam" }]
-    }]
+        parameters: [{ name: "myParam" }],
+    }],
 };
 
 forEachStructureChild(structure, child => {

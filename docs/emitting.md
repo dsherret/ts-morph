@@ -85,8 +85,8 @@ project.emit({
         // optional transformers to evaluate after built in .js transformations
         after: [],
         // optional transformers to evaluate after built in .d.ts transformations
-        afterDeclarations: []
-    }
+        afterDeclarations: [],
+    },
 });
 
 function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext, visitNode: (node: ts.Node) => ts.Node) {
@@ -135,9 +135,8 @@ const result = project.emitToMemory();
 
 // load the javascript files into a new project
 const newProject = new Project();
-for (const file of result.getFiles()) {
+for (const file of result.getFiles())
     newProject.createSourceFile(file.filePath, file.text, { overwrite: true });
-}
 
 // ...manipulate the javascript files here...
 

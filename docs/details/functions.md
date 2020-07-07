@@ -32,7 +32,7 @@ Add or insert enums to a source file, namespace, or function like declarations b
 
 ```ts
 const functionDeclaration = sourceFile.addFunction({
-    name: "FunctionName"
+    name: "FunctionName",
 });
 ```
 
@@ -90,10 +90,12 @@ functionDeclaration.setBodyText("const myNumber = 5;");
 Or alternatively, write the body text with [code-block-writer](https://github.com/dsherret/code-block-writer):
 
 ```ts
-functionDeclaration.setBodyText(writer => writer.writeLine("const myNumber = 5;")
-    .write("if (myNumber === 5)").block(() => {
-        writer.writeLine("console.log('yes')");
-    }));
+functionDeclaration.setBodyText(writer =>
+    writer.writeLine("const myNumber = 5;")
+        .write("if (myNumber === 5)").block(() => {
+            writer.writeLine("console.log('yes')");
+        })
+);
 ```
 
 Using the writer is very useful because it will write code out using the indentation and newline settings of the AST. It's also easier to use.
@@ -135,11 +137,14 @@ const someDeclaration = 5;
 They exist in an expression:
 
 ```ts
-const add = function(a: number, b: number) { return a + b; };
+const add = function(a: number, b: number) {
+    return a + b;
+};
 ```
 
 In this case, it can be retrieved via the variable declaration's [initializer](initializers).
 
 ```ts
-const functionExpression = sourceFile.getVariableDeclarationOrThrow("add").getInitializerIfKindOrThrow(SyntaxKind.FunctionExpression);
+const functionExpression = sourceFile.getVariableDeclarationOrThrow("add")
+    .getInitializerIfKindOrThrow(SyntaxKind.FunctionExpression);
 ```

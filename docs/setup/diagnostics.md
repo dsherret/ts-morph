@@ -48,8 +48,8 @@ const sourceFile = diagnostic.getSourceFile(); // returns: SourceFile | undefine
 Position in the file, the line number, and length of the diagnostic:
 
 ```ts
-const start = diagnostic.getStart();   // returns: number
-const lineNumber = diagnostic.getLineNumber();   // returns: number
+const start = diagnostic.getStart(); // returns: number
+const lineNumber = diagnostic.getLineNumber(); // returns: number
 const length = diagnostic.getLength(); // returns: number
 ```
 
@@ -96,8 +96,8 @@ The properties of a DMC are similar to a Diagnostic:
 
 ```ts
 const messageText = dmc.getMessageText(); // returns: string
-const category = dmc.getCategory();       // returns: DiagnosticCategory
-const code = dmc.getCode();               // returns: number
+const category = dmc.getCategory(); // returns: DiagnosticCategory
+const code = dmc.getCode(); // returns: number
 ```
 
 #### Next DMC in linked list

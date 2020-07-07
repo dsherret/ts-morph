@@ -1,5 +1,4 @@
-﻿ts-morph
-========
+﻿# ts-morph
 
 [![npm version](https://badge.fury.io/js/ts-morph.svg)](https://badge.fury.io/js/ts-morph)
 [![Build Status](https://travis-ci.org/dsherret/ts-morph.svg?branch=latest)](https://travis-ci.org/dsherret/ts-morph)
@@ -12,8 +11,8 @@ Formerly `ts-simple-ast`.
 
 ## Overview
 
-* [Documentation](https://ts-morph.com/)
-* [Declaration file](lib/ts-morph.d.ts)
+- [Documentation](https://ts-morph.com/)
+- [Declaration file](lib/ts-morph.d.ts)
 
 ## Main Features
 
@@ -35,12 +34,13 @@ Formerly `ts-simple-ast`.
 
 This library is still under active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do. Please open an issue if you find a feature missing, bug, or question that isn't in the issue tracker.
 
-* [Breaking changes](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/breaking-changes.md)
-* [Change log](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/CHANGELOG.md)
-* [Wrapped nodes progress report](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/wrapped-nodes.md)
+- [Breaking changes](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/breaking-changes.md)
+- [Change log](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/CHANGELOG.md)
+- [Wrapped nodes progress report](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/wrapped-nodes.md)
 
 ## Example
 
+<!-- dprint-ignore -->
 ```ts
 import { Project, StructureKind } from "ts-morph";
 
@@ -60,8 +60,8 @@ const myEnumFile = project.createSourceFile("src/MyEnum.ts", {
         kind: StructureKind.Enum,
         name: "MyEnum",
         isExported: true,
-        members: [{ name: "member" }]
-    }]
+        members: [{ name: "member" }],
+    }],
 });
 
 // get information
@@ -76,15 +76,15 @@ const myInterface = myClassFile.addInterface({
     isExported: true,
     properties: [{
         name: "myProp",
-        type: "number"
-    }]
+        type: "number",
+    }],
 });
 
 myClass.rename("NewName");
 myClass.addImplements(myInterface.getName());
 myClass.addProperty({
     name: "myProp",
-    initializer: "5"
+    initializer: "5",
 });
 
 project.getSourceFileOrThrow("src/ExistingFile.ts").delete();

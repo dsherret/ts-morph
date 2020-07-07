@@ -18,7 +18,7 @@ Add or insert interfaces to a source file, namespace, or function like declarati
 
 ```ts
 const interfaceDeclaration = sourceFile.addInterface({
-    name: "InterfaceName"
+    name: "InterfaceName",
 });
 ```
 
@@ -129,7 +129,7 @@ To add or insert use `addIndexSignature()`, `addIndexSignatures()`, `insertIndex
 const indexSignature = interfaceDeclaration.addIndexSignature({
     keyName: "someKey", // defaults to key
     keyType: "string", // defaults to string
-    returnType: "SomeClass"
+    returnType: "SomeClass",
 });
 ```
 

@@ -4,50 +4,50 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 
 ## Version 7
 
-* Only Node 10+ has full support. Some functionality might not work on older versions of Node.
-* Update to TypeScript 3.8.
+- Only Node 10+ has full support. Some functionality might not work on older versions of Node.
+- Update to TypeScript 3.8.
 
 ## Version 6
 
 Renames:
 
-* `StructureTypeGuards` -> `Structure`
-* `TypeGuards` -> `Node` (Soft deprecation... will be deprecated in next major)
-* `ProjectOptions#useVirtualFileSystem` -> `useInMemoryFileSystem`
-* `FileSystemHost#glob` -> `globSync`
-* `Directory/Project#addExistingSourceFile` -> `addSourceFileAtPath`
-* `Directory/Project#addExistingSourceFileIfExists` -> `addSourceFileAtPathIfExists`
-* `Directory/Project#addExistingSourceFiles` -> `addSourceFilesAtPaths`
-* `Directory/Project#addExistingDirectory` -> `addDirectoryAtPath`
-* `Directory/Project#addExistingDirectoryIfExists` -> `addDirectoryAtPathIfExists`
+- `StructureTypeGuards` -> `Structure`
+- `TypeGuards` -> `Node` (Soft deprecation... will be deprecated in next major)
+- `ProjectOptions#useVirtualFileSystem` -> `useInMemoryFileSystem`
+- `FileSystemHost#glob` -> `globSync`
+- `Directory/Project#addExistingSourceFile` -> `addSourceFileAtPath`
+- `Directory/Project#addExistingSourceFileIfExists` -> `addSourceFileAtPathIfExists`
+- `Directory/Project#addExistingSourceFiles` -> `addSourceFilesAtPaths`
+- `Directory/Project#addExistingDirectory` -> `addDirectoryAtPath`
+- `Directory/Project#addExistingDirectoryIfExists` -> `addDirectoryAtPathIfExists`
 
 Removed:
 
-* `JSDoc#setComment(...)` and `#getComment()`. These are now `setDescription(...)` and `getDescription()` and work according to [#764](https://github.com/dsherret/ts-morph/issues/764).
+- `JSDoc#setComment(...)` and `#getComment()`. These are now `setDescription(...)` and `getDescription()` and work according to [#764](https://github.com/dsherret/ts-morph/issues/764).
 
 Other:
 
-* PropertyDeclarationDeclaration and PropertyDeclarationStructure now can have a `declare` keyword (new in TS 3.7).
-* Creating a Project with `useInMemoryFileSystem: true` will now load in the lib files into the `node_modules/typescript/lib` folder. If you want the old behaviour, specify `{ skipLoadingLibFiles: true }` in the `Project`'s constructor.
-* Due to the fix for [#702](https://github.com/dsherret/ts-morph/issues/702), when using `Project#addSourceFileAtPaths` directories that do not have an ancestor directory with a source file included in the results will no longer be added to the project. If you want to ensure that a directory and all its subfolders are added, use `Project#addDirectoryAtPath(path, { recursive: true })`.
-* JS docs will be written as a single line unless multi-line or starting with a newline. Additionally, getting a JS doc structure will have a newline at the start if the JS doc description is one line, but the JS doc is multi-line.
+- PropertyDeclarationDeclaration and PropertyDeclarationStructure now can have a `declare` keyword (new in TS 3.7).
+- Creating a Project with `useInMemoryFileSystem: true` will now load in the lib files into the `node_modules/typescript/lib` folder. If you want the old behaviour, specify `{ skipLoadingLibFiles: true }` in the `Project`'s constructor.
+- Due to the fix for [#702](https://github.com/dsherret/ts-morph/issues/702), when using `Project#addSourceFileAtPaths` directories that do not have an ancestor directory with a source file included in the results will no longer be added to the project. If you want to ensure that a directory and all its subfolders are added, use `Project#addDirectoryAtPath(path, { recursive: true })`.
+- JS docs will be written as a single line unless multi-line or starting with a newline. Additionally, getting a JS doc structure will have a newline at the start if the JS doc description is one line, but the JS doc is multi-line.
 
 ## Version 5
 
-* TypeScript 3.7.x support only.
-* New `@ts-morph/common` base package. This was done to support `@ts-morph/bootstrap`.
-* `TypePredicateNode#getTypeNode()` now possible returns undefined. This was a change done in the compiler api to support the new `asserts` modifier on type predicates.
-* Recommended to use the new `Project#addSourceFileAtPath(path)` methods instead of the ones like `Project#addExistingSourceFile(path)`. The old way will be deprecated in Version 6. Special thanks to [@ChristianIvicevic](https://github.com/ChristianIvicevic) for helping out with this one.
+- TypeScript 3.7.x support only.
+- New `@ts-morph/common` base package. This was done to support `@ts-morph/bootstrap`.
+- `TypePredicateNode#getTypeNode()` now possible returns undefined. This was a change done in the compiler api to support the new `asserts` modifier on type predicates.
+- Recommended to use the new `Project#addSourceFileAtPath(path)` methods instead of the ones like `Project#addExistingSourceFile(path)`. The old way will be deprecated in Version 6. Special thanks to [@ChristianIvicevic](https://github.com/ChristianIvicevic) for helping out with this one.
 
 ## Version 4
 
 Mostly renames:
 
-* `SourceFile#getReferencedFiles()` is now `getPathReferenceDirectives()`. This was done to prevent confusion with upcoming methods in #680. The name was chosen because it is similar to the methods `getTypeReferenceDirectives()` and `getLibReferenceDirectives()`.
-* `CodeBlockWriter#indentBlock` is now `indent`. `withHangingIndentation` is now `hangingIndent`. `withHangingIndentationUnlessBlock` is now `hangingIndentUnlessBlock`.
-* `DiagnosticMessageChain#getNext()` now returns an array to match TS 3.6.
-* `DirectoryEmitResult#getEmitSkipped()` was removed. Check the output file paths and skipped file paths instead as that's more accurate.
-* `CompilerExtendedComment` is now called `CompilerCommentNode`.
+- `SourceFile#getReferencedFiles()` is now `getPathReferenceDirectives()`. This was done to prevent confusion with upcoming methods in #680. The name was chosen because it is similar to the methods `getTypeReferenceDirectives()` and `getLibReferenceDirectives()`.
+- `CodeBlockWriter#indentBlock` is now `indent`. `withHangingIndentation` is now `hangingIndent`. `withHangingIndentationUnlessBlock` is now `hangingIndentUnlessBlock`.
+- `DiagnosticMessageChain#getNext()` now returns an array to match TS 3.6.
+- `DirectoryEmitResult#getEmitSkipped()` was removed. Check the output file paths and skipped file paths instead as that's more accurate.
+- `CompilerExtendedComment` is now called `CompilerCommentNode`.
 
 ## Version 3
 
@@ -130,13 +130,13 @@ Instead of writing code like the following:
 ```ts
 const sourceFileStructure: SourceFileStructure = {
     classes: [{
-        name: "MyClass"
+        name: "MyClass",
     }],
     enums: [{
         name: "MyEnum",
-        members: [{ name: "value" }]
+        members: [{ name: "value" }],
     }],
-    bodyText: "console.log(5);"
+    bodyText: "console.log(5);",
 };
 ```
 
@@ -146,12 +146,12 @@ Write the following:
 const sourceFileStructure: SourceFileStructure = {
     statements: [{
         kind: StructureKind.Class,
-        name: "MyClass"
+        name: "MyClass",
     }, {
         kind: StructureKind.Enum,
         name: "MyEnum",
-        members: [{ name: "value" }]
-    }, "console.log(5);"]
+        members: [{ name: "value" }],
+    }, "console.log(5);"],
 };
 ```
 
@@ -174,12 +174,12 @@ The new async emit methods should be much faster than the previous synchronous m
 
 The `ByName` suffix was overly verbose, so I removed it. The following methods have been renamed:
 
-* `Symbol#getExportByName(name: string)` -> `getExport`
-* `Symbol#getExportByNameOrThrow(name: string)` -> `getExportOrThrow`
-* `Symbol#getGlobalExportByName(name: string)` -> `getGlobalExport`
-* `Symbol#getGlobalExportByNameOrThrow(name: string)` -> `getGlobalExportOrThrow`
-* `Symbol#getMemberByName(name: string)` -> `getMember`
-* `Symbol#getMemberByNameOrThrow(name: string)` -> `getMemberOrThrow`
+- `Symbol#getExportByName(name: string)` -> `getExport`
+- `Symbol#getExportByNameOrThrow(name: string)` -> `getExportOrThrow`
+- `Symbol#getGlobalExportByName(name: string)` -> `getGlobalExport`
+- `Symbol#getGlobalExportByNameOrThrow(name: string)` -> `getGlobalExportOrThrow`
+- `Symbol#getMemberByName(name: string)` -> `getMember`
+- `Symbol#getMemberByNameOrThrow(name: string)` -> `getMemberOrThrow`
 
 ### FileSystemHost changes
 
@@ -193,9 +193,9 @@ This was done to match the change in TS 3.4.
 
 These are now all covered by `StatementedNodeStructure`.
 
-* `BodyableNodeStructure`
-* `BodiedNodeStructure`
-* `ModuledNodeStructure`
+- `BodyableNodeStructure`
+- `BodiedNodeStructure`
+- `ModuledNodeStructure`
 
 ### `JsxAttributeStructure` and `JsxSpreadAttributeStructure` differentiation
 
@@ -255,7 +255,7 @@ Renamed library to `ts-morph` and reset version to 1.0.0.
 
 ## Version 21
 
-* `node.getFirstChildByKind` and `node.getChildrenOfKind` now search the parsed tree via `.forEachChild(...)` when specifying a parsed node's syntax kind. Previously it would only search the results of `node.getChildren()`.
+- `node.getFirstChildByKind` and `node.getChildrenOfKind` now search the parsed tree via `.forEachChild(...)` when specifying a parsed node's syntax kind. Previously it would only search the results of `node.getChildren()`.
 
 ### Resolved node_module source files and directories are no longer returned from Project#getSourceFiles() and getDirectories()
 
@@ -271,12 +271,12 @@ Note that the directory and source files are still available when you explicitly
 
 ## Version 20
 
-* Added support for TS 3.2.
-* Removed `JSDocTag#getAtToken()`. The `atToken` property was removed in the compiler api.
+- Added support for TS 3.2.
+- Removed `JSDocTag#getAtToken()`. The `atToken` property was removed in the compiler api.
 
 ## Version 19
 
-* `Options` interface renamed to `ProjectOptions` in order to be more specific.
+- `Options` interface renamed to `ProjectOptions` in order to be more specific.
 
 ### Source file dependencies automatically added
 
@@ -306,14 +306,14 @@ Now when constructing a project like so...
 const project = new Project({ tsConfigFilePath: "tsconfig.json" });
 ```
 
-...the project will now include both source files instead of only *src/main.ts*.
+...the project will now include both source files instead of only _src/main.ts_.
 
 Doing this requires an extra analysis step so if you want to revert back to the old behaviour, provide the `skipFileDependencyResolution` option and set it to true:
 
 ```ts
 const project = new Project({
     tsConfigFilePath: "tsconfig.json",
-    skipFileDependencyResolution: true
+    skipFileDependencyResolution: true,
 });
 ```
 
@@ -322,7 +322,7 @@ const project = new Project({
 Previously a custom file system host could be passed to the constructor like so:
 
 ```ts
-const project = new Project({ }, fileSystem);
+const project = new Project({}, fileSystem);
 ```
 
 This was mostly for legacy reasons. It's now been moved to be an option.
@@ -333,12 +333,12 @@ const project = new Project({ fileSystem });
 
 ## Version 18
 
-* `JSDocTag.getName()` is now `.getTagName()`. This was originally incorrectly named and `.getName()` is necessary for js doc tags that have one (such as `JSDocPropertyLikeTag`).
+- `JSDocTag.getName()` is now `.getTagName()`. This was originally incorrectly named and `.getName()` is necessary for js doc tags that have one (such as `JSDocPropertyLikeTag`).
 
 ## Version 17
 
-* Removed `CompilerNodeBrandPropertyNamesType` type alias.
-* More nodes are being written with hanging indentation when doing a newline.
+- Removed `CompilerNodeBrandPropertyNamesType` type alias.
+- More nodes are being written with hanging indentation when doing a newline.
 
 ## Version 16
 
@@ -356,20 +356,16 @@ The following changes were made:
 
 Deprecated:
 
-* `.setHasNamespaceKeyword`
-* `.setHasModuleKeyword`
-* `NamespaceDeclarationStructure` - `hasModuleKeyword` and `hasNamespaceKeyword`
+- `.setHasNamespaceKeyword`
+- `.setHasModuleKeyword`
+- `NamespaceDeclarationStructure` - `hasModuleKeyword` and `hasNamespaceKeyword`
 
 Added:
 
-* `enum NamespaceDeclarationKind {
-    Namespace = "namespace",
-    Module = "module",
-    Global = "global"
-}`
-* `setDeclarationKind(kind: NamespaceDeclarationKind)`
-* `getDeclarationKind(): NamespaceDeclarationKind;`
-* `NamespaceDeclarationStructure` - `declarationKind: NamespaceDeclarationKind`
+- `enum NamespaceDeclarationKind { Namespace = "namespace", Module = "module", Global = "global" }`
+- `setDeclarationKind(kind: NamespaceDeclarationKind)`
+- `getDeclarationKind(): NamespaceDeclarationKind;`
+- `NamespaceDeclarationStructure` - `declarationKind: NamespaceDeclarationKind`
 
 ### `IndexSignatureDeclaration` - Return type is now nullable
 
@@ -391,16 +387,16 @@ for more details.
 
 ## Version 15
 
-* `TypeParameterDeclaration` - `getConstraintNode()` and `getDefaultNode()` are now `getConstraint()` and `getDefault()`.
-* `JsxTagNamedNode` - `getTagName()` is now `.getTagNameNode()` for consistency.
+- `TypeParameterDeclaration` - `getConstraintNode()` and `getDefaultNode()` are now `getConstraint()` and `getDefault()`.
+- `JsxTagNamedNode` - `getTagName()` is now `.getTagNameNode()` for consistency.
 
 ### Import and Exports - No renaming for .setX methods
 
 Previously, the following methods would rename with the language service:
 
-* `ImportDeclaration.setDefaultImport`
-* `ImportSpecifier.setAlias`
-* `ExportSpecifier.setAlias`
+- `ImportDeclaration.setDefaultImport`
+- `ImportSpecifier.setAlias`
+- `ExportSpecifier.setAlias`
 
 These no longer rename using the language service. Use the corresponding `renameX` methods instead.
 
@@ -414,7 +410,7 @@ Previously calling...
 
 ```ts
 classDeclaration.fill({
-    properties: [{ name: "newProp" }]
+    properties: [{ name: "newProp" }],
 });
 ```
 
@@ -455,13 +451,13 @@ if (TypeGuards.isBindingElement(name))
 
 ## Version 13
 
-* `CompilerApiNodeBrandPropertyNamesType` is now `CompilerNodeBrandPropertyNamesType`.
-* `renameName` on `ImportSpecifier` and `ExportSpecifier` is now deprecated. Use `importSpecifier.getNameNode().rename(newName)`.
-* Renamed `getAliasIdentifier()` to `getAliasNode()` on `ImportSpecifier` and `ExportSpecifier`. Done for consistency.
-* Deprecated `node.getStartColumn()` and `node.getEndColumn()`.
-* Renamed `sourceFile.getColumnAtPos(pos)` to `.getLengthFromLineStartAtPos(pos)` for correctness.
-* Renamed `sourceFile.getLineNumberFromPos(pos)` to `getLineNumberAtPos(pos)` for consistency.
-* `getImplementations()[i].getNode()` now returns the identifier range (compiler API changed behaviour).
+- `CompilerApiNodeBrandPropertyNamesType` is now `CompilerNodeBrandPropertyNamesType`.
+- `renameName` on `ImportSpecifier` and `ExportSpecifier` is now deprecated. Use `importSpecifier.getNameNode().rename(newName)`.
+- Renamed `getAliasIdentifier()` to `getAliasNode()` on `ImportSpecifier` and `ExportSpecifier`. Done for consistency.
+- Deprecated `node.getStartColumn()` and `node.getEndColumn()`.
+- Renamed `sourceFile.getColumnAtPos(pos)` to `.getLengthFromLineStartAtPos(pos)` for correctness.
+- Renamed `sourceFile.getLineNumberFromPos(pos)` to `getLineNumberAtPos(pos)` for consistency.
+- `getImplementations()[i].getNode()` now returns the identifier range (compiler API changed behaviour).
 
 ### `FunctionDeclaration` has an optional name
 
@@ -548,8 +544,7 @@ This was done so it aligns with the TypeScript compiler API methods and to remov
 
 ### Renamed Methods
 
-* `getReferencingNodes()` on `ReferenceFindableNode`s is now `findReferencesAsNodes()` and `languageService.getDefinitionReferencingNodes()` is also now `findReferencesAsNodes()`. This was done to improve its discoverability.
-
+- `getReferencingNodes()` on `ReferenceFindableNode`s is now `findReferencesAsNodes()` and `languageService.getDefinitionReferencingNodes()` is also now `findReferencesAsNodes()`. This was done to improve its discoverability.
 
 ## Version 11
 
@@ -574,20 +569,25 @@ The `FileSystemHost` interface now has `move`, `moveSync`, `copy`, and `copySync
 ### Changed methods/properties
 
 `Directory`
-* `.remove()` is now `.forget()` - This was done for consistency with `SourceFile`.
+
+- `.remove()` is now `.forget()` - This was done for consistency with `SourceFile`.
 
 `SourceFile`
-* `getRelativePathToSourceFileAsModuleSpecifier` is now `getRelativePathAsModuleSpecifierTo`.
-* `getRelativePathToSourceFile` is now `getRelativePathTo`.
+
+- `getRelativePathToSourceFileAsModuleSpecifier` is now `getRelativePathAsModuleSpecifierTo`.
+- `getRelativePathToSourceFile` is now `getRelativePathTo`.
 
 `Identifier`
-* `getDefinitionReferencingNodes()` is now `getReferencingNodes()` for consistency.
+
+- `getDefinitionReferencingNodes()` is now `getReferencingNodes()` for consistency.
 
 `ClassDeclarationStructure`
-* `ctor` is now `ctors` - There can be multiple constructors on ambient classes.
+
+- `ctor` is now `ctors` - There can be multiple constructors on ambient classes.
 
 `ExportAssignmentStructure`
-* `isEqualsExport` is now `isExportEquals` - I originally named this incorrectly by accident.
+
+- `isEqualsExport` is now `isExportEquals` - I originally named this incorrectly by accident.
 
 ## Version 10
 
@@ -606,11 +606,13 @@ export default class {
 ### Changed methods
 
 `Project` and `Directory`
-* `addSourceFileIfExists` is now `addExistingSourceFileIfExists` (standardizes with `addExistingSourceFile`)
-* `addDirectoryIfExists` is now `addExistingDirectoryIfExists` (standardizes with `addExistingDirectory`)
+
+- `addSourceFileIfExists` is now `addExistingSourceFileIfExists` (standardizes with `addExistingSourceFile`)
+- `addDirectoryIfExists` is now `addExistingDirectoryIfExists` (standardizes with `addExistingDirectory`)
 
 `SourceFile`
-* `getReferencingImportAndExportDeclarations` is removed. Use `getReferencingNodesInOtherSourceFiles`.
+
+- `getReferencingImportAndExportDeclarations` is removed. Use `getReferencingNodesInOtherSourceFiles`.
 
 ### VariableDeclarationType/QuoteType -> VariableDeclarationKind/QuoteKind
 
@@ -627,7 +629,7 @@ Script target was removed from the manipulation settings (it was there for legac
 Instead of being written as:
 
 ```ts
-import {SomeExport} from "./SomeFile";
+import { SomeExport } from "./SomeFile";
 ```
 
 Imports will now be written with spaces (as is the default in the compiler):
@@ -668,7 +670,7 @@ someSymbol.equals(otherSymbol); // deprecated method
 But now, as expected, you can compare them using an equality check:
 
 ```ts
-someSymbol === otherSymbol
+someSymbol === otherSymbol;
 ```
 
 ### ClassDeclaration changes
@@ -716,10 +718,10 @@ Moving directories is going to come soon. Follow the progress in [#256](https://
 
 The TypeScript peer dependency has been dropped, but there should be no loss of functionality! If there is, please open an issue.
 
-The TypeScript compiler object used by this library can now be accessed via the `ts` named export. Also non-node TypeScript compiler objects used in the public API of this  library are now exported directly as named exports:
+The TypeScript compiler object used by this library can now be accessed via the `ts` named export. Also non-node TypeScript compiler objects used in the public API of this library are now exported directly as named exports:
 
 ```ts
-import Project, {ts, SyntaxKind, ScriptTarget} from "ts-morph";
+import Project, { ts, SyntaxKind, ScriptTarget } from "ts-morph";
 ```
 
 ### Using the TypeScript compiler and ts-morph

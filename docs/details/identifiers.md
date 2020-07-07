@@ -10,7 +10,6 @@ For example, in the following code the identifiers are the variable name and the
 
 ```ts
 const identifier = 5;
-
 console.log(identifier);
 ```
 

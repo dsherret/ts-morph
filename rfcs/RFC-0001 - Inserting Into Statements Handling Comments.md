@@ -4,13 +4,13 @@ Ported from: https://github.com/dsherret/ts-morph/issues/575
 
 ## Prerequisites
 
-* Understand comment ownership: https://github.com/Microsoft/TypeScript/wiki/Architectural-Overview#trivia
-* Current api is for inserting statements: `insertStatements(index: number, statements: string | WriterFunction | (string | WriterFunction)[]): Statement[];` where `index` is the `node.statements` array index of the node.
+- Understand comment ownership: https://github.com/Microsoft/TypeScript/wiki/Architectural-Overview#trivia
+- Current api is for inserting statements: `insertStatements(index: number, statements: string | WriterFunction | (string | WriterFunction)[]): Statement[];` where `index` is the `node.statements` array index of the node.
 
 ## Issues
 
-* [#189](https://github.com/dsherret/ts-morph/issues/189) - Node inserted before comment when calling `addClass`-like methods
-* [#565](https://github.com/dsherret/ts-morph/issues/565) - Inserting at a specific position
+- [#189](https://github.com/dsherret/ts-morph/issues/189) - Node inserted before comment when calling `addClass`-like methods
+- [#565](https://github.com/dsherret/ts-morph/issues/565) - Inserting at a specific position
 
 ## Overview
 
@@ -49,13 +49,13 @@ One option would be to change the API for `insertStatements` to take a position.
 
 ### Upsides
 
-* Close functionality to the compiler API.
+- Close functionality to the compiler API.
 
 ### Downsides
 
-* API is not intuitive.
-* Users confused why comments aren't a statement (had people ask about this multiple times).
-* Users will need to parse for comments themselves in order to find out they're there.
+- API is not intuitive.
+- Users confused why comments aren't a statement (had people ask about this multiple times).
+- Users will need to parse for comments themselves in order to find out they're there.
 
 ## Option 2: Leading Comments as Statements
 
@@ -83,7 +83,7 @@ Calling `.getStatementsWithComments()` would return any leading comments that ar
 }
 ```
 
-So in other words, trailing comments are never included as well as leading comments on the same line. 
+So in other words, trailing comments are never included as well as leading comments on the same line.
 
 ### JS Docs
 
@@ -114,6 +114,7 @@ It should return both comments when calling `#getStatementsWithComments()`.
 
 This is an edge case, but if someone does the following:
 
+<!-- dprint-ignore -->
 ```ts
 /* comment 1 */ // comment 2
 /* comment 3 */ /* comment 4 */ // comment 5
@@ -125,6 +126,7 @@ Then it should just return comment 1 and 3. Comment 2, 4, and 5 should return as
 
 This comment should be parsed as if it's a member if it has no other token on the same line.
 
+<!-- dprint-ignore -->
 ```ts
 class C {
     prop;
@@ -169,11 +171,11 @@ Should this behaviour be conditional (ex. `parseComments: false` or something in
 
 ### Benefits
 
-* Users approaching the problem for the first time do not understand why comments are not considered statements. It might be more intuitive to do this.
-* Makes it very easy to deal with comments and decide whether to insert before or after one (or remove them).
+- Users approaching the problem for the first time do not understand why comments are not considered statements. It might be more intuitive to do this.
+- Makes it very easy to deal with comments and decide whether to insert before or after one (or remove them).
 
 ### Drawbacks
 
-* Might confuse some users who are used to the compiler api behaviour when using `#getChildren()`.
-  * This is slightly unfortunate, but users would be even more confused about methods like `#getChildIndex()` not including comments. It would also increase complexity internally within the library.
-  * Most users won't have any experience with the compiler API so this is probably not an issue.
+- Might confuse some users who are used to the compiler api behaviour when using `#getChildren()`.
+  - This is slightly unfortunate, but users would be even more confused about methods like `#getChildIndex()` not including comments. It would also increase complexity internally within the library.
+  - Most users won't have any experience with the compiler API so this is probably not an issue.

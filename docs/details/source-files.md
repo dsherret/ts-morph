@@ -63,7 +63,7 @@ import { Project } from "ts-morph";
 
 // queue up all the source files to be deleted
 const project = new Project();
-project.addSourceFilesAtPaths("folder/**/*.ts")
+project.addSourceFilesAtPaths("folder/**/*.ts");
 
 project.getSourceFileOrThrow("someFile.ts").delete();
 project.getSourceFileOrThrow("someOtherFile.ts").delete();
@@ -140,7 +140,7 @@ Refresh the source file from the file system:
 ```ts
 import { FileSystemRefreshResult } from "ts-morph";
 
- // returns: FileSystemRefreshResult (NoChange, Updated, Deleted)
+// returns: FileSystemRefreshResult (NoChange, Updated, Deleted)
 const result = await sourceFile.refreshFromFileSystem(); // or refreshFromFileSystemSync()
 ```
 
@@ -188,6 +188,7 @@ See [Export Declarations](exports).
 
 Call the `.indent` or `.unindent` methods.
 
+<!-- dprint-ignore -->
 ```ts
 sourceFile.indent(5);        // indent line containing position 5
 sourceFile.indent([5, 10]);  // indent line or lines within position range [5-10]

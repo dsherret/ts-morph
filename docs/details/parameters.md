@@ -19,7 +19,7 @@ For example:
 ```ts
 const parameter = functionDeclaration.insertParameter(1, {
     name: "param1",
-    type: "string"
+    type: "string",
 });
 ```
 

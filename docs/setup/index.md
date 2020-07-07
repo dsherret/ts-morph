@@ -19,29 +19,29 @@ import { Project, ScriptTarget } from "ts-morph";
 
 const project = new Project({
     compilerOptions: {
-        target: ScriptTarget.ES3
-    }
+        target: ScriptTarget.ES3,
+    },
 });
 ```
 
 ### tsconfig.json
 
-If you would like to manually specify the path to a *tsconfig.json* file then specify that:
-
-```ts
-const project = new Project({
-    tsConfigFilePath: "path/to/tsconfig.json"
-});
-```
-
-*Note:* You can override any `tsconfig.json` options by also providing a `compilerOptions` object.
-
-For your convenience, this will automatically add all the associated source files from the *tsconfig.json*. If you don't wish to do that, then you will need to explicitly set `addFilesFromTsConfig` to `false`:
+If you would like to manually specify the path to a _tsconfig.json_ file then specify that:
 
 ```ts
 const project = new Project({
     tsConfigFilePath: "path/to/tsconfig.json",
-    addFilesFromTsConfig: false
+});
+```
+
+_Note:_ You can override any `tsconfig.json` options by also providing a `compilerOptions` object.
+
+For your convenience, this will automatically add all the associated source files from the _tsconfig.json_. If you don't wish to do that, then you will need to explicitly set `addFilesFromTsConfig` to `false`:
+
+```ts
+const project = new Project({
+    tsConfigFilePath: "path/to/tsconfig.json",
+    addFilesFromTsConfig: false,
 });
 ```
 
@@ -69,7 +69,7 @@ const project = new Project({
                 }
 
                 return resolvedModules;
-            }
+            },
         };
 
         function removeTsExtension(moduleName: string) {
@@ -77,6 +77,6 @@ const project = new Project({
                 return moduleName.slice(0, -3);
             return moduleName;
         }
-    }
+    },
 });
 ```

@@ -62,7 +62,6 @@ const text = type.getText(parameter, TypeFormatFlags.NoTruncation | TypeFormatFl
 
 Look at the declaration file for more available options for `TypeFormatFlags`.
 
-
 ### Constraint and Default
 
 ```ts
@@ -237,6 +236,6 @@ functionDeclaration.removeReturnType();
 
 Not implemented. Getting...
 
-* Enum member types
-* Destructuring pattern
-* More...?
+- Enum member types
+- Destructuring pattern
+- More...?

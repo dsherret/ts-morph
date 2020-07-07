@@ -18,8 +18,8 @@ const obj = {
         // do something
     },
     method() {
-        return "some string"
-    }
+        return "some string";
+    },
 };
 ```
 
@@ -33,7 +33,7 @@ const properties = objectLiteralExpression.getProperties();
 const property = objectLiteralExpression.getProperty("propertyAssignment");
 // or
 const spreadAssignment = objectLiteralExpression.getProperty(
-    p => p.getText() === "...spreadAssignment"
+    p => p.getText() === "...spreadAssignment",
 );
 // or
 const method = objectLiteralExpression.getPropertyOrThrow("method");
@@ -46,7 +46,7 @@ Add a property assignment via the `insertPropertyAssignment`, `insertPropertyAss
 ```ts
 const propertyAssignment = objectLiteralExpression.addPropertyAssignment({
     name: "propertyAssignment",
-    initializer: "5"
+    initializer: "5",
 });
 ```
 
@@ -57,7 +57,7 @@ Add a shorthand property assignment via the `insertShorthandPropertyAssignment`,
 
 ```ts
 const shorthandPropertyAssignment = objectLiteralExpression.addShorthandPropertyAssignment({
-    name: "shorthandPropertyAssignment"
+    name: "shorthandPropertyAssignment",
 });
 ```
 
@@ -77,12 +77,12 @@ Add get and set accessors via the `insertGetAccessor`, `insertGetAccessors`, `ad
 const getAccessor = objectLiteralExpression.addGetAccessor({
     name: "someNumber",
     returnType: "number",
-    statements: ["return someNumber;"]
+    statements: ["return someNumber;"],
 });
 const setAccessor = objectLiteralExpression.addSetAccessor({
     name: "someNumber",
     parameters: [{ name: "value", type: "number" }],
-    statements: ["someNumber = value;"]
+    statements: ["someNumber = value;"],
 });
 ```
 
@@ -93,10 +93,9 @@ Add a method via the `insertMethod`, `insertMethods`, `addMethod`, or `addMethod
 ```ts
 const method = objectLiteralExpression.addMethod({
     name: "method",
-    statements: [`return "some string";`]
+    statements: [`return "some string";`],
 });
 ```
-
 
 ### Removing
 

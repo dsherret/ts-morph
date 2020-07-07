@@ -8,7 +8,7 @@ Given the source file for following code:
 
 ```ts
 enum MyEnum {
-    myMember
+    myMember,
 }
 ```
 

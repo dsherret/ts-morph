@@ -21,7 +21,7 @@ Add or insert type aliases to a source file, namespace, or function like declara
 ```ts
 const typeAliasDeclaration = sourceFile.addTypeAlias({
     name: "TypeAliasName",
-    type: "string"
+    type: "string",
 });
 ```
 

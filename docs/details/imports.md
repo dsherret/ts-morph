@@ -21,7 +21,7 @@ Add or insert use `insertImportDeclaration`, `insertImportDeclarations`, `addImp
 ```ts
 const importDeclaration = sourceFile.addImportDeclaration({
     defaultImport: "MyClass",
-    moduleSpecifier: "./file"
+    moduleSpecifier: "./file",
 });
 ```
 
@@ -100,7 +100,7 @@ Doing the following:
 ```ts
 const importDeclaration = sourceFile.getImportDeclarations()[0];
 importDeclaration.renameDefaultImport("NewName");
-````
+```
 
 Will rename the default import and all its usages:
 
@@ -145,7 +145,7 @@ Adding or inserting named imports can be done via the `addNamedImport`, `addName
 ```ts
 const namedImport = importDeclaration.addNamedImport({
     name: "MyClass",
-    alias: "MyAliasName" // alias is optional
+    alias: "MyAliasName", // alias is optional
 });
 // or
 importDeclaration.addNamedImports(["MyClass", "SomeInterface"]);

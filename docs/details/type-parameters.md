@@ -19,7 +19,7 @@ For example:
 ```ts
 const typeParameter = classDeclaration.insertTypeParameter(1, {
     name: "T",
-    constraint: "string" // optional
+    constraint: "string", // optional
 });
 ```
 

@@ -29,8 +29,13 @@ Example:
 ```ts
 // this code will get a structure from declarations.ts, make all the descendants not be exported,
 // then create a new file called private.ts from that structure
-import { Structures, forEachStructureChild, SourceFileStructure, StructureKind,
-    Structures } from "ts-morph";
+import {
+    Structures,
+    forEachStructureChild,
+    SourceFileStructure,
+    StructureKind,
+    Structures,
+} from "ts-morph";
 
 const project = new Project({ tsConfigFilePath: "tsconfig.json" });
 const classesFile = project.getSourceFileOrThrow("declarations.ts");
@@ -179,7 +184,7 @@ project.forgetNodesCreatedInBlock(remember => {
 
 namespaceDeclaration.getText(); // ok, child was marked to remember
 interfaceDeclaration.getText(); // ok, was explicitly marked to remember
-classDeclaration.getText();     // throws, was forgotten
+classDeclaration.getText(); // throws, was forgotten
 
 // alternatively, return the node to remember it
 const node = project.forgetNodesCreatedInBlock(() => {
@@ -203,13 +208,13 @@ project.forgetNodesCreatedInBlock(() => {
         remember(namespaceDeclaration);
     });
 
-    classDeclaration.getText();     // throws, was forgotten outside the block above
+    classDeclaration.getText(); // throws, was forgotten outside the block above
     interfaceDeclaration.getText(); // ok, hasn't been forgotten yet
 });
 
 namespaceDeclaration.getText(); // ok, was marked to remember in one of the blocks
 interfaceDeclaration.getText(); // throws, was forgotten
-classDeclaration.getText();     // throws, was forgotten
+classDeclaration.getText(); // throws, was forgotten
 ```
 
 ##### Async

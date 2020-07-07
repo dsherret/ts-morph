@@ -31,12 +31,12 @@ const variableStatement = sourceFile.addVariableStatement({
     declarationKind: VariableDeclarationKind.Const, // defaults to "let"
     declarations: [{
         name: "myNumber",
-        initializer: "5"
+        initializer: "5",
     }, {
         name: "myString",
         type: "string",
-        initializer: `'my string'`
-    }]
+        initializer: `'my string'`,
+    }],
 });
 ```
 
@@ -89,8 +89,7 @@ Or from source files, namespaces, and function bodies:
 ```ts
 const variableDeclarations = sourceFile.getVariableDeclarations();
 const variableDeclaration = sourceFile.getVariableDeclaration("myVar");
-const firstStringTypedVariableDeclaration = sourceFile.getVariableDeclaration(v =>
-    v.getType().getText() === "string");
+const firstStringTypedVariableDeclaration = sourceFile.getVariableDeclaration(v => v.getType().getText() === "string");
 ```
 
 ### Add/Insert

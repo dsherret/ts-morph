@@ -6,7 +6,7 @@ title: Adding Source Files
 
 You will need to populate the `project` object with source files.
 
-### By a *tsconfig.json*
+### By a _tsconfig.json_
 
 Source files will be added when instantiating with a `tsConfigFilePath`:
 
@@ -14,7 +14,7 @@ Source files will be added when instantiating with a `tsConfigFilePath`:
 import { Project } from "ts-morph";
 
 const project = new Project({
-    tsConfigFilePath: "path/to/tsconfig.json"
+    tsConfigFilePath: "path/to/tsconfig.json",
 });
 ```
 
@@ -23,7 +23,7 @@ const project = new Project({
 ```ts
 const project = new Project({
     tsConfigFilePath: "path/to/tsconfig.json",
-    addFilesFromTsConfig: false
+    addFilesFromTsConfig: false,
 });
 ```
 
@@ -35,13 +35,13 @@ project.addSourceFilesFromTsConfig("path/to/tsconfig.json");
 
 #### Source File Dependency Resolution
 
-By default, all the source files added to the project in the constructor via a *tsconfig.json* will automatically be analyzed to
+By default, all the source files added to the project in the constructor via a _tsconfig.json_ will automatically be analyzed to
 include the source files they depend on. If you wish to skip this analysis step, then provide the `skipFileDependencyResolution` option:
 
 ```ts
 const project = new Project({
     tsConfigFilePath: "path/to/tsconfig.json",
-    skipFileDependencyResolution: true
+    skipFileDependencyResolution: true,
 });
 ```
 
@@ -87,13 +87,13 @@ const sourceFile = project.createSourceFile("path/to/myStructureFile.ts", {
         kind: StructureKind.Enum,
         name: "MyEnum",
         members: [{
-            name: "member"
-        }]
+            name: "member",
+        }],
     }, {
         kind: StructureKind.Class,
         name: "MyClass",
         // etc...
-    }]
+    }],
     // etc...
 });
 ```
@@ -102,7 +102,7 @@ The above would create a source file with the following text:
 
 ```ts
 enum MyEnum {
-    member
+    member,
 }
 
 class MyClass {

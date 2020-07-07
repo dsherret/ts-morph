@@ -22,7 +22,7 @@ const testSourceFiles = project.getSourceFiles("src/test/**/*.ts");
 // or multiple
 const nonTestSourceFiles = project.getSourceFiles([
     "src/**/*.ts",
-    "!src/test/**/*.ts"
+    "!src/test/**/*.ts",
 ]);
 ```
 

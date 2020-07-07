@@ -15,15 +15,18 @@
   "json": {
     "indentWidth": 2
   },
-  "includes": ["**/*.{ts,tsx,js,jsx,json}"],
+  "includes": ["**/*.{ts,tsx,js,jsx,json,md}"],
   "excludes": [
     "**/node_modules",
     "**/*-lock.json",
     "packages/*/dist/**/*.*",
-    "packages/*/lib/*.ts"
+    "packages/*/lib/*.ts",
+    "**/CHANGELOG.md",
+    "**/wrapped-nodes.md"
   ],
   "plugins": [
-    "https://plugins.dprint.dev/typescript-0.19.2.wasm",
-    "https://plugins.dprint.dev/json-0.4.1.wasm"
+    "https://plugins.dprint.dev/typescript-0.19.8.wasm",
+    "https://plugins.dprint.dev/json-0.4.1.wasm",
+    "https://plugins.dprint.dev/markdown-0.2.1.wasm"
   ]
 }

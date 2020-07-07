@@ -8,9 +8,8 @@ Given the source file for following code:
 
 ```ts
 enum MyEnum {
-    myMember
+    myMember,
 }
-
 const myVar = MyEnum.myMember;
 ```
 
@@ -27,7 +26,7 @@ So the file above would now contain the following code:
 
 ```ts
 enum NewEnum {
-    myMember
+    myMember,
 }
 
 const myVar = NewEnum.myMember;
@@ -90,12 +89,12 @@ Or globally:
 ```ts
 const project = new Project({
     manipulationSettings: {
-        usePrefixAndSuffixTextForRename: true
-    }
+        usePrefixAndSuffixTextForRename: true,
+    },
 });
 // or
 project.manipulationSettings.set({
-    usePrefixAndSuffixTextForRename: true
+    usePrefixAndSuffixTextForRename: true,
 });
 ```
 
@@ -103,5 +102,5 @@ project.manipulationSettings.set({
 
 See:
 
-* [Moving Files](../details/source-files#move)
-* [Moving Directories](../navigation/directories#moving)
+- [Moving Files](../details/source-files#move)
+- [Moving Directories](../navigation/directories#moving)

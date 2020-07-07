@@ -77,7 +77,7 @@ const statements = sourceFile.addStatements("console.log(5);\nconsole.log(6);");
 const statements = sourceFile.insertStatements(3, "console.log(5);\nconsole.log(6);");
 // remove statements
 sourceFile.removeStatements([1, 3]); // removes statements from index 1 to 3
-sourceFile.removeStatement(1);       // removes statement at index 1
+sourceFile.removeStatement(1); // removes statement at index 1
 ```
 
 When adding or inserting, you can also write using a [code writer](code-writer):
@@ -94,7 +94,7 @@ functionDeclaration.addStatements(writer => {
 
 In some scenarios, a simple to use API might not have been implemented. If you find that's the case, open an issue on GitHub.
 
-In the meantime, you can insert, replace, and remove text using the following methods, but *generally you will want to avoid using these if possible*:
+In the meantime, you can insert, replace, and remove text using the following methods, but _generally you will want to avoid using these if possible_:
 
 ```ts
 // insert text
@@ -129,8 +129,8 @@ classDeclaration = sourceFile.getClass("MyClass")!;
 
 There are a variety of useful code fixes and refactors such as:
 
-* `SourceFile#organizeImports()`
-* `SourceFile#fixMissingImports()`
-* `SourceFile#fixUnusedIdentifiers()`
+- `SourceFile#organizeImports()`
+- `SourceFile#fixMissingImports()`
+- `SourceFile#fixUnusedIdentifiers()`
 
 Check more details on the [source files details page](../details/source-files).

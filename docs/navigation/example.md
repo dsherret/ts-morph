@@ -45,6 +45,6 @@ const interfaces = sourceFile.getInterfaces();
 // person interface
 const personInterface = sourceFile.getInterface("Person")!;
 personInterface.isDefaultExport(); // returns true
-personInterface.getName();         // returns "Person"
-personInterface.getProperties();   // returns the properties
+personInterface.getName(); // returns "Person"
+personInterface.getProperties(); // returns the properties
 ```

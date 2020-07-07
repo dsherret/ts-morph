@@ -6,6 +6,7 @@ title: Formatting
 
 Sometimes you might encounter code that looks terrible. For example:
 
+<!-- dprint-ignore -->
 ```ts
 // BadlyFormattedFile.ts
 var myVariable     :      string |    number;
@@ -20,7 +21,7 @@ Automatically format the text of this file by calling format text on it:
 sourceFile.formatText();
 // or provide optional formatting settings
 sourceFile.formatText({
-    placeOpenBraceOnNewLineForFunctions: true
+    placeOpenBraceOnNewLineForFunctions: true,
 });
 ```
 
@@ -38,6 +39,7 @@ function myFunction(param: string) {
 
 Individual nodes can also be formatted. For example, say you have a file that looks like this:
 
+<!-- dprint-ignore -->
 ```ts
 // file.ts
 export class MyClass {
@@ -61,6 +63,7 @@ project.getSourceFileOrThrow("file.ts")
 
 Which would selectively only format the first statement in the method:
 
+<!-- dprint-ignore -->
 ```ts
 // file.ts
 export class MyClass {

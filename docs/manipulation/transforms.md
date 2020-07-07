@@ -63,9 +63,19 @@ sourceFile.transform(traversal => {
         return traversal.currentNode;
 
     const node = traversal.visitChildren();
-    if (ts.isFunctionDeclaration(node))
-        return ts.updateFunctionDeclaration(node, [], [], undefined, ts.createIdentifier("newName"),
-            [], [], undefined, ts.createBlock([]))
+    if (ts.isFunctionDeclaration(node)) {
+        return ts.updateFunctionDeclaration(
+            node,
+            [],
+            [],
+            undefined,
+            ts.createIdentifier("newName"),
+            [],
+            [],
+            undefined,
+            ts.createBlock([]),
+        );
+    }
     return node;
 });
 ```

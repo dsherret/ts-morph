@@ -9,10 +9,10 @@ yarn setup
 
 # Packages
 
-* [packages/ts-morph](packages/ts-morph)
-* [packages/bootstrap](packages/bootstrap)
-* [packages/common](packages/common) - Common code used by both of the packages above.
-* [packages/scripts](packages/scripts) - Common scripts used at development time by both packages.
+- [packages/ts-morph](packages/ts-morph)
+- [packages/bootstrap](packages/bootstrap)
+- [packages/common](packages/common) - Common code used by both of the packages above.
+- [packages/scripts](packages/scripts) - Common scripts used at development time by both packages.
 
 # Commands
 

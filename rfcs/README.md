@@ -6,8 +6,8 @@ This is a very loose RFC process. The implementation may slightly differ.
 
 ## Implemented
 
-* [RFC-0001](RFC-0001 - Inserting Into Statements Handling Comments.md) - Inserting into statements handling comments.
+- [RFC-0001](RFC-0001 - Inserting Into Statements Handling Comments.md) - Inserting into statements handling comments.
 
 ## In Progress
 
-* None
+- None

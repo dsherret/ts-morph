@@ -22,7 +22,7 @@ Add or insert namespaces to a source file, namespace, or function like declarati
 
 ```ts
 const namespaceDeclaration = sourceFile.addNamespace({
-    name: "NamespaceName"
+    name: "NamespaceName",
 });
 ```
 

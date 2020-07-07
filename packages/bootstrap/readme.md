@@ -7,7 +7,7 @@ A library for quickly getting set up with the [TypeScript](https://github.com/Mi
 
 This library is separate from [ts-morph](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/), but uses some of its underlying infrastructure.
 
-* [Declarations](https://github.com/dsherret/ts-morph/blob/latest/packages/bootstrap/lib/ts-morph-bootstrap.d.ts)
+- [Declarations](https://github.com/dsherret/ts-morph/blob/latest/packages/bootstrap/lib/ts-morph-bootstrap.d.ts)
 
 ## Example
 
@@ -19,11 +19,11 @@ const project = await createProject(); // or createProjectSync
 // these are typed as ts.SourceFile
 const myClassFile = project.createSourceFile(
     "MyClass.ts",
-    "export class MyClass { prop: string; }"
+    "export class MyClass { prop: string; }",
 );
 const mainFile = project.createSourceFile(
     "main.ts",
-    "import { MyClass } from './MyClass'"
+    "import { MyClass } from './MyClass'",
 );
 
 // ts.Program
@@ -75,8 +75,8 @@ project.fileSystem.writeFileSync("MyClass.ts", "class MyClass {}");
 ```ts
 const project = await createProject({
     compilerOptions: {
-        target: ts.ScriptTarget.ES3
-    }
+        target: ts.ScriptTarget.ES3,
+    },
 });
 ```
 
@@ -86,21 +86,21 @@ If you would like to manually specify the path to a tsconfig.json file then spec
 
 ```ts
 const project = await createProject({
-    tsConfigFilePath: "packages/my-library/tsconfig.json"
+    tsConfigFilePath: "packages/my-library/tsconfig.json",
 });
 
 // output all the source files that were added
 console.log(project.getSourceFiles().map(s => s.fileName));
 ```
 
-*Note:* You can override any tsconfig.json options by also providing a `compilerOptions` object.
+_Note:_ You can override any tsconfig.json options by also providing a `compilerOptions` object.
 
 For your convenience, this will automatically add all the associated source files from the tsconfig.json. If you don't wish to do that, then you will need to explicitly set `addFilesFromTsConfig` to `false`:
 
 ```ts
 const project = await createProject({
     tsConfigFilePath: "path/to/tsconfig.json",
-    addFilesFromTsConfig: false
+    addFilesFromTsConfig: false,
 });
 ```
 
@@ -127,7 +127,7 @@ const project = await createProject({
                         moduleName,
                         containingFile,
                         compilerOptions,
-                        moduleResolutionHost
+                        moduleResolutionHost,
                     );
 
                     if (result.resolvedModule)
@@ -135,7 +135,7 @@ const project = await createProject({
                 }
 
                 return resolvedModules;
-            }
+            },
         };
 
         function removeTsExtension(moduleName: string) {
@@ -143,7 +143,7 @@ const project = await createProject({
                 return moduleName.slice(0, -3);
             return moduleName;
         }
-    }
+    },
 });
 ```
 
@@ -151,9 +151,9 @@ const project = await createProject({
 
 Use the following methods:
 
-* `const sourceFiles = await project.addSourceFilesByPaths("**/*.ts");` or provide an array of file globs.
-* `const sourceFile = await project.addSourceFileAtPath("src/my-file.ts");` or use `addSourceFileAtPathIfExists(filePath)`
-* `const sourceFiles = await project.addSourceFilesFromTsConfig("path/to/tsconfig.json")`
+- `const sourceFiles = await project.addSourceFilesByPaths("**/*.ts");` or provide an array of file globs.
+- `const sourceFile = await project.addSourceFileAtPath("src/my-file.ts");` or use `addSourceFileAtPathIfExists(filePath)`
+- `const sourceFiles = await project.addSourceFilesFromTsConfig("path/to/tsconfig.json")`
 
 Or use the corresponding `-Sync` suffix methods for a synchronous API (though it will be much slower).
 

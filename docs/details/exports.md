@@ -76,6 +76,7 @@ The exported declarations of a file or module can be retrieved via `.getExported
 
 For example, given the following setup:
 
+<!-- dprint-ignore -->
 ```ts
 // main.ts
 export * from "./classes";
@@ -112,9 +113,8 @@ const project = new Project();
 project.addSourceFilesAtPaths("**/*.ts");
 const mainFile = project.getSourceFileOrThrow("main.ts");
 
-for (const [name, declarations] of mainFile.getExportedDeclarations()) {
-    console.log(`${name}: ${declarations.map(d => d.getText()).join(", ")}`)
-}
+for (const [name, declarations] of mainFile.getExportedDeclarations())
+    console.log(`${name}: ${declarations.map(d => d.getText()).join(", ")}`);
 ```
 
 Outputs the following:
@@ -167,7 +167,7 @@ Add or insert use `insertExportDeclaration`, `insertExportDeclarations`, `addExp
 ```ts
 const exportDeclaration = sourceFile.addExportDeclaration({
     namedExports: ["MyClass"],
-    moduleSpecifier: "./file"
+    moduleSpecifier: "./file",
 });
 ```
 
@@ -184,7 +184,7 @@ exportDeclaration.remove();
 Given an export declaration with named exports:
 
 ```ts
-export {Export1, Export2, Export3} from "./other-file";
+export { Export1, Export2, Export3 } from "./other-file";
 ```
 
 Calling `exportDeclaration.toNamespaceExport();` will change the code to the following:
@@ -206,7 +206,7 @@ Adding or inserting named exports can be done via the `addNamedExport`, `addName
 ```ts
 const namedExport = exportDeclaration.addNamedExport({
     name: "MyClass",
-    alias: "MyAliasName" // alias is optional
+    alias: "MyAliasName", // alias is optional
 });
 // or
 exportDeclaration.addNamedExport("MyClass");
@@ -295,7 +295,7 @@ Add or insert use `insertExportAssignment`, `insertExportAssignments`, `addExpor
 ```ts
 const exportAssignment = sourceFile.addExportAssignment({
     isExportEquals: true, // defaults to true
-    expression: "5"
+    expression: "5",
 });
 ```
 

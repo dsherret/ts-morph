@@ -24,8 +24,8 @@ const project = new Project({
         usePrefixAndSuffixTextForRename: false,
         // Whether to use trailing commas in multi-line scenarios where trailing
         // commas would be used.
-        useTrailingCommas: false
-    }
+        useTrailingCommas: false,
+    },
 });
 ```
 
@@ -33,7 +33,7 @@ You can only provide a partial of these settings if you wish:
 
 ```ts
 const project = new Project({
-    manipulationSettings: { indentationText: IndentationText.TwoSpaces }
+    manipulationSettings: { indentationText: IndentationText.TwoSpaces },
 });
 ```
 
@@ -59,7 +59,7 @@ project.manipulationSettings.set({ quoteKind: QuoteKind.Single });
 // or multiple
 project.manipulationSettings.set({
     quoteKind: QuoteKind.Single,
-    indentationText: IndentationText.TwoSpaces
+    indentationText: IndentationText.TwoSpaces,
 });
 ```
 
@@ -71,6 +71,6 @@ They will slowly be supported and added to the manipulation settings. For exampl
 ```ts
 project.manipulationSettings.set({
     // only one for now... will add more in the future
-    insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false // default: true
+    insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false, // default: true
 });
 ```
