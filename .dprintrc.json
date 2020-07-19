@@ -1,6 +1,7 @@
 {
   "$schema": "https://dprint.dev/schemas/v0.json",
   "projectType": "openSource",
+  "incremental": true,
   "lineWidth": 160,
   "typescript": {
     "useBraces": "preferNone",
@@ -25,8 +26,8 @@
     "**/wrapped-nodes.md"
   ],
   "plugins": [
-    "https://plugins.dprint.dev/typescript-0.19.8.wasm",
+    "https://plugins.dprint.dev/typescript-0.20.0.wasm",
     "https://plugins.dprint.dev/json-0.4.1.wasm",
-    "https://plugins.dprint.dev/markdown-0.2.1.wasm"
+    "https://plugins.dprint.dev/markdown-0.2.4.wasm"
   ]
 }
