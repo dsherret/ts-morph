@@ -6,7 +6,7 @@ export function getDeclarationProject() {
     const project = new tsMorph.Project({
         tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
         manipulationSettings: {
-            newLineKind: tsMorph.NewLineKind.CarriageReturnLineFeed,
+            newLineKind: tsMorph.NewLineKind.LineFeed,
         },
         addFilesFromTsConfig: false,
     });

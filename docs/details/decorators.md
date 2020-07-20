@@ -59,7 +59,7 @@ const args = decorator.insertArguments(1, ["5", "6"]);
 
 And remove them by calling `.removeArgument()`:
 
-```ts
+```ts setup: const args: any;
 // specify the index
 decorator.removeArgument(0);
 // or specify the argument node

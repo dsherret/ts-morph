@@ -7,7 +7,7 @@ const declarationProject = createDeclarationProject({
 const emitMainFile = declarationProject.getSourceFileOrThrow("./dist/index.d.ts");
 const writeProject = new tsMorph.Project({
     manipulationSettings: {
-        newLineKind: tsMorph.NewLineKind.CarriageReturnLineFeed,
+        newLineKind: tsMorph.NewLineKind.LineFeed,
     },
 });
 const declarationFile = writeProject.addSourceFileAtPath("lib/ts-morph-bootstrap.d.ts");

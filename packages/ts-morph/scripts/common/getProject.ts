@@ -7,7 +7,7 @@ export function getProject() {
         tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
         addFilesFromTsConfig: false,
         manipulationSettings: {
-            newLineKind: tsMorph.NewLineKind.CarriageReturnLineFeed,
+            newLineKind: tsMorph.NewLineKind.LineFeed,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
         },
     });

@@ -9,7 +9,7 @@ export function createDeclarationProject(opts: CreateDeclarationProjectOptions) 
     const project = new Project({
         tsConfigFilePath: opts.tsConfigFilePath,
         manipulationSettings: {
-            newLineKind: NewLineKind.CarriageReturnLineFeed,
+            newLineKind: NewLineKind.LineFeed,
         },
         compilerOptions: {
             declaration: true,
@@ -27,7 +27,7 @@ export function createDeclarationProject(opts: CreateDeclarationProjectOptions) 
     const declarationProject = new Project({
         tsConfigFilePath: opts.tsConfigFilePath,
         manipulationSettings: {
-            newLineKind: NewLineKind.CarriageReturnLineFeed,
+            newLineKind: NewLineKind.LineFeed,
         },
         addFilesFromTsConfig: false,
     });
