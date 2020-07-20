@@ -702,7 +702,9 @@ export class TransactionalFileSystem {
             return pathDir.getIsDeleted();
 
         // check if the provided path is a file or if it or its parent is deleted
-        const parentDir = this.getOrCreateParentDirectory(path);
+        const parentDir = this.getParentDirectoryIfExists(path);
+        if (parentDir == null)
+            return false;
         return parentDir.isFileQueuedForDelete(path) || parentDir.getIsDeleted();
     }
 

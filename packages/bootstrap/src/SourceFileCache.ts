@@ -86,7 +86,10 @@ export class SourceFileCache implements TsSourceFileContainer {
             (sourceFile as any)["scriptKind"] as ts.ScriptKind,
         );
 
-        this.fileSystemWrapper.queueMkdir(FileUtils.getDirPath(standardizedFilePath));
+        const dirPath = FileUtils.getDirPath(standardizedFilePath);
+        if (!this.fileSystemWrapper.directoryExistsSync(dirPath))
+            this.fileSystemWrapper.queueMkdir(dirPath);
+
         this.sourceFilesByFilePath.set(standardizedFilePath, sourceFile);
     }
 
