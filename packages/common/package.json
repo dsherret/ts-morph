@@ -1,6 +1,6 @@
 {
   "name": "@ts-morph/common",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Common functionality for ts-morph packages.",
   "main": "dist/ts-morph-common.js",
   "author": "David Sherret",
@@ -22,7 +22,7 @@
     "fs-extra": "^9.0.0",
     "is-negated-glob": "^1.0.0",
     "multimatch": "^4.0.0",
-    "typescript": "~3.9.2"
+    "typescript": "~3.9.7"
   },
   "devDependencies": {
     "@ts-morph/scripts": "~0.2.0",

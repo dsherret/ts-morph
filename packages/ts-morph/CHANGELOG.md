@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.1.3"></a>
+## [7.1.3](https://github.com/dsherret/ts-morph/compare/7.1.2...7.1.3) (2020-07-20)
+
+
+### Bug Fixes
+
+* [#835](https://github.com/dsherret/ts-morph/issues/835) - Do not create a parent directory when checking if it exists. ([698a169](https://github.com/dsherret/ts-morph/commit/698a169))
+
+
 <a name="7.1.2"></a>
 ## [7.1.2](https://github.com/dsherret/ts-morph/compare/7.1.1...7.1.2) (2020-06-18)
 
