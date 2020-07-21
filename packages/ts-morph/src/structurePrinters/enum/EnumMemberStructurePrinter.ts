@@ -3,6 +3,7 @@ import { EnumMemberStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 import { WriterFunction } from "../../types";
+import { isValidVariableName } from '../../utils'
 
 export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMemberStructure> | WriterFunction | string> {
     private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
@@ -25,7 +26,14 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
         }
 
         this.factory.forJSDoc().printDocs(writer, structure.docs);
-        writer.write(structure.name);
+        // Adds quotes if structure is not a valid variable name
+        // AND the string is not enclosed in quotation marks
+        if (isValidVariableName(structure.name) || /^(['`"])[^]*\1$/.test(structure.name)) {
+            writer.write(structure.name)
+        } else {
+            writer.write('').quote(structure.name)
+        }
+
         if (typeof structure.value === "string") {
             const { value } = structure;
             writer.hangingIndent(() => writer.write(` = `).quote(value));
