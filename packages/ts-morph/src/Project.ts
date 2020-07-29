@@ -125,6 +125,7 @@ export class Project {
                 return options.compilerOptions.charset ?? defaultEncoding;
             return defaultEncoding;
         }
+        
     }
 
     /** Gets the manipulation settings. */
@@ -656,6 +657,18 @@ export class Project {
     getModuleResolutionHost(): ts.ModuleResolutionHost {
         return this._context.getModuleResolutionHost();
     }
+
+    /**
+     * An opinionated file cleaner. Removes unused imports and declarations whilst formatting aall files.
+     * 
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     */
+
+    clean() {
+        for (let val; val != (val = this.getSourceFiles().map(node => node.print()).toString());)
+            this.getSourceFiles().forEach(file => file.clean())
+    }
+
 }
 
 function normalizeAmbientModuleName(moduleName: string) {

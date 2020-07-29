@@ -953,6 +953,20 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         });
     }
 
+    /**
+     * An opinionated file cleaner. Removes unused imports and declarations whilst formatting the file.
+     * 
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     */
+    clean() {
+        this.fixMissingImports()
+        for (let val; val != (val = this.print());) {
+            this.fixUnusedIdentifiers()
+            this.organizeImports()
+        }
+        this.formatText()
+    }
+
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
         if (fileReadResult === false) {
             this.forget();
