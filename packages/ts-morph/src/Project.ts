@@ -659,7 +659,7 @@ export class Project {
     }
 
     /**
-     * An opinionated file cleaner. Removes unused imports and declarations whilst formatting aall files.
+     * An opinionated file cleaner. Removes unused imports and declarations whilst formatting all files.
      * 
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      */
