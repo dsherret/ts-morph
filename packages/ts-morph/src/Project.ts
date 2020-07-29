@@ -665,8 +665,10 @@ export class Project {
      */
 
     clean() {
-        for (let val; val != (val = this.getSourceFiles().map(node => node.print()).toString());)
+        for (let val; val != (val = this.getSourceFiles().map(node => node.print()).toString());) {
             this.getSourceFiles().forEach(file => file.clean())
+        }
+        return this
     }
 
 }

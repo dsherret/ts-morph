@@ -965,6 +965,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             this.organizeImports()
         }
         this.formatText()
+        return this
     }
 
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
