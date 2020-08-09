@@ -3941,10 +3941,30 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isJSDoc(node: Node): node is JSDoc;
     /**
+     * Gets if the node is a JSDocPrivateTag.
+     * @param node - Node to check.
+     */
+    static isJSDocPrivateTag(node: Node): node is JSDocPrivateTag;
+    /**
      * Gets if the node is a JSDocPropertyLikeTag.
      * @param node - Node to check.
      */
     static isJSDocPropertyLikeTag<T extends Node>(node: T): node is JSDocPropertyLikeTag & JSDocPropertyLikeTagExtensionType & T;
+    /**
+     * Gets if the node is a JSDocProtectedTag.
+     * @param node - Node to check.
+     */
+    static isJSDocProtectedTag(node: Node): node is JSDocProtectedTag;
+    /**
+     * Gets if the node is a JSDocPublicTag.
+     * @param node - Node to check.
+     */
+    static isJSDocPublicTag(node: Node): node is JSDocPublicTag;
+    /**
+     * Gets if the node is a JSDocReadonlyTag.
+     * @param node - Node to check.
+     */
+    static isJSDocReadonlyTag(node: Node): node is JSDocReadonlyTag;
     /**
      * Gets if the node is a JSDocTag.
      * @param node - Node to check.
@@ -4556,6 +4576,14 @@ export declare class JSDocParameterTag extends JSDocParameterTagBase<ts.JSDocPar
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocParameterTag>>;
 }
 
+/** JS doc private tag node. */
+export declare class JSDocPrivateTag extends JSDocTag<ts.JSDocPrivateTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocPrivateTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocPrivateTag>>;
+}
+
 declare const JSDocPropertyTagBase: Constructor<JSDocPropertyLikeTag> & typeof JSDocTag;
 
 /** JS doc property tag node. */
@@ -4564,6 +4592,30 @@ export declare class JSDocPropertyTag extends JSDocPropertyTagBase<ts.JSDocPrope
     getParent(): NodeParentType<ts.JSDocPropertyTag>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocPropertyTag>>;
+}
+
+/** JS doc protected tag node. */
+export declare class JSDocProtectedTag extends JSDocTag<ts.JSDocProtectedTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocProtectedTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocProtectedTag>>;
+}
+
+/** JS doc public tag node. */
+export declare class JSDocPublicTag extends JSDocTag<ts.JSDocPublicTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocPublicTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocPublicTag>>;
+}
+
+/** JS doc readonly tag node. */
+export declare class JSDocReadonlyTag extends JSDocTag<ts.JSDocReadonlyTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocReadonlyTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocReadonlyTag>>;
 }
 
 declare const JSDocReturnTagBase: Constructor<JSDocTypeExpressionableTag> & typeof JSDocTag;
@@ -6109,7 +6161,13 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
     [SyntaxKind.JSDocClassTag]: JSDocClassTag;
     [SyntaxKind.JSDocFunctionType]: JSDocFunctionType;
+    [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
+    [SyntaxKind.JSDocPrivateTag]: JSDocPrivateTag;
+    [SyntaxKind.JSDocPropertyTag]: JSDocPropertyTag;
+    [SyntaxKind.JSDocProtectedTag]: JSDocProtectedTag;
+    [SyntaxKind.JSDocPublicTag]: JSDocPublicTag;
     [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
+    [SyntaxKind.JSDocReadonlyTag]: JSDocReadonlyTag;
     [SyntaxKind.JSDocSignature]: JSDocSignature;
     [SyntaxKind.JSDocTag]: JSDocUnknownTag;
     [SyntaxKind.JSDocTemplateTag]: JSDocTemplateTag;
@@ -6117,8 +6175,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocTypeExpression]: JSDocTypeExpression;
     [SyntaxKind.JSDocTypeTag]: JSDocTypeTag;
     [SyntaxKind.JSDocTypedefTag]: JSDocTypedefTag;
-    [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
-    [SyntaxKind.JSDocPropertyTag]: JSDocPropertyTag;
     [SyntaxKind.JsxAttribute]: JsxAttribute;
     [SyntaxKind.JsxClosingElement]: JsxClosingElement;
     [SyntaxKind.JsxClosingFragment]: JsxClosingFragment;
