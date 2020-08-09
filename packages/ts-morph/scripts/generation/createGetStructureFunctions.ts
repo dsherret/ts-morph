@@ -16,7 +16,7 @@ import { Structure } from "../inspectors";
 // todo: a lot of this code was written before this library supported manipulation
 
 export function createGetStructureFunctions(structures: Structure[]) {
-    const writer = new tsMorph.CodeBlockWriter({ newLine: "\r\n" });
+    const writer = new tsMorph.CodeBlockWriter({ newLine: "\n" });
 
     writer.writeLine("// dprint-ignore-file");
     writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: yarn code-generate").newLine();
