@@ -114,11 +114,20 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
 }
 
 function addNameNode(node: Node, newName: string) {
-    const beginToken = Node.isClassDeclaration(node) ? SyntaxKind.OpenBraceToken : SyntaxKind.OpenParenToken;
-    const openParenToken = node.getFirstChildByKindOrThrow(beginToken);
-    insertIntoParentTextRange({
-        insertPos: openParenToken.getStart(),
-        newText: " " + newName,
-        parent: node,
-    });
+    if (Node.isClassDeclaration(node) || Node.isClassExpression(node)) {
+        const classKeyword = node.getFirstChildByKindOrThrow(SyntaxKind.ClassKeyword);
+        insertIntoParentTextRange({
+            insertPos: classKeyword.getEnd(),
+            newText: " " + newName,
+            parent: node,
+        });
+    }
+    else {
+        const openParenToken = node.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken);
+        insertIntoParentTextRange({
+            insertPos: openParenToken.getStart(),
+            newText: " " + newName,
+            parent: node,
+        });
+    }
 }

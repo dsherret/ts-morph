@@ -5,6 +5,7 @@ export * from "./fillDefaultEditorSettings";
 export * from "./fillDefaultFormatCodeSettings";
 export * from "./getTextFromStringOrWriter";
 export * from "./logging";
+export * from "./namingValidator";
 export * from "./newLineKindToString";
 export * from "./references";
 export * from "./setValueIfUndefined";

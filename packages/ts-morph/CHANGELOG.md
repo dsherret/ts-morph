@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.2.0"></a>
+# [7.2.0](https://github.com/dsherret/ts-morph/compare/7.1.3...7.2.0) (2020-08-09)
+
+
+### Bug Fixes
+
+* [#840](https://github.com/dsherret/ts-morph/issues/840) - Correctly add name to class without name and with extends or implements. ([ed764a7](https://github.com/dsherret/ts-morph/commit/ed764a7))
+
+
+### Features
+
+* add quotations around enums with invalid names ([#839](https://github.com/dsherret/ts-morph/issues/839)) ([affc253](https://github.com/dsherret/ts-morph/commit/affc253))
+* Implement JSDocReadonlyTag and others ([abbf208](https://github.com/dsherret/ts-morph/commit/abbf208))
+
+
+
 <a name="7.1.3"></a>
 ## [7.1.3](https://github.com/dsherret/ts-morph/compare/7.1.2...7.1.3) (2020-07-20)
 

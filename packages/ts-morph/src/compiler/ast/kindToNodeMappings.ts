@@ -71,7 +71,13 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag;
     [SyntaxKind.JSDocClassTag]: compiler.JSDocClassTag;
     [SyntaxKind.JSDocFunctionType]: compiler.JSDocFunctionType;
+    [SyntaxKind.JSDocParameterTag]: compiler.JSDocParameterTag;
+    [SyntaxKind.JSDocPrivateTag]: compiler.JSDocPrivateTag;
+    [SyntaxKind.JSDocPropertyTag]: compiler.JSDocPropertyTag;
+    [SyntaxKind.JSDocProtectedTag]: compiler.JSDocProtectedTag;
+    [SyntaxKind.JSDocPublicTag]: compiler.JSDocPublicTag;
     [SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag;
+    [SyntaxKind.JSDocReadonlyTag]: compiler.JSDocReadonlyTag;
     [SyntaxKind.JSDocSignature]: compiler.JSDocSignature;
     [SyntaxKind.JSDocTag]: compiler.JSDocUnknownTag;
     [SyntaxKind.JSDocTemplateTag]: compiler.JSDocTemplateTag;
@@ -79,8 +85,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocTypeExpression]: compiler.JSDocTypeExpression;
     [SyntaxKind.JSDocTypeTag]: compiler.JSDocTypeTag;
     [SyntaxKind.JSDocTypedefTag]: compiler.JSDocTypedefTag;
-    [SyntaxKind.JSDocParameterTag]: compiler.JSDocParameterTag;
-    [SyntaxKind.JSDocPropertyTag]: compiler.JSDocPropertyTag;
     [SyntaxKind.JsxAttribute]: compiler.JsxAttribute;
     [SyntaxKind.JsxClosingElement]: compiler.JsxClosingElement;
     [SyntaxKind.JsxClosingFragment]: compiler.JsxClosingFragment;

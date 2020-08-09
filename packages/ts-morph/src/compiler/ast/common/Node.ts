@@ -2879,6 +2879,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocParameterTag: (node: compiler.Node) => node is compiler.JSDocParameterTag = Node.is(SyntaxKind.JSDocParameterTag);
 
     /**
+     * Gets if the node is a JSDocPrivateTag.
+     * @param node - Node to check.
+     */
+    static isJSDocPrivateTag(node: compiler.Node): node is compiler.JSDocPrivateTag {
+        return node.getKind() === SyntaxKind.JSDocPrivateTag;
+    }
+
+    /**
      * Gets if the node is a JSDocPropertyLikeTag.
      * @param node - Node to check.
      */
@@ -2894,6 +2902,31 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a JSDocPropertyTag. */
     static readonly isJSDocPropertyTag: (node: compiler.Node) => node is compiler.JSDocPropertyTag = Node.is(SyntaxKind.JSDocPropertyTag);
+
+    /**
+     * Gets if the node is a JSDocProtectedTag.
+     * @param node - Node to check.
+     */
+    static isJSDocProtectedTag(node: compiler.Node): node is compiler.JSDocProtectedTag {
+        return node.getKind() === SyntaxKind.JSDocProtectedTag;
+    }
+
+    /**
+     * Gets if the node is a JSDocPublicTag.
+     * @param node - Node to check.
+     */
+    static isJSDocPublicTag(node: compiler.Node): node is compiler.JSDocPublicTag {
+        return node.getKind() === SyntaxKind.JSDocPublicTag;
+    }
+
+    /**
+     * Gets if the node is a JSDocReadonlyTag.
+     * @param node - Node to check.
+     */
+    static isJSDocReadonlyTag(node: compiler.Node): node is compiler.JSDocReadonlyTag {
+        return node.getKind() === SyntaxKind.JSDocReadonlyTag;
+    }
+
     /** Gets if the node is a JSDocReturnTag. */
     static readonly isJSDocReturnTag: (node: compiler.Node) => node is compiler.JSDocReturnTag = Node.is(SyntaxKind.JSDocReturnTag);
     /** Gets if the node is a JSDocSignature. */
@@ -2908,7 +2941,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JSDocAugmentsTag:
             case SyntaxKind.JSDocClassTag:
             case SyntaxKind.JSDocParameterTag:
+            case SyntaxKind.JSDocPrivateTag:
             case SyntaxKind.JSDocPropertyTag:
+            case SyntaxKind.JSDocProtectedTag:
+            case SyntaxKind.JSDocPublicTag:
+            case SyntaxKind.JSDocReadonlyTag:
             case SyntaxKind.JSDocReturnTag:
             case SyntaxKind.JSDocTemplateTag:
             case SyntaxKind.JSDocThisTag:
