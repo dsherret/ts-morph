@@ -3,7 +3,7 @@ import { EnumMemberStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 import { WriterFunction } from "../../types";
-import { isValidVariableName } from '../../utils'
+import { isValidVariableName } from "../../utils";
 
 export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMemberStructure> | WriterFunction | string> {
     private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
@@ -28,11 +28,10 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         // Adds quotes if structure is not a valid variable name
         // AND the string is not enclosed in quotation marks
-        if (isValidVariableName(structure.name) || /^(['`"])[^]*\1$/.test(structure.name)) {
-            writer.write(structure.name)
-        } else {
-            writer.write('').quote(structure.name)
-        }
+        if (isValidVariableName(structure.name) || isSurroundedInQuotes(structure.name))
+            writer.write(structure.name);
+        else
+            writer.quote(structure.name);
 
         if (typeof structure.value === "string") {
             const { value } = structure;
@@ -43,4 +42,8 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
         else
             this.factory.forInitializerExpressionableNode().printText(writer, structure);
     }
+}
+
+function isSurroundedInQuotes(text: string) {
+    return text.startsWith("'") && text.endsWith("'") || text.startsWith("\"") && text.endsWith("\"");
 }
