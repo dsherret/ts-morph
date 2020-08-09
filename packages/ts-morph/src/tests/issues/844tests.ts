@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { Project } from "../../Project";
 
 describe("tests for issue #844", () => {
-    it.only("should not throw an error getting structure", () => {
+    it("should not throw an error getting structure", () => {
         const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile("src/file.ts", `class MyClass {
             constructor(renderer: MYNAMESPACE.Renderer);
