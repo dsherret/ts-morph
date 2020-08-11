@@ -47,7 +47,7 @@ describe(nameof(NameableNode), () => {
         });
 
         it("should add name if class name not defined", () => {
-            testClass("export default class {}", "newName", "export default class  newName{}");
+            testClass("export default class {}", "newName", "export default class newName {}");
         });
     });
 
