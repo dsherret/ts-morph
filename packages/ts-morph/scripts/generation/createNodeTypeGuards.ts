@@ -55,7 +55,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
                 kind: tsMorph.StructureKind.Property,
                 docs: [{ description }],
                 initializer: `Node.is(SyntaxKind.${method.name})`,
-                type: `(node: compiler.Node) => node is ${getNodeType(method)}`,
+                type: `(node: compiler.Node | undefined) => node is ${getNodeType(method)}`,
                 isReadonly: true,
             };
             methodsAndProperties.push(propertyStructure);
@@ -68,7 +68,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
                     description: description + "\r\n@param node - Node to check.",
                 }],
                 typeParameters: method.isMixin ? [{ name: "T", constraint: "compiler.Node" }] : [],
-                parameters: [{ name: "node", type: method.isMixin ? "T" : "compiler.Node" }],
+                parameters: [{ name: "node", type: method.isMixin ? "T | undefined" : "compiler.Node | undefined" }],
                 returnType: `node is ${getNodeType(method)}`,
                 statements: writer => {
                     if (method.syntaxKinds.length === 0)
@@ -194,7 +194,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
             docs: ["@internal"],
             isStatic: true,
             name: "_hasStructure",
-            parameters: [{ name: "node", type: "compiler.Node" }],
+            parameters: [{ name: "node", type: "compiler.Node | undefined" }],
             returnType: `node is compiler.Node & { getStructure(): Structure; }`,
             statements: writer => {
                 writeSyntaxKinds(writer, ArrayUtils.flatten(nodesWithGetStructure.map(n => {
@@ -221,10 +221,10 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
                 { name: `TKind`, constraint: `keyof KindToNodeMappings` },
             ],
             parameters: [{ name: `kind`, type: `TKind` }],
-            returnType: `(node: compiler.Node) => node is KindToNodeMappings[TKind]`,
+            returnType: `(node: compiler.Node | undefined) => node is KindToNodeMappings[TKind]`,
             statements: writer =>
-                writer.write(`return (node: compiler.Node): node is KindToNodeMappings[TKind] => `).inlineBlock(() => {
-                    writer.writeLine(`return node.getKind() == kind;`);
+                writer.write(`return (node: compiler.Node | undefined): node is KindToNodeMappings[TKind] => `).inlineBlock(() => {
+                    writer.writeLine(`return node?.getKind() == kind;`);
                 }).write(";"),
         });
     }
@@ -248,47 +248,47 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
             isStatic: true,
             name: "isCommentStatement",
             returnType: `node is compiler.CommentStatement`,
-            parameters: [{ name: "node", type: "compiler.Node" }],
+            parameters: [{ name: "node", type: "compiler.Node | undefined" }],
             statements: writer => {
-                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.CommentNodeKind.Statement;`);
+                writer.writeLine(`return (node?.compilerNode as compiler.CompilerCommentStatement)._commentKind === compiler.CommentNodeKind.Statement;`);
             },
         }, {
             docs: ["Gets if the provided node is a CommentClassElement."],
             isStatic: true,
             name: "isCommentClassElement",
             returnType: `node is compiler.CommentClassElement`,
-            parameters: [{ name: "node", type: "compiler.Node" }],
+            parameters: [{ name: "node", type: "compiler.Node | undefined" }],
             statements: writer => {
-                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.CommentNodeKind.ClassElement;`);
+                writer.writeLine(`return (node?.compilerNode as compiler.CompilerCommentClassElement)._commentKind === compiler.CommentNodeKind.ClassElement;`);
             },
         }, {
             docs: ["Gets if the provided value is a CommentTypeElement."],
             isStatic: true,
             name: "isCommentTypeElement",
             returnType: `node is compiler.CommentTypeElement`,
-            parameters: [{ name: "node", type: "compiler.Node" }],
+            parameters: [{ name: "node", type: "compiler.Node | undefined" }],
             statements: writer => {
-                writer.writeLine(`return (node.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.CommentNodeKind.TypeElement;`);
+                writer.writeLine(`return (node?.compilerNode as compiler.CompilerCommentTypeElement)._commentKind === compiler.CommentNodeKind.TypeElement;`);
             },
         }, {
             docs: ["Gets if the provided node is a CommentObjectLiteralElement."],
             isStatic: true,
             name: "isCommentObjectLiteralElement",
             returnType: `node is compiler.CommentObjectLiteralElement`,
-            parameters: [{ name: "node", type: "compiler.Node" }],
+            parameters: [{ name: "node", type: "compiler.Node | undefined" }],
             statements: writer =>
                 writer.writeLine(
-                    `return (node.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;`,
+                    `return (node?.compilerNode as compiler.CompilerCommentObjectLiteralElement)._commentKind === compiler.CommentNodeKind.ObjectLiteralElement;`,
                 ),
         }, {
             docs: ["Gets if the provided node is a CommentEnumMember."],
             isStatic: true,
             name: "isCommentEnumMember",
             returnType: `node is compiler.CommentEnumMember`,
-            parameters: [{ name: "node", type: "compiler.Node" }],
+            parameters: [{ name: "node", type: "compiler.Node | undefined" }],
             statements: writer =>
                 writer.writeLine(
-                    `return (node.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.CommentNodeKind.EnumMember;`,
+                    `return (node?.compilerNode as compiler.CompilerCommentEnumMember)._commentKind == compiler.CommentNodeKind.EnumMember;`,
                 ),
         }];
 
@@ -297,9 +297,9 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
             isStatic: true,
             name: "isCommentNode",
             returnType: `node is ${commentMethods.map(c => "compiler." + c.name.replace("is", "")).join(" | ")}`,
-            parameters: [{ name: "node", type: "compiler.Node" }],
+            parameters: [{ name: "node", type: "compiler.Node | undefined" }],
             statements: writer => {
-                writer.writeLine("const kind = node.getKind();");
+                writer.writeLine("const kind = node?.getKind();");
                 writer.writeLine(`return kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.MultiLineCommentTrivia;`);
             },
         }, ...commentMethods]);
@@ -308,11 +308,11 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
 
 function writeSyntaxKinds(writer: tsMorph.CodeBlockWriter, kinds: string[]) {
     if (kinds.length === 1) {
-        writer.writeLine(`return node.getKind() === SyntaxKind.${kinds[0]};`);
+        writer.writeLine(`return node?.getKind() === SyntaxKind.${kinds[0]};`);
         return;
     }
 
-    writer.write("switch (node.getKind())").block(() => {
+    writer.write("switch (node?.getKind())").block(() => {
         for (const syntaxKindName of kinds)
             writer.writeLine(`case SyntaxKind.${syntaxKindName}:`);
         writer.indent().write("return true;").newLine();
