@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.3.0"></a>
+# [7.3.0](https://github.com/dsherret/ts-morph/compare/7.2.0...7.3.0) (2020-08-11)
+
+
+### Features
+
+* [#842](https://github.com/dsherret/ts-morph/issues/842) - Allow calling Node.is** functions with undefined value ([fff2cf8](https://github.com/dsherret/ts-morph/commit/fff2cf8)) - Thanks [@sisisin](https://github.com/sisisin)!
+
+
+
 <a name="7.2.0"></a>
 # [7.2.0](https://github.com/dsherret/ts-morph/compare/7.1.3...7.2.0) (2020-08-09)
 
@@ -13,7 +23,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* add quotations around enums with invalid names ([#839](https://github.com/dsherret/ts-morph/issues/839)) ([affc253](https://github.com/dsherret/ts-morph/commit/affc253))
+* Add quotations around enum members with invalid names ([#839](https://github.com/dsherret/ts-morph/issues/839)) ([affc253](https://github.com/dsherret/ts-morph/commit/affc253)) Thanks [@jeswr](https://github.com/jeswr)!
 * Implement JSDocReadonlyTag and others ([abbf208](https://github.com/dsherret/ts-morph/commit/abbf208))
 
 
