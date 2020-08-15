@@ -3949,6 +3949,26 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isJSDoc(node: Node | undefined): node is JSDoc;
     /**
+     * Gets if the node is a JSDocAuthorTag.
+     * @param node - Node to check.
+     */
+    static isJSDocAuthorTag(node: Node | undefined): node is JSDocAuthorTag;
+    /**
+     * Gets if the node is a JSDocCallbackTag.
+     * @param node - Node to check.
+     */
+    static isJSDocCallbackTag(node: Node | undefined): node is JSDocCallbackTag;
+    /**
+     * Gets if the node is a JSDocEnumTag.
+     * @param node - Node to check.
+     */
+    static isJSDocEnumTag(node: Node | undefined): node is JSDocEnumTag;
+    /**
+     * Gets if the node is a JSDocImplementsTag.
+     * @param node - Node to check.
+     */
+    static isJSDocImplementsTag(node: Node | undefined): node is JSDocImplementsTag;
+    /**
      * Gets if the node is a JSDocPropertyLikeTag.
      * @param node - Node to check.
      */
@@ -4730,6 +4750,38 @@ export declare class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression
     getParent(): NodeParentType<ts.JSDocTypeExpression>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocTypeExpression>>;
+}
+
+/** JS doc author tag node. */
+export declare class JSDocAuthorTag extends JSDocTag<ts.JSDocAuthorTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocAuthorTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocAuthorTag>>;
+}
+
+/** JS doc callback tag node. */
+export declare class JSDocCallbackTag extends JSDocTag<ts.JSDocCallbackTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocCallbackTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocCallbackTag>>;
+}
+
+/** JS doc enum tag node. */
+export declare class JSDocEnumTag extends JSDocTag<ts.JSDocEnumTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocEnumTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocEnumTag>>;
+}
+
+/** JS doc implements tag node. */
+export declare class JSDocImplementsTag extends JSDocTag<ts.JSDocImplementsTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocImplementsTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocImplementsTag>>;
 }
 
 export declare class CommentEnumMember extends Node<CompilerCommentEnumMember> {
@@ -6147,8 +6199,12 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: IntersectionTypeNode;
     [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
+    [SyntaxKind.JSDocAuthorTag]: JSDocAuthorTag;
+    [SyntaxKind.JSDocCallbackTag]: JSDocCallbackTag;
     [SyntaxKind.JSDocClassTag]: JSDocClassTag;
+    [SyntaxKind.JSDocEnumTag]: JSDocEnumTag;
     [SyntaxKind.JSDocFunctionType]: JSDocFunctionType;
+    [SyntaxKind.JSDocImplementsTag]: JSDocImplementsTag;
     [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
     [SyntaxKind.JSDocPrivateTag]: JSDocPrivateTag;
     [SyntaxKind.JSDocPropertyTag]: JSDocPropertyTag;

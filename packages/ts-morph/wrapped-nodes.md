@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 187
+**Total:** 191
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -193,8 +193,17 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :x: comment
 * [JSDocAugmentsTag](src/compiler/ast/doc/JSDocAugmentsTag.ts)
     * :x: class
+* [JSDocAuthorTag](src/compiler/ast/doc/JSDocAuthorTag.ts)
+* [JSDocCallbackTag](src/compiler/ast/doc/JSDocCallbackTag.ts)
+    * :x: fullName
+    * :heavy_check_mark: name
+    * :x: typeExpression
 * [JSDocClassTag](src/compiler/ast/doc/JSDocClassTag.ts)
+* [JSDocEnumTag](src/compiler/ast/doc/JSDocEnumTag.ts)
+    * :x: typeExpression
 * [JSDocFunctionType](src/compiler/ast/doc/JSDocFunctionType.ts)
+* [JSDocImplementsTag](src/compiler/ast/doc/JSDocImplementsTag.ts)
+    * :x: class
 * [JSDocParameterTag](src/compiler/ast/doc/JSDocParameterTag.ts)
 * [JSDocPrivateTag](src/compiler/ast/doc/JSDocPrivateTag.ts)
 * [JSDocPropertyTag](src/compiler/ast/doc/JSDocPropertyTag.ts)
@@ -467,7 +476,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 56
+**Total:** 52
 
 * Bundle
 * CallChain
@@ -478,10 +487,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ImportCall
 * InputFiles
 * JSDocAllType
-* JSDocAuthorTag
-* JSDocCallbackTag
-* JSDocEnumTag
-* JSDocImplementsTag
 * JSDocNamepathType
 * JSDocNamespaceDeclaration
 * JSDocNonNullableType
