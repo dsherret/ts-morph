@@ -2872,10 +2872,18 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a JSDocAugmentsTag. */
     static readonly isJSDocAugmentsTag: (node: compiler.Node | undefined) => node is compiler.JSDocAugmentsTag = Node.is(SyntaxKind.JSDocAugmentsTag);
+    /** Gets if the node is a JSDocAuthorTag. */
+    static readonly isJSDocAuthorTag: (node: compiler.Node | undefined) => node is compiler.JSDocAuthorTag = Node.is(SyntaxKind.JSDocAuthorTag);
+    /** Gets if the node is a JSDocCallbackTag. */
+    static readonly isJSDocCallbackTag: (node: compiler.Node | undefined) => node is compiler.JSDocCallbackTag = Node.is(SyntaxKind.JSDocCallbackTag);
     /** Gets if the node is a JSDocClassTag. */
     static readonly isJSDocClassTag: (node: compiler.Node | undefined) => node is compiler.JSDocClassTag = Node.is(SyntaxKind.JSDocClassTag);
+    /** Gets if the node is a JSDocEnumTag. */
+    static readonly isJSDocEnumTag: (node: compiler.Node | undefined) => node is compiler.JSDocEnumTag = Node.is(SyntaxKind.JSDocEnumTag);
     /** Gets if the node is a JSDocFunctionType. */
     static readonly isJSDocFunctionType: (node: compiler.Node | undefined) => node is compiler.JSDocFunctionType = Node.is(SyntaxKind.JSDocFunctionType);
+    /** Gets if the node is a JSDocImplementsTag. */
+    static readonly isJSDocImplementsTag: (node: compiler.Node | undefined) => node is compiler.JSDocImplementsTag = Node.is(SyntaxKind.JSDocImplementsTag);
     /** Gets if the node is a JSDocParameterTag. */
     static readonly isJSDocParameterTag: (node: compiler.Node | undefined) => node is compiler.JSDocParameterTag = Node.is(SyntaxKind.JSDocParameterTag);
     /** Gets if the node is a JSDocPrivateTag. */
@@ -2915,7 +2923,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isJSDocTag(node: compiler.Node | undefined): node is compiler.JSDocTag {
         switch (node?.getKind()) {
             case SyntaxKind.JSDocAugmentsTag:
+            case SyntaxKind.JSDocAuthorTag:
+            case SyntaxKind.JSDocCallbackTag:
             case SyntaxKind.JSDocClassTag:
+            case SyntaxKind.JSDocEnumTag:
+            case SyntaxKind.JSDocImplementsTag:
             case SyntaxKind.JSDocParameterTag:
             case SyntaxKind.JSDocPrivateTag:
             case SyntaxKind.JSDocPropertyTag:

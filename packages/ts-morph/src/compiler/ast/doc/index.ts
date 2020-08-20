@@ -20,3 +20,7 @@ export * from "./JSDocTypedefTag";
 export * from "./JSDocTypeTag";
 export * from "./JSDocUnknownTag";
 export * from "./JSDocTypeExpression";
+export * from "./JSDocAuthorTag";
+export * from "./JSDocCallbackTag";
+export * from "./JSDocEnumTag";
+export * from "./JSDocImplementsTag";
