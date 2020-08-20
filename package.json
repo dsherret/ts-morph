@@ -22,6 +22,6 @@
   },
   "homepage": "https://github.com/dsherret/ts-morph#readme",
   "devDependencies": {
-    "lerna": "^3.21.0"
+    "lerna": "^3.22.1"
   }
 }

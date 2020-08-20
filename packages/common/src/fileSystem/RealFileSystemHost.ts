@@ -55,7 +55,7 @@ export class RealFileSystemHost implements FileSystemHost {
     /** @inheritdoc */
     readFileSync(filePath: string, encoding = "utf-8") {
         try {
-            return this.fs.readFileSync(filePath, encoding);
+            return this.fs.readFileSync(filePath, encoding as "utf-8"); // todo: fix this...
         } catch (err) {
             throw this.getFileNotFoundErrorIfNecessary(err, filePath);
         }
