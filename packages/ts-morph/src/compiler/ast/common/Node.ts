@@ -3032,6 +3032,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.ExpressionStatement:
             case SyntaxKind.LabeledStatement:
             case SyntaxKind.VariableStatement:
+            case SyntaxKind.NamedTupleMember:
             case SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
@@ -3330,6 +3331,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Gets if the node is a NamedTupleMember.
+     * @param node - Node to check.
+     */
+    static isNamedTupleMember(node: compiler.Node | undefined): node is compiler.NamedTupleMember {
+        return node?.getKind() === SyntaxKind.NamedTupleMember;
     }
 
     /**
@@ -4021,6 +4030,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.InferType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
+            case SyntaxKind.NamedTupleMember:
             case SyntaxKind.ParenthesizedType:
             case SyntaxKind.ThisType:
             case SyntaxKind.TupleType:

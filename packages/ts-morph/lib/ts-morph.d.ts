@@ -1072,6 +1072,18 @@ export interface DecoratableNode {
 }
 
 declare type DecoratableNodeExtensionType = Node<ts.Node>;
+export declare function DotDotDotTokenableNode<T extends Constructor<DotDotDotTokenableNodeExtensionType>>(Base: T): Constructor<DotDotDotTokenableNode> & T;
+
+export interface DotDotDotTokenableNode {
+    /** Gets the dot dot dot token (...) if it exists or returns undefined */
+    getDotDotDotToken(): Node<ts.DotDotDotToken> | undefined;
+    /** Gets the dot dot dot token (...) if it exists or throws if not. */
+    getDotDotDotTokenOrThrow(): Node<ts.DotDotDotToken>;
+}
+
+declare type DotDotDotTokenableNodeExtensionType = Node<ts.Node & {
+        dotDotDotToken?: ts.DotDotDotToken;
+    }>;
 export declare function ExclamationTokenableNode<T extends Constructor<ExclamationTokenableNodeExtensionType>>(Base: T): Constructor<ExclamationTokenableNode> & T;
 
 export interface ExclamationTokenableNode {
@@ -2150,13 +2162,9 @@ export declare class ArrayBindingPattern extends Node<ts.ArrayBindingPattern> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.ArrayBindingPattern>>;
 }
 
-declare const BindingElementBase: Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
+declare const BindingElementBase: Constructor<DotDotDotTokenableNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
 
 export declare class BindingElement extends BindingElementBase<ts.BindingElement> {
-    /** Gets the binding element's dot dot dot token (...) if it exists or throws if not. */
-    getDotDotDotTokenOrThrow(): Node<ts.DotDotDotToken>;
-    /** Gets the binding element's dot dot dot token (...) if it exists or returns undefined. */
-    getDotDotDotToken(): Node<ts.DotDotDotToken> | undefined;
     /**
      * Gets binding element's property name node or throws if not found.
      *
@@ -2976,10 +2984,18 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isInterfaceDeclaration: (node: Node | undefined) => node is InterfaceDeclaration;
     /** Gets if the node is a JSDocAugmentsTag. */
     static readonly isJSDocAugmentsTag: (node: Node | undefined) => node is JSDocAugmentsTag;
+    /** Gets if the node is a JSDocAuthorTag. */
+    static readonly isJSDocAuthorTag: (node: Node | undefined) => node is JSDocAuthorTag;
+    /** Gets if the node is a JSDocCallbackTag. */
+    static readonly isJSDocCallbackTag: (node: Node | undefined) => node is JSDocCallbackTag;
     /** Gets if the node is a JSDocClassTag. */
     static readonly isJSDocClassTag: (node: Node | undefined) => node is JSDocClassTag;
+    /** Gets if the node is a JSDocEnumTag. */
+    static readonly isJSDocEnumTag: (node: Node | undefined) => node is JSDocEnumTag;
     /** Gets if the node is a JSDocFunctionType. */
     static readonly isJSDocFunctionType: (node: Node | undefined) => node is JSDocFunctionType;
+    /** Gets if the node is a JSDocImplementsTag. */
+    static readonly isJSDocImplementsTag: (node: Node | undefined) => node is JSDocImplementsTag;
     /** Gets if the node is a JSDocParameterTag. */
     static readonly isJSDocParameterTag: (node: Node | undefined) => node is JSDocParameterTag;
     /** Gets if the node is a JSDocPrivateTag. */
@@ -3949,26 +3965,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isJSDoc(node: Node | undefined): node is JSDoc;
     /**
-     * Gets if the node is a JSDocAuthorTag.
-     * @param node - Node to check.
-     */
-    static isJSDocAuthorTag(node: Node | undefined): node is JSDocAuthorTag;
-    /**
-     * Gets if the node is a JSDocCallbackTag.
-     * @param node - Node to check.
-     */
-    static isJSDocCallbackTag(node: Node | undefined): node is JSDocCallbackTag;
-    /**
-     * Gets if the node is a JSDocEnumTag.
-     * @param node - Node to check.
-     */
-    static isJSDocEnumTag(node: Node | undefined): node is JSDocEnumTag;
-    /**
-     * Gets if the node is a JSDocImplementsTag.
-     * @param node - Node to check.
-     */
-    static isJSDocImplementsTag(node: Node | undefined): node is JSDocImplementsTag;
-    /**
      * Gets if the node is a JSDocPropertyLikeTag.
      * @param node - Node to check.
      */
@@ -4063,6 +4059,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isNamedNode<T extends Node>(node: T | undefined): node is NamedNode & NamedNodeExtensionType & T;
+    /**
+     * Gets if the node is a NamedTupleMember.
+     * @param node - Node to check.
+     */
+    static isNamedTupleMember(node: Node | undefined): node is NamedTupleMember;
     /**
      * Gets if the node is a NamespaceChildableNode.
      * @param node - Node to check.
@@ -5432,9 +5433,9 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
     /** Gets the object assignment initializer if it exists. */
     getObjectAssignmentInitializer(): Expression | undefined;
     /** Gets the equals token or throws if it doesn't exist. */
-    getEqualsTokenOrThrow(): Node<ts.Token<SyntaxKind.EqualsToken>>;
+    getEqualsTokenOrThrow(): Node<ts.EqualsToken>;
     /** Gets the equals token if it exists. */
-    getEqualsToken(): Node<ts.Token<SyntaxKind.EqualsToken>> | undefined;
+    getEqualsToken(): Node<ts.EqualsToken> | undefined;
     /**
      * Remove the object assignment initializer.
      *
@@ -5713,11 +5714,9 @@ export interface OverloadableNode {
 }
 
 declare type OverloadableNodeExtensionType = Node & BodyableNode;
-declare const ParameterDeclarationBase: Constructor<QuestionTokenableNode> & Constructor<DecoratableNode> & Constructor<ScopeableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
+declare const ParameterDeclarationBase: Constructor<QuestionTokenableNode> & Constructor<DecoratableNode> & Constructor<ScopeableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & Constructor<DotDotDotTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
 
 export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
-    /** Gets the dot dot dot token (...) if it exists, for a rest parameter. */
-    getDotDotDotToken(): Node<ts.DotDotDotToken> | undefined;
     /** Gets if it's a rest parameter. */
     isRestParameter(): boolean;
     /** Gets if this is a property with a scope or readonly keyword (found in class constructors). */
@@ -6038,11 +6037,9 @@ export declare class JsxElement extends JsxElementBase<ts.JsxElement> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.JsxElement>>;
 }
 
-export declare class JsxExpression extends Expression<ts.JsxExpression> {
-    /** Gets the dot dot dot token (...) or throws if it doesn't exist. */
-    getDotDotDotTokenOrThrow(): Node<ts.Token<SyntaxKind.DotDotDotToken>>;
-    /** Gets the dot dot dot token (...) or returns undefined if it doesn't exist. */
-    getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
+declare const JsxExpressionBase: Constructor<DotDotDotTokenableNode> & typeof Expression;
+
+export declare class JsxExpression extends JsxExpressionBase<ts.JsxExpression> {
     /** Gets the expression or throws if it doesn't exist. */
     getExpressionOrThrow(): Expression<ts.Expression>;
     /** Gets the expression or returns undefined if it doesn't exist */
@@ -6239,6 +6236,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ModuleDeclaration]: NamespaceDeclaration;
     [SyntaxKind.NamedExports]: NamedExports;
     [SyntaxKind.NamedImports]: NamedImports;
+    [SyntaxKind.NamedTupleMember]: NamedTupleMember;
     [SyntaxKind.NamespaceExport]: NamespaceExport;
     [SyntaxKind.NamespaceImport]: NamespaceImport;
     [SyntaxKind.NewExpression]: NewExpression;
@@ -8131,9 +8129,7 @@ declare const ThrowStatementBase: typeof Statement;
 
 export declare class ThrowStatement extends ThrowStatementBase<ts.ThrowStatement> {
     /** Gets the throw statement's expression. */
-    getExpression(): Expression | undefined;
-    /** Gets the throw statement's expression or throws undefined if it doesn't exist. */
-    getExpressionOrThrow(): Expression;
+    getExpression(): Expression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.ThrowStatement>;
     /** @inheritdoc **/
@@ -8372,11 +8368,29 @@ export declare class IntersectionTypeNode extends TypeNode<ts.IntersectionTypeNo
 
 export declare class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {
     /** Gets the literal type node's literal. */
-    getLiteral(): BooleanLiteral | LiteralExpression | PrefixUnaryExpression;
+    getLiteral(): NullLiteral | BooleanLiteral | LiteralExpression | PrefixUnaryExpression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.LiteralTypeNode>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.LiteralTypeNode>>;
+}
+
+declare const NamedTupleMemberBase: Constructor<TypedNode> & Constructor<QuestionTokenableNode> & Constructor<DotDotDotTokenableNode> & Constructor<JSDocableNode> & Constructor<NamedNode> & typeof TypeNode;
+
+/**
+ * A named/labeled tuple element.
+ *
+ * Ex. `start: number` in `type Range = [start: number, end: number]`
+ */
+export declare class NamedTupleMember extends NamedTupleMemberBase<ts.NamedTupleMember> {
+    /** Gets the named tuple type's type. */
+    getTypeNode(): TypeNode<ts.TypeNode>;
+    /** Throws. This is not supported for NamedTupleMember. */
+    removeType(): never;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.NamedTupleMember>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.NamedTupleMember>>;
 }
 
 export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedTypeNode> {
@@ -8402,7 +8416,7 @@ export declare class ThisTypeNode extends TypeNode<ts.ThisTypeNode> {
 
 export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {
     /** Gets the tuple element type nodes. */
-    getElementTypeNodes(): TypeNode[];
+    getElements(): (TypeNode<ts.TypeNode> | NamedTupleMember)[];
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.TupleTypeNode>;
     /** @inheritdoc **/
@@ -8490,9 +8504,9 @@ export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
     /** Gets if the type predicate has an `asserts` modifier (ex. `asserts condition`). */
     hasAssertsModifier(): boolean;
     /** Gets the asserts modifier if it exists. */
-    getAssertsModifier(): Node<ts.AssertsToken> | undefined;
+    getAssertsModifier(): Node<ts.AssertsKeyword> | undefined;
     /** Gets the asserts modifier if it exists or throws otherwise. */
-    getAssertsModifierOrThrow(): Node<ts.AssertsToken>;
+    getAssertsModifierOrThrow(): Node<ts.AssertsKeyword>;
     /** Gets the type name if it exists or returns undefined when it asserts a condition. */
     getTypeNode(): TypeNode | undefined;
     /** Gets the type name if it exists or throws when it asserts a condition. */

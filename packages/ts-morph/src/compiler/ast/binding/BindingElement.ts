@@ -1,24 +1,10 @@
 import { errors, ts } from "@ts-morph/common";
-import { BindingNamedNode, InitializerExpressionableNode } from "../base";
+import { BindingNamedNode, DotDotDotTokenableNode, InitializerExpressionableNode } from "../base";
 import { Node } from "../common";
 
-const createBase = <T extends typeof Node>(ctor: T) => InitializerExpressionableNode(BindingNamedNode(ctor));
+const createBase = <T extends typeof Node>(ctor: T) => DotDotDotTokenableNode(InitializerExpressionableNode(BindingNamedNode(ctor)));
 export const BindingElementBase = createBase(Node);
 export class BindingElement extends BindingElementBase<ts.BindingElement> {
-    /**
-     * Gets the binding element's dot dot dot token (...) if it exists or throws if not.
-     */
-    getDotDotDotTokenOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getDotDotDotToken(), "Expected to find a dot dot dot token (...).");
-    }
-
-    /**
-     * Gets the binding element's dot dot dot token (...) if it exists or returns undefined.
-     */
-    getDotDotDotToken() {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.dotDotDotToken);
-    }
-
     /**
      * Gets binding element's property name node or throws if not found.
      *

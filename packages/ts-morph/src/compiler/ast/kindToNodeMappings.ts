@@ -109,6 +109,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.ModuleDeclaration]: compiler.NamespaceDeclaration;
     [SyntaxKind.NamedExports]: compiler.NamedExports;
     [SyntaxKind.NamedImports]: compiler.NamedImports;
+    [SyntaxKind.NamedTupleMember]: compiler.NamedTupleMember;
     [SyntaxKind.NamespaceExport]: compiler.NamespaceExport;
     [SyntaxKind.NamespaceImport]: compiler.NamespaceImport;
     [SyntaxKind.NewExpression]: compiler.NewExpression;

@@ -1,21 +1,9 @@
 import { errors, ts } from "@ts-morph/common";
+import { DotDotDotTokenableNode } from "../base";
 import { Expression } from "../expression";
 
-export class JsxExpression extends Expression<ts.JsxExpression> {
-    /**
-     * Gets the dot dot dot token (...) or throws if it doesn't exist.
-     */
-    getDotDotDotTokenOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getDotDotDotToken(), "Expected to find a dot dot dot token for the JSX expression.");
-    }
-
-    /**
-     * Gets the dot dot dot token (...) or returns undefined if it doesn't exist.
-     */
-    getDotDotDotToken() {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.dotDotDotToken);
-    }
-
+export const JsxExpressionBase = DotDotDotTokenableNode(Expression);
+export class JsxExpression extends JsxExpressionBase<ts.JsxExpression> {
     /**
      * Gets the expression or throws if it doesn't exist.
      */

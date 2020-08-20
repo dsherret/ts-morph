@@ -17,5 +17,5 @@ describe("tests for issue #854", () => {
         }`);
 
         expect(() => sourceFile.getStructure()).to.not.throw();
-      });
+    });
 });

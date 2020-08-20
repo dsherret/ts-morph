@@ -2,25 +2,18 @@ import { ts, SyntaxKind } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { ParameterDeclarationStructure, ParameterDeclarationSpecificStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
-import { BindingNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode,
-    TypedNode } from "../base";
+import { BindingNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode,
+    DotDotDotTokenableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 const createBase = <T extends typeof Node>(ctor: T) =>
     QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
-        TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor))),
+        DotDotDotTokenableNode(TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor)))),
     )))));
 export const ParameterDeclarationBase = createBase(Node);
 export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
-    /**
-     * Gets the dot dot dot token (...) if it exists, for a rest parameter.
-     */
-    getDotDotDotToken() {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.dotDotDotToken);
-    }
-
     /**
      * Gets if it's a rest parameter.
      */
@@ -52,7 +45,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
             });
         }
         else {
-            removeChildren({ children: [this.getDotDotDotToken()!] });
+            removeChildren({ children: [this.getDotDotDotTokenOrThrow()] });
         }
 
         return this;

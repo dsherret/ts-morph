@@ -8,10 +8,10 @@ describe(nameof(TupleTypeNode), () => {
         return getInfoFromTextWithDescendant<TupleTypeNode>(text, SyntaxKind.TupleType);
     }
 
-    describe(nameof<TupleTypeNode>(d => d.getElementTypeNodes), () => {
+    describe(nameof<TupleTypeNode>(d => d.getElements), () => {
         it("should get the element type nodes of the tuple type node", () => {
             const { descendant } = getNode("var t: [string, number];");
-            expect(descendant.getElementTypeNodes().map(t => t.getText())).to.deep.equal(["string", "number"]);
+            expect(descendant.getElements().map(t => t.getText())).to.deep.equal(["string", "number"]);
         });
     });
 });
