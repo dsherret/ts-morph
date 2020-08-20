@@ -2104,6 +2104,15 @@ class MyClass {
                 return node;
             }, `/** Testing */\nclass A {\n}`);
         });
+
+        it("should handle nested sibling transformations", () => {
+            doTest("foo(bar(), baz())", sourceFile => sourceFile, traversal => {
+                const node = traversal.visitChildren();
+                if (ts.isCallExpression(node))
+                    return ts.createIdentifier("hello");
+                return node;
+            }, "hello");
+        });
     });
 
     describe(nameof<Node>(n => n.getLocals), () => {

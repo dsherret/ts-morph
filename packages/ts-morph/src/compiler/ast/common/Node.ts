@@ -1438,7 +1438,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             newLine: this._context.manipulationSettings.getNewLineKind(),
             removeComments: false,
         });
-        const transformations: { start: number; end: number; compilerNode: ts.Node; }[] = [];
+        interface Transformation { start: number; end: number; compilerNode: ts.Node; }
+        const transformations: Transformation[] = [];
         const compilerSourceFile = this._sourceFile.compilerNode;
         const compilerNode = this.compilerNode;
         const transformerFactory: ts.TransformerFactory<ts.Node> = context => {
@@ -1473,10 +1474,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
             const start = oldNode.getStart(compilerSourceFile, true);
             const end = oldNode.end;
-            const lastTransformation = transformations[transformations.length - 1];
+            let lastTransformation: Transformation | undefined;
 
-            // remove the last transformation if it's nested within this transformation
-            if (lastTransformation != null && lastTransformation.start > start)
+            // remove any prior transformations nested within this transformation
+            while ((lastTransformation = transformations[transformations.length - 1]) && lastTransformation.start > start)
                 transformations.pop();
 
             const wrappedNode = compilerFactory.getExistingNodeFromCompilerNode(oldNode);
