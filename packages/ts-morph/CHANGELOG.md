@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.0.0"></a>
+# [8.0.0](https://github.com/dsherret/ts-morph/compare/7.3.0...8.0.0) (2020-08-20)
+
+
+### Bug Fixes
+
+* [#853](https://github.com/dsherret/ts-morph/issues/853) - Fix nested sibling transformations ([59b31b1](https://github.com/dsherret/ts-morph/commit/59b31b1)) - Thanks [@vsiao](https://github.com/vsiao)!
+
+
+### Features
+
+* [#855](https://github.com/dsherret/ts-morph/issues/855) - Add Author, Callback, Enum, Implements JSDoc tags ([f5b4bc9](https://github.com/dsherret/ts-morph/commit/f5b4bc9)) - Thanks [@ilyaulyanov](https://github.com/ilyaulyanov)!
+* [#857](https://github.com/dsherret/ts-morph/issues/857) - Upgrade to TypeScript 4.0 ([67017f9](https://github.com/dsherret/ts-morph/commit/67017f9))
+
+
+### BREAKING CHANGES
+
+* Upgraded to TypeScript 4.0
+
+* `TupleTypeNode#getElementTypeNodes()` is now `getElements()` to match the change in the compiler API.
+
+
+
 <a name="7.3.0"></a>
 # [7.3.0](https://github.com/dsherret/ts-morph/compare/7.2.0...7.3.0) (2020-08-11)
 
