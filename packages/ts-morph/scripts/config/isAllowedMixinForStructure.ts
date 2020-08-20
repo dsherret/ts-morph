@@ -5,6 +5,8 @@ export function isAllowedMixinForStructure(mixinName: string, structureName: str
         return mixinName !== "QuestionTokenableNode";
     if (structureName === "VariableDeclarationStructure")
         return mixinName !== "ExportGetableNode";
+    if (structureName === "ParameterDeclarationStructure")
+        return mixinName !== "DotDotDotTokenableNode";
 
     return true;
 }
