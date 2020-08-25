@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.1.0"></a>
+# [8.1.0](https://github.com/dsherret/ts-morph/compare/0.8.0...8.1.0) (2020-08-25)
+
+
+### Features
+
+* [#803](https://github.com/dsherret/ts-morph/issues/803) - Standardize nodes with `getExpression()` method to be `ExpressionedNode`s. ([3550cbf](https://github.com/dsherret/ts-morph/commit/3550cbf))
+* Add JSDocDeprecatedTag. ([d73c480](https://github.com/dsherret/ts-morph/commit/d73c480))
+
+
+
 <a name="8.0.0"></a>
 # [8.0.0](https://github.com/dsherret/ts-morph/compare/7.3.0...8.0.0) (2020-08-20)
 
