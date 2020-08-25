@@ -2,6 +2,7 @@ export * from "./base";
 export * from "./JSDoc";
 export * from "./JSDocAugmentsTag";
 export * from "./JSDocClassTag";
+export * from "./JSDocDeprecatedTag";
 export * from "./JSDocFunctionType";
 export * from "./JSDocParameterTag";
 export * from "./JSDocPrivateTag";
