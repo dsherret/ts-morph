@@ -1,18 +1,19 @@
 import { errors, getSyntaxKindName, ts, SyntaxKind } from "@ts-morph/common";
 import { ExpressionedNodeStructure } from "../../../../structures";
-import { Constructor, WriterFunction } from "../../../../types";
+import { Constructor, InstanceOf, WriterFunction } from "../../../../types";
 import { callBaseSet } from "../../callBaseSet";
 import { KindToExpressionMappings } from "../../kindToNodeMappings";
 import { Node } from "../../common";
 import { Expression } from "../Expression";
+import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
 
 export type ExpressionedNodeExtensionType = Node<ts.Node & { expression: ts.Expression; }>;
 
-export interface ExpressionedNode {
+export interface BaseExpressionedNode<TExpression extends Node> {
     /**
      * Gets the expression.
      */
-    getExpression(): Expression;
+    getExpression(): TExpression;
     /**
      * Gets the expression if its of a certain kind or returns undefined.
      * @param kind - Syntax kind of the expression.
@@ -30,10 +31,13 @@ export interface ExpressionedNode {
     setExpression(textOrWriterFunction: string | WriterFunction): this;
 }
 
-export function ExpressionedNode<T extends Constructor<ExpressionedNodeExtensionType>>(Base: T): Constructor<ExpressionedNode> & T {
-    return class extends Base implements ExpressionedNode {
+export function BaseExpressionedNode<
+    T extends Constructor<ExpressionedNodeExtensionType>,
+    TExpression extends Node = CompilerNodeToWrappedType<InstanceOf<T>["compilerNode"]>,
+>(Base: T): Constructor<BaseExpressionedNode<TExpression>> & T {
+    return class extends Base implements BaseExpressionedNode<TExpression> {
         getExpression() {
-            return this._getNodeFromCompilerNode(this.compilerNode.expression);
+            return this._getNodeFromCompilerNode(this.compilerNode.expression) as any as TExpression;
         }
 
         getExpressionIfKind<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] | undefined {
@@ -46,7 +50,7 @@ export function ExpressionedNode<T extends Constructor<ExpressionedNodeExtension
         }
 
         setExpression(textOrWriterFunction: string | WriterFunction) {
-            this.getExpression().replaceWithText(textOrWriterFunction);
+            this.getExpression().replaceWithText(textOrWriterFunction, this._getWriterWithQueuedChildIndentation());
             return this;
         }
 
@@ -59,4 +63,11 @@ export function ExpressionedNode<T extends Constructor<ExpressionedNodeExtension
             return this;
         }
     };
+}
+
+export interface ExpressionedNode extends BaseExpressionedNode<Expression> {
+}
+
+export function ExpressionedNode<T extends Constructor<ExpressionedNodeExtensionType>>(Base: T): Constructor<ExpressionedNode> & T {
+    return BaseExpressionedNode(Base);
 }

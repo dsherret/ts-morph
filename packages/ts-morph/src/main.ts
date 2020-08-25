@@ -13,7 +13,7 @@ export { Directory, DirectoryAddOptions, DirectoryCopyOptions, DirectoryEmitResu
 export * from "./options";
 export { ProjectOptions, Project, SourceFileCreateOptions } from "./Project";
 export * from "./structures";
-export { Constructor, WriterFunction } from "./types";
+export { Constructor, InstanceOf as Instance, WriterFunction } from "./types";
 export { createWrappedNode, CreateWrappedNodeOptions } from "./utils/compiler/createWrappedNode";
 export { printNode, PrintNodeOptions } from "./utils/compiler/printNode";
 export { SourceFileReferencingNodes } from "./utils/references/SourceFileReferenceContainer";

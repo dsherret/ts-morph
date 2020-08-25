@@ -721,6 +721,7 @@ export interface SourceFileCreateOptions {
 }
 
 export declare type Constructor<T> = new (...args: any[]) => T;
+export declare type InstanceOf<T> = T extends new (...args: any[]) => infer U ? U : never;
 export declare type WriterFunction = (writer: CodeBlockWriter) => void;
 /**
  * Creates a wrapped node from a compiler node.
@@ -4349,7 +4350,7 @@ export interface TransformTraversalControl {
 }
 
 export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.AssignmentExpression<infer U> ? AssignmentExpression<ts.AssignmentExpression<U>> : T["kind"] extends keyof ImplementedKindToNodeMappings ? ImplementedKindToNodeMappings[T["kind"]] : T extends ts.SyntaxList ? SyntaxList : T extends ts.JSDocTypeExpression ? JSDocTypeExpression : T extends ts.JSDocType ? JSDocType : T extends ts.TypeNode ? TypeNode : T extends ts.JSDocTag ? JSDocTag : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.IterationStatement ? IterationStatement : T extends CompilerCommentStatement ? CommentStatement : T extends CompilerCommentClassElement ? CommentClassElement : T extends CompilerCommentTypeElement ? CommentTypeElement : T extends CompilerCommentObjectLiteralElement ? CommentObjectLiteralElement : T extends CompilerCommentEnumMember ? CommentEnumMember : T extends ts.TypeElement ? TypeElement : T extends ts.Statement ? Statement : T extends ts.ClassElement ? ClassElement : T extends ts.ObjectLiteralElement ? ObjectLiteralElement : Node<T>;
-declare const DecoratorBase: typeof Node;
+declare const DecoratorBase: Constructor<LeftHandSideExpressionedNode> & typeof Node;
 
 export declare class Decorator extends DecoratorBase<ts.Decorator> {
     /** Gets the decorator name. */
@@ -4369,8 +4370,6 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
     getCallExpressionOrThrow(): CallExpression;
     /** Gets the call expression if a decorator factory. */
     getCallExpression(): CallExpression | undefined;
-    /** Gets the expression. */
-    getExpression(): Expression<ts.LeftHandSideExpression>;
     /** Gets the decorator's arguments from its call expression. */
     getArguments(): Node[];
     /** Gets the decorator's type arguments from its call expression. */
@@ -5068,11 +5067,27 @@ export declare class Expression<T extends ts.Expression = ts.Expression> extends
     getContextualType(): Type | undefined;
 }
 
-export declare function ExpressionedNode<T extends Constructor<ExpressionedNodeExtensionType>>(Base: T): Constructor<ExpressionedNode> & T;
+export declare function ExpressionableNode<T extends Constructor<ExpressionableNodeExtensionType>>(Base: T): Constructor<ExpressionableNode> & T;
 
-export interface ExpressionedNode {
+export interface ExpressionableNode {
+    /** Gets the expression if it exists or returns undefined. */
+    getExpression(): Expression | undefined;
+    /** Gets the expression if it exists or throws. */
+    getExpressionOrThrow(): Expression;
+    /** Gets the expression if it is of the specified syntax kind or returns undefined. */
+    getExpressionIfKind<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] | undefined;
+    /** Gets the expression if it is of the specified syntax kind or throws. */
+    getExpressionIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind];
+}
+
+declare type ExpressionableNodeExtensionType = Node<ts.Node & {
+        expression?: ts.Expression;
+    }>;
+export declare function BaseExpressionedNode<T extends Constructor<ExpressionedNodeExtensionType>, TExpression extends Node = CompilerNodeToWrappedType<InstanceOf<T>["compilerNode"]>>(Base: T): Constructor<BaseExpressionedNode<TExpression>> & T;
+
+export interface BaseExpressionedNode<TExpression extends Node> {
     /** Gets the expression. */
-    getExpression(): Expression;
+    getExpression(): TExpression;
     /**
      * Gets the expression if its of a certain kind or returns undefined.
      * @param kind - Syntax kind of the expression.
@@ -5090,14 +5105,17 @@ export interface ExpressionedNode {
     setExpression(textOrWriterFunction: string | WriterFunction): this;
 }
 
+export declare function ExpressionedNode<T extends Constructor<ExpressionedNodeExtensionType>>(Base: T): Constructor<ExpressionedNode> & T;
+
+export interface ExpressionedNode extends BaseExpressionedNode<Expression> {
+}
+
 declare type ExpressionedNodeExtensionType = Node<ts.Node & {
         expression: ts.Expression;
     }>;
 export declare function ImportExpressionedNode<T extends Constructor<ImportExpressionedNodeExtensionType>>(Base: T): Constructor<ImportExpressionedNode> & T;
 
-export interface ImportExpressionedNode {
-    /** Gets the expression. */
-    getExpression(): ImportExpression;
+export interface ImportExpressionedNode extends BaseExpressionedNode<ImportExpression> {
 }
 
 declare type ImportExpressionedNodeExtensionType = Node<ts.Node & {
@@ -5105,9 +5123,7 @@ declare type ImportExpressionedNodeExtensionType = Node<ts.Node & {
     }>;
 export declare function LeftHandSideExpressionedNode<T extends Constructor<LeftHandSideExpressionedNodeExtensionType>>(Base: T): Constructor<LeftHandSideExpressionedNode> & T;
 
-export interface LeftHandSideExpressionedNode {
-    /** Gets the expression. */
-    getExpression(): LeftHandSideExpression;
+export interface LeftHandSideExpressionedNode extends BaseExpressionedNode<LeftHandSideExpression> {
 }
 
 declare type LeftHandSideExpressionedNodeExtensionType = Node<ts.Node & {
@@ -5115,9 +5131,7 @@ declare type LeftHandSideExpressionedNodeExtensionType = Node<ts.Node & {
     }>;
 export declare function SuperExpressionedNode<T extends Constructor<SuperExpressionedNodeExtensionType>>(Base: T): Constructor<SuperExpressionedNode> & T;
 
-export interface SuperExpressionedNode {
-    /** Gets the expression. */
-    getExpression(): SuperExpression;
+export interface SuperExpressionedNode extends BaseExpressionedNode<SuperExpression> {
 }
 
 declare type SuperExpressionedNodeExtensionType = Node<ts.Node & {
@@ -5125,9 +5139,7 @@ declare type SuperExpressionedNodeExtensionType = Node<ts.Node & {
     }>;
 export declare function UnaryExpressionedNode<T extends Constructor<UnaryExpressionedNodeExtensionType>>(Base: T): Constructor<UnaryExpressionedNode> & T;
 
-export interface UnaryExpressionedNode {
-    /** Gets the expression. */
-    getExpression(): UnaryExpression;
+export interface UnaryExpressionedNode extends BaseExpressionedNode<UnaryExpression> {
 }
 
 declare type UnaryExpressionedNodeExtensionType = Node<ts.Node & {
@@ -5617,13 +5629,9 @@ export declare class VoidExpression extends VoidExpressionBase<ts.VoidExpression
     getParentOrThrow(): NonNullable<NodeParentType<ts.VoidExpression>>;
 }
 
-declare const YieldExpressionBase: Constructor<GeneratorableNode> & typeof Expression;
+declare const YieldExpressionBase: Constructor<ExpressionableNode> & Constructor<GeneratorableNode> & typeof Expression;
 
 export declare class YieldExpression extends YieldExpressionBase<ts.YieldExpression> {
-    /** Gets the expression or undefined of the yield expression. */
-    getExpression(): Expression | undefined;
-    /** Gets the expression of the yield expression or throws if it does not exist. */
-    getExpressionOrThrow(): Expression<ts.Expression>;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.YieldExpression>;
     /** @inheritdoc **/
@@ -6037,13 +6045,9 @@ export declare class JsxElement extends JsxElementBase<ts.JsxElement> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.JsxElement>>;
 }
 
-declare const JsxExpressionBase: Constructor<DotDotDotTokenableNode> & typeof Expression;
+declare const JsxExpressionBase: Constructor<ExpressionableNode> & Constructor<DotDotDotTokenableNode> & typeof Expression;
 
 export declare class JsxExpression extends JsxExpressionBase<ts.JsxExpression> {
-    /** Gets the expression or throws if it doesn't exist. */
-    getExpressionOrThrow(): Expression<ts.Expression>;
-    /** Gets the expression or returns undefined if it doesn't exist */
-    getExpression(): Expression | undefined;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.JsxExpression>;
     /** @inheritdoc **/
@@ -6095,16 +6099,9 @@ export declare class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.
     getParentOrThrow(): NonNullable<NodeParentType<ts.JsxSelfClosingElement>>;
 }
 
-declare const JsxSpreadAttributeBase: typeof Node;
+declare const JsxSpreadAttributeBase: Constructor<ExpressionedNode> & typeof Node;
 
 export declare class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttribute> {
-    /** Gets the JSX spread attribute's expression. */
-    getExpression(): Expression<ts.Expression>;
-    /**
-     * Sets the expression.
-     * @param textOrWriterFunction - Text to set the expression with.
-     */
-    setExpression(textOrWriterFunction: string | WriterFunction): this;
     /** Removes the JSX spread attribute. */
     remove(): void;
     /**
@@ -6583,7 +6580,7 @@ export declare class TemplateTail extends TemplateTailBase<ts.TemplateTail> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.TemplateTail>>;
 }
 
-declare const ExportAssignmentBase: typeof Statement;
+declare const ExportAssignmentBase: Constructor<ExpressionedNode> & typeof Statement;
 
 export declare class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
     /**
@@ -6597,13 +6594,6 @@ export declare class ExportAssignment extends ExportAssignmentBase<ts.ExportAssi
      * @param value - Whether it should be an export equals assignment.
      */
     setIsExportEquals(value: boolean): this;
-    /** Gets the export assignment expression. */
-    getExpression(): Expression;
-    /**
-     * Sets the expression of the export assignment.
-     * @param textOrWriterFunction - Text or writer function to set as the export assignment expression.
-     */
-    setExpression(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.
@@ -6748,11 +6738,9 @@ export declare class ExportSpecifier extends ExportSpecifierBase<ts.ExportSpecif
     getParentOrThrow(): NonNullable<NodeParentType<ts.ExportSpecifier>>;
 }
 
-export declare class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
-    /** Gets the expression or undefined of the yield expression. */
-    getExpression(): Expression | undefined;
-    /** Gets the expression of the yield expression or throws if it does not exist. */
-    getExpressionOrThrow(): Expression<ts.Expression>;
+declare const ExternalModuleReferenceBase: Constructor<ExpressionableNode> & typeof Node;
+
+export declare class ExternalModuleReference extends ExternalModuleReferenceBase<ts.ExternalModuleReference> {
     /** Gets the source file referenced or throws if it can't find it. */
     getReferencedSourceFileOrThrow(): SourceFile;
     /** Gets if the external module reference is relative. */
@@ -7415,10 +7403,9 @@ interface CommonIdentifierBase {
 declare type CommonIdentifierBaseExtensionType = Node<ts.Node & {
         text: string;
     }>;
+declare const ComputedPropertyNameBase: Constructor<ExpressionedNode> & typeof Node;
 
-export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
-    /** Gets the expression. */
-    getExpression(): Expression;
+export declare class ComputedPropertyName extends ComputedPropertyNameBase<ts.ComputedPropertyName> {
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.ComputedPropertyName>;
     /** @inheritdoc **/
@@ -7501,11 +7488,9 @@ export declare class CaseBlock extends CaseBlockBase<ts.CaseBlock> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.CaseBlock>>;
 }
 
-declare const CaseClauseBase: Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Node;
+declare const CaseClauseBase: Constructor<ExpressionedNode> & Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Node;
 
 export declare class CaseClause extends CaseClauseBase<ts.CaseClause> {
-    /** Gets this switch statement's expression. */
-    getExpression(): Expression;
     /** Removes this case clause. */
     remove(): void;
     /** @inheritdoc **/
@@ -7563,11 +7548,9 @@ export declare class DefaultClause extends DefaultClauseBase<ts.DefaultClause> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.DefaultClause>>;
 }
 
-declare const DoStatementBase: typeof IterationStatement;
+declare const DoStatementBase: Constructor<ExpressionedNode> & typeof IterationStatement;
 
 export declare class DoStatement extends DoStatementBase<ts.DoStatement> {
-    /** Gets this do statement's expression. */
-    getExpression(): Expression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.DoStatement>;
     /** @inheritdoc **/
@@ -7583,37 +7566,31 @@ export declare class EmptyStatement extends EmptyStatementBase<ts.EmptyStatement
     getParentOrThrow(): NonNullable<NodeParentType<ts.EmptyStatement>>;
 }
 
-declare const ExpressionStatementBase: Constructor<JSDocableNode> & typeof Statement;
+declare const ExpressionStatementBase: Constructor<ExpressionedNode> & Constructor<JSDocableNode> & typeof Statement;
 
 export declare class ExpressionStatement extends ExpressionStatementBase<ts.ExpressionStatement> {
-    /** Gets this expression statement's expression. */
-    getExpression(): Expression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.ExpressionStatement>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.ExpressionStatement>>;
 }
 
-declare const ForInStatementBase: typeof IterationStatement;
+declare const ForInStatementBase: Constructor<ExpressionedNode> & typeof IterationStatement;
 
 export declare class ForInStatement extends ForInStatementBase<ts.ForInStatement> {
     /** Gets this for in statement's initializer. */
     getInitializer(): VariableDeclarationList | Expression;
-    /** Gets this for in statement's expression. */
-    getExpression(): Expression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.ForInStatement>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.ForInStatement>>;
 }
 
-declare const ForOfStatementBase: Constructor<AwaitableNode> & typeof IterationStatement;
+declare const ForOfStatementBase: Constructor<ExpressionedNode> & Constructor<AwaitableNode> & typeof IterationStatement;
 
 export declare class ForOfStatement extends ForOfStatementBase<ts.ForOfStatement> {
     /** Gets this for of statement's initializer. */
     getInitializer(): VariableDeclarationList | Expression;
-    /** Gets this for of statement's expression. */
-    getExpression(): Expression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.ForOfStatement>;
     /** @inheritdoc **/
@@ -7641,9 +7618,9 @@ export declare class ForStatement extends ForStatementBase<ts.ForStatement> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.ForStatement>>;
 }
 
-export declare class IfStatement extends Statement<ts.IfStatement> {
-    /** Gets this if statement's expression. */
-    getExpression(): Expression;
+declare const IfStatementBase: Constructor<ExpressionedNode> & typeof Statement;
+
+export declare class IfStatement extends IfStatementBase<ts.IfStatement> {
     /** Gets this if statement's then statement. */
     getThenStatement(): Statement;
     /** Gets this if statement's else statement. */
@@ -7683,11 +7660,9 @@ export declare class NotEmittedStatement extends NotEmittedStatementBase<ts.NotE
     getParentOrThrow(): NonNullable<NodeParentType<ts.NotEmittedStatement>>;
 }
 
-export declare class ReturnStatement extends Statement<ts.ReturnStatement> {
-    /** Gets this return statement's expression if it exists or throws. */
-    getExpressionOrThrow(): Expression<ts.Expression>;
-    /** Gets this return statement's expression if it exists. */
-    getExpression(): Expression | undefined;
+declare const ReturnStatementBase: Constructor<ExpressionableNode> & typeof Statement;
+
+export declare class ReturnStatement extends ReturnStatementBase<ts.ReturnStatement> {
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.ReturnStatement>;
     /** @inheritdoc **/
@@ -8102,9 +8077,9 @@ export interface KindToNodeMappingsWithCommentStatements extends ImplementedKind
     [SyntaxKind.MultiLineCommentTrivia]: CommentStatement;
 }
 
-export declare class SwitchStatement extends Statement<ts.SwitchStatement> {
-    /** Gets this switch statement's expression. */
-    getExpression(): Expression;
+declare const SwitchStatementBase: Constructor<ExpressionedNode> & typeof Statement;
+
+export declare class SwitchStatement extends SwitchStatementBase<ts.SwitchStatement> {
     /** Gets this switch statement's case block. */
     getCaseBlock(): CaseBlock;
     /** Gets the switch statement's case block's clauses. */
@@ -8125,11 +8100,9 @@ export declare class SwitchStatement extends Statement<ts.SwitchStatement> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.SwitchStatement>>;
 }
 
-declare const ThrowStatementBase: typeof Statement;
+declare const ThrowStatementBase: Constructor<ExpressionedNode> & typeof Statement;
 
 export declare class ThrowStatement extends ThrowStatementBase<ts.ThrowStatement> {
-    /** Gets the throw statement's expression. */
-    getExpression(): Expression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.ThrowStatement>;
     /** @inheritdoc **/
@@ -8206,20 +8179,18 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
     getParentOrThrow(): NonNullable<NodeParentType<ts.VariableStatement>>;
 }
 
-declare const WhileStatementBase: typeof IterationStatement;
+declare const WhileStatementBase: Constructor<ExpressionedNode> & typeof IterationStatement;
 
 export declare class WhileStatement extends WhileStatementBase<ts.WhileStatement> {
-    /** Gets this while statement's expression. */
-    getExpression(): Expression;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.WhileStatement>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.WhileStatement>>;
 }
 
-export declare class WithStatement extends Statement<ts.WithStatement> {
-    /** Gets this with statement's expression. */
-    getExpression(): Expression;
+declare const WithStatementBase: Constructor<ExpressionedNode> & typeof Statement;
+
+export declare class WithStatement extends WithStatementBase<ts.WithStatement> {
     /** Gets this with statement's statement. */
     getStatement(): Statement;
     /** @inheritdoc **/

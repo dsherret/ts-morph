@@ -1,12 +1,7 @@
 import { ts } from "@ts-morph/common";
 import { Node } from "../common";
-import { Expression } from "../expression";
+import { ExpressionedNode } from "../expression";
 
-export class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
-    /**
-     * Gets the expression.
-     */
-    getExpression(): Expression {
-        return this._getNodeFromCompilerNode(this.compilerNode.expression);
-    }
+export const ComputedPropertyNameBase = ExpressionedNode(Node);
+export class ComputedPropertyName extends ComputedPropertyNameBase<ts.ComputedPropertyName> {
 }

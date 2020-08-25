@@ -1,17 +1,11 @@
 import { ts, SyntaxKind } from "@ts-morph/common";
 import { Node } from "../common";
-import { Expression } from "../expression";
+import { ExpressionedNode } from "../expression";
 import { Statement } from "./Statement";
 import { removeStatementedNodeChildren } from "../../../manipulation";
 
-export class IfStatement extends Statement<ts.IfStatement> {
-    /**
-     * Gets this if statement's expression.
-     */
-    getExpression(): Expression {
-        return this._getNodeFromCompilerNode(this.compilerNode.expression);
-    }
-
+export const IfStatementBase = ExpressionedNode(Statement);
+export class IfStatement extends IfStatementBase<ts.IfStatement> {
     /**
      * Gets this if statement's then statement.
      */

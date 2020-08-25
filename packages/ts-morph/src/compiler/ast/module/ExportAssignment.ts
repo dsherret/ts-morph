@@ -1,12 +1,11 @@
 import { ts, SyntaxKind } from "@ts-morph/common";
-import { Expression } from "../expression";
+import { ExpressionedNode } from "../expression";
 import { Statement } from "../statement";
 import { ExportAssignmentStructure, ExportAssignmentSpecificStructure, StructureKind } from "../../../structures";
-import { WriterFunction } from "../../../types";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 
-export const ExportAssignmentBase = Statement;
+export const ExportAssignmentBase = ExpressionedNode(Statement);
 export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {
     /**
      * Gets if this is an export equals assignment.
@@ -30,22 +29,6 @@ export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> 
         else
             this.getFirstChildByKindOrThrow(SyntaxKind.EqualsToken).replaceWithText("default");
 
-        return this;
-    }
-
-    /**
-     * Gets the export assignment expression.
-     */
-    getExpression(): Expression {
-        return this._getNodeFromCompilerNode(this.compilerNode.expression);
-    }
-
-    /**
-     * Sets the expression of the export assignment.
-     * @param textOrWriterFunction - Text or writer function to set as the export assignment expression.
-     */
-    setExpression(textOrWriterFunction: string | WriterFunction) {
-        this.getExpression().replaceWithText(textOrWriterFunction, this._getWriterWithQueuedChildIndentation());
         return this;
     }
 

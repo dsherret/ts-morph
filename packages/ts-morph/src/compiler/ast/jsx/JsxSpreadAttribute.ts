@@ -1,29 +1,13 @@
 import { ts } from "@ts-morph/common";
 import { removeChildren } from "../../../manipulation";
 import { JsxSpreadAttributeStructure, JsxSpreadAttributeSpecificStructure, StructureKind } from "../../../structures";
-import { WriterFunction } from "../../../types";
 import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common";
+import { ExpressionedNode } from "../expression";
 
-export const JsxSpreadAttributeBase = Node;
+export const JsxSpreadAttributeBase = ExpressionedNode(Node);
 export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttribute> {
-    /**
-     * Gets the JSX spread attribute's expression.
-     */
-    getExpression() {
-        return this._getNodeFromCompilerNode(this.compilerNode.expression);
-    }
-
-    /**
-     * Sets the expression.
-     * @param textOrWriterFunction - Text to set the expression with.
-     */
-    setExpression(textOrWriterFunction: string | WriterFunction) {
-        this.getExpression().replaceWithText(textOrWriterFunction);
-        return this;
-    }
-
     /**
      * Removes the JSX spread attribute.
      */

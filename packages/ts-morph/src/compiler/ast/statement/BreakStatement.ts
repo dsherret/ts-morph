@@ -1,6 +1,6 @@
 import { errors, ts } from "@ts-morph/common";
-import { Identifier } from "../../../main";
 import { Statement } from "./Statement";
+import { Identifier } from "../name";
 
 export class BreakStatement extends Statement<ts.BreakStatement> {
     /**

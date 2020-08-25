@@ -2,13 +2,13 @@ import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { FormattingKind, insertIntoParentTextRange, removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { Node } from "../common/Node";
-import { CallExpression, Expression } from "../expression";
+import { CallExpression, Expression, LeftHandSideExpressionedNode } from "../expression";
 import { TypeNode } from "../type";
 import { DecoratorStructure, DecoratorSpecificStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 
-export const DecoratorBase = Node;
+export const DecoratorBase = LeftHandSideExpressionedNode(Node);
 export class Decorator extends DecoratorBase<ts.Decorator> {
     /**
      * Gets the decorator name.
@@ -125,13 +125,6 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
             return undefined;
 
         return this.getExpression() as any as CallExpression;
-    }
-
-    /**
-     * Gets the expression.
-     */
-    getExpression(): Expression<ts.LeftHandSideExpression> {
-        return this._getNodeFromCompilerNode(this.compilerNode.expression);
     }
 
     /**

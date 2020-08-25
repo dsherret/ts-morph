@@ -1,23 +1,10 @@
 import { errors, ts } from "@ts-morph/common";
 import { ModuleUtils } from "../../../utils";
 import { Node } from "../common";
-import { Expression } from "../expression";
+import { Expression, ExpressionableNode } from "../expression";
 
-export class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
-    /**
-     * Gets the expression or undefined of the yield expression.
-     */
-    getExpression(): Expression | undefined {
-        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
-    }
-
-    /**
-     * Gets the expression of the yield expression or throws if it does not exist.
-     */
-    getExpressionOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getExpression(), "Expected to find an expression.");
-    }
-
+export const ExternalModuleReferenceBase = ExpressionableNode(Node);
+export class ExternalModuleReference extends ExternalModuleReferenceBase<ts.ExternalModuleReference> {
     /**
      * Gets the source file referenced or throws if it can't find it.
      */

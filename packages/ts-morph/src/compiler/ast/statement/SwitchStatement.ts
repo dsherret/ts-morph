@@ -1,17 +1,11 @@
 import { ts } from "@ts-morph/common";
 import { CaseOrDefaultClause } from "../aliases";
-import { Expression } from "../expression";
+import { ExpressionedNode } from "../expression";
 import { CaseBlock } from "./CaseBlock";
 import { Statement } from "./Statement";
 
-export class SwitchStatement extends Statement<ts.SwitchStatement> {
-    /**
-     * Gets this switch statement's expression.
-     */
-    getExpression(): Expression {
-        return this._getNodeFromCompilerNode(this.compilerNode.expression);
-    }
-
+export const SwitchStatementBase = ExpressionedNode(Statement);
+export class SwitchStatement extends SwitchStatementBase<ts.SwitchStatement> {
     /**
      * Gets this switch statement's case block.
      */
