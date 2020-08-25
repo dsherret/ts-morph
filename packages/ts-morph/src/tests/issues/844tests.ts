@@ -10,6 +10,7 @@ describe("tests for issue #844", () => {
              * A flag
              * @member {boolean}
              * @readonly
+             * @deprecated
              */
             readonly isActive: boolean;
         }`);
