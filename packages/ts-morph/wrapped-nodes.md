@@ -40,7 +40,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: initializer
 * [Block](src/compiler/ast/statement/Block.ts)
     * :heavy_check_mark: statements
-* [BooleanLiteral](src/compiler/ast/literal/BooleanLiteral.ts)
 * [BreakStatement](src/compiler/ast/statement/BreakStatement.ts)
     * :heavy_check_mark: label
 * [CallExpression](src/compiler/ast/expression/CallExpression.ts)
@@ -174,6 +173,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: argument
     * :heavy_check_mark: qualifier
 * [IndexSignatureDeclaration](src/compiler/ast/interface/IndexSignatureDeclaration.ts)
+    * :heavy_check_mark: type
 * [IndexedAccessTypeNode](src/compiler/ast/type/IndexedAccessTypeNode.ts)
     * :heavy_check_mark: objectType
     * :heavy_check_mark: indexType
@@ -287,6 +287,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: elements
 * [NamedImports](src/compiler/ast/module/NamedImports.ts)
     * :heavy_check_mark: elements
+* [NamedTupleMember](src/compiler/ast/type/NamedTupleMember.ts)
+    * :heavy_check_mark: dotDotDotToken
+    * :heavy_check_mark: name
+    * :heavy_check_mark: questionToken
+    * :heavy_check_mark: type
 * [NamespaceDeclaration](src/compiler/ast/module/NamespaceDeclaration.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: body
@@ -342,6 +347,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [PropertyAssignment](src/compiler/ast/expression/object/PropertyAssignment.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: questionToken
+    * :x: exclamationToken
     * :heavy_check_mark: initializer
 * [PropertyDeclaration](src/compiler/ast/class/PropertyDeclaration.ts)
     * :heavy_check_mark: name
@@ -423,7 +429,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: catchClause
     * :heavy_check_mark: finallyBlock
 * [TupleTypeNode](src/compiler/ast/type/TupleTypeNode.ts)
-    * :heavy_check_mark: elementTypes
+    * :heavy_check_mark: elements
 * [TypeAliasDeclaration](src/compiler/ast/type/TypeAliasDeclaration.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: typeParameters
@@ -476,17 +482,19 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 52
+**Total:** 58
 
 * Bundle
 * CallChain
 * ClassLikeDeclarationBase
 * DeclarationStatement
 * ElementAccessChain
+* FalseLiteral
 * FunctionOrConstructorTypeNodeBase
 * ImportCall
 * InputFiles
 * JSDocAllType
+* JSDocDeprecatedTag
 * JSDocNamepathType
 * JSDocNamespaceDeclaration
 * JSDocNonNullableType
@@ -501,10 +509,12 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * JsonSourceFile
 * JsxAttributes
 * JsxTagNamePropertyAccess
+* KeywordToken
 * KeywordTypeNode
 * LiteralLikeNode
 * MappedTypeNode
 * MissingDeclaration
+* ModifierToken
 * ModuleDeclaration
 * NamespaceExportDeclaration
 * NodeWithTypeArguments
@@ -514,6 +524,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * PropertyAccessChain
 * PropertyAccessEntityNameExpression
 * PropertyLikeDeclaration
+* PunctuationToken
 * RestTypeNode
 * SemicolonClassElement
 * SuperCall
@@ -521,6 +532,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * TemplateLiteralLikeNode
 * Token
 * TransientIdentifier
+* TrueLiteral
 * TsConfigSourceFile
 * TypeOperatorNode
 * TypeQueryNode
