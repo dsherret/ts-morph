@@ -2991,6 +2991,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocCallbackTag: (node: Node | undefined) => node is JSDocCallbackTag;
     /** Gets if the node is a JSDocClassTag. */
     static readonly isJSDocClassTag: (node: Node | undefined) => node is JSDocClassTag;
+    /** Gets if the node is a JSDocDeprecatedTag. */
+    static readonly isJSDocDeprecatedTag: (node: Node | undefined) => node is JSDocDeprecatedTag;
     /** Gets if the node is a JSDocEnumTag. */
     static readonly isJSDocEnumTag: (node: Node | undefined) => node is JSDocEnumTag;
     /** Gets if the node is a JSDocFunctionType. */
@@ -3059,6 +3061,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isNamedExports: (node: Node | undefined) => node is NamedExports;
     /** Gets if the node is a NamedImports. */
     static readonly isNamedImports: (node: Node | undefined) => node is NamedImports;
+    /** Gets if the node is a NamedTupleMember. */
+    static readonly isNamedTupleMember: (node: Node | undefined) => node is NamedTupleMember;
     /** Gets if the node is a NamespaceExport. */
     static readonly isNamespaceExport: (node: Node | undefined) => node is NamespaceExport;
     /** Gets if the node is a NamespaceImport. */
@@ -3856,6 +3860,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isDecoratableNode<T extends Node>(node: T | undefined): node is DecoratableNode & DecoratableNodeExtensionType & T;
     /**
+     * Gets if the node is a DotDotDotTokenableNode.
+     * @param node - Node to check.
+     */
+    static isDotDotDotTokenableNode<T extends Node>(node: T | undefined): node is DotDotDotTokenableNode & DotDotDotTokenableNodeExtensionType & T;
+    /**
      * Gets if the node is an ExclamationTokenableNode.
      * @param node - Node to check.
      */
@@ -3875,6 +3884,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isExpression(node: Node | undefined): node is Expression;
+    /**
+     * Gets if the node is an ExpressionableNode.
+     * @param node - Node to check.
+     */
+    static isExpressionableNode<T extends Node>(node: T | undefined): node is ExpressionableNode & ExpressionableNodeExtensionType & T;
     /**
      * Gets if the node is an ExpressionedNode.
      * @param node - Node to check.
@@ -4060,11 +4074,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isNamedNode<T extends Node>(node: T | undefined): node is NamedNode & NamedNodeExtensionType & T;
-    /**
-     * Gets if the node is a NamedTupleMember.
-     * @param node - Node to check.
-     */
-    static isNamedTupleMember(node: Node | undefined): node is NamedTupleMember;
     /**
      * Gets if the node is a NamespaceChildableNode.
      * @param node - Node to check.
@@ -4562,6 +4571,14 @@ export declare class JSDocClassTag extends JSDocTag<ts.JSDocClassTag> {
     getParent(): NodeParentType<ts.JSDocClassTag>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocClassTag>>;
+}
+
+/** JS doc deprecated tag node. */
+export declare class JSDocDeprecatedTag extends JSDocTag<ts.JSDocDeprecatedTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocDeprecatedTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocDeprecatedTag>>;
 }
 
 declare const JSDocFunctionTypeBase: Constructor<SignaturedDeclaration> & typeof JSDocType;
@@ -6196,6 +6213,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocAuthorTag]: JSDocAuthorTag;
     [SyntaxKind.JSDocCallbackTag]: JSDocCallbackTag;
     [SyntaxKind.JSDocClassTag]: JSDocClassTag;
+    [SyntaxKind.JSDocDeprecatedTag]: JSDocDeprecatedTag;
     [SyntaxKind.JSDocEnumTag]: JSDocEnumTag;
     [SyntaxKind.JSDocFunctionType]: JSDocFunctionType;
     [SyntaxKind.JSDocImplementsTag]: JSDocImplementsTag;

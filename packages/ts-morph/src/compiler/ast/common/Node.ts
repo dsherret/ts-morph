@@ -2235,49 +2235,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         return node?.getKind() === SyntaxKind.ForOfStatement;
     }
 
-    /**
-     * Gets if the node is a BaseExpressionedNode.
-     * @param node - Node to check.
-     */
-    static isBaseExpressionedNode<T extends compiler.Node>(node: T | undefined): node is compiler.BaseExpressionedNode & compiler.BaseExpressionedNodeExtensionType & T {
-        switch (node?.getKind()) {
-            case SyntaxKind.Decorator:
-            case SyntaxKind.AsExpression:
-            case SyntaxKind.AwaitExpression:
-            case SyntaxKind.CallExpression:
-            case SyntaxKind.DeleteExpression:
-            case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.ParenthesizedExpression:
-            case SyntaxKind.PartiallyEmittedExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SpreadElement:
-            case SyntaxKind.TypeAssertionExpression:
-            case SyntaxKind.TypeOfExpression:
-            case SyntaxKind.VoidExpression:
-            case SyntaxKind.JsxSpreadAttribute:
-            case SyntaxKind.ExportAssignment:
-            case SyntaxKind.ComputedPropertyName:
-            case SyntaxKind.CaseClause:
-            case SyntaxKind.DoStatement:
-            case SyntaxKind.ExpressionStatement:
-            case SyntaxKind.ForInStatement:
-            case SyntaxKind.ForOfStatement:
-            case SyntaxKind.IfStatement:
-            case SyntaxKind.SwitchStatement:
-            case SyntaxKind.ThrowStatement:
-            case SyntaxKind.WhileStatement:
-            case SyntaxKind.WithStatement:
-            case SyntaxKind.ExpressionWithTypeArguments:
-            case SyntaxKind.SpreadAssignment:
-            case SyntaxKind.TemplateSpan:
-                return true;
-            default:
-                return false;
-        }
-    }
-
     /** Gets if the node is a BigIntLiteral. */
     static readonly isBigIntLiteral: (node: compiler.Node | undefined) => node is compiler.BigIntLiteral = Node.is(SyntaxKind.BigIntLiteral);
     /** Gets if the node is a BinaryExpression. */
@@ -2967,15 +2924,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocCallbackTag: (node: compiler.Node | undefined) => node is compiler.JSDocCallbackTag = Node.is(SyntaxKind.JSDocCallbackTag);
     /** Gets if the node is a JSDocClassTag. */
     static readonly isJSDocClassTag: (node: compiler.Node | undefined) => node is compiler.JSDocClassTag = Node.is(SyntaxKind.JSDocClassTag);
-
-    /**
-     * Gets if the node is a JSDocDeprecatedTag.
-     * @param node - Node to check.
-     */
-    static isJSDocDeprecatedTag(node: compiler.Node | undefined): node is compiler.JSDocDeprecatedTag {
-        return node?.getKind() === SyntaxKind.JSDocDeprecatedTag;
-    }
-
+    /** Gets if the node is a JSDocDeprecatedTag. */
+    static readonly isJSDocDeprecatedTag: (node: compiler.Node | undefined) => node is compiler.JSDocDeprecatedTag = Node.is(SyntaxKind.JSDocDeprecatedTag);
     /** Gets if the node is a JSDocEnumTag. */
     static readonly isJSDocEnumTag: (node: compiler.Node | undefined) => node is compiler.JSDocEnumTag = Node.is(SyntaxKind.JSDocEnumTag);
     /** Gets if the node is a JSDocFunctionType. */

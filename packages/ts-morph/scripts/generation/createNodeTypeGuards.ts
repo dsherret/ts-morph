@@ -337,6 +337,7 @@ function isAllowedClass(name: string) {
     switch (name) {
         case "Node":
         case "FunctionOrConstructorTypeNodeBase":
+        case "BaseExpressionedNode":
         case "CommentStatement":
         case "CommentClassElement":
         case "CommentTypeElement":
