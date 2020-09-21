@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.1.1"></a>
+## [8.1.1](https://github.com/dsherret/ts-morph/compare/8.1.0...8.1.1) (2020-09-21)
+
+
+### Bug Fixes
+
+* [#867](https://github.com/dsherret/ts-morph/issues/867) - Inspecting and manipulating new expressions without parenthesis would throw. ([1e5c9c0](https://github.com/dsherret/ts-morph/commit/1e5c9c0))
+
+
+
 <a name="8.1.0"></a>
 # [8.1.0](https://github.com/dsherret/ts-morph/compare/0.8.0...8.1.0) (2020-08-25)
 
