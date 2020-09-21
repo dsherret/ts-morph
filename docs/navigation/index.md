@@ -7,7 +7,7 @@ title: Navigating the AST
 Navigating the AST should be simple and straightforward.
 
 Right now, the best way to explore what's implemented is to look at the autocompletion/intellisense results
-or view [this report](https://github.com/dsherret/ts-morph/blob/master/wrapped-nodes.md).
+or view [this report](https://github.com/dsherret/ts-morph/blob/master/packages/ts-morph/wrapped-nodes.md).
 
 If you can't find something that means it's most likely not implemented and you should [open an issue](https://github.com/dsherret/ts-morph/issues) on GitHub.
 
