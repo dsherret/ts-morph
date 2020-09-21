@@ -1,10 +1,11 @@
 import { errors, ArrayUtils, SyntaxKind, ts } from "@ts-morph/common";
-import { getNodesToReturn, insertIntoCommaSeparatedNodes, removeCommaSeparatedChild, verifyAndGetIndex } from "../../../manipulation";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeCommaSeparatedChild,
+    verifyAndGetIndex } from "../../../manipulation";
 import { Constructor, WriterFunction } from "../../../types";
 import { printTextFromStringOrWriter } from "../../../utils";
 import { Node } from "../common";
 
-export type ArgumentedNodeExtensionType = Node<ts.Node & { arguments: ts.NodeArray<ts.Node>; }>;
+export type ArgumentedNodeExtensionType = Node<ts.Node & { arguments?: ts.NodeArray<ts.Node>; }>;
 
 export interface ArgumentedNode {
     /**
@@ -52,7 +53,7 @@ export interface ArgumentedNode {
 export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType>>(Base: T): Constructor<ArgumentedNode> & T {
     return class extends Base implements ArgumentedNode {
         getArguments() {
-            return this.compilerNode.arguments.map(a => this._getNodeFromCompilerNode(a));
+            return this.compilerNode.arguments?.map(a => this._getNodeFromCompilerNode(a)) ?? [];
         }
 
         addArgument(argumentText: string | WriterFunction) {
@@ -73,6 +74,8 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
 
             if (ArrayUtils.isNullOrEmpty(argumentTexts))
                 return [];
+
+            this._addParensIfNecessary();
 
             const originalArgs = this.getArguments();
             index = verifyAndGetIndex(index, originalArgs.length);
@@ -108,6 +111,17 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
 
             function getArgFromIndex(index: number) {
                 return args[verifyAndGetIndex(index, args.length - 1)];
+            }
+        }
+
+        private _addParensIfNecessary() {
+            const fullText = this.getFullText();
+            if (fullText[fullText.length - 1] !== ")") {
+                insertIntoParentTextRange({
+                    insertPos: this.getEnd(),
+                    newText: "()",
+                    parent: this,
+                });
             }
         }
     };

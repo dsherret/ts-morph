@@ -935,7 +935,7 @@ export interface ArgumentedNode {
 }
 
 declare type ArgumentedNodeExtensionType = Node<ts.Node & {
-        arguments: ts.NodeArray<ts.Node>;
+        arguments?: ts.NodeArray<ts.Node>;
     }>;
 export declare function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>(Base: T): Constructor<AsyncableNode> & T;
 
