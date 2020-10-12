@@ -272,6 +272,18 @@ describe(nameof(EnumDeclaration), () => {
             firstChild.setIsConstEnum(true);
             expect(firstChild.getText()).to.equal("const enum MyEnum {}");
         });
+
+        it("should set as const exported enum when not one", () => {
+            const { firstChild } = getInfoFromText<EnumDeclaration>("export enum MyEnum {}");
+            firstChild.setIsConstEnum(true);
+            expect(firstChild.getText()).to.equal("export const enum MyEnum {}");
+        });
+
+        it("should set as not const exported enum when is one", () => {
+            const { firstChild } = getInfoFromText<EnumDeclaration>("export const enum MyEnum {}");
+            firstChild.setIsConstEnum(false);
+            expect(firstChild.getText()).to.equal("export enum MyEnum {}");
+        });
     });
 
     describe(nameof<EnumDeclaration>(n => n.set), () => {
