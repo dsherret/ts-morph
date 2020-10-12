@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.1.2"></a>
+## [8.1.2](https://github.com/dsherret/ts-morph/compare/8.1.1...8.1.2) (2020-10-12)
+
+
+### Bug Fixes
+
+* Fixed adding const modifier to exported enum ([#875](https://github.com/dsherret/ts-morph/issues/875)) ([b539a07](https://github.com/dsherret/ts-morph/commit/b539a07)) - Thanks [@IKatsuba](https://github.com/IKatsuba)!
+
+
+
 <a name="8.1.1"></a>
 ## [8.1.1](https://github.com/dsherret/ts-morph/compare/8.1.0...8.1.1) (2020-09-21)
 
