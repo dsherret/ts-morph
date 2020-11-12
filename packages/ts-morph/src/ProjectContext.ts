@@ -9,10 +9,12 @@ import { ConsoleLogger, LazyReferenceCoordinator } from "./utils";
 import { Project } from "./Project";
 import { createWrappedNode } from "./utils/compiler/createWrappedNode";
 
-/**
- * @internal
- */
-export interface ProjectContextOptions {
+/** @internal */
+export interface ProjectContextCreationData {
+    project: Project | undefined;
+    fileSystemWrapper: TransactionalFileSystem;
+    compilerOptionsContainer: CompilerOptionsContainer;
+    configFileParsingDiagnostics: ts.Diagnostic[];
     createLanguageService: boolean;
     resolutionHost?: ResolutionHostFactory;
     typeChecker?: ts.TypeChecker;
@@ -43,19 +45,19 @@ export class ProjectContext {
     readonly compilerFactory: CompilerFactory;
     readonly inProjectCoordinator: InProjectCoordinator;
 
-    constructor(project: Project | undefined, fileSystemWrapper: TransactionalFileSystem, compilerOptionsContainer: CompilerOptionsContainer,
-        opts: ProjectContextOptions)
-    {
-        this._project = project;
-        this.fileSystemWrapper = fileSystemWrapper;
-        this._compilerOptions = compilerOptionsContainer;
+    constructor(opts: ProjectContextCreationData) {
+        this._project = opts.project;
+        this.fileSystemWrapper = opts.fileSystemWrapper;
+        this._compilerOptions = opts.compilerOptionsContainer;
         this.compilerFactory = new CompilerFactory(this);
         this.inProjectCoordinator = new InProjectCoordinator(this.compilerFactory);
         this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
         this.lazyReferenceCoordinator = new LazyReferenceCoordinator(this.compilerFactory);
-        this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, fileSystemWrapper);
+        this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, opts.fileSystemWrapper);
         this._languageService = opts.createLanguageService
-            ? new LanguageService(this, {
+            ? new LanguageService({
+                context: this,
+                configFileParsingDiagnostics: opts.configFileParsingDiagnostics,
                 resolutionHost: opts.resolutionHost && opts.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get()),
             })
             : undefined;

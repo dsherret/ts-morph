@@ -118,6 +118,8 @@ export class Project {
     private readonly languageServiceHost: ts.LanguageServiceHost;
     /** @internal */
     private readonly compilerHost: ts.CompilerHost;
+    /** @internal */
+    private readonly configFileParsingDiagnostics: ts.Diagnostic[];
 
     /** @private */
     constructor(objs: {
@@ -152,6 +154,7 @@ export class Project {
         });
         this.languageServiceHost = languageServiceHost;
         this.compilerHost = compilerHost;
+        this.configFileParsingDiagnostics = tsConfigResolver?.getErrors() ?? [];
 
         function getCompilerOptions(): ts.CompilerOptions {
             return {
@@ -423,6 +426,7 @@ export class Project {
             options: this.compilerOptions.get(),
             host: this.compilerHost,
             oldProgram,
+            configFileParsingDiagnostics: this.configFileParsingDiagnostics,
             ...options,
         });
         this._oldProgram = program;

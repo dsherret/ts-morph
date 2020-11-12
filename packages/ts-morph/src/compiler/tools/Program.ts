@@ -32,6 +32,14 @@ export interface EmitOptionsBase {
     customTransformers?: ts.CustomTransformers;
 }
 
+/** @internal */
+export interface ProgramCreationData {
+    context: ProjectContext;
+    rootNames: ReadonlyArray<string>;
+    host: ts.CompilerHost;
+    configFileParsingDiagnostics: ts.Diagnostic[]
+}
+
 /**
  * Wrapper around Program.
  */
@@ -46,12 +54,15 @@ export class Program {
     private _oldProgram: ts.Program | undefined;
     /** @internal */
     private _getOrCreateCompilerObject!: () => ts.Program;
+    /** @internal */
+    private _configFileParsingDiagnostics: ts.Diagnostic[];
 
     /** @private */
-    constructor(context: ProjectContext, rootNames: ReadonlyArray<string>, host: ts.CompilerHost) {
-        this._context = context;
+    constructor(opts: ProgramCreationData) {
+        this._context = opts.context;
+        this._configFileParsingDiagnostics = opts.configFileParsingDiagnostics;
         this._typeChecker = new TypeChecker(this._context);
-        this._reset(rootNames, host);
+        this._reset(opts.rootNames, opts.host);
     }
 
     /**
@@ -79,7 +90,13 @@ export class Program {
             // need to use ts.createProgram instead of languageService.getProgram() because the
             // program created by the language service is not fully featured (ex. does not write to the file system)
             if (this._createdCompilerObject == null) {
-                this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host, this._oldProgram);
+                this._createdCompilerObject = ts.createProgram(
+                    rootNames,
+                    compilerOptions,
+                    host,
+                    this._oldProgram,
+                    this._configFileParsingDiagnostics
+                );
                 delete this._oldProgram;
             }
 
@@ -194,6 +211,14 @@ export class Program {
      */
     getGlobalDiagnostics(): Diagnostic[] {
         const compilerDiagnostics = this.compilerObject.getGlobalDiagnostics();
+        return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
+    }
+
+    /**
+     * Gets the diagnostics found when parsing the tsconfig.json file.
+     */
+    getConfigFileParsingDiagnostics(): Diagnostic[] {
+        const compilerDiagnostics = this.compilerObject.getConfigFileParsingDiagnostics();
         return compilerDiagnostics.map(d => this._context.compilerFactory.getDiagnostic(d));
     }
 

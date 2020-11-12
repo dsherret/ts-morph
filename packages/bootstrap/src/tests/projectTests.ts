@@ -703,6 +703,17 @@ describe(nameof(Project), () => {
         });
     });
 
+    describe(nameof<ts.Program>(p => p.getConfigFileParsingDiagnostics), () => {
+        it("should get the diagnostics found when parsing the tsconfig.json", () => {
+            const fileSystem = new InMemoryFileSystemHost();
+            fileSystem.writeFileSync("/tsconfig.json", `{ "fies": [] }`);
+            const project = createProjectSync({ fileSystem, tsConfigFilePath: "/tsconfig.json" });
+            expect(project.createProgram().getConfigFileParsingDiagnostics().map(d => d.messageText)).to.deep.equal([
+                `No inputs were found in config file '/tsconfig.json'. Specified 'include' paths were '["**/*"]' and 'exclude' paths were '[]'.`
+            ]);
+        });
+    });
+
     function setup() {
         const project = createProjectSync({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
         return { project };

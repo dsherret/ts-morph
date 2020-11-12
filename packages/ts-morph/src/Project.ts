@@ -75,9 +75,13 @@ export class Project {
         compilerOptionsContainer.set(compilerOptions);
 
         // setup context
-        this._context = new ProjectContext(this, fileSystemWrapper, compilerOptionsContainer, {
+        this._context = new ProjectContext({
+            project: this,
+            compilerOptionsContainer,
+            fileSystemWrapper,
             createLanguageService: true,
             resolutionHost: options.resolutionHost,
+            configFileParsingDiagnostics: tsConfigResolver?.getErrors() ?? [],
         });
 
         // initialize manipulation settings
@@ -609,6 +613,13 @@ export class Project {
      */
     getCompilerOptions(): CompilerOptions {
         return this._context.compilerOptions.get();
+    }
+
+    /**
+     * Gets the diagnostics found when parsing the tsconfig.json file provided in the project's constructor.
+     */
+    getConfigFileParsingDiagnostics(): Diagnostic[] {
+        return this.getProgram().getConfigFileParsingDiagnostics();
     }
 
     /**

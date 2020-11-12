@@ -11,7 +11,9 @@ import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, Re
     CodeFixAction, CombinedCodeActions } from "./results";
 
 /** @internal */
-export interface LanguageServiceOptions {
+export interface LanguageServiceCreationData {
+    context: ProjectContext;
+    configFileParsingDiagnostics: ts.Diagnostic[];
     resolutionHost?: ResolutionHost;
 }
 
@@ -33,21 +35,25 @@ export class LanguageService {
     }
 
     /** @private */
-    constructor(context: ProjectContext, opts: LanguageServiceOptions) {
-        const { resolutionHost = {} } = opts;
-        this._context = context;
+    constructor(opts: LanguageServiceCreationData) {
+        this._context = opts.context;
 
         const { languageServiceHost, compilerHost } = createHosts({
             transactionalFileSystem: this._context.fileSystemWrapper,
             sourceFileContainer: this._context.getSourceFileContainer(),
             compilerOptions: this._context.compilerOptions,
             getNewLine: () => this._context.manipulationSettings.getNewLineKindAsString(),
-            resolutionHost,
+            resolutionHost: opts.resolutionHost ?? {},
         });
 
         this._compilerHost = compilerHost;
         this._compilerObject = ts.createLanguageService(languageServiceHost, this._context.compilerFactory.documentRegistry);
-        this._program = new Program(this._context, Array.from(this._context.compilerFactory.getSourceFilePaths()), this._compilerHost);
+        this._program = new Program({
+            context: this._context,
+            rootNames: Array.from(this._context.compilerFactory.getSourceFilePaths()),
+            host: this._compilerHost,
+            configFileParsingDiagnostics: opts.configFileParsingDiagnostics,
+        });
 
         this._context.compilerFactory.onSourceFileAdded(() => this._resetProgram());
         this._context.compilerFactory.onSourceFileRemoved(() => this._resetProgram());

@@ -26,12 +26,14 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: Cr
     const { compilerOptions = {}, sourceFile, typeChecker } = opts;
     const compilerOptionsContainer = new CompilerOptionsContainer();
     compilerOptionsContainer.set(compilerOptions);
-    const projectContext = new ProjectContext(
-        undefined,
-        new TransactionalFileSystem(new RealFileSystemHost()),
+    const projectContext = new ProjectContext({
+        project: undefined,
+        fileSystemWrapper: new TransactionalFileSystem(new RealFileSystemHost()),
         compilerOptionsContainer,
-        { createLanguageService: false, typeChecker },
-    );
+        createLanguageService: false,
+        typeChecker,
+        configFileParsingDiagnostics: [],
+    });
     const wrappedSourceFile = projectContext.compilerFactory.getSourceFile(getSourceFileNode(), { markInProject: true });
 
     return projectContext.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile);

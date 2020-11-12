@@ -678,6 +678,8 @@ export declare class Project {
     emitToMemory(emitOptions?: EmitOptions): MemoryEmitResult;
     /** Gets the compiler options. */
     getCompilerOptions(): CompilerOptions;
+    /** Gets the diagnostics found when parsing the tsconfig.json file provided in the project's constructor. */
+    getConfigFileParsingDiagnostics(): Diagnostic[];
     /**
      * Creates a writer with the current manipulation settings.
      * @remarks Generally it's best to use a provided writer, but this may be useful in some scenarios.
@@ -8934,6 +8936,8 @@ export declare class Program {
     getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[];
     /** Gets the global diagnostics. */
     getGlobalDiagnostics(): Diagnostic[];
+    /** Gets the diagnostics found when parsing the tsconfig.json file. */
+    getConfigFileParsingDiagnostics(): Diagnostic[];
     /** Gets the emit module resolution kind. */
     getEmitModuleResolutionKind(): ModuleResolutionKind;
     /**

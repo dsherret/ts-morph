@@ -1571,6 +1571,17 @@ describe(nameof(Project), () => {
             expect(moduleResolutionHost.trace).to.be.undefined;
         });
     });
+
+    describe(nameof<Project>(p => p.getConfigFileParsingDiagnostics), () => {
+        it("should get the diagnostics found when parsing the tsconfig.json file", () => {
+            const fileSystem = new InMemoryFileSystemHost();
+            fileSystem.writeFileSync("/tsconfig.json", `{ "fies": [] }`);
+            const project = new Project({ fileSystem, tsConfigFilePath: "/tsconfig.json" });
+            expect(project.getConfigFileParsingDiagnostics().map(d => d.getMessageText())).to.deep.equal([
+                `No inputs were found in config file '/tsconfig.json'. Specified 'include' paths were '["**/*"]' and 'exclude' paths were '[]'.`
+            ]);
+        });
+    });
 });
 
 function assertHasDirectories(project: Project, dirPaths: string[]) {
