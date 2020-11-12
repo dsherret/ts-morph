@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.2.0"></a>
+# [8.2.0](https://github.com/dsherret/ts-morph/compare/8.1.2...8.2.0) (2020-11-12)
+
+
+### Features
+
+* Add `Project#getConfigFileParsingDiagnostics`. ([3f9f252](https://github.com/dsherret/ts-morph/commit/3f9f252))
+
+
+
 <a name="8.1.2"></a>
 ## [8.1.2](https://github.com/dsherret/ts-morph/compare/8.1.1...8.1.2) (2020-10-12)
 
