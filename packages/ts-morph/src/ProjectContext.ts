@@ -29,6 +29,7 @@ export class ProjectContext {
     private readonly _compilerOptions: CompilerOptionsContainer;
     private readonly _customTypeChecker: TypeChecker | undefined;
     private readonly _project: Project | undefined;
+    private _projectVersion: number  = 0;
 
     get project(): Project {
         if (this._project == null)
@@ -67,6 +68,8 @@ export class ProjectContext {
             this._customTypeChecker = new TypeChecker(this);
             this._customTypeChecker._reset(() => opts.typeChecker!);
         }
+        this.compilerFactory.onSourceFileAdded(() => this._projectVersion += 1);
+        this.compilerFactory.onSourceFileRemoved(() => this._projectVersion += 1);
     }
 
     /** Gets the compiler options. */
@@ -130,6 +133,13 @@ export class ProjectContext {
      */
     getUserPreferences() {
         return this.manipulationSettings.getUserPreferences();
+    }
+
+    /**
+     * Gets current project version.
+     */
+    getProjectVersion(): string {
+        return `${this._projectVersion}`;
     }
 
     /**

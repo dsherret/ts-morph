@@ -43,6 +43,7 @@ export class LanguageService {
             sourceFileContainer: this._context.getSourceFileContainer(),
             compilerOptions: this._context.compilerOptions,
             getNewLine: () => this._context.manipulationSettings.getNewLineKindAsString(),
+            getProjectVersion: () => this._context.getProjectVersion(),
             resolutionHost: opts.resolutionHost ?? {},
         });
 

@@ -18,6 +18,8 @@ export interface CreateHostsOptions {
     getNewLine: () => "\r\n" | "\n";
     /** The resolution host used for resolving modules and type reference directives. */
     resolutionHost: ResolutionHost;
+    /** Provides the current project version to be used for up-to-date checks.  */
+    getProjectVersion?: () => string;
 }
 
 /**
@@ -25,7 +27,7 @@ export interface CreateHostsOptions {
  * @param options - Options for creating the hosts.
  */
 export function createHosts(options: CreateHostsOptions) {
-    const { transactionalFileSystem, sourceFileContainer, compilerOptions, getNewLine, resolutionHost } = options;
+    const { transactionalFileSystem, sourceFileContainer, compilerOptions, getNewLine, resolutionHost, getProjectVersion } = options;
     let version = 0;
     const fileExistsSync = (path: StandardizedFilePath) =>
         sourceFileContainer.containsSourceFileAtPath(path)
@@ -33,6 +35,7 @@ export function createHosts(options: CreateHostsOptions) {
     const languageServiceHost: ts.LanguageServiceHost = {
         getCompilationSettings: () => compilerOptions.get(),
         getNewLine,
+        getProjectVersion,
         getScriptFileNames: () => Array.from(sourceFileContainer.getSourceFilePaths()),
         getScriptVersion: fileName => {
             const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
