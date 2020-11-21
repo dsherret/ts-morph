@@ -474,16 +474,16 @@ export interface ProjectOptions {
     compilerOptions?: CompilerOptions;
     /** File path to the tsconfig.json file. */
     tsConfigFilePath?: string;
-    /** Whether to add the source files from the specified tsconfig.json or not. @default true */
-    addFilesFromTsConfig?: boolean;
-    /** Manipulation settings */
-    manipulationSettings?: Partial<ManipulationSettings>;
+    /** Whether to skip adding the source files from the specified tsconfig.json. @default false */
+    skipAddingFilesFromTsConfig?: boolean;
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
     skipFileDependencyResolution?: boolean;
-    /** Whether to use an in-memory file system. @default false */
-    useInMemoryFileSystem?: boolean;
     /** Skip loading the lib files when using an in-memory file system. @default false */
     skipLoadingLibFiles?: boolean;
+    /** Manipulation settings */
+    manipulationSettings?: Partial<ManipulationSettings>;
+    /** Whether to use an in-memory file system. @default false */
+    useInMemoryFileSystem?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
      * @remarks Consider using `useInMemoryFileSystem` instead.
@@ -574,7 +574,7 @@ export declare class Project {
      * Adds all the source files from the specified tsconfig.json.
      *
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
-     * addFilesFromTsConfig option to false.
+     * `skipAddingFilesFromTsConfig` option to `true`.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
     addSourceFilesFromTsConfig(tsConfigFilePath: string): SourceFile[];
@@ -849,6 +849,7 @@ export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDe
 export declare type ArrayBindingElement = BindingElement | OmittedExpression;
 export declare type BindingName = Identifier | BindingPattern;
 export declare type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
+export declare type BooleanLiteral = TrueLiteral | FalseLiteral;
 export declare type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
 export declare type EntityNameExpression = Identifier | PropertyAccessExpression;
 export declare type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | ElementAccessExpression | BindingPattern | EntityNameExpression;
@@ -2955,8 +2956,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isExpressionWithTypeArguments: (node: Node | undefined) => node is ExpressionWithTypeArguments;
     /** Gets if the node is an ExternalModuleReference. */
     static readonly isExternalModuleReference: (node: Node | undefined) => node is ExternalModuleReference;
-    /** Gets if the node is a FalseKeyword. */
-    static readonly isFalseKeyword: (node: Node | undefined) => node is BooleanLiteral;
     /** Gets if the node is a ForInStatement. */
     static readonly isForInStatement: (node: Node | undefined) => node is ForInStatement;
     /** Gets if the node is a ForOfStatement. */
@@ -3149,8 +3148,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isTemplateTail: (node: Node | undefined) => node is TemplateTail;
     /** Gets if the node is a ThrowStatement. */
     static readonly isThrowStatement: (node: Node | undefined) => node is ThrowStatement;
-    /** Gets if the node is a TrueKeyword. */
-    static readonly isTrueKeyword: (node: Node | undefined) => node is BooleanLiteral;
     /** Gets if the node is a TryStatement. */
     static readonly isTryStatement: (node: Node | undefined) => node is TryStatement;
     /** Gets if the node is a TypeAliasDeclaration. */
@@ -3817,11 +3814,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isBodyableNode<T extends Node>(node: T | undefined): node is BodyableNode & BodyableNodeExtensionType & T;
     /**
-     * Gets if the node is a BooleanLiteral.
-     * @param node - Node to check.
-     */
-    static isBooleanLiteral(node: Node | undefined): node is BooleanLiteral;
-    /**
      * Gets if the node is a CallSignatureDeclaration.
      * @param node - Node to check.
      */
@@ -3901,6 +3893,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isExtendsClauseableNode<T extends Node>(node: T | undefined): node is ExtendsClauseableNode & ExtendsClauseableNodeExtensionType & T;
+    /**
+     * Gets if the node is a FalseLiteral.
+     * @param node - Node to check.
+     */
+    static isFalseLiteral(node: Node | undefined): node is FalseLiteral;
     /**
      * Gets if the node is a FunctionLikeDeclaration.
      * @param node - Node to check.
@@ -4206,6 +4203,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isThisTypeNode(node: Node | undefined): node is ThisTypeNode;
+    /**
+     * Gets if the node is a TrueLiteral.
+     * @param node - Node to check.
+     */
+    static isTrueLiteral(node: Node | undefined): node is TrueLiteral;
     /**
      * Gets if the node is a TupleTypeNode.
      * @param node - Node to check.
@@ -6319,12 +6321,12 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.StringKeyword]: Expression;
     [SyntaxKind.SymbolKeyword]: Expression;
     [SyntaxKind.UndefinedKeyword]: Expression;
-    [SyntaxKind.FalseKeyword]: BooleanLiteral;
-    [SyntaxKind.TrueKeyword]: BooleanLiteral;
+    [SyntaxKind.FalseKeyword]: FalseLiteral;
     [SyntaxKind.ImportKeyword]: ImportExpression;
     [SyntaxKind.NullKeyword]: NullLiteral;
     [SyntaxKind.SuperKeyword]: SuperExpression;
     [SyntaxKind.ThisKeyword]: ThisExpression;
+    [SyntaxKind.TrueKeyword]: TrueLiteral;
     [SyntaxKind.VoidExpression]: VoidExpression;
 }
 
@@ -6382,12 +6384,12 @@ export interface KindToExpressionMappings {
     [SyntaxKind.StringKeyword]: Expression;
     [SyntaxKind.SymbolKeyword]: Expression;
     [SyntaxKind.UndefinedKeyword]: Expression;
-    [SyntaxKind.FalseKeyword]: BooleanLiteral;
-    [SyntaxKind.TrueKeyword]: BooleanLiteral;
+    [SyntaxKind.FalseKeyword]: FalseLiteral;
     [SyntaxKind.ImportKeyword]: ImportExpression;
     [SyntaxKind.NullKeyword]: NullLiteral;
     [SyntaxKind.SuperKeyword]: SuperExpression;
     [SyntaxKind.ThisKeyword]: ThisExpression;
+    [SyntaxKind.TrueKeyword]: TrueLiteral;
     [SyntaxKind.VoidExpression]: VoidExpression;
 }
 
@@ -6411,22 +6413,40 @@ export declare class BigIntLiteral extends BigIntLiteralBase<ts.BigIntLiteral> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.BigIntLiteral>>;
 }
 
-declare const BooleanLiteralBase: typeof PrimaryExpression;
+declare const TrueLiteralBase: typeof PrimaryExpression;
 
-export declare class BooleanLiteral extends BooleanLiteralBase<ts.BooleanLiteral> {
+export declare class TrueLiteral extends TrueLiteralBase<ts.TrueLiteral> {
     /** Gets the literal value. */
     getLiteralValue(): boolean;
     /**
      * Sets the literal value.
      *
-     * Note: For the time being, this forgets the current node and returns the new node.
+     * Note: This forgets the current node and returns the new node if the value changes.
      * @param value - Value to set.
      */
-    setLiteralValue(value: boolean): BooleanLiteral;
+    setLiteralValue(value: boolean): this | FalseLiteral;
     /** @inheritdoc **/
-    getParent(): NodeParentType<ts.BooleanLiteral>;
+    getParent(): NodeParentType<ts.TrueLiteral>;
     /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.BooleanLiteral>>;
+    getParentOrThrow(): NonNullable<NodeParentType<ts.TrueLiteral>>;
+}
+
+declare const FalseLiteralBase: typeof PrimaryExpression;
+
+export declare class FalseLiteral extends FalseLiteralBase<ts.FalseLiteral> {
+    /** Gets the literal value. */
+    getLiteralValue(): boolean;
+    /**
+     * Sets the literal value.
+     *
+     * Note: This forgets the current node and returns the new node if the value changes.
+     * @param value - Value to set.
+     */
+    setLiteralValue(value: boolean): this | TrueLiteral;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.FalseLiteral>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.FalseLiteral>>;
 }
 
 declare const NullLiteralBase: typeof PrimaryExpression;

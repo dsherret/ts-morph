@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 191
+**Total:** 196
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -119,6 +119,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: expression
 * [ExternalModuleReference](src/compiler/ast/module/ExternalModuleReference.ts)
     * :heavy_check_mark: expression
+* [FalseLiteral](src/compiler/ast/literal/BooleanLiterals.ts)
 * [ForInStatement](src/compiler/ast/statement/ForInStatement.ts)
     * :heavy_check_mark: initializer
     * :heavy_check_mark: expression
@@ -199,6 +200,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: name
     * :x: typeExpression
 * [JSDocClassTag](src/compiler/ast/doc/JSDocClassTag.ts)
+* [JSDocDeprecatedTag](src/compiler/ast/doc/JSDocDeprecatedTag.ts)
 * [JSDocEnumTag](src/compiler/ast/doc/JSDocEnumTag.ts)
     * :x: typeExpression
 * [JSDocFunctionType](src/compiler/ast/doc/JSDocFunctionType.ts)
@@ -212,6 +214,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocReadonlyTag](src/compiler/ast/doc/JSDocReadonlyTag.ts)
 * [JSDocReturnTag](src/compiler/ast/doc/JSDocReturnTag.ts)
     * :heavy_check_mark: typeExpression
+* [JSDocSeeTag](src/compiler/ast/doc/JSDocSeeTag.ts)
+    * :x: name
 * [JSDocSignature](src/compiler/ast/doc/JSDocSignature.ts)
     * :x: typeParameters
     * :x: parameters
@@ -415,6 +419,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: head
     * :heavy_check_mark: templateSpans
 * [TemplateHead](src/compiler/ast/literal/template/TemplateHead.ts)
+* [TemplateLiteralTypeNode](src/compiler/ast/type/TemplateLiteralTypeNode.ts)
+    * :x: head
+    * :x: templateSpans
 * [TemplateMiddle](src/compiler/ast/literal/template/TemplateMiddle.ts)
 * [TemplateSpan](src/compiler/ast/literal/template/TemplateSpan.ts)
     * :heavy_check_mark: expression
@@ -424,6 +431,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ThisTypeNode](src/compiler/ast/type/ThisTypeNode.ts)
 * [ThrowStatement](src/compiler/ast/statement/ThrowStatement.ts)
     * :heavy_check_mark: expression
+* [TrueLiteral](src/compiler/ast/literal/BooleanLiterals.ts)
 * [TryStatement](src/compiler/ast/statement/TryStatement.ts)
     * :heavy_check_mark: tryBlock
     * :heavy_check_mark: catchClause
@@ -482,19 +490,18 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 58
+**Total:** 57
 
 * Bundle
 * CallChain
 * ClassLikeDeclarationBase
 * DeclarationStatement
 * ElementAccessChain
-* FalseLiteral
 * FunctionOrConstructorTypeNodeBase
 * ImportCall
 * InputFiles
 * JSDocAllType
-* JSDocDeprecatedTag
+* JSDocNameReference
 * JSDocNamepathType
 * JSDocNamespaceDeclaration
 * JSDocNonNullableType
@@ -530,9 +537,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * SuperCall
 * SyntheticExpression
 * TemplateLiteralLikeNode
+* TemplateLiteralTypeSpan
 * Token
 * TransientIdentifier
-* TrueLiteral
 * TsConfigSourceFile
 * TypeOperatorNode
 * TypeQueryNode

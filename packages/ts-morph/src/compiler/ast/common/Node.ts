@@ -2953,6 +2953,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocReadonlyTag: (node: compiler.Node | undefined) => node is compiler.JSDocReadonlyTag = Node.is(SyntaxKind.JSDocReadonlyTag);
     /** Gets if the node is a JSDocReturnTag. */
     static readonly isJSDocReturnTag: (node: compiler.Node | undefined) => node is compiler.JSDocReturnTag = Node.is(SyntaxKind.JSDocReturnTag);
+    /** Gets if the node is a JSDocSeeTag. */
+    static readonly isJSDocSeeTag: (node: compiler.Node | undefined) => node is compiler.JSDocSeeTag = Node.is(SyntaxKind.JSDocSeeTag);
     /** Gets if the node is a JSDocSignature. */
     static readonly isJSDocSignature: (node: compiler.Node | undefined) => node is compiler.JSDocSignature = Node.is(SyntaxKind.JSDocSignature);
 
@@ -2976,6 +2978,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JSDocPublicTag:
             case SyntaxKind.JSDocReadonlyTag:
             case SyntaxKind.JSDocReturnTag:
+            case SyntaxKind.JSDocSeeTag:
             case SyntaxKind.JSDocTemplateTag:
             case SyntaxKind.JSDocThisTag:
             case SyntaxKind.JSDocTypedefTag:
@@ -3016,6 +3019,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isJSDocTypeExpressionableTag<T extends compiler.Node>(node: T | undefined): node is compiler.JSDocTypeExpressionableTag & compiler.JSDocTypeExpressionableTagExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.JSDocReturnTag:
+            case SyntaxKind.JSDocSeeTag:
             case SyntaxKind.JSDocThisTag:
                 return true;
             default:
@@ -3920,6 +3924,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isTemplateExpression: (node: compiler.Node | undefined) => node is compiler.TemplateExpression = Node.is(SyntaxKind.TemplateExpression);
     /** Gets if the node is a TemplateHead. */
     static readonly isTemplateHead: (node: compiler.Node | undefined) => node is compiler.TemplateHead = Node.is(SyntaxKind.TemplateHead);
+
+    /**
+     * Gets if the node is a TemplateLiteralTypeNode.
+     * @param node - Node to check.
+     */
+    static isTemplateLiteralTypeNode(node: compiler.Node | undefined): node is compiler.TemplateLiteralTypeNode {
+        return node?.getKind() === SyntaxKind.TemplateLiteralType;
+    }
+
     /** Gets if the node is a TemplateMiddle. */
     static readonly isTemplateMiddle: (node: compiler.Node | undefined) => node is compiler.TemplateMiddle = Node.is(SyntaxKind.TemplateMiddle);
     /** Gets if the node is a TemplateSpan. */
@@ -4080,6 +4093,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.LiteralType:
             case SyntaxKind.NamedTupleMember:
             case SyntaxKind.ParenthesizedType:
+            case SyntaxKind.TemplateLiteralType:
             case SyntaxKind.ThisType:
             case SyntaxKind.TupleType:
             case SyntaxKind.TypeLiteral:

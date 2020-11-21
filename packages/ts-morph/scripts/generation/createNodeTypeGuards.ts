@@ -200,7 +200,10 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
                 writeSyntaxKinds(writer, ArrayUtils.flatten(nodesWithGetStructure.map(n => {
                     const item = kindToWrapperMappings.find(m => m.wrapperName === n.getName());
                     if (item == null) {
-                        console.warn(`Could not find syntax kinds for ${n.getName()}`);
+                        // supress for JSDocTag as this will never be used for that
+                        if (n.getName() !== "JSDocTag") {
+                            throw new Error(`Could not find syntax kinds for ${n.getName()}`);
+                        }
                         return [];
                     }
                     return item.syntaxKindNames;

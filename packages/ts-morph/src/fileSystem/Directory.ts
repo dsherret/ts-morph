@@ -229,7 +229,7 @@ export class Directory {
             return Array.from(this._getSourceFilesIterator());
         }
 
-        function* getFilteredSourceFiles(globPatterns: string[]) {
+        function* getFilteredSourceFiles(globPatterns: ReadonlyArray<string>) {
             const sourceFilePaths = Array.from(getSourceFilePaths());
             const matchedPaths = matchGlobs(sourceFilePaths, globPatterns!, dir.getPath());
 

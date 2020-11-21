@@ -577,7 +577,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     getImportStringLiterals() {
         this._ensureBound();
         const literals = ((this.compilerNode as any).imports || []) as ts.StringLiteral[];
-        return literals.filter(l => (l.flags & ts.NodeFlags.Synthesized) === 0).map(l => this._getNodeFromCompilerNode(l));
+        // exclude import helpers
+        return literals.filter(l => l.pos !== -1).map(l => this._getNodeFromCompilerNode(l));
     }
 
     /**

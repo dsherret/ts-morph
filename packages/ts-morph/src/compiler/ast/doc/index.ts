@@ -11,6 +11,7 @@ export * from "./JSDocProtectedTag";
 export * from "./JSDocPublicTag";
 export * from "./JSDocReadonlyTag";
 export * from "./JSDocReturnTag";
+export * from "./JSDocSeeTag";
 export * from "./JSDocSignature";
 export * from "./JSDocTag";
 export * from "./JSDocTagInfo";

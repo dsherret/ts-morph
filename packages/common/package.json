@@ -22,7 +22,7 @@
     "fs-extra": "^9.0.1",
     "is-negated-glob": "^1.0.0",
     "multimatch": "^4.0.0",
-    "typescript": "~4.0.2"
+    "typescript": "~4.1.2"
   },
   "devDependencies": {
     "@ts-morph/scripts": "~0.2.0",
