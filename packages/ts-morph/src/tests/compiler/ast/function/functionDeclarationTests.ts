@@ -145,7 +145,7 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(f => f.set), () => {
-        function doTest(startingCode: string, structure: OptionalKindAndTrivia<FunctionDeclarationSpecificStructure>, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<FunctionDeclarationSpecificStructure>, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
             sourceFile.getFunctions()[0].set(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);

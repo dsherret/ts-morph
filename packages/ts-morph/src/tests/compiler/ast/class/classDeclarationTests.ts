@@ -2,7 +2,7 @@ import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration } from "../../../../compiler";
 import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure, InterfaceDeclarationStructure,
-    TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+    StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
@@ -28,7 +28,7 @@ describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(c => c.set), () => {
         function doTest(
             startingCode: string,
-            structure: OptionalKindAndTrivia<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>,
+            structure: OptionalKind<ClassDeclarationSpecificStructure & ClassLikeDeclarationBaseSpecificStructure>,
             expectedCode: string,
         ) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);

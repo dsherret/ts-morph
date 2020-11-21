@@ -123,7 +123,7 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(n => n.set), () => {
-        function doTest(startingCode: string, structure: OptionalKindAndTrivia<ConstructorDeclarationSpecificStructure>, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<ConstructorDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const ctor = firstChild.getConstructors()[0];
             ctor.set(structure);

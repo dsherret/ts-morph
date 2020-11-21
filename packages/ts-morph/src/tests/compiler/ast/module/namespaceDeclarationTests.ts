@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { NamespaceDeclaration, NamespaceDeclarationKind, VariableDeclarationKind } from "../../../../compiler";
 import { errors } from "@ts-morph/common";
-import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, fillStructures, OptionalTrivia } from "../../testHelpers";
+import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../../structures";
+import { getInfoFromText, fillStructures, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(NamespaceDeclaration), () => {
     describe(nameof<NamespaceDeclaration>(d => d.getName), () => {
@@ -217,7 +217,7 @@ describe(nameof(NamespaceDeclaration), () => {
         });
 
         it("should modify when changed", () => {
-            const structure: OptionalKindAndTrivia<MakeRequired<NamespaceDeclarationSpecificStructure>> = {
+            const structure: OptionalKind<MakeRequired<NamespaceDeclarationSpecificStructure>> = {
                 declarationKind: NamespaceDeclarationKind.Module,
             };
             doTest("namespace Identifier {\n}", structure, "module Identifier {\n}");

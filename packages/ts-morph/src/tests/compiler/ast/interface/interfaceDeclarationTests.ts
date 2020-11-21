@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { InterfaceDeclaration } from "../../../../compiler";
-import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
@@ -57,7 +57,7 @@ describe(nameof(InterfaceDeclaration), () => {
     });
 
     describe(nameof<InterfaceDeclaration>(d => d.set), () => {
-        function doTest(startingCode: string, structure: OptionalKindAndTrivia<InterfaceDeclarationSpecificStructure>, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<InterfaceDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);

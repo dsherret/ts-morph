@@ -199,7 +199,7 @@ describe(nameof(MethodDeclaration), () => {
     });
 
     describe(nameof<MethodDeclaration>(m => m.set), () => {
-        function doTest(startingCode: string, structure: OptionalKindAndTrivia<MethodDeclarationSpecificStructure>, expectedCode: string) {
+        function doTest(startingCode: string, structure: OptionalKind<MethodDeclarationSpecificStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const method = firstChild.getInstanceMethods()[0];
             method.set(structure);

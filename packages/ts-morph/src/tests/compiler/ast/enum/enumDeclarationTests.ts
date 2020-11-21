@@ -287,8 +287,8 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(n => n.set), () => {
-        function doTest(startingCode: string, structure: OptionalKindAndTrivia<EnumDeclarationSpecificStructure>, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startingCode);
+        function doTest(startingCode: string, structure: OptionalKind<EnumDeclarationSpecificStructure>, expectedCode: string) {
+            const { firstChild } = getInfoFromText<EnumDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
