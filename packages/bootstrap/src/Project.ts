@@ -8,14 +8,14 @@ export interface ProjectOptions {
     compilerOptions?: ts.CompilerOptions;
     /** File path to the tsconfig.json file. */
     tsConfigFilePath?: string;
-    /** Whether to add the source files from the specified tsconfig.json or not. Defaults to true. */
-    addFilesFromTsConfig?: boolean;
-    /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. */
+    /** Whether to skip adding source files from the specified tsconfig.json. @default false */
+    skipAddingFilesFromTsConfig?: boolean;
+    /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
     skipFileDependencyResolution?: boolean;
-    /** Whether to use an in-memory file system. */
-    useInMemoryFileSystem?: boolean;
     /** Skip loading the lib files when using an in-memory file system. @default false */
     skipLoadingLibFiles?: boolean;
+    /** Whether to use an in-memory file system. */
+    useInMemoryFileSystem?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
      * @remarks Consider using `useInMemoryFileSystem` instead.
@@ -33,7 +33,7 @@ export async function createProject(options: ProjectOptions = {}): Promise<Proje
     const { project, tsConfigResolver } = createProjectCommon(options);
 
     // add any file paths from the tsconfig if necessary
-    if (tsConfigResolver != null && options.addFilesFromTsConfig !== false) {
+    if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
         await project._addSourceFilesForTsConfigResolver(tsConfigResolver, project.compilerOptions.get());
 
         if (!options.skipFileDependencyResolution)
@@ -51,7 +51,7 @@ export function createProjectSync(options: ProjectOptions = {}): Project {
     const { project, tsConfigResolver } = createProjectCommon(options);
 
     // add any file paths from the tsconfig if necessary
-    if (tsConfigResolver != null && options.addFilesFromTsConfig !== false) {
+    if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
         project._addSourceFilesForTsConfigResolverSync(tsConfigResolver, project.compilerOptions.get());
 
         if (!options.skipFileDependencyResolution)
@@ -282,7 +282,7 @@ export class Project {
      * Asynchronously adds all the source files from the specified tsconfig.json.
      *
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
-     * addFilesFromTsConfig option to false.
+     * `skipAddingSourceFilesFromTsConfig` option to `true`.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
     addSourceFilesFromTsConfig(tsConfigFilePath: string): Promise<ts.SourceFile[]> {
@@ -294,7 +294,7 @@ export class Project {
      * Synchronously adds all the source files from the specified tsconfig.json.
      *
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
-     * addFilesFromTsConfig option to false.
+     * `skipAddingSourceFilesFromTsConfig` option to `true`.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
     addSourceFilesFromTsConfigSync(tsConfigFilePath: string): ts.SourceFile[] {

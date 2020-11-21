@@ -95,12 +95,12 @@ console.log(project.getSourceFiles().map(s => s.fileName));
 
 _Note:_ You can override any tsconfig.json options by also providing a `compilerOptions` object.
 
-For your convenience, this will automatically add all the associated source files from the tsconfig.json. If you don't wish to do that, then you will need to explicitly set `addFilesFromTsConfig` to `false`:
+For your convenience, this will automatically add all the associated source files from the tsconfig.json. If you don't wish to do that, then you will need to explicitly set `skipAddingFilesFromTsConfig` to `true`:
 
 ```ts
 const project = await createProject({
     tsConfigFilePath: "path/to/tsconfig.json",
-    addFilesFromTsConfig: false,
+    skipAddingFilesFromTsConfig: true,
 });
 ```
 

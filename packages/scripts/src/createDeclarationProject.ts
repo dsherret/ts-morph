@@ -14,7 +14,6 @@ export function createDeclarationProject(opts: CreateDeclarationProjectOptions) 
         compilerOptions: {
             declaration: true,
         },
-        addFilesFromTsConfig: true,
     });
 
     const emitResult = project.emitToMemory({ emitOnlyDtsFiles: true });

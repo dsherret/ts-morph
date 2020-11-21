@@ -35,7 +35,7 @@ describe(nameof(Project), () => {
                 fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
                 fileSystem.writeFileSync("/test/file.ts", "");
                 fileSystem.writeFileSync("/test/test2/file2.ts", "");
-                const project = await create({ tsConfigFilePath: "tsconfig.json", addFilesFromTsConfig: false, fileSystem });
+                const project = await create({ tsConfigFilePath: "tsconfig.json", skipAddingFilesFromTsConfig: true, fileSystem });
                 expect(project.getSourceFiles().map(s => s.fileName).sort()).to.deep.equal([]);
             });
 

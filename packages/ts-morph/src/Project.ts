@@ -14,16 +14,16 @@ export interface ProjectOptions {
     compilerOptions?: CompilerOptions;
     /** File path to the tsconfig.json file. */
     tsConfigFilePath?: string;
-    /** Whether to add the source files from the specified tsconfig.json or not. @default true */
-    addFilesFromTsConfig?: boolean;
-    /** Manipulation settings */
-    manipulationSettings?: Partial<ManipulationSettings>;
+    /** Whether to skip adding the source files from the specified tsconfig.json. @default false */
+    skipAddingFilesFromTsConfig?: boolean;
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
     skipFileDependencyResolution?: boolean;
-    /** Whether to use an in-memory file system. @default false */
-    useInMemoryFileSystem?: boolean;
     /** Skip loading the lib files when using an in-memory file system. @default false */
     skipLoadingLibFiles?: boolean;
+    /** Manipulation settings */
+    manipulationSettings?: Partial<ManipulationSettings>;
+    /** Whether to use an in-memory file system. @default false */
+    useInMemoryFileSystem?: boolean;
     /**
      * Optional file system host. Useful for mocking access to the file system.
      * @remarks Consider using `useInMemoryFileSystem` instead.
@@ -89,7 +89,7 @@ export class Project {
             this._context.manipulationSettings.set(options.manipulationSettings);
 
         // add any file paths from the tsconfig if necessary
-        if (tsConfigResolver != null && options.addFilesFromTsConfig !== false) {
+        if (tsConfigResolver != null && options.skipAddingFilesFromTsConfig !== true) {
             this._addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions);
 
             if (!options.skipFileDependencyResolution)
@@ -301,7 +301,7 @@ export class Project {
      * Adds all the source files from the specified tsconfig.json.
      *
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
-     * addFilesFromTsConfig option to false.
+     * `skipAddingFilesFromTsConfig` option to `true`.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
     addSourceFilesFromTsConfig(tsConfigFilePath: string): SourceFile[] {

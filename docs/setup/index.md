@@ -36,12 +36,12 @@ const project = new Project({
 
 _Note:_ You can override any `tsconfig.json` options by also providing a `compilerOptions` object.
 
-For your convenience, this will automatically add all the associated source files from the _tsconfig.json_. If you don't wish to do that, then you will need to explicitly set `addFilesFromTsConfig` to `false`:
+For your convenience, this will automatically add all the associated source files from the _tsconfig.json_. If you don't wish to do that, then you will need to set `skipAddingFilesFromTsConfig` to `true`:
 
 ```ts
 const project = new Project({
     tsConfigFilePath: "path/to/tsconfig.json",
-    addFilesFromTsConfig: false,
+    skipAddingFilesFromTsConfig: true,
 });
 ```
 

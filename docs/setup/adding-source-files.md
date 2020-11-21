@@ -18,12 +18,12 @@ const project = new Project({
 });
 ```
 
-...and this can be disabled by setting `addFilesFromTsConfig: false`:
+...and this can be disabled by setting `skipAddingFilesFromTsConfig: true`:
 
 ```ts
 const project = new Project({
     tsConfigFilePath: "path/to/tsconfig.json",
-    addFilesFromTsConfig: false,
+    skipAddingFilesFromTsConfig: true,
 });
 ```
 

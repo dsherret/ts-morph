@@ -51,7 +51,7 @@ describe(nameof(Project), () => {
             fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
             fileSystem.writeFileSync("/test/file.ts", "");
             fileSystem.writeFileSync("/test/test2/file2.ts", "");
-            const project = new Project({ tsConfigFilePath: "tsconfig.json", addFilesFromTsConfig: false, fileSystem });
+            const project = new Project({ tsConfigFilePath: "tsconfig.json", skipAddingFilesFromTsConfig: true, fileSystem });
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([]);
         });
 
@@ -372,7 +372,7 @@ describe(nameof(Project), () => {
             expect(project.getCompilerOptions()).to.deep.equal({});
         });
 
-        function doTsConfigTest(addFilesFromTsConfig: boolean) {
+        function doTsConfigTest(skipAddingFilesFromTsConfig: boolean) {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{
                 filePath: "tsconfig.json",
                 text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`,
@@ -383,18 +383,18 @@ describe(nameof(Project), () => {
                     target: 2,
                     allowJs: true,
                 },
-                addFilesFromTsConfig, // the behaviour changes based on this value so it's good to test both of these
+                skipAddingFilesFromTsConfig, // the behaviour changes based on this value so it's good to test both of these
                 fileSystem,
             });
             expect(project.getCompilerOptions()).to.deep.equal({ rootDir: "/test", target: 2, allowJs: true, configFilePath: "/tsconfig.json" });
         }
 
         it(`should override the tsconfig options when specifying to add files from tsconfig`, () => {
-            doTsConfigTest(true);
+            doTsConfigTest(false);
         });
 
-        it(`should override the tsconfig options when specifying to not add files from tsconfig`, () => {
-            doTsConfigTest(false);
+        it(`should override the tsconfig options when specifying to not skip adding files from tsconfig`, () => {
+            doTsConfigTest(true);
         });
     });
 
