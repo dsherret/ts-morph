@@ -27,56 +27,32 @@ export class TsConfigResolver {
     @Memoize
     getPaths(compilerOptions?: CompilerOptions) {
         const files = new Set<StandardizedFilePath>();
-        const { tsConfigDirPath, fileSystem } = this;
+        const { fileSystem } = this;
         const directories = new Set<StandardizedFilePath>();
 
         compilerOptions = compilerOptions || this.getCompilerOptions();
 
-        const rootDirs = getRootDirs(compilerOptions);
         const configFileContent = this.parseJsonConfigFileContent();
 
         for (let dirName of configFileContent.directories) {
             const dirPath = fileSystem.getStandardizedAbsolutePath(dirName);
-            if (dirInProject(dirPath) && fileSystem.directoryExistsSync(dirPath))
+            if (fileSystem.directoryExistsSync(dirPath))
                 directories.add(dirPath);
         }
 
         for (let fileName of configFileContent.fileNames) {
             const filePath = fileSystem.getStandardizedAbsolutePath(fileName);
             const parentDirPath = FileUtils.getDirPath(filePath);
-            files.add(filePath);
-            if (dirInProject(parentDirPath) && fileSystem.fileExistsSync(filePath)) {
+            if (fileSystem.fileExistsSync(filePath)) {
                 directories.add(parentDirPath);
+                files.add(filePath);
             }
         }
-
-        for (const rootDir of rootDirs)
-            directories.add(rootDir);
 
         return {
             filePaths: Array.from(files.values()),
             directoryPaths: Array.from(directories.values()),
         };
-
-        function dirInProject(dirPath: StandardizedFilePath) {
-            // fast check
-            if (directories.has(dirPath))
-                return true;
-
-            // otherwise, check the strings
-            if (rootDirs.length > 0)
-                return rootDirs.some(rootDir => FileUtils.pathStartsWith(dirPath, rootDir));
-            return FileUtils.pathStartsWith(dirPath, tsConfigDirPath);
-        }
-
-        function getRootDirs(options: CompilerOptions) {
-            const result: string[] = [];
-            if (typeof options.rootDir === "string")
-                result.push(options.rootDir);
-            if (options.rootDirs != null)
-                result.push(...options.rootDirs);
-            return result.map(rootDir => fileSystem.getStandardizedAbsolutePath(rootDir, tsConfigDirPath));
-        }
     }
 
     @Memoize

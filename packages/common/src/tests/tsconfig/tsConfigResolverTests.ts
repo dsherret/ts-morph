@@ -6,7 +6,11 @@ import { TsConfigResolver } from "../../tsconfig";
 describe(nameof(TsConfigResolver), () => {
     function getResolver(fileSystem: FileSystemHost) {
         const fileSystemWrapper = new TransactionalFileSystem(fileSystem);
-        return new TsConfigResolver(fileSystemWrapper, "/tsconfig.json", "utf-8");
+        return new TsConfigResolver(
+            fileSystemWrapper,
+            fileSystemWrapper.getStandardizedAbsolutePath("/tsconfig.json"),
+            "utf-8",
+        );
     }
 
     describe(nameof<TsConfigResolver>(r => r.getCompilerOptions), () => {
@@ -82,7 +86,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
             doTest(fs, {
                 files: [],
-                dirs: ["/test"],
+                dirs: ["/"],
             });
         });
 
@@ -121,10 +125,11 @@ describe(nameof(TsConfigResolver), () => {
             });
         });
 
-        it("should get root dir files when an exclude is also specified", () => {
+        it("should get include files when an exclude is also specified", () => {
             const fs = new InMemoryFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{
-              "compilerOptions": { "rootDir": "./src" },
+              "compilerOptions": {},
+              "include": [ "./src" ],
               "exclude": [ "./src/file2.ts" ]
             }`);
             fs.writeFileSync("/src/file1.ts", "");
@@ -147,40 +152,29 @@ describe(nameof(TsConfigResolver), () => {
             });
         });
 
-        it("should add the files from tsconfig.json when using rootDir", () => {
+        it("should add the files from tsconfig.json when using include", () => {
             const fs = new InMemoryFileSystemHost();
-            fs.writeFileSync("/tsconfig.json", `{ "compilerOptions": { "rootDir": "./test" } }`);
+            fs.writeFileSync("/tsconfig.json", `{ "include": ["./test"] }`);
             fs.writeFileSync("/otherFile.ts", "");
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
             doTest(fs, {
-                files: ["/otherFile.ts", "/test/file.ts", "/test/test2/file2.ts"],
+                files: ["/test/file.ts", "/test/test2/file2.ts"],
                 dirs: ["/test", "/test/test2"],
             });
         });
 
-        it("should add the files from tsconfig.json when using rootDirs", () => {
+        it("should add the files from tsconfig.json when using multiple includes", () => {
             const fs = new InMemoryFileSystemHost();
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDirs": ["/test/test1", "/test/test2"] } }`);
+            fs.writeFileSync("tsconfig.json", `{ "include": ["/test/test1", "/test/test2"] }`);
+            fs.writeFileSync("/file.ts", "");
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test/test1/file1.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
             fs.writeFileSync("/test/test2/sub/file3.ts", "");
             doTest(fs, {
-                files: ["/test/file.ts", "/test/test1/file1.ts", "/test/test2/file2.ts", "/test/test2/sub/file3.ts"],
+                files: ["/test/test1/file1.ts", "/test/test2/file2.ts", "/test/test2/sub/file3.ts"],
                 dirs: ["/test/test1", "/test/test2", "/test/test2/sub"],
-            });
-        });
-
-        it("should add the files from tsconfig.json when using rootDir and rootDirs", () => {
-            const fs = new InMemoryFileSystemHost();
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "/test/test1", "rootDirs": ["/test/test2"] } }`);
-            fs.writeFileSync("/test/file.ts", "");
-            fs.writeFileSync("/test/test1/file1.ts", "");
-            fs.writeFileSync("/test/test2/file2.ts", "");
-            doTest(fs, {
-                files: ["/test/file.ts", "/test/test1/file1.ts", "/test/test2/file2.ts"],
-                dirs: ["/test/test1", "/test/test2"],
             });
         });
 
@@ -188,15 +182,17 @@ describe(nameof(TsConfigResolver), () => {
             const fs = new InMemoryFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{
               "compilerOptions": { },
-              "files": [ "./file1.ts", "./file2.ts" ]
+              "files": [ "./file1.ts", "./file2.ts", "./subDir/file4.ts" ]
             }`);
             fs.writeFileSync("/file1.ts", "");
             fs.writeFileSync("/file2.ts", "");
             fs.writeFileSync("/file3.ts", "");
+            fs.writeFileSync("/subDir/file4.ts", "");
             doTest(fs, {
-                files: ["/file1.ts", "/file2.ts"],
+                files: ["/file1.ts", "/file2.ts", "/subDir/file4.ts"],
                 dirs: [
                     "/",
+                    "/subDir",
                 ],
             });
         });
@@ -226,20 +222,32 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/test1/file1.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
             doTest(fs, {
-                files: ["/file1.ts", "/file2.ts"],
-                dirs: ["/test/test1", "/test/test2"],
+                files: [],
+                dirs: [],
             });
         });
 
-        it("should add the files from tsconfig.json when using extends", () => {
+        it("should add the include from the base tsconfig.json when using extends", () => {
             const fs = new InMemoryFileSystemHost();
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { }, "extends": "./base" }`);
-            fs.writeFileSync("base.json", `{ "compilerOptions": { "rootDir": "/test" } }`);
+            fs.writeFileSync("tsconfig.json", `{ "extends": "./base", "compilerOptions": { } }`);
+            fs.writeFileSync("base.json", `{ "include": ["/test"] }`);
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test2/file2.ts", "");
             doTest(fs, {
-                files: ["/test/file.ts", "/test2/file2.ts"],
+                files: ["/test/file.ts"],
                 dirs: ["/test"],
+            });
+        });
+
+        it("should overwrite the include from the base tsconfig.json when using extends", () => {
+            const fs = new InMemoryFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{ "extends": "./base", "include": ["/test2"] }`);
+            fs.writeFileSync("base.json", `{ "include": ["/test"] }`);
+            fs.writeFileSync("/test/file.ts", "");
+            fs.writeFileSync("/test2/file2.ts", "");
+            doTest(fs, {
+                files: ["/test2/file2.ts"],
+                dirs: ["/test2"],
             });
         });
     });
