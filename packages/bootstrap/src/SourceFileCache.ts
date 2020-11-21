@@ -3,6 +3,7 @@ import { DocumentRegistry, ScriptKind, ts, StringUtils, TsSourceFileContainer, F
 
 export class SourceFileCache implements TsSourceFileContainer {
     private readonly sourceFilesByFilePath = new Map<StandardizedFilePath, ts.SourceFile>();
+    private projectVersion = 0;
 
     readonly documentRegistry: DocumentRegistry;
 
@@ -23,6 +24,10 @@ export class SourceFileCache implements TsSourceFileContainer {
 
     getSourceFiles() {
         return this.sourceFilesByFilePath.values();
+    }
+
+    getProjectVersion() {
+        return this.projectVersion;
     }
 
     getSourceFileVersion(sourceFile: ts.SourceFile) {
@@ -91,6 +96,7 @@ export class SourceFileCache implements TsSourceFileContainer {
             this.fileSystemWrapper.queueMkdir(dirPath);
 
         this.sourceFilesByFilePath.set(standardizedFilePath, sourceFile);
+        this.projectVersion++;
     }
 
     removeSourceFile(filePath: StandardizedFilePath) {

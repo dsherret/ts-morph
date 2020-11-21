@@ -151,6 +151,7 @@ export class Project {
             compilerOptions: this.compilerOptions,
             getNewLine: () => newLineKind,
             resolutionHost: resolutionHost || {},
+            getProjectVersion: () => this._sourceFileCache.getProjectVersion().toString(),
         });
         this.languageServiceHost = languageServiceHost;
         this.compilerHost = compilerHost;

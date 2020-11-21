@@ -108,7 +108,8 @@ export interface CreateHostsOptions {
     getNewLine: () => "\r\n" | "\n";
     /** The resolution host used for resolving modules and type reference directives. */
     resolutionHost: ResolutionHost;
-    /** Provides the current project version to be used for up-to-date checks.  */
+    /** Provides the current project version to be used to tell if source files have
+     * changed. Provide this for a performance improvement. */
     getProjectVersion?: () => string;
 }
 

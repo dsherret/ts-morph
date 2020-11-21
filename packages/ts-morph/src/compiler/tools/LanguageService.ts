@@ -27,7 +27,7 @@ export class LanguageService {
     /** @internal */
     private _context: ProjectContext;
     /** @internal */
-    private _projectVersion: number  = 0;
+    private _projectVersion = 0;
 
     /**
      * Gets the compiler language service.
