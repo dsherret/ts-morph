@@ -13,7 +13,7 @@ import { SourceFile, ExternalModuleReference, ExportAssignment, NamespaceDeclara
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature,
     InterfaceDeclaration } from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText, JsxOpeningElement } from "./jsx";
-import { NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TemplateExpression, TaggedTemplateExpression } from "./literal";
+import { NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TemplateExpression, TaggedTemplateExpression, TrueLiteral, FalseLiteral } from "./literal";
 import { CaseClause, DefaultClause } from "./statement";
 import { VariableDeclaration } from "./variable";
 import { TypeAliasDeclaration } from "./type";
@@ -34,6 +34,9 @@ type _BindingNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<BindingName
 
 export type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 type _BindingPatternTest = AssertTrue<IsExact<WrappedToCompilerNodeType<BindingPattern>, ts.BindingPattern>>;
+
+export type BooleanLiteral = TrueLiteral | FalseLiteral;
+type _BooleanLiteralTest = AssertTrue<IsExact<WrappedToCompilerNodeType<BooleanLiteral>, ts.BooleanLiteral>>;
 
 export type CallLikeExpression = CallExpression | NewExpression | TaggedTemplateExpression | Decorator | JsxOpeningLikeElement;
 type _CallLikeExpressionTest = AssertTrue<IsExact<WrappedToCompilerNodeType<CallLikeExpression>, ts.CallLikeExpression>>;

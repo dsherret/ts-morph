@@ -170,7 +170,7 @@ export const kindToWrapperMappings: { [key: number]: unknown; } = {
     // keywords
     [SyntaxKind.AnyKeyword]: compiler.Expression,
     [SyntaxKind.BooleanKeyword]: compiler.Expression,
-    [SyntaxKind.FalseKeyword]: compiler.BooleanLiteral,
+    [SyntaxKind.FalseKeyword]: compiler.FalseLiteral,
     [SyntaxKind.ImportKeyword]: compiler.ImportExpression,
     [SyntaxKind.InferKeyword]: compiler.Node,
     [SyntaxKind.NeverKeyword]: compiler.Node,
@@ -181,7 +181,7 @@ export const kindToWrapperMappings: { [key: number]: unknown; } = {
     [SyntaxKind.SymbolKeyword]: compiler.Expression,
     [SyntaxKind.SuperKeyword]: compiler.SuperExpression,
     [SyntaxKind.ThisKeyword]: compiler.ThisExpression,
-    [SyntaxKind.TrueKeyword]: compiler.BooleanLiteral,
+    [SyntaxKind.TrueKeyword]: compiler.TrueLiteral,
     [SyntaxKind.UndefinedKeyword]: compiler.Expression,
     [SyntaxKind.VoidExpression]: compiler.VoidExpression,
 };

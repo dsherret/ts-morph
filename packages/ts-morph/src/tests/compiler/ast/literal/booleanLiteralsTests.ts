@@ -3,6 +3,8 @@ import { expect } from "chai";
 import { BooleanLiteral } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
+// Tests for both TrueLiteral and FalseLiteral
+
 function getInfoFromTextWithBooleanLiteral(text: string) {
     const obj = getInfoFromText(text);
     const literal = (obj.sourceFile.getFirstDescendantByKind(SyntaxKind.TrueKeyword)
@@ -10,7 +12,7 @@ function getInfoFromTextWithBooleanLiteral(text: string) {
     return { ...obj, literal };
 }
 
-describe(nameof(BooleanLiteral), () => {
+describe(nameof<BooleanLiteral>(), () => {
     describe(nameof<BooleanLiteral>(n => n.getLiteralValue), () => {
         function doTest(text: string, expectedValue: boolean) {
             const { literal } = getInfoFromTextWithBooleanLiteral(text);

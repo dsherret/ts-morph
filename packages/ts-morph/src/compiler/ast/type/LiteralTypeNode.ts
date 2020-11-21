@@ -1,6 +1,7 @@
 import { ts } from "@ts-morph/common";
+import { BooleanLiteral } from "../aliases";
 import { LiteralExpression, PrefixUnaryExpression } from "../expression";
-import { BooleanLiteral, NullLiteral } from "../literal";
+import { NullLiteral } from "../literal";
 import { TypeNode } from "./TypeNode";
 
 export class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {

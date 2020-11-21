@@ -1,5 +1,5 @@
 export * from "./BigIntLiteral";
-export * from "./BooleanLiteral";
+export * from "./BooleanLiterals";
 export * from "./NullLiteral";
 export * from "./NumericLiteral";
 export * from "./QuoteKind";

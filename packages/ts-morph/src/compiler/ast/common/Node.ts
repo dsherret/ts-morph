@@ -2294,21 +2294,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a BooleanKeyword. */
     static readonly isBooleanKeyword: (node: compiler.Node | undefined) => node is compiler.Expression = Node.is(SyntaxKind.BooleanKeyword);
-
-    /**
-     * Gets if the node is a BooleanLiteral.
-     * @param node - Node to check.
-     */
-    static isBooleanLiteral(node: compiler.Node | undefined): node is compiler.BooleanLiteral {
-        switch (node?.getKind()) {
-            case SyntaxKind.FalseKeyword:
-            case SyntaxKind.TrueKeyword:
-                return true;
-            default:
-                return false;
-        }
-    }
-
     /** Gets if the node is a BreakStatement. */
     static readonly isBreakStatement: (node: compiler.Node | undefined) => node is compiler.BreakStatement = Node.is(SyntaxKind.BreakStatement);
     /** Gets if the node is a CallExpression. */
@@ -2608,8 +2593,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JsxOpeningFragment:
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
@@ -2689,8 +2674,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is an ExternalModuleReference. */
     static readonly isExternalModuleReference: (node: compiler.Node | undefined) => node is compiler.ExternalModuleReference = Node.is(SyntaxKind.ExternalModuleReference);
-    /** Gets if the node is a FalseKeyword. */
-    static readonly isFalseKeyword: (node: compiler.Node | undefined) => node is compiler.BooleanLiteral = Node.is(SyntaxKind.FalseKeyword);
+
+    /**
+     * Gets if the node is a FalseLiteral.
+     * @param node - Node to check.
+     */
+    static isFalseLiteral(node: compiler.Node | undefined): node is compiler.FalseLiteral {
+        return node?.getKind() === SyntaxKind.FalseKeyword;
+    }
+
     /** Gets if the node is a ForInStatement. */
     static readonly isForInStatement: (node: compiler.Node | undefined) => node is compiler.ForInStatement = Node.is(SyntaxKind.ForInStatement);
     /** Gets if the node is a ForOfStatement. */
@@ -3166,8 +3158,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
@@ -3267,8 +3259,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
@@ -3532,8 +3524,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
@@ -3982,8 +3974,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a ThrowStatement. */
     static readonly isThrowStatement: (node: compiler.Node | undefined) => node is compiler.ThrowStatement = Node.is(SyntaxKind.ThrowStatement);
-    /** Gets if the node is a TrueKeyword. */
-    static readonly isTrueKeyword: (node: compiler.Node | undefined) => node is compiler.BooleanLiteral = Node.is(SyntaxKind.TrueKeyword);
+
+    /**
+     * Gets if the node is a TrueLiteral.
+     * @param node - Node to check.
+     */
+    static isTrueLiteral(node: compiler.Node | undefined): node is compiler.TrueLiteral {
+        return node?.getKind() === SyntaxKind.TrueKeyword;
+    }
+
     /** Gets if the node is a TryStatement. */
     static readonly isTryStatement: (node: compiler.Node | undefined) => node is compiler.TryStatement = Node.is(SyntaxKind.TryStatement);
 
@@ -4195,8 +4194,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
@@ -4276,8 +4275,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:

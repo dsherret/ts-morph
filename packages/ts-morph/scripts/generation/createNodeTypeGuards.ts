@@ -116,7 +116,7 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
             fillMixinable(node, node);
         }
 
-        const allowedBaseNames = ["Node", "Expression", "BooleanLiteral"];
+        const allowedBaseNames = ["Node", "Expression"];
         for (const kindToWrapperMapping of kindToWrapperMappings.filter(v => allowedBaseNames.indexOf(v.wrapperName) >= 0)) {
             for (const syntaxKindName of kindToWrapperMapping.syntaxKindNames) {
                 methodInfos.set(syntaxKindName, {

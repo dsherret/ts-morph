@@ -8,7 +8,7 @@ Literals:
 
 - `StringLiteral` (ex. `"some string"`)
 - `NumericLiteral` (ex. `5`, `10.53`)
-- `BooleanLiteral` (ex. `true`)
+- `TrueLiteral` / `FalseLiteral` (ex. `true` / `false`)
 - `NoSubstitutionTemplateLiteral` (ex. `` `some string` ``)
 - `RegularExpressionLiteral` (ex. `/pattern/gi`)
 

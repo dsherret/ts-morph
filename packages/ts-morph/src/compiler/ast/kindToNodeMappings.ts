@@ -176,12 +176,12 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.StringKeyword]: compiler.Expression;
     [SyntaxKind.SymbolKeyword]: compiler.Expression;
     [SyntaxKind.UndefinedKeyword]: compiler.Expression;
-    [SyntaxKind.FalseKeyword]: compiler.BooleanLiteral;
-    [SyntaxKind.TrueKeyword]: compiler.BooleanLiteral;
+    [SyntaxKind.FalseKeyword]: compiler.FalseLiteral;
     [SyntaxKind.ImportKeyword]: compiler.ImportExpression;
     [SyntaxKind.NullKeyword]: compiler.NullLiteral;
     [SyntaxKind.SuperKeyword]: compiler.SuperExpression;
     [SyntaxKind.ThisKeyword]: compiler.ThisExpression;
+    [SyntaxKind.TrueKeyword]: compiler.TrueLiteral;
     [SyntaxKind.VoidExpression]: compiler.VoidExpression;
 }
 
@@ -239,11 +239,11 @@ export interface KindToExpressionMappings {
     [SyntaxKind.StringKeyword]: compiler.Expression;
     [SyntaxKind.SymbolKeyword]: compiler.Expression;
     [SyntaxKind.UndefinedKeyword]: compiler.Expression;
-    [SyntaxKind.FalseKeyword]: compiler.BooleanLiteral;
-    [SyntaxKind.TrueKeyword]: compiler.BooleanLiteral;
+    [SyntaxKind.FalseKeyword]: compiler.FalseLiteral;
     [SyntaxKind.ImportKeyword]: compiler.ImportExpression;
     [SyntaxKind.NullKeyword]: compiler.NullLiteral;
     [SyntaxKind.SuperKeyword]: compiler.SuperExpression;
     [SyntaxKind.ThisKeyword]: compiler.ThisExpression;
+    [SyntaxKind.TrueKeyword]: compiler.TrueLiteral;
     [SyntaxKind.VoidExpression]: compiler.VoidExpression;
 }

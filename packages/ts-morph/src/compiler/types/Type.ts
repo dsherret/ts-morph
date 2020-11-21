@@ -345,7 +345,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is a literal type.
      */
     isLiteral() {
-        // todo: remove this in TS 3.1 when https://github.com/Microsoft/TypeScript/issues/26075 is fixed
+        // todo: remove this when https://github.com/Microsoft/TypeScript/issues/26075 is fixed
         const isBooleanLiteralForTs3_0 = this.isBooleanLiteral();
         return this.compilerType.isLiteral() || isBooleanLiteralForTs3_0;
     }
