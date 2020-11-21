@@ -11,10 +11,11 @@ const errorCodes = {
     ImportDeclarationConflictsWithLocalDeclaration: 2440,
     ExportAssignmentCannotBeUsedTargetingESModules: 1203,
     FileNotUnderRootDir: 6059,
+    TopLevelAwait: 1378,
 };
 const errorCodesToIgnore = [errorCodes.CannotRedeclareVariable, errorCodes.CannotFindModule, errorCodes.DuplicateIdentifier,
     errorCodes.AwaitOnlyAllowedInAsyncFunc, errorCodes.NoMultipleExportAssignments, errorCodes.ImportDeclarationConflictsWithLocalDeclaration,
-    errorCodes.ExportAssignmentCannotBeUsedTargetingESModules, errorCodes.FileNotUnderRootDir];
+    errorCodes.ExportAssignmentCannotBeUsedTargetingESModules, errorCodes.FileNotUnderRootDir, errorCodes.TopLevelAwait];
 const project = getProject();
 const docsDir = project.addDirectoryAtPath("../../docs");
 const fileSystem = project.getFileSystem();

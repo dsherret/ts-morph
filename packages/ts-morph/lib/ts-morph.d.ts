@@ -9665,7 +9665,7 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
     /** Gets the new line kind. */
     getNewLineKind(): NewLineKind;
     /** Gets the new line kind as a string. */
-    getNewLineKindAsString(): "\n" | "\r\n";
+    getNewLineKindAsString(): "\r\n" | "\n";
     /** Gets the indentation text. */
     getIndentationText(): IndentationText;
     /** Gets whether to use prefix and suffix text when renaming. */

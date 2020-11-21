@@ -1326,7 +1326,7 @@ describe(nameof(Project), () => {
                 let classDec: ClassDeclaration;
                 const returnedNode = await project.forgetNodesCreatedInBlock(async remember => {
                     // do something to cause this code to be added to the end of the execution queue
-                    await new Promise((resolve, reject) => resolve());
+                    await new Promise<void>((resolve, reject) => resolve());
 
                     classDec = sourceFile.addClass({ name: "Class" });
                     interfaceDec = sourceFile.addInterface({ name: "Interface" });

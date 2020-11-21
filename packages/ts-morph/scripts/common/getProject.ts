@@ -5,7 +5,7 @@ import { rootFolder } from "../config";
 export function getProject() {
     const project = new tsMorph.Project({
         tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
-        addFilesFromTsConfig: false,
+        skipAddingFilesFromTsConfig: true,
         manipulationSettings: {
             newLineKind: tsMorph.NewLineKind.LineFeed,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,

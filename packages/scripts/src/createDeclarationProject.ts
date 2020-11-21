@@ -28,7 +28,7 @@ export function createDeclarationProject(opts: CreateDeclarationProjectOptions) 
         manipulationSettings: {
             newLineKind: NewLineKind.LineFeed,
         },
-        addFilesFromTsConfig: false,
+        skipAddingFilesFromTsConfig: true,
     });
 
     for (const file of emitResult.getFiles())

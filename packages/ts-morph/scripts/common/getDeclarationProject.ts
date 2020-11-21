@@ -8,7 +8,7 @@ export function getDeclarationProject() {
         manipulationSettings: {
             newLineKind: tsMorph.NewLineKind.LineFeed,
         },
-        addFilesFromTsConfig: false,
+        skipAddingFilesFromTsConfig: true,
     });
     project.addSourceFilesAtPaths(path.join(rootFolder, "lib/**/*.d.ts"));
     return project;

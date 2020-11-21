@@ -6,8 +6,7 @@
     "outDir": "./dist",
     "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
   },
-  "exclude": [
-    "./dist",
-    "node_modules"
+  "include": [
+    "./src",
   ]
 }

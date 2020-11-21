@@ -6,6 +6,9 @@
     "outDir": "./lib",
     "emitDeclarationOnly": true
   },
+  "include": [
+    "./src",
+  ],
   "exclude": [
     "./src/tests"
   ]

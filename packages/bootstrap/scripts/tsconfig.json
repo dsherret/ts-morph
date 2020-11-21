@@ -6,5 +6,8 @@
     "noEmit": true,
     "module": "commonjs",
     "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
-  }
+  },
+  "include": [
+    "../**/*.ts"
+  ]
 }

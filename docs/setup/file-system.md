@@ -60,7 +60,7 @@ When using a non-default file system, the library will search for these files in
 
 It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Project` instance:
 
-```ts ignore-error: 2420, 2345
+```ts ignore-error: 2420, 2345, 2740
 import { Project, FileSystemHost } from "ts-morph";
 
 class MyCustomFileSystem implements FileSystemHost {

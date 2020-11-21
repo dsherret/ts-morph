@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 * [#878](https://github.com/dsherret/ts-morph/issues/878) - Fix tsconfig file resolution ([#883](https://github.com/dsherret/ts-morph/issues/883)) ([23ab8f5](https://github.com/dsherret/ts-morph/commit/23ab8f5), [8c7e8ba](https://github.com/dsherret/ts-morph/commit/8c7e8ba)) - Thanks [@Zzzen](https://github.com/Zzzen)!
 
+Previously ts-morph was incorrectly resolving files based on `rootDir` and `rootDirs`, but according to the nicely updated tsconfig documentation, these options have nothing to do with file resolution ([read more](https://www.typescriptlang.org/tsconfig#rootDir)). If you run into any trouble, try using `"include": ["./your-source-dir"]` at the top level of the config file instead of `"rootDir": ["./your-source-dir"]` in compiler options or please open an issue.
+
 
 ### Code Refactoring
 

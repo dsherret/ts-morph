@@ -40,7 +40,7 @@
     "rimraf": "^3.0.2",
     "rollup": "^2.33.3",
     "rollup-plugin-typescript2": "^0.29.0",
-    "ts-morph": "npm:ts-morph@8.2.0",
+    "ts-morph": "npm:ts-morph@9.0.0",
     "ts-nameof": "^5.0.0",
     "ts-node": "^9.0.0",
     "ttypescript": "^1.5.12"
