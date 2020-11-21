@@ -9,7 +9,7 @@
     "build": "lerna run build",
     "clean": "lerna clean",
     "test": "lerna run test",
-    "format": "dprint"
+    "format": "dprint fmt"
   },
   "repository": {
     "type": "git",

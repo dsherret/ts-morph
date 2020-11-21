@@ -3014,6 +3014,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocReadonlyTag: (node: Node | undefined) => node is JSDocReadonlyTag;
     /** Gets if the node is a JSDocReturnTag. */
     static readonly isJSDocReturnTag: (node: Node | undefined) => node is JSDocReturnTag;
+    /** Gets if the node is a JSDocSeeTag. */
+    static readonly isJSDocSeeTag: (node: Node | undefined) => node is JSDocSeeTag;
     /** Gets if the node is a JSDocSignature. */
     static readonly isJSDocSignature: (node: Node | undefined) => node is JSDocSignature;
     /** Gets if the node is a JSDocTemplateTag. */
@@ -4189,6 +4191,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isSuperExpression(node: Node | undefined): node is SuperExpression;
     /**
+     * Gets if the node is a TemplateLiteralTypeNode.
+     * @param node - Node to check.
+     */
+    static isTemplateLiteralTypeNode(node: Node | undefined): node is TemplateLiteralTypeNode;
+    /**
      * Gets if the node is a TextInsertableNode.
      * @param node - Node to check.
      */
@@ -4657,6 +4664,16 @@ export declare class JSDocReturnTag extends JSDocReturnTagBase<ts.JSDocReturnTag
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocReturnTag>>;
 }
 
+declare const JSDocSeeTagBase: Constructor<JSDocTypeExpressionableTag> & typeof JSDocTag;
+
+/** JS doc "see" tag node. */
+export declare class JSDocSeeTag extends JSDocSeeTagBase<ts.JSDocSeeTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocSeeTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocSeeTag>>;
+}
+
 /** JS doc signature node. */
 export declare class JSDocSignature extends JSDocType<ts.JSDocSignature> {
     /** Gets the type node of the JS doc signature. */
@@ -4725,7 +4742,7 @@ export declare class JSDocTemplateTag extends JSDocTemplateTagBase<ts.JSDocTempl
 
 declare const JSDocThisTagBase: Constructor<JSDocTypeExpressionableTag> & typeof JSDocTag;
 
-/** JS doc this tag node. */
+/** JS doc "this" tag node. */
 export declare class JSDocThisTag extends JSDocThisTagBase<ts.JSDocThisTag> {
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.JSDocThisTag>;
@@ -6228,6 +6245,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocPublicTag]: JSDocPublicTag;
     [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
     [SyntaxKind.JSDocReadonlyTag]: JSDocReadonlyTag;
+    [SyntaxKind.JSDocSeeTag]: JSDocSeeTag;
     [SyntaxKind.JSDocSignature]: JSDocSignature;
     [SyntaxKind.JSDocTag]: JSDocUnknownTag;
     [SyntaxKind.JSDocTemplateTag]: JSDocTemplateTag;
@@ -6289,6 +6307,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TaggedTemplateExpression]: TaggedTemplateExpression;
     [SyntaxKind.TemplateExpression]: TemplateExpression;
     [SyntaxKind.TemplateHead]: TemplateHead;
+    [SyntaxKind.TemplateLiteralType]: TemplateLiteralTypeNode;
     [SyntaxKind.TemplateMiddle]: TemplateMiddle;
     [SyntaxKind.TemplateSpan]: TemplateSpan;
     [SyntaxKind.TemplateTail]: TemplateTail;
@@ -8418,6 +8437,13 @@ export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedType
     getParentOrThrow(): NonNullable<NodeParentType<ts.ParenthesizedTypeNode>>;
 }
 
+export declare class TemplateLiteralTypeNode extends TypeNode<ts.TemplateLiteralTypeNode> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.TemplateLiteralTypeNode>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.TemplateLiteralTypeNode>>;
+}
+
 export declare class ThisTypeNode extends TypeNode<ts.ThisTypeNode> {
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.ThisTypeNode>;
@@ -9562,7 +9588,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      * Gets the object flags.
      * @remarks Returns 0 for a non-object type.
      */
-    getObjectFlags(): ObjectFlags | 0;
+    getObjectFlags(): 0 | ObjectFlags;
 }
 
 export declare class TypeParameter extends Type<ts.TypeParameter> {

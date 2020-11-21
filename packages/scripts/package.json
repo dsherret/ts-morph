@@ -12,15 +12,15 @@
     "rollup": "rollup --config"
   },
   "dependencies": {
-    "ts-morph": "npm:ts-morph@6.0.1"
+    "ts-morph": "npm:ts-morph@8.2.0"
   },
   "devDependencies": {
     "@types/ts-nameof": "^4.2.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.26.4",
-    "rollup-plugin-typescript2": "^0.27.2",
+    "rollup": "^2.33.3",
+    "rollup-plugin-typescript2": "^0.29.0",
     "ts-nameof": "^5.0.0",
-    "ttypescript": "^1.5.10",
+    "ttypescript": "^1.5.12",
     "typescript": "~4.1.2"
   },
   "publishConfig": {

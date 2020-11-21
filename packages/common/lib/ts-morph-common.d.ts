@@ -276,7 +276,7 @@ export declare class LocaleStringComparer implements Comparer<string> {
     /** Static instance for reuse. */
     static readonly instance: LocaleStringComparer;
     /** @inheritdoc */
-    compareTo(a: string, b: string): 1 | -1 | 0;
+    compareTo(a: string, b: string): 1 | 0 | -1;
 }
 
 /**
