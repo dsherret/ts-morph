@@ -136,7 +136,7 @@ export class ProjectContext {
      * Resets the program.
      */
     resetProgram() {
-        this.languageService._resetProgram();
+        this.languageService._reset();
     }
 
     /**
