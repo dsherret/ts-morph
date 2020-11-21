@@ -34,6 +34,22 @@ describe(nameof(RealFileSystemHost), () => {
         });
     });
 
+    describe(nameof<RealFileSystemHost>(h => h.mkdir), () => {
+        it("should not throw for a directory that already exists", async () => {
+            try {
+                await new RealFileSystemHost().mkdir(__dirname);
+            } catch (err) {
+                expect.fail("Should not have thrown.");
+            }
+        });
+    });
+
+    describe(nameof<RealFileSystemHost>(h => h.mkdirSync), () => {
+        it("should not throw for a directory that already exists", async () => {
+            expect(() => new RealFileSystemHost().mkdirSync(__dirname)).to.not.throw();
+        });
+    });
+
     describe(nameof<RealFileSystemHost>(h => h.delete), () => {
         it("should not throw a file not found exception when deleting a path that doesn't exist", async () => {
             let caughtErr: any;

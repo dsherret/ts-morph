@@ -5,10 +5,11 @@ import { FileSystemHost } from "./FileSystemHost";
 
 /** An implementation of a file host that interacts with the actual file system. */
 export class RealFileSystemHost implements FileSystemHost {
-    // Prevent fs-extra and fast-glob from being loaded in environments that don't support it (ex. browsers).
+    // Prevent these from being loaded in environments that don't support it (ex. browsers).
     // This means if someone specifies to use an in-memory file system then it won't load this.
-    private fs: typeof import("fs-extra") = require("fs-extra");
+    private fs: typeof import("fs") = require("fs");
     private fastGlob: typeof import("fast-glob") = require("fast-glob");
+    private mkdirp: typeof import("mkdirp") = require("mkdirp");
 
     /** @inheritdoc */
     delete(path: string) {
@@ -80,44 +81,49 @@ export class RealFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     async mkdir(dirPath: string) {
-        try {
-            await this.fs.mkdirp(dirPath);
-        } catch (err) {
-            // ignore if it already exists
-            if (err.code !== "EEXIST")
-                throw err;
-        }
+        await this.mkdirp(dirPath);
     }
 
     /** @inheritdoc */
     mkdirSync(dirPath: string) {
-        try {
-            this.fs.mkdirpSync(dirPath);
-        } catch (err) {
-            // ignore if it already exists
-            if (err.code !== "EEXIST")
-                throw err;
-        }
+        this.mkdirp.sync(dirPath);
     }
 
     /** @inheritdoc */
     move(srcPath: string, destPath: string) {
-        return this.fs.move(srcPath, destPath, { overwrite: true });
+        return new Promise<void>((resolve, reject) => {
+            this.fs.rename(srcPath, destPath, err => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
     }
 
     /** @inheritdoc */
     moveSync(srcPath: string, destPath: string) {
-        this.fs.moveSync(srcPath, destPath, { overwrite: true });
+        this.fs.renameSync(srcPath, destPath);
     }
 
     /** @inheritdoc */
     copy(srcPath: string, destPath: string) {
-        return this.fs.copy(srcPath, destPath, { overwrite: true });
+        return new Promise<void>((resolve, reject) => {
+            // this overwrites by default
+            this.fs.copyFile(srcPath, destPath, err => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
     }
 
     /** @inheritdoc */
     copySync(srcPath: string, destPath: string) {
-        this.fs.copySync(srcPath, destPath, { overwrite: true });
+        this.fs.copyFileSync(srcPath, destPath);
     }
 
     /** @inheritdoc */

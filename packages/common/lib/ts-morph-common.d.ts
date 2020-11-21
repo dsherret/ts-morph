@@ -453,6 +453,7 @@ export declare namespace errors {
 export declare class RealFileSystemHost implements FileSystemHost {
     private fs;
     private fastGlob;
+    private mkdirp;
     /** @inheritdoc */
     delete(path: string): Promise<void>;
     /** @inheritdoc */
