@@ -27,7 +27,7 @@ describe(nameof(Project), () => {
 
         it("should add the files from tsconfig.json by default with the target in the tsconfig.json", () => {
             const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
-            fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"] }`);
             fileSystem.writeFileSync("/otherFile.ts", "");
             fileSystem.writeFileSync("/test/file.ts", "");
             fileSystem.writeFileSync("/test/test2/file2.ts", "");
@@ -43,7 +43,7 @@ describe(nameof(Project), () => {
             fileSystem.writeFileSync("/test/file.ts", "");
             fileSystem.writeFileSync("/test/test2/file2.ts", "");
             const project = new Project({ tsConfigFilePath: "tsconfig.json", compilerOptions: { rootDir: "/test/test2" }, fileSystem });
-            expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/test/test2/file2.ts"].sort());
+            expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/otherFile.ts", "/test/file.ts", "/test/test2/file2.ts"].sort());
         });
 
         it("should not add the files from tsconfig.json when specifying not to", () => {
@@ -669,7 +669,7 @@ describe(nameof(Project), () => {
         it("should add the files from tsconfig.json", () => {
             const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
             // todo: why did I need a slash at the start of `/test/exclude`?
-            fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "exclude": ["/test/exclude"] }`);
+            fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"], "exclude": ["/test/exclude"] }`);
             fileSystem.writeFileSync("/otherFile.ts", "");
             fileSystem.writeFileSync("/test/file.ts", "");
             fileSystem.writeFileSync("/test/test2/file2.ts", "");

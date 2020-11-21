@@ -154,7 +154,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
             doTest(fs, {
-                files: ["/test/file.ts", "/test/test2/file2.ts"],
+                files: ["/otherFile.ts", "/test/file.ts", "/test/test2/file2.ts"],
                 dirs: ["/test", "/test/test2"],
             });
         });
@@ -167,7 +167,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/test2/file2.ts", "");
             fs.writeFileSync("/test/test2/sub/file3.ts", "");
             doTest(fs, {
-                files: ["/test/test1/file1.ts", "/test/test2/file2.ts", "/test/test2/sub/file3.ts"],
+                files: ["/test/file.ts", "/test/test1/file1.ts", "/test/test2/file2.ts", "/test/test2/sub/file3.ts"],
                 dirs: ["/test/test1", "/test/test2", "/test/test2/sub"],
             });
         });
@@ -179,7 +179,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/test1/file1.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
             doTest(fs, {
-                files: ["/test/test1/file1.ts", "/test/test2/file2.ts"],
+                files: ["/test/file.ts", "/test/test1/file1.ts", "/test/test2/file2.ts"],
                 dirs: ["/test/test1", "/test/test2"],
             });
         });
@@ -226,7 +226,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/test1/file1.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
             doTest(fs, {
-                files: [],
+                files: ["/file1.ts", "/file2.ts"],
                 dirs: ["/test/test1", "/test/test2"],
             });
         });
@@ -238,7 +238,7 @@ describe(nameof(TsConfigResolver), () => {
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test2/file2.ts", "");
             doTest(fs, {
-                files: ["/test/file.ts"],
+                files: ["/test/file.ts", "/test2/file2.ts"],
                 dirs: ["/test"],
             });
         });

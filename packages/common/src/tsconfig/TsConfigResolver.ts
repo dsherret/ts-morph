@@ -44,8 +44,8 @@ export class TsConfigResolver {
         for (let fileName of configFileContent.fileNames) {
             const filePath = fileSystem.getStandardizedAbsolutePath(fileName);
             const parentDirPath = FileUtils.getDirPath(filePath);
+            files.add(filePath);
             if (dirInProject(parentDirPath) && fileSystem.fileExistsSync(filePath)) {
-                files.add(filePath);
                 directories.add(parentDirPath);
             }
         }
