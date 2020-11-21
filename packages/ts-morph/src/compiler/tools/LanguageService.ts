@@ -26,6 +26,8 @@ export class LanguageService {
     private _program: Program;
     /** @internal */
     private _context: ProjectContext;
+    /** @internal */
+    private _projectVersion: number  = 0;
 
     /**
      * Gets the compiler language service.
@@ -43,7 +45,7 @@ export class LanguageService {
             sourceFileContainer: this._context.getSourceFileContainer(),
             compilerOptions: this._context.compilerOptions,
             getNewLine: () => this._context.manipulationSettings.getNewLineKindAsString(),
-            getProjectVersion: () => this._context.getProjectVersion(),
+            getProjectVersion: () => `${this._projectVersion}`,
             resolutionHost: opts.resolutionHost ?? {},
         });
 
@@ -56,15 +58,16 @@ export class LanguageService {
             configFileParsingDiagnostics: opts.configFileParsingDiagnostics,
         });
 
-        this._context.compilerFactory.onSourceFileAdded(() => this._resetProgram());
-        this._context.compilerFactory.onSourceFileRemoved(() => this._resetProgram());
+        this._context.compilerFactory.onSourceFileAdded(() => this._reset());
+        this._context.compilerFactory.onSourceFileRemoved(() => this._reset());
     }
 
     /**
      * Resets the program. This should be done whenever any modifications happen.
      * @internal
      */
-    _resetProgram() {
+    _reset() {
+        this._projectVersion += 1;
         this._program._reset(Array.from(this._context.compilerFactory.getSourceFilePaths()), this._compilerHost);
     }
 
