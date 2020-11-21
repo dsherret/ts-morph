@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.0.0"></a>
+# [9.0.0](https://github.com/dsherret/ts-morph/compare/8.2.0...9.0.0) (2020-11-21)
+
+
+### Bug Fixes
+
+* [#878](https://github.com/dsherret/ts-morph/issues/878) - Fix tsconfig file resolution ([#883](https://github.com/dsherret/ts-morph/issues/883)) ([23ab8f5](https://github.com/dsherret/ts-morph/commit/23ab8f5), [8c7e8ba](https://github.com/dsherret/ts-morph/commit/8c7e8ba)) - Thanks [@Zzzen](https://github.com/Zzzen)!
+
+
+### Code Refactoring
+
+* [#838](https://github.com/dsherret/ts-morph/issues/838) - `addFilesFromTsConfig` is now inverted to `skipAddingFilesFromTsConfig`. Default behaviour is the same. ([1fda310](https://github.com/dsherret/ts-morph/commit/1fda310))
+
+
+### Features
+
+* [#858](https://github.com/dsherret/ts-morph/issues/858) - Remove `BooleanLiteral` and replace with `TrueLiteral` and `FalseLiteral`. ([97f0873](https://github.com/dsherret/ts-morph/commit/97f0873))
+* [#885](https://github.com/dsherret/ts-morph/issues/885) - Upgrade to TS 4.1 ([d5395f6](https://github.com/dsherret/ts-morph/commit/d5395f6))
+
+
+### Performance Improvements
+
+* [#881](https://github.com/dsherret/ts-morph/issues/881) - Implement `getProjectVersion` on `LanguageServiceHost` ([#884](https://github.com/dsherret/ts-morph/issues/884)) ([916ffb4](https://github.com/dsherret/ts-morph/commit/916ffb4), [646f797](https://github.com/dsherret/ts-morph/commit/646f797)) - Thanks [@geremih](https://github.com/geremih)!
+
+
+### BREAKING CHANGES
+
+* Upgraded to TS 4.1.
+* `addFilesFromTsConfig` is now inverted to `skipAddingFilesFromTsConfig`. Default behaviour is the same.
+
+This was done to make the option align with the other options.
+* `BooleanLiteral` is now a type alias of `TrueLiteral` and `FalseLiteral`. This was done to match the same change made in the compiler API.
+
+
+
 <a name="8.2.0"></a>
 # [8.2.0](https://github.com/dsherret/ts-morph/compare/8.1.2...8.2.0) (2020-11-12)
 
