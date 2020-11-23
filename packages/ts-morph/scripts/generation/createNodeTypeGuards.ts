@@ -13,7 +13,7 @@
  */
 import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, KeyValueCache } from "@ts-morph/common";
-import { Mixin, TsMorphInspector, WrappedNode, TsInspector } from "../inspectors";
+import { Mixin, TsInspector, TsMorphInspector, WrappedNode } from "../inspectors";
 
 // todo: this should be cleaned up as it's a mess
 
@@ -201,9 +201,8 @@ export function createNodeTypeGuards(inspector: TsMorphInspector, tsInspector: T
                     const item = kindToWrapperMappings.find(m => m.wrapperName === n.getName());
                     if (item == null) {
                         // supress for JSDocTag as this will never be used for that
-                        if (n.getName() !== "JSDocTag") {
+                        if (n.getName() !== "JSDocTag")
                             throw new Error(`Could not find syntax kinds for ${n.getName()}`);
-                        }
                         return [];
                     }
                     return item.syntaxKindNames;

@@ -1,23 +1,7 @@
 // flattened typescript exports
-import { SyntaxKind, ScriptTarget, ScriptKind, LanguageVariant, EmitHint, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags, ObjectFlags, SymbolFlags,
-    TypeFormatFlags, DiagnosticCategory, CompilerOptions, EditorSettings } from "typescript";
+import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind,
+    ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "typescript";
 import * as ts from "typescript";
 
-export {
-    ts,
-    SyntaxKind,
-    ScriptTarget,
-    ScriptKind,
-    LanguageVariant,
-    EmitHint,
-    ModuleKind,
-    ModuleResolutionKind,
-    NewLineKind,
-    TypeFlags,
-    ObjectFlags,
-    SymbolFlags,
-    TypeFormatFlags,
-    DiagnosticCategory,
-    CompilerOptions,
-    EditorSettings,
-};
+export { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind,
+    ScriptTarget, SymbolFlags, SyntaxKind, ts, TypeFlags, TypeFormatFlags };

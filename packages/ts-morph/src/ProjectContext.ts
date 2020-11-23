@@ -1,8 +1,8 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
-import { LanguageService, QuoteKind, TypeChecker, SourceFile, Diagnostic } from "./compiler";
-import { errors, TransactionalFileSystem, CompilerOptionsContainer, ts, TsSourceFileContainer, Memoize, createModuleResolutionHost, ResolutionHostFactory,
-    StandardizedFilePath } from "@ts-morph/common";
-import { CompilerFactory, StructurePrinterFactory, InProjectCoordinator } from "./factories";
+import { Diagnostic, LanguageService, QuoteKind, SourceFile, TypeChecker } from "./compiler";
+import { CompilerOptionsContainer, createModuleResolutionHost, errors, Memoize, ResolutionHostFactory, StandardizedFilePath, TransactionalFileSystem, ts,
+    TsSourceFileContainer } from "@ts-morph/common";
+import { CompilerFactory, InProjectCoordinator, StructurePrinterFactory } from "./factories";
 import { DirectoryCoordinator } from "./fileSystem";
 import { IndentationText, ManipulationSettingsContainer } from "./options";
 import { ConsoleLogger, LazyReferenceCoordinator } from "./utils";

@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { TypeAliasDeclarationStructure, OptionalKind } from "../../structures";
+import { OptionalKind, TypeAliasDeclarationStructure } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 

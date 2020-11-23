@@ -1,4 +1,4 @@
-import { FileSystemHost, RealFileSystemHost, InMemoryFileSystemHost, CompilerOptions, SyntaxKind, ts } from "@ts-morph/common";
+import { CompilerOptions, FileSystemHost, InMemoryFileSystemHost, RealFileSystemHost, SyntaxKind, ts } from "@ts-morph/common";
 import * as path from "path";
 import { IsAny } from "conditional-type-checks";
 import { Node, SourceFile } from "../../../compiler";

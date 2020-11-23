@@ -1,4 +1,4 @@
-import { FileUtils, TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
+import { FileUtils, StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
 import { ts } from "../typescript";
 import { TsSourceFileContainer } from "./TsSourceFileContainer";
 

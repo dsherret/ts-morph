@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { JsxSelfClosingElement, JsxSpreadAttribute } from "../../../../compiler";
 import { errors, SyntaxKind } from "@ts-morph/common";
 import { JsxSpreadAttributeStructure, StructureKind } from "../../../../structures";
-import { getInfoFromTextWithDescendant, OptionalTrivia, OptionalKindAndTrivia } from "../../testHelpers";
+import { getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxSpreadAttribute>(text, SyntaxKind.JsxSpreadAttribute, { isJsx: true });

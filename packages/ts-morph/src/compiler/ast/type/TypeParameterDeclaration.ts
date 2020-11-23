@@ -1,10 +1,10 @@
-import { removeChildren, removeCommaSeparatedChild, insertIntoParentTextRange } from "../../../manipulation";
+import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { WriterFunction } from "../../../types";
 import { NamedNode } from "../base";
 import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
-import { TypeParameterDeclarationStructure, TypeParameterDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { StructureKind, TypeParameterDeclarationSpecificStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 

@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
-import { EnumDeclaration, EnumMember, CommentEnumMember } from "../../../../compiler";
-import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
+import { CommentEnumMember, EnumDeclaration, EnumMember } from "../../../../compiler";
+import { EnumDeclarationSpecificStructure, EnumDeclarationStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
     describe(nameof<EnumDeclaration>(d => d.getMember), () => {

@@ -1,7 +1,7 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallSignatureDeclaration, FunctionDeclaration, TypeAliasDeclaration, TypeParameterDeclaration, TypeParameteredNode } from "../../../../compiler";
-import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure, OptionalKind } from "../../../../structures";
+import { OptionalKind, TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(TypeParameteredNode), () => {

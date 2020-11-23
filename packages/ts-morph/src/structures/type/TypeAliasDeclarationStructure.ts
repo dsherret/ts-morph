@@ -1,7 +1,7 @@
 import { WriterFunction } from "../../types";
 import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure, TypedNodeStructure,
     TypeParameteredNodeStructure } from "../base";
-import { Structure, KindedStructure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface TypeAliasDeclarationStructure

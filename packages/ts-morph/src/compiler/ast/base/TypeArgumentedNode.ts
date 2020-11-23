@@ -1,4 +1,4 @@
-import { errors, ArrayUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { ArrayUtils, errors, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild,
     verifyAndGetIndex } from "../../../manipulation";
 import { Constructor } from "../../../types";

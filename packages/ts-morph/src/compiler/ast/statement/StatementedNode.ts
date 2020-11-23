@@ -3,10 +3,10 @@ import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../../manipulation";
 import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
-    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure, StatementStructures, OptionalKind,
-    Structure } from "../../../structures";
+    OptionalKind, StatementedNodeStructure, StatementStructures, Structure, TypeAliasDeclarationStructure,
+    VariableStatementStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
-import { getNodeByNameOrFindFunction, nodeHasName, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext } from "../../../utils";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext, nodeHasName } from "../../../utils";
 import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassDeclaration } from "../class";
@@ -16,7 +16,7 @@ import { FunctionDeclaration } from "../function";
 import { InterfaceDeclaration } from "../interface";
 import { ImplementedKindToNodeMappings } from "../kindToNodeMappings";
 import { NamespaceDeclaration } from "../module";
-import { Statement, VariableStatement, CommentStatement } from "../statement";
+import { CommentStatement, Statement, VariableStatement } from "../statement";
 import { VariableDeclaration } from "../variable";
 import { TypeAliasDeclaration } from "../type";
 import { ExtendedParser, StatementContainerNodes } from "../utils";

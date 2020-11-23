@@ -1,5 +1,5 @@
 import { ts } from "@ts-morph/common";
-import { JsxSelfClosingElementStructure, JsxSelfClosingElementSpecificStructure, StructureKind } from "../../../structures";
+import { JsxSelfClosingElementSpecificStructure, JsxSelfClosingElementStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { PrimaryExpression } from "../expression";

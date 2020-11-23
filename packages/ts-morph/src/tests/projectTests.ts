@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { EOL } from "os";
 import * as path from "path";
-import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile, Identifier } from "../compiler";
-import { errors, InMemoryFileSystemHost, CompilerOptions, ScriptTarget, SyntaxKind, ts, ScriptKind } from "@ts-morph/common";
+import { ClassDeclaration, EmitResult, Identifier, InterfaceDeclaration, MemoryEmitResult, NamespaceDeclaration, Node, SourceFile } from "../compiler";
+import { CompilerOptions, errors, InMemoryFileSystemHost, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
 import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure, StructureKind } from "../structures";
@@ -669,7 +669,8 @@ describe(nameof(Project), () => {
         it("should add the files from tsconfig.json", () => {
             const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
             // todo: why did I need a slash at the start of `/test/exclude`?
-            fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"], "exclude": ["/test/exclude"] }`);
+            fileSystem.writeFileSync("tsconfig.json",
+                `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"], "exclude": ["/test/exclude"] }`);
             fileSystem.writeFileSync("/otherFile.ts", "");
             fileSystem.writeFileSync("/test/file.ts", "");
             fileSystem.writeFileSync("/test/test2/file2.ts", "");
@@ -1578,7 +1579,7 @@ describe(nameof(Project), () => {
             fileSystem.writeFileSync("/tsconfig.json", `{ "fies": [] }`);
             const project = new Project({ fileSystem, tsConfigFilePath: "/tsconfig.json" });
             expect(project.getConfigFileParsingDiagnostics().map(d => d.getMessageText())).to.deep.equal([
-                `No inputs were found in config file '/tsconfig.json'. Specified 'include' paths were '["**/*"]' and 'exclude' paths were '[]'.`
+                `No inputs were found in config file '/tsconfig.json'. Specified 'include' paths were '["**/*"]' and 'exclude' paths were '[]'.`,
             ]);
         });
     });

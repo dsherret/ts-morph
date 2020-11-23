@@ -1,7 +1,7 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, Scope } from "../../../../compiler";
-import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
+import { OptionalKind, ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ParameterDeclaration), () => {

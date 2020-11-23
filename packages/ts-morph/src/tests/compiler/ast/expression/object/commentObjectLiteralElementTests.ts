@@ -1,6 +1,6 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ObjectLiteralExpression, CommentObjectLiteralElement } from "../../../../../compiler";
+import { CommentObjectLiteralElement, ObjectLiteralExpression } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
 
 describe(nameof(CommentObjectLiteralElement), () => {

@@ -1,9 +1,9 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Scope } from "../../../../compiler";
-import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure, StructureKind,
-    OptionalKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure, OptionalKind,
+    StructureKind } from "../../../../structures";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {

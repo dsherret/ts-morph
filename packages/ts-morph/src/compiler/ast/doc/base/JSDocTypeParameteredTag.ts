@@ -1,4 +1,4 @@
-import { ts, errors } from "@ts-morph/common";
+import { errors, ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
 import { Node } from "../../common";
 import { JSDocTag } from "../JSDocTag";

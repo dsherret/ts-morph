@@ -1,6 +1,6 @@
 import { StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
-import { EnumMemberStructure, EnumMemberSpecificStructure, StructureKind } from "../../../structures";
+import { EnumMemberSpecificStructure, EnumMemberStructure, StructureKind } from "../../../structures";
 import { InitializerExpressionableNode, JSDocableNode, PropertyNamedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";

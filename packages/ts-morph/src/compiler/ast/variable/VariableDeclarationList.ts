@@ -1,7 +1,7 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { CommaSeparatedStructuresPrinter } from "../../../structurePrinters";
-import { VariableDeclarationStructure, OptionalKind } from "../../../structures";
+import { OptionalKind, VariableDeclarationStructure } from "../../../structures";
 import { ModifierableNode } from "../base";
 import { Node } from "../common";
 import { VariableDeclaration } from "./VariableDeclaration";

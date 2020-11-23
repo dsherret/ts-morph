@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
-import { SourceFileStructure, OptionalKind } from "../../structures";
+import { OptionalKind, SourceFileStructure } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 
 export class SourceFileStructurePrinter extends NodePrinter<OptionalKind<SourceFileStructure>> {

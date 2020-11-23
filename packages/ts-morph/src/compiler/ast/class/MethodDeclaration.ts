@@ -1,10 +1,10 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure, StructureKind, OptionalKind,
-    MethodDeclarationOverloadSpecificStructure } from "../../../structures";
+import { MethodDeclarationOverloadSpecificStructure, MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure,
+    OptionalKind, StructureKind } from "../../../structures";
 import { isNodeAmbientOrInAmbientContext } from "../../../utils";
-import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode,
-    SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode, QuestionTokenableNode } from "../base";
+import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
+    QuestionTokenableNode, ScopedNode, SignaturedDeclaration, StaticableNode, TextInsertableNode, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";

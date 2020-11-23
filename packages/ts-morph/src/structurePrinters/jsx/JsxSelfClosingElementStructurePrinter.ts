@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { JsxAttributeStructure, JsxSpreadAttributeStructure, JsxSelfClosingElementStructure, OptionalKind } from "../../structures";
+import { JsxAttributeStructure, JsxSelfClosingElementStructure, JsxSpreadAttributeStructure, OptionalKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 
 export class JsxSelfClosingElementStructurePrinter extends NodePrinter<OptionalKind<JsxSelfClosingElementStructure>> {

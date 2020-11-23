@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
-import { SpreadAssignmentStructure, OptionalKind } from "../../../structures";
+import { OptionalKind, SpreadAssignmentStructure } from "../../../structures";
 import { printTextFromStringOrWriter } from "../../../utils";
 import { NodePrinter } from "../../NodePrinter";
 

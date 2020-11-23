@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { SourceFile } from "../../compiler";
-import { errors, FileUtils, FileSystemHost, CompilerOptions, ModuleResolutionKind, ScriptTarget, ScriptKind } from "@ts-morph/common";
+import { CompilerOptions, errors, FileSystemHost, FileUtils, ModuleResolutionKind, ScriptKind, ScriptTarget } from "@ts-morph/common";
 import { Directory, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions } from "../../fileSystem";
 import { Project } from "../../Project";
-import { SourceFileStructure, StructureKind, OptionalKind } from "../../structures";
+import { OptionalKind, SourceFileStructure, StructureKind } from "../../structures";
 import { WriterFunction } from "../../types";
 import { CustomFileSystemProps, getFileSystemHostWithFiles, testDirectoryTree } from "../testHelpers";
 

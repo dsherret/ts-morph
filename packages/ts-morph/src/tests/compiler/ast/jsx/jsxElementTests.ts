@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { errors, SyntaxKind } from "@ts-morph/common";
 import { JsxElement } from "../../../../compiler";
-import { JsxElementStructure, JsxAttributeStructure, StructureKind } from "../../../../structures";
-import { getInfoFromTextWithDescendant, OptionalTrivia, OptionalKindAndTrivia } from "../../testHelpers";
+import { JsxAttributeStructure, JsxElementStructure, StructureKind } from "../../../../structures";
+import { getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxElement>(text, SyntaxKind.JsxElement, { isJsx: true });

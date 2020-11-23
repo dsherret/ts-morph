@@ -1,11 +1,11 @@
-import { StringUtils, ts, errors, ArrayUtils } from "@ts-morph/common";
-import { removeChildren, replaceTextPossiblyCreatingChildNodes, verifyAndGetIndex, insertIntoParentTextRange, getNodesToReturn } from "../../../manipulation";
+import { ArrayUtils, errors, StringUtils, ts } from "@ts-morph/common";
+import { getNodesToReturn, insertIntoParentTextRange, removeChildren, replaceTextPossiblyCreatingChildNodes, verifyAndGetIndex } from "../../../manipulation";
 import { getPreviousMatchingPos } from "../../../manipulation/textSeek";
 import { WriterFunction } from "../../../types";
-import { getTextFromStringOrWriter, CharCodes } from "../../../utils";
+import { CharCodes, getTextFromStringOrWriter } from "../../../utils";
 import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
-import { JSDocStructure, JSDocSpecificStructure, StructureKind, JSDocTagStructure, OptionalKind } from "../../../structures";
+import { JSDocSpecificStructure, JSDocStructure, JSDocTagStructure, OptionalKind, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { getTextWithoutStars } from "./utils/getTextWithoutStars";

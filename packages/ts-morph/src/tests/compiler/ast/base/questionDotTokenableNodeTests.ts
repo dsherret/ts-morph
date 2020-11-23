@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { QuestionDotTokenableNode, ExpressionStatement } from "../../../../compiler";
+import { ExpressionStatement, QuestionDotTokenableNode } from "../../../../compiler";
 import { QuestionDotTokenableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 

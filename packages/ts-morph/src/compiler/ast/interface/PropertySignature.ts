@@ -1,5 +1,5 @@
 import { ts } from "@ts-morph/common";
-import { PropertySignatureStructure, PropertySignatureSpecificStructure, StructureKind } from "../../../structures";
+import { PropertySignatureSpecificStructure, PropertySignatureStructure, StructureKind } from "../../../structures";
 import { ChildOrderableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode, QuestionTokenableNode, ReadonlyableNode,
     TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";

@@ -1,4 +1,4 @@
-import { KeyValueCache, FileSystemHost, InMemoryFileSystemHost } from "@ts-morph/common";
+import { FileSystemHost, InMemoryFileSystemHost, KeyValueCache } from "@ts-morph/common";
 
 export interface CustomFileSystemProps {
     getWriteLog(): { filePath: string; fileText: string; }[];

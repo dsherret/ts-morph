@@ -1,7 +1,7 @@
 import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, Memoize } from "@ts-morph/common";
 import { isNodeClass } from "../common";
-import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsMorph";
+import { KindToWrapperMapping, Mixin, Structure, WrappedNode } from "./tsMorph";
 import { WrapperFactory } from "./WrapperFactory";
 
 export interface DependencyNode {

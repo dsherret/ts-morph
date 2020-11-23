@@ -1,5 +1,5 @@
 import { ts } from "@ts-morph/common";
-import { TypeAliasDeclarationStructure, TypeAliasDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { StructureKind, TypeAliasDeclarationSpecificStructure, TypeAliasDeclarationStructure } from "../../../structures";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TypedNode, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Statement } from "../statement";

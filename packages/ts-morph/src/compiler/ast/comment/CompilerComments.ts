@@ -1,4 +1,4 @@
-import { ts, SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, ts } from "@ts-morph/common";
 
 /** @internal */
 export enum CommentNodeKind {

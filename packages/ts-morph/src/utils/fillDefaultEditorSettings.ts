@@ -1,4 +1,4 @@
-import { ts, EditorSettings } from "@ts-morph/common";
+import { EditorSettings, ts } from "@ts-morph/common";
 import { IndentationText, ManipulationSettingsContainer } from "../options";
 import { setValueIfUndefined } from "./setValueIfUndefined";
 

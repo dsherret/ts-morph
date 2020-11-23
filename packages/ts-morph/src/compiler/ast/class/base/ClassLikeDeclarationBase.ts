@@ -1,15 +1,15 @@
 import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { Constructor } from "../../../../types";
-import { errors, ArrayUtils, StringUtils, ts, SyntaxKind } from "@ts-morph/common";
-import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange, InsertIntoBracesOrSourceFileOptionsWriteInfo,
-    insertIntoBracesOrSourceFileWithGetChildrenWithComments } from "../../../../manipulation";
-import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure, ClassMemberStructures, OptionalKind, Structure, Structures } from "../../../../structures";
+import { ArrayUtils, errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { getEndIndexFromArray, InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren,
+    insertIntoBracesOrSourceFileWithGetChildrenWithComments, insertIntoParentTextRange } from "../../../../manipulation";
+import { ClassMemberStructures, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, OptionalKind,
+    PropertyDeclarationStructure, SetAccessorDeclarationStructure, Structure, Structures } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext } from "../../../../utils";
 import { Type } from "../../../types";
-import { DecoratableNode, JSDocableNode, ModifierableNode, TypeParameteredNode, ImplementsClauseableNode, TextInsertableNode, HeritageClauseableNode,
-    NameableNode } from "../../base";
+import { DecoratableNode, HeritageClauseableNode, ImplementsClauseableNode, JSDocableNode, ModifierableNode, NameableNode, TextInsertableNode,
+    TypeParameteredNode } from "../../base";
 import { Node } from "../../common";
 import { ParameterDeclaration } from "../../function";
 import { ExpressionWithTypeArguments } from "../../type";

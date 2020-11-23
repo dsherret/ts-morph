@@ -1,5 +1,5 @@
 import { ArrayUtils, ts } from "@ts-morph/common";
-import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { InterfaceDeclarationSpecificStructure, InterfaceDeclarationStructure, StructureKind } from "../../../structures";
 import { AmbientableNode, ExportableNode, ExtendsClauseableNode, HeritageClauseableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode,
     TypeElementMemberedNode, TypeParameteredNode } from "../base";
 import { Type } from "../../types";

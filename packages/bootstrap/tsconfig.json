@@ -7,6 +7,6 @@
     "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
   },
   "include": [
-    "./src",
+    "./src"
   ]
 }

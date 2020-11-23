@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { FunctionDeclaration } from "../../../../compiler";
-import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure, StructureKind,
-    OptionalKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure, FunctionDeclarationStructure, OptionalKind,
+    StructureKind } from "../../../../structures";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(FunctionDeclaration), () => {
     describe(nameof<FunctionDeclaration>(f => f.getName), () => {

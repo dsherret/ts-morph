@@ -1,4 +1,4 @@
-import { errors, FileUtils, TransactionalFileSystem, StandardizedFilePath } from "@ts-morph/common";
+import { errors, FileUtils, StandardizedFilePath, TransactionalFileSystem } from "@ts-morph/common";
 import { SourceFile } from "../compiler";
 import { CompilerFactory } from "../factories";
 import { DirectoryAddOptions } from "./Directory";

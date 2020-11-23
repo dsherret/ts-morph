@@ -1,4 +1,4 @@
-import { errors, ArrayUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { ArrayUtils, errors, SyntaxKind, ts } from "@ts-morph/common";
 import { FormattingKind, getEndIndexFromArray, getNewInsertCode, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { DecoratableNodeStructure, DecoratorStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";

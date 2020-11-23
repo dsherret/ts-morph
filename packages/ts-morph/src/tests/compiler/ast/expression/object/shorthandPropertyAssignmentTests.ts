@@ -1,6 +1,6 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression } from "../../../../../compiler";
+import { ObjectLiteralExpression, PropertyAssignment, ShorthandPropertyAssignment } from "../../../../../compiler";
 import { ShorthandPropertyAssignmentStructure, StructureKind } from "../../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 

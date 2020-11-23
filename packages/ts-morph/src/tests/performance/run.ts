@@ -1,6 +1,6 @@
 import { ArrayUtils } from "@ts-morph/common";
 import * as cases from "./cases";
-import { PerformanceTestTemplate, MetricsReaderWriter } from "./helpers";
+import { MetricsReaderWriter, PerformanceTestTemplate } from "./helpers";
 const args = process.argv.slice(2);
 const shouldSave = args.some(arg => arg === "--save");
 const testCases = ArrayUtils.sortByProperty(

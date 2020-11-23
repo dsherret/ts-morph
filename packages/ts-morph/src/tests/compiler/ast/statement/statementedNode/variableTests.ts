@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement, Node } from "../../../../../compiler";
+import { Node, StatementedNode, VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../../compiler";
 import { VariableDeclarationStructure, VariableStatementStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 

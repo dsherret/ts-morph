@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration, ParameteredNode, Scope } from "../../../../compiler";
-import { ParameterDeclarationStructure, ParameteredNodeStructure, OptionalKind } from "../../../../structures";
+import { OptionalKind, ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(ParameteredNode), () => {

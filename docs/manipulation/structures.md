@@ -85,7 +85,7 @@ Similar to the compiler API's `forEachChild`, there is a `forEachStructureChild`
 For example:
 
 ```ts
-import { Structure, forEachStructureChild, SourceFileStructure } from "ts-morph";
+import { forEachStructureChild, SourceFileStructure, Structure } from "ts-morph";
 
 const structure: SourceFileStructure = {
     kind: StructureKind.SourceFile,

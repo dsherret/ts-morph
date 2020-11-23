@@ -1,4 +1,4 @@
-import { Project, NewLineKind } from "ts-morph";
+import { NewLineKind, Project } from "ts-morph";
 import { printDiagnostics } from "./utils";
 
 export interface CreateDeclarationProjectOptions {

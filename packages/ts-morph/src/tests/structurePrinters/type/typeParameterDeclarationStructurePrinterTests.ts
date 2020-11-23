@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { TypeParameterDeclarationStructurePrinter } from "../../../structurePrinters";
-import { TypeParameterDeclarationStructure, OptionalKind } from "../../../structures";
+import { OptionalKind, TypeParameterDeclarationStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(TypeParameterDeclarationStructurePrinter), () => {

@@ -1,7 +1,7 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { TryStatement, VariableDeclaration } from "../../../../compiler";
-import { VariableDeclarationStructure, StructureKind } from "../../../../structures";
+import { StructureKind, VariableDeclarationStructure } from "../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(VariableDeclaration), () => {

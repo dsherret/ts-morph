@@ -1,4 +1,4 @@
-import { Structure, KindedStructure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { JSDocableNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { FunctionLikeDeclarationStructure } from "../function";

@@ -1,13 +1,13 @@
-import { ts, StringUtils, SyntaxKind } from "@ts-morph/common";
+import { StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { Node } from "../common";
 import { Identifier } from "../name";
-import { JSDocTagStructure, JSDocTagSpecificStructure, StructureKind } from "../../../structures";
+import { JSDocTagSpecificStructure, JSDocTagStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { getTextWithoutStars } from "./utils/getTextWithoutStars";
-import { removeChildren, insertIntoParentTextRange, getPreviousMatchingPos } from "../../../manipulation";
+import { getPreviousMatchingPos, insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
-import { getTextFromStringOrWriter, CharCodes } from "../../../utils";
+import { CharCodes, getTextFromStringOrWriter } from "../../../utils";
 
 export const JSDocTagBase = Node;
 /**

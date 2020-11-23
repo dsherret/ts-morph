@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { assert, IsExact, IsNullable } from "conditional-type-checks";
-import { errors, NewLineKind, SyntaxKind, ts, SymbolFlags } from "@ts-morph/common";
+import { errors, NewLineKind, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../../../codeBlockWriter";
-import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, FunctionDeclaration, Identifier, InterfaceDeclaration, Node,
-    PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachDescendantTraversalControl, VariableStatement, ForStatement,
-    ForOfStatement, ForInStatement, NumericLiteral, StringLiteral, ExpressionStatement, NodeParentType } from "../../../../compiler";
+import { CallExpression, ClassDeclaration, EnumDeclaration, ExpressionStatement, ForEachDescendantTraversalControl, ForInStatement, FormatCodeSettings,
+    ForOfStatement, ForStatement, FunctionDeclaration, Identifier, InterfaceDeclaration, Node, NodeParentType, NumericLiteral, PropertyAccessExpression,
+    PropertySignature, SourceFile, StringLiteral, TypeParameterDeclaration, VariableStatement } from "../../../../compiler";
 import { hasParsedTokens } from "../../../../compiler/ast/utils";
 import { Project } from "../../../../Project";
 import { createWrappedNode } from "../../../../utils/compiler/createWrappedNode";

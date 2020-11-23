@@ -1,17 +1,17 @@
-import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, SetAccessorDeclarationStructure,
-    MethodDeclarationStructure, PropertyDeclarationStructure, MethodDeclarationOverloadStructure, ConstructorDeclarationOverloadStructure } from "./class";
+import { ClassDeclarationStructure, ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
+    MethodDeclarationOverloadStructure, MethodDeclarationStructure, PropertyDeclarationStructure, SetAccessorDeclarationStructure } from "./class";
 import { DecoratorStructure } from "./decorator";
 import { EnumDeclarationStructure, EnumMemberStructure } from "./enum";
-import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, ParameterDeclarationStructure } from "./function";
-import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure,
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, ParameterDeclarationStructure } from "./function";
+import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, InterfaceDeclarationStructure,
     MethodSignatureStructure, PropertySignatureStructure } from "./interface";
 import { JSDocStructure, JSDocTagStructure } from "./doc";
 import { PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "./expression";
-import { JsxAttributeStructure, JsxElementStructure, JsxSpreadAttributeStructure, JsxSelfClosingElementStructure } from "./jsx";
-import { NamespaceDeclarationStructure, SourceFileStructure, ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure,
-    ExportSpecifierStructure, ImportSpecifierStructure } from "./module";
+import { JsxAttributeStructure, JsxElementStructure, JsxSelfClosingElementStructure, JsxSpreadAttributeStructure } from "./jsx";
+import { ExportAssignmentStructure, ExportDeclarationStructure, ExportSpecifierStructure, ImportDeclarationStructure, ImportSpecifierStructure,
+    NamespaceDeclarationStructure, SourceFileStructure } from "./module";
 import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "./type";
-import { VariableStatementStructure, VariableDeclarationStructure } from "./statement";
+import { VariableDeclarationStructure, VariableStatementStructure } from "./statement";
 
 export type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure
     | NamespaceDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure

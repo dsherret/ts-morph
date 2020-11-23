@@ -1,6 +1,6 @@
 /* barrel:ignore */
 import { StandardizedFilePath } from "@ts-morph/common";
-import { SourceFile, Diagnostic } from "../../compiler";
+import { Diagnostic, SourceFile } from "../../compiler";
 import { Project, ProjectOptions } from "../../Project";
 import { NodeHandler } from "../nodeHandlers";
 import { TextManipulator } from "../textManipulators";

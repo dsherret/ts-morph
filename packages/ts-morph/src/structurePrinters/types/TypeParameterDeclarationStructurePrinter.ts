@@ -1,6 +1,6 @@
 import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { TypeParameterDeclarationStructure, OptionalKind } from "../../structures";
+import { OptionalKind, TypeParameterDeclarationStructure } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 

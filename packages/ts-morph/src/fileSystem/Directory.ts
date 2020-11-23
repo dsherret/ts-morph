@@ -1,8 +1,8 @@
 import { SourceFile, SourceFileCopyOptions, SourceFileMoveOptions } from "../compiler";
-import { errors, ObjectUtils, FileUtils, ModuleResolutionKind, StandardizedFilePath, matchGlobs } from "@ts-morph/common";
+import { errors, FileUtils, matchGlobs, ModuleResolutionKind, ObjectUtils, StandardizedFilePath } from "@ts-morph/common";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
-import { SourceFileStructure, OptionalKind } from "../structures";
+import { OptionalKind, SourceFileStructure } from "../structures";
 import { WriterFunction } from "../types";
 import { setValueIfUndefined } from "../utils";
 import { DirectoryEmitResult } from "./DirectoryEmitResult";

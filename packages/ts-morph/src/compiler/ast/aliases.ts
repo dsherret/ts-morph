@@ -1,19 +1,20 @@
 import { ts } from "@ts-morph/common";
 import { AssertTrue, IsExact } from "conditional-type-checks";
-import { ArrayBindingPattern, ObjectBindingPattern, BindingElement } from "./binding";
-import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration, ClassDeclaration } from "./class";
+import { ArrayBindingPattern, BindingElement, ObjectBindingPattern } from "./binding";
+import { ClassDeclaration, GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "./class";
 import { Node } from "./common";
-import { ComputedPropertyName, Identifier, QualifiedName, PrivateIdentifier } from "./name";
+import { ComputedPropertyName, Identifier, PrivateIdentifier, QualifiedName } from "./name";
 import { Decorator } from "./decorator";
 import { EnumDeclaration } from "./enum";
-import { Expression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ThisExpression, OmittedExpression,
-    CallExpression, NewExpression, ElementAccessExpression } from "./expression";
+import { CallExpression, ElementAccessExpression, Expression, NewExpression, OmittedExpression, PropertyAccessExpression, PropertyAssignment,
+    ShorthandPropertyAssignment, SpreadAssignment, ThisExpression } from "./expression";
 import { FunctionDeclaration } from "./function";
-import { SourceFile, ExternalModuleReference, ExportAssignment, NamespaceDeclaration } from "./module";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature,
-    InterfaceDeclaration } from "./interface";
-import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText, JsxOpeningElement } from "./jsx";
-import { NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TemplateExpression, TaggedTemplateExpression, TrueLiteral, FalseLiteral } from "./literal";
+import { ExportAssignment, ExternalModuleReference, NamespaceDeclaration, SourceFile } from "./module";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature,
+    PropertySignature } from "./interface";
+import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute, JsxText } from "./jsx";
+import { FalseLiteral, NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TaggedTemplateExpression, TemplateExpression,
+    TrueLiteral } from "./literal";
 import { CaseClause, DefaultClause } from "./statement";
 import { VariableDeclaration } from "./variable";
 import { TypeAliasDeclaration } from "./type";

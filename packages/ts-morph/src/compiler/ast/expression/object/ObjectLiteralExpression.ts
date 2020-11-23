@@ -1,8 +1,8 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../../manipulation";
 import { CommaNewLineSeparatedStructuresPrinter, Printer } from "../../../../structurePrinters";
-import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, ObjectLiteralExpressionPropertyStructures, OptionalKind } from "../../../../structures";
+import { GetAccessorDeclarationStructure, MethodDeclarationStructure, ObjectLiteralExpressionPropertyStructures, OptionalKind, PropertyAssignmentStructure,
+    SetAccessorDeclarationStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
 import { ExtendedParser } from "../../utils";

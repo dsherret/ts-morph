@@ -1,5 +1,5 @@
 import { ts } from "@ts-morph/common";
-import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
+import { OptionalKind, StructureKind, VariableDeclarationStructure, VariableStatementSpecificStructure, VariableStatementStructure } from "../../../structures";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";

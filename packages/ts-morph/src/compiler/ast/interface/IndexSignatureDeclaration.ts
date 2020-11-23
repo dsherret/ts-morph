@@ -1,4 +1,4 @@
-import { IndexSignatureDeclarationStructure, IndexSignatureDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { IndexSignatureDeclarationSpecificStructure, IndexSignatureDeclarationStructure, StructureKind } from "../../../structures";
 import { errors, ts } from "@ts-morph/common";
 import { Type } from "../../types";
 import { ChildOrderableNode, JSDocableNode, ModifierableNode, ReadonlyableNode, ReturnTypedNode } from "../base";

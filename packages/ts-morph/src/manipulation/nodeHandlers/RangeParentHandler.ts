@@ -1,4 +1,4 @@
-import { ts, StringUtils } from "@ts-morph/common";
+import { StringUtils, ts } from "@ts-morph/common";
 import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 import { CharCodes } from "../../utils";

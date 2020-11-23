@@ -2,15 +2,15 @@ import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren,
     insertIntoBracesOrSourceFileWithGetChildrenWithComments } from "../../../manipulation";
-import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure, OptionalKind, Structure, TypeElementMemberStructures } from "../../../structures";
+import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure, OptionalKind,
+    PropertySignatureStructure, Structure, TypeElementMemberedNodeStructure, TypeElementMemberStructures } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { TypeElementTypes } from "../aliases";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature,
-    CommentTypeElement } from "../interface";
+import { CallSignatureDeclaration, CommentTypeElement, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature,
+    PropertySignature } from "../interface";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ExtendedParser } from "../utils";
 

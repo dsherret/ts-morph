@@ -7,7 +7,7 @@
  * ------------------------------------------------------
  */
 import { tsMorph } from "@ts-morph/scripts";
-import { TsMorphInspector, TsInspector } from "../inspectors";
+import { TsInspector, TsMorphInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
 export function validateCodeFences(

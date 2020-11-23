@@ -1,6 +1,6 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { SpreadAssignment, ObjectLiteralExpression } from "../../../../../compiler";
+import { ObjectLiteralExpression, SpreadAssignment } from "../../../../../compiler";
 import { SpreadAssignmentStructure, StructureKind } from "../../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 

@@ -8,7 +8,7 @@
 import * as os from "os";
 import { forEachTypeText, makeConstructorsPrivate, tsMorph } from "@ts-morph/scripts";
 import { createDeclarationProject } from "../common";
-import { getDeclarationFileStatements, getCodeBlockWriterStatements } from "./declarationFile";
+import { getCodeBlockWriterStatements, getDeclarationFileStatements } from "./declarationFile";
 
 // todo: remove this once this code's performance is improved.
 // Basic idea here is to change this code to modify the structures rather than the source file

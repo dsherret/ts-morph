@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { AssertTrue, IsExact } from "conditional-type-checks";
-import { VariableStatement, BindingNamedNode, BindingName, Node } from "../../../../../compiler";
+import { BindingName, BindingNamedNode, Node, VariableStatement } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
 function getInfoFromTextWithFirstVariableDeclaration(text: string) {

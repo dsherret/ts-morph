@@ -1,9 +1,9 @@
-import { ts, SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
-import { ParameterDeclarationStructure, ParameterDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
-import { BindingNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode,
-    DotDotDotTokenableNode } from "../base";
+import { BindingNamedNode, DecoratableNode, DotDotDotTokenableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode,
+    ScopeableNode, TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 import { callBaseGetStructure } from "../callBaseGetStructure";

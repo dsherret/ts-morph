@@ -3,7 +3,7 @@ import { insertIntoParentTextRange, removeChildren } from "../../../../manipulat
 import { InitializerExpressionGetableNode, NamedNode, QuestionTokenableNode } from "../../base";
 import { Expression } from "../Expression";
 import { PropertyAssignment } from "./PropertyAssignment";
-import { ShorthandPropertyAssignmentStructure, ShorthandPropertyAssignmentSpecificStructure, QuestionTokenableNodeStructure,
+import { QuestionTokenableNodeStructure, ShorthandPropertyAssignmentSpecificStructure, ShorthandPropertyAssignmentStructure,
     StructureKind } from "../../../../structures";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { callBaseSet } from "../../callBaseSet";

@@ -1,6 +1,6 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, ExportGetableNode, NamespaceDeclaration, VariableStatement, Node } from "../../../../../compiler";
+import { ClassDeclaration, ExportGetableNode, NamespaceDeclaration, Node, VariableStatement } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(ExportGetableNode), () => {

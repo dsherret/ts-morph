@@ -1,7 +1,7 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { errors } from "@ts-morph/common";
 import { StructurePrinterFactory } from "../../factories";
-import { TypeElementMemberStructures, StructureKind } from "../../structures";
+import { StructureKind, TypeElementMemberStructures } from "../../structures";
 import { WriterFunction } from "../../types";
 import { isLastNonWhitespaceCharCloseBrace } from "../helpers";
 import { Printer } from "../Printer";

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableStatement } from "../../../../compiler";
-import { VariableDeclarationStructure, VariableStatementStructure, OptionalKind, StructureKind } from "../../../../structures";
-import { getInfoFromText, fillStructures } from "../../testHelpers";
+import { OptionalKind, StructureKind, VariableDeclarationStructure, VariableStatementStructure } from "../../../../structures";
+import { fillStructures, getInfoFromText } from "../../testHelpers";
 
 describe(nameof(VariableStatement), () => {
     describe(nameof<VariableStatement>(d => d.getDeclarationKind), () => {

@@ -1,4 +1,4 @@
-import { removeChildrenWithFormatting, FormattingKind } from "../../../manipulation";
+import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
 import { CompilerCommentEnumMember } from "../comment";
 import { Node } from "../common";
 

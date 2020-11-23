@@ -7,7 +7,7 @@ title: Manipulation Settings
 The manipulation settings can be set when creating the main `Project` object:
 
 ```ts
-import { Project, QuoteKind, NewLineKind, IndentationText } from "ts-morph";
+import { IndentationText, NewLineKind, Project, QuoteKind } from "ts-morph";
 
 const project = new Project({
     // these are the defaults

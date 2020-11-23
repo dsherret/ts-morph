@@ -1,11 +1,12 @@
-import { Project, FunctionDeclaration, ClassDeclaration, Node, SourceFile, MethodDeclaration, Decorator, EnumDeclaration, EnumMember, ExportDeclaration,
-    ExportSpecifier, ImportDeclaration, ImportSpecifier, InterfaceDeclaration, ShorthandPropertyAssignment, SpreadAssignment, ObjectLiteralExpression,
-    ParameterDeclaration, Type, Symbol, Signature, TypeFormatFlags, NamespaceDeclaration, Directory, Diagnostic, DiagnosticMessageChain, GetAccessorDeclaration,
-    SetAccessorDeclaration, PropertyDeclaration, TypeNode, JSDoc, ExportAssignment, ExpressionWithTypeArguments, CallExpression, SyntaxKind, Identifier,
-    VariableDeclaration, ConstructSignatureDeclaration, CallSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature,
-    TypeAliasDeclaration, NumericLiteral, VariableStatement, VariableDeclarationKind, IndentationText, QuoteKind, ts, createWrappedNode,
-    PropertyAccessExpression, LanguageService, Program, TypeChecker, FileSystemHost, TypeParameterDeclaration, NamespaceDeclarationKind, CallLikeExpression,
-    StructureKind, forEachStructureChild, Structures, ClassDeclarationStructure, SourceFileStructure, Structure } from "../../packages/ts-morph/src/main";
+import { CallExpression, CallLikeExpression, CallSignatureDeclaration, ClassDeclaration, ClassDeclarationStructure, ConstructSignatureDeclaration,
+    createWrappedNode, Decorator, Diagnostic, DiagnosticMessageChain, Directory, EnumDeclaration, EnumMember, ExportAssignment, ExportDeclaration,
+    ExportSpecifier, ExpressionWithTypeArguments, FileSystemHost, forEachStructureChild, FunctionDeclaration, GetAccessorDeclaration, Identifier,
+    ImportDeclaration, ImportSpecifier, IndentationText, IndexSignatureDeclaration, InterfaceDeclaration, JSDoc, LanguageService, MethodDeclaration,
+    MethodSignature, NamespaceDeclaration, NamespaceDeclarationKind, Node, NumericLiteral, ObjectLiteralExpression, ParameterDeclaration, Program, Project,
+    PropertyAccessExpression, PropertyDeclaration, PropertySignature, QuoteKind, SetAccessorDeclaration, ShorthandPropertyAssignment, Signature, SourceFile,
+    SourceFileStructure, SpreadAssignment, Structure, StructureKind, Structures, Symbol, SyntaxKind, ts, Type, TypeAliasDeclaration, TypeChecker,
+    TypeFormatFlags, TypeNode, TypeParameterDeclaration, VariableDeclaration, VariableDeclarationKind,
+    VariableStatement } from "../../packages/ts-morph/src/main";
 
 let project: Project, node: Node, classDeclaration: ClassDeclaration, functionDeclaration: FunctionDeclaration, sourceFile: SourceFile,
     method: MethodDeclaration, decorator: Decorator, enumDeclaration: EnumDeclaration, enumMember: EnumMember, exportDeclaration: ExportDeclaration,

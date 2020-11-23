@@ -1,6 +1,6 @@
 import { Memoize, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../../ProjectContext";
-import { FileTextChanges, ApplyFileTextChangesOptions } from "./FileTextChanges";
+import { ApplyFileTextChangesOptions, FileTextChanges } from "./FileTextChanges";
 
 /**
  * Represents file changes.

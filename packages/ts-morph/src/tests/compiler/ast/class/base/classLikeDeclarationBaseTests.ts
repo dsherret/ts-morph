@@ -1,9 +1,9 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { Node, ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
-    PropertyDeclaration, Scope, SetAccessorDeclaration, ClassLikeDeclarationBase, CommentClassElement } from "../../../../../compiler";
-import { ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure, StructureKind, ClassMemberStructures } from "../../../../../structures";
+import { ClassDeclaration, ClassLikeDeclarationBase, CommentClassElement, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration,
+    MethodDeclaration, Node, ParameterDeclaration, PropertyDeclaration, Scope, SetAccessorDeclaration } from "../../../../../compiler";
+import { ClassMemberStructures, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
+    SetAccessorDeclarationStructure, StructureKind } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../../testHelpers";
 

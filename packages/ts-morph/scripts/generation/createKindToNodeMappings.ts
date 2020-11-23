@@ -7,7 +7,7 @@
  */
 import { tsMorph } from "@ts-morph/scripts";
 import { hasDescendantBaseType } from "../common";
-import { TsMorphInspector, TsInspector } from "../inspectors";
+import { TsInspector, TsMorphInspector } from "../inspectors";
 
 export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspector: TsInspector) {
     const project = inspector.getProject();

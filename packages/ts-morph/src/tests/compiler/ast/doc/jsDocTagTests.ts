@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { JSDocTag, Node } from "../../../../compiler";
-import { getInfoFromText, fillStructures, OptionalKindAndTrivia } from "../../testHelpers";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 import { JSDocTagStructure } from "../../../../structures";
 
 describe(nameof(JSDocTag), () => {

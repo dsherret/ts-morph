@@ -1,4 +1,4 @@
-import { ts, SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { CommentNodeParser, ContainerNodes, isComment } from "../../../../compiler/ast/utils";
 describe(nameof(CommentNodeParser), () => {

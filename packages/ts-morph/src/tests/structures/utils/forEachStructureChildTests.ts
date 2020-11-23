@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
-import { forEachStructureChild, StructureKind, InterfaceDeclarationStructure, PropertySignatureStructure, ClassDeclarationStructure,
+import { ClassDeclarationStructure, forEachStructureChild, InterfaceDeclarationStructure, PropertySignatureStructure, StructureKind,
     Structures } from "../../../structures";
 import { getInfoFromText } from "../../compiler/testHelpers";
 

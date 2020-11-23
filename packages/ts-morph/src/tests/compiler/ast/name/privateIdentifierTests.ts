@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { PrivateIdentifier, ClassDeclaration } from "../../../../compiler";
+import { ClassDeclaration, PrivateIdentifier } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 function getInfoFromTextWithFirstProperty(text: string) {

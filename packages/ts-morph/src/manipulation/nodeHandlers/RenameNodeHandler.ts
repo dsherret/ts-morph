@@ -1,5 +1,5 @@
-import { ts, SyntaxKind } from "@ts-morph/common";
-import { Node, ShorthandPropertyAssignment, ExportSpecifier, ImportSpecifier } from "../../compiler";
+import { SyntaxKind, ts } from "@ts-morph/common";
+import { ExportSpecifier, ImportSpecifier, Node, ShorthandPropertyAssignment } from "../../compiler";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
 import { CompilerFactory } from "../../factories";
 

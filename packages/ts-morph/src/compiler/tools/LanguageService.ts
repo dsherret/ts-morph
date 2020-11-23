@@ -1,14 +1,14 @@
-import { errors, ObjectUtils, FileUtils, RealFileSystemHost, ResolutionHost, CompilerOptions, EditorSettings, ScriptTarget, ts, TsSourceFileContainer,
-    createHosts } from "@ts-morph/common";
+import { CompilerOptions, createHosts, EditorSettings, errors, FileUtils, ObjectUtils, RealFileSystemHost, ResolutionHost, ScriptTarget, ts,
+    TsSourceFileContainer } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { getTextFromTextChanges } from "../../manipulation";
 import { fillDefaultEditorSettings, fillDefaultFormatCodeSettings } from "../../utils";
 import { Node } from "../ast/common";
 import { SourceFile } from "../ast/module";
-import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
+import { FormatCodeSettings, RenameOptions, UserPreferences } from "./inputs";
 import { Program } from "./Program";
-import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange, DiagnosticWithLocation, RefactorEditInfo,
-    CodeFixAction, CombinedCodeActions } from "./results";
+import { CodeFixAction, CombinedCodeActions, DefinitionInfo, DiagnosticWithLocation, EmitOutput, FileTextChanges, ImplementationLocation, RefactorEditInfo,
+    RenameLocation, TextChange } from "./results";
 
 /** @internal */
 export interface LanguageServiceCreationData {

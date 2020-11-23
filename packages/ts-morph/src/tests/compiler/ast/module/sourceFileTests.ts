@@ -1,11 +1,11 @@
 import { expect } from "chai";
-import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, VariableDeclarationKind, TextChange } from "../../../../compiler";
-import { errors, CompilerOptions, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
+import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, TextChange, VariableDeclarationKind } from "../../../../compiler";
+import { CompilerOptions, errors, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
 import { SourceFileStructure, StructureKind } from "../../../../structures";
 import { getFileSystemHostWithFiles } from "../../../testHelpers";
-import { getInfoFromText, fillStructures, OptionalKindAndTrivia } from "../../testHelpers";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {

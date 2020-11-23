@@ -1,5 +1,5 @@
 import { DiagnosticCategory, ts } from "@ts-morph/common";
-import { IsExact, AssertTrue } from "conditional-type-checks";
+import { AssertTrue, IsExact } from "conditional-type-checks";
 
 /**
  * Diagnostic message chain.

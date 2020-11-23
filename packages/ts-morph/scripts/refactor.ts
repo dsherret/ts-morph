@@ -7,7 +7,7 @@
  */
 
 import { InspectorFactory } from "./inspectors";
-import { SyntaxKind, Node, SourceFile } from "ts-morph";
+import { Node, SourceFile, SyntaxKind } from "ts-morph";
 
 const factory = new InspectorFactory();
 const tsaInspector = factory.getTsMorphInspector();

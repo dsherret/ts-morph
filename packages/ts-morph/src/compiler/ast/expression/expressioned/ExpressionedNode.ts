@@ -1,4 +1,4 @@
-import { errors, getSyntaxKindName, ts, SyntaxKind } from "@ts-morph/common";
+import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
 import { ExpressionedNodeStructure } from "../../../../structures";
 import { Constructor, InstanceOf, WriterFunction } from "../../../../types";
 import { callBaseSet } from "../../callBaseSet";

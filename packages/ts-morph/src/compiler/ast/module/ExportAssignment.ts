@@ -1,7 +1,7 @@
-import { ts, SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, ts } from "@ts-morph/common";
 import { ExpressionedNode } from "../expression";
 import { Statement } from "../statement";
-import { ExportAssignmentStructure, ExportAssignmentSpecificStructure, StructureKind } from "../../../structures";
+import { ExportAssignmentSpecificStructure, ExportAssignmentStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 

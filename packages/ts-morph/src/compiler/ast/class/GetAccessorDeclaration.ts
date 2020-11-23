@@ -1,5 +1,5 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
-import { GetAccessorDeclarationStructure, GetAccessorDeclarationSpecificStructure, StructureKind } from "../../../structures";
+import { GetAccessorDeclarationSpecificStructure, GetAccessorDeclarationStructure, StructureKind } from "../../../structures";
 import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration } from "../function";

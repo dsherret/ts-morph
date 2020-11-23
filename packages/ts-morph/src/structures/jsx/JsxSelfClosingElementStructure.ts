@@ -1,6 +1,6 @@
-import { Structure, KindedStructure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
-import { JsxTagNamedNodeStructure, JsxAttributedNodeStructure } from "./base";
+import { JsxAttributedNodeStructure, JsxTagNamedNodeStructure } from "./base";
 
 export interface JsxSelfClosingElementStructure
     extends Structure, JsxTagNamedNodeStructure, JsxSelfClosingElementSpecificStructure, JsxAttributedNodeStructure

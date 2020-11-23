@@ -1,5 +1,5 @@
 import { KeyValueCache } from "@ts-morph/common";
-import { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, SourceFile, StringLiteral, Node } from "../../compiler";
+import { CallExpression, ExportDeclaration, ImportDeclaration, ImportEqualsDeclaration, Node, SourceFile, StringLiteral } from "../../compiler";
 import { ModuleUtils } from "../compiler";
 export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
 

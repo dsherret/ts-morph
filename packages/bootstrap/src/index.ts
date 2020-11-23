@@ -1,3 +1,3 @@
 export * from "./Project";
-export { CompilerOptionsContainer, FileSystemHost, ResolutionHostFactory, ResolutionHost, SettingsContainer, ts, InMemoryFileSystemHostOptions,
-    InMemoryFileSystemHost } from "@ts-morph/common";
+export { CompilerOptionsContainer, FileSystemHost, InMemoryFileSystemHost, InMemoryFileSystemHostOptions, ResolutionHost, ResolutionHostFactory,
+    SettingsContainer, ts } from "@ts-morph/common";

@@ -1,7 +1,7 @@
 import { NamespaceDeclarationKind } from "../../compiler";
 import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure } from "../base";
 import { StatementedNodeStructure } from "../statement";
-import { Structure, KindedStructure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface NamespaceDeclarationStructure

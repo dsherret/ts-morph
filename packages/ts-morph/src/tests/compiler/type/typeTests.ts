@@ -1,6 +1,6 @@
 import { InMemoryFileSystemHost, ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 import { expect } from "chai";
-import { FunctionDeclaration, Node, Type, TypeAliasDeclaration, VariableStatement, Symbol } from "../../../compiler";
+import { FunctionDeclaration, Node, Symbol, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Type), () => {

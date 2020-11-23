@@ -1,8 +1,8 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxSelfClosingElement } from "../../../../compiler";
-import { JsxSelfClosingElementStructure, JsxAttributeStructure, StructureKind } from "../../../../structures";
-import { getInfoFromTextWithDescendant, OptionalTrivia, OptionalKindAndTrivia } from "../../testHelpers";
+import { JsxAttributeStructure, JsxSelfClosingElementStructure, StructureKind } from "../../../../structures";
+import { getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxSelfClosingElement>(text, SyntaxKind.JsxSelfClosingElement, { isJsx: true });

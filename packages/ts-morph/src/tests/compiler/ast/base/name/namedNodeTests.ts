@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { InterfaceDeclaration, EnumDeclaration, FunctionDeclaration, Identifier, NamedNode, RenameOptions, VariableStatement, ObjectLiteralExpression,
-    ShorthandPropertyAssignment } from "../../../../../compiler";
+import { EnumDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, NamedNode, ObjectLiteralExpression, RenameOptions, ShorthandPropertyAssignment,
+    VariableStatement } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(NamedNode), () => {

@@ -1,14 +1,14 @@
 import { ArrayUtils, KeyValueCache, StringUtils, ts } from "@ts-morph/common";
-import { ClassDeclarationStructure, ConstructorDeclarationStructure, MethodDeclarationStructure, ClassDeclarationSpecificStructure,
-    ClassLikeDeclarationBaseSpecificStructure, InterfaceDeclarationStructure, PropertySignatureStructure, MethodSignatureStructure,
-    ParameterDeclarationStructure, StructureKind, JSDocStructure } from "../../../structures";
-import { ExportableNode, AmbientableNode } from "../base";
+import { ClassDeclarationSpecificStructure, ClassDeclarationStructure, ClassLikeDeclarationBaseSpecificStructure, ConstructorDeclarationStructure,
+    InterfaceDeclarationStructure, JSDocStructure, MethodDeclarationStructure, MethodSignatureStructure, ParameterDeclarationStructure,
+    PropertySignatureStructure, StructureKind } from "../../../structures";
+import { AmbientableNode, ExportableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassLikeDeclarationBase } from "./base";
-import { Scope, Node } from "../common";
+import { Node, Scope } from "../common";
 import { ParameterDeclaration } from "../function";
 import { PropertyDeclaration } from "./PropertyDeclaration";
 import { ConstructorDeclaration } from "./ConstructorDeclaration";

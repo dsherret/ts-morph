@@ -1,6 +1,6 @@
 import { errors } from "../errors";
-import { TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
-import { ts, CompilerOptions, ScriptKind } from "../typescript";
+import { StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
+import { CompilerOptions, ScriptKind, ts } from "../typescript";
 import { createCompilerSourceFile } from "./createCompilerSourceFile";
 
 /**

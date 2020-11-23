@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ModuleKind, ModuleResolutionKind, ScriptTarget, getEmitModuleResolutionKind } from "../../typescript";
+import { getEmitModuleResolutionKind, ModuleKind, ModuleResolutionKind, ScriptTarget } from "../../typescript";
 
 describe("tsInternal", () => {
     describe(nameof(getEmitModuleResolutionKind), () => {

@@ -1,5 +1,5 @@
-import { ts, errors } from "@ts-morph/common";
-import { JSDocableNode, DotDotDotTokenableNode, NamedNode, QuestionTokenableNode, TypedNode } from "../base";
+import { errors, ts } from "@ts-morph/common";
+import { DotDotDotTokenableNode, JSDocableNode, NamedNode, QuestionTokenableNode, TypedNode } from "../base";
 import { TypeNode } from "./TypeNode";
 
 // Not sure how I feel about this having `removeType` and `getTypeNodeOrThrow` methods.

@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../../compiler";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, StructureKind,
-    OptionalKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure, ConstructorDeclarationStructure, OptionalKind,
+    StructureKind } from "../../../../structures";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.insertOverloads), () => {

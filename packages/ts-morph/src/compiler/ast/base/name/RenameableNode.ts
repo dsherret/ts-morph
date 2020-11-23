@@ -1,7 +1,7 @@
 import { errors, KeyValueCache, ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
 import { Node } from "../../common";
-import { RenameOptions, RenameLocation } from "../../../tools";
+import { RenameLocation, RenameOptions } from "../../../tools";
 import { replaceSourceFileTextForRename } from "../../../../manipulation";
 import { SourceFile } from "../../module";
 

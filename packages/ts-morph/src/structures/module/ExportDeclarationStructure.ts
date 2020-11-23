@@ -1,6 +1,6 @@
 import { WriterFunction } from "../../types";
 import { ExportSpecifierStructure } from "./ExportSpecifierStructure";
-import { Structure, KindedStructure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { OptionalKind } from "../types";
 

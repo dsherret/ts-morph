@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
-import { JSDocStructure, StructureKind, JSDocTagStructure, OptionalKind } from "../../../../structures";
-import { getInfoFromText, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { JSDocStructure, JSDocTagStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(JSDoc), () => {
     describe(nameof<JSDoc>(d => d.isMultiLine), () => {

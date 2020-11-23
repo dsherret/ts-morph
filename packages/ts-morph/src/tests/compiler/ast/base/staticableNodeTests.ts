@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ClassDeclaration, MethodDeclaration, PropertyDeclaration, StaticableNode, Node } from "../../../../compiler";
+import { ClassDeclaration, MethodDeclaration, Node, PropertyDeclaration, StaticableNode } from "../../../../compiler";
 import { StaticableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 

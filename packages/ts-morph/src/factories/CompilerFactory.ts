@@ -1,13 +1,13 @@
-import { errors, KeyValueCache, WeakCache, StringUtils, EventContainer, FileUtils, DocumentRegistry, SyntaxKind, ts, TypeFlags, ScriptKind,
-    StandardizedFilePath } from "@ts-morph/common";
-import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
-    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter, CommentStatement,
-    CommentClassElement, CommentTypeElement, CommentObjectLiteralElement, CompilerCommentNode, CommentEnumMember } from "../compiler";
+import { DocumentRegistry, errors, EventContainer, FileUtils, KeyValueCache, ScriptKind, StandardizedFilePath, StringUtils, SyntaxKind, ts, TypeFlags,
+    WeakCache } from "@ts-morph/common";
+import { CommentClassElement, CommentEnumMember, CommentObjectLiteralElement, CommentStatement, CommentTypeElement, CompilerCommentNode,
+    CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node, ReferencedSymbol,
+    ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
 import { CommentNodeParser } from "../compiler/ast/utils";
 import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
-import { SourceFileStructure, OptionalKind } from "../structures";
+import { OptionalKind, SourceFileStructure } from "../structures";
 import { WriterFunction } from "../types";
 import { replaceSourceFileForCacheUpdate } from "../manipulation";
 import { getTextFromStringOrWriter } from "../utils";

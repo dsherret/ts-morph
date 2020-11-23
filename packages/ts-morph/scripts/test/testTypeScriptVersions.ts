@@ -1,4 +1,4 @@
-import { execNpmScript, getDevCompilerVersions, changeTypeScriptVersion, resetTypeScriptVersion } from "@ts-morph/scripts";
+import { changeTypeScriptVersion, execNpmScript, getDevCompilerVersions, resetTypeScriptVersion } from "@ts-morph/scripts";
 import { rootFolder } from "../config";
 
 async function run() {

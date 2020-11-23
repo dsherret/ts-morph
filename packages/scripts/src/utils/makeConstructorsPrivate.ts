@@ -1,4 +1,4 @@
-import { SourceFile, Node, ClassDeclaration, Scope } from "ts-morph";
+import { ClassDeclaration, Node, Scope, SourceFile } from "ts-morph";
 
 export function makeConstructorsPrivate(mainFile: SourceFile) {
     forEachDescendant(mainFile);

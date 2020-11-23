@@ -4,7 +4,7 @@ import { WriterFunction } from "../../../../types";
 import { getTextFromStringOrWriter } from "../../../../utils";
 import { InitializerExpressionGetableNode, PropertyNamedNode, QuestionTokenableNode } from "../../base";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
-import { PropertyAssignmentStructure, PropertyAssignmentSpecificStructure, StructureKind } from "../../../../structures";
+import { PropertyAssignmentSpecificStructure, PropertyAssignmentStructure, StructureKind } from "../../../../structures";
 import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { ObjectLiteralElement } from "./ObjectLiteralElement";

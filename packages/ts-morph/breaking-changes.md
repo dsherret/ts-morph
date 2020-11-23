@@ -721,7 +721,7 @@ The TypeScript peer dependency has been dropped, but there should be no loss of 
 The TypeScript compiler object used by this library can now be accessed via the `ts` named export. Also non-node TypeScript compiler objects used in the public API of this library are now exported directly as named exports:
 
 ```ts
-import Project, { ts, SyntaxKind, ScriptTarget } from "ts-morph";
+import Project, { ScriptTarget, SyntaxKind, ts } from "ts-morph";
 ```
 
 ### Using the TypeScript compiler and ts-morph

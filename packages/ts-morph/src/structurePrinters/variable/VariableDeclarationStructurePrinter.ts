@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { VariableDeclarationStructure, OptionalKind } from "../../structures";
+import { OptionalKind, VariableDeclarationStructure } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 

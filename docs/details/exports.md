@@ -107,7 +107,7 @@ export interface Interface2 {}
 The following code:
 
 ```ts
-import { Project, ExportedDeclarations } from "ts-morph";
+import { ExportedDeclarations, Project } from "ts-morph";
 
 const project = new Project();
 project.addSourceFilesAtPaths("**/*.ts");

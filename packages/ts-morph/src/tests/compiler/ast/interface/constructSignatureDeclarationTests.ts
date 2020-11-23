@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ConstructSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
-import { ConstructSignatureDeclarationStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { ConstructSignatureDeclarationStructure, StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ConstructSignatureDeclaration), () => {
     function getFirstConstructSignatureWithInfo(code: string) {

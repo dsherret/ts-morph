@@ -1,4 +1,4 @@
-import { KeyValueCache, SortedKeyValueArray, LocaleStringComparer, FileUtils, StandardizedFilePath } from "@ts-morph/common";
+import { FileUtils, KeyValueCache, LocaleStringComparer, SortedKeyValueArray, StandardizedFilePath } from "@ts-morph/common";
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem/Directory";
 import { ProjectContext } from "../ProjectContext";

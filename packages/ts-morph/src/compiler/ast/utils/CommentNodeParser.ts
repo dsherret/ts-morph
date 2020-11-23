@@ -1,6 +1,6 @@
-import { errors, getSyntaxKindName, StringUtils, ts, SyntaxKind } from "@ts-morph/common";
-import { CompilerCommentNode, CompilerCommentStatement, CompilerCommentClassElement, CompilerCommentTypeElement, CompilerCommentObjectLiteralElement,
-    CompilerCommentEnumMember, CommentNodeKind } from "../comment/CompilerComments";
+import { errors, getSyntaxKindName, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { CommentNodeKind, CompilerCommentClassElement, CompilerCommentEnumMember, CompilerCommentNode, CompilerCommentObjectLiteralElement,
+    CompilerCommentStatement, CompilerCommentTypeElement } from "../comment/CompilerComments";
 
 enum CommentKind {
     SingleLine,

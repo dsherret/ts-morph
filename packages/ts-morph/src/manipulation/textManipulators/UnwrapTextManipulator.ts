@@ -1,4 +1,4 @@
-import { StringUtils, SyntaxKind, errors } from "@ts-morph/common";
+import { errors, StringUtils, SyntaxKind } from "@ts-morph/common";
 import { Node } from "../../compiler";
 import { InsertionTextManipulator } from "./InsertionTextManipulator";
 

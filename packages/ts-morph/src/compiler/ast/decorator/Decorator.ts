@@ -4,7 +4,7 @@ import { WriterFunction } from "../../../types";
 import { Node } from "../common/Node";
 import { CallExpression, Expression, LeftHandSideExpressionedNode } from "../expression";
 import { TypeNode } from "../type";
-import { DecoratorStructure, DecoratorSpecificStructure, StructureKind } from "../../../structures";
+import { DecoratorSpecificStructure, DecoratorStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 

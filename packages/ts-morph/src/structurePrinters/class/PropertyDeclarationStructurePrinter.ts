@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { PropertyDeclarationStructure, OptionalKind } from "../../structures";
+import { OptionalKind, PropertyDeclarationStructure } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 

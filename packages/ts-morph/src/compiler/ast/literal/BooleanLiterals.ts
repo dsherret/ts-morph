@@ -7,7 +7,7 @@ export class TrueLiteral extends TrueLiteralBase<ts.TrueLiteral> {
      * Gets the literal value.
      */
     getLiteralValue(): boolean {
-        return getLiteralValue(this)
+        return getLiteralValue(this);
     }
 
     /**
@@ -27,7 +27,7 @@ export class FalseLiteral extends FalseLiteralBase<ts.FalseLiteral> {
      * Gets the literal value.
      */
     getLiteralValue(): boolean {
-        return getLiteralValue(this)
+        return getLiteralValue(this);
     }
 
     /**

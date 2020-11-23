@@ -6,7 +6,7 @@
  * -------------------------------------------------
  */
 import { tsMorph } from "@ts-morph/scripts";
-import { TsMorphInspector, Structure } from "../inspectors";
+import { Structure, TsMorphInspector } from "../inspectors";
 
 // very messy first pass... needs cleanup
 

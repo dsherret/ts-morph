@@ -3,7 +3,7 @@ import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../../com
 import { errors } from "@ts-morph/common";
 import { IndexSignatureDeclarationStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(IndexSignatureDeclaration), () => {
     function getFirstIndexSignatureWithInfo(code: string) {

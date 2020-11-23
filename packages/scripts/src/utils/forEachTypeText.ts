@@ -1,4 +1,4 @@
-import { Structure, Structures, forEachStructureChild, WriterFunction } from "ts-morph";
+import { forEachStructureChild, Structure, Structures, WriterFunction } from "ts-morph";
 
 export function forEachTypeText(structure: Structures, func: (typeText: string) => string) {
     forEachChild(structure);

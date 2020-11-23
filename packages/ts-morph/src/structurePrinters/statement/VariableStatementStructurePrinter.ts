@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { VariableDeclarationKind } from "../../compiler/ast/variable/VariableDeclarationKind";
-import { VariableStatementStructure, OptionalKind } from "../../structures";
+import { OptionalKind, VariableStatementStructure } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 

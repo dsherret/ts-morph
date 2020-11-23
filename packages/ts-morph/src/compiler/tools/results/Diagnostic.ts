@@ -1,4 +1,4 @@
-import { StringUtils, Memoize, DiagnosticCategory, ts } from "@ts-morph/common";
+import { DiagnosticCategory, Memoize, StringUtils, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../../ProjectContext";
 import { SourceFile } from "../../ast";
 import { DiagnosticMessageChain } from "./DiagnosticMessageChain";

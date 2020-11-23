@@ -1,6 +1,6 @@
 import { BindingNamedNodeStructure, DecoratableNodeStructure, InitializerExpressionableNodeStructure, QuestionTokenableNodeStructure, ReadonlyableNodeStructure,
     ScopeableNodeStructure, TypedNodeStructure } from "../base";
-import { Structure, KindedStructure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface ParameterDeclarationStructure

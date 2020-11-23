@@ -1,7 +1,7 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
-import { VariableDeclarationStructure, VariableDeclarationSpecificStructure, StructureKind } from "../../../structures";
-import { BindingNamedNode, ExclamationTokenableNode, InitializerExpressionableNode, TypedNode, ExportGetableNode } from "../base";
+import { StructureKind, VariableDeclarationSpecificStructure, VariableDeclarationStructure } from "../../../structures";
+import { BindingNamedNode, ExclamationTokenableNode, ExportGetableNode, InitializerExpressionableNode, TypedNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";

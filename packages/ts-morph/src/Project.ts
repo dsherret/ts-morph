@@ -1,11 +1,11 @@
-import { errors, FileUtils, TransactionalFileSystem, FileSystemHost, RealFileSystemHost, matchGlobs, InMemoryFileSystemHost, ResolutionHostFactory,
-    TsConfigResolver, CompilerOptionsContainer, ts, CompilerOptions, ScriptKind, IterableUtils, StandardizedFilePath } from "@ts-morph/common";
+import { CompilerOptions, CompilerOptionsContainer, errors, FileSystemHost, FileUtils, InMemoryFileSystemHost, IterableUtils, matchGlobs, RealFileSystemHost,
+    ResolutionHostFactory, ScriptKind, StandardizedFilePath, TransactionalFileSystem, ts, TsConfigResolver } from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import { Directory, DirectoryAddOptions } from "./fileSystem";
 import { ProjectContext } from "./ProjectContext";
 import { ManipulationSettings, ManipulationSettingsContainer } from "./options";
-import { SourceFileStructure, OptionalKind } from "./structures";
+import { OptionalKind, SourceFileStructure } from "./structures";
 import { WriterFunction } from "./types";
 
 /** Options for creating a project. */

@@ -1,9 +1,9 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration } from "../../../../compiler";
-import { ClassDeclarationSpecificStructure, ClassLikeDeclarationBaseSpecificStructure, ClassDeclarationStructure, InterfaceDeclarationStructure,
-    StructureKind, OptionalKind } from "../../../../structures";
-import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { ClassDeclarationSpecificStructure, ClassDeclarationStructure, ClassLikeDeclarationBaseSpecificStructure, InterfaceDeclarationStructure, OptionalKind,
+    StructureKind } from "../../../../structures";
+import { fillStructures, getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getType), () => {

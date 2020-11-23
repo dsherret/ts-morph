@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { errors } from "@ts-morph/common";
-import { JsxElementStructure, JsxAttributeStructure, JsxSpreadAttributeStructure, StructureKind, OptionalKind } from "../../structures";
+import { JsxAttributeStructure, JsxElementStructure, JsxSpreadAttributeStructure, OptionalKind, StructureKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 
 export class JsxAttributeDeciderStructurePrinter extends NodePrinter<InferArrayElementType<JsxElementStructure["attributes"]>> {

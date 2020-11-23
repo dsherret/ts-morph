@@ -3,7 +3,7 @@ import { ImportDeclaration } from "../../../../compiler";
 import { errors, ModuleResolutionKind } from "@ts-morph/common";
 import { Project } from "../../../../Project";
 import { WriterFunction } from "../../../../types";
-import { ImportSpecifierStructure, ImportDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
+import { ImportDeclarationStructure, ImportSpecifierStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ImportDeclaration), () => {

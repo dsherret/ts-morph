@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { TransactionalFileSystem, FileSystemHost, InMemoryFileSystemHost } from "../../fileSystem";
+import { FileSystemHost, InMemoryFileSystemHost, TransactionalFileSystem } from "../../fileSystem";
 import { errors } from "../../errors";
 import { TsConfigResolver } from "../../tsconfig";
 

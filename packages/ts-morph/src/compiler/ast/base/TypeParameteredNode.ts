@@ -1,6 +1,6 @@
-import { errors, ArrayUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { ArrayUtils, errors, SyntaxKind, ts } from "@ts-morph/common";
 import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
-import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure, OptionalKind } from "../../../structures";
+import { OptionalKind, TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { NamedNode } from "../base";

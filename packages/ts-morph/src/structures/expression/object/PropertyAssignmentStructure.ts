@@ -1,6 +1,6 @@
 import { WriterFunction } from "../../../types";
 import { PropertyNamedNodeStructure } from "../../base";
-import { Structure, KindedStructure } from "../../Structure";
+import { KindedStructure, Structure } from "../../Structure";
 import { StructureKind } from "../../StructureKind";
 
 export interface PropertyAssignmentStructure extends Structure, PropertyAssignmentSpecificStructure, PropertyNamedNodeStructure {

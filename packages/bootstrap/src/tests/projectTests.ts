@@ -1,6 +1,6 @@
 import { EOL } from "os";
 import { expect } from "chai";
-import { Project, ProjectOptions, createProject, createProjectSync } from "../Project";
+import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";
 import { InMemoryFileSystemHost, ts } from "@ts-morph/common";
 
 describe(nameof(Project), () => {
@@ -377,7 +377,8 @@ describe(nameof(Project), () => {
 
             it("should add the files from tsconfig.json", async () => {
                 const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
-                fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"], "exclude": ["/test/exclude"] }`);
+                fileSystem.writeFileSync("tsconfig.json",
+                    `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"], "exclude": ["/test/exclude"] }`);
                 fileSystem.writeFileSync("/otherFile.ts", "");
                 fileSystem.writeFileSync("/test/file.ts", "");
                 fileSystem.writeFileSync("/test/test2/file2.ts", "");
@@ -709,7 +710,7 @@ describe(nameof(Project), () => {
             fileSystem.writeFileSync("/tsconfig.json", `{ "fies": [] }`);
             const project = createProjectSync({ fileSystem, tsConfigFilePath: "/tsconfig.json" });
             expect(project.createProgram().getConfigFileParsingDiagnostics().map(d => d.messageText)).to.deep.equal([
-                `No inputs were found in config file '/tsconfig.json'. Specified 'include' paths were '["**/*"]' and 'exclude' paths were '[]'.`
+                `No inputs were found in config file '/tsconfig.json'. Specified 'include' paths were '["**/*"]' and 'exclude' paths were '[]'.`,
             ]);
         });
     });

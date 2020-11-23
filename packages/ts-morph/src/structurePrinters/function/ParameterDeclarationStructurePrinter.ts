@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { errors } from "@ts-morph/common";
-import { ParameterDeclarationStructure, OptionalKind } from "../../structures";
+import { OptionalKind, ParameterDeclarationStructure } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 

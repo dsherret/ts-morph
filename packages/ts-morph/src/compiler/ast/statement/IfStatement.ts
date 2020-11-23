@@ -1,4 +1,4 @@
-import { ts, SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, ts } from "@ts-morph/common";
 import { Node } from "../common";
 import { ExpressionedNode } from "../expression";
 import { Statement } from "./Statement";

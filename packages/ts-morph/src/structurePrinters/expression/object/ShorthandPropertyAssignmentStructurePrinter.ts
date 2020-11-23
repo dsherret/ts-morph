@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
-import { ShorthandPropertyAssignmentStructure, OptionalKind } from "../../../structures";
+import { OptionalKind, ShorthandPropertyAssignmentStructure } from "../../../structures";
 import { NodePrinter } from "../../NodePrinter";
 
 export class ShorthandPropertyAssignmentStructurePrinter extends NodePrinter<OptionalKind<ShorthandPropertyAssignmentStructure>> {

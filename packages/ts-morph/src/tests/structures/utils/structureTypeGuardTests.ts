@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
-import { Structure, StructureKind, ClassDeclarationStructure, AbstractableNodeStructure } from "../../../structures";
+import { AbstractableNodeStructure, ClassDeclarationStructure, Structure, StructureKind } from "../../../structures";
 
 // most of this code is not worth testing because it's auto generated
 

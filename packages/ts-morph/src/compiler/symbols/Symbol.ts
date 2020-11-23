@@ -1,4 +1,4 @@
-import { errors, ArrayUtils, SymbolFlags, ts } from "@ts-morph/common";
+import { ArrayUtils, errors, SymbolFlags, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { Node } from "../ast";
 import { Type } from "../types";

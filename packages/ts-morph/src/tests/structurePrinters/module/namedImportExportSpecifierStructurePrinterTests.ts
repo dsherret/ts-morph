@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { FormatCodeSettings } from "../../../compiler";
 import { NamedImportExportSpecifierStructurePrinter } from "../../../structurePrinters";
-import { ImportSpecifierStructure, ExportSpecifierStructure, OptionalKind } from "../../../structures";
+import { ExportSpecifierStructure, ImportSpecifierStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(NamedImportExportSpecifierStructurePrinter), () => {

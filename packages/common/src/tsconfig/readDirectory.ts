@@ -1,5 +1,5 @@
-import { FileUtils, TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
-import { matchFiles, getFileMatcherPatterns, FileSystemEntries } from "../typescript";
+import { FileUtils, StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
+import { FileSystemEntries, getFileMatcherPatterns, matchFiles } from "../typescript";
 
 export function readDirectory(
     fileSystemWrapper: TransactionalFileSystem,

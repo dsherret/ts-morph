@@ -1,6 +1,6 @@
 import { ts } from "@ts-morph/common";
 import { ExpressionedNode } from "../expressioned";
-import { SpreadAssignmentStructure, SpreadAssignmentSpecificStructure, StructureKind, ExpressionedNodeStructure } from "../../../../structures";
+import { ExpressionedNodeStructure, SpreadAssignmentSpecificStructure, SpreadAssignmentStructure, StructureKind } from "../../../../structures";
 import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { ObjectLiteralElement } from "./ObjectLiteralElement";

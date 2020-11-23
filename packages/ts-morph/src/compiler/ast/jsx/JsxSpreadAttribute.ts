@@ -1,6 +1,6 @@
 import { ts } from "@ts-morph/common";
 import { removeChildren } from "../../../manipulation";
-import { JsxSpreadAttributeStructure, JsxSpreadAttributeSpecificStructure, StructureKind } from "../../../structures";
+import { JsxSpreadAttributeSpecificStructure, JsxSpreadAttributeStructure, StructureKind } from "../../../structures";
 import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common";

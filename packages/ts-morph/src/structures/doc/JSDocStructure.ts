@@ -1,5 +1,5 @@
 import { WriterFunction } from "../../types";
-import { Structure, KindedStructure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { OptionalKind } from "../types";
 import { JSDocTagStructure } from "./JSDocTagStructure";

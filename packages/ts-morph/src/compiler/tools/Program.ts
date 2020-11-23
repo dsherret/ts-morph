@@ -1,4 +1,4 @@
-import { errors, ModuleResolutionKind, ts, getEmitModuleResolutionKind } from "@ts-morph/common";
+import { errors, getEmitModuleResolutionKind, ModuleResolutionKind, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { SourceFile } from "../ast/module";
 import { Diagnostic, DiagnosticWithLocation, EmitResult, MemoryEmitResult, MemoryEmitResultFile } from "./results";
@@ -37,7 +37,7 @@ export interface ProgramCreationData {
     context: ProjectContext;
     rootNames: ReadonlyArray<string>;
     host: ts.CompilerHost;
-    configFileParsingDiagnostics: ts.Diagnostic[]
+    configFileParsingDiagnostics: ts.Diagnostic[];
 }
 
 /**
@@ -95,7 +95,7 @@ export class Program {
                     compilerOptions,
                     host,
                     this._oldProgram,
-                    this._configFileParsingDiagnostics
+                    this._configFileParsingDiagnostics,
                 );
                 delete this._oldProgram;
             }

@@ -1,5 +1,5 @@
-import { ts, ScriptKind, ScriptTarget } from "../typescript";
-import { TransactionalFileSystem, StandardizedFilePath } from "../fileSystem";
+import { ScriptKind, ScriptTarget, ts } from "../typescript";
+import { StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
 import { deepClone } from "../utils";
 import { createCompilerSourceFile } from "./createCompilerSourceFile";
 

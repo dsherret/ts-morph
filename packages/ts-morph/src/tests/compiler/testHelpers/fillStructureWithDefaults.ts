@@ -1,10 +1,10 @@
-import { NamespaceDeclarationStructure, VariableStatementStructure, OptionalKind, StructureKind, VariableDeclarationStructure, ImportDeclarationStructure,
-    ClassDeclarationStructure, ImportSpecifierStructure, EnumDeclarationStructure, InterfaceDeclarationStructure, FunctionDeclarationStructure,
-    TypeAliasDeclarationStructure, PropertyDeclarationStructure, TypeParameterDeclarationStructure, ParameterDeclarationStructure, JSDocStructure,
-    PropertySignatureStructure, MethodSignatureStructure, CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure,
-    ConstructSignatureDeclarationStructure, FunctionDeclarationOverloadStructure, EnumMemberStructure, MethodDeclarationStructure,
-    MethodDeclarationOverloadStructure, SetAccessorDeclarationStructure, GetAccessorDeclarationStructure, DecoratorStructure, ConstructorDeclarationStructure,
-    ConstructorDeclarationOverloadStructure, JSDocTagStructure } from "../../../structures";
+import { CallSignatureDeclarationStructure, ClassDeclarationStructure, ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure,
+    ConstructSignatureDeclarationStructure, DecoratorStructure, EnumDeclarationStructure, EnumMemberStructure, FunctionDeclarationOverloadStructure,
+    FunctionDeclarationStructure, GetAccessorDeclarationStructure, ImportDeclarationStructure, ImportSpecifierStructure, IndexSignatureDeclarationStructure,
+    InterfaceDeclarationStructure, JSDocStructure, JSDocTagStructure, MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodSignatureStructure,
+    NamespaceDeclarationStructure, OptionalKind, ParameterDeclarationStructure, PropertyDeclarationStructure, PropertySignatureStructure,
+    SetAccessorDeclarationStructure, StructureKind, TypeAliasDeclarationStructure, TypeParameterDeclarationStructure, VariableDeclarationStructure,
+    VariableStatementStructure } from "../../../structures";
 import { NamespaceDeclarationKind, VariableDeclarationKind } from "../../../compiler";
 
 // this file is incomplete... update accordingly as needed

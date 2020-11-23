@@ -1,7 +1,7 @@
 import { AbstractableNodeStructure, AsyncableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure,
-    PropertyNamedNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure, TypeParameteredNodeStructure,
-    QuestionTokenableNodeStructure } from "../base";
-import { Structure, KindedStructure } from "../Structure";
+    PropertyNamedNodeStructure, QuestionTokenableNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure,
+    TypeParameteredNodeStructure } from "../base";
+import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { FunctionLikeDeclarationStructure } from "../function";
 import { OptionalKind } from "../types";

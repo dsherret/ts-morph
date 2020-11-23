@@ -1,6 +1,6 @@
 import { Memoize, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../../ProjectContext";
-import { SourceFile, Node } from "../../ast";
+import { Node, SourceFile } from "../../ast";
 import { TextSpan } from "./TextSpan";
 
 /**

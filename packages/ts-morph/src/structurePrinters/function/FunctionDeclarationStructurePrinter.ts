@@ -1,4 +1,4 @@
-import { StringUtils, ObjectUtils } from "@ts-morph/common";
+import { ObjectUtils, StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, OptionalKind } from "../../structures";

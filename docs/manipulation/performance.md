@@ -29,13 +29,7 @@ Example:
 ```ts
 // this code will get a structure from declarations.ts, make all the descendants not be exported,
 // then create a new file called private.ts from that structure
-import {
-    Structures,
-    forEachStructureChild,
-    SourceFileStructure,
-    StructureKind,
-    Structures,
-} from "ts-morph";
+import { forEachStructureChild, SourceFileStructure, StructureKind, Structures, Structures } from "ts-morph";
 
 const project = new Project({ tsConfigFilePath: "tsconfig.json" });
 const classesFile = project.getSourceFileOrThrow("declarations.ts");
@@ -162,7 +156,7 @@ It won't be updated when manipulation happens again. Note that after doing this,
 It's possible to make sure all created nodes within a block are forgotten:
 
 ```ts
-import { Project, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration } from "ts-morph";
+import { ClassDeclaration, InterfaceDeclaration, NamespaceDeclaration, Project } from "ts-morph";
 
 const project = new Project();
 const text = "namespace Namespace { interface Interface {} class Class {} }";

@@ -1,4 +1,4 @@
-import { FileSystemHost, CompilerOptions, getCompilerOptionsFromTsConfig as coreGetCompilerOptionsFromTsConfig } from "@ts-morph/common";
+import { CompilerOptions, FileSystemHost, getCompilerOptionsFromTsConfig as coreGetCompilerOptionsFromTsConfig } from "@ts-morph/common";
 import { Diagnostic } from "../../compiler";
 
 export interface CompilerOptionsFromTsConfigOptions {

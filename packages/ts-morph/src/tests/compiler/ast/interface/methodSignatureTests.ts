@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { InterfaceDeclaration, MethodSignature } from "../../../../compiler";
-import { MethodSignatureStructure, TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { MethodSignatureStructure, StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(MethodSignature), () => {
     function getFirstMethodWithInfo(code: string) {

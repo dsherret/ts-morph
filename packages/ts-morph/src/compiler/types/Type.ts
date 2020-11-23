@@ -1,6 +1,6 @@
 import { errors, ObjectFlags, ts, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
-import { getSymbolByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
+import { getNotFoundErrorMessageForNameOrFindFunction, getSymbolByNameOrFindFunction } from "../../utils";
 import { Signature, Symbol } from "../symbols";
 import { Node } from "../ast";
 import { TypeParameter } from "./TypeParameter";

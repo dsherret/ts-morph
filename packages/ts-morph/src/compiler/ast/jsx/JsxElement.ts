@@ -1,7 +1,7 @@
 import { errors, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
-import { JsxElementStructure, JsxElementSpecificStructure, StructureKind } from "../../../structures";
+import { JsxElementSpecificStructure, JsxElementStructure, StructureKind } from "../../../structures";
 import { printTextFromStringOrWriter } from "../../../utils";
 import { JsxChild } from "../aliases";
 import { getBodyText, getBodyTextWithoutLeadingIndentation } from "../base/helpers";

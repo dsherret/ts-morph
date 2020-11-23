@@ -3,7 +3,7 @@ import { JsxAttribute, JsxSelfClosingElement } from "../../../../compiler";
 import { errors, SyntaxKind } from "@ts-morph/common";
 import { JsxAttributeStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromTextWithDescendant, OptionalTrivia, OptionalKindAndTrivia } from "../../testHelpers";
+import { getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxAttribute>(text, SyntaxKind.JsxAttribute, { isJsx: true });

@@ -93,11 +93,10 @@ export class RealFileSystemHost implements FileSystemHost {
     move(srcPath: string, destPath: string) {
         return new Promise<void>((resolve, reject) => {
             this.fs.rename(srcPath, destPath, err => {
-                if (err) {
+                if (err)
                     reject(err);
-                } else {
+                else
                     resolve();
-                }
             });
         });
     }
@@ -112,11 +111,10 @@ export class RealFileSystemHost implements FileSystemHost {
         return new Promise<void>((resolve, reject) => {
             // this overwrites by default
             this.fs.copyFile(srcPath, destPath, err => {
-                if (err) {
+                if (err)
                     reject(err);
-                } else {
+                else
                     resolve();
-                }
             });
         });
     }

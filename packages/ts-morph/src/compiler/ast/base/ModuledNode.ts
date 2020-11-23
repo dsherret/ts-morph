@@ -1,12 +1,12 @@
-import { errors, ArrayUtils, ts, SyntaxKind } from "@ts-morph/common";
+import { ArrayUtils, errors, SyntaxKind, ts } from "@ts-morph/common";
 import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulation";
-import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, OptionalKind } from "../../../structures";
+import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { Symbol } from "../../symbols";
 import { isComment } from "../utils";
 import { ExportedDeclarations } from "../aliases";
 import { Node } from "../common";
-import { ImportDeclaration, ExportDeclaration, ExportAssignment } from "../module";
+import { ExportAssignment, ExportDeclaration, ImportDeclaration } from "../module";
 import { StatementedNode } from "../statement";
 
 export type ModuledNodeExtensionType = Node<ts.SourceFile | ts.NamespaceDeclaration> & StatementedNode;

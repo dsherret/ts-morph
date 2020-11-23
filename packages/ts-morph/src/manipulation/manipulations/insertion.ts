@@ -1,8 +1,8 @@
 import { StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Node, SourceFile } from "../../compiler";
-import { getEndPosFromIndex, getInsertPosFromIndex, getRangeWithoutCommentsFromArray, verifyAndGetIndex, appendCommaToText,
-    getNodesToReturn } from "../helpers";
+import { appendCommaToText, getEndPosFromIndex, getInsertPosFromIndex, getNodesToReturn, getRangeWithoutCommentsFromArray,
+    verifyAndGetIndex } from "../helpers";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { InsertionTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";

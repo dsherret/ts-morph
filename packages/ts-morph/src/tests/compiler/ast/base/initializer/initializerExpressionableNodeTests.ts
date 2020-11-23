@@ -1,6 +1,6 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, EnumDeclaration, InitializerExpressionableNode, PropertyDeclaration, BindingElement } from "../../../../../compiler";
+import { BindingElement, ClassDeclaration, EnumDeclaration, InitializerExpressionableNode, PropertyDeclaration } from "../../../../../compiler";
 import { InitializerExpressionableNodeStructure } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";

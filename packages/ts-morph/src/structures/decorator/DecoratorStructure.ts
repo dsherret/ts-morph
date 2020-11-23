@@ -1,5 +1,5 @@
 import { WriterFunction } from "../../types";
-import { Structure, KindedStructure } from "../Structure";
+import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface DecoratorStructure extends Structure, DecoratorSpecificStructure {

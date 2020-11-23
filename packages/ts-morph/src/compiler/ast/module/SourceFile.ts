@@ -1,5 +1,5 @@
-import { errors, ArrayUtils, StringUtils, Memoize, EventContainer, FileUtils, LanguageVariant, ScriptTarget, ts, ScriptKind,
-    StandardizedFilePath } from "@ts-morph/common";
+import { ArrayUtils, errors, EventContainer, FileUtils, LanguageVariant, Memoize, ScriptKind, ScriptTarget, StandardizedFilePath, StringUtils,
+    ts } from "@ts-morph/common";
 import { Directory } from "../../../fileSystem";
 import { getTextFromTextChanges, insertIntoTextRange, replaceNodeText, replaceSourceFileForFilePathMove,
     replaceSourceFileTextForFormatting } from "../../../manipulation";
@@ -7,7 +7,7 @@ import { getNextMatchingPos, getPreviousMatchingPos } from "../../../manipulatio
 import { ProjectContext } from "../../../ProjectContext";
 import { SourceFileSpecificStructure, SourceFileStructure, StructureKind } from "../../../structures";
 import { Constructor } from "../../../types";
-import { ModuleUtils, SourceFileReferenceContainer, SourceFileReferencingNodes, CharCodes } from "../../../utils";
+import { CharCodes, ModuleUtils, SourceFileReferenceContainer, SourceFileReferencingNodes } from "../../../utils";
 import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, TextChange, UserPreferences } from "../../tools";
 import { ModuledNode, TextInsertableNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";

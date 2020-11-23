@@ -9,7 +9,7 @@
  * could cause the statements to be written multiple times.
  * -----------------------------------------------------------
  */
-import { TsMorphInspector, WrappedNode, Mixin } from "../inspectors";
+import { Mixin, TsMorphInspector, WrappedNode } from "../inspectors";
 import { Problem } from "./Problem";
 
 export function ensureMixinNotAppliedMultipleTimes(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {

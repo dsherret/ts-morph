@@ -1,5 +1,5 @@
 import { ts } from "@ts-morph/common";
-import { MethodSignatureStructure, MethodSignatureSpecificStructure, StructureKind } from "../../../structures";
+import { MethodSignatureSpecificStructure, MethodSignatureStructure, StructureKind } from "../../../structures";
 import { ChildOrderableNode, JSDocableNode, PropertyNamedNode, QuestionTokenableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";

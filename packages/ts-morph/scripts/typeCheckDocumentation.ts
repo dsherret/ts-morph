@@ -1,6 +1,6 @@
 import { tsMorph } from "@ts-morph/scripts";
 import { getProject } from "./common";
-import { MarkDownFile, CodeBlock } from "./markdown";
+import { CodeBlock, MarkDownFile } from "./markdown";
 
 const errorCodes = {
     CannotRedeclareVariable: 2451,

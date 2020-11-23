@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { NamespaceDeclarationKind } from "../../compiler";
-import { errors, StringUtils, ObjectUtils } from "@ts-morph/common";
+import { errors, ObjectUtils, StringUtils } from "@ts-morph/common";
 import { StructurePrinterFactory } from "../../factories";
 import { setValueIfUndefined } from "../../utils";
 import { NamespaceDeclarationStructure, OptionalKind } from "../../structures";

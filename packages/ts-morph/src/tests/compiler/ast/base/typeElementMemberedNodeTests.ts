@@ -1,9 +1,9 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature, PropertySignature,
-    TypeElementMemberedNode, CommentTypeElement, TypeLiteralNode, Node } from "../../../../compiler";
+import { CallSignatureDeclaration, CommentTypeElement, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature, Node,
+    PropertySignature, TypeElementMemberedNode, TypeLiteralNode } from "../../../../compiler";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure, TypeElementMemberStructures, StructureKind } from "../../../../structures";
+    PropertySignatureStructure, StructureKind, TypeElementMemberedNodeStructure, TypeElementMemberStructures } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../testHelpers";
 

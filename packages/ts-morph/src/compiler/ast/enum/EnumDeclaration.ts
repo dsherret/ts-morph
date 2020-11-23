@@ -1,6 +1,6 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
-import { EnumDeclarationStructure, EnumMemberStructure, EnumDeclarationSpecificStructure, StructureKind, OptionalKind } from "../../../structures";
+import { EnumDeclarationSpecificStructure, EnumDeclarationStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../structures";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";

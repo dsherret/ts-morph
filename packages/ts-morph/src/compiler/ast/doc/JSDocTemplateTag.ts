@@ -1,4 +1,4 @@
-import { ts, errors } from "@ts-morph/common";
+import { errors, ts } from "@ts-morph/common";
 import { JSDocTypeParameteredTag } from "./base";
 import { JSDocTag } from "./JSDocTag";
 

@@ -1,4 +1,4 @@
-import { ts, ScriptKind } from "../typescript";
+import { ScriptKind, ts } from "../typescript";
 import { StandardizedFilePath } from "../fileSystem";
 
 /**

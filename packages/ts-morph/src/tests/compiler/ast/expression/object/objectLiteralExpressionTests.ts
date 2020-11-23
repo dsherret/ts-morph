@@ -1,10 +1,9 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { Node, GetAccessorDeclaration, MethodDeclaration, ObjectLiteralExpression, PropertyAssignment, SetAccessorDeclaration, ShorthandPropertyAssignment,
+import { GetAccessorDeclaration, MethodDeclaration, Node, ObjectLiteralExpression, PropertyAssignment, SetAccessorDeclaration, ShorthandPropertyAssignment,
     SpreadAssignment } from "../../../../../compiler";
-import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, OptionalKind, ObjectLiteralExpressionPropertyStructures,
-    StructureKind } from "../../../../../structures";
+import { GetAccessorDeclarationStructure, MethodDeclarationStructure, ObjectLiteralExpressionPropertyStructures, OptionalKind, PropertyAssignmentStructure,
+    SetAccessorDeclarationStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, StructureKind } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { getInfoFromText } from "../../../testHelpers";
 

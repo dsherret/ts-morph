@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
-import { TypeParameterDeclarationStructure, StructureKind } from "../../../../structures";
+import { StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(TypeParameterDeclaration), () => {

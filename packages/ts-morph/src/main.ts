@@ -1,17 +1,17 @@
 /// <reference path="typings/index.d.ts" />
 import { errors } from "@ts-morph/common";
-export { FileSystemHost, ResolutionHost, ResolutionHostFactory, CompilerOptionsContainer, SettingsContainer, ts, SyntaxKind, ScriptTarget, ScriptKind,
-    LanguageVariant, EmitHint, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory,
-    CompilerOptions, EditorSettings, InMemoryFileSystemHostOptions, InMemoryFileSystemHost } from "@ts-morph/common";
+export { CompilerOptions, CompilerOptionsContainer, DiagnosticCategory, EditorSettings, EmitHint, FileSystemHost, InMemoryFileSystemHost,
+    InMemoryFileSystemHostOptions, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ResolutionHost, ResolutionHostFactory,
+    ScriptKind, ScriptTarget, SettingsContainer, SymbolFlags, SyntaxKind, ts, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 export * from "./codeBlockWriter";
 export * from "./compiler";
 const { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError,
     DirectoryNotFoundError, NotImplementedError, NotSupportedError, PathNotFoundError } = errors;
-export { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError,
-    DirectoryNotFoundError, NotImplementedError, NotSupportedError, PathNotFoundError };
+export { ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError, DirectoryNotFoundError, FileNotFoundError,
+    InvalidOperationError, NotImplementedError, NotSupportedError, PathNotFoundError };
 export { Directory, DirectoryAddOptions, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions } from "./fileSystem";
 export * from "./options";
-export { ProjectOptions, Project, SourceFileCreateOptions } from "./Project";
+export { Project, ProjectOptions, SourceFileCreateOptions } from "./Project";
 export * from "./structures";
 export { Constructor, InstanceOf as Instance, WriterFunction } from "./types";
 export { createWrappedNode, CreateWrappedNodeOptions } from "./utils/compiler/createWrappedNode";

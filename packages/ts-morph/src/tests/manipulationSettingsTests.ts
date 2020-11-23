@@ -1,4 +1,4 @@
-import { ts, EditorSettings, NewLineKind } from "@ts-morph/common";
+import { EditorSettings, NewLineKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { QuoteKind, UserPreferences } from "../compiler";
 import { IndentationText, ManipulationSettings, ManipulationSettingsContainer } from "../options";

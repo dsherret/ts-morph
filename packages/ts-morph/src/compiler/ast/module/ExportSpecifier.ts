@@ -1,11 +1,11 @@
 import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
-import { insertIntoParentTextRange, removeCommaSeparatedChild, removeChildren } from "../../../manipulation";
+import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { LocalTargetDeclarations } from "../aliases";
 import { Node } from "../common";
 import { Symbol } from "../../symbols";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
-import { ExportSpecifierStructure, ExportSpecifierSpecificStructure, StructureKind } from "../../../structures";
+import { ExportSpecifierSpecificStructure, ExportSpecifierStructure, StructureKind } from "../../../structures";
 
 // todo: There's a lot of common code that could be shared with ImportSpecifier. It could be moved to a mixin.
 

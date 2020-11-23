@@ -1,8 +1,8 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
-import { removeChildren, insertIntoParentTextRange } from "../../../manipulation";
-import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure, StructureKind } from "../../../structures";
-import { AmbientableNode, BodiedNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode, UnwrappableNode,
-    ModuledNode } from "../base";
+import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
+import { NamespaceDeclarationSpecificStructure, NamespaceDeclarationStructure, StructureKind } from "../../../structures";
+import { AmbientableNode, BodiedNode, ExportableNode, JSDocableNode, ModifierableNode, ModuledNode, NamedNode, TextInsertableNode,
+    UnwrappableNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Identifier } from "../name";

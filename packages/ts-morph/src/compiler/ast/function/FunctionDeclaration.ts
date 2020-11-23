@@ -1,10 +1,10 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import { removeOverloadableStatementedNodeChild } from "../../../manipulation";
 import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFunctions";
-import { FunctionDeclarationOverloadStructure, FunctionDeclarationOverloadSpecificStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure,
-    StructureKind, OptionalKind } from "../../../structures";
-import { AmbientableNode, AsyncableNode, BodyableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode, TextInsertableNode, UnwrappableNode,
-    SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
+import { FunctionDeclarationOverloadSpecificStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure, FunctionDeclarationStructure,
+    OptionalKind, StructureKind } from "../../../structures";
+import { AmbientableNode, AsyncableNode, BodyableNode, ExportableNode, GeneratorableNode, JSDocableNode, ModifierableNode, NameableNode, SignaturedDeclaration,
+    TextInsertableNode, TypeParameteredNode, UnwrappableNode } from "../base";
 import { callBaseSet } from "../callBaseSet";
 import { Statement } from "../statement";
 import { NamespaceChildableNode } from "../module";

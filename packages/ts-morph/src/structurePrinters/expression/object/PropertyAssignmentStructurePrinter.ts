@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
-import { PropertyAssignmentStructure, OptionalKind } from "../../../structures";
+import { OptionalKind, PropertyAssignmentStructure } from "../../../structures";
 import { printTextFromStringOrWriter } from "../../../utils";
 import { NodePrinter } from "../../NodePrinter";
 

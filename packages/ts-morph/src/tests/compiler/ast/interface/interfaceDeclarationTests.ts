@@ -1,7 +1,8 @@
 import { expect } from "chai";
 import { InterfaceDeclaration } from "../../../../compiler";
-import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure, TypeParameterDeclarationStructure, StructureKind, OptionalKind } from "../../../../structures";
-import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia, fillStructures } from "../../testHelpers";
+import { InterfaceDeclarationSpecificStructure, InterfaceDeclarationStructure, OptionalKind, StructureKind,
+    TypeParameterDeclarationStructure } from "../../../../structures";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
     describe(nameof<InterfaceDeclaration>(d => d.getType), () => {

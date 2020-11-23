@@ -1,4 +1,4 @@
-import { errors, SyntaxKind, ts, getSyntaxKindName } from "@ts-morph/common";
+import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
 import { Node } from "../../common";
 import { Expression } from "../Expression";

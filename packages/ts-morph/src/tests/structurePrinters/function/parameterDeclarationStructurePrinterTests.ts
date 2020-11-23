@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ParameterDeclarationStructurePrinter } from "../../../structurePrinters";
-import { ParameterDeclarationStructure, OptionalKind } from "../../../structures";
+import { OptionalKind, ParameterDeclarationStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
 describe(nameof(ParameterDeclarationStructurePrinter), () => {
