@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.1.0"></a>
+# [9.1.0](https://github.com/dsherret/ts-morph/compare/9.0.0...9.1.0) (2020-11-26)
+
+
+### Features
+
+* Add Directory#getProject() ([bef39b8](https://github.com/dsherret/ts-morph/commit/bef39b8))
+* Support providing file paths to `getRelativePathTo` and `getRelativePathToAsModuleSpecifier`. ([df43d12](https://github.com/dsherret/ts-morph/commit/df43d12))
+
+
+
 <a name="9.0.0"></a>
 # [9.0.0](https://github.com/dsherret/ts-morph/compare/8.2.0...9.0.0) (2020-11-21)
 
