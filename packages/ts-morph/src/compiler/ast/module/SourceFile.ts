@@ -780,6 +780,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the relative path to the specified path.
+     * @param fileOrDirPath - The file or directory path.
+     */
+    getRelativePathTo(fileOrDirPath: string): string;
+    /**
      * Gets the relative path to another source file.
      * @param sourceFile - Source file.
      */
@@ -789,10 +794,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param directory - Directory.
      */
     getRelativePathTo(directory: Directory): string;
-    getRelativePathTo(sourceFileOrDir: SourceFile | Directory) {
-        return this.getDirectory().getRelativePathTo(sourceFileOrDir);
+    getRelativePathTo(sourceFileDirOrPath: SourceFile | Directory | string) {
+        return this.getDirectory().getRelativePathTo(sourceFileDirOrPath);
     }
 
+    /**
+     * Gets the relative path to the specified file path as a module specifier.
+     * @param filePath - File path.
+     * @remarks To get to a directory, provide `path/to/directory/index.ts`.
+     */
+    getRelativePathAsModuleSpecifierTo(filePath: string): string;
     /**
      * Gets the relative path to the specified source file as a module specifier.
      * @param sourceFile - Source file.
@@ -803,8 +814,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param directory - Directory.
      */
     getRelativePathAsModuleSpecifierTo(directory: Directory): string;
-    getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory) {
-        return this.getDirectory().getRelativePathAsModuleSpecifierTo(sourceFileOrDir);
+    getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath: SourceFile | Directory | string) {
+        return this.getDirectory().getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath);
     }
 
     /**

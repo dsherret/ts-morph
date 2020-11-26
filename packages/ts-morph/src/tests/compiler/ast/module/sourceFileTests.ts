@@ -1065,6 +1065,8 @@ function myFunction(param: MyClass) {
             const fromFile = project.createSourceFile(from);
             const toFile = project.createSourceFile(to);
             expect(fromFile.getRelativePathTo(toFile)).to.equal(expected);
+            // test providing a string
+            expect(fromFile.getRelativePathTo(to)).to.equal(expected);
         }
 
         // most of these tests are in fileUtilsTests
@@ -1081,7 +1083,7 @@ function myFunction(param: MyClass) {
         }
 
         it("should get the relative path to a directory", () => {
-            doSourceFileTest("/dir/from.ts", "/dir2/dir3", "../dir2/dir3");
+            doDirTest("/dir/from.ts", "/dir2/dir3", "../dir2/dir3");
         });
     });
 
@@ -1091,6 +1093,8 @@ function myFunction(param: MyClass) {
             const fromFile = project.createSourceFile(from);
             const toFile = from === to ? fromFile : project.createSourceFile(to);
             expect(fromFile.getRelativePathAsModuleSpecifierTo(toFile)).to.equal(expected);
+            // test providing a string
+            expect(fromFile.getRelativePathAsModuleSpecifierTo(to)).to.equal(expected);
         }
 
         it("should get the module specifier to a source file in a different directory", () => {

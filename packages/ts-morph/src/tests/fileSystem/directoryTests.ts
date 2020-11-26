@@ -1790,6 +1790,8 @@ describe(nameof(Directory), () => {
             const fromDir = project.createDirectory(from);
             const toFile = project.createSourceFile(to);
             expect(fromDir.getRelativePathTo(toFile)).to.equal(expected);
+            // test providing a string
+            expect(fromDir.getRelativePathTo(to)).to.equal(expected);
         }
 
         // most of these tests are in fileUtilsTests
@@ -1806,16 +1808,18 @@ describe(nameof(Directory), () => {
         }
 
         it("should get the relative path to a directory", () => {
-            doSourceFileTest("/dir", "/dir2/dir3", "../dir2/dir3");
+            doDirTest("/dir", "/dir2/dir3", "../dir2/dir3");
         });
     });
 
     describe(nameof<Directory>(s => s.getRelativePathAsModuleSpecifierTo), () => {
         function doSourceFileTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
             const project = new Project({ useInMemoryFileSystem: true, compilerOptions });
-            const fromFile = from === "/" ? project.addDirectoryAtPath(from) : project.createDirectory(from);
+            const fromDir = from === "/" ? project.addDirectoryAtPath(from) : project.createDirectory(from);
             const toFile = project.createSourceFile(to);
-            expect(fromFile.getRelativePathAsModuleSpecifierTo(toFile)).to.equal(expected);
+            expect(fromDir.getRelativePathAsModuleSpecifierTo(toFile)).to.equal(expected);
+            // test providing a string
+            expect(fromDir.getRelativePathAsModuleSpecifierTo(to)).to.equal(expected);
         }
 
         it("should get the module specifier to a source file in a different directory", () => {

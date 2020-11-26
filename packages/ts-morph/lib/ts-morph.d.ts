@@ -416,6 +416,11 @@ export declare class Directory {
     /** Synchronously saves the directory and all the unsaved source files to the disk. */
     saveSync(): void;
     /**
+     * Gets the relative path to the specified path.
+     * @param fileOrDirPath - The file or directory path.
+     */
+    getRelativePathTo(fileOrDirPath: string): string;
+    /**
      * Gets the relative path to another source file.
      * @param sourceFile - Source file.
      */
@@ -425,6 +430,12 @@ export declare class Directory {
      * @param directory - Directory.
      */
     getRelativePathTo(directory: Directory): string;
+    /**
+     * Gets the relative path to the specified file path as a module specifier.
+     * @param filePath - File path.
+     * @remarks To get to a directory, provide `path/to/directory/index.ts`.
+     */
+    getRelativePathAsModuleSpecifierTo(filePath: string): string;
     /**
      * Gets the relative path to the specified source file as a module specifier.
      * @param sourceFile - Source file.
@@ -7373,6 +7384,11 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     refreshFromFileSystemSync(): FileSystemRefreshResult;
     /**
+     * Gets the relative path to the specified path.
+     * @param fileOrDirPath - The file or directory path.
+     */
+    getRelativePathTo(fileOrDirPath: string): string;
+    /**
      * Gets the relative path to another source file.
      * @param sourceFile - Source file.
      */
@@ -7382,6 +7398,12 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param directory - Directory.
      */
     getRelativePathTo(directory: Directory): string;
+    /**
+     * Gets the relative path to the specified file path as a module specifier.
+     * @param filePath - File path.
+     * @remarks To get to a directory, provide `path/to/directory/index.ts`.
+     */
+    getRelativePathAsModuleSpecifierTo(filePath: string): string;
     /**
      * Gets the relative path to the specified source file as a module specifier.
      * @param sourceFile - Source file.

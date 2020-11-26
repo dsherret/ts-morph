@@ -826,6 +826,11 @@ export class Directory {
     }
 
     /**
+     * Gets the relative path to the specified path.
+     * @param fileOrDirPath - The file or directory path.
+     */
+    getRelativePathTo(fileOrDirPath: string): string;
+    /**
      * Gets the relative path to another source file.
      * @param sourceFile - Source file.
      */
@@ -836,15 +841,26 @@ export class Directory {
      */
     getRelativePathTo(directory: Directory): string;
     /** @internal */
-    getRelativePathTo(sourceFileOrDir: SourceFile | Directory): string;
-    getRelativePathTo(sourceFileOrDir: SourceFile | Directory) {
+    getRelativePathTo(sourceFileOrDir: SourceFile | Directory | string): string;
+    getRelativePathTo(sourceFileDirOrPath: SourceFile | Directory | string) {
+        const thisDirectory = this;
         return FileUtils.getRelativePathTo(this.getPath(), getPath());
 
         function getPath() {
-            return sourceFileOrDir instanceof SourceFile ? sourceFileOrDir.getFilePath() : sourceFileOrDir.getPath();
+            return sourceFileDirOrPath instanceof SourceFile
+                ? sourceFileDirOrPath.getFilePath()
+                : sourceFileDirOrPath instanceof Directory
+                ? sourceFileDirOrPath.getPath()
+                : thisDirectory._context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFileDirOrPath, thisDirectory.getPath());
         }
     }
 
+    /**
+     * Gets the relative path to the specified file path as a module specifier.
+     * @param filePath - File path.
+     * @remarks To get to a directory, provide `path/to/directory/index.ts`.
+     */
+    getRelativePathAsModuleSpecifierTo(filePath: string): string;
     /**
      * Gets the relative path to the specified source file as a module specifier.
      * @param sourceFile - Source file.
@@ -856,28 +872,22 @@ export class Directory {
      */
     getRelativePathAsModuleSpecifierTo(directory: Directory): string;
     /** @internal */
-    getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory): string;
-    getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory) {
+    getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory | string): string;
+    getRelativePathAsModuleSpecifierTo(sourceFileDirOrFilePath: SourceFile | Directory | string) {
         const moduleResolution = this._context.program.getEmitModuleResolutionKind();
         const thisDirectory = this;
         const moduleSpecifier = FileUtils.getRelativePathTo(this.getPath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
         return moduleSpecifier.startsWith("../") ? moduleSpecifier : "./" + moduleSpecifier;
 
         function getPath() {
-            return sourceFileOrDir instanceof SourceFile ? getPathForSourceFile(sourceFileOrDir) : getPathForDirectory(sourceFileOrDir);
+            return sourceFileDirOrFilePath instanceof SourceFile
+                ? getPathForSourceFile(sourceFileDirOrFilePath)
+                : sourceFileDirOrFilePath instanceof Directory
+                ? getPathForDirectory(sourceFileDirOrFilePath)
+                : getPathForFilePath(thisDirectory._context.fileSystemWrapper.getStandardizedAbsolutePath(sourceFileDirOrFilePath, thisDirectory.getPath()));
 
             function getPathForSourceFile(sourceFile: SourceFile) {
-                switch (moduleResolution) {
-                    case ModuleResolutionKind.NodeJs:
-                        const filePath = sourceFile.getFilePath();
-                        if (sourceFile.getDirectory() === thisDirectory)
-                            return filePath;
-                        return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
-                    case ModuleResolutionKind.Classic:
-                        return sourceFile.getFilePath();
-                    default:
-                        return errors.throwNotImplementedForNeverValueError(moduleResolution);
-                }
+                return getPathForFilePath(sourceFile.getFilePath());
             }
 
             function getPathForDirectory(dir: Directory) {
@@ -888,6 +898,20 @@ export class Directory {
                         return dir.getPath();
                     case ModuleResolutionKind.Classic:
                         return FileUtils.pathJoin(dir.getPath(), "index.ts");
+                    default:
+                        return errors.throwNotImplementedForNeverValueError(moduleResolution);
+                }
+            }
+
+            function getPathForFilePath(filePath: StandardizedFilePath) {
+                const dirPath = FileUtils.getDirPath(filePath);
+                switch (moduleResolution) {
+                    case ModuleResolutionKind.NodeJs:
+                        if (dirPath === thisDirectory.getPath())
+                            return filePath;
+                        return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "") as StandardizedFilePath;
+                    case ModuleResolutionKind.Classic:
+                        return filePath;
                     default:
                         return errors.throwNotImplementedForNeverValueError(moduleResolution);
                 }
