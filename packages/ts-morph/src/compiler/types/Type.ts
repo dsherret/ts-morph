@@ -234,6 +234,8 @@ export class Type<TType extends ts.Type = ts.Type> {
 
     /**
      * Gets the target type of a type reference if it exists.
+     *
+     * For example, given `Promise<string>` this will return `Promise<T>`.
      */
     getTargetType(): Type<ts.GenericType> | undefined {
         const targetType = (this.compilerType as any as ts.TypeReference).target || undefined;
@@ -242,6 +244,8 @@ export class Type<TType extends ts.Type = ts.Type> {
 
     /**
      * Gets the target type of a type reference or throws if it doesn't exist.
+     *
+     * For example, given `Promise<string>` this will return `Promise<T>`.
      */
     getTargetTypeOrThrow(): Type<ts.GenericType> {
         return errors.throwIfNullOrUndefined(this.getTargetType(), "Expected to find the target type.");
