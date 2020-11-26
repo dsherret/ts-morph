@@ -106,7 +106,10 @@ export class FileUtils {
      * @param fileOrDirPath - Path.
      */
     static standardizeSlashes<T extends string>(fileOrDirPath: T): T {
-        return fileOrDirPath.replace(this.standardizeSlashesRegex, "/") as T;
+        let result = fileOrDirPath.replace(this.standardizeSlashesRegex, "/");
+        if (result !== "/" && result.endsWith("/"))
+            result = result.substring(0, result.length - 1);
+        return result as T;
     }
 
     /**

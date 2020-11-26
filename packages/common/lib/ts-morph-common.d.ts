@@ -1,12 +1,5 @@
 import * as ts from "typescript";
 
-/**
- * Gets the compiler options from a specified tsconfig.json
- * @param filePath - File path to the tsconfig.json.
- * @param options - Options.
- */
-export declare function getCompilerOptionsFromTsConfig(filePath: string, options?: CompilerOptionsFromTsConfigOptions): CompilerOptionsFromTsConfigResult;
-
 export interface CompilerOptionsFromTsConfigOptions {
     encoding?: string;
     fileSystem?: FileSystemHost;
@@ -17,6 +10,13 @@ export interface CompilerOptionsFromTsConfigResult {
     errors: ts.Diagnostic[];
 }
 
+/**
+ * Gets the compiler options from a specified tsconfig.json
+ * @param filePath - File path to the tsconfig.json.
+ * @param options - Options.
+ */
+export declare function getCompilerOptionsFromTsConfig(filePath: string, options?: CompilerOptionsFromTsConfigOptions): CompilerOptionsFromTsConfigResult;
+
 export declare class TsConfigResolver {
     private readonly fileSystem;
     private readonly encoding;
@@ -24,7 +24,7 @@ export declare class TsConfigResolver {
     private readonly tsConfigFilePath;
     private readonly tsConfigDirPath;
     constructor(fileSystem: TransactionalFileSystem, tsConfigFilePath: StandardizedFilePath, encoding: string);
-    getCompilerOptions(): ts.CompilerOptions;
+    getCompilerOptions(): CompilerOptions;
     getErrors(): ts.Diagnostic[];
     getPaths(compilerOptions?: CompilerOptions): {
         filePaths: StandardizedFilePath[];
@@ -985,5 +985,5 @@ export declare function getLibFiles(): {
     text: string;
 }[];
 
-import { SyntaxKind, ScriptTarget, ScriptKind, LanguageVariant, EmitHint, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, CompilerOptions, EditorSettings } from "typescript";
-export { ts, SyntaxKind, ScriptTarget, ScriptKind, LanguageVariant, EmitHint, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, CompilerOptions, EditorSettings };
+import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "typescript";
+export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };

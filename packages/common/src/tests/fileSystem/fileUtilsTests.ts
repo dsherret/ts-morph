@@ -16,6 +16,11 @@ describe(nameof(FileUtils), () => {
         it("should get the relative path without dots", () => {
             expect(FileUtils.getStandardizedAbsolutePath(fileSystem, "../relative/path", "/basedir")).to.equal("/relative/path");
         });
+
+        it("should get the path when it ends with a slash", () => {
+            expect(FileUtils.getStandardizedAbsolutePath(fileSystem, "../relative/path/", "/basedir")).to.equal("/relative/path");
+            expect(FileUtils.getStandardizedAbsolutePath(fileSystem, "/absolute/path/", "/basedir")).to.equal("/absolute/path");
+        });
     });
 
     describe(nameof(FileUtils.standardizeSlashes), () => {
