@@ -1,5 +1,19 @@
 import { errors, ts, StandardizedFilePath } from "@ts-morph/common";
 
+/** Holds the compiler options. */
+export declare class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptions> {
+    constructor();
+    /**
+     * Sets one or all of the compiler options.
+     *
+     * WARNING: Setting the compiler options will cause a complete reparse of all the source files.
+     * @param settings - Compiler options to set.
+     */
+    set(settings: Partial<ts.CompilerOptions>): void;
+    /** Gets the encoding from the compiler options or returns utf-8. */
+    getEncoding(): string;
+}
+
 /** Represents a file system that can be interacted with. */
 export interface FileSystemHost {
     /** Gets if this file system is case sensitive. */
@@ -49,64 +63,6 @@ export interface FileSystemHost {
     glob(patterns: ReadonlyArray<string>): Promise<string[]>;
     /** Synchronously uses pattern matching to find files or directories. */
     globSync(patterns: ReadonlyArray<string>): string[];
-}
-
-/** Host for implementing custom module and/or type reference directive resolution. */
-export interface ResolutionHost {
-    resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
-    getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
-    resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
-}
-
-/**
- * Factory used to create a resolution host.
- * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
- */
-export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
-
-/** Holds the compiler options. */
-export declare class CompilerOptionsContainer extends SettingsContainer<ts.CompilerOptions> {
-    constructor();
-    /**
-     * Sets one or all of the compiler options.
-     *
-     * WARNING: Setting the compiler options will cause a complete reparse of all the source files.
-     * @param settings - Compiler options to set.
-     */
-    set(settings: Partial<ts.CompilerOptions>): void;
-    /** Gets the encoding from the compiler options or returns utf-8. */
-    getEncoding(): string;
-}
-
-export declare abstract class SettingsContainer<T extends object> {
-    protected _settings: T;
-    /**
-     * Constructor.
-     * @param defaultSettings - The settings to use by default.
-     */
-    constructor(defaultSettings: T);
-    /** Resets the settings to the default. */
-    reset(): void;
-    /** Gets a copy of the settings as an object. */
-    get(): T;
-    /**
-     * Sets one or all of the settings.
-     * @param settings - Settings to set.
-     */
-    set(settings: Partial<T>): void;
-    /**
-     * Subscribe to modifications in the settings container.
-     * @param action - Action to execute when the settings change.
-     */
-    onModified(action: () => void): void;
-}
-
-export interface InMemoryFileSystemHostOptions {
-    /**
-     * Set this to true to not load the /node_modules/typescript/lib files on construction.
-     * @default false
-     */
-    skipLoadingLibFiles?: boolean;
 }
 
 /** An implementation of a file system that exists in memory only. */
@@ -162,14 +118,58 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
 }
 
-declare const InvalidOperationError: typeof errors.InvalidOperationError;
-declare const FileNotFoundError: typeof errors.FileNotFoundError;
+export interface InMemoryFileSystemHostOptions {
+    /**
+     * Set this to true to not load the /node_modules/typescript/lib files on construction.
+     * @default false
+     */
+    skipLoadingLibFiles?: boolean;
+}
+
+/** Host for implementing custom module and/or type reference directive resolution. */
+export interface ResolutionHost {
+    resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
+    getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
+    resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
+}
+
+/**
+ * Factory used to create a resolution host.
+ * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
+ */
+export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
+
+export declare abstract class SettingsContainer<T extends object> {
+    protected _settings: T;
+    /**
+     * Constructor.
+     * @param defaultSettings - The settings to use by default.
+     */
+    constructor(defaultSettings: T);
+    /** Resets the settings to the default. */
+    reset(): void;
+    /** Gets a copy of the settings as an object. */
+    get(): T;
+    /**
+     * Sets one or all of the settings.
+     * @param settings - Settings to set.
+     */
+    set(settings: Partial<T>): void;
+    /**
+     * Subscribe to modifications in the settings container.
+     * @param action - Action to execute when the settings change.
+     */
+    onModified(action: () => void): void;
+}
+
 declare const ArgumentError: typeof errors.ArgumentError;
 declare const ArgumentNullOrWhitespaceError: typeof errors.ArgumentNullOrWhitespaceError;
 declare const ArgumentOutOfRangeError: typeof errors.ArgumentOutOfRangeError;
 declare const ArgumentTypeError: typeof errors.ArgumentTypeError;
 declare const BaseError: typeof errors.BaseError;
 declare const DirectoryNotFoundError: typeof errors.DirectoryNotFoundError;
+declare const FileNotFoundError: typeof errors.FileNotFoundError;
+declare const InvalidOperationError: typeof errors.InvalidOperationError;
 declare const NotImplementedError: typeof errors.NotImplementedError;
 declare const NotSupportedError: typeof errors.NotSupportedError;
 declare const PathNotFoundError: typeof errors.PathNotFoundError;
@@ -435,6 +435,8 @@ export declare class Directory {
      * @param directory - Directory.
      */
     getRelativePathAsModuleSpecifierTo(directory: Directory): string;
+    /** Gets the project. */
+    getProject(): Project;
     /** Gets if the directory was forgotten. */
     wasForgotten(): boolean;
 }
@@ -466,31 +468,6 @@ export declare class DirectoryEmitResult {
 }
 
 export interface DirectoryMoveOptions extends SourceFileMoveOptions {
-}
-
-/** Options for creating a project. */
-export interface ProjectOptions {
-    /** Compiler options */
-    compilerOptions?: CompilerOptions;
-    /** File path to the tsconfig.json file. */
-    tsConfigFilePath?: string;
-    /** Whether to skip adding the source files from the specified tsconfig.json. @default false */
-    skipAddingFilesFromTsConfig?: boolean;
-    /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
-    skipFileDependencyResolution?: boolean;
-    /** Skip loading the lib files when using an in-memory file system. @default false */
-    skipLoadingLibFiles?: boolean;
-    /** Manipulation settings */
-    manipulationSettings?: Partial<ManipulationSettings>;
-    /** Whether to use an in-memory file system. @default false */
-    useInMemoryFileSystem?: boolean;
-    /**
-     * Optional file system host. Useful for mocking access to the file system.
-     * @remarks Consider using `useInMemoryFileSystem` instead.
-     */
-    fileSystem?: FileSystemHost;
-    /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
-    resolutionHost?: ResolutionHostFactory;
 }
 
 /** Project that holds source files. */
@@ -709,6 +686,31 @@ export declare class Project {
         }): string;
     /** Gets a ts.ModuleResolutionHost for the project. */
     getModuleResolutionHost(): ts.ModuleResolutionHost;
+}
+
+/** Options for creating a project. */
+export interface ProjectOptions {
+    /** Compiler options */
+    compilerOptions?: CompilerOptions;
+    /** File path to the tsconfig.json file. */
+    tsConfigFilePath?: string;
+    /** Whether to skip adding the source files from the specified tsconfig.json. @default false */
+    skipAddingFilesFromTsConfig?: boolean;
+    /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
+    skipFileDependencyResolution?: boolean;
+    /** Skip loading the lib files when using an in-memory file system. @default false */
+    skipLoadingLibFiles?: boolean;
+    /** Manipulation settings */
+    manipulationSettings?: Partial<ManipulationSettings>;
+    /** Whether to use an in-memory file system. @default false */
+    useInMemoryFileSystem?: boolean;
+    /**
+     * Optional file system host. Useful for mocking access to the file system.
+     * @remarks Consider using `useInMemoryFileSystem` instead.
+     */
+    fileSystem?: FileSystemHost;
+    /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
+    resolutionHost?: ResolutionHostFactory;
 }
 
 /** Options for creating a source file. */
@@ -10515,8 +10517,8 @@ export declare enum StructureKind {
 export declare type OptionalKind<TStructure extends {
         kind?: StructureKind;
     }> = Pick<TStructure, Exclude<keyof TStructure, "kind">> & Partial<Pick<TStructure, "kind">>;
-import { SyntaxKind, ScriptTarget, ScriptKind, LanguageVariant, EmitHint, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, CompilerOptions, EditorSettings } from "@ts-morph/common";
-export { ts, SyntaxKind, ScriptTarget, ScriptKind, LanguageVariant, EmitHint, ModuleKind, ModuleResolutionKind, NewLineKind, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, CompilerOptions, EditorSettings };
+import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
+export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
 
 /** Code writer that assists with formatting and visualizing blocks of JavaScript or TypeScript code. */
 export declare class CodeBlockWriter {
