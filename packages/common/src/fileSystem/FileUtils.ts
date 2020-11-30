@@ -6,6 +6,8 @@ import { FileSystemHost } from "./FileSystemHost";
 import { StandardizedFilePath } from "./StandardizedFilePath";
 import { TransactionalFileSystem } from "./TransactionalFileSystem";
 
+const isWindowsRootDirRegex = /^[A-Z]+:\/$/i;
+
 /** Utilities for working with files. */
 export class FileUtils {
     /** @internal */
@@ -107,7 +109,7 @@ export class FileUtils {
      */
     static standardizeSlashes<T extends string>(fileOrDirPath: T): T {
         let result = fileOrDirPath.replace(this.standardizeSlashesRegex, "/");
-        if (result !== "/" && result.endsWith("/"))
+        if (result !== "/" && !isWindowsRootDirRegex.test(result) && result.endsWith("/"))
             result = result.substring(0, result.length - 1);
         return result as T;
     }

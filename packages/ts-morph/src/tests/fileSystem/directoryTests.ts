@@ -1,6 +1,6 @@
+import { CompilerOptions, errors, FileSystemHost, FileUtils, ModuleResolutionKind, ScriptKind, ScriptTarget } from "@ts-morph/common";
 import { expect } from "chai";
 import { SourceFile } from "../../compiler";
-import { CompilerOptions, errors, FileSystemHost, FileUtils, ModuleResolutionKind, ScriptKind, ScriptTarget } from "@ts-morph/common";
 import { Directory, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions } from "../../fileSystem";
 import { Project } from "../../Project";
 import { OptionalKind, SourceFileStructure, StructureKind } from "../../structures";

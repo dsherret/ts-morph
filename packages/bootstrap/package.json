@@ -18,7 +18,7 @@
     "rollup": "rollup --config"
   },
   "dependencies": {
-    "@ts-morph/common": "~0.7.1"
+    "@ts-morph/common": "~0.7.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.14",

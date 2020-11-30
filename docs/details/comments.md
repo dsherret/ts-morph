@@ -110,6 +110,7 @@ This will remove the comment and any of its trailing comment nodes.
 
 Comment nodes may have trailing comment ranges. For example, given the following source file:
 
+<!-- dprint-ignore -->
 ```ts
 /* 1 */ // 2
 ```
