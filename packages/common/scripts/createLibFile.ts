@@ -1,8 +1,8 @@
-import * as path from "path";
-import * as fs from "fs";
-import fastGlob from "fast-glob";
-import * as ts from "typescript";
 import { createMinifier } from "dts-minify";
+import fastGlob from "fast-glob";
+import * as fs from "fs";
+import * as path from "path";
+import * as ts from "typescript";
 
 const rootDir = path.resolve(__dirname, "../");
 const libFilesFilePath = path.join(rootDir, "src/data/libFiles.ts");

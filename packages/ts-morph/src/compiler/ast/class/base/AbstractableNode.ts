@@ -2,8 +2,8 @@ import { errors, SyntaxKind } from "@ts-morph/common";
 import { AbstractableNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
 import { ModifierableNode } from "../../base";
-import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 
 export type AbstractableNodeExtensionType = Node & ModifierableNode;

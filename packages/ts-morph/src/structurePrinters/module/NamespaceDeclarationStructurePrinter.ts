@@ -1,11 +1,11 @@
+import { errors, ObjectUtils, StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { NamespaceDeclarationKind } from "../../compiler";
-import { errors, ObjectUtils, StringUtils } from "@ts-morph/common";
 import { StructurePrinterFactory } from "../../factories";
-import { setValueIfUndefined } from "../../utils";
 import { NamespaceDeclarationStructure, OptionalKind } from "../../structures";
-import { NodePrinter } from "../NodePrinter";
+import { setValueIfUndefined } from "../../utils";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
+import { NodePrinter } from "../NodePrinter";
 
 export class NamespaceDeclarationStructurePrinter extends NodePrinter<OptionalKind<NamespaceDeclarationStructure>> {
     private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);

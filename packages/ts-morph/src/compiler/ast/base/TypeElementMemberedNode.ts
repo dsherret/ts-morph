@@ -1,5 +1,5 @@
-import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren,
     insertIntoBracesOrSourceFileWithGetChildrenWithComments } from "../../../manipulation";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure, OptionalKind,
@@ -7,11 +7,11 @@ import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructu
 import { Constructor, WriterFunction } from "../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { TypeElementTypes } from "../aliases";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { CallSignatureDeclaration, CommentTypeElement, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature,
     PropertySignature } from "../interface";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ExtendedParser } from "../utils";
 
 export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.NodeArray<ts.TypeElement>; }>;

@@ -1,8 +1,8 @@
 import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
 import { Node } from "../../common";
-import { Expression } from "../Expression";
 import { KindToExpressionMappings } from "../../kindToNodeMappings";
+import { Expression } from "../Expression";
 
 export type ExpressionableNodeExtensionType = Node<ts.Node & { expression?: ts.Expression; }>;
 

@@ -1,9 +1,9 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { EnumMemberStructure, OptionalKind } from "../../structures";
-import { NodePrinter } from "../NodePrinter";
-import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 import { WriterFunction } from "../../types";
 import { isValidVariableName } from "../../utils";
+import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
+import { NodePrinter } from "../NodePrinter";
 
 export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMemberStructure> | WriterFunction | string> {
     private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);

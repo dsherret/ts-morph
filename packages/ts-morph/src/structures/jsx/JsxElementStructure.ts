@@ -2,8 +2,8 @@ import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { OptionalKind } from "../types";
 import { JsxAttributeStructure } from "./JsxAttributeStructure";
-import { JsxSpreadAttributeStructure } from "./JsxSpreadAttributeStructure";
 import { JsxSelfClosingElementStructure } from "./JsxSelfClosingElementStructure";
+import { JsxSpreadAttributeStructure } from "./JsxSpreadAttributeStructure";
 
 export interface JsxElementStructure extends Structure, JsxElementSpecificStructure {
 }

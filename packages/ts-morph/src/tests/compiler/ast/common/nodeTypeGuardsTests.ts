@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
-import { getInfoFromText } from "../../testHelpers";
 import { ClassDeclaration, Node } from "../../../../compiler";
+import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(Node), () => {
     // most of the type guards are not worth the effort to test... it's auto generated from code so it should be close to correct

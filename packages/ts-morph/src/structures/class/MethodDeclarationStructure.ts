@@ -1,9 +1,9 @@
 import { AbstractableNodeStructure, AsyncableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure,
     PropertyNamedNodeStructure, QuestionTokenableNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure,
     TypeParameteredNodeStructure } from "../base";
+import { FunctionLikeDeclarationStructure } from "../function";
 import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
-import { FunctionLikeDeclarationStructure } from "../function";
 import { OptionalKind } from "../types";
 
 export interface MethodDeclarationStructure

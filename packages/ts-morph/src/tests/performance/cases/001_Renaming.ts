@@ -1,7 +1,7 @@
-import { Project } from "../../../Project";
-import { PerformanceTestTemplate } from "../helpers";
-import { StructureKind } from "../../../structures";
 import { ClassDeclaration } from "../../../compiler";
+import { Project } from "../../../Project";
+import { StructureKind } from "../../../structures";
+import { PerformanceTestTemplate } from "../helpers";
 
 export class RenamingPerformanceTest extends PerformanceTestTemplate<ClassDeclaration> {
     id = 1;

@@ -1,6 +1,6 @@
+import { errors } from "@ts-morph/common";
 import { expect } from "chai";
 import { FileTextChanges } from "../../../../compiler";
-import { errors } from "@ts-morph/common";
 import { Project } from "../../../../Project";
 
 describe(nameof(FileTextChanges), () => {

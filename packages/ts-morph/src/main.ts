@@ -10,6 +10,7 @@ const { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrW
 export { ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError, DirectoryNotFoundError, FileNotFoundError,
     InvalidOperationError, NotImplementedError, NotSupportedError, PathNotFoundError };
 export { Directory, DirectoryAddOptions, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions } from "./fileSystem";
+export { ManipulationError } from "./manipulation";
 export * from "./options";
 export { Project, ProjectOptions, SourceFileCreateOptions } from "./Project";
 export * from "./structures";
@@ -19,7 +20,6 @@ export { printNode, PrintNodeOptions } from "./utils/compiler/printNode";
 export { SourceFileReferencingNodes } from "./utils/references/SourceFileReferenceContainer";
 export { CompilerOptionsFromTsConfigOptions, CompilerOptionsFromTsConfigResult,
     getCompilerOptionsFromTsConfig } from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
-export { ManipulationError } from "./manipulation";
 import { Writers } from "./structurePrinters/Writers";
 /** @deprecated Use `Writers`. */
 const WriterFunctions = Writers;

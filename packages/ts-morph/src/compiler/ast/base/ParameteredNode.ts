@@ -3,10 +3,10 @@ import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, 
 import { OptionalKind, ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function/ParameterDeclaration";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration>; }>;
 

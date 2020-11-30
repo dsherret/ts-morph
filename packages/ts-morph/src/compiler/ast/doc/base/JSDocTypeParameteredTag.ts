@@ -1,8 +1,8 @@
 import { errors, ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
 import { Node } from "../../common";
-import { JSDocTag } from "../JSDocTag";
 import { TypeParameterDeclaration } from "../../type";
+import { JSDocTag } from "../JSDocTag";
 
 export type JSDocTypeParameteredTagExtensionType = Node<ts.Node & { typeParameters: ts.NodeArray<ts.TypeParameterDeclaration>; }> & JSDocTag;
 

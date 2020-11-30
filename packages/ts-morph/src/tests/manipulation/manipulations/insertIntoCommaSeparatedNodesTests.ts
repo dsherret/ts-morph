@@ -1,9 +1,9 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ArrayLiteralExpression, NamespaceDeclaration } from "../../../compiler";
+import { OptionalKind, PropertyAssignmentStructure } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../compiler/testHelpers";
-import { OptionalKind, PropertyAssignmentStructure } from "../../../structures";
 
 describe("insertIntoCommaSeparatedNodes", () => {
     // these are high level tests of this function

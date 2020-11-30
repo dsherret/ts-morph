@@ -1,6 +1,6 @@
-import { ExpressionedNodeStructure } from "../expressioned";
 import { KindedStructure, Structure } from "../../Structure";
 import { StructureKind } from "../../StructureKind";
+import { ExpressionedNodeStructure } from "../expressioned";
 
 export interface SpreadAssignmentStructure extends Structure, SpreadAssignmentSpecificStructure, ExpressionedNodeStructure {
 }

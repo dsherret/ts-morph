@@ -1,7 +1,7 @@
 import { errors, ts } from "@ts-morph/common";
 import { Expression } from "../expression";
-import { IterationStatement } from "./IterationStatement";
 import { VariableDeclarationList } from "../variable";
+import { IterationStatement } from "./IterationStatement";
 
 export const ForStatementBase = IterationStatement;
 export class ForStatement extends ForStatementBase<ts.ForStatement> {

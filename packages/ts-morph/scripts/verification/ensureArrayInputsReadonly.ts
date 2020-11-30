@@ -6,8 +6,8 @@
  * ------------------------------------------------
  */
 import { tsMorph } from "@ts-morph/scripts";
-import { TsMorphInspector } from "../inspectors";
 import { hasInternalDocTag } from "../common";
+import { TsMorphInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
 export function ensureArrayInputsReadonly(inspector: TsMorphInspector, addProblem: (problem: Problem) => void) {

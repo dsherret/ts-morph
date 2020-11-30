@@ -1,6 +1,6 @@
+import { errors } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, Node, PropertyDeclaration, TypeAliasDeclaration, TypedNode, VariableStatement } from "../../../../compiler";
-import { errors } from "@ts-morph/common";
 import { TypedNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 

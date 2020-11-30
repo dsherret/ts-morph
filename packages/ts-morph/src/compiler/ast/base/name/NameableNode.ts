@@ -2,11 +2,11 @@ import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../../manipulation";
 import { NameableNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 import { Identifier } from "../../name";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
-import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { RenameableNode } from "./RenameableNode";
 
 export type NameableNodeExtensionType = Node<ts.Node & { name?: ts.Identifier; }>;

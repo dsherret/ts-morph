@@ -1,15 +1,15 @@
 import { InspectorFactory } from "../inspectors";
 import { ensureArrayInputsReadonly } from "./ensureArrayInputsReadonly";
-import { ensureOrThrowExists } from "./ensureOrThrowExists";
-import { ensureOverloadStructuresMatch } from "./ensureOverloadStructuresMatch";
-import { ensureStructuresMatchClasses } from "./ensureStructuresMatchClasses";
 import { ensureClassesImplementStructureMethods } from "./ensureClassesImplementStructureMethods";
 import { ensureMixinNotAppliedMultipleTimes } from "./ensureMixinNotAppliedMultipleTimes";
+import { ensureOrThrowExists } from "./ensureOrThrowExists";
+import { ensureOverloadStructuresMatch } from "./ensureOverloadStructuresMatch";
 import { ensurePublicApiHasTests } from "./ensurePublicApiHasTests";
-import { validateCodeFences } from "./validateCodeFences";
-import { validatePublicApiClassMemberNames } from "./validatePublicApiClassMemberNames";
-import { validateCompilerNodeToWrappedType } from "./validateCompilerNodeToWrappedType";
+import { ensureStructuresMatchClasses } from "./ensureStructuresMatchClasses";
 import { Problem } from "./Problem";
+import { validateCodeFences } from "./validateCodeFences";
+import { validateCompilerNodeToWrappedType } from "./validateCompilerNodeToWrappedType";
+import { validatePublicApiClassMemberNames } from "./validatePublicApiClassMemberNames";
 
 const args = process.argv.slice(2);
 const factory = new InspectorFactory();

@@ -1,5 +1,5 @@
-import { expect } from "chai";
 import { SyntaxKind } from "@ts-morph/common";
+import { expect } from "chai";
 import { BigIntLiteral } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 

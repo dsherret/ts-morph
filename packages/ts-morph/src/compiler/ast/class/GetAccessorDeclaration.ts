@@ -1,13 +1,13 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { GetAccessorDeclarationSpecificStructure, GetAccessorDeclarationStructure, StructureKind } from "../../../structures";
 import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
-import { callBaseSet } from "../callBaseSet";
-import { FunctionLikeDeclaration } from "../function";
-import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
+import { Node } from "../common";
+import { FunctionLikeDeclaration } from "../function";
 import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
-import { Node } from "../common";
+import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
 const createBase = <T extends typeof ClassElement>(ctor: T) =>
     ChildOrderableNode(TextInsertableNode(DecoratableNode(

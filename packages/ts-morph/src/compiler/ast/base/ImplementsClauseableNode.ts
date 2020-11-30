@@ -3,11 +3,11 @@ import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRa
 import { CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../../structurePrinters";
 import { ImplementsClauseableNodeStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ExpressionWithTypeArguments } from "../type/ExpressionWithTypeArguments";
 import { HeritageClauseableNode } from "./HeritageClauseableNode";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 

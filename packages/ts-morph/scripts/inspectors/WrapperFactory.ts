@@ -1,7 +1,7 @@
-import { tsMorph } from "@ts-morph/scripts";
 import { KeyValueCache } from "@ts-morph/common";
-import { Mixin, Structure, WrappedNode } from "./tsMorph";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsNode, TsNodeProperty } from "./ts";
+import { Mixin, Structure, WrappedNode } from "./tsMorph";
 
 export class WrapperFactory {
     private readonly wrappedNodeCache = new KeyValueCache<tsMorph.ClassDeclaration, WrappedNode>();

@@ -1,7 +1,7 @@
 import * as nodePath from "path";
 import { errors } from "../errors";
-import { FileUtils } from "./FileUtils";
 import { FileSystemHost } from "./FileSystemHost";
+import { FileUtils } from "./FileUtils";
 
 /** An implementation of a file host that interacts with the actual file system. */
 export class RealFileSystemHost implements FileSystemHost {

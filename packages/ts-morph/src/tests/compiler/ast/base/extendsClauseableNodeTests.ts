@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ExtendsClauseableNode, InterfaceDeclaration } from "../../../../compiler";
-import { WriterFunction } from "../../../../types";
 import { ExtendsClauseableNodeStructure } from "../../../../structures";
+import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ExtendsClauseableNode), () => {

@@ -1,10 +1,10 @@
-import { CodeBlockWriter } from "../../../../codeBlockWriter";
-import { Constructor } from "../../../../types";
 import { ArrayUtils, errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { getEndIndexFromArray, InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren,
     insertIntoBracesOrSourceFileWithGetChildrenWithComments, insertIntoParentTextRange } from "../../../../manipulation";
 import { ClassMemberStructures, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, OptionalKind,
     PropertyDeclarationStructure, SetAccessorDeclarationStructure, Structure, Structures } from "../../../../structures";
+import { Constructor } from "../../../../types";
 import { WriterFunction } from "../../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext } from "../../../../utils";
 import { Type } from "../../../types";
@@ -14,13 +14,13 @@ import { Node } from "../../common";
 import { ParameterDeclaration } from "../../function";
 import { ExpressionWithTypeArguments } from "../../type";
 import { ExtendedParser } from "../../utils";
-import { ConstructorDeclaration } from "../ConstructorDeclaration";
 import { ClassDeclaration } from "../ClassDeclaration";
+import { CommentClassElement } from "../CommentClassElement";
+import { ConstructorDeclaration } from "../ConstructorDeclaration";
 import { GetAccessorDeclaration } from "../GetAccessorDeclaration";
 import { MethodDeclaration } from "../MethodDeclaration";
 import { PropertyDeclaration } from "../PropertyDeclaration";
 import { SetAccessorDeclaration } from "../SetAccessorDeclaration";
-import { CommentClassElement } from "../CommentClassElement";
 import { AbstractableNode } from "./AbstractableNode";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;

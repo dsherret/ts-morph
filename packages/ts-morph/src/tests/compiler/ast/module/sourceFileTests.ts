@@ -1,6 +1,6 @@
+import { CompilerOptions, errors, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { EmitResult, FileSystemRefreshResult, FormatCodeSettings, SourceFile, TextChange, VariableDeclarationKind } from "../../../../compiler";
-import { CompilerOptions, errors, LanguageVariant, ModuleResolutionKind, NewLineKind, ScriptTarget, SyntaxKind } from "@ts-morph/common";
 import { IndentationText, ManipulationSettings } from "../../../../options";
 import { Project } from "../../../../Project";
 import { SourceFileStructure, StructureKind } from "../../../../structures";

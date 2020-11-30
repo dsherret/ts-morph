@@ -1,5 +1,5 @@
-import { CompilerOptionsContainer } from "../options";
 import { FileUtils, RealFileSystemHost, StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
+import { CompilerOptionsContainer } from "../options";
 import { CompilerOptions, ScriptTarget, ts } from "../typescript";
 import { ResolutionHost } from "./ResolutionHost";
 import { TsSourceFileContainer } from "./TsSourceFileContainer";

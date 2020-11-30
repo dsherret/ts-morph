@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { FileSystemHost, InMemoryFileSystemHost, TransactionalFileSystem } from "../../fileSystem";
 import { errors } from "../../errors";
+import { FileSystemHost, InMemoryFileSystemHost, TransactionalFileSystem } from "../../fileSystem";
 import { TsConfigResolver } from "../../tsconfig";
 
 describe(nameof(TsConfigResolver), () => {

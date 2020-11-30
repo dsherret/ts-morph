@@ -1,6 +1,6 @@
+import { errors } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, Node, SourceFile, TextInsertableNode } from "../../../../compiler";
-import { errors } from "@ts-morph/common";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(TextInsertableNode), () => {

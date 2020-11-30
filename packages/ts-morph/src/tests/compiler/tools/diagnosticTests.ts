@@ -1,5 +1,5 @@
-import { expect } from "chai";
 import { DiagnosticCategory } from "@ts-morph/common";
+import { expect } from "chai";
 import { Diagnostic } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 

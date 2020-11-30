@@ -11,8 +11,8 @@
  * 3. Forward support: Features we add in the future will be auto-implemented.
  * ------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, KeyValueCache } from "@ts-morph/common";
+import { tsMorph } from "@ts-morph/scripts";
 import { Mixin, TsInspector, TsMorphInspector, WrappedNode } from "../inspectors";
 
 // todo: this should be cleaned up as it's a mess

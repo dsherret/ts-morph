@@ -5,9 +5,9 @@ import { ConstructorDeclarationOverloadSpecificStructure, ConstructorDeclaration
 import { isNodeAmbientOrInAmbientContext } from "../../../utils";
 import { BodyableNode, ChildOrderableNode, JSDocableNode, ModifierableNode, ScopedNode, SignaturedDeclaration, TextInsertableNode,
     TypeParameteredNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassElement } from "./ClassElement";
 
 const createBase = <T extends typeof ClassElement>(ctor: T) =>

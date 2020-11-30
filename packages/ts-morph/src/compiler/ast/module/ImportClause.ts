@@ -1,6 +1,6 @@
 import { errors, ts } from "@ts-morph/common";
-import { Node } from "../common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
+import { Node } from "../common";
 
 export const ImportClauseBase = Node;
 export class ImportClause extends ImportClauseBase<ts.ImportClause> {

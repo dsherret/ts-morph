@@ -4,8 +4,8 @@
  * Automatically maintains this class based on changes in the application.
  * --------------------------------------------------------
  */
-import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils } from "@ts-morph/common";
+import { tsMorph } from "@ts-morph/scripts";
 import { TsMorphInspector } from "../inspectors";
 
 export function createStructurePrinterFactory(inspector: TsMorphInspector) {

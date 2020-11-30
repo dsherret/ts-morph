@@ -1,5 +1,5 @@
-import { expect } from "chai";
 import { errors, SyntaxKind } from "@ts-morph/common";
+import { expect } from "chai";
 import { JsxElement } from "../../../../compiler";
 import { JsxAttributeStructure, JsxElementStructure, StructureKind } from "../../../../structures";
 import { getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";

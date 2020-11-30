@@ -3,13 +3,13 @@ import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRa
 import { ExportDeclarationSpecificStructure, ExportDeclarationStructure, ExportSpecifierStructure, OptionalKind, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { ModuleUtils } from "../../../utils";
-import { StringLiteral } from "../literal";
+import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
+import { StringLiteral } from "../literal";
 import { Statement } from "../statement";
 import { ExportSpecifier } from "./ExportSpecifier";
 import { SourceFile } from "./SourceFile";
-import { callBaseGetStructure } from "../callBaseGetStructure";
-import { callBaseSet } from "../callBaseSet";
 
 export const ExportDeclarationBase = Statement;
 export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaration> {

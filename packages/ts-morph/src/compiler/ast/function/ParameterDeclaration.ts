@@ -4,9 +4,9 @@ import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, S
 import { WriterFunction } from "../../../types";
 import { BindingNamedNode, DecoratableNode, DotDotDotTokenableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode,
     ScopeableNode, TypedNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 const createBase = <T extends typeof Node>(ctor: T) =>
     QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(

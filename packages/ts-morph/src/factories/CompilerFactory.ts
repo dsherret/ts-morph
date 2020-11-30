@@ -5,11 +5,11 @@ import { CommentClassElement, CommentEnumMember, CommentObjectLiteralElement, Co
     ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
 import { CommentNodeParser } from "../compiler/ast/utils";
 import { Directory } from "../fileSystem";
-import { ProjectContext } from "../ProjectContext";
+import { replaceSourceFileForCacheUpdate } from "../manipulation";
 import { SourceFileCreateOptions } from "../Project";
+import { ProjectContext } from "../ProjectContext";
 import { OptionalKind, SourceFileStructure } from "../structures";
 import { WriterFunction } from "../types";
-import { replaceSourceFileForCacheUpdate } from "../manipulation";
 import { getTextFromStringOrWriter } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
 import { ForgetfulNodeCache } from "./ForgetfulNodeCache";

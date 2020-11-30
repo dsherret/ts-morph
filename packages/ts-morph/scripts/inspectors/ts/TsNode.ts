@@ -1,7 +1,7 @@
-import { tsMorph } from "@ts-morph/scripts";
 import { Memoize } from "@ts-morph/common";
-import { WrapperFactory } from "../WrapperFactory";
+import { tsMorph } from "@ts-morph/scripts";
 import { WrappedNode } from "../tsMorph";
+import { WrapperFactory } from "../WrapperFactory";
 import { TsNodeProperty } from "./TsNodeProperty";
 
 export class TsNode {

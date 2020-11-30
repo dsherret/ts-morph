@@ -481,6 +481,14 @@ export declare class DirectoryEmitResult {
 export interface DirectoryMoveOptions extends SourceFileMoveOptions {
 }
 
+/** Occurs when there is a problem doing a manipulation. */
+export declare class ManipulationError extends errors.InvalidOperationError {
+    readonly filePath: string;
+    readonly oldText: string;
+    readonly newText: string;
+    constructor(filePath: string, oldText: string, newText: string, errorMessage: string);
+}
+
 /** Project that holds source files. */
 export declare class Project {
     /**
@@ -818,14 +826,6 @@ export interface CompilerOptionsFromTsConfigResult {
  * @param options - Options.
  */
 export declare function getCompilerOptionsFromTsConfig(filePath: string, options?: CompilerOptionsFromTsConfigOptions): CompilerOptionsFromTsConfigResult;
-
-/** Occurs when there is a problem doing a manipulation. */
-export declare class ManipulationError extends errors.InvalidOperationError {
-    readonly filePath: string;
-    readonly oldText: string;
-    readonly newText: string;
-    constructor(filePath: string, oldText: string, newText: string, errorMessage: string);
-}
 
 /** Functions for writing code. */
 export declare class Writers {
@@ -1559,6 +1559,13 @@ export interface NameableNodeSpecific {
     removeName(): this;
 }
 
+export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T;
+
+export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode, RenameableNode {
+}
+
+declare type NamedNodeExtensionType = NamedNodeBaseExtensionType<ts.Identifier>;
+export declare type NamedNodeSpecific = NamedNodeSpecificBase<Identifier>;
 export declare function NamedNodeBase<TCompilerNode extends ts.Node, U extends Constructor<NamedNodeBaseExtensionType<TCompilerNode>>>(Base: U): Constructor<NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>>> & U;
 
 export interface NamedNodeSpecificBase<TNode extends Node> {
@@ -1571,13 +1578,6 @@ export interface NamedNodeSpecificBase<TNode extends Node> {
 declare type NamedNodeBaseExtensionType<TCompilerNode extends ts.Node> = Node<ts.Node & {
         name: TCompilerNode;
     }>;
-export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T;
-
-export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode, RenameableNode {
-}
-
-declare type NamedNodeExtensionType = NamedNodeBaseExtensionType<ts.Identifier>;
-export declare type NamedNodeSpecific = NamedNodeSpecificBase<Identifier>;
 export declare function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T;
 
 export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
@@ -2653,10 +2653,6 @@ export declare type ClassStaticMemberTypes = MethodDeclaration | ClassStaticProp
 export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 declare type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
 declare type ClassLikeDeclarationBaseSpecificExtensionType = Node<ts.ClassLikeDeclarationBase> & HeritageClauseableNode & ModifierableNode & NameableNode;
-
-export declare class CommentClassElement extends ClassElement<CompilerCommentClassElement> {
-}
-
 declare const ClassDeclarationBase: Constructor<NamespaceChildableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ClassLikeDeclarationBase> & typeof Statement;
 
 export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
@@ -2695,6 +2691,9 @@ export declare class ClassExpression extends ClassExpressionBase<ts.ClassExpress
     getParent(): NodeParentType<ts.ClassExpression>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.ClassExpression>>;
+}
+
+export declare class CommentClassElement extends ClassElement<CompilerCommentClassElement> {
 }
 
 declare const ConstructorDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<ScopedNode> & Constructor<FunctionLikeDeclaration> & Constructor<BodyableNode> & typeof ClassElement;
@@ -4589,6 +4588,22 @@ export declare class JSDocAugmentsTag extends JSDocTag<ts.JSDocAugmentsTag> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocAugmentsTag>>;
 }
 
+/** JS doc author tag node. */
+export declare class JSDocAuthorTag extends JSDocTag<ts.JSDocAuthorTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocAuthorTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocAuthorTag>>;
+}
+
+/** JS doc callback tag node. */
+export declare class JSDocCallbackTag extends JSDocTag<ts.JSDocCallbackTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocCallbackTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocCallbackTag>>;
+}
+
 /** JS doc class tag node. */
 export declare class JSDocClassTag extends JSDocTag<ts.JSDocClassTag> {
     /** @inheritdoc **/
@@ -4605,6 +4620,14 @@ export declare class JSDocDeprecatedTag extends JSDocTag<ts.JSDocDeprecatedTag> 
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocDeprecatedTag>>;
 }
 
+/** JS doc enum tag node. */
+export declare class JSDocEnumTag extends JSDocTag<ts.JSDocEnumTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocEnumTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocEnumTag>>;
+}
+
 declare const JSDocFunctionTypeBase: Constructor<SignaturedDeclaration> & typeof JSDocType;
 
 /** JS doc function type. */
@@ -4613,6 +4636,14 @@ export declare class JSDocFunctionType extends JSDocFunctionTypeBase<ts.JSDocFun
     getParent(): NodeParentType<ts.JSDocFunctionType>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocFunctionType>>;
+}
+
+/** JS doc implements tag node. */
+export declare class JSDocImplementsTag extends JSDocTag<ts.JSDocImplementsTag> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocImplementsTag>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocImplementsTag>>;
 }
 
 declare const JSDocParameterTagBase: Constructor<JSDocPropertyLikeTag> & typeof JSDocTag;
@@ -4775,6 +4806,16 @@ export declare class JSDocTypedefTag extends JSDocTag<ts.JSDocTypedefTag> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocTypedefTag>>;
 }
 
+/** JS doc type expression node. */
+export declare class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression> {
+    /** Gets the type node of the JS doc type expression. */
+    getTypeNode(): TypeNode<ts.TypeNode>;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocTypeExpression>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocTypeExpression>>;
+}
+
 /** JS doc type tag node. */
 export declare class JSDocTypeTag extends JSDocTag<ts.JSDocTypeTag> {
     /** Gets the type expression node of the JS doc property type tag. */
@@ -4791,48 +4832,6 @@ export declare class JSDocUnknownTag extends JSDocTag<ts.JSDocUnknownTag> {
     getParent(): NodeParentType<ts.JSDocUnknownTag>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocUnknownTag>>;
-}
-
-/** JS doc type expression node. */
-export declare class JSDocTypeExpression extends TypeNode<ts.JSDocTypeExpression> {
-    /** Gets the type node of the JS doc type expression. */
-    getTypeNode(): TypeNode<ts.TypeNode>;
-    /** @inheritdoc **/
-    getParent(): NodeParentType<ts.JSDocTypeExpression>;
-    /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocTypeExpression>>;
-}
-
-/** JS doc author tag node. */
-export declare class JSDocAuthorTag extends JSDocTag<ts.JSDocAuthorTag> {
-    /** @inheritdoc **/
-    getParent(): NodeParentType<ts.JSDocAuthorTag>;
-    /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocAuthorTag>>;
-}
-
-/** JS doc callback tag node. */
-export declare class JSDocCallbackTag extends JSDocTag<ts.JSDocCallbackTag> {
-    /** @inheritdoc **/
-    getParent(): NodeParentType<ts.JSDocCallbackTag>;
-    /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocCallbackTag>>;
-}
-
-/** JS doc enum tag node. */
-export declare class JSDocEnumTag extends JSDocTag<ts.JSDocEnumTag> {
-    /** @inheritdoc **/
-    getParent(): NodeParentType<ts.JSDocEnumTag>;
-    /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocEnumTag>>;
-}
-
-/** JS doc implements tag node. */
-export declare class JSDocImplementsTag extends JSDocTag<ts.JSDocImplementsTag> {
-    /** @inheritdoc **/
-    getParent(): NodeParentType<ts.JSDocImplementsTag>;
-    /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocImplementsTag>>;
 }
 
 export declare class CommentEnumMember extends Node<CompilerCommentEnumMember> {
@@ -8340,6 +8339,11 @@ export declare class ExpressionWithTypeArguments extends ExpressionWithTypeArgum
     getParentOrThrow(): NonNullable<NodeParentType<ts.ExpressionWithTypeArguments>>;
 }
 
+declare const FunctionOrConstructorTypeNodeBaseBase: Constructor<SignaturedDeclaration> & typeof TypeNode;
+
+export declare class FunctionOrConstructorTypeNodeBase<T extends ts.FunctionOrConstructorTypeNode = ts.FunctionOrConstructorTypeNode> extends FunctionOrConstructorTypeNodeBaseBase<T> {
+}
+
 declare const FunctionTypeNodeBase: Constructor<TypeParameteredNode> & typeof FunctionOrConstructorTypeNodeBase;
 
 export declare class FunctionTypeNode extends FunctionTypeNodeBase<ts.FunctionTypeNode> {
@@ -8347,11 +8351,6 @@ export declare class FunctionTypeNode extends FunctionTypeNodeBase<ts.FunctionTy
     getParent(): NodeParentType<ts.FunctionTypeNode>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.FunctionTypeNode>>;
-}
-
-declare const FunctionOrConstructorTypeNodeBaseBase: Constructor<SignaturedDeclaration> & typeof TypeNode;
-
-export declare class FunctionOrConstructorTypeNodeBase<T extends ts.FunctionOrConstructorTypeNode = ts.FunctionOrConstructorTypeNode> extends FunctionOrConstructorTypeNodeBaseBase<T> {
 }
 
 declare const ImportTypeNodeBase: Constructor<TypeArgumentedNode> & typeof TypeNode;
@@ -9028,6 +9027,19 @@ export declare class CodeAction<TCompilerObject extends ts.CodeAction = ts.CodeA
     getChanges(): FileTextChanges[];
 }
 
+/** Represents a code fix action. */
+export declare class CodeFixAction extends CodeAction<ts.CodeFixAction> {
+    /** Short name to identify the fix, for use by telemetry. */
+    getFixName(): string;
+    /**
+     * If present, one may call 'getCombinedCodeFix' with this fixId.
+     * This may be omitted to indicate that the code fix can't be applied in a group.
+     */
+    getFixId(): {} | undefined;
+    /** Gets the description of the code fix when fixing everything. */
+    getFixAllDescription(): string | undefined;
+}
+
 /**
  * Represents file changes.
  *
@@ -9046,19 +9058,6 @@ export declare class CombinedCodeActions {
      * @options - Options used when applying the changes.
      */
     applyChanges(options?: ApplyFileTextChangesOptions): this;
-}
-
-/** Represents a code fix action. */
-export declare class CodeFixAction extends CodeAction<ts.CodeFixAction> {
-    /** Short name to identify the fix, for use by telemetry. */
-    getFixName(): string;
-    /**
-     * If present, one may call 'getCombinedCodeFix' with this fixId.
-     * This may be omitted to indicate that the code fix can't be applied in a group.
-     */
-    getFixId(): {} | undefined;
-    /** Gets the description of the code fix when fixing everything. */
-    getFixAllDescription(): string | undefined;
 }
 
 /** Definition info. */
@@ -9942,6 +9941,22 @@ interface JSDocTagSpecificStructure extends KindedStructure<StructureKind.JSDocT
     text?: string | WriterFunction;
 }
 
+export interface EnumDeclarationStructure extends Structure, NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+}
+
+interface EnumDeclarationSpecificStructure extends KindedStructure<StructureKind.Enum> {
+    isConst?: boolean;
+    members?: OptionalKind<EnumMemberStructure>[];
+}
+
+export interface EnumMemberStructure extends Structure, EnumMemberSpecificStructure, PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure {
+}
+
+interface EnumMemberSpecificStructure extends KindedStructure<StructureKind.EnumMember> {
+    /** Convenience property for setting the initializer. */
+    value?: number | string;
+}
+
 export interface ExpressionedNodeStructure {
     expression: string | WriterFunction;
 }
@@ -9963,22 +9978,6 @@ export interface SpreadAssignmentStructure extends Structure, SpreadAssignmentSp
 }
 
 interface SpreadAssignmentSpecificStructure extends KindedStructure<StructureKind.SpreadAssignment> {
-}
-
-export interface EnumDeclarationStructure extends Structure, NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
-}
-
-interface EnumDeclarationSpecificStructure extends KindedStructure<StructureKind.Enum> {
-    isConst?: boolean;
-    members?: OptionalKind<EnumMemberStructure>[];
-}
-
-export interface EnumMemberStructure extends Structure, EnumMemberSpecificStructure, PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure {
-}
-
-interface EnumMemberSpecificStructure extends KindedStructure<StructureKind.EnumMember> {
-    /** Convenience property for setting the initializer. */
-    value?: number | string;
 }
 
 export interface FunctionDeclarationStructure extends Structure, FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
@@ -10161,36 +10160,6 @@ interface VariableStatementSpecificStructure extends KindedStructure<StructureKi
     declarationKind?: VariableDeclarationKind;
     declarations: OptionalKind<VariableDeclarationStructure>[];
 }
-
-export interface TypeAliasDeclarationStructure extends Structure, TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
-    type: string | WriterFunction;
-}
-
-interface TypeAliasDeclarationSpecificStructure extends KindedStructure<StructureKind.TypeAlias> {
-    type: string | WriterFunction;
-}
-
-export interface TypeParameterDeclarationStructure extends Structure, TypeParameterDeclarationSpecificStructure, NamedNodeStructure {
-}
-
-interface TypeParameterDeclarationSpecificStructure extends KindedStructure<StructureKind.TypeParameter> {
-    constraint?: string | WriterFunction;
-    default?: string | WriterFunction;
-}
-
-/**
- * Iterates over the elements in the provided array.
- * @param structures - Array of structures to iterate over.
- * @param callback - Callback to do on each element in the array. Returning a truthy value will return that value in the main function call.
- */
-export declare function forEachStructureChild<TStructure>(structures: ReadonlyArray<Structures>, callback: (child: Structures) => TStructure | void): TStructure | undefined;
-/**
- * Iterates over the children of the provided array.
- * @remarks If the children do not have a `kind` property, it will be automatically added.
- * @param structure - Structure to iterate over.
- * @param callback - Callback to do on each child of the provided structure. Returning a truthy value will return that value in the main function call.
- */
-export declare function forEachStructureChild<TStructure>(structure: Structures, callback: (child: Structures) => TStructure | void): TStructure | undefined;
 
 export interface Structure {
     /** Leading comments or whitespace. */
@@ -10544,9 +10513,38 @@ export declare enum StructureKind {
     VariableStatement = 39
 }
 
+export interface TypeAliasDeclarationStructure extends Structure, TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+    type: string | WriterFunction;
+}
+
+interface TypeAliasDeclarationSpecificStructure extends KindedStructure<StructureKind.TypeAlias> {
+    type: string | WriterFunction;
+}
+
+export interface TypeParameterDeclarationStructure extends Structure, TypeParameterDeclarationSpecificStructure, NamedNodeStructure {
+}
+
+interface TypeParameterDeclarationSpecificStructure extends KindedStructure<StructureKind.TypeParameter> {
+    constraint?: string | WriterFunction;
+    default?: string | WriterFunction;
+}
+
 export declare type OptionalKind<TStructure extends {
         kind?: StructureKind;
     }> = Pick<TStructure, Exclude<keyof TStructure, "kind">> & Partial<Pick<TStructure, "kind">>;
+/**
+ * Iterates over the elements in the provided array.
+ * @param structures - Array of structures to iterate over.
+ * @param callback - Callback to do on each element in the array. Returning a truthy value will return that value in the main function call.
+ */
+export declare function forEachStructureChild<TStructure>(structures: ReadonlyArray<Structures>, callback: (child: Structures) => TStructure | void): TStructure | undefined;
+/**
+ * Iterates over the children of the provided array.
+ * @remarks If the children do not have a `kind` property, it will be automatically added.
+ * @param structure - Structure to iterate over.
+ * @param callback - Callback to do on each child of the provided structure. Returning a truthy value will return that value in the main function call.
+ */
+export declare function forEachStructureChild<TStructure>(structure: Structures, callback: (child: Structures) => TStructure | void): TStructure | undefined;
 import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
 

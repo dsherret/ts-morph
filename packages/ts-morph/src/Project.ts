@@ -3,8 +3,8 @@ import { CompilerOptions, CompilerOptionsContainer, errors, FileSystemHost, File
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import { Directory, DirectoryAddOptions } from "./fileSystem";
-import { ProjectContext } from "./ProjectContext";
 import { ManipulationSettings, ManipulationSettingsContainer } from "./options";
+import { ProjectContext } from "./ProjectContext";
 import { OptionalKind, SourceFileStructure } from "./structures";
 import { WriterFunction } from "./types";
 

@@ -1,6 +1,6 @@
+import { errors } from "@ts-morph/common";
 import { expect } from "chai";
 import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
-import { errors } from "@ts-morph/common";
 import { IndexSignatureDeclarationStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";

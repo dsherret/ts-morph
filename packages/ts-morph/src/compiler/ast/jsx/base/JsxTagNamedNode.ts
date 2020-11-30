@@ -1,9 +1,9 @@
 import { ts } from "@ts-morph/common";
-import { Constructor } from "../../../../types";
 import { JsxTagNamedNodeStructure } from "../../../../structures";
-import { callBaseSet } from "../../callBaseSet";
-import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { Constructor } from "../../../../types";
 import { JsxTagNameExpression } from "../../aliases";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 
 export type JsxTagNamedNodeExtensionType = Node<ts.Node & { tagName: ts.JsxTagNameExpression; }>;

@@ -1,11 +1,11 @@
 import { ArrayUtils, ts } from "@ts-morph/common";
 import { ScopeableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Scope } from "../common/Scope";
 import { ModifierableNode } from "./ModifierableNode";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ScopeableNodeExtensionType = Node & ModifierableNode;
 

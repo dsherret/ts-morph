@@ -1,7 +1,7 @@
 import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure } from "../base";
 import { KindedStructure, Structure } from "../Structure";
-import { OptionalKind } from "../types";
 import { StructureKind } from "../StructureKind";
+import { OptionalKind } from "../types";
 import { EnumMemberStructure } from "./EnumMemberStructure";
 
 export interface EnumDeclarationStructure

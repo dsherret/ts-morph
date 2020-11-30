@@ -1,9 +1,9 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
-import { ExpressionedNode } from "../expression";
-import { Statement } from "../statement";
 import { ExportAssignmentSpecificStructure, ExportAssignmentStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
+import { ExpressionedNode } from "../expression";
+import { Statement } from "../statement";
 
 export const ExportAssignmentBase = ExpressionedNode(Statement);
 export class ExportAssignment extends ExportAssignmentBase<ts.ExportAssignment> {

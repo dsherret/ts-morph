@@ -1,12 +1,12 @@
-import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
+import { StructureKind, TypeParameterDeclarationSpecificStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { NamedNode } from "../base";
-import { Node } from "../common";
-import { TypeNode } from "./TypeNode";
-import { StructureKind, TypeParameterDeclarationSpecificStructure, TypeParameterDeclarationStructure } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
+import { Node } from "../common";
+import { TypeNode } from "./TypeNode";
 
 export const TypeParameterDeclarationBase = NamedNode(Node);
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {

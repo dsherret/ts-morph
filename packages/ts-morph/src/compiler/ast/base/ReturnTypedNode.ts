@@ -5,10 +5,10 @@ import { Constructor, WriterFunction } from "../../../types";
 import { getTextFromStringOrWriter } from "../../../utils";
 import { Signature } from "../../symbols";
 import { Type } from "../../types";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { TypeNode } from "../type/TypeNode";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ReturnTypedNodeExtensionType = Node<ts.SignatureDeclaration>;
 

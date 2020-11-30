@@ -4,10 +4,10 @@ import { OptionalKind, TypeParameterDeclarationStructure, TypeParameteredNodeStr
 import { Constructor } from "../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { NamedNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { TypeParameterDeclaration } from "../type/TypeParameterDeclaration";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type TypeParameteredNodeExtensionType = Node<ts.Node & { typeParameters?: ts.NodeArray<ts.TypeParameterDeclaration>; }>;
 

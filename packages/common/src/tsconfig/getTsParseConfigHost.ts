@@ -1,5 +1,5 @@
-import { ts } from "../typescript";
 import { TransactionalFileSystem } from "../fileSystem";
+import { ts } from "../typescript";
 import { readDirectory } from "./readDirectory";
 
 export interface GetTsParseConfigHostOptions {

@@ -1,6 +1,6 @@
+import { errors } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ExclamationTokenableNode, PropertyDeclaration, VariableStatement } from "../../../../compiler";
-import { errors } from "@ts-morph/common";
 import { ExclamationTokenableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 

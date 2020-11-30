@@ -3,10 +3,10 @@ import { FormattingKind, getEndIndexFromArray, getNewInsertCode, getNodesToRetur
 import { DecoratableNodeStructure, DecoratorStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { Decorator } from "../decorator/Decorator";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type DecoratableNodeExtensionType = Node<ts.Node>;
 

@@ -1,5 +1,5 @@
-import { Constructor } from "../../../types";
 import { errors, SyntaxKind } from "@ts-morph/common";
+import { Constructor } from "../../../types";
 import { Node } from "../common";
 import { NamespaceDeclaration } from "./NamespaceDeclaration";
 

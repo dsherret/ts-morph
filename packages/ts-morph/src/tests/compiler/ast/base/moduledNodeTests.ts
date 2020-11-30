@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { ExportAssignment, ExportDeclaration, ExportedDeclarations, ImportDeclaration, ModuledNode, NamespaceDeclaration, QuoteKind,
     SourceFile } from "../../../../compiler";
-import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, OptionalKind } from "../../../../structures";
 import { Project } from "../../../../Project";
+import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ModuledNode), () => {

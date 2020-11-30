@@ -1,8 +1,8 @@
 import { errors, ObjectFlags, ts, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
 import { getNotFoundErrorMessageForNameOrFindFunction, getSymbolByNameOrFindFunction } from "../../utils";
-import { Signature, Symbol } from "../symbols";
 import { Node } from "../ast";
+import { Signature, Symbol } from "../symbols";
 import { TypeParameter } from "./TypeParameter";
 
 export class Type<TType extends ts.Type = ts.Type> {

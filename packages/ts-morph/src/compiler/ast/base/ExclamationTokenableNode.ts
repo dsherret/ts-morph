@@ -2,9 +2,9 @@ import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ExclamationTokenableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ExclamationTokenableNodeExtensionType = Node<ts.Node & { exclamationToken?: ts.ExclamationToken; }>;
 

@@ -5,11 +5,11 @@ import { AmbientableNode, BodiedNode, ExportableNode, JSDocableNode, Modifierabl
     UnwrappableNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
+import { Node } from "../common";
 import { Identifier } from "../name";
 import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
 import { NamespaceDeclarationKind } from "./NamespaceDeclarationKind";
-import { Node } from "../common";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>
     ModuledNode(UnwrappableNode(

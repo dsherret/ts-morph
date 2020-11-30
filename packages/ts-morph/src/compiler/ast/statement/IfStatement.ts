@@ -1,8 +1,8 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
+import { removeStatementedNodeChildren } from "../../../manipulation";
 import { Node } from "../common";
 import { ExpressionedNode } from "../expression";
 import { Statement } from "./Statement";
-import { removeStatementedNodeChildren } from "../../../manipulation";
 
 export const IfStatementBase = ExpressionedNode(Statement);
 export class IfStatement extends IfStatementBase<ts.IfStatement> {

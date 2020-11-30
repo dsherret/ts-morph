@@ -1,10 +1,10 @@
 import { ts } from "@ts-morph/common";
 import { NamedNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
-import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
-import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
+import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
 
 export interface NamedNodeSpecificBase<TNode extends Node> {
     /**

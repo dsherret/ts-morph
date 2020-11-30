@@ -3,17 +3,17 @@ import { ClassDeclarationSpecificStructure, ClassDeclarationStructure, ClassLike
     InterfaceDeclarationStructure, JSDocStructure, MethodDeclarationStructure, MethodSignatureStructure, ParameterDeclarationStructure,
     PropertySignatureStructure, StructureKind } from "../../../structures";
 import { AmbientableNode, ExportableNode } from "../base";
-import { callBaseSet } from "../callBaseSet";
-import { NamespaceChildableNode } from "../module";
-import { Statement } from "../statement";
 import { callBaseGetStructure } from "../callBaseGetStructure";
-import { ClassLikeDeclarationBase } from "./base";
+import { callBaseSet } from "../callBaseSet";
 import { Node, Scope } from "../common";
 import { ParameterDeclaration } from "../function";
-import { PropertyDeclaration } from "./PropertyDeclaration";
+import { NamespaceChildableNode } from "../module";
+import { Statement } from "../statement";
+import { ClassLikeDeclarationBase } from "./base";
 import { ConstructorDeclaration } from "./ConstructorDeclaration";
 import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { MethodDeclaration } from "./MethodDeclaration";
+import { PropertyDeclaration } from "./PropertyDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>

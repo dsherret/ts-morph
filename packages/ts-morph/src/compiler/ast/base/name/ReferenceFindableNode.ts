@@ -1,7 +1,7 @@
 import { ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
-import { Node } from "../../common";
 import { ReferencedSymbol } from "../../../tools";
+import { Node } from "../../common";
 
 export type ReferenceFindableNodeExtensionType = Node<ts.Node & { name?: ts.PropertyName | ts.BindingName | ts.DeclarationName; }>;
 

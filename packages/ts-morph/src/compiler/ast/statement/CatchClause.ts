@@ -1,7 +1,7 @@
 import { errors, ts } from "@ts-morph/common";
 import { Node } from "../common";
-import { Block } from "./Block";
 import { VariableDeclaration } from "../variable";
+import { Block } from "./Block";
 
 export const CatchClauseBase = Node;
 export class CatchClause extends CatchClauseBase<ts.CatchClause> {

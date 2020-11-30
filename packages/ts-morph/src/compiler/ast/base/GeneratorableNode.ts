@@ -3,9 +3,9 @@ import { FormattingKind, insertIntoParentTextRange, removeChildrenWithFormatting
 import { GeneratorableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { NamedNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type GeneratorableNodeExtensionType = Node<ts.Node & { asteriskToken?: ts.AsteriskToken; }>;
 

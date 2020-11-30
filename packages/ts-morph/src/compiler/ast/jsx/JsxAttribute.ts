@@ -4,9 +4,9 @@ import { JsxAttributeSpecificStructure, JsxAttributeStructure, StructureKind } f
 import { WriterFunction } from "../../../types";
 import { getTextFromStringOrWriter } from "../../../utils";
 import { NamedNode } from "../base";
-import { Node } from "../common";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
+import { Node } from "../common";
 import { StringLiteral } from "../literal";
 import { JsxExpression } from "./JsxExpression";
 

@@ -5,10 +5,10 @@ import { MethodDeclarationOverloadSpecificStructure, MethodDeclarationOverloadSt
 import { isNodeAmbientOrInAmbientContext } from "../../../utils";
 import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
     QuestionTokenableNode, ScopedNode, SignaturedDeclaration, StaticableNode, TextInsertableNode, TypeParameteredNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 import { ClassElement } from "./ClassElement";
 
 const createBase = <T extends typeof ClassElement>(ctor: T) =>

@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { Project } from "../../Project";
 import { ClassExpression, ReturnStatement } from "../../compiler";
+import { Project } from "../../Project";
 
 describe("tests for issue #840", () => {
     it("should rename anonymous class expression with extends", () => {

@@ -5,12 +5,12 @@ import { FunctionDeclarationOverloadSpecificStructure, FunctionDeclarationOverlo
     OptionalKind, StructureKind } from "../../../structures";
 import { AmbientableNode, AsyncableNode, BodyableNode, ExportableNode, GeneratorableNode, JSDocableNode, ModifierableNode, NameableNode, SignaturedDeclaration,
     TextInsertableNode, TypeParameteredNode, UnwrappableNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
-import { Statement } from "../statement";
 import { NamespaceChildableNode } from "../module";
+import { Statement } from "../statement";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>
     UnwrappableNode(TextInsertableNode(OverloadableNode(

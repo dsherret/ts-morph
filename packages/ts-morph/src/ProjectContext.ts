@@ -1,12 +1,12 @@
-import { CodeBlockWriter } from "./codeBlockWriter";
-import { Diagnostic, LanguageService, QuoteKind, SourceFile, TypeChecker } from "./compiler";
 import { CompilerOptionsContainer, createModuleResolutionHost, errors, Memoize, ResolutionHostFactory, StandardizedFilePath, TransactionalFileSystem, ts,
     TsSourceFileContainer } from "@ts-morph/common";
+import { CodeBlockWriter } from "./codeBlockWriter";
+import { Diagnostic, LanguageService, QuoteKind, SourceFile, TypeChecker } from "./compiler";
 import { CompilerFactory, InProjectCoordinator, StructurePrinterFactory } from "./factories";
 import { DirectoryCoordinator } from "./fileSystem";
 import { IndentationText, ManipulationSettingsContainer } from "./options";
-import { ConsoleLogger, LazyReferenceCoordinator } from "./utils";
 import { Project } from "./Project";
+import { ConsoleLogger, LazyReferenceCoordinator } from "./utils";
 import { createWrappedNode } from "./utils/compiler/createWrappedNode";
 
 /** @internal */

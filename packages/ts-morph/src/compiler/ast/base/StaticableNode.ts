@@ -1,10 +1,10 @@
 import { errors, SyntaxKind } from "@ts-morph/common";
 import { StaticableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type StaticableNodeExtensionType = Node & ModifierableNode;
 

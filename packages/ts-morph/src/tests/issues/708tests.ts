@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { Project } from "../../Project";
 import { IfStatement, Node } from "../../compiler";
+import { Project } from "../../Project";
 describe("tests for issue #706", () => {
     it("should not error when removing a else if", () => {
         const project = new Project({ useInMemoryFileSystem: true });

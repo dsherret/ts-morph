@@ -5,9 +5,9 @@ import { GetAccessorDeclarationStructure, MethodDeclarationStructure, ObjectLite
     SetAccessorDeclarationStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
-import { ExtendedParser } from "../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "../../class";
+import { ExtendedParser } from "../../utils";
 import { PrimaryExpression } from "../PrimaryExpression";
 import { CommentObjectLiteralElement } from "./CommentObjectLiteralElement";
 import { PropertyAssignment } from "./PropertyAssignment";

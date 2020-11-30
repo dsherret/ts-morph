@@ -1,8 +1,8 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { getAppendCommaPos } from "../../manipulation/helpers/appendCommaToText";
 import { WriterFunction } from "../../types";
 import { WriterUtils } from "../../utils";
 import { Printer } from "../Printer";
-import { getAppendCommaPos } from "../../manipulation/helpers/appendCommaToText";
 
 export class CommaSeparatedStructuresPrinter<T> extends Printer<ReadonlyArray<T | WriterFunction | string> | WriterFunction | string> {
     constructor(private readonly printer: Printer<T | WriterFunction>) {

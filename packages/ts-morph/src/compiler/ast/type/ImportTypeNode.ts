@@ -2,8 +2,8 @@ import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { EntityName } from "../aliases";
 import { TypeArgumentedNode } from "../base";
-import { TypeNode } from "./TypeNode";
 import { Node } from "../common";
+import { TypeNode } from "./TypeNode";
 
 export const ImportTypeNodeBase = TypeArgumentedNode(TypeNode);
 export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {

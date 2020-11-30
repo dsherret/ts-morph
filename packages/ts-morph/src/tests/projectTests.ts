@@ -1,14 +1,14 @@
+import { CompilerOptions, errors, InMemoryFileSystemHost, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
+import { assert, IsExact } from "conditional-type-checks";
 import { EOL } from "os";
 import * as path from "path";
 import { ClassDeclaration, EmitResult, Identifier, InterfaceDeclaration, MemoryEmitResult, NamespaceDeclaration, Node, SourceFile } from "../compiler";
-import { CompilerOptions, errors, InMemoryFileSystemHost, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
 import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure, StructureKind } from "../structures";
 import { OptionalKindAndTrivia } from "./compiler/testHelpers";
 import * as testHelpers from "./testHelpers";
-import { assert, IsExact } from "conditional-type-checks";
 
 console.log("");
 console.log("TypeScript version: " + ts.version);

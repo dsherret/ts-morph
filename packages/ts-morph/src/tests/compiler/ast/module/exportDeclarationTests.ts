@@ -1,9 +1,9 @@
+import { errors, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExportDeclaration } from "../../../../compiler";
-import { errors, SyntaxKind } from "@ts-morph/common";
 import { Project } from "../../../../Project";
-import { WriterFunction } from "../../../../types";
 import { ExportDeclarationStructure, ExportSpecifierStructure, OptionalKind, StructureKind } from "../../../../structures";
+import { WriterFunction } from "../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {

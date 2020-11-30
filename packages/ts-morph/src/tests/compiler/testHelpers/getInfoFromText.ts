@@ -1,6 +1,6 @@
 import { CompilerOptions, FileSystemHost, InMemoryFileSystemHost, RealFileSystemHost, SyntaxKind, ts } from "@ts-morph/common";
-import * as path from "path";
 import { IsAny } from "conditional-type-checks";
+import * as path from "path";
 import { Node, SourceFile } from "../../../compiler";
 import { Project } from "../../../Project";
 const fileSystem = new RealFileSystemHost();

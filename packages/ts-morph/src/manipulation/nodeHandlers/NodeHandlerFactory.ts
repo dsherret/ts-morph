@@ -1,5 +1,5 @@
-import { Node, SourceFile } from "../../compiler";
 import { errors, ts } from "@ts-morph/common";
+import { Node, SourceFile } from "../../compiler";
 import { CompilerFactory } from "../../factories";
 import { ChangeChildOrderParentHandler } from "./ChangeChildOrderParentHandler";
 import { DefaultParentHandler } from "./DefaultParentHandler";
@@ -7,8 +7,8 @@ import { ForgetChangedNodeHandler } from "./ForgetChangedNodeHandler";
 import { NodeHandler } from "./NodeHandler";
 import { ParentFinderReplacementNodeHandler } from "./ParentFinderReplacementNodeHandler";
 import { RangeHandler } from "./RangeHandler";
-import { RenameNodeHandler } from "./RenameNodeHandler";
 import { RangeParentHandler } from "./RangeParentHandler";
+import { RenameNodeHandler } from "./RenameNodeHandler";
 import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
 import { TryOrForgetNodeHandler } from "./TryOrForgetNodeHandler";
 import { UnwrapParentHandler } from "./UnwrapParentHandler";

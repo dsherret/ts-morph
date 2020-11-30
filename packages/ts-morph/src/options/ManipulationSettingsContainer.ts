@@ -1,5 +1,5 @@
-import { QuoteKind, UserPreferences } from "../compiler";
 import { EditorSettings, errors, NewLineKind, SettingsContainer } from "@ts-morph/common";
+import { QuoteKind, UserPreferences } from "../compiler";
 import { fillDefaultEditorSettings, newLineKindToString } from "../utils";
 
 /** Kinds of indentation */

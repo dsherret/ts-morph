@@ -4,8 +4,8 @@ import { assert, IsExact } from "conditional-type-checks";
 import { Block, BodyableNode, CaseClause, ClassDeclaration, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile,
     StatementedNode } from "../../../../compiler";
 import { StatementedNodeStructure, StatementStructures, StructureKind } from "../../../../structures";
-import { fillStructures, getInfoFromText } from "../../testHelpers";
 import { WriterFunction } from "../../../../types";
+import { fillStructures, getInfoFromText } from "../../testHelpers";
 
 function getInfoFromTextWithSyntax<T extends Node>(text: string, kind?: SyntaxKind) {
     const obj = getInfoFromText(text);

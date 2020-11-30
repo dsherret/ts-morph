@@ -1,14 +1,14 @@
+import { errors, NewLineKind, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact, IsNullable } from "conditional-type-checks";
-import { errors, NewLineKind, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { CallExpression, ClassDeclaration, EnumDeclaration, ExpressionStatement, ForEachDescendantTraversalControl, ForInStatement, FormatCodeSettings,
     ForOfStatement, ForStatement, FunctionDeclaration, Identifier, InterfaceDeclaration, Node, NodeParentType, NumericLiteral, PropertyAccessExpression,
     PropertySignature, SourceFile, StringLiteral, TypeParameterDeclaration, VariableStatement } from "../../../../compiler";
 import { hasParsedTokens } from "../../../../compiler/ast/utils";
 import { Project } from "../../../../Project";
-import { createWrappedNode } from "../../../../utils/compiler/createWrappedNode";
 import { WriterFunction } from "../../../../types";
+import { createWrappedNode } from "../../../../utils/compiler/createWrappedNode";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(Node), () => {

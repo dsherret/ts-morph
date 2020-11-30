@@ -1,8 +1,8 @@
 import { tsMorph } from "@ts-morph/scripts";
 import { getProject } from "../common";
-import { WrapperFactory } from "./WrapperFactory";
-import { TsMorphInspector } from "./TsMorphInspector";
 import { TsInspector } from "./TsInspector";
+import { TsMorphInspector } from "./TsMorphInspector";
+import { WrapperFactory } from "./WrapperFactory";
 
 export class InspectorFactory {
     private readonly tsMorphInspector: TsMorphInspector;

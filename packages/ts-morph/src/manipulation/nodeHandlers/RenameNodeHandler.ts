@@ -1,7 +1,7 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import { ExportSpecifier, ImportSpecifier, Node, ShorthandPropertyAssignment } from "../../compiler";
-import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
 import { CompilerFactory } from "../../factories";
+import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
 
 /**
  * Replacement handler that handles renames

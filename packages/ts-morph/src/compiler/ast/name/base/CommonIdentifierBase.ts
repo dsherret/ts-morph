@@ -1,7 +1,7 @@
 import { ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
-import { Node } from "../../common";
 import { DefinitionInfo } from "../../../tools";
+import { Node } from "../../common";
 
 export type CommonIdentifierBaseExtensionType = Node<ts.Node & { text: string; }>;
 

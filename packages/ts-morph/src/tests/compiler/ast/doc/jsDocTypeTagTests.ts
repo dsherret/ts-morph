@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { getInfoFromText } from "../../testHelpers";
 import { JSDocTypeTag, Node } from "../../../../compiler";
+import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(JSDocTypeTag), () => {
     function getInfo(text: string) {

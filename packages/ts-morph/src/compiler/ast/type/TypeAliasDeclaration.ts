@@ -1,9 +1,9 @@
 import { ts } from "@ts-morph/common";
 import { StructureKind, TypeAliasDeclarationSpecificStructure, TypeAliasDeclarationStructure } from "../../../structures";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TypedNode, TypeParameteredNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Statement } from "../statement";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 // todo: type node should not be able to return undefined
 

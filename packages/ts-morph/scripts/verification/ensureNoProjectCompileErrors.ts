@@ -4,8 +4,8 @@
  * Ensures there are no compile errors in the src directory.
  * ---------------------------------------------------
  */
-import { getProject } from "../common";
 import { printDiagnostics } from "@ts-morph/scripts";
+import { getProject } from "../common";
 
 const project = getProject();
 

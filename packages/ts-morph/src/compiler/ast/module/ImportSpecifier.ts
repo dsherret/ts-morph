@@ -1,9 +1,9 @@
 import { StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
-import { Node } from "../common";
+import { ImportSpecifierSpecificStructure, ImportSpecifierStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
-import { ImportSpecifierSpecificStructure, ImportSpecifierStructure, StructureKind } from "../../../structures";
+import { Node } from "../common";
 
 // todo: There's a lot of common code that could be shared with ExportSpecifier. It could be moved to a mixin.
 

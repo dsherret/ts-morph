@@ -1,8 +1,8 @@
-import { CodeBlockWriter } from "../../codeBlockWriter";
 import { errors } from "@ts-morph/common";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { ImportDeclarationStructure, OptionalKind } from "../../structures";
-import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
+import { NodePrinter } from "../NodePrinter";
 
 export class ImportDeclarationStructurePrinter extends NodePrinter<OptionalKind<ImportDeclarationStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);

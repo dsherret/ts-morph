@@ -1,8 +1,8 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { VariableDeclarationKind } from "../../compiler/ast/variable/VariableDeclarationKind";
 import { OptionalKind, VariableStatementStructure } from "../../structures";
-import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
+import { NodePrinter } from "../NodePrinter";
 
 export class VariableStatementStructurePrinter extends NodePrinter<OptionalKind<VariableStatementStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);

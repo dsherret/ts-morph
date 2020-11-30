@@ -1,5 +1,5 @@
-import { ArrayUtils } from "../utils";
 import { Comparer, ComparerToStoredComparer, PropertyComparer, PropertyStoredComparer } from "../comparers";
+import { ArrayUtils } from "../utils";
 
 /**
  * An array where the values are sorted by a key of one of the values.

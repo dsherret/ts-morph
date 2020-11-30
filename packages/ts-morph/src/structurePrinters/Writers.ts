@@ -1,8 +1,8 @@
 /* barrel:ignore */
-import { CodeBlockWriter } from "../codeBlockWriter";
 import { errors } from "@ts-morph/common";
-import { TypeElementMemberedNodeStructure } from "../structures";
+import { CodeBlockWriter } from "../codeBlockWriter";
 import { StructurePrinterFactory } from "../factories/StructurePrinterFactory";
+import { TypeElementMemberedNodeStructure } from "../structures";
 import { WriterFunction } from "../types";
 
 export type WriterFunctionOrValue = string | number | WriterFunction;

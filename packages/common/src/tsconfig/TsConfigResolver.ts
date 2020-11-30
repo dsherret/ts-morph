@@ -1,6 +1,6 @@
+import { Memoize } from "../decorators";
 import { FileUtils, StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
 import { CompilerOptions, ts } from "../typescript";
-import { Memoize } from "../decorators";
 import { getTsParseConfigHost, TsParseConfigHostResult } from "./getTsParseConfigHost";
 
 export class TsConfigResolver {

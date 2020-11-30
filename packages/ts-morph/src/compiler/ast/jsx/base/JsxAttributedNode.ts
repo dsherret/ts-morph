@@ -2,12 +2,12 @@ import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../../manipulation";
 import { SpaceFormattingStructuresPrinter } from "../../../../structurePrinters";
 import { JsxAttributeStructure, JsxSpreadAttributeStructure, OptionalKind } from "../../../../structures";
+import { JsxAttributedNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../../utils";
-import { JsxAttributedNodeStructure } from "../../../../structures";
-import { callBaseSet } from "../../callBaseSet";
-import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { JsxAttributeLike } from "../../aliases";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 import { JsxTagNamedNode } from "./JsxTagNamedNode";
 

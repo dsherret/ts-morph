@@ -2,8 +2,8 @@ import { KeyValueCache, SortedKeyValueArray } from "../collections";
 import { LocaleStringComparer } from "../comparers";
 import { errors } from "../errors";
 import { ArrayUtils } from "../utils";
-import { FileUtils } from "./FileUtils";
 import { FileSystemHost } from "./FileSystemHost";
+import { FileUtils } from "./FileUtils";
 import { StandardizedFilePath } from "./StandardizedFilePath";
 
 type Operation = DeleteDirectoryOperation | DeleteFileOperation | MoveDirectoryOperation | MakeDirectoryOperation | CopyDirectoryOperation;

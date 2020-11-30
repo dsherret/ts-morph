@@ -1,8 +1,8 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, JSDocableNode, Node, VariableStatement } from "../../../../compiler";
-import { WriterFunction } from "../../../../types";
 import { JSDocableNodeStructure, JSDocStructure, OptionalKind } from "../../../../structures";
+import { WriterFunction } from "../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 
 describe(nameof(JSDocableNode), () => {

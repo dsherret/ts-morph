@@ -2,9 +2,9 @@ import { ts } from "@ts-morph/common";
 import { PropertySignatureSpecificStructure, PropertySignatureStructure, StructureKind } from "../../../structures";
 import { ChildOrderableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode, QuestionTokenableNode, ReadonlyableNode,
     TypedNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 const createBase = <T extends typeof TypeElement>(ctor: T) =>
     ChildOrderableNode(JSDocableNode(ReadonlyableNode(

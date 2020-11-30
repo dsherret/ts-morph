@@ -1,7 +1,7 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { OptionalKind, VariableDeclarationStructure } from "../../structures";
-import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
+import { NodePrinter } from "../NodePrinter";
 
 export class VariableDeclarationStructurePrinter extends NodePrinter<OptionalKind<VariableDeclarationStructure>> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);

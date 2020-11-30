@@ -1,8 +1,8 @@
 import { errors, SyntaxKind } from "@ts-morph/common";
 import { ExportableNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
-import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 import { ModifierableNode } from "../ModifierableNode";
 import { ExportGetableNode } from "./ExportGetableNode";

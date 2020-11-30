@@ -1,6 +1,6 @@
 import { ts } from "@ts-morph/common";
-import { Statement } from "./Statement";
 import { ExpressionedNode } from "../expression";
+import { Statement } from "./Statement";
 
 export const WithStatementBase = ExpressionedNode(Statement);
 export class WithStatement extends WithStatementBase<ts.WithStatement> {

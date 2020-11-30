@@ -1,8 +1,8 @@
 import { errors, KeyValueCache, ts } from "@ts-morph/common";
-import { Constructor } from "../../../../types";
-import { Node } from "../../common";
-import { RenameLocation, RenameOptions } from "../../../tools";
 import { replaceSourceFileTextForRename } from "../../../../manipulation";
+import { Constructor } from "../../../../types";
+import { RenameLocation, RenameOptions } from "../../../tools";
+import { Node } from "../../common";
 import { SourceFile } from "../../module";
 
 export type RenameableNodeExtensionType = Node<ts.Node>;

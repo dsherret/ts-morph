@@ -1,6 +1,6 @@
+import { errors, ScriptTarget, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { EmitOutput, FileTextChanges, LanguageService, SourceFile, TextChange, TextSpan } from "../../../compiler";
-import { errors, ScriptTarget, ts } from "@ts-morph/common";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(LanguageService), () => {

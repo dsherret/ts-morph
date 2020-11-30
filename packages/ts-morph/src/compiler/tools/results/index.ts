@@ -1,6 +1,6 @@
 export * from "./CodeAction";
-export * from "./CombinedCodeActions";
 export * from "./CodeFixAction";
+export * from "./CombinedCodeActions";
 export * from "./DefinitionInfo";
 export * from "./Diagnostic";
 export * from "./DiagnosticMessageChain";

@@ -1,6 +1,6 @@
 import toAbsoluteGlob from "@dsherret/to-absolute-glob";
-import * as path from "path";
 import isNegatedGlob from "is-negated-glob";
+import * as path from "path";
 import { ArrayUtils, StringUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 import { StandardizedFilePath } from "./StandardizedFilePath";

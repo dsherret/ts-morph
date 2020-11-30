@@ -7,8 +7,8 @@
  * all the compiler node properties.
  * ------------------------------------------
  */
-import * as path from "path";
 import * as fs from "fs";
+import * as path from "path";
 import { rootFolder } from "../config";
 import { InspectorFactory, TsNode, TsNodeProperty } from "../inspectors";
 

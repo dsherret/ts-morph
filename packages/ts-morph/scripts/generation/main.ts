@@ -1,12 +1,12 @@
 import { tsMorph } from "@ts-morph/scripts";
-import { createGetStructureFunctions } from "./createGetStructureFunctions";
-import { createNodeTypeGuards } from "./createNodeTypeGuards";
-import { createKindToNodeMappings } from "./createKindToNodeMappings";
-import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
+import { InspectorFactory } from "../inspectors";
 import { createDeclarationFile } from "./createDeclarationFile";
 import { createForEachStructureChild } from "./createForEachStructureChild";
+import { createGetStructureFunctions } from "./createGetStructureFunctions";
+import { createKindToNodeMappings } from "./createKindToNodeMappings";
+import { createNodeTypeGuards } from "./createNodeTypeGuards";
+import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
 import { createStructureTypeGuards } from "./createStructureTypeGuards";
-import { InspectorFactory } from "../inspectors";
 
 const args = process.argv.slice(2);
 const originalArgs = [...args];

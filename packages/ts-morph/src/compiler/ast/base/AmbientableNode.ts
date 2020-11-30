@@ -2,10 +2,10 @@ import { errors, SyntaxKind } from "@ts-morph/common";
 import { AmbientableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { isNodeAmbientOrInAmbientContext } from "../../../utils";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type AmbientableNodeExtensionType = Node & ModifierableNode;
 

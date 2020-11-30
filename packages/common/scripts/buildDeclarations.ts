@@ -1,5 +1,5 @@
-import * as path from "path";
 import { createDeclarationProject, makeConstructorsPrivate, tsMorph } from "@ts-morph/scripts";
+import * as path from "path";
 
 const declarationProject = createDeclarationProject({
     tsConfigFilePath: path.join(__dirname, "../tsconfig.json"),

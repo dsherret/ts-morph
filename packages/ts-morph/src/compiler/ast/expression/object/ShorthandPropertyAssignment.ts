@@ -1,13 +1,13 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../../manipulation";
-import { InitializerExpressionGetableNode, NamedNode, QuestionTokenableNode } from "../../base";
-import { Expression } from "../Expression";
-import { PropertyAssignment } from "./PropertyAssignment";
 import { QuestionTokenableNodeStructure, ShorthandPropertyAssignmentSpecificStructure, ShorthandPropertyAssignmentStructure,
     StructureKind } from "../../../../structures";
+import { InitializerExpressionGetableNode, NamedNode, QuestionTokenableNode } from "../../base";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { callBaseSet } from "../../callBaseSet";
+import { Expression } from "../Expression";
 import { ObjectLiteralElement } from "./ObjectLiteralElement";
+import { PropertyAssignment } from "./PropertyAssignment";
 
 // This node only has an object assignment initializer, equals token, and question token, in order to tell the user about bad code
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)

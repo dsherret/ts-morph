@@ -1,6 +1,6 @@
+import { StringUtils } from "@ts-morph/common";
 import { getNextMatchingPos } from "./getNextMatchingPos";
 import { getPreviousMatchingPos } from "./getPreviousMatchingPos";
-import { StringUtils } from "@ts-morph/common";
 
 export function getNextNonWhitespacePos(text: string, pos: number) {
     return getNextMatchingPos(text, pos, isNotWhitespace);

@@ -3,11 +3,11 @@ import { FormattingKind, removeChildrenWithFormatting } from "../../../manipulat
 import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
 import { Symbol } from "../../symbols";
-import { isComment } from "../utils";
 import { ExportedDeclarations } from "../aliases";
 import { Node } from "../common";
 import { ExportAssignment, ExportDeclaration, ImportDeclaration } from "../module";
 import { StatementedNode } from "../statement";
+import { isComment } from "../utils";
 
 export type ModuledNodeExtensionType = Node<ts.SourceFile | ts.NamespaceDeclaration> & StatementedNode;
 

@@ -1,6 +1,6 @@
 import { errors, ts } from "@ts-morph/common";
-import { Type } from "./Type";
 import { Node } from "../ast";
+import { Type } from "./Type";
 
 export class TypeParameter extends Type<ts.TypeParameter> {
     /**

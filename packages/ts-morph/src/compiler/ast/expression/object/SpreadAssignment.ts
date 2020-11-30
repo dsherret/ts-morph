@@ -1,8 +1,8 @@
 import { ts } from "@ts-morph/common";
-import { ExpressionedNode } from "../expressioned";
 import { ExpressionedNodeStructure, SpreadAssignmentSpecificStructure, SpreadAssignmentStructure, StructureKind } from "../../../../structures";
-import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { callBaseSet } from "../../callBaseSet";
+import { ExpressionedNode } from "../expressioned";
 import { ObjectLiteralElement } from "./ObjectLiteralElement";
 
 export const SpreadAssignmentBase = ExpressionedNode(ObjectLiteralElement);

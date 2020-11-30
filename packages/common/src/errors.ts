@@ -1,6 +1,6 @@
+import { StandardizedFilePath } from "./fileSystem";
 import { getSyntaxKindName } from "./helpers";
 import { ts } from "./typescript";
-import { StandardizedFilePath } from "./fileSystem";
 
 /** Collection of helper functions that can be used to throw errors. */
 export namespace errors {

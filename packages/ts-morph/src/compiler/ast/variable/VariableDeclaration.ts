@@ -2,9 +2,9 @@ import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { StructureKind, VariableDeclarationSpecificStructure, VariableDeclarationStructure } from "../../../structures";
 import { BindingNamedNode, ExclamationTokenableNode, ExportGetableNode, InitializerExpressionableNode, TypedNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 const createBase = <T extends typeof Node>(ctor: T) =>
     ExportGetableNode(ExclamationTokenableNode(

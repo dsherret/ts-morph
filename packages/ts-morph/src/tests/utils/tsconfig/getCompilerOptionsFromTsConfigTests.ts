@@ -1,5 +1,5 @@
-import { expect } from "chai";
 import { CompilerOptions, errors, FileSystemHost } from "@ts-morph/common";
+import { expect } from "chai";
 import { getCompilerOptionsFromTsConfig } from "../../../utils";
 import * as testHelpers from "../../testHelpers";
 

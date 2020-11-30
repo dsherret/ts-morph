@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { Writers } from "../../structurePrinters/Writers";
 import { TypeElementMemberedNodeStructure } from "../../structures";
 import { WriterFunction } from "../../types";
-import { Writers } from "../../structurePrinters/Writers";
 
 describe(nameof<Writers>(), () => {
     function getWriter() {

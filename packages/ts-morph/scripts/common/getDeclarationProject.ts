@@ -1,5 +1,5 @@
-import * as path from "path";
 import { createDeclarationProject as scriptsCreateDeclarationProject, tsMorph } from "@ts-morph/scripts";
+import * as path from "path";
 import { rootFolder } from "../config";
 
 export function getDeclarationProject() {

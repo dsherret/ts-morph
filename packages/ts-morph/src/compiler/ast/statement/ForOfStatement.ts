@@ -1,8 +1,8 @@
 import { ts } from "@ts-morph/common";
 import { AwaitableNode } from "../base";
 import { Expression, ExpressionedNode } from "../expression";
-import { IterationStatement } from "./IterationStatement";
 import { VariableDeclarationList } from "../variable";
+import { IterationStatement } from "./IterationStatement";
 
 export const ForOfStatementBase = ExpressionedNode(AwaitableNode(IterationStatement));
 export class ForOfStatement extends ForOfStatementBase<ts.ForOfStatement> {

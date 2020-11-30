@@ -2,10 +2,10 @@ import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
 import { ExpressionedNodeStructure } from "../../../../structures";
 import { Constructor, InstanceOf, WriterFunction } from "../../../../types";
 import { callBaseSet } from "../../callBaseSet";
-import { KindToExpressionMappings } from "../../kindToNodeMappings";
 import { Node } from "../../common";
-import { Expression } from "../Expression";
 import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
+import { KindToExpressionMappings } from "../../kindToNodeMappings";
+import { Expression } from "../Expression";
 
 export type ExpressionedNodeExtensionType = Node<ts.Node & { expression: ts.Expression; }>;
 

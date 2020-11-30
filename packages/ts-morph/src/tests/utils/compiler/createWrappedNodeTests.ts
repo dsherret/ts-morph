@@ -1,6 +1,6 @@
+import { errors, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { SourceFile } from "../../../compiler";
-import { errors, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
 import { Project } from "../../../Project";
 import { createWrappedNode } from "../../../utils/compiler/createWrappedNode";
 

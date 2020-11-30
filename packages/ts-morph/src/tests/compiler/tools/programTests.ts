@@ -1,6 +1,6 @@
+import { errors } from "@ts-morph/common";
 import { expect } from "chai";
 import { Program } from "../../../compiler";
-import { errors } from "@ts-morph/common";
 import { getFileSystemHostWithFiles } from "../../testHelpers";
 import { getInfoFromText } from "../testHelpers";
 

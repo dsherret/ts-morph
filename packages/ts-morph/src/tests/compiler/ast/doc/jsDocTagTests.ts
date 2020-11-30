@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { JSDocTag, Node } from "../../../../compiler";
-import { fillStructures, getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 import { JSDocTagStructure } from "../../../../structures";
+import { fillStructures, getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
 describe(nameof(JSDocTag), () => {
     function getInfo(text: string) {

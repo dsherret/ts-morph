@@ -3,21 +3,21 @@ import { AssertTrue, IsExact } from "conditional-type-checks";
 import { ArrayBindingPattern, BindingElement, ObjectBindingPattern } from "./binding";
 import { ClassDeclaration, GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "./class";
 import { Node } from "./common";
-import { ComputedPropertyName, Identifier, PrivateIdentifier, QualifiedName } from "./name";
 import { Decorator } from "./decorator";
 import { EnumDeclaration } from "./enum";
 import { CallExpression, ElementAccessExpression, Expression, NewExpression, OmittedExpression, PropertyAccessExpression, PropertyAssignment,
     ShorthandPropertyAssignment, SpreadAssignment, ThisExpression } from "./expression";
 import { FunctionDeclaration } from "./function";
-import { ExportAssignment, ExternalModuleReference, NamespaceDeclaration, SourceFile } from "./module";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, InterfaceDeclaration, MethodSignature,
     PropertySignature } from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute, JsxText } from "./jsx";
 import { FalseLiteral, NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TaggedTemplateExpression, TemplateExpression,
     TrueLiteral } from "./literal";
+import { ExportAssignment, ExternalModuleReference, NamespaceDeclaration, SourceFile } from "./module";
+import { ComputedPropertyName, Identifier, PrivateIdentifier, QualifiedName } from "./name";
 import { CaseClause, DefaultClause } from "./statement";
-import { VariableDeclaration } from "./variable";
 import { TypeAliasDeclaration } from "./type";
+import { VariableDeclaration } from "./variable";
 
 type WrappedToCompilerNodeType<T extends Node> = T["compilerNode"];
 

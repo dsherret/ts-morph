@@ -1,5 +1,5 @@
-import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, Memoize } from "@ts-morph/common";
+import { tsMorph } from "@ts-morph/scripts";
 import { isNodeClass } from "../common";
 import { KindToWrapperMapping, Mixin, Structure, WrappedNode } from "./tsMorph";
 import { WrapperFactory } from "./WrapperFactory";

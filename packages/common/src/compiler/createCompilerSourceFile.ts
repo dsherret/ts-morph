@@ -1,5 +1,5 @@
-import { ScriptKind, ScriptTarget, ts } from "../typescript";
 import { StandardizedFilePath } from "../fileSystem";
+import { ScriptKind, ScriptTarget, ts } from "../typescript";
 
 export function createCompilerSourceFile(
     filePath: StandardizedFilePath,

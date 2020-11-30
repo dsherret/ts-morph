@@ -1,9 +1,9 @@
 import { ts } from "@ts-morph/common";
 import { CallSignatureDeclarationSpecificStructure, CallSignatureDeclarationStructure, StructureKind } from "../../../structures";
 import { ChildOrderableNode, JSDocableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { TypeElement } from "./TypeElement";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 const createBase = <T extends typeof TypeElement>(ctor: T) =>
     TypeParameteredNode(ChildOrderableNode(JSDocableNode(

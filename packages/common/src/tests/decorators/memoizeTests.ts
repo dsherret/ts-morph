@@ -1,5 +1,5 @@
-import { Memoize } from "../../decorators";
 import { expect } from "chai";
+import { Memoize } from "../../decorators";
 
 describe(nameof(Memoize), () => {
     let val = 0;

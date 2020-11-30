@@ -1,6 +1,6 @@
+import { errors, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxSelfClosingElement, JsxSpreadAttribute } from "../../../../compiler";
-import { errors, SyntaxKind } from "@ts-morph/common";
 import { JsxSpreadAttributeStructure, StructureKind } from "../../../../structures";
 import { getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
 

@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { getInfoFromText } from "../compiler/testHelpers";
 import { Node } from "../../compiler";
+import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("tests for issue #460", () => {
     it("should change to be ambientable", () => {

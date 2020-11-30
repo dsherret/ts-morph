@@ -86,6 +86,87 @@ export declare class WeakCache<T extends object, U> {
 }
 
 /**
+ * Compares two values specifying the sort order.
+ */
+export interface Comparer<T> {
+    /**
+     * Checks the two items returning -1 if `a` preceeds, 0 if equal, and 1 if `a` follows.
+     * @param a - Item to use.
+     * @param b - Item to compare with.
+     */
+    compareTo(a: T, b: T): number;
+}
+
+/**
+ * Converts a comparer to a stored comparer.
+ */
+export declare class ComparerToStoredComparer<T> implements StoredComparer<T> {
+    private readonly comparer;
+    private readonly storedValue;
+    /**
+     * Constructor.
+     * @param comparer - Comparer to use.
+     * @param storedValue - Stored value to use as the value to always compare the input of `compareTo` to.
+     */
+    constructor(comparer: Comparer<T>, storedValue: T);
+    /** @inheritdoc */
+    compareTo(value: T): number;
+}
+
+/**
+ * Compares two strings by en-us-u-kf-upper locale.
+ */
+export declare class LocaleStringComparer implements Comparer<string> {
+    /** Static instance for reuse. */
+    static readonly instance: LocaleStringComparer;
+    /** @inheritdoc */
+    compareTo(a: string, b: string): 1 | 0 | -1;
+}
+
+/**
+ * Compares two values based on one of their properties.
+ */
+export declare class PropertyComparer<TValue, TProperty> implements Comparer<TValue> {
+    private readonly getProperty;
+    private readonly comparer;
+    /**
+     * Constructor.
+     * @param getProperty - Gets the property from the value to use for comparisons.
+     * @param comparer - Comparer to compare the properties with.
+     */
+    constructor(getProperty: (value: TValue) => TProperty, comparer: Comparer<TProperty>);
+    /** @inheritdoc */
+    compareTo(a: TValue, b: TValue): number;
+}
+
+/**
+ * A stored comparer that compares a property to a stored value.
+ */
+export declare class PropertyStoredComparer<TValue, TProperty> implements StoredComparer<TValue> {
+    private readonly getProperty;
+    private readonly comparer;
+    /**
+     * Constructor.
+     * @param getProperty - Gets the property from the value.
+     * @param comparer - Comparer to compare the property with.
+     */
+    constructor(getProperty: (value: TValue) => TProperty, comparer: StoredComparer<TProperty>);
+    /** @inheritdoc */
+    compareTo(value: TValue): number;
+}
+
+/**
+ * Compares a value against a stored value.
+ */
+export interface StoredComparer<T> {
+    /**
+     * Checks the value against a stored value returning -1 if the stored value preceeds, 0 if the value is equal, and 1 if follows.
+     * @param value - Value to compare.
+     */
+    compareTo(value: T): number;
+}
+
+/**
  * Creates a language service host and compiler host.
  * @param options - Options for creating the hosts.
  */
@@ -244,87 +325,6 @@ export interface TsSourceFileContainer {
     getChildDirectoriesOfDirectory(dirPath: StandardizedFilePath): StandardizedFilePath[];
 }
 
-/**
- * Compares two values specifying the sort order.
- */
-export interface Comparer<T> {
-    /**
-     * Checks the two items returning -1 if `a` preceeds, 0 if equal, and 1 if `a` follows.
-     * @param a - Item to use.
-     * @param b - Item to compare with.
-     */
-    compareTo(a: T, b: T): number;
-}
-
-/**
- * Converts a comparer to a stored comparer.
- */
-export declare class ComparerToStoredComparer<T> implements StoredComparer<T> {
-    private readonly comparer;
-    private readonly storedValue;
-    /**
-     * Constructor.
-     * @param comparer - Comparer to use.
-     * @param storedValue - Stored value to use as the value to always compare the input of `compareTo` to.
-     */
-    constructor(comparer: Comparer<T>, storedValue: T);
-    /** @inheritdoc */
-    compareTo(value: T): number;
-}
-
-/**
- * Compares two strings by en-us-u-kf-upper locale.
- */
-export declare class LocaleStringComparer implements Comparer<string> {
-    /** Static instance for reuse. */
-    static readonly instance: LocaleStringComparer;
-    /** @inheritdoc */
-    compareTo(a: string, b: string): 1 | 0 | -1;
-}
-
-/**
- * Compares two values based on one of their properties.
- */
-export declare class PropertyComparer<TValue, TProperty> implements Comparer<TValue> {
-    private readonly getProperty;
-    private readonly comparer;
-    /**
-     * Constructor.
-     * @param getProperty - Gets the property from the value to use for comparisons.
-     * @param comparer - Comparer to compare the properties with.
-     */
-    constructor(getProperty: (value: TValue) => TProperty, comparer: Comparer<TProperty>);
-    /** @inheritdoc */
-    compareTo(a: TValue, b: TValue): number;
-}
-
-/**
- * A stored comparer that compares a property to a stored value.
- */
-export declare class PropertyStoredComparer<TValue, TProperty> implements StoredComparer<TValue> {
-    private readonly getProperty;
-    private readonly comparer;
-    /**
-     * Constructor.
-     * @param getProperty - Gets the property from the value.
-     * @param comparer - Comparer to compare the property with.
-     */
-    constructor(getProperty: (value: TValue) => TProperty, comparer: StoredComparer<TProperty>);
-    /** @inheritdoc */
-    compareTo(value: TValue): number;
-}
-
-/**
- * Compares a value against a stored value.
- */
-export interface StoredComparer<T> {
-    /**
-     * Checks the value against a stored value returning -1 if the stored value preceeds, 0 if the value is equal, and 1 if follows.
-     * @param value - Value to compare.
-     */
-    compareTo(value: T): number;
-}
-
 /** Decorator for memoizing the result of a method or get accessor. */
 export declare function Memoize(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>): void;
 
@@ -449,59 +449,6 @@ export declare namespace errors {
     function throwIfTrue(value: boolean | undefined, errorMessage: string): void;
 }
 
-/** An implementation of a file host that interacts with the actual file system. */
-export declare class RealFileSystemHost implements FileSystemHost {
-    private fs;
-    private fastGlob;
-    private mkdirp;
-    /** @inheritdoc */
-    delete(path: string): Promise<void>;
-    /** @inheritdoc */
-    deleteSync(path: string): void;
-    /** @inheritdoc */
-    readDirSync(dirPath: string): string[];
-    /** @inheritdoc */
-    readFile(filePath: string, encoding?: string): Promise<string>;
-    /** @inheritdoc */
-    readFileSync(filePath: string, encoding?: string): string;
-    /** @inheritdoc */
-    writeFile(filePath: string, fileText: string): Promise<void>;
-    /** @inheritdoc */
-    writeFileSync(filePath: string, fileText: string): void;
-    /** @inheritdoc */
-    mkdir(dirPath: string): Promise<void>;
-    /** @inheritdoc */
-    mkdirSync(dirPath: string): void;
-    /** @inheritdoc */
-    move(srcPath: string, destPath: string): Promise<void>;
-    /** @inheritdoc */
-    moveSync(srcPath: string, destPath: string): void;
-    /** @inheritdoc */
-    copy(srcPath: string, destPath: string): Promise<void>;
-    /** @inheritdoc */
-    copySync(srcPath: string, destPath: string): void;
-    /** @inheritdoc */
-    fileExists(filePath: string): Promise<boolean>;
-    /** @inheritdoc */
-    fileExistsSync(filePath: string): boolean;
-    /** @inheritdoc */
-    directoryExists(dirPath: string): Promise<boolean>;
-    /** @inheritdoc */
-    directoryExistsSync(dirPath: string): boolean;
-    /** @inheritdoc */
-    realpathSync(path: string): string;
-    /** @inheritdoc */
-    getCurrentDirectory(): string;
-    /** @inheritdoc */
-    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
-    /** @inheritdoc */
-    globSync(patterns: ReadonlyArray<string>): string[];
-    /** @inheritdoc */
-    isCaseSensitive(): boolean;
-    private getDirectoryNotFoundErrorIfNecessary;
-    private getFileNotFoundErrorIfNecessary;
-}
-
 /**
  * Represents a file system that can be interacted with.
  */
@@ -553,83 +500,6 @@ export interface FileSystemHost {
     glob(patterns: ReadonlyArray<string>): Promise<string[]>;
     /** Synchronously uses pattern matching to find files or directories. */
     globSync(patterns: ReadonlyArray<string>): string[];
-}
-
-/**
- * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
- */
-export declare class TransactionalFileSystem {
-    private readonly fileSystem;
-    private readonly directories;
-    private readonly pathCasingMaintainer;
-    /**
-     * Constructor.
-     * @param fileSystem - File system host to commit the operations to.
-     */
-    constructor(fileSystem: FileSystemHost);
-    queueFileDelete(filePath: StandardizedFilePath): void;
-    removeFileDelete(filePath: StandardizedFilePath): void;
-    queueMkdir(dirPath: StandardizedFilePath): void;
-    queueDirectoryDelete(dirPath: StandardizedFilePath): void;
-    queueMoveDirectory(srcPath: StandardizedFilePath, destPath: StandardizedFilePath): void;
-    queueCopyDirectory(srcPath: StandardizedFilePath, destPath: StandardizedFilePath): void;
-    flush(): Promise<void>;
-    flushSync(): void;
-    saveForDirectory(dirPath: StandardizedFilePath): Promise<void>;
-    saveForDirectorySync(dirPath: StandardizedFilePath): void;
-    private getAndClearOperationsForDir;
-    private executeOperation;
-    private executeOperationSync;
-    private getAndClearOperations;
-    moveFileImmediately(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): Promise<void>;
-    moveFileImmediatelySync(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): void;
-    deleteFileImmediately(filePath: StandardizedFilePath): Promise<void>;
-    deleteFileImmediatelySync(filePath: StandardizedFilePath): void;
-    copyDirectoryImmediately(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): Promise<void>;
-    copyDirectoryImmediatelySync(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): void;
-    moveDirectoryImmediately(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): Promise<void>;
-    moveDirectoryImmediatelySync(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): void;
-    deleteDirectoryImmediately(dirPath: StandardizedFilePath): Promise<void>;
-    /** Recreates a directory on the underlying file system asynchronously. */
-    clearDirectoryImmediately(dirPath: StandardizedFilePath): Promise<void>;
-    /** Recreates a directory on the underlying file system synchronously. */
-    clearDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
-    deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
-    private deleteSuppressNotFound;
-    private deleteSuppressNotFoundSync;
-    fileExists(filePath: StandardizedFilePath): false | Promise<boolean>;
-    fileExistsSync(filePath: StandardizedFilePath): boolean;
-    private _fileDeletedInMemory;
-    directoryExistsSync(dirPath: StandardizedFilePath): boolean;
-    readFileSync(filePath: StandardizedFilePath, encoding: string | undefined): string;
-    readFile(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string>;
-    private _verifyCanReadFile;
-    readDirSync(dirPath: StandardizedFilePath): StandardizedFilePath[];
-    glob(patterns: ReadonlyArray<string>): AsyncGenerator<StandardizedFilePath, void, unknown>;
-    globSync(patterns: ReadonlyArray<string>): Generator<StandardizedFilePath, void, unknown>;
-    getFileSystem(): FileSystemHost;
-    getCurrentDirectory(): StandardizedFilePath;
-    getDirectories(dirPath: StandardizedFilePath): StandardizedFilePath[];
-    realpathSync(path: StandardizedFilePath): StandardizedFilePath;
-    getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string): StandardizedFilePath;
-    readFileOrNotExists(filePath: StandardizedFilePath, encoding: string): false | Promise<string | false>;
-    readFileOrNotExistsSync(filePath: StandardizedFilePath, encoding: string): string | false;
-    writeFile(filePath: StandardizedFilePath, fileText: string): Promise<void>;
-    writeFileSync(filePath: StandardizedFilePath, fileText: string): void;
-    private isPathDirectoryInQueueThatExists;
-    private isPathQueuedForDeletion;
-    private removeDirAndSubDirs;
-    private addBackDirAndSubDirs;
-    private operationIndex;
-    private getNextOperationIndex;
-    private getParentDirectoryIfExists;
-    private getOrCreateParentDirectory;
-    private getDirectoryIfExists;
-    private getOrCreateDirectory;
-    private throwIfHasExternalOperations;
-    private ensureDirectoryExists;
-    private ensureDirectoryExistsSync;
-    private removeMkDirOperationsForDir;
 }
 
 /** Utilities for working with files. */
@@ -744,9 +614,6 @@ export declare class FileUtils {
     static isNegatedGlob(glob: string): boolean;
 }
 
-/** Checks the specified file paths to see if the match any of the specified patterns. */
-export declare function matchGlobs(paths: ReadonlyArray<string>, patterns: ReadonlyArray<string> | string, cwd: string): string[];
-
 export interface InMemoryFileSystemHostOptions {
     /**
      * Set this to true to not load the /node_modules/typescript/lib files on construction.
@@ -808,10 +675,149 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
 }
 
+/** Checks the specified file paths to see if the match any of the specified patterns. */
+export declare function matchGlobs(paths: ReadonlyArray<string>, patterns: ReadonlyArray<string> | string, cwd: string): string[];
+
+/** An implementation of a file host that interacts with the actual file system. */
+export declare class RealFileSystemHost implements FileSystemHost {
+    private fs;
+    private fastGlob;
+    private mkdirp;
+    /** @inheritdoc */
+    delete(path: string): Promise<void>;
+    /** @inheritdoc */
+    deleteSync(path: string): void;
+    /** @inheritdoc */
+    readDirSync(dirPath: string): string[];
+    /** @inheritdoc */
+    readFile(filePath: string, encoding?: string): Promise<string>;
+    /** @inheritdoc */
+    readFileSync(filePath: string, encoding?: string): string;
+    /** @inheritdoc */
+    writeFile(filePath: string, fileText: string): Promise<void>;
+    /** @inheritdoc */
+    writeFileSync(filePath: string, fileText: string): void;
+    /** @inheritdoc */
+    mkdir(dirPath: string): Promise<void>;
+    /** @inheritdoc */
+    mkdirSync(dirPath: string): void;
+    /** @inheritdoc */
+    move(srcPath: string, destPath: string): Promise<void>;
+    /** @inheritdoc */
+    moveSync(srcPath: string, destPath: string): void;
+    /** @inheritdoc */
+    copy(srcPath: string, destPath: string): Promise<void>;
+    /** @inheritdoc */
+    copySync(srcPath: string, destPath: string): void;
+    /** @inheritdoc */
+    fileExists(filePath: string): Promise<boolean>;
+    /** @inheritdoc */
+    fileExistsSync(filePath: string): boolean;
+    /** @inheritdoc */
+    directoryExists(dirPath: string): Promise<boolean>;
+    /** @inheritdoc */
+    directoryExistsSync(dirPath: string): boolean;
+    /** @inheritdoc */
+    realpathSync(path: string): string;
+    /** @inheritdoc */
+    getCurrentDirectory(): string;
+    /** @inheritdoc */
+    glob(patterns: ReadonlyArray<string>): Promise<string[]>;
+    /** @inheritdoc */
+    globSync(patterns: ReadonlyArray<string>): string[];
+    /** @inheritdoc */
+    isCaseSensitive(): boolean;
+    private getDirectoryNotFoundErrorIfNecessary;
+    private getFileNotFoundErrorIfNecessary;
+}
+
 /** Nominal type to denote a file path that has been standardized. */
 export declare type StandardizedFilePath = string & {
     _standardizedFilePathBrand: undefined;
 };
+
+/**
+ * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
+ */
+export declare class TransactionalFileSystem {
+    private readonly fileSystem;
+    private readonly directories;
+    private readonly pathCasingMaintainer;
+    /**
+     * Constructor.
+     * @param fileSystem - File system host to commit the operations to.
+     */
+    constructor(fileSystem: FileSystemHost);
+    queueFileDelete(filePath: StandardizedFilePath): void;
+    removeFileDelete(filePath: StandardizedFilePath): void;
+    queueMkdir(dirPath: StandardizedFilePath): void;
+    queueDirectoryDelete(dirPath: StandardizedFilePath): void;
+    queueMoveDirectory(srcPath: StandardizedFilePath, destPath: StandardizedFilePath): void;
+    queueCopyDirectory(srcPath: StandardizedFilePath, destPath: StandardizedFilePath): void;
+    flush(): Promise<void>;
+    flushSync(): void;
+    saveForDirectory(dirPath: StandardizedFilePath): Promise<void>;
+    saveForDirectorySync(dirPath: StandardizedFilePath): void;
+    private getAndClearOperationsForDir;
+    private executeOperation;
+    private executeOperationSync;
+    private getAndClearOperations;
+    moveFileImmediately(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): Promise<void>;
+    moveFileImmediatelySync(oldFilePath: StandardizedFilePath, newFilePath: StandardizedFilePath, fileText: string): void;
+    deleteFileImmediately(filePath: StandardizedFilePath): Promise<void>;
+    deleteFileImmediatelySync(filePath: StandardizedFilePath): void;
+    copyDirectoryImmediately(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): Promise<void>;
+    copyDirectoryImmediatelySync(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): void;
+    moveDirectoryImmediately(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): Promise<void>;
+    moveDirectoryImmediatelySync(srcDirPath: StandardizedFilePath, destDirPath: StandardizedFilePath): void;
+    deleteDirectoryImmediately(dirPath: StandardizedFilePath): Promise<void>;
+    /** Recreates a directory on the underlying file system asynchronously. */
+    clearDirectoryImmediately(dirPath: StandardizedFilePath): Promise<void>;
+    /** Recreates a directory on the underlying file system synchronously. */
+    clearDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
+    deleteDirectoryImmediatelySync(dirPath: StandardizedFilePath): void;
+    private deleteSuppressNotFound;
+    private deleteSuppressNotFoundSync;
+    fileExists(filePath: StandardizedFilePath): false | Promise<boolean>;
+    fileExistsSync(filePath: StandardizedFilePath): boolean;
+    private _fileDeletedInMemory;
+    directoryExistsSync(dirPath: StandardizedFilePath): boolean;
+    readFileSync(filePath: StandardizedFilePath, encoding: string | undefined): string;
+    readFile(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string>;
+    private _verifyCanReadFile;
+    readDirSync(dirPath: StandardizedFilePath): StandardizedFilePath[];
+    glob(patterns: ReadonlyArray<string>): AsyncGenerator<StandardizedFilePath, void, unknown>;
+    globSync(patterns: ReadonlyArray<string>): Generator<StandardizedFilePath, void, unknown>;
+    getFileSystem(): FileSystemHost;
+    getCurrentDirectory(): StandardizedFilePath;
+    getDirectories(dirPath: StandardizedFilePath): StandardizedFilePath[];
+    realpathSync(path: StandardizedFilePath): StandardizedFilePath;
+    getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string): StandardizedFilePath;
+    readFileOrNotExists(filePath: StandardizedFilePath, encoding: string): false | Promise<string | false>;
+    readFileOrNotExistsSync(filePath: StandardizedFilePath, encoding: string): string | false;
+    writeFile(filePath: StandardizedFilePath, fileText: string): Promise<void>;
+    writeFileSync(filePath: StandardizedFilePath, fileText: string): void;
+    private isPathDirectoryInQueueThatExists;
+    private isPathQueuedForDeletion;
+    private removeDirAndSubDirs;
+    private addBackDirAndSubDirs;
+    private operationIndex;
+    private getNextOperationIndex;
+    private getParentDirectoryIfExists;
+    private getOrCreateParentDirectory;
+    private getDirectoryIfExists;
+    private getOrCreateDirectory;
+    private throwIfHasExternalOperations;
+    private ensureDirectoryExists;
+    private ensureDirectoryExistsSync;
+    private removeMkDirOperationsForDir;
+}
+
+/** Loads the lib files that are stored in a separate module. */
+export declare function getLibFiles(): {
+    fileName: string;
+    text: string;
+}[];
 
 /**
  * Gets the enum name for the specified syntax kind.
@@ -978,12 +984,6 @@ export declare class StringUtils {
         isInStringAtPos: (pos: number) => boolean;
     }): string;
 }
-
-/** Loads the lib files that are stored in a separate module. */
-export declare function getLibFiles(): {
-    fileName: string;
-    text: string;
-}[];
 
 import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "typescript";
 export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };

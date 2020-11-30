@@ -1,7 +1,7 @@
-import { EOL } from "os";
-import { expect } from "chai";
-import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";
 import { InMemoryFileSystemHost, ts } from "@ts-morph/common";
+import { expect } from "chai";
+import { EOL } from "os";
+import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";
 
 describe(nameof(Project), () => {
     describe("constructor", () => {

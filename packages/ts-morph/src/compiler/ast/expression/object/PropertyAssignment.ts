@@ -1,13 +1,13 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../../manipulation";
+import { PropertyAssignmentSpecificStructure, PropertyAssignmentStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getTextFromStringOrWriter } from "../../../../utils";
 import { InitializerExpressionGetableNode, PropertyNamedNode, QuestionTokenableNode } from "../../base";
-import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
-import { PropertyAssignmentSpecificStructure, PropertyAssignmentStructure, StructureKind } from "../../../../structures";
-import { callBaseSet } from "../../callBaseSet";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { callBaseSet } from "../../callBaseSet";
 import { ObjectLiteralElement } from "./ObjectLiteralElement";
+import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 
 // This node only has a question token in order to tell the user about bad code.
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)

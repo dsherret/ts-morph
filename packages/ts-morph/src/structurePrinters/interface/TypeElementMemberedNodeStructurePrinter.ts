@@ -1,7 +1,7 @@
 import { ArrayUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { TypeElementMemberedNodeStructure } from "../../structures";
 import { StructurePrinterFactory } from "../../factories";
+import { TypeElementMemberedNodeStructure } from "../../structures";
 import { Printer } from "../Printer";
 
 export class TypeElementMemberedNodeStructurePrinter extends Printer<TypeElementMemberedNodeStructure> {

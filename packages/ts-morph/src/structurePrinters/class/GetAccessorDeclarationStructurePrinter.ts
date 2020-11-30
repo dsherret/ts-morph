@@ -1,8 +1,8 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { GetAccessorDeclarationStructure, OptionalKind } from "../../structures";
-import { NodePrinter } from "../NodePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
+import { NodePrinter } from "../NodePrinter";
 
 export class GetAccessorDeclarationStructurePrinter extends NodePrinter<OptionalKind<GetAccessorDeclarationStructure>> {
     private readonly blankLineWriter = new BlankLineFormattingStructuresPrinter(this);

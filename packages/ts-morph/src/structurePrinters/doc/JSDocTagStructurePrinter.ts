@@ -1,10 +1,10 @@
+import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { StructurePrinterFactory } from "../../factories";
 import { JSDocTagStructure, OptionalKind } from "../../structures";
 import { WriterFunction } from "../../types";
 import { printTextFromStringOrWriter } from "../../utils";
 import { NodePrinter } from "../NodePrinter";
-import { StructurePrinterFactory } from "../../factories";
-import { StringUtils } from "@ts-morph/common";
 
 export class JSDocTagStructurePrinter extends NodePrinter<OptionalKind<JSDocTagStructure> | string | WriterFunction> {
     constructor(factory: StructurePrinterFactory, private readonly options: { printStarsOnNewLine: boolean; }) {

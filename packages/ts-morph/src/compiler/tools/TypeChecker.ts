@@ -1,12 +1,12 @@
-import { ProjectContext } from "../../ProjectContext";
 import { errors, SymbolFlags, SyntaxKind, ts, TypeFormatFlags } from "@ts-morph/common";
-import { Signature, Symbol } from "../symbols";
-import { Type } from "../types";
+import { ProjectContext } from "../../ProjectContext";
+import { CallLikeExpression } from "../ast/aliases";
 import { Node } from "../ast/common";
 import { EnumMember } from "../ast/enum";
 import { Expression } from "../ast/expression";
 import { ExportSpecifier } from "../ast/module";
-import { CallLikeExpression } from "../ast/aliases";
+import { Signature, Symbol } from "../symbols";
+import { Type } from "../types";
 
 /**
  * Wrapper around the TypeChecker.

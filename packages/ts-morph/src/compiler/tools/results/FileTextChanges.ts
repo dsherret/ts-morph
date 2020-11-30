@@ -1,5 +1,5 @@
-import { SourceFile } from "../../../compiler";
 import { errors, Memoize, ts } from "@ts-morph/common";
+import { SourceFile } from "../../../compiler";
 import { ProjectContext } from "../../../ProjectContext";
 import { TextChange } from "./TextChange";
 

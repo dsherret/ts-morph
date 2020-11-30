@@ -3,10 +3,10 @@ import { insertIntoParentTextRange, removeChildren } from "../../../../manipulat
 import { InitializerExpressionableNodeStructure } from "../../../../structures";
 import { Constructor, WriterFunction } from "../../../../types";
 import { getTextFromStringOrWriter } from "../../../../utils";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { callBaseSet } from "../../callBaseSet";
 import { Node } from "../../common";
 import { InitializerExpressionGetableNode } from "./InitializerExpressionGetableNode";
-import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 export type InitializerExpressionableNodeExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
 

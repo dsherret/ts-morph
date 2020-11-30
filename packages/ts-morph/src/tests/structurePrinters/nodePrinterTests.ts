@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { Structure } from "../../structures";
 import { NodePrinter } from "../../structurePrinters";
+import { Structure } from "../../structures";
 import { getInfoFromText } from "../compiler/testHelpers";
 
 describe(nameof(NodePrinter), () => {

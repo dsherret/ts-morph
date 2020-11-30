@@ -71,54 +71,6 @@ export interface FileSystemHost {
     globSync(patterns: ReadonlyArray<string>): string[];
 }
 
-/**
- * Factory used to create a resolution host.
- * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
- */
-export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
-
-/** Host for implementing custom module and/or type reference directive resolution. */
-export interface ResolutionHost {
-    resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
-    getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
-    resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
-}
-
-export declare abstract class SettingsContainer<T extends object> {
-    protected _settings: T;
-    /**
-     * Constructor.
-     * @param defaultSettings - The settings to use by default.
-     */
-    constructor(defaultSettings: T);
-    /**
-     * Resets the settings to the default.
-     */
-    reset(): void;
-    /**
-     * Gets a copy of the settings as an object.
-     */
-    get(): T;
-    /**
-     * Sets one or all of the settings.
-     * @param settings - Settings to set.
-     */
-    set(settings: Partial<T>): void;
-    /**
-     * Subscribe to modifications in the settings container.
-     * @param action - Action to execute when the settings change.
-     */
-    onModified(action: () => void): void;
-}
-
-export interface InMemoryFileSystemHostOptions {
-    /**
-     * Set this to true to not load the /node_modules/typescript/lib files on construction.
-     * @default false
-     */
-    skipLoadingLibFiles?: boolean;
-}
-
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
     /**
@@ -170,6 +122,54 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     glob(patterns: ReadonlyArray<string>): Promise<string[]>;
     /** @inheritdoc */
     globSync(patterns: ReadonlyArray<string>): string[];
+}
+
+export interface InMemoryFileSystemHostOptions {
+    /**
+     * Set this to true to not load the /node_modules/typescript/lib files on construction.
+     * @default false
+     */
+    skipLoadingLibFiles?: boolean;
+}
+
+/** Host for implementing custom module and/or type reference directive resolution. */
+export interface ResolutionHost {
+    resolveModuleNames?: ts.LanguageServiceHost["resolveModuleNames"];
+    getResolvedModuleWithFailedLookupLocationsFromCache?: ts.LanguageServiceHost["getResolvedModuleWithFailedLookupLocationsFromCache"];
+    resolveTypeReferenceDirectives?: ts.LanguageServiceHost["resolveTypeReferenceDirectives"];
+}
+
+/**
+ * Factory used to create a resolution host.
+ * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
+ */
+export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
+
+export declare abstract class SettingsContainer<T extends object> {
+    protected _settings: T;
+    /**
+     * Constructor.
+     * @param defaultSettings - The settings to use by default.
+     */
+    constructor(defaultSettings: T);
+    /**
+     * Resets the settings to the default.
+     */
+    reset(): void;
+    /**
+     * Gets a copy of the settings as an object.
+     */
+    get(): T;
+    /**
+     * Sets one or all of the settings.
+     * @param settings - Settings to set.
+     */
+    set(settings: Partial<T>): void;
+    /**
+     * Subscribe to modifications in the settings container.
+     * @param action - Action to execute when the settings change.
+     */
+    onModified(action: () => void): void;
 }
 
 /**

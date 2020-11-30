@@ -1,5 +1,5 @@
-import { CodeBlockWriter } from "../../codeBlockWriter";
 import { errors } from "@ts-morph/common";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { JsxAttributeStructure, JsxElementStructure, JsxSpreadAttributeStructure, OptionalKind, StructureKind } from "../../structures";
 import { NodePrinter } from "../NodePrinter";
 

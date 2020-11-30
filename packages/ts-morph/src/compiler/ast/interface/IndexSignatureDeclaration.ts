@@ -1,11 +1,11 @@
-import { IndexSignatureDeclarationSpecificStructure, IndexSignatureDeclarationStructure, StructureKind } from "../../../structures";
 import { errors, ts } from "@ts-morph/common";
+import { IndexSignatureDeclarationSpecificStructure, IndexSignatureDeclarationStructure, StructureKind } from "../../../structures";
 import { Type } from "../../types";
 import { ChildOrderableNode, JSDocableNode, ModifierableNode, ReadonlyableNode, ReturnTypedNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { TypeNode } from "../type";
 import { TypeElement } from "./TypeElement";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 const createBase = <T extends typeof TypeElement>(ctor: T) =>
     ReturnTypedNode(ChildOrderableNode(JSDocableNode(

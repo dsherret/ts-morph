@@ -1,7 +1,7 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { getInfoFromText } from "../../compiler/testHelpers";
 import { Block } from "../../../compiler";
+import { getInfoFromText } from "../../compiler/testHelpers";
 
 describe("doManipulation", () => {
     it("should display the syntactic diagnostics if the user inserts a syntax error", () => {

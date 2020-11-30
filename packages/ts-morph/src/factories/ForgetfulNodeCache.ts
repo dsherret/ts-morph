@@ -1,5 +1,5 @@
-import { Node } from "../compiler";
 import { errors, KeyValueCache, SyntaxKind, ts } from "@ts-morph/common";
+import { Node } from "../compiler";
 
 /**
  * Extension of KeyValueCache that allows for "forget points."

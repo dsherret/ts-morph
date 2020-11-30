@@ -1,5 +1,5 @@
-import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../../manipulation";
 import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
@@ -7,8 +7,8 @@ import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclaratio
     VariableStatementStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext, nodeHasName } from "../../../utils";
-import { callBaseSet } from "../callBaseSet";
 import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { ClassDeclaration } from "../class";
 import { Node } from "../common";
 import { EnumDeclaration } from "../enum";
@@ -17,9 +17,9 @@ import { InterfaceDeclaration } from "../interface";
 import { ImplementedKindToNodeMappings } from "../kindToNodeMappings";
 import { NamespaceDeclaration } from "../module";
 import { CommentStatement, Statement, VariableStatement } from "../statement";
-import { VariableDeclaration } from "../variable";
 import { TypeAliasDeclaration } from "../type";
 import { ExtendedParser, StatementContainerNodes } from "../utils";
+import { VariableDeclaration } from "../variable";
 
 export type StatementedNodeExtensionType = Node<
     ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause | ts.ModuleBlock

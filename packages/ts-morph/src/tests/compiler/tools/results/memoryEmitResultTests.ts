@@ -1,7 +1,7 @@
 import { CompilerOptions } from "@ts-morph/common";
 import { expect } from "chai";
-import { Project } from "../../../../Project";
 import { MemoryEmitResult } from "../../../../compiler";
+import { Project } from "../../../../Project";
 describe(nameof(MemoryEmitResult), () => {
     function emitSetup(compilerOptions: CompilerOptions) {
         const project = new Project({ compilerOptions, useInMemoryFileSystem: true });

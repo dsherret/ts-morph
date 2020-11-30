@@ -1,17 +1,17 @@
 import { ClassDeclarationStructure, ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     MethodDeclarationOverloadStructure, MethodDeclarationStructure, PropertyDeclarationStructure, SetAccessorDeclarationStructure } from "./class";
 import { DecoratorStructure } from "./decorator";
+import { JSDocStructure, JSDocTagStructure } from "./doc";
 import { EnumDeclarationStructure, EnumMemberStructure } from "./enum";
+import { PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "./expression";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, ParameterDeclarationStructure } from "./function";
 import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, InterfaceDeclarationStructure,
     MethodSignatureStructure, PropertySignatureStructure } from "./interface";
-import { JSDocStructure, JSDocTagStructure } from "./doc";
-import { PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "./expression";
 import { JsxAttributeStructure, JsxElementStructure, JsxSelfClosingElementStructure, JsxSpreadAttributeStructure } from "./jsx";
 import { ExportAssignmentStructure, ExportDeclarationStructure, ExportSpecifierStructure, ImportDeclarationStructure, ImportSpecifierStructure,
     NamespaceDeclarationStructure, SourceFileStructure } from "./module";
-import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "./type";
 import { VariableDeclarationStructure, VariableStatementStructure } from "./statement";
+import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "./type";
 
 export type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure
     | NamespaceDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure

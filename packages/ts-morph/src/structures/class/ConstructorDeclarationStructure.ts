@@ -1,7 +1,7 @@
-import { KindedStructure, Structure } from "../Structure";
-import { StructureKind } from "../StructureKind";
 import { JSDocableNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { FunctionLikeDeclarationStructure } from "../function";
+import { KindedStructure, Structure } from "../Structure";
+import { StructureKind } from "../StructureKind";
 import { OptionalKind } from "../types";
 
 export interface ConstructorDeclarationStructure

@@ -1,7 +1,7 @@
 import { CompilerOptions, createHosts, EditorSettings, errors, FileUtils, ObjectUtils, RealFileSystemHost, ResolutionHost, ScriptTarget, ts,
     TsSourceFileContainer } from "@ts-morph/common";
-import { ProjectContext } from "../../ProjectContext";
 import { getTextFromTextChanges } from "../../manipulation";
+import { ProjectContext } from "../../ProjectContext";
 import { fillDefaultEditorSettings, fillDefaultFormatCodeSettings } from "../../utils";
 import { Node } from "../ast/common";
 import { SourceFile } from "../ast/module";

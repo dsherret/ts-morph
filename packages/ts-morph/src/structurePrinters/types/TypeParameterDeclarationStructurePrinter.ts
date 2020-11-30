@@ -1,8 +1,8 @@
 import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { OptionalKind, TypeParameterDeclarationStructure } from "../../structures";
-import { NodePrinter } from "../NodePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
+import { NodePrinter } from "../NodePrinter";
 
 export class TypeParameterDeclarationStructurePrinter extends NodePrinter<OptionalKind<TypeParameterDeclarationStructure> | string> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);

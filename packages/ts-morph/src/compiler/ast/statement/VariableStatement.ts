@@ -1,11 +1,11 @@
 import { ts } from "@ts-morph/common";
 import { OptionalKind, StructureKind, VariableDeclarationStructure, VariableStatementSpecificStructure, VariableStatementStructure } from "../../../structures";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { NamespaceChildableNode } from "../module";
-import { Statement } from "./Statement";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../variable";
-import { callBaseGetStructure } from "../callBaseGetStructure";
+import { Statement } from "./Statement";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>
     NamespaceChildableNode(JSDocableNode(AmbientableNode(

@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ArrayUtils } from "../../utils";
 import { Comparer, ComparerToStoredComparer } from "../../comparers";
+import { ArrayUtils } from "../../utils";
 
 describe(nameof(ArrayUtils), () => {
     class NumberComparer implements Comparer<number> {

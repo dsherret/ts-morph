@@ -1,7 +1,7 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { OptionalKind, PropertySignatureStructure } from "../../structures";
-import { NodePrinter } from "../NodePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
+import { NodePrinter } from "../NodePrinter";
 
 export class PropertySignatureStructurePrinter extends NodePrinter<OptionalKind<PropertySignatureStructure>> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);

@@ -1,5 +1,5 @@
-import { CompilerNodeToWrappedType } from "../../compiler";
 import { CompilerOptions, CompilerOptionsContainer, errors, RealFileSystemHost, SyntaxKind, TransactionalFileSystem, ts } from "@ts-morph/common";
+import { CompilerNodeToWrappedType } from "../../compiler";
 import { ProjectContext } from "../../ProjectContext";
 
 export interface CreateWrappedNodeOptions {

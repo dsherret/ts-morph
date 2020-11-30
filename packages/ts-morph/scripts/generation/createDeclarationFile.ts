@@ -5,8 +5,8 @@
  * and hides any declarations that should be internal.
  * -------------------------------------------
  */
-import * as os from "os";
 import { forEachTypeText, makeConstructorsPrivate, tsMorph } from "@ts-morph/scripts";
+import * as os from "os";
 import { createDeclarationProject } from "../common";
 import { getCodeBlockWriterStatements, getDeclarationFileStatements } from "./declarationFile";
 

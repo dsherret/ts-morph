@@ -1,9 +1,9 @@
 import { VariableDeclarationKind } from "../../compiler";
 import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructure } from "../base";
-import { VariableDeclarationStructure } from "./VariableDeclarationStructure";
 import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 import { OptionalKind } from "../types";
+import { VariableDeclarationStructure } from "./VariableDeclarationStructure";
 
 export interface VariableStatementStructure
     extends Structure, VariableStatementSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure

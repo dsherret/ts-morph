@@ -1,6 +1,6 @@
+import { ParameterDeclaration, Statement } from "../../../compiler";
 import { Project } from "../../../Project";
 import { PerformanceTestTemplate } from "../helpers";
-import { ParameterDeclaration, Statement } from "../../../compiler";
 
 interface SetupData {
     statements: Statement[];

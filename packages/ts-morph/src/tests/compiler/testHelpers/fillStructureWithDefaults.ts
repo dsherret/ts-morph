@@ -1,3 +1,4 @@
+import { NamespaceDeclarationKind, VariableDeclarationKind } from "../../../compiler";
 import { CallSignatureDeclarationStructure, ClassDeclarationStructure, ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure,
     ConstructSignatureDeclarationStructure, DecoratorStructure, EnumDeclarationStructure, EnumMemberStructure, FunctionDeclarationOverloadStructure,
     FunctionDeclarationStructure, GetAccessorDeclarationStructure, ImportDeclarationStructure, ImportSpecifierStructure, IndexSignatureDeclarationStructure,
@@ -5,7 +6,6 @@ import { CallSignatureDeclarationStructure, ClassDeclarationStructure, Construct
     NamespaceDeclarationStructure, OptionalKind, ParameterDeclarationStructure, PropertyDeclarationStructure, PropertySignatureStructure,
     SetAccessorDeclarationStructure, StructureKind, TypeAliasDeclarationStructure, TypeParameterDeclarationStructure, VariableDeclarationStructure,
     VariableStatementStructure } from "../../../structures";
-import { NamespaceDeclarationKind, VariableDeclarationKind } from "../../../compiler";
 
 // this file is incomplete... update accordingly as needed
 

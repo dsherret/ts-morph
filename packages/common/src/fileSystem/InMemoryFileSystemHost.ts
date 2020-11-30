@@ -1,8 +1,8 @@
 import { errors } from "../errors";
 import { getLibFiles } from "../getLibFiles";
+import { FileSystemHost } from "./FileSystemHost";
 import { FileUtils } from "./FileUtils";
 import { matchGlobs } from "./matchGlobs";
-import { FileSystemHost } from "./FileSystemHost";
 import { StandardizedFilePath } from "./StandardizedFilePath";
 
 interface VirtualDirectory {

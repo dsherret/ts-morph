@@ -1,6 +1,6 @@
 import { errors, ts } from "@ts-morph/common";
-import { Statement } from "./Statement";
 import { Identifier } from "../name";
+import { Statement } from "./Statement";
 
 export class ContinueStatement extends Statement<ts.ContinueStatement> {
     /**

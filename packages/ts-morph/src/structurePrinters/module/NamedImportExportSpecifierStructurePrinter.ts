@@ -1,9 +1,9 @@
 import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { WriterFunction } from "../../types";
 import { ExportSpecifierStructure, ImportSpecifierStructure, OptionalKind } from "../../structures";
-import { NodePrinter } from "../NodePrinter";
+import { WriterFunction } from "../../types";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
+import { NodePrinter } from "../NodePrinter";
 
 export type NamedImportExportSpecifierStructureToTextItem = WriterFunction | OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>
     | string;

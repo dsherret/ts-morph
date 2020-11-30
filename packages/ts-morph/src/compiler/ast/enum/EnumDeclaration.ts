@@ -1,17 +1,17 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
 import { EnumDeclarationSpecificStructure, EnumDeclarationStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
+import { Node } from "../common";
 import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
-import { EnumMember } from "./EnumMember";
-import { callBaseGetStructure } from "../callBaseGetStructure";
-import { CommentEnumMember } from "./CommentEnumMember";
 import { ExtendedParser } from "../utils";
-import { WriterFunction } from "../../../types";
-import { Node } from "../common";
+import { CommentEnumMember } from "./CommentEnumMember";
+import { EnumMember } from "./EnumMember";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>
     TextInsertableNode(NamespaceChildableNode(JSDocableNode(

@@ -8,8 +8,8 @@
  * declaration file doesn't have errors.
  * ---------------------------------------------------
  */
-import { getDeclarationProject } from "../common";
 import { printDiagnostics } from "@ts-morph/scripts";
+import { getDeclarationProject } from "../common";
 
 const project = getDeclarationProject();
 

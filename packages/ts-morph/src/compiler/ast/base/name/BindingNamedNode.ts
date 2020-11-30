@@ -1,9 +1,9 @@
 import { ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
 import { BindingName } from "../../aliases";
+import { NamedNodeBase, NamedNodeBaseExtensionType, NamedNodeSpecificBase } from "./NamedNodeBase";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { RenameableNode } from "./RenameableNode";
-import { NamedNodeBase, NamedNodeBaseExtensionType, NamedNodeSpecificBase } from "./NamedNodeBase";
 
 export type BindingNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.BindingName>;
 

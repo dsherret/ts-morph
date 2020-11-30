@@ -1,8 +1,8 @@
 import { Node } from "../../compiler";
+import { CharCodes } from "../../utils";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../textSeek";
 import { getTextForError } from "./getTextForError";
 import { TextManipulator } from "./TextManipulator";
-import { CharCodes } from "../../utils";
 
 export interface RemoveChildrenTextManipulatorOptions {
     children: Node[];

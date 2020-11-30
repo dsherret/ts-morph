@@ -1,7 +1,7 @@
 import { ts } from "@ts-morph/common";
 import { JSDocableNode } from "../base";
-import { Statement } from "./Statement";
 import { Identifier } from "../name";
+import { Statement } from "./Statement";
 
 export const LabeledStatementBase = JSDocableNode(Statement);
 export class LabeledStatement extends LabeledStatementBase<ts.LabeledStatement> {

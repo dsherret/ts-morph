@@ -1,5 +1,5 @@
-import { CodeBlockWriter } from "../../codeBlockWriter";
 import { errors } from "@ts-morph/common";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinterFactory } from "../../factories";
 import { StatementStructures, StructureKind } from "../../structures";
 import { WriterFunction } from "../../types";

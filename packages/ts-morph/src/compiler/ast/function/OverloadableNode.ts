@@ -1,7 +1,7 @@
 import { errors, ObjectUtils, SyntaxKind } from "@ts-morph/common";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { getRangeWithoutCommentsFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { Structure } from "../../../structures";
-import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { Constructor } from "../../../types";
 import { BodyableNode, NamedNode } from "../base";
 import { Node } from "../common";

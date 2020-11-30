@@ -1,5 +1,5 @@
-import { Project, StringLiteral, SyntaxKind } from "ts-morph";
 import * as path from "path";
+import { Project, StringLiteral, SyntaxKind } from "ts-morph";
 
 export function changeTypeScriptVersion(version: string) {
     setModuleSpecifierValue(`typescript-${version}`);

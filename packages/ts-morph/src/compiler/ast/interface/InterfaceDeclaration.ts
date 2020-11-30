@@ -1,15 +1,15 @@
 import { ArrayUtils, ts } from "@ts-morph/common";
 import { InterfaceDeclarationSpecificStructure, InterfaceDeclarationStructure, StructureKind } from "../../../structures";
+import { ImplementationLocation } from "../../tools";
+import { Type } from "../../types";
 import { AmbientableNode, ExportableNode, ExtendsClauseableNode, HeritageClauseableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode,
     TypeElementMemberedNode, TypeParameteredNode } from "../base";
-import { Type } from "../../types";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { ClassDeclaration } from "../class";
 import { NamespaceChildableNode } from "../module";
 import { Statement } from "../statement";
-import { ImplementationLocation } from "../../tools";
 import { TypeAliasDeclaration } from "../type";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>
     TypeElementMemberedNode(TextInsertableNode(

@@ -2,11 +2,11 @@ import { ArrayUtils, ts } from "@ts-morph/common";
 import { getEndIndexFromArray, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { JSDocableNodeStructure, JSDocStructure, OptionalKind } from "../../../structures";
 import { Constructor } from "../../../types";
-import { callBaseSet } from "../callBaseSet";
 import { WriterFunction } from "../../../types";
+import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { JSDoc } from "../doc/JSDoc";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type JSDocableNodeExtensionType = Node<ts.Node & { jsDoc?: ts.NodeArray<ts.JSDoc>; }>;
 

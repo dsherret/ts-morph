@@ -3,10 +3,10 @@ import { insertIntoParentTextRange, removeChildren } from "../../../manipulation
 import { TypedNodeStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
 import { getTextFromStringOrWriter } from "../../../utils";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
 import { TypeNode } from "../type/TypeNode";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 

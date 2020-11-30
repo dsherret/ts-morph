@@ -1,7 +1,7 @@
 import { AbstractableNodeStructure, DecoratableNodeStructure, PropertyNamedNodeStructure, ScopedNodeStructure, StaticableNodeStructure } from "../base";
+import { FunctionLikeDeclarationStructure } from "../function";
 import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
-import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface SetAccessorDeclarationStructure
     extends Structure, SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure,

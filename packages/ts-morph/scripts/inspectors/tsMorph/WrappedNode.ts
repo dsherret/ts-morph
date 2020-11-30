@@ -1,8 +1,8 @@
-import { tsMorph } from "@ts-morph/scripts";
 import { ArrayUtils, Memoize } from "@ts-morph/common";
+import { tsMorph } from "@ts-morph/scripts";
 import { hasDescendantNodeType } from "../../common";
-import { WrapperFactory } from "../WrapperFactory";
 import { TsNode } from "../ts";
+import { WrapperFactory } from "../WrapperFactory";
 import { Mixin } from "./Mixin";
 
 export class WrappedNode {

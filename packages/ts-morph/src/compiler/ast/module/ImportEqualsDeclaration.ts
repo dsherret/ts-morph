@@ -1,9 +1,9 @@
 import { errors, ts } from "@ts-morph/common";
 import { ModuleReference } from "../aliases";
 import { JSDocableNode, NamedNode } from "../base";
+import { Node } from "../common";
 import { Statement } from "../statement";
 import { SourceFile } from "./SourceFile";
-import { Node } from "../common";
 
 const createBase = <T extends typeof Statement>(ctor: T) => JSDocableNode(NamedNode(ctor));
 export const ImportEqualsDeclarationBase = createBase(Statement);

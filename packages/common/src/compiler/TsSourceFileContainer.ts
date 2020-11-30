@@ -1,5 +1,5 @@
-import { ScriptKind, ts } from "../typescript";
 import { StandardizedFilePath } from "../fileSystem";
+import { ScriptKind, ts } from "../typescript";
 
 /**
  * A container of source files.

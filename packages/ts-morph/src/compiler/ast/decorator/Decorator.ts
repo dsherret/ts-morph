@@ -1,12 +1,12 @@
 import { errors, SyntaxKind, ts } from "@ts-morph/common";
 import { FormattingKind, insertIntoParentTextRange, removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList } from "../../../manipulation";
+import { DecoratorSpecificStructure, DecoratorStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
+import { callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 import { CallExpression, Expression, LeftHandSideExpressionedNode } from "../expression";
 import { TypeNode } from "../type";
-import { DecoratorSpecificStructure, DecoratorStructure, StructureKind } from "../../../structures";
-import { callBaseGetStructure } from "../callBaseGetStructure";
-import { callBaseSet } from "../callBaseSet";
 
 export const DecoratorBase = LeftHandSideExpressionedNode(Node);
 export class Decorator extends DecoratorBase<ts.Decorator> {
