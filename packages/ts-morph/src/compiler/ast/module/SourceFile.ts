@@ -162,7 +162,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the line and column number at the provided position (1-indexed).
+     * Gets the line and column number (1-indexed) at the provided position.
      * @param pos - Position in the source file.
      */
     getLineAndColumnAtPos(pos: number) {
@@ -171,6 +171,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             line: StringUtils.getLineNumberAtPos(fullText, pos),
             column: StringUtils.getLengthFromLineStartAtPos(fullText, pos) + 1,
         };
+    }
+
+    /**
+     * Gets the position at the provided line and column number (1-indexed).
+     * @param line - Line number in the source file.
+     * @param col - Column number in the source file.
+     */
+    getPosAtLineAndColumn(line: number, col: number) {
+        const fullText = this.getFullText();
+        return StringUtils.getPosAtLineNumber(fullText, line) + col;
     }
 
     /**
