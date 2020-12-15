@@ -243,9 +243,9 @@ export class Type<TType extends ts.Type = ts.Type> {
      *
      * For example:
      *
-     * - given `Promise<string>` this will return `Promise<T>`.
-     * - given `Promise<T>` this will return the same `Promise<T>`.
-     * - given `string` this will return `undefined`.
+     * - Given `Promise<string>` this will return `Promise<T>`.
+     * - Given `Promise<T>` this will return the same `Promise<T>`.
+     * - Given `string` this will return `undefined`.
      */
     getTargetType(): Type<ts.GenericType> | undefined {
         const targetType = (this.compilerType as any as ts.TypeReference).target || undefined;
