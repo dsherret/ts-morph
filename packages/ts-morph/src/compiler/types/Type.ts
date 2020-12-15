@@ -233,9 +233,19 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
-     * Gets the target type of a type reference if it exists.
+     * Gets the reference type if this type is an instantiated type.
      *
-     * For example, given `Promise<string>` this will return `Promise<T>`.
+     * Specifically:
+     *
+     * - If this type is an instantiated type then returns the reference type.
+     * - If this type is a reference type then returns itself (same reference).
+     * - Otherwise returns `undefined`.
+     *
+     * For example:
+     *
+     * - given `Promise<string>` this will return `Promise<T>`.
+     * - given `Promise<T>` this will return the same `Promise<T>`.
+     * - given `string` this will return `undefined`.
      */
     getTargetType(): Type<ts.GenericType> | undefined {
         const targetType = (this.compilerType as any as ts.TypeReference).target || undefined;
