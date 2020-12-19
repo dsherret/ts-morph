@@ -9542,15 +9542,25 @@ export declare class Type<TType extends ts.Type = ts.Type> {
     /** Gets the string index type. */
     getStringIndexType(): Type | undefined;
     /**
-     * Gets the target type of a type reference if it exists.
+     * Returns the generic type when the type is a type reference, returns itself when it's
+     * already a generic type, or otherwise returns undefined.
      *
-     * For example, given `Promise<string>` this will return `Promise<T>`.
+     * For example:
+     *
+     * - Given type reference `Promise<string>` returns `Promise<T>`.
+     * - Given generic type `Promise<T>` returns the same `Promise<T>`.
+     * - Given `string` returns `undefined`.
      */
     getTargetType(): Type<ts.GenericType> | undefined;
     /**
-     * Gets the target type of a type reference or throws if it doesn't exist.
+     * Returns the generic type when the type is a type reference, returns itself when it's
+     * already a generic type, or otherwise throws an error.
      *
-     * For example, given `Promise<string>` this will return `Promise<T>`.
+     * For example:
+     *
+     * - Given type reference `Promise<string>` returns `Promise<T>`.
+     * - Given generic type `Promise<T>` returns the same `Promise<T>`.
+     * - Given `string` throws an error.
      */
     getTargetTypeOrThrow(): Type<ts.GenericType>;
     /** Gets type arguments. */

@@ -21,14 +21,17 @@ export interface CreateHostsOptions {
     /** Provides the current project version to be used to tell if source files have
      * changed. Provide this for a performance improvement. */
     getProjectVersion?: () => string;
+    isKnownTypesPackageName?: ts.LanguageServiceHost['isKnownTypesPackageName'];
 }
+
+const returnTrue = () => true;
 
 /**
  * Creates a language service host and compiler host.
  * @param options - Options for creating the hosts.
  */
 export function createHosts(options: CreateHostsOptions) {
-    const { transactionalFileSystem, sourceFileContainer, compilerOptions, getNewLine, resolutionHost, getProjectVersion } = options;
+    const { transactionalFileSystem, sourceFileContainer, compilerOptions, getNewLine, resolutionHost, getProjectVersion, isKnownTypesPackageName } = options;
     let version = 0;
     const fileExistsSync = (path: StandardizedFilePath) =>
         sourceFileContainer.containsSourceFileAtPath(path)
@@ -65,7 +68,8 @@ export function createHosts(options: CreateHostsOptions) {
                 );
             }
         },
-        useCaseSensitiveFileNames: () => true,
+        isKnownTypesPackageName: isKnownTypesPackageName || returnTrue,
+        useCaseSensitiveFileNames: returnTrue,
         readFile: (path, encoding) => {
             const standardizedPath = transactionalFileSystem.getStandardizedAbsolutePath(path);
             if (sourceFileContainer.containsSourceFileAtPath(standardizedPath))

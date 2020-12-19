@@ -205,6 +205,7 @@ export interface ProjectOptions {
     fileSystem?: FileSystemHost;
     /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
     resolutionHost?: ResolutionHostFactory;
+    isKnownTypesPackageName?: ts.LanguageServiceHost['isKnownTypesPackageName'];
 }
 
 /** Project that holds source files. */
