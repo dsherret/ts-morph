@@ -12,7 +12,7 @@ Formerly `ts-simple-ast`.
 ## Overview
 
 - [Documentation](https://ts-morph.com/)
-- [Declaration file](lib/ts-morph.d.ts)
+- [Declaration file](https://github.com/dsherret/ts-morph/blob/latest/packages/ts-morph/lib/ts-morph.d.ts)
 
 ## Main Features
 
