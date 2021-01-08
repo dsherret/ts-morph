@@ -342,9 +342,10 @@ diff@4.0.2, diff@^4.0.1:
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
-dts-minify@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/dts-minify/-/dts-minify-0.2.0.tgz#057a212d5cfd38c0375955e4c1f040b82601a1e8"
+dts-minify@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/dts-minify/-/dts-minify-0.2.3.tgz#c70cf307cbcf74ad11d9ec80a0e239f6dde1b5c9"
+  integrity sha512-njGBE4h3j6QnDxT8cxKhNHLvk/e5C4jM2OKgmX1oBJk/DI13LxtjJz2NbUNcNciDMLUUNCzUxEfuKl0Df95rtw==
 
 emoji-regex@^7.0.1:
   version "7.0.3"

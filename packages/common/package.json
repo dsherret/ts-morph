@@ -35,7 +35,7 @@
     "@types/ts-nameof": "^4.2.1",
     "chai": "^4.2.0",
     "cross-env": "^7.0.2",
-    "dts-minify": "^0.2.0",
+    "dts-minify": "^0.2.3",
     "mocha": "^8.2.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.33.3",
