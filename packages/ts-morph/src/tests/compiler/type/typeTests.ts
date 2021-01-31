@@ -902,7 +902,8 @@ let unknownType: unknown;
             expect(firstType.getLiteralValue()).to.equal(expectedValue);
             if (expectedValue == null)
                 expect(() => firstType.getLiteralValueOrThrow()).to.throw();
-            expect(firstType.getLiteralValueOrThrow()).to.equal(expectedValue);
+            else
+                expect(firstType.getLiteralValueOrThrow()).to.equal(expectedValue);
         }
 
         it("should get the literal value", () => {
