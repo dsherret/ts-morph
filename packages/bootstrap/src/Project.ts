@@ -23,7 +23,12 @@ export interface ProjectOptions {
     fileSystem?: FileSystemHost;
     /** Creates a resolution host for specifying custom module and/or type reference directive resolution. */
     resolutionHost?: ResolutionHostFactory;
-    isKnownTypesPackageName?: ts.LanguageServiceHost['isKnownTypesPackageName'];
+    /**
+     * Unstable and will probably be removed in the future.
+     * I believe this option should be internal to the library and if you know how to achieve
+     * that then please consider submitting a PR.
+     */
+    isKnownTypesPackageName?: ts.LanguageServiceHost["isKnownTypesPackageName"];
 }
 
 /**
@@ -153,7 +158,7 @@ export class Project {
             getNewLine: () => newLineKind,
             resolutionHost: resolutionHost || {},
             getProjectVersion: () => this._sourceFileCache.getProjectVersion().toString(),
-            isKnownTypesPackageName: options.isKnownTypesPackageName
+            isKnownTypesPackageName: options.isKnownTypesPackageName,
         });
         this.languageServiceHost = languageServiceHost;
         this.compilerHost = compilerHost;
