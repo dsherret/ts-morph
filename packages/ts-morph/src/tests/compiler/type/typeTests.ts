@@ -895,4 +895,22 @@ let unknownType: unknown;
             expect(typeArgs[0].getText()).to.equal("string");
         });
     });
+
+    describe(nameof<Type>(t => t.getLiteralValue), () => {
+        function runTest(text: string, expectedValue: number | string | boolean | undefined) {
+            const { firstType } = getTypeFromText(text);
+            expect(firstType.getLiteralValue()).to.equal(expectedValue);
+            if (expectedValue == null)
+                expect(() => firstType.getLiteralValueOrThrow()).to.throw();
+            expect(firstType.getLiteralValueOrThrow()).to.equal(expectedValue);
+        }
+
+        it("should get the literal value", () => {
+            runTest("let myType: 6;", 6);
+        });
+
+        it("should return undefined when not a literal type", () => {
+            runTest("let myType: string;", undefined);
+        });
+    });
 });

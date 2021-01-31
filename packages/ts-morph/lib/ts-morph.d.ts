@@ -9542,15 +9542,25 @@ export declare class Type<TType extends ts.Type = ts.Type> {
     /** Gets the string index type. */
     getStringIndexType(): Type | undefined;
     /**
-     * Gets the target type of a type reference if it exists.
+     * Returns the generic type when the type is a type reference, returns itself when it's
+     * already a generic type, or otherwise returns undefined.
      *
-     * For example, given `Promise<string>` this will return `Promise<T>`.
+     * For example:
+     *
+     * - Given type reference `Promise<string>` returns `Promise<T>`.
+     * - Given generic type `Promise<T>` returns the same `Promise<T>`.
+     * - Given `string` returns `undefined`.
      */
     getTargetType(): Type<ts.GenericType> | undefined;
     /**
-     * Gets the target type of a type reference or throws if it doesn't exist.
+     * Returns the generic type when the type is a type reference, returns itself when it's
+     * already a generic type, or otherwise throws an error.
      *
-     * For example, given `Promise<string>` this will return `Promise<T>`.
+     * For example:
+     *
+     * - Given type reference `Promise<string>` returns `Promise<T>`.
+     * - Given generic type `Promise<T>` returns the same `Promise<T>`.
+     * - Given `string` throws an error.
      */
     getTargetTypeOrThrow(): Type<ts.GenericType>;
     /** Gets type arguments. */
@@ -9561,6 +9571,34 @@ export declare class Type<TType extends ts.Type = ts.Type> {
     getUnionTypes(): Type[];
     /** Gets the intersection types (ex. for `T & U` it returns the array `[T, U]`). */
     getIntersectionTypes(): Type[];
+    /** Gets the value of a literal or returns undefined if this is not a literal type. */
+    getLiteralValue(): string | number | ts.PseudoBigInt | undefined;
+    /** Gets the value of the literal or throws if this is not a literal type. */
+    getLiteralValueOrThrow(): string | number | ts.PseudoBigInt;
+    /**
+     * Gets the fresh type of the literal or returns undefined if this is not a literal type.
+     *
+     * Note: I have no idea what this means. Please help contribute to these js docs if you know.
+     */
+    getLiteralFreshType(): Type<ts.LiteralType> | undefined;
+    /**
+     * Gets the fresh type of the literal or throws if this is not a literal type.
+     *
+     * Note: I have no idea what this means. Please help contribute to these js docs if you know.
+     */
+    getLiteralFreshTypeOrThrow(): Type<ts.LiteralType>;
+    /**
+     * Gets the regular type of the literal or returns undefined if this is not a literal type.
+     *
+     * Note: I have no idea what this means. Please help contribute to these js docs if you know.
+     */
+    getLiteralRegularType(): Type<ts.LiteralType> | undefined;
+    /**
+     * Gets the regular type of the literal or throws if this is not a literal type.
+     *
+     * Note: I have no idea what this means. Please help contribute to these js docs if you know.
+     */
+    getLiteralRegularTypeOrThrow(): Type<ts.LiteralType>;
     /** Gets the symbol of the type. */
     getSymbol(): Symbol | undefined;
     /** Gets the symbol of the type or throws. */

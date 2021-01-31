@@ -297,6 +297,58 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets the value of a literal or returns undefined if this is not a literal type.
+     */
+    getLiteralValue() {
+        return (this.compilerType as any as ts.LiteralType | undefined)?.value;
+    }
+
+    /**
+     * Gets the value of the literal or throws if this is not a literal type.
+     */
+    getLiteralValueOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getLiteralValue(), "Type was not a literal type.");
+    }
+
+    /**
+     * Gets the fresh type of the literal or returns undefined if this is not a literal type.
+     *
+     * Note: I have no idea what this means. Please help contribute to these js docs if you know.
+     */
+    getLiteralFreshType() {
+        const type = (this.compilerType as any as ts.LiteralType | undefined)?.freshType;
+        return type == null ? undefined : this._context.compilerFactory.getType(type);
+    }
+
+    /**
+     * Gets the fresh type of the literal or throws if this is not a literal type.
+     *
+     * Note: I have no idea what this means. Please help contribute to these js docs if you know.
+     */
+    getLiteralFreshTypeOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getLiteralFreshType(), "Type was not a literal type.");
+    }
+
+    /**
+     * Gets the regular type of the literal or returns undefined if this is not a literal type.
+     *
+     * Note: I have no idea what this means. Please help contribute to these js docs if you know.
+     */
+    getLiteralRegularType() {
+        const type = (this.compilerType as any as ts.LiteralType | undefined)?.regularType;
+        return type == null ? undefined : this._context.compilerFactory.getType(type);
+    }
+
+    /**
+     * Gets the regular type of the literal or throws if this is not a literal type.
+     *
+     * Note: I have no idea what this means. Please help contribute to these js docs if you know.
+     */
+    getLiteralRegularTypeOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getLiteralRegularType(), "Type was not a literal type.");
+    }
+
+    /**
      * Gets the symbol of the type.
      */
     getSymbol(): Symbol | undefined {
