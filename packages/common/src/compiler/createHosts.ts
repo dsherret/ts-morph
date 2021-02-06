@@ -83,6 +83,7 @@ export function createHosts(options: CreateHostsOptions) {
         resolveModuleNames: resolutionHost.resolveModuleNames,
         resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives,
         getResolvedModuleWithFailedLookupLocationsFromCache: resolutionHost.getResolvedModuleWithFailedLookupLocationsFromCache,
+        realpath: path => transactionalFileSystem.realpathSync(transactionalFileSystem.getStandardizedAbsolutePath(path)),
     };
 
     const compilerHost: ts.CompilerHost = {
@@ -96,22 +97,23 @@ export function createHosts(options: CreateHostsOptions) {
         },
         // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
         // getDefaultLibLocation: (...) => {},
-        getDefaultLibFileName: (options: CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
+        getDefaultLibFileName: languageServiceHost.getDefaultLibFileName,
         writeFile: (fileName, data, writeByteOrderMark, onError, sourceFiles) => {
             const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
             transactionalFileSystem.writeFileSync(filePath, writeByteOrderMark ? "\uFEFF" + data : data);
         },
         getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),
         getDirectories: (path: string) => transactionalFileSystem.getDirectories(transactionalFileSystem.getStandardizedAbsolutePath(path)),
-        fileExists: (fileName: string) => languageServiceHost.fileExists!(fileName),
-        readFile: (fileName: string) => languageServiceHost.readFile!(fileName),
+        fileExists: languageServiceHost.fileExists!,
+        readFile: languageServiceHost.readFile!,
         getCanonicalFileName: (fileName: string) => transactionalFileSystem.getStandardizedAbsolutePath(fileName),
-        useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
-        getNewLine: () => languageServiceHost.getNewLine!(),
+        useCaseSensitiveFileNames: languageServiceHost.useCaseSensitiveFileNames!,
+        getNewLine: languageServiceHost.getNewLine!,
         getEnvironmentVariable: (name: string) => process.env[name],
         directoryExists: dirName => languageServiceHost.directoryExists!(dirName),
         resolveModuleNames: resolutionHost.resolveModuleNames,
         resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives,
+        realpath: languageServiceHost.realpath!,
     };
 
     return { languageServiceHost, compilerHost };
