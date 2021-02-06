@@ -13,7 +13,7 @@ export function readDirectory(
     const currentDir = fileSystemWrapper.getCurrentDirectory();
     const directories: StandardizedFilePath[] = [];
 
-    // start: code from compiler api
+    // start: code from TypeScript compiler source
     const regexFlag = useCaseSensitiveFileNames ? "" : "i";
     const patterns = getFileMatcherPatterns(rootDir, excludes || [], includes, useCaseSensitiveFileNames, currentDir);
     const includeDirectoryRegex = patterns.includeDirectoryPattern && new RegExp(patterns.includeDirectoryPattern, regexFlag);
@@ -28,7 +28,7 @@ export function readDirectory(
             includes,
             useCaseSensitiveFileNames,
             currentDir,
-            undefined,
+            depth,
             path => {
                 const includeDir = dirPathMatches(path);
                 const standardizedPath = fileSystemWrapper.getStandardizedAbsolutePath(path);
@@ -46,7 +46,7 @@ export function readDirectory(
         if (absoluteName[absoluteName.length - 1] !== "/")
             absoluteName += "/";
 
-        // condition is from compiler api
+        // condition is from TypeScript compiler source
         return (!includeDirectoryRegex || includeDirectoryRegex.test(absoluteName))
             && (!excludeRegex || !excludeRegex.test(absoluteName));
     }
