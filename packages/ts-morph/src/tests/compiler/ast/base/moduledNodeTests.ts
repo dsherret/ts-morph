@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ExportAssignment, ExportDeclaration, ExportedDeclarations, ImportDeclaration, ModuledNode, NamespaceDeclaration, QuoteKind,
+import { ExportAssignment, ExportDeclaration, ExportedDeclarations, ImportDeclaration, ModuledNode, NamespaceDeclaration, Node, QuoteKind,
     SourceFile } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, OptionalKind } from "../../../../structures";
@@ -479,12 +479,25 @@ describe(nameof(ModuledNode), () => {
 
     describe(nameof<ModuledNode>(n => n.getExportedDeclarations), () => {
         function assertMapsEqual(expected: [string, string[]][], actual: ReadonlyMap<string, ExportedDeclarations[]>) {
+            for (const nodes of actual.values())
+                nodes.forEach(assertExportedDeclaration);
+
             expect(sort(Array.from(actual.entries()).map(entry => [entry[0], entry[1].map(n => n.getText())] as [string, string[]])))
                 .to.deep.equal(sort(expected));
 
             function sort(values: [string, string[]][]) {
                 values.sort((a, b) => a > b ? 1 : -1);
                 return values;
+            }
+
+            function assertExportedDeclaration(node: ExportedDeclarations) {
+                if (!Node.isClassDeclaration(node) && !Node.isInterfaceDeclaration(node) && !Node.isEnumDeclaration(node) && !Node.isFunctionDeclaration(node)
+                    && !Node.isVariableDeclaration(node) && !Node.isTypeAliasDeclaration(node) && !Node.isNamespaceDeclaration(node)
+                    && !Node.isExpression(node) && !Node.isSourceFile(node))
+                {
+                    const assertNever: never = node;
+                    throw new Error(`Node was not an exported declaration: ${(node as Node).getKindName()}`);
+                }
             }
         }
 
@@ -574,6 +587,16 @@ export = ts;`);
 
             assertMapsEqual([
                 ["Test", ["export default class Test {}"]],
+            ], mainSourceFile.getExportedDeclarations());
+        });
+
+        it("should follow a namespace export to the source file", () => {
+            const project = new Project({ useInMemoryFileSystem: true });
+            project.createSourceFile("foo.ts", `export const x: string;`);
+            const mainSourceFile = project.createSourceFile("main.ts", `export * as foo from "./foo";`);
+
+            assertMapsEqual([
+                ["foo", ["export const x: string;"]],
             ], mainSourceFile.getExportedDeclarations());
         });
 

@@ -407,7 +407,7 @@ export function ModuledNode<T extends Constructor<ModuledNodeExtensionType>>(Bas
                         return;
                     yield* getDeclarationsForSymbol(symbol.getAliasedSymbol() || symbol);
                 }
-                else if (Node.isNamespaceImport(declaration)) {
+                else if (Node.isNamespaceImport(declaration) || Node.isNamespaceExport(declaration)) {
                     const symbol = declaration.getNameNode().getSymbol();
                     if (symbol == null)
                         return;

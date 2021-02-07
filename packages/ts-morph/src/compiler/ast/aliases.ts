@@ -104,4 +104,4 @@ export type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceD
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
 export type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration
-    | NamespaceDeclaration | Expression;
+    | NamespaceDeclaration | Expression | SourceFile;
