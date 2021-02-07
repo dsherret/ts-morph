@@ -208,8 +208,8 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forNamespaceDeclaration(options: { isAmbient: boolean; }): structurePrinters.NamespaceDeclarationStructurePrinter {
-        return new structurePrinters.NamespaceDeclarationStructurePrinter(this, options);
+    forModuleDeclaration(options: { isAmbient: boolean; }): structurePrinters.ModuleDeclarationStructurePrinter {
+        return new structurePrinters.ModuleDeclarationStructurePrinter(this, options);
     }
 
     @Memoize

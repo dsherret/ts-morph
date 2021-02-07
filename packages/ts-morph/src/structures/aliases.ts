@@ -9,12 +9,12 @@ import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructu
     MethodSignatureStructure, PropertySignatureStructure } from "./interface";
 import { JsxAttributeStructure, JsxElementStructure, JsxSelfClosingElementStructure, JsxSpreadAttributeStructure } from "./jsx";
 import { ExportAssignmentStructure, ExportDeclarationStructure, ExportSpecifierStructure, ImportDeclarationStructure, ImportSpecifierStructure,
-    NamespaceDeclarationStructure, SourceFileStructure } from "./module";
+    ModuleDeclarationStructure, SourceFileStructure } from "./module";
 import { VariableDeclarationStructure, VariableStatementStructure } from "./statement";
 import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "./type";
 
 export type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure
-    | NamespaceDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure
+    | ModuleDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure
     | VariableStatementStructure;
 
 export type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure

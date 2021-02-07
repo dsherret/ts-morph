@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ExportAssignment, ExportDeclaration, ExportedDeclarations, ImportDeclaration, ModuledNode, NamespaceDeclaration, Node, QuoteKind,
+import { ExportAssignment, ExportDeclaration, ExportedDeclarations, ImportDeclaration, ModuleDeclaration, ModuledNode, Node, QuoteKind,
     SourceFile } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, OptionalKind } from "../../../../structures";
@@ -147,7 +147,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should get in a namespace", () => {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>("declare namespace N { import myImport from 'test'; }");
+            const { firstChild } = getInfoFromText<ModuleDeclaration>("declare namespace N { import myImport from 'test'; }");
             expect(firstChild.getImportDeclarations().length).to.equal(1);
             expect(firstChild.getImportDeclarations()[0]).to.be.instanceOf(ImportDeclaration);
         });
@@ -303,7 +303,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should get in a namespace", () => {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>("declare namespace N { export * from 'test'; }");
+            const { firstChild } = getInfoFromText<ModuleDeclaration>("declare namespace N { export * from 'test'; }");
             expect(firstChild.getExportDeclarations().length).to.equal(1);
             expect(firstChild.getExportDeclarations()[0]).to.be.instanceOf(ExportDeclaration);
         });
@@ -492,7 +492,7 @@ describe(nameof(ModuledNode), () => {
 
             function assertExportedDeclaration(node: ExportedDeclarations) {
                 if (!Node.isClassDeclaration(node) && !Node.isInterfaceDeclaration(node) && !Node.isEnumDeclaration(node) && !Node.isFunctionDeclaration(node)
-                    && !Node.isVariableDeclaration(node) && !Node.isTypeAliasDeclaration(node) && !Node.isNamespaceDeclaration(node)
+                    && !Node.isVariableDeclaration(node) && !Node.isTypeAliasDeclaration(node) && !Node.isModuleDeclaration(node)
                     && !Node.isExpression(node) && !Node.isSourceFile(node))
                 {
                     const assertNever: never = node;

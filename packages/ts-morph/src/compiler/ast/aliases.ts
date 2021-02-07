@@ -13,7 +13,7 @@ import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignature
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute, JsxText } from "./jsx";
 import { FalseLiteral, NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TaggedTemplateExpression, TemplateExpression,
     TrueLiteral } from "./literal";
-import { ExportAssignment, ExternalModuleReference, NamespaceDeclaration, SourceFile } from "./module";
+import { ExportAssignment, ExternalModuleReference, ModuleDeclaration, SourceFile } from "./module";
 import { ComputedPropertyName, Identifier, PrivateIdentifier, QualifiedName } from "./name";
 import { CaseClause, DefaultClause } from "./statement";
 import { TypeAliasDeclaration } from "./type";
@@ -23,6 +23,9 @@ type WrappedToCompilerNodeType<T extends Node> = T["compilerNode"];
 
 export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
 type _PropertyNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<PropertyName>, ts.PropertyName>>;
+
+export type ModuleName = Identifier | StringLiteral;
+type _ModuleNameTest = AssertTrue<IsExact<WrappedToCompilerNodeType<ModuleName>, ts.ModuleName>>;
 
 export type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
 type _AccessorDeclarationTest = AssertTrue<IsExact<WrappedToCompilerNodeType<AccessorDeclaration>, ts.AccessorDeclaration>>;
@@ -97,11 +100,11 @@ type _TemplateLiteralTest = AssertTrue<IsExact<WrappedToCompilerNodeType<Templat
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
 export type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration
-    | TypeAliasDeclaration | NamespaceDeclaration | ExportAssignment;
+    | TypeAliasDeclaration | ModuleDeclaration | ExportAssignment;
 
 /**
  * Declarations that can be exported from a module.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
 export type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration
-    | NamespaceDeclaration | Expression | SourceFile;
+    | ModuleDeclaration | Expression | SourceFile;

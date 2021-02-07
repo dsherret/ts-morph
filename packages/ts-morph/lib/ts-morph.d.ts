@@ -858,6 +858,7 @@ export declare type WriterFunctionOrValue = string | number | WriterFunction;
 /** @deprecated Use static methods on `Node`. */
 export declare const TypeGuards: typeof Node;
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
+export declare type ModuleName = Identifier | StringLiteral;
 export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
 export declare type ArrayBindingElement = BindingElement | OmittedExpression;
 export declare type BindingName = Identifier | BindingPattern;
@@ -886,12 +887,12 @@ export declare type TemplateLiteral = TemplateExpression | NoSubstitutionTemplat
  * Local target declarations.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
-export declare type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | NamespaceDeclaration | ExportAssignment;
+export declare type LocalTargetDeclarations = SourceFile | ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | ModuleDeclaration | ExportAssignment;
 /**
  * Declarations that can be exported from a module.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
-export declare type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | NamespaceDeclaration | Expression | SourceFile;
+export declare type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | ModuleDeclaration | Expression | SourceFile;
 export declare function AmbientableNode<T extends Constructor<AmbientableNodeExtensionType>>(Base: T): Constructor<AmbientableNode> & T;
 
 export interface AmbientableNode {
@@ -1529,7 +1530,7 @@ export interface ModuledNode {
     removeDefaultExport(defaultExportSymbol?: Symbol | undefined): this;
 }
 
-declare type ModuledNodeExtensionType = Node<ts.SourceFile | ts.NamespaceDeclaration> & StatementedNode;
+declare type ModuledNodeExtensionType = Node<ts.SourceFile | ts.ModuleDeclaration> & StatementedNode;
 export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T;
 
 export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
@@ -1537,6 +1538,13 @@ export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFin
 
 declare type BindingNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.BindingName>;
 export declare type BindingNamedNodeSpecific = NamedNodeSpecificBase<BindingName>;
+export declare function ModuleNamedNode<T extends Constructor<ModuleNamedNodeExtensionType>>(Base: T): Constructor<ModuleNamedNode> & T;
+
+export interface ModuleNamedNode extends ModuleNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
+}
+
+declare type ModuleNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.ModuleName>;
+export declare type ModuleNamedNodeSpecific = NamedNodeSpecificBase<ModuleName>;
 export declare function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T;
 
 export interface NameableNode extends NameableNodeSpecific, ReferenceFindableNode, RenameableNode {
@@ -2653,7 +2661,7 @@ export declare type ClassStaticMemberTypes = MethodDeclaration | ClassStaticProp
 export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 declare type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
 declare type ClassLikeDeclarationBaseSpecificExtensionType = Node<ts.ClassLikeDeclarationBase> & HeritageClauseableNode & ModifierableNode & NameableNode;
-declare const ClassDeclarationBase: Constructor<NamespaceChildableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ClassLikeDeclarationBase> & typeof Statement;
+declare const ClassDeclarationBase: Constructor<ModuleChildableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ClassLikeDeclarationBase> & typeof Statement;
 
 export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
@@ -4093,12 +4101,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a NamespaceChildableNode.
      * @param node - Node to check.
      */
-    static isNamespaceChildableNode<T extends Node>(node: T | undefined): node is NamespaceChildableNode & NamespaceChildableNodeExtensionType & T;
+    static isNamespaceChildableNode<T extends Node>(node: T | undefined): node is ModuleChildableNode & NamespaceChildableNodeExtensionType & T;
     /**
-     * Gets if the node is a NamespaceDeclaration.
+     * Gets if the node is a ModuleDeclaration.
      * @param node - Node to check.
      */
-    static isNamespaceDeclaration(node: Node | undefined): node is NamespaceDeclaration;
+    static isModuleDeclaration(node: Node | undefined): node is ModuleDeclaration;
     /**
      * Gets if the node is a NullLiteral.
      * @param node - Node to check.
@@ -4841,7 +4849,7 @@ export declare class CommentEnumMember extends Node<CompilerCommentEnumMember> {
     remove(): void;
 }
 
-declare const EnumDeclarationBase: Constructor<TextInsertableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
+declare const EnumDeclarationBase: Constructor<TextInsertableNode> & Constructor<ModuleChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
@@ -5701,8 +5709,8 @@ export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.ArrowFunction>>;
 }
 
-declare const FunctionDeclarationBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<FunctionLikeDeclaration> & Constructor<NamespaceChildableNode> & Constructor<NameableNode> & typeof Statement;
-declare const FunctionDeclarationOverloadBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
+declare const FunctionDeclarationBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<FunctionLikeDeclaration> & Constructor<ModuleChildableNode> & Constructor<NameableNode> & typeof Statement;
+declare const FunctionDeclarationOverloadBase: Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<SignaturedDeclaration> & Constructor<AmbientableNode> & Constructor<ModuleChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
 
 export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
@@ -5908,7 +5916,7 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
     getParentOrThrow(): NonNullable<NodeParentType<ts.IndexSignatureDeclaration>>;
 }
 
-declare const InterfaceDeclarationBase: Constructor<TypeElementMemberedNode> & Constructor<TextInsertableNode> & Constructor<ExtendsClauseableNode> & Constructor<HeritageClauseableNode> & Constructor<TypeParameteredNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
+declare const InterfaceDeclarationBase: Constructor<TypeElementMemberedNode> & Constructor<TextInsertableNode> & Constructor<ExtendsClauseableNode> & Constructor<HeritageClauseableNode> & Constructor<TypeParameteredNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ModuleChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /** Gets the base types. */
@@ -6284,7 +6292,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.MethodDeclaration]: MethodDeclaration;
     [SyntaxKind.MethodSignature]: MethodSignature;
     [SyntaxKind.ModuleBlock]: ModuleBlock;
-    [SyntaxKind.ModuleDeclaration]: NamespaceDeclaration;
+    [SyntaxKind.ModuleDeclaration]: ModuleDeclaration;
     [SyntaxKind.NamedExports]: NamedExports;
     [SyntaxKind.NamedImports]: NamedImports;
     [SyntaxKind.NamedTupleMember]: NamedTupleMember;
@@ -7039,6 +7047,66 @@ export declare class ModuleBlock extends ModuleBlockBase<ts.ModuleBlock> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.ModuleBlock>>;
 }
 
+export declare function ModuleChildableNode<T extends Constructor<NamespaceChildableNodeExtensionType>>(Base: T): Constructor<ModuleChildableNode> & T;
+
+export interface ModuleChildableNode {
+    /** Gets the parent module declaration or undefined if it doesn't exist. */
+    getParentModule(): ModuleDeclaration | undefined;
+    /** Gets the parent module declaration or throws if it doesn't exist. */
+    getParentModuleOrThrow(): ModuleDeclaration;
+}
+
+declare type NamespaceChildableNodeExtensionType = Node;
+declare const ModuleDeclarationBase: Constructor<ModuledNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<BodyableNode> & Constructor<ModuleChildableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<ModuleNamedNode> & typeof Statement;
+
+export declare class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaration> {
+    /** Gets the full name of the namespace. */
+    getName(): string;
+    /**
+     * Sets the name without renaming references.
+     * @param newName - New full namespace name.
+     */
+    setName(newName: string): this;
+    /**
+     * Renames the name.
+     * @param newName - New name.
+     * @param options - Options for renaming.
+     */
+    rename(newName: string, options?: RenameOptions): this;
+    /** Gets the name nodes or the string literal. */
+    getNameNodes(): Identifier[] | StringLiteral;
+    /** Gets if this namespace has a namespace keyword. */
+    hasNamespaceKeyword(): boolean;
+    /** Gets if this namespace has a namespace keyword. */
+    hasModuleKeyword(): boolean;
+    /**
+     * Sets the namespace declaration kind.
+     * @param kind - Kind to set.
+     */
+    setDeclarationKind(kind: ModuleDeclarationKind): this;
+    /** Gets the namesapce declaration kind. */
+    getDeclarationKind(): ModuleDeclarationKind;
+    /** Gets the namespace or module keyword or returns undefined if it's global. */
+    getDeclarationKindKeyword(): Node<ts.Node> | undefined;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ModuleDeclarationStructure>): this;
+    /** Gets the structure equivalent to this node. */
+    getStructure(): ModuleDeclarationStructure;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.ModuleDeclaration>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.ModuleDeclaration>>;
+}
+
+export declare enum ModuleDeclarationKind {
+    Namespace = "namespace",
+    Module = "module",
+    Global = "global"
+}
+
 declare const NamedExportsBase: typeof Node;
 
 export declare class NamedExports extends NamedExportsBase<ts.NamedExports> {
@@ -7059,65 +7127,6 @@ export declare class NamedImports extends NamedImportsBase<ts.NamedImports> {
     getParent(): NodeParentType<ts.NamedImports>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.NamedImports>>;
-}
-
-export declare function NamespaceChildableNode<T extends Constructor<NamespaceChildableNodeExtensionType>>(Base: T): Constructor<NamespaceChildableNode> & T;
-
-export interface NamespaceChildableNode {
-    /** Gets the parent namespace or undefined if it doesn't exist. */
-    getParentNamespace(): NamespaceDeclaration | undefined;
-    /** Gets the parent namespace or throws if it doesn't exist. */
-    getParentNamespaceOrThrow(): NamespaceDeclaration;
-}
-
-declare type NamespaceChildableNodeExtensionType = Node;
-declare const NamespaceDeclarationBase: Constructor<ModuledNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<NamespaceChildableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
-
-export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
-    /** Gets the full name of the namespace. */
-    getName(): string;
-    /**
-     * Sets the name without renaming references.
-     * @param newName - New full namespace name.
-     */
-    setName(newName: string): this;
-    /**
-     * Renames the name.
-     * @param newName - New name.
-     */
-    rename(newName: string): this;
-    /** Gets the name nodes. */
-    getNameNodes(): Identifier[];
-    /** Gets if this namespace has a namespace keyword. */
-    hasNamespaceKeyword(): boolean;
-    /** Gets if this namespace has a namespace keyword. */
-    hasModuleKeyword(): boolean;
-    /**
-     * Sets the namespace declaration kind.
-     * @param kind - Kind to set.
-     */
-    setDeclarationKind(kind: NamespaceDeclarationKind): this;
-    /** Gets the namesapce declaration kind. */
-    getDeclarationKind(): NamespaceDeclarationKind;
-    /** Gets the namespace or module keyword or returns undefined if it's global. */
-    getDeclarationKindKeyword(): Node<ts.Node> | undefined;
-    /**
-     * Sets the node from a structure.
-     * @param structure - Structure to set the node with.
-     */
-    set(structure: Partial<NamespaceDeclarationStructure>): this;
-    /** Gets the structure equivalent to this node. */
-    getStructure(): NamespaceDeclarationStructure;
-    /** @inheritdoc **/
-    getParent(): NodeParentType<ts.NamespaceDeclaration>;
-    /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.NamespaceDeclaration>>;
-}
-
-export declare enum NamespaceDeclarationKind {
-    Namespace = "namespace",
-    Module = "module",
-    Global = "global"
 }
 
 declare const NamespaceExportBase: Constructor<RenameableNode> & typeof Node;
@@ -8000,46 +8009,46 @@ export interface StatementedNode {
      * Adds a namespace declaration as a child.
      * @param structure - Structure of the namespace declaration to add.
      */
-    addNamespace(structure: OptionalKind<NamespaceDeclarationStructure>): NamespaceDeclaration;
+    addNamespace(structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
     /**
      * Adds namespace declarations as a child.
      * @param structures - Structures of the namespace declarations to add.
      */
-    addNamespaces(structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[];
+    addNamespaces(structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
     /**
      * Inserts an namespace declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
-    insertNamespace(index: number, structure: OptionalKind<NamespaceDeclarationStructure>): NamespaceDeclaration;
+    insertNamespace(index: number, structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
     /**
      * Inserts namespace declarations as a child.
      * @param index - Child index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
-    insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[];
+    insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
     /** Gets the direct namespace declaration children. */
-    getNamespaces(): NamespaceDeclaration[];
+    getNamespaces(): ModuleDeclaration[];
     /**
      * Gets a namespace.
      * @param name - Name of the namespace.
      */
-    getNamespace(name: string): NamespaceDeclaration | undefined;
+    getNamespace(name: string): ModuleDeclaration | undefined;
     /**
      * Gets a namespace.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespace(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration | undefined;
+    getNamespace(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration | undefined;
     /**
      * Gets a namespace or throws if it doesn't exist.
      * @param name - Name of the namespace.
      */
-    getNamespaceOrThrow(name: string): NamespaceDeclaration;
+    getNamespaceOrThrow(name: string): ModuleDeclaration;
     /**
      * Gets a namespace or throws if it doesn't exist.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespaceOrThrow(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration;
+    getNamespaceOrThrow(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration;
     /**
      * Adds a type alias declaration as a child.
      * @param structure - Structure of the type alias declaration to add.
@@ -8212,7 +8221,7 @@ export declare class TryStatement extends TryStatementBase<ts.TryStatement> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.TryStatement>>;
 }
 
-declare const VariableStatementBase: Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
+declare const VariableStatementBase: Constructor<ModuleChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
 
 export declare class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /** Get variable declaration list. */
@@ -9750,7 +9759,7 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
     set(settings: Partial<ManipulationSettings>): void;
 }
 
-export declare type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | NamespaceDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
+export declare type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | ModuleDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
 export declare type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure | PropertyDeclarationStructure;
 export declare type TypeElementMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
 export declare type InterfaceMemberStructures = TypeElementMemberStructures;
@@ -10164,16 +10173,16 @@ interface ImportSpecifierSpecificStructure extends KindedStructure<StructureKind
     alias?: string;
 }
 
-export interface NamespaceDeclarationStructure extends Structure, NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure {
+export interface ModuleDeclarationStructure extends Structure, NamedNodeStructure, ModuleDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure {
 }
 
-interface NamespaceDeclarationSpecificStructure extends KindedStructure<StructureKind.Namespace> {
+interface ModuleDeclarationSpecificStructure extends KindedStructure<StructureKind.Module> {
     /**
-     * The namespace declaration kind.
+     * The module declaration kind.
      *
      * @remarks Defaults to "namespace".
      */
-    declarationKind?: NamespaceDeclarationKind;
+    declarationKind?: ModuleDeclarationKind;
 }
 
 export interface SourceFileStructure extends Structure, SourceFileSpecificStructure, StatementedNodeStructure {
@@ -10464,10 +10473,10 @@ export declare const Structure: {
         readonly isImportSpecifier: (structure: Structure & {
             kind: StructureKind;
         }) => structure is ImportSpecifierStructure;
-        /** Gets if the provided structure is a NamespaceDeclarationStructure. */
+        /** Gets if the provided structure is a ModuleDeclarationStructure. */
         readonly isNamespace: (structure: Structure & {
             kind: StructureKind;
-        }) => structure is NamespaceDeclarationStructure;
+        }) => structure is ModuleDeclarationStructure;
         /** Gets if the provided structure is a SourceFileStructure. */
         readonly isSourceFile: (structure: Structure & {
             kind: StructureKind;
@@ -10538,7 +10547,7 @@ export declare enum StructureKind {
     Method = 24,
     MethodOverload = 25,
     MethodSignature = 26,
-    Namespace = 27,
+    Module = 27,
     Parameter = 28,
     Property = 29,
     PropertyAssignment = 30,

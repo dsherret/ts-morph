@@ -1592,7 +1592,7 @@ const t = 5;`;
                 }), fillStructures.enumDeclaration({
                     isExported: true,
                     name: "U",
-                }), fillStructures.namespaceDeclaration({
+                }), fillStructures.moduleDeclaration({
                     name: "ns",
                     statements: [fillStructures.interfaceDeclaration({
                         name: "nsi",

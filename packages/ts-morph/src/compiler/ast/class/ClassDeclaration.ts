@@ -7,7 +7,7 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node, Scope } from "../common";
 import { ParameterDeclaration } from "../function";
-import { NamespaceChildableNode } from "../module";
+import { ModuleChildableNode } from "../module";
 import { Statement } from "../statement";
 import { ClassLikeDeclarationBase } from "./base";
 import { ConstructorDeclaration } from "./ConstructorDeclaration";
@@ -17,7 +17,7 @@ import { PropertyDeclaration } from "./PropertyDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>
-    NamespaceChildableNode(AmbientableNode(ExportableNode(
+    ModuleChildableNode(AmbientableNode(ExportableNode(
         ClassLikeDeclarationBase(ctor),
     )));
 export const ClassDeclarationBase = createBase(Statement);

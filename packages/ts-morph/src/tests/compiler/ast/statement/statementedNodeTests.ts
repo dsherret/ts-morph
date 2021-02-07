@@ -1,7 +1,7 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
-import { Block, BodyableNode, CaseClause, ClassDeclaration, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile,
+import { Block, BodyableNode, CaseClause, ClassDeclaration, DefaultClause, FunctionDeclaration, ModuleDeclaration, Node, SourceFile,
     StatementedNode } from "../../../../compiler";
 import { StatementedNodeStructure, StatementStructures, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
@@ -37,11 +37,11 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should get the statements of a namespace", () => {
-            doFirstChildTest<NamespaceDeclaration>("namespace n { var t; var m; }", ["var t;", "var m;"]);
+            doFirstChildTest<ModuleDeclaration>("namespace n { var t; var m; }", ["var t;", "var m;"]);
         });
 
         it("should get the statements of a namespace that uses dot notation", () => {
-            doFirstChildTest<NamespaceDeclaration>("namespace n.inner { var t; var m; }", ["var t;", "var m;"]);
+            doFirstChildTest<ModuleDeclaration>("namespace n.inner { var t; var m; }", ["var t;", "var m;"]);
         });
 
         it("should get statements of a case clause", () => {
@@ -272,12 +272,12 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert statements in the middle and into a namespace", () => {
-            doFirstChildTest<NamespaceDeclaration>("namespace n {\n    var t;\n    var m;\n}", 1, "newText;\nsecondText;", 2,
+            doFirstChildTest<ModuleDeclaration>("namespace n {\n    var t;\n    var m;\n}", 1, "newText;\nsecondText;", 2,
                 "namespace n {\n    var t;\n    newText;\n    secondText;\n    var m;\n}");
         });
 
         it("should insert statements at the end and into a namespace", () => {
-            doFirstChildTest<NamespaceDeclaration>("namespace n {\n    var t;\n    var m;\n}", 2, "newText;\nsecondText;", 2,
+            doFirstChildTest<ModuleDeclaration>("namespace n {\n    var t;\n    var m;\n}", 2, "newText;\nsecondText;", 2,
                 "namespace n {\n    var t;\n    var m;\n    newText;\n    secondText;\n}");
         });
 

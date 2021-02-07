@@ -2,9 +2,9 @@
 title: Namespaces
 ---
 
-## Namespaces
+## Namespaces / Modules
 
-Namespaces (or modules) can be retrieved from source files or other namespaces:
+Namespaces can be retrieved from source files or other namespaces:
 
 ```ts
 const namespaces = sourceFile.getNamespaces();
@@ -14,14 +14,14 @@ const firstNamespaceWithClass = sourceFile.getNamespace(n => n.getClasses().leng
 
 Most of the information you can get about namespaces is covered in other sections.
 
-Note: Although it's a compile error, you can also retreive namespaces from function bodies.
+Note: Although it's a compile error, you can also retrieve namespaces from function bodies.
 
 ### Add/Insert
 
 Add or insert namespaces to a source file, namespace, or function like declarations by calling `addNamespace()`, `addNamespaces()`, `insertNamespace()`, or `insertNamespaces()`.
 
 ```ts
-const namespaceDeclaration = sourceFile.addNamespace({
+const moduleDeclaration = sourceFile.addNamespace({
     name: "NamespaceName",
 });
 ```
@@ -31,7 +31,7 @@ const namespaceDeclaration = sourceFile.addNamespace({
 Call `.remove()`:
 
 ```ts
-namespaceDeclaration.remove();
+moduleDeclaration.remove();
 ```
 
 ### Module, namespace, or `global`?
@@ -39,28 +39,28 @@ namespaceDeclaration.remove();
 Check for the declaration kind or keywords:
 
 ```ts
-namespaceDeclaration.getDeclarationKind(); // returns: NamespaceDeclarationKind
+moduleDeclaration.getDeclarationKind(); // returns: ModuleDeclarationKind
 // or
-namespaceDeclaration.hasModuleKeyword(); // returns: boolean
-namespaceDeclaration.hasNamespaceKeyword(); // returns: boolean
+moduleDeclaration.hasModuleKeyword(); // returns: boolean
+moduleDeclaration.hasNamespaceKeyword(); // returns: boolean
 ```
 
 Or set the declaration kind:
 
 ```ts
-namespaceDeclaration.setDeclarationKind(NamespaceDeclarationKind.Namespace);
-namespaceDeclaration.setDeclarationKind(NamespaceDeclarationKind.Module);
-namespaceDeclaration.setDeclarationKind(NamespaceDeclarationKind.Global);
+moduleDeclaration.setDeclarationKind(ModuleDeclarationKind.Namespace);
+moduleDeclaration.setDeclarationKind(ModuleDeclarationKind.Module);
+moduleDeclaration.setDeclarationKind(ModuleDeclarationKind.Global);
 ```
 
 Or get the keyword:
 
 ```ts
 // returns: the module or namespace keyword or undefined if global
-namespaceDeclaration.getDeclarationKindKeyword();
+moduleDeclaration.getDeclarationKindKeyword();
 ```
 
-**Reminder:** Namespace declarations that are `global` have the following syntax:
+**Reminder:** Module declarations that are `global` have the following syntax:
 
 ```ts ignore-error: 2664, 2669
 declare module "my-library" {
@@ -73,7 +73,7 @@ declare module "my-library" {
 
 ### Unwrap
 
-A namespace declaration can be replaced with its body using the `.unwrap()` method.
+A module declaration can be replaced with its body using the `.unwrap()` method.
 
 Given the following code:
 
@@ -87,7 +87,7 @@ namespace MyNamespace {
 }
 ```
 
-Calling `.unwrap()` on the namespace will change the code to the following:
+Calling `.unwrap()` will change the code to the following:
 
 ```ts
 function someFunction() {

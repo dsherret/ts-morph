@@ -1,6 +1,6 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, ExportGetableNode, NamespaceDeclaration, Node, VariableStatement } from "../../../../../compiler";
+import { ClassDeclaration, ExportGetableNode, ModuleDeclaration, Node, VariableStatement } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
 describe(nameof(ExportGetableNode), () => {
@@ -158,7 +158,7 @@ describe(nameof(ExportGetableNode), () => {
 
         describe("class in namepsace", () => {
             function doTest(text: string, expected: boolean) {
-                const { firstChild } = getInfoFromText<NamespaceDeclaration>(text);
+                const { firstChild } = getInfoFromText<ModuleDeclaration>(text);
                 expect(firstChild.getClasses()[0].isExported()).to.equal(expected);
             }
 
@@ -275,7 +275,7 @@ describe(nameof(ExportGetableNode), () => {
             });
 
             it("should not be a named export when contained in a namespace", () => {
-                const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Namespace { export class Identifier {} }");
+                const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace Namespace { export class Identifier {} }");
                 const innerClass = firstChild.getClasses()[0];
                 expect(innerClass.isNamedExport()).to.be.false;
             });
@@ -312,7 +312,7 @@ describe(nameof(ExportGetableNode), () => {
             });
 
             it("should not be a named export when contained in a namespace", () => {
-                const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Namespace { export const t = 4; }");
+                const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace Namespace { export const t = 4; }");
                 const innerClass = firstChild.getVariableDeclarations()[0];
                 expect(innerClass.isNamedExport()).to.be.false;
             });

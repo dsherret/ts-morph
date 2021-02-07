@@ -1,12 +1,12 @@
 import { expect } from "chai";
-import { ClassDeclaration, FunctionDeclaration, NamespaceDeclaration, StatementedNode } from "../../../../../compiler";
+import { ClassDeclaration, FunctionDeclaration, ModuleDeclaration, StatementedNode } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
 
 // todo: make tests in other files reusable for StatementedNode. Then retest everything within namespaces and functions.
 
 describe(nameof(StatementedNode), () => {
     describe("getting a declaration within a namespace", () => {
-        const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Namespace1 {\n    class Class1 {}\n}\n");
+        const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace Namespace1 {\n    class Class1 {}\n}\n");
         const classes = firstChild.getClasses();
 
         it("should have the expected number of classes", () => {
@@ -19,7 +19,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe("getting a declaration within a namespace with dot tokens", () => {
-        const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Namespace1.Namespace2.Namespace3 { class MyClass {} }\n");
+        const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace Namespace1.Namespace2.Namespace3 { class MyClass {} }\n");
         const classes = firstChild.getClasses();
 
         it("should have the expected number of classes", () => {
@@ -29,7 +29,7 @@ describe(nameof(StatementedNode), () => {
 
     it("should get items inside a namespace", () => {
         // only need to check for one kind in here
-        const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Identifier { function function1() {}\nfunction function2() {} }");
+        const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace Identifier { function function1() {}\nfunction function2() {} }");
         const functions = firstChild.getFunctions();
         expect(functions.length).to.equal(2);
     });

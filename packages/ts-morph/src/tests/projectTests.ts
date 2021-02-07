@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { EOL } from "os";
 import * as path from "path";
-import { ClassDeclaration, EmitResult, Identifier, InterfaceDeclaration, MemoryEmitResult, NamespaceDeclaration, Node, SourceFile } from "../compiler";
+import { ClassDeclaration, EmitResult, Identifier, InterfaceDeclaration, MemoryEmitResult, ModuleDeclaration, Node, SourceFile } from "../compiler";
 import { IndentationText } from "../options";
 import { Project, ProjectOptions } from "../Project";
 import { SourceFileStructure, StructureKind } from "../structures";
@@ -1255,7 +1255,7 @@ describe(nameof(Project), () => {
             let sourceFile: SourceFile;
             let sourceFileNotNavigated: SourceFile;
             let classNode: Node;
-            let namespaceNode: NamespaceDeclaration;
+            let namespaceNode: ModuleDeclaration;
             let namespaceKeywordNode: Node;
             let interfaceNode1: Node;
             let interfaceNode2: Node;

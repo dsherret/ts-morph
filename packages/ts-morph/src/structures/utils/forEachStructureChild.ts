@@ -12,7 +12,7 @@ import { FunctionDeclarationStructure, FunctionLikeDeclarationStructure, Functio
 import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, MethodSignatureStructure,
     IndexSignatureDeclarationStructure, PropertySignatureStructure } from "../interface";
 import { JsxElementStructure, JsxSelfClosingElementStructure, JsxAttributedNodeStructure } from "../jsx";
-import { ExportDeclarationStructure, ImportDeclarationStructure, NamespaceDeclarationStructure, SourceFileStructure } from "../module";
+import { ExportDeclarationStructure, ImportDeclarationStructure, ModuleDeclarationStructure, SourceFileStructure } from "../module";
 import { VariableStatementStructure, StatementedNodeStructure } from "../statement";
 import { TypeAliasDeclarationStructure } from "../type";
 import { OptionalKind } from "../types";
@@ -90,8 +90,8 @@ export function forEachStructureChild<TStructure>(structure: Structures | Readon
             return forExportDeclaration(structure, callback);
         case StructureKind.ImportDeclaration:
             return forImportDeclaration(structure, callback);
-        case StructureKind.Namespace:
-            return forNamespaceDeclaration(structure, callback);
+        case StructureKind.Module:
+            return forModuleDeclaration(structure, callback);
         case StructureKind.SourceFile:
             return forSourceFile(structure, callback);
         case StructureKind.VariableStatement:
@@ -311,7 +311,7 @@ function forImportDeclaration<TStructure>(structure: ImportDeclarationStructure,
 }
 
 /** @generated */
-function forNamespaceDeclaration<TStructure>(structure: NamespaceDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
+function forModuleDeclaration<TStructure>(structure: ModuleDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
     return forJSDocableNode(structure, callback)
         || forStatementedNode(structure, callback);
 }

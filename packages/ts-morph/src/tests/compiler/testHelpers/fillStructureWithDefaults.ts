@@ -1,17 +1,17 @@
-import { NamespaceDeclarationKind, VariableDeclarationKind } from "../../../compiler";
+import { ModuleDeclarationKind, VariableDeclarationKind } from "../../../compiler";
 import { CallSignatureDeclarationStructure, ClassDeclarationStructure, ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure,
     ConstructSignatureDeclarationStructure, DecoratorStructure, EnumDeclarationStructure, EnumMemberStructure, FunctionDeclarationOverloadStructure,
     FunctionDeclarationStructure, GetAccessorDeclarationStructure, ImportDeclarationStructure, ImportSpecifierStructure, IndexSignatureDeclarationStructure,
     InterfaceDeclarationStructure, JSDocStructure, JSDocTagStructure, MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodSignatureStructure,
-    NamespaceDeclarationStructure, OptionalKind, ParameterDeclarationStructure, PropertyDeclarationStructure, PropertySignatureStructure,
+    ModuleDeclarationStructure, OptionalKind, ParameterDeclarationStructure, PropertyDeclarationStructure, PropertySignatureStructure,
     SetAccessorDeclarationStructure, StructureKind, TypeAliasDeclarationStructure, TypeParameterDeclarationStructure, VariableDeclarationStructure,
     VariableStatementStructure } from "../../../structures";
 
 // this file is incomplete... update accordingly as needed
 
 export namespace fillStructures {
-    export function namespaceDeclaration(structure: OptionalKind<NamespaceDeclarationStructure>): NamespaceDeclarationStructure {
-        setIfNull(structure, "declarationKind", NamespaceDeclarationKind.Namespace);
+    export function moduleDeclaration(structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclarationStructure {
+        setIfNull(structure, "declarationKind", ModuleDeclarationKind.Namespace);
         setIfNull(structure, "docs", []);
         setIfNull(structure, "hasDeclareKeyword", false);
         setIfNull(structure, "isDefaultExport", false);
@@ -19,8 +19,8 @@ export namespace fillStructures {
 
         fill(structure.docs!, jsDoc);
 
-        setIfNull(structure, "kind", StructureKind.Namespace);
-        return structure as NamespaceDeclarationStructure;
+        setIfNull(structure, "kind", StructureKind.Module);
+        return structure as ModuleDeclarationStructure;
     }
 
     export function variableStatement(structure: OptionalKind<VariableStatementStructure>): VariableStatementStructure {

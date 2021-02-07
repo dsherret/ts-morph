@@ -21,7 +21,7 @@ import { InterfaceDeclarationStructure, CallSignatureDeclarationStructure, Const
 import { JsxAttributeStructure, JsxElementStructure, JsxSelfClosingElementStructure, JsxTagNamedNodeStructure, JsxAttributedNodeStructure,
     JsxSpreadAttributeStructure } from "./jsx";
 import { ExportAssignmentStructure, ExportDeclarationStructure, ExportSpecifierStructure, ImportDeclarationStructure, ImportSpecifierStructure,
-    NamespaceDeclarationStructure, SourceFileStructure } from "./module";
+    ModuleDeclarationStructure, SourceFileStructure } from "./module";
 import { VariableDeclarationStructure, StatementedNodeStructure, VariableStatementStructure } from "./statement";
 import { TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "./type";
 import { StructureKind } from "./StructureKind";
@@ -126,7 +126,7 @@ export const Structure = {
             case StructureKind.Interface:
             case StructureKind.MethodSignature:
             case StructureKind.PropertySignature:
-            case StructureKind.Namespace:
+            case StructureKind.Module:
             case StructureKind.VariableStatement:
             case StructureKind.TypeAlias:
                 return true;
@@ -157,7 +157,7 @@ export const Structure = {
             case StructureKind.Function:
             case StructureKind.FunctionOverload:
             case StructureKind.Interface:
-            case StructureKind.Namespace:
+            case StructureKind.Module:
             case StructureKind.VariableStatement:
             case StructureKind.TypeAlias:
                 return true;
@@ -173,7 +173,7 @@ export const Structure = {
             case StructureKind.Function:
             case StructureKind.FunctionOverload:
             case StructureKind.Interface:
-            case StructureKind.Namespace:
+            case StructureKind.Module:
             case StructureKind.VariableStatement:
             case StructureKind.TypeAlias:
                 return true;
@@ -279,7 +279,7 @@ export const Structure = {
             case StructureKind.Method:
             case StructureKind.SetAccessor:
             case StructureKind.Function:
-            case StructureKind.Namespace:
+            case StructureKind.Module:
             case StructureKind.SourceFile:
                 return true;
             default:
@@ -447,7 +447,7 @@ export const Structure = {
             case StructureKind.Enum:
             case StructureKind.Interface:
             case StructureKind.JsxAttribute:
-            case StructureKind.Namespace:
+            case StructureKind.Module:
             case StructureKind.TypeAlias:
             case StructureKind.TypeParameter:
             case StructureKind.ShorthandPropertyAssignment:
@@ -562,9 +562,9 @@ export const Structure = {
     isImportSpecifier(structure: Structure & { kind: StructureKind; }): structure is ImportSpecifierStructure {
         return structure.kind === StructureKind.ImportSpecifier;
     },
-    /** Gets if the provided structure is a NamespaceDeclarationStructure. */
-    isNamespace(structure: Structure & { kind: StructureKind; }): structure is NamespaceDeclarationStructure {
-        return structure.kind === StructureKind.Namespace;
+    /** Gets if the provided structure is a ModuleDeclarationStructure. */
+    isNamespace(structure: Structure & { kind: StructureKind; }): structure is ModuleDeclarationStructure {
+        return structure.kind === StructureKind.Module;
     },
     /** Gets if the provided structure is a SourceFileStructure. */
     isSourceFile(structure: Structure & { kind: StructureKind; }): structure is SourceFileStructure {

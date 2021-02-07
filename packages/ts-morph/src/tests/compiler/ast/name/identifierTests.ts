@@ -1,6 +1,6 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
-import { FunctionDeclaration, Identifier, InterfaceDeclaration, NamespaceDeclaration, PropertyAccessExpression } from "../../../../compiler";
+import { FunctionDeclaration, Identifier, InterfaceDeclaration, ModuleDeclaration, PropertyAccessExpression } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -110,7 +110,7 @@ describe(nameof(Identifier), () => {
         });
 
         it("should get the right node when the reference is at the start of a property access expression", () => {
-            const { firstChild, sourceFile, project } = getInfoFromText<NamespaceDeclaration>(`
+            const { firstChild, sourceFile, project } = getInfoFromText<ModuleDeclaration>(`
 namespace MyNamespace {
     export class MyClass {
     }

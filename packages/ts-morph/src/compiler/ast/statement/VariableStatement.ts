@@ -3,12 +3,12 @@ import { OptionalKind, StructureKind, VariableDeclarationStructure, VariableStat
 import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
-import { NamespaceChildableNode } from "../module";
+import { ModuleChildableNode } from "../module";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../variable";
 import { Statement } from "./Statement";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>
-    NamespaceChildableNode(JSDocableNode(AmbientableNode(
+    ModuleChildableNode(JSDocableNode(AmbientableNode(
         ExportableNode(ModifierableNode(ctor)),
     )));
 export const VariableStatementBase = createBase(Statement);

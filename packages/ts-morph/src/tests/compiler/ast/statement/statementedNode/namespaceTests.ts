@@ -1,12 +1,12 @@
 import { errors } from "@ts-morph/common";
 import { expect } from "chai";
-import { NamespaceDeclaration, NamespaceDeclarationKind, Node, StatementedNode } from "../../../../../compiler";
-import { NamespaceDeclarationStructure, StructureKind } from "../../../../../structures";
+import { ModuleDeclaration, ModuleDeclarationKind, Node, StatementedNode } from "../../../../../compiler";
+import { ModuleDeclarationStructure, StructureKind } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertNamespaces), () => {
-        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<NamespaceDeclarationStructure>[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<ModuleDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespaces(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -16,7 +16,7 @@ describe(nameof(StatementedNode), () => {
         it("should insert to an empty file", () => {
             doTest("", 0, [{
                 name: "Identifier",
-                declarationKind: NamespaceDeclarationKind.Module,
+                declarationKind: ModuleDeclarationKind.Module,
             }], "module Identifier {\n}\n");
         });
 
@@ -49,11 +49,11 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert all the properties of the structure", () => {
-            const structure: OptionalKindAndTrivia<MakeRequired<NamespaceDeclarationStructure>> = {
+            const structure: OptionalKindAndTrivia<MakeRequired<ModuleDeclarationStructure>> = {
                 docs: [{ description: "Test" }],
                 name: "n",
                 hasDeclareKeyword: false,
-                declarationKind: NamespaceDeclarationKind.Module,
+                declarationKind: ModuleDeclarationKind.Module,
                 isDefaultExport: false,
                 isExported: true,
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"],
@@ -89,14 +89,14 @@ describe(nameof(StatementedNode), () => {
         it("should insert a global module", () => {
             doTest("", 0, [{
                 name: "global",
-                declarationKind: NamespaceDeclarationKind.Global,
+                declarationKind: ModuleDeclarationKind.Global,
             }], "global {\n}\n");
         });
 
         it("should insert a global module and ignore value in the name property", () => {
             doTest("", 0, [{
                 name: "somethingElse",
-                declarationKind: NamespaceDeclarationKind.Global, // priority
+                declarationKind: ModuleDeclarationKind.Global, // priority
             }], "global {\n}\n");
         });
 
@@ -112,20 +112,20 @@ describe(nameof(StatementedNode), () => {
             doTest("", 0, [{ name: `"Identifier"`, hasDeclareKeyword: false }], `module "Identifier" {\n}\n`);
         });
 
-        it("should throw when specifying quotes and a namespace declaration kind of namespace", () => {
+        it("should throw when specifying quotes and a module declaration kind of namespace", () => {
             const { sourceFile } = getInfoFromText("");
-            expect(() => sourceFile.insertNamespaces(0, [{ name: `"Identifier"`, declarationKind: NamespaceDeclarationKind.Namespace }]))
+            expect(() => sourceFile.insertNamespaces(0, [{ name: `"Identifier"`, declarationKind: ModuleDeclarationKind.Namespace }]))
                 .to.throw(errors.InvalidOperationError, `Cannot print a namespace with quotes for namespace with name "Identifier". `
-                    + `Use NamespaceDeclarationKind.Module instead.`);
+                    + `Use ModuleDeclarationKind.Module instead.`);
         });
     });
 
     describe(nameof<StatementedNode>(n => n.insertNamespace), () => {
-        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<NamespaceDeclarationStructure>, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<ModuleDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertNamespace(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
-            expect(result).to.be.instanceOf(NamespaceDeclaration);
+            expect(result).to.be.instanceOf(ModuleDeclaration);
         }
 
         it("should insert", () => {
@@ -134,7 +134,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespaces), () => {
-        function doTest(startCode: string, structures: OptionalKindAndTrivia<NamespaceDeclarationStructure>[], expectedText: string) {
+        function doTest(startCode: string, structures: OptionalKindAndTrivia<ModuleDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespaces(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -148,11 +148,11 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespace), () => {
-        function doTest(startCode: string, structure: OptionalKindAndTrivia<NamespaceDeclarationStructure>, expectedText: string) {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<ModuleDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addNamespace(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
-            expect(result).to.be.instanceOf(NamespaceDeclaration);
+            expect(result).to.be.instanceOf(ModuleDeclaration);
         }
 
         it("should add one", () => {
@@ -169,7 +169,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should have correct type", () => {
-            expect(namespaces[0]).to.be.instanceOf(NamespaceDeclaration);
+            expect(namespaces[0]).to.be.instanceOf(ModuleDeclaration);
         });
 
         it("should not throw when getting from an empty body", () => {

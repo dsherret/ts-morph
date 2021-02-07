@@ -26,7 +26,7 @@ export enum StructureKind {
     Method,
     MethodOverload,
     MethodSignature,
-    Namespace,
+    Module,
     Parameter,
     Property,
     PropertyAssignment,

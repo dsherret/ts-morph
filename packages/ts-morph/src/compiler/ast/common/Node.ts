@@ -3392,7 +3392,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets if the node is a NamespaceChildableNode.
      * @param node - Node to check.
      */
-    static isNamespaceChildableNode<T extends compiler.Node>(node: T | undefined): node is compiler.NamespaceChildableNode & compiler.NamespaceChildableNodeExtensionType & T {
+    static isNamespaceChildableNode<T extends compiler.Node>(node: T | undefined): node is compiler.ModuleChildableNode & compiler.NamespaceChildableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
@@ -3407,10 +3407,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets if the node is a NamespaceDeclaration.
+     * Gets if the node is a ModuleDeclaration.
      * @param node - Node to check.
      */
-    static isNamespaceDeclaration(node: compiler.Node | undefined): node is compiler.NamespaceDeclaration {
+    static isModuleDeclaration(node: compiler.Node | undefined): node is compiler.ModuleDeclaration {
         return node?.getKind() === SyntaxKind.ModuleDeclaration;
     }
 
