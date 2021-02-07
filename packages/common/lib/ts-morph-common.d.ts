@@ -192,7 +192,7 @@ export interface CreateHostsOptions {
     /** Provides the current project version to be used to tell if source files have
      * changed. Provide this for a performance improvement. */
     getProjectVersion?: () => string;
-    isKnownTypesPackageName?: ts.LanguageServiceHost['isKnownTypesPackageName'];
+    isKnownTypesPackageName?: ts.LanguageServiceHost["isKnownTypesPackageName"];
 }
 
 /**
@@ -986,5 +986,5 @@ export declare class StringUtils {
     }): string;
 }
 
-import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "typescript";
-export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
+import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "typescript";
+export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };

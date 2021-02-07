@@ -131,10 +131,12 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets the namesapce declaration kind.
      */
     getDeclarationKind() {
-        const declarationKeyword = this.getDeclarationKindKeyword();
-        if (declarationKeyword == null)
+        const nodeFlags = this.getFlags();
+        if ((nodeFlags & ts.NodeFlags.GlobalAugmentation) !== 0)
             return NamespaceDeclarationKind.Global;
-        return declarationKeyword.getKind() === SyntaxKind.NamespaceKeyword ? NamespaceDeclarationKind.Namespace : NamespaceDeclarationKind.Module;
+        if ((nodeFlags & ts.NodeFlags.Namespace) !== 0)
+            return NamespaceDeclarationKind.Namespace;
+        return NamespaceDeclarationKind.Module;
     }
 
     /**

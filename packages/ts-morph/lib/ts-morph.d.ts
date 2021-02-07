@@ -891,7 +891,7 @@ export declare type LocalTargetDeclarations = SourceFile | ClassDeclaration | In
  * Declarations that can be exported from a module.
  * @remarks This may be missing some types. Please open an issue if this returns a type not listed here.
  */
-export declare type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | NamespaceDeclaration | Expression;
+export declare type ExportedDeclarations = ClassDeclaration | InterfaceDeclaration | EnumDeclaration | FunctionDeclaration | VariableDeclaration | TypeAliasDeclaration | NamespaceDeclaration | Expression | SourceFile;
 export declare function AmbientableNode<T extends Constructor<AmbientableNodeExtensionType>>(Base: T): Constructor<AmbientableNode> & T;
 
 export interface AmbientableNode {
@@ -3205,6 +3205,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     getKind(): SyntaxKind;
     /** Gets the syntax kind name. */
     getKindName(): string;
+    /** Gets the node's flags. */
+    getFlags(): ts.NodeFlags;
     /**
      * Prints the node using the compiler's printer.
      * @param options - Options.
@@ -10583,8 +10585,8 @@ export declare function forEachStructureChild<TStructure>(structures: ReadonlyAr
  * @param callback - Callback to do on each child of the provided structure. Returning a truthy value will return that value in the main function call.
  */
 export declare function forEachStructureChild<TStructure>(structure: Structures, callback: (child: Structures) => TStructure | void): TStructure | undefined;
-import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
-export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
+import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
+export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };
 
 /** Code writer that assists with formatting and visualizing blocks of JavaScript or TypeScript code. */
 export declare class CodeBlockWriter {

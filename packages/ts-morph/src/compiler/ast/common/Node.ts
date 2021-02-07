@@ -216,6 +216,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         return getSyntaxKindName(this.compilerNode.kind);
     }
 
+    /** Gets the node's flags. */
+    getFlags() {
+        return this.compilerNode.flags;
+    }
+
     /**
      * Prints the node using the compiler's printer.
      * @param options - Options.
