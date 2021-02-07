@@ -15,7 +15,7 @@ import { EnumDeclaration } from "../enum";
 import { FunctionDeclaration } from "../function";
 import { InterfaceDeclaration } from "../interface";
 import { ImplementedKindToNodeMappings } from "../kindToNodeMappings";
-import { ModuleDeclaration } from "../module";
+import { ModuleDeclaration, ModuleDeclarationKind } from "../module";
 import { CommentStatement, Statement, VariableStatement } from "../statement";
 import { TypeAliasDeclaration } from "../type";
 import { ExtendedParser, StatementContainerNodes } from "../utils";
@@ -278,51 +278,51 @@ export interface StatementedNode {
      */
     getInterfaceOrThrow(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration;
     /**
-     * Adds a namespace declaration as a child.
+     * Adds a module declaration as a child.
      * @param structure - Structure of the namespace declaration to add.
      */
-    addNamespace(structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
+    addModule(structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
     /**
-     * Adds namespace declarations as a child.
+     * Adds module declarations as a child.
      * @param structures - Structures of the namespace declarations to add.
      */
-    addNamespaces(structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
+    addModules(structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
     /**
-     * Inserts an namespace declaration as a child.
+     * Inserts a module declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
-    insertNamespace(index: number, structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
+    insertModule(index: number, structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
     /**
-     * Inserts namespace declarations as a child.
+     * Inserts module declarations as children.
      * @param index - Child index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
-    insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
+    insertModules(index: number, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
     /**
-     * Gets the direct namespace declaration children.
+     * Gets the module declaration children.
      */
-    getNamespaces(): ModuleDeclaration[];
+    getModules(): ModuleDeclaration[];
     /**
-     * Gets a namespace.
+     * Gets a module declaration child by name.
      * @param name - Name of the namespace.
      */
-    getNamespace(name: string): ModuleDeclaration | undefined;
+    getModule(name: string): ModuleDeclaration | undefined;
     /**
-     * Gets a namespace.
+     * Gets a module declaration child by condition.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespace(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration | undefined;
+    getModule(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration | undefined;
     /**
-     * Gets a namespace or throws if it doesn't exist.
+     * Gets a module declaration child by name or throws if it doesn't exist.
      * @param name - Name of the namespace.
      */
-    getNamespaceOrThrow(name: string): ModuleDeclaration;
+    getModuleOrThrow(name: string): ModuleDeclaration;
     /**
-     * Gets a namespace or throws if it doesn't exist.
+     * Gets a module declaration child by condition or throws if it doesn't exist.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespaceOrThrow(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration;
+    getModuleOrThrow(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration;
     /**
      * Adds a type alias declaration as a child.
      * @param structure - Structure of the type alias declaration to add.
@@ -742,19 +742,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Namespaces */
 
-        addNamespace(structure: OptionalKind<ModuleDeclarationStructure>) {
-            return this.addNamespaces([structure])[0];
+        addModule(structure: OptionalKind<ModuleDeclarationStructure>) {
+            return this.addModules([structure])[0];
         }
 
-        addNamespaces(structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>) {
-            return this.insertNamespaces(this._getCompilerStatementsWithComments().length, structures);
+        addModules(structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>) {
+            return this.insertModules(this._getCompilerStatementsWithComments().length, structures);
         }
 
-        insertNamespace(index: number, structure: OptionalKind<ModuleDeclarationStructure>) {
-            return this.insertNamespaces(index, [structure])[0];
+        insertModule(index: number, structure: OptionalKind<ModuleDeclarationStructure>) {
+            return this.insertModules(index, [structure])[0];
         }
 
-        insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[] {
+        insertModules(index: number, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[] {
             return this._insertChildren<ModuleDeclaration>({
                 expectedKind: SyntaxKind.ModuleDeclaration,
                 index,
@@ -768,22 +768,22 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             });
         }
 
-        getNamespaces(): ModuleDeclaration[] {
+        getModules(): ModuleDeclaration[] {
             return this.getStatements().filter(Node.isModuleDeclaration);
         }
 
-        getNamespace(name: string): ModuleDeclaration | undefined;
-        getNamespace(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration | undefined;
-        getNamespace(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration | undefined;
-        getNamespace(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration | undefined {
-            return getNodeByNameOrFindFunction(this.getNamespaces(), nameOrFindFunction);
+        getModule(name: string): ModuleDeclaration | undefined;
+        getModule(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration | undefined;
+        getModule(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration | undefined;
+        getModule(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration | undefined {
+            return getNodeByNameOrFindFunction(this.getModules(), nameOrFindFunction);
         }
 
-        getNamespaceOrThrow(name: string): ModuleDeclaration;
-        getNamespaceOrThrow(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration;
-        getNamespaceOrThrow(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration {
+        getModuleOrThrow(name: string): ModuleDeclaration;
+        getModuleOrThrow(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration;
+        getModuleOrThrow(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration {
             return errors.throwIfNullOrUndefined(
-                this.getNamespace(nameOrFindFunction),
+                this.getModule(nameOrFindFunction),
                 () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction),
             );
         }

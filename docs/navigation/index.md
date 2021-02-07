@@ -19,7 +19,7 @@ Many exist. If you find one you would really like, then please [open an issue](h
 
 ### getChildren() and forEachChild(child => ...)
 
-In general, you can easily navigate the tree by using methods such as `.getClasses()`, `.getClass('MyClass')`, `.getNamespaces()`, and so on, but in some cases you might want to get all the child nodes.
+In general, you can easily navigate the tree by using methods such as `.getClasses()`, `.getClass('MyClass')`, `.getModules()`, and so on, but in some cases you might want to get all the child nodes.
 
 In the compiler API, there exists a `node.getChildren()` method and `ts.forEachChild(node, child => { })`/`node.forEachChild(child => { })` function/method.
 

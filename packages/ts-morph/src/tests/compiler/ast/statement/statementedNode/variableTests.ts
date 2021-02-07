@@ -52,7 +52,7 @@ describe(nameof(StatementedNode), () => {
 
         it("should have the expected text adding to non-source file", () => {
             const { sourceFile } = getInfoFromText("namespace Identifier {\n}\n");
-            const namespaceDec = sourceFile.getNamespaces()[0];
+            const namespaceDec = sourceFile.getModules()[0];
             namespaceDec.insertVariableStatements(0, [{ declarations: [{ name: "Identifier" }] }]);
 
             expect(sourceFile.getFullText()).to.equal("namespace Identifier {\n    let Identifier;\n}\n");

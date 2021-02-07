@@ -118,7 +118,7 @@ namespace MyNamespace {
 
 const t = MyNamespace.MyClass;
 `);
-            const referencedSymbols = firstChild.getNameNode().findReferences();
+            const referencedSymbols = (firstChild.getNameNode() as Identifier).findReferences();
             expect(referencedSymbols.length).to.equal(1);
             const referencedSymbol = referencedSymbols[0];
             const references = referencedSymbol.getReferences();

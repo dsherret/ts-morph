@@ -17,7 +17,7 @@ Find out more information about:
 - [Functions](functions)
 - [Imports](imports)
 - [Interfaces](interfaces)
-- [Namespaces](namespaces)
+- [Modules](modules)
 - [Parameters](parameters)
 - [Type Parameters](type-parameters)
 - [Type Aliases](type-aliases)

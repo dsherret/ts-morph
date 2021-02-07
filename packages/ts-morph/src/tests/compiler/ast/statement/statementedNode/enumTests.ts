@@ -38,7 +38,7 @@ describe(nameof(StatementedNode), () => {
 
         it("should have the expected text adding to non-source file", () => {
             const { sourceFile } = getInfoFromText("namespace MyNamespace {\n}\n");
-            const namespaceDec = sourceFile.getNamespaces()[0];
+            const namespaceDec = sourceFile.getModules()[0];
             namespaceDec.insertEnums(0, [{
                 name: "MyEnum",
                 members: [{ name: "member" }],

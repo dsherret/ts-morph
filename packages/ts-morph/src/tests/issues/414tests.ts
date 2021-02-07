@@ -9,7 +9,7 @@ declare global {
     export type People = Person[];
 }`;
         const { sourceFile } = getInfoFromText(text, { includeLibDts: true });
-        const globalNode = sourceFile.getNamespaceOrThrow("global");
+        const globalNode = sourceFile.getModuleOrThrow("global");
 
         globalNode.insertText(globalNode.getEnd() - 1, writer => {
             writer.indent().write("export interface Car { model: string }").newLine();

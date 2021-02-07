@@ -1267,7 +1267,7 @@ describe(nameof(Project), () => {
                     + "interface Interface3 {} interface Interface4 {} }");
                 sourceFileNotNavigated = project.createSourceFile("test2.ts", "class MyClass {}");
                 classNode = sourceFile.getClassOrThrow("MyClass");
-                namespaceNode = sourceFile.getNamespaceOrThrow("MyNamespace");
+                namespaceNode = sourceFile.getModuleOrThrow("MyNamespace");
 
                 project.forgetNodesCreatedInBlock(remember2 => {
                     interfaceNode2 = namespaceNode.getInterfaceOrThrow("Interface2");

@@ -1,6 +1,7 @@
-import { errors } from "@ts-morph/common";
+import { errors, SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { ModuleDeclaration, ModuleDeclarationKind, VariableDeclarationKind } from "../../../../compiler";
+import { Project } from "../../../../main";
 import { ModuleDeclarationSpecificStructure, ModuleDeclarationStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
@@ -75,6 +76,21 @@ describe(nameof(ModuleDeclaration), () => {
         it("should throw an exception when renaming a namespace whose name uses dot notation", () => {
             const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace MyNamespace.MyInner {}");
             expect(() => firstChild.rename("NewName")).to.throw(errors.NotSupportedError);
+        });
+
+        it("should support renaming a string identifier module name", () => {
+            const project = new Project({ useInMemoryFileSystem: true });
+            const testFile = project.createSourceFile("test.d.ts", "declare module 'test' { export class Test {} }");
+            const mainFile = project.createSourceFile("main.ts", "/// <reference path='test.d.ts' />\nimport { Test } from 'test';");
+
+            const testModule = testFile.getFirstChildByKindOrThrow(SyntaxKind.ModuleDeclaration);
+            testModule.rename("'asdf'");
+            expect(testFile.getFullText()).to.equal("declare module 'asdf' { export class Test {} }");
+            testModule.rename("testing");
+            expect(testFile.getFullText()).to.equal("declare module 'testing' { export class Test {} }");
+
+            // unfortunately the ts compiler won't update the other module declarations
+            expect(mainFile.getFullText()).to.equal("/// <reference path='test.d.ts' />\nimport { Test } from 'test';");
         });
     });
 
@@ -309,7 +325,7 @@ export declare module Identifier {
     describe(nameof<ModuleDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
-            sourceFile.getNamespaces()[index].remove();
+            sourceFile.getModules()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 

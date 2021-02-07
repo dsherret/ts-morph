@@ -48,7 +48,7 @@ describe(nameof(StatementedNode), () => {
 
         it("should have the expected text adding to non-source file", () => {
             const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
-            const namespaceDec = sourceFile.getNamespaces()[0];
+            const namespaceDec = sourceFile.getModules()[0];
             namespaceDec.insertFunctions(0, [{
                 name: "Identifier",
             }]);
@@ -66,7 +66,7 @@ describe(nameof(StatementedNode), () => {
 
         it("should insert into an ambient context", () => {
             const { sourceFile } = getInfoFromText("declare namespace Namespace {\n}\n");
-            const namespaceDec = sourceFile.getNamespaces()[0];
+            const namespaceDec = sourceFile.getModules()[0];
             namespaceDec.insertFunctions(0, [{
                 name: "Identifier",
             }]);

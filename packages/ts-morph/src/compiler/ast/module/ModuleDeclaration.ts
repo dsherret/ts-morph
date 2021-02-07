@@ -1,8 +1,8 @@
-import { errors, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ModuleDeclarationSpecificStructure, ModuleDeclarationStructure, StructureKind } from "../../../structures";
 import { RenameOptions } from "../../tools";
-import { AmbientableNode, BodyableNode, ExportableNode, JSDocableNode, ModifierableNode, ModuledNode, ModuleNamedNode, TextInsertableNode,
+import { AmbientableNode, BodiedNode, BodyableNode, ExportableNode, JSDocableNode, ModifierableNode, ModuledNode, ModuleNamedNode, TextInsertableNode,
     UnwrappableNode } from "../base";
 import { renameNode } from "../base/helpers";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -56,7 +56,9 @@ export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaratio
     }
 
     /**
-     * Renames the name.
+     * Renames the module name.
+     *
+     * Note: The TS compiler does not update module declarations for string literal module names unfortunately.
      * @param newName - New name.
      * @param options - Options for renaming.
      */
@@ -78,7 +80,7 @@ export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaratio
         else {
             renameNode(
                 nameNodes,
-                newName,
+                StringUtils.stripQuotes(newName),
                 options,
             );
         }

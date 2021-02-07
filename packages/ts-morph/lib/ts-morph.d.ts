@@ -7068,7 +7068,9 @@ export declare class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDe
      */
     setName(newName: string): this;
     /**
-     * Renames the name.
+     * Renames the module name.
+     *
+     * Note: The TS compiler does not update module declarations for string literal module names unfortunately.
      * @param newName - New name.
      * @param options - Options for renaming.
      */
@@ -8006,49 +8008,49 @@ export interface StatementedNode {
      */
     getInterfaceOrThrow(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration;
     /**
-     * Adds a namespace declaration as a child.
+     * Adds a module declaration as a child.
      * @param structure - Structure of the namespace declaration to add.
      */
-    addNamespace(structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
+    addModule(structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
     /**
-     * Adds namespace declarations as a child.
+     * Adds module declarations as a child.
      * @param structures - Structures of the namespace declarations to add.
      */
-    addNamespaces(structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
+    addModules(structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
     /**
-     * Inserts an namespace declaration as a child.
+     * Inserts a module declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
-    insertNamespace(index: number, structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
+    insertModule(index: number, structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
     /**
-     * Inserts namespace declarations as a child.
+     * Inserts module declarations as children.
      * @param index - Child index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
-    insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
-    /** Gets the direct namespace declaration children. */
-    getNamespaces(): ModuleDeclaration[];
+    insertModules(index: number, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
+    /** Gets the module declaration children. */
+    getModules(): ModuleDeclaration[];
     /**
-     * Gets a namespace.
+     * Gets a module declaration child by name.
      * @param name - Name of the namespace.
      */
-    getNamespace(name: string): ModuleDeclaration | undefined;
+    getModule(name: string): ModuleDeclaration | undefined;
     /**
-     * Gets a namespace.
+     * Gets a module declaration child by condition.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespace(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration | undefined;
+    getModule(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration | undefined;
     /**
-     * Gets a namespace or throws if it doesn't exist.
+     * Gets a module declaration child by name or throws if it doesn't exist.
      * @param name - Name of the namespace.
      */
-    getNamespaceOrThrow(name: string): ModuleDeclaration;
+    getModuleOrThrow(name: string): ModuleDeclaration;
     /**
-     * Gets a namespace or throws if it doesn't exist.
+     * Gets a module declaration child by condition or throws if it doesn't exist.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespaceOrThrow(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration;
+    getModuleOrThrow(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration;
     /**
      * Adds a type alias declaration as a child.
      * @param structure - Structure of the type alias declaration to add.

@@ -960,6 +960,8 @@ export declare class StringUtils {
     static isSpaces(text: string): boolean;
     static hasBom(text: string): boolean;
     static stripBom(text: string): string;
+    static stripQuotes(text: string): string;
+    static isQuoted(text: string): boolean;
     static isNullOrWhitespace(str: string | undefined): str is undefined;
     static isNullOrEmpty(str: string | undefined): str is undefined;
     static isWhitespace(text: string | undefined): boolean;

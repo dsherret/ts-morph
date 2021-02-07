@@ -38,7 +38,7 @@ describe(nameof(StatementedNode), () => {
 
         it("should have the expected text adding to non-source file", () => {
             const { sourceFile } = getInfoFromText("namespace Namespace {\n}\n");
-            const namespaceDec = sourceFile.getNamespaces()[0];
+            const namespaceDec = sourceFile.getModules()[0];
             namespaceDec.insertInterfaces(0, [{
                 name: "Identifier",
             }]);
