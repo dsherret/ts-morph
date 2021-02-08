@@ -33,7 +33,7 @@ export function NamedNodeBase<TCompilerNode extends ts.Node, U extends Construct
         set(structure: Partial<NamedNodeStructure>) {
             callBaseSet(Base.prototype, this, structure);
 
-            // do not rename here
+            // do not rename here—don't use language service
             if (structure.name != null)
                 this.getNameNode().replaceWithText(structure.name);
 

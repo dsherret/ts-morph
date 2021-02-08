@@ -3,7 +3,7 @@ import { Constructor } from "../../../types";
 import { Node } from "../common";
 import { ModuleDeclaration } from "./ModuleDeclaration";
 
-export type NamespaceChildableNodeExtensionType = Node;
+export type ModuleChildableNodeExtensionType = Node;
 
 export interface ModuleChildableNode {
     /**
@@ -17,7 +17,7 @@ export interface ModuleChildableNode {
     getParentModuleOrThrow(): ModuleDeclaration;
 }
 
-export function ModuleChildableNode<T extends Constructor<NamespaceChildableNodeExtensionType>>(Base: T): Constructor<ModuleChildableNode> & T {
+export function ModuleChildableNode<T extends Constructor<ModuleChildableNodeExtensionType>>(Base: T): Constructor<ModuleChildableNode> & T {
     return class extends Base implements ModuleChildableNode {
         getParentModuleOrThrow() {
             return errors.throwIfNullOrUndefined(this.getParentModule(), "Expected to find the parent module declaration.");

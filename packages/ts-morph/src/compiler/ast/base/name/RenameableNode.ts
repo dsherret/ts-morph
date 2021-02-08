@@ -1,9 +1,7 @@
-import { errors, KeyValueCache, ts } from "@ts-morph/common";
-import { replaceSourceFileTextForRename } from "../../../../manipulation";
+import { errors, ts } from "@ts-morph/common";
 import { Constructor } from "../../../../types";
-import { RenameLocation, RenameOptions } from "../../../tools";
+import { RenameOptions } from "../../../tools";
 import { Node } from "../../common";
-import { SourceFile } from "../../module";
 import { renameNode } from "../helpers";
 
 export type RenameableNodeExtensionType = Node<ts.Node>;
@@ -28,7 +26,7 @@ export function RenameableNode<T extends Constructor<RenameableNodeExtensionType
             return this;
 
             function getNodeToRename(thisNode: Node) {
-                if (Node.isIdentifier(thisNode) || Node.isPrivateIdentifier(thisNode))
+                if (Node.isIdentifier(thisNode) || Node.isPrivateIdentifier(thisNode) || Node.isStringLiteral(thisNode))
                     return thisNode;
                 else if ((thisNode as any).getNameNode != null) {
                     const node = (thisNode as any).getNameNode() as Node;
