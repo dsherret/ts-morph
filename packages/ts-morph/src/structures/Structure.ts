@@ -563,7 +563,7 @@ export const Structure = {
         return structure.kind === StructureKind.ImportSpecifier;
     },
     /** Gets if the provided structure is a ModuleDeclarationStructure. */
-    isNamespace(structure: Structure & { kind: StructureKind; }): structure is ModuleDeclarationStructure {
+    isModule(structure: Structure & { kind: StructureKind; }): structure is ModuleDeclarationStructure {
         return structure.kind === StructureKind.Module;
     },
     /** Gets if the provided structure is a SourceFileStructure. */

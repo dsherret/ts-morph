@@ -24,30 +24,37 @@ export class ModuleDeclarationStructurePrinter extends NodePrinter<OptionalKind<
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         if (structure.declarationKind == null || structure.declarationKind !== ModuleDeclarationKind.Global)
-            writer.write(`${structure.declarationKind || "namespace"} ${structure.name} `);
+            writer.write(`${structure.declarationKind || "namespace"} ${structure.name}`);
         else
-            writer.write("global ");
+            writer.write("global");
 
-        writer.inlineBlock(() => {
-            this.factory.forStatementedNode({
-                isAmbient: structure.hasDeclareKeyword || this.options.isAmbient,
-            }).printText(writer, structure);
-        });
+        if (structure.hasDeclareKeyword && StringUtils.isQuoted(structure.name.trim())
+            && structure.hasOwnProperty(nameof(structure.statements)) && structure.statements == null)
+        {
+            writer.write(";");
+        }
+        else {
+            writer.write(" ");
+            writer.inlineBlock(() => {
+                this.factory.forStatementedNode({
+                    isAmbient: structure.hasDeclareKeyword || this.options.isAmbient,
+                }).printText(writer, structure);
+            });
+        }
     }
 
     private validateAndGetStructure(structure: OptionalKind<ModuleDeclarationStructure>) {
-        const name = structure.name.trim();
-        if (!name.startsWith("'") && !name.startsWith(`"`))
-            return structure;
+        if (StringUtils.isQuoted(structure.name.trim())) {
+            if (structure.declarationKind === ModuleDeclarationKind.Namespace) {
+                throw new errors.InvalidOperationError(`Cannot print a namespace with quotes for namespace with name ${structure.name}. `
+                    + `Use ${nameof.full(ModuleDeclarationKind.Module)} instead.`);
+            }
 
-        if (structure.declarationKind === ModuleDeclarationKind.Namespace) {
-            throw new errors.InvalidOperationError(`Cannot print a namespace with quotes for namespace with name ${structure.name}. `
-                + `Use ${nameof.full(ModuleDeclarationKind.Module)} instead.`);
+            structure = ObjectUtils.clone(structure);
+            setValueIfUndefined(structure, "hasDeclareKeyword", true);
+            setValueIfUndefined(structure, "declarationKind", ModuleDeclarationKind.Module);
         }
 
-        structure = ObjectUtils.clone(structure);
-        setValueIfUndefined(structure, "hasDeclareKeyword", true);
-        setValueIfUndefined(structure, "declarationKind", ModuleDeclarationKind.Module);
         return structure;
     }
 }

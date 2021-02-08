@@ -23,6 +23,10 @@ describe(nameof(ModuleDeclaration), () => {
         it("should get the name when in quotes", () => {
             doTest("declare module 'test' {}", "'test'");
         });
+
+        it("should get the name when an ambient shorthand module declaration", () => {
+            doTest("declare module 'test';", "'test'");
+        });
     });
 
     describe(nameof<ModuleDeclaration>(d => d.getNameNodes), () => {
@@ -318,6 +322,19 @@ export declare module Identifier {
                 isDefaultExport: false,
                 isExported: false,
                 name: "global",
+            });
+        });
+
+        it("should get shorthand ambient module", () => {
+            doTest("declare module 'test';", {
+                kind: StructureKind.Module,
+                declarationKind: ModuleDeclarationKind.Module,
+                statements: undefined,
+                docs: [],
+                hasDeclareKeyword: true,
+                isDefaultExport: false,
+                isExported: false,
+                name: "'test'",
             });
         });
     });

@@ -1,7 +1,7 @@
 // DO NOT EDIT - Automatically maintained by createStructurePrinterFactory.ts
 import { Memoize } from "@ts-morph/common";
-import { SupportedFormatCodeSettings } from "../options";
 import * as structurePrinters from "../structurePrinters";
+import { SupportedFormatCodeSettings } from "../options";
 
 /** Cached lazy factory for StructurePrinters. */
 export class StructurePrinterFactory {
@@ -163,6 +163,11 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forJsxAttributeDecider(): structurePrinters.JsxAttributeDeciderStructurePrinter {
+        return new structurePrinters.JsxAttributeDeciderStructurePrinter(this);
+    }
+
+    @Memoize
     forJsxAttribute(): structurePrinters.JsxAttributeStructurePrinter {
         return new structurePrinters.JsxAttributeStructurePrinter(this);
     }
@@ -175,11 +180,6 @@ export class StructurePrinterFactory {
     @Memoize
     forJsxElement(): structurePrinters.JsxElementStructurePrinter {
         return new structurePrinters.JsxElementStructurePrinter(this);
-    }
-
-    @Memoize
-    forJsxAttributeDecider(): structurePrinters.JsxAttributeDeciderStructurePrinter {
-        return new structurePrinters.JsxAttributeDeciderStructurePrinter(this);
     }
 
     @Memoize
@@ -238,11 +238,6 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forVariableDeclaration(): structurePrinters.VariableDeclarationStructurePrinter {
-        return new structurePrinters.VariableDeclarationStructurePrinter(this);
-    }
-
-    @Memoize
     forTypeAliasDeclaration(): structurePrinters.TypeAliasDeclarationStructurePrinter {
         return new structurePrinters.TypeAliasDeclarationStructurePrinter(this);
     }
@@ -250,5 +245,10 @@ export class StructurePrinterFactory {
     @Memoize
     forTypeParameterDeclaration(): structurePrinters.TypeParameterDeclarationStructurePrinter {
         return new structurePrinters.TypeParameterDeclarationStructurePrinter(this);
+    }
+
+    @Memoize
+    forVariableDeclaration(): structurePrinters.VariableDeclarationStructurePrinter {
+        return new structurePrinters.VariableDeclarationStructurePrinter(this);
     }
 }

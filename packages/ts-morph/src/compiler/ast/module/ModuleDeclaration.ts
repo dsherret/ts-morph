@@ -2,7 +2,7 @@ import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ModuleDeclarationSpecificStructure, ModuleDeclarationStructure, StructureKind } from "../../../structures";
 import { RenameOptions } from "../../tools";
-import { AmbientableNode, BodiedNode, BodyableNode, ExportableNode, JSDocableNode, ModifierableNode, ModuledNode, ModuleNamedNode, TextInsertableNode,
+import { AmbientableNode, BodyableNode, ExportableNode, JSDocableNode, ModifierableNode, ModuledNode, ModuleNamedNode, TextInsertableNode,
     UnwrappableNode } from "../base";
 import { renameNode } from "../base/helpers";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -208,7 +208,7 @@ export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaratio
     /** @internal */
     _getInnerBody() {
         let node = this.getBody();
-        while (node != null && Node.isBodiedNode(node) && (node.compilerNode as ts.Node as ts.Block).statements == null)
+        while (node != null && Node.isBodyableNode(node) && (node.compilerNode as ts.Node as ts.Block).statements == null)
             node = node.getBody();
         return node;
     }

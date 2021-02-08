@@ -118,6 +118,14 @@ describe(nameof(StatementedNode), () => {
                 .to.throw(errors.InvalidOperationError, `Cannot print a namespace with quotes for namespace with name "Identifier". `
                     + `Use ModuleDeclarationKind.Module instead.`);
         });
+
+        it("should support providing a shorthand ambient module", () => {
+            doTest("", 0, [{
+                name: "'test'",
+                declarationKind: ModuleDeclarationKind.Module,
+                statements: undefined,
+            }], "declare module 'test';\n");
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.insertModule), () => {
