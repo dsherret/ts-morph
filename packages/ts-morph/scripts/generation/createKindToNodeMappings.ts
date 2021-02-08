@@ -13,36 +13,43 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
     const project = inspector.getProject();
     const kindToNodeMappingsFile = project.getSourceFileOrThrow("kindToNodeMappings.ts");
     const kindToWrapperMappings = inspector.getKindToWrapperMappings();
-    kindToNodeMappingsFile.removeText();
 
-    // add imports
-    kindToNodeMappingsFile.insertText(0, writer =>
-        writer
-            .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts")
-            .writeLine("// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead."));
-    kindToNodeMappingsFile.addImportDeclarations([{
-        namedImports: ["SyntaxKind", "ts"],
-        moduleSpecifier: "@ts-morph/common",
-    }, {
-        namespaceImport: "compiler",
-        moduleSpecifier: kindToNodeMappingsFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/compiler/ast/index.ts")),
-    }]);
-
-    addTypeForSubSet("ImplementedKindToNodeMappings", project.getSourceFileOrThrow("Node.ts").getClassOrThrow("Node"));
-    addDefaultIndexSignature(kindToNodeMappingsFile.addInterface({
+    const interfaceStructures: tsMorph.InterfaceDeclarationStructure[] = [];
+    interfaceStructures.push(getTypeForSubSet("ImplementedKindToNodeMappings", project.getSourceFileOrThrow("Node.ts").getClassOrThrow("Node")));
+    interfaceStructures.push(withDefaultIndexSignature({
+        kind: tsMorph.StructureKind.Interface,
         isExported: true,
         name: "KindToNodeMappings",
         extends: ["ImplementedKindToNodeMappings"],
     }));
-    addDefaultIndexSignature(addTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression")));
+    interfaceStructures.push(withDefaultIndexSignature(getTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression"))));
 
-    function addTypeForSubSet(name: string, nodeClass: tsMorph.ClassDeclaration) {
+    // add imports
+    kindToNodeMappingsFile.removeText();
+    kindToNodeMappingsFile.addStatements([
+        writer => writer
+            .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts")
+            .writeLine("// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead."),
+        {
+                kind: tsMorph.StructureKind.ImportDeclaration,
+            namedImports: ["SyntaxKind", "ts"],
+            moduleSpecifier: "@ts-morph/common",
+        }, {
+                kind: tsMorph.StructureKind.ImportDeclaration,
+            namespaceImport: "compiler",
+            moduleSpecifier: kindToNodeMappingsFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/compiler/ast/index.ts")),
+        },
+        ...interfaceStructures,
+    ]);
+
+    function getTypeForSubSet(name: string, nodeClass: tsMorph.ClassDeclaration) {
         const classType = nodeClass.getType();
         const addingProperties: tsMorph.PropertySignatureStructure[] = [];
-        const newInterface = kindToNodeMappingsFile.addInterface({
+        const newInterface: tsMorph.InterfaceDeclarationStructure = {
+            kind: tsMorph.StructureKind.Interface,
             isExported: true,
             name,
-        });
+        };
 
         for (const mapping of kindToWrapperMappings) {
             if (!hasDescendantBaseType(mapping.wrappedNode.getType(), t => t.getText() === classType.getText()))
@@ -58,8 +65,7 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
             }
         }
 
-        newInterface.addProperties(addingProperties);
-        newInterface.getChildren().forEach(c => c.forget());
+        newInterface.properties = addingProperties;
 
         return newInterface;
 
@@ -76,11 +82,14 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
         }
     }
 
-    function addDefaultIndexSignature(interfaceDec: tsMorph.InterfaceDeclaration) {
-        interfaceDec.insertIndexSignature(0, {
-            keyName: "kind",
-            keyType: "number",
-            returnType: "compiler.Node",
-        });
+    function withDefaultIndexSignature(interfaceStructure: tsMorph.InterfaceDeclarationStructure) {
+        interfaceStructure.indexSignatures = [{
+                keyName: "kind",
+                keyType: "number",
+                returnType: "compiler.Node",
+            },
+            ...interfaceStructure.indexSignatures ?? []
+        ];
+        return interfaceStructure;
     }
 }
