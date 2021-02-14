@@ -47,6 +47,8 @@ export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaratio
                 throw new errors.NotImplementedError(`Not implemented to set a namespace name that uses dot notation. ${openIssueText}`);
             if (newName !== "global")
                 addNamespaceKeywordIfNecessary(this);
+            if (StringUtils.isQuoted(newName))
+                changeToAmbientModuleIfNecessary(this);
             moduleName[0].replaceWithText(newName);
         }
         else {
@@ -217,4 +219,11 @@ export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaratio
 function addNamespaceKeywordIfNecessary(namespaceDec: ModuleDeclaration) {
     if (namespaceDec.getDeclarationKind() === ModuleDeclarationKind.Global)
         namespaceDec.setDeclarationKind(ModuleDeclarationKind.Namespace);
+}
+
+function changeToAmbientModuleIfNecessary(namespaceDec: ModuleDeclaration) {
+    if (namespaceDec.hasNamespaceKeyword())
+        namespaceDec.setDeclarationKind(ModuleDeclarationKind.Module);
+    if (!namespaceDec.hasDeclareKeyword())
+        namespaceDec.setHasDeclareKeyword(true);
 }

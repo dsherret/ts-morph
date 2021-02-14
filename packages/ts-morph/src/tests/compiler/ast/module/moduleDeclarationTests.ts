@@ -101,12 +101,24 @@ describe(nameof(ModuleDeclaration), () => {
     describe(nameof<ModuleDeclaration>(d => d.setName), () => {
         function doTest(text: string, newName: string, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ModuleDeclaration>(text);
-            firstChild.rename(newName);
+            firstChild.setName(newName);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
         it("should set the name when not using dot notation", () => {
-            doTest("namespace MyNamespace {} const t = MyNamespace;", "NewName", "namespace NewName {} const t = MyNamespace;");
+            doTest(
+                "namespace MyNamespace { export class Test {} } const t = MyNamespace;",
+                "NewName",
+                "namespace NewName { export class Test {} } const t = MyNamespace;",
+            );
+        });
+
+        it("should set the name to one with quotes", () => {
+            doTest("namespace MyNamespace {}", "'test'", "declare module 'test' {}");
+        });
+
+        it("should set the name to one without quotes", () => {
+            doTest("declare module 'test' {}", "MyNamespace", "declare module MyNamespace {}");
         });
 
         it("should add a namespace keyword for a global module", () => {
