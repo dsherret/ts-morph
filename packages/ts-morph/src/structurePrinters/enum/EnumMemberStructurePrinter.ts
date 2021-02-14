@@ -1,3 +1,4 @@
+import { StringUtils } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { EnumMemberStructure, OptionalKind } from "../../structures";
 import { WriterFunction } from "../../types";
@@ -28,7 +29,7 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         // Adds quotes if structure is not a valid variable name
         // AND the string is not enclosed in quotation marks
-        if (isValidVariableName(structure.name) || isSurroundedInQuotes(structure.name))
+        if (isValidVariableName(structure.name) || StringUtils.isQuoted(structure.name))
             writer.write(structure.name);
         else
             writer.quote(structure.name);
@@ -42,8 +43,4 @@ export class EnumMemberStructurePrinter extends NodePrinter<OptionalKind<EnumMem
         else
             this.factory.forInitializerExpressionableNode().printText(writer, structure);
     }
-}
-
-function isSurroundedInQuotes(text: string) {
-    return text.startsWith("'") && text.endsWith("'") || text.startsWith("\"") && text.endsWith("\"");
 }

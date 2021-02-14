@@ -3,7 +3,7 @@ import { Constructor } from "../../../../types";
 import { ReferencedSymbol } from "../../../tools";
 import { Node } from "../../common";
 
-export type ReferenceFindableNodeExtensionType = Node<ts.Node & { name?: ts.PropertyName | ts.BindingName | ts.DeclarationName; }>;
+export type ReferenceFindableNodeExtensionType = Node<ts.Node & { name?: ts.PropertyName | ts.BindingName | ts.DeclarationName | ts.StringLiteral; }>;
 
 export interface ReferenceFindableNode {
     /**
@@ -29,7 +29,7 @@ export function ReferenceFindableNode<T extends Constructor<ReferenceFindableNod
 }
 
 function getNodeForReferences(node: ReferenceFindableNodeExtensionType) {
-    if (Node.isIdentifier(node))
+    if (Node.isIdentifier(node) || Node.isStringLiteral(node))
         return node;
     const nameNode = node.getNodeProperty("name");
     if (nameNode != null)

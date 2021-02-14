@@ -1,6 +1,6 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ArrayLiteralExpression, NamespaceDeclaration } from "../../../compiler";
+import { ArrayLiteralExpression, ModuleDeclaration } from "../../../compiler";
 import { OptionalKind, PropertyAssignmentStructure } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../compiler/testHelpers";
@@ -9,7 +9,7 @@ describe("insertIntoCommaSeparatedNodes", () => {
     // these are high level tests of this function
     describe("named imports", () => {
         function doTest(text: string, index: number, writerFunction: WriterFunction, expected: string, surroundWithSpaces = true) {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>(`declare namespace Test {\n    import ${text} from "./test";\n}\n`);
+            const { firstChild } = getInfoFromText<ModuleDeclaration>(`declare namespace Test {\n    import ${text} from "./test";\n}\n`);
             const importDec = firstChild.getImportDeclarations()[0];
             if (!surroundWithSpaces)
                 firstChild._context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });

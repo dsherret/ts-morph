@@ -60,9 +60,9 @@ export class StatementStructurePrinter extends Printer<StatementStructuresArrayI
             case StructureKind.ImportDeclaration:
                 this.factory.forImportDeclaration().printText(writer, statement);
                 break;
-            case StructureKind.Namespace:
+            case StructureKind.Module:
                 ensureBlankLine();
-                this.factory.forNamespaceDeclaration(this.options).printText(writer, statement);
+                this.factory.forModuleDeclaration(this.options).printText(writer, statement);
                 break;
             case StructureKind.Enum:
                 ensureBlankLine();

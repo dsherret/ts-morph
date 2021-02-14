@@ -4,7 +4,7 @@ import { getInfoFromText } from "../compiler/testHelpers";
 describe("tests for issue #424", () => {
     it("should insert with correct indentation when the file has a BOM at the beginning", () => {
         const { sourceFile } = getInfoFromText("\ufeffmodule Test {\n    enum Test {\n    }\n}");
-        const enumDec = sourceFile.getNamespaceOrThrow("Test").getEnumOrThrow("Test");
+        const enumDec = sourceFile.getModuleOrThrow("Test").getEnumOrThrow("Test");
 
         enumDec.addMember({ name: "member", initializer: "5" });
 

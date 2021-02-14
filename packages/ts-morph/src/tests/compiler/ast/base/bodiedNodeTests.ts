@@ -1,18 +1,18 @@
 import { expect } from "chai";
-import { BodiedNode, NamespaceDeclaration } from "../../../../compiler";
+import { BodiedNode, ModuleDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(BodiedNode), () => {
     describe(nameof<BodiedNode>(n => n.setBodyText), () => {
         function doTest(startCode: string, newText: string, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ModuleDeclaration>(startCode);
             firstChild.setBodyText(newText);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         function doWriterTest(startCode: string, writerFunc: WriterFunction, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ModuleDeclaration>(startCode);
             firstChild.setBodyText(writerFunc);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -27,9 +27,9 @@ describe(nameof(BodiedNode), () => {
         });
     });
 
-    describe(nameof<NamespaceDeclaration>(n => n.getBodyText), () => {
+    describe(nameof<ModuleDeclaration>(n => n.getBodyText), () => {
         function doTest(startCode: string, bodyText: string | undefined) {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ModuleDeclaration>(startCode);
             expect(firstChild.getBodyText()).to.equal(bodyText);
         }
 

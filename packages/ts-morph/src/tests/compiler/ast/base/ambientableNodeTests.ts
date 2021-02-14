@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { AmbientableNode, ClassDeclaration, NamespaceDeclaration, Node } from "../../../../compiler";
+import { AmbientableNode, ClassDeclaration, ModuleDeclaration, Node } from "../../../../compiler";
 import { AmbientableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -59,7 +59,7 @@ describe(nameof(AmbientableNode), () => {
             });
 
             it("should be ambient when it's parent is ambient", () => {
-                const { firstChild } = getInfoFromText<NamespaceDeclaration>("declare namespace Identifier { class Identifier {} }");
+                const { firstChild } = getInfoFromText<ModuleDeclaration>("declare namespace Identifier { class Identifier {} }");
                 const innerClass = firstChild.getClasses()[0];
                 expect(innerClass.isAmbient()).to.be.true;
             });

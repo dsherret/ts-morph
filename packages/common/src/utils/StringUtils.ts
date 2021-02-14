@@ -33,6 +33,16 @@ export class StringUtils {
         return text;
     }
 
+    static stripQuotes(text: string) {
+        if (StringUtils.isQuoted(text))
+            return text.substring(1, text.length - 1);
+        return text;
+    }
+
+    static isQuoted(text: string) {
+        return text.startsWith("'") && text.endsWith("'") || text.startsWith("\"") && text.endsWith("\"");
+    }
+
     static isNullOrWhitespace(str: string | undefined): str is undefined {
         return typeof str !== "string" || StringUtils.isWhitespace(str);
     }

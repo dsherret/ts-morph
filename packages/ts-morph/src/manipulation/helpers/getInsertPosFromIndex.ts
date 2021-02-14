@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { errors, SyntaxKind } from "@ts-morph/common";
 import { Node, SyntaxList } from "../../compiler";
 import { getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
 
@@ -19,7 +19,7 @@ export function getInsertPosFromIndex(index: number, syntaxList: SyntaxList, chi
         if (isInline)
             return syntaxList.getStart();
 
-        const parentContainer = getParentContainer(parent);
+        const parentContainer = getParentContainerOrThrow(parent);
         const openBraceToken = parentContainer.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
         return openBraceToken.getEnd();
     }
@@ -36,7 +36,7 @@ export function getEndPosFromIndex(index: number, parent: Node, children: Node[]
         else if (Node.isCaseClause(parent) || Node.isDefaultClause(parent))
             endPos = parent.getEnd();
         else {
-            const parentContainer = getParentContainer(parent);
+            const parentContainer = getParentContainerOrThrow(parent);
             const closeBraceToken = parentContainer.getLastChildByKind(SyntaxKind.CloseBraceToken);
             if (closeBraceToken == null)
                 endPos = parent.getEnd();
@@ -53,10 +53,16 @@ export function getEndPosFromIndex(index: number, parent: Node, children: Node[]
     return getPosAtStartOfLineOrNonWhitespace(fullText, endPos);
 }
 
-function getParentContainer(parent: Node) {
-    if (Node.isBodiedNode(parent))
-        return Node.isNamespaceDeclaration(parent) ? parent._getInnerBody() : parent.getBody();
-    if (Node.isBodyableNode(parent))
+function getParentContainerOrThrow(parent: Node) {
+    if (Node.isModuleDeclaration(parent)) {
+        const innerBody = parent._getInnerBody();
+        if (innerBody == null)
+            throw new errors.InvalidOperationError("This operation requires the module to have a body.");
+        return innerBody;
+    }
+    else if (Node.isBodiedNode(parent))
+        return parent.getBody();
+    else if (Node.isBodyableNode(parent))
         return parent.getBodyOrThrow();
     else
         return parent;

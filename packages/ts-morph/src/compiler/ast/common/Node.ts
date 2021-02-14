@@ -2273,7 +2273,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         switch (node?.getKind()) {
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.ModuleDeclaration:
                 return true;
             default:
                 return false;
@@ -2291,6 +2290,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
             case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.ModuleDeclaration:
                 return true;
             default:
                 return false;
@@ -3328,6 +3328,35 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isModuleBlock: (node: compiler.Node | undefined) => node is compiler.ModuleBlock = Node.is(SyntaxKind.ModuleBlock);
 
     /**
+     * Gets if the node is a ModuleChildableNode.
+     * @param node - Node to check.
+     */
+    static isModuleChildableNode<T extends compiler.Node>(node: T | undefined): node is compiler.ModuleChildableNode & compiler.ModuleChildableNodeExtensionType & T {
+        switch (node?.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.VariableStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /** Gets if the node is a ModuleDeclaration. */
+    static readonly isModuleDeclaration: (node: compiler.Node | undefined) => node is compiler.ModuleDeclaration = Node.is(SyntaxKind.ModuleDeclaration);
+
+    /**
+     * Gets if the node is a ModuleNamedNode.
+     * @param node - Node to check.
+     */
+    static isModuleNamedNode<T extends compiler.Node>(node: T | undefined): node is compiler.ModuleNamedNode & compiler.ModuleNamedNodeExtensionType & T {
+        return node?.getKind() === SyntaxKind.ModuleDeclaration;
+    }
+
+    /**
      * Gets if the node is a ModuledNode.
      * @param node - Node to check.
      */
@@ -3374,7 +3403,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.JsxAttribute:
             case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.NamedTupleMember:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
@@ -3387,33 +3415,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a NamedTupleMember. */
     static readonly isNamedTupleMember: (node: compiler.Node | undefined) => node is compiler.NamedTupleMember = Node.is(SyntaxKind.NamedTupleMember);
-
-    /**
-     * Gets if the node is a NamespaceChildableNode.
-     * @param node - Node to check.
-     */
-    static isNamespaceChildableNode<T extends compiler.Node>(node: T | undefined): node is compiler.NamespaceChildableNode & compiler.NamespaceChildableNodeExtensionType & T {
-        switch (node?.getKind()) {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a NamespaceDeclaration.
-     * @param node - Node to check.
-     */
-    static isNamespaceDeclaration(node: compiler.Node | undefined): node is compiler.NamespaceDeclaration {
-        return node?.getKind() === SyntaxKind.ModuleDeclaration;
-    }
-
     /** Gets if the node is a NamespaceExport. */
     static readonly isNamespaceExport: (node: compiler.Node | undefined) => node is compiler.NamespaceExport = Node.is(SyntaxKind.NamespaceExport);
     /** Gets if the node is a NamespaceImport. */

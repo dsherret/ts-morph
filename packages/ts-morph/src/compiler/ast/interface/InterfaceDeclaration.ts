@@ -7,14 +7,14 @@ import { AmbientableNode, ExportableNode, ExtendsClauseableNode, HeritageClausea
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { ClassDeclaration } from "../class";
-import { NamespaceChildableNode } from "../module";
+import { ModuleChildableNode } from "../module";
 import { Statement } from "../statement";
 import { TypeAliasDeclaration } from "../type";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>
     TypeElementMemberedNode(TextInsertableNode(
         ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(JSDocableNode(AmbientableNode(
-            NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(ctor)))),
+            ModuleChildableNode(ExportableNode(ModifierableNode(NamedNode(ctor)))),
         ))))),
     ));
 export const InterfaceDeclarationBase = createBase(Statement);

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ExportAssignment, ExportDeclaration, ExportedDeclarations, ImportDeclaration, ModuledNode, NamespaceDeclaration, Node, QuoteKind,
+import { ExportAssignment, ExportDeclaration, ExportedDeclarations, ImportDeclaration, ModuleDeclaration, ModuledNode, Node, QuoteKind,
     SourceFile } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, OptionalKind } from "../../../../structures";
@@ -71,7 +71,7 @@ describe(nameof(ModuledNode), () => {
 
         function doNamespaceTest(startCode: string, index: number, structures: OptionalKind<ImportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile, project } = getInfoFromText(startCode);
-            const result = sourceFile.getNamespaces()[0].insertImportDeclarations(index, structures);
+            const result = sourceFile.getModules()[0].insertImportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -147,7 +147,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should get in a namespace", () => {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>("declare namespace N { import myImport from 'test'; }");
+            const { firstChild } = getInfoFromText<ModuleDeclaration>("declare namespace N { import myImport from 'test'; }");
             expect(firstChild.getImportDeclarations().length).to.equal(1);
             expect(firstChild.getImportDeclarations()[0]).to.be.instanceOf(ImportDeclaration);
         });
@@ -244,7 +244,7 @@ describe(nameof(ModuledNode), () => {
 
         function doNamespaceTest(startCode: string, index: number, structures: OptionalKind<ExportDeclarationStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
-            const result = sourceFile.getNamespaces()[0].insertExportDeclarations(index, structures);
+            const result = sourceFile.getModules()[0].insertExportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -303,7 +303,7 @@ describe(nameof(ModuledNode), () => {
         });
 
         it("should get in a namespace", () => {
-            const { firstChild } = getInfoFromText<NamespaceDeclaration>("declare namespace N { export * from 'test'; }");
+            const { firstChild } = getInfoFromText<ModuleDeclaration>("declare namespace N { export * from 'test'; }");
             expect(firstChild.getExportDeclarations().length).to.equal(1);
             expect(firstChild.getExportDeclarations()[0]).to.be.instanceOf(ExportDeclaration);
         });
@@ -393,7 +393,7 @@ describe(nameof(ModuledNode), () => {
 
         function doNamespaceTest(startCode: string, index: number, structures: OptionalKind<ExportAssignmentStructure>[], expectedCode: string) {
             const { sourceFile } = getInfoFromText(startCode);
-            const result = sourceFile.getNamespaces()[0].insertExportAssignments(index, structures);
+            const result = sourceFile.getModules()[0].insertExportAssignments(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -452,7 +452,7 @@ describe(nameof(ModuledNode), () => {
 
         it("should get from namespace", () => {
             const { sourceFile } = getInfoFromText("namespace T { export = 5; export = 6; }");
-            const result = sourceFile.getNamespaces()[0].getExportAssignments();
+            const result = sourceFile.getModules()[0].getExportAssignments();
             expect(result.length).to.equal(2);
             expect(result[0]).to.be.instanceOf(ExportAssignment);
         });
@@ -492,7 +492,7 @@ describe(nameof(ModuledNode), () => {
 
             function assertExportedDeclaration(node: ExportedDeclarations) {
                 if (!Node.isClassDeclaration(node) && !Node.isInterfaceDeclaration(node) && !Node.isEnumDeclaration(node) && !Node.isFunctionDeclaration(node)
-                    && !Node.isVariableDeclaration(node) && !Node.isTypeAliasDeclaration(node) && !Node.isNamespaceDeclaration(node)
+                    && !Node.isVariableDeclaration(node) && !Node.isTypeAliasDeclaration(node) && !Node.isModuleDeclaration(node)
                     && !Node.isExpression(node) && !Node.isSourceFile(node))
                 {
                     const assertNever: never = node;
@@ -652,7 +652,7 @@ export = ts;`);
             const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("file.d.ts", text);
 
-            assertMapsEqual(expected, mainSourceFile.getNamespaces()[0].getExportedDeclarations());
+            assertMapsEqual(expected, mainSourceFile.getModules()[0].getExportedDeclarations());
         }
 
         it("should get from namespace when there's a default export using an export assignment", () => {
@@ -692,7 +692,7 @@ export = ts;`);
         it("should return the default export symbol for a module", () => {
             doTest("class Identifier {}\nexport default Identifier;", "default");
             const { sourceFile } = getInfoFromText("declare module 'test' { class Identifier {}\nexport default Identifier; }", { isDefinitionFile: true });
-            const defaultSymbol = sourceFile.getNamespaces()[0].getDefaultExportSymbol();
+            const defaultSymbol = sourceFile.getModules()[0].getDefaultExportSymbol();
             expect(defaultSymbol!.getName()).to.equal("default");
         });
     });
@@ -736,7 +736,7 @@ export = ts;`);
 
         function doNamespaceTest(text: string, expected: string) {
             const { sourceFile } = getInfoFromText(text, { isDefinitionFile: true });
-            sourceFile.getNamespaces()[0].removeDefaultExport();
+            sourceFile.getModules()[0].removeDefaultExport();
             expect(sourceFile.getFullText()).to.equal(expected);
         }
 

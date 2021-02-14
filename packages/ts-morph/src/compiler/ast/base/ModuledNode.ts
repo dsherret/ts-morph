@@ -9,7 +9,7 @@ import { ExportAssignment, ExportDeclaration, ImportDeclaration } from "../modul
 import { StatementedNode } from "../statement";
 import { isComment } from "../utils";
 
-export type ModuledNodeExtensionType = Node<ts.SourceFile | ts.NamespaceDeclaration> & StatementedNode;
+export type ModuledNodeExtensionType = Node<ts.SourceFile | ts.ModuleDeclaration> & StatementedNode;
 
 export interface ModuledNode {
     /**

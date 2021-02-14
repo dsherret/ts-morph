@@ -1,8 +1,7 @@
-import { SyntaxKind, ts } from "@ts-morph/common";
-import * as compiler from "./index";
-
 // DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts
 // Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead.
+import { SyntaxKind, ts } from "@ts-morph/common";
+import * as compiler from "./index";
 
 export interface ImplementedKindToNodeMappings {
     [SyntaxKind.SourceFile]: compiler.SourceFile;
@@ -108,7 +107,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.MethodDeclaration]: compiler.MethodDeclaration;
     [SyntaxKind.MethodSignature]: compiler.MethodSignature;
     [SyntaxKind.ModuleBlock]: compiler.ModuleBlock;
-    [SyntaxKind.ModuleDeclaration]: compiler.NamespaceDeclaration;
+    [SyntaxKind.ModuleDeclaration]: compiler.ModuleDeclaration;
     [SyntaxKind.NamedExports]: compiler.NamedExports;
     [SyntaxKind.NamedImports]: compiler.NamedImports;
     [SyntaxKind.NamedTupleMember]: compiler.NamedTupleMember;

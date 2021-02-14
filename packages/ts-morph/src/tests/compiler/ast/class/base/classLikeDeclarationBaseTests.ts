@@ -283,7 +283,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                     kind: StructureKind.Class,
                     name: "C",
                 }, {
-                    kind: StructureKind.Namespace,
+                    kind: StructureKind.Module,
                     name: "N",
                 }, "console.log('here');"],
             };

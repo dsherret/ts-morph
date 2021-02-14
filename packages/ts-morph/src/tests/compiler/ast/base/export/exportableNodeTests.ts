@@ -1,6 +1,6 @@
 import { errors } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, ExportableNode, FunctionDeclaration, NamespaceDeclaration } from "../../../../../compiler";
+import { ClassDeclaration, ExportableNode, FunctionDeclaration, ModuleDeclaration } from "../../../../../compiler";
 import { ExportableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
@@ -43,7 +43,7 @@ describe(nameof(ExportableNode), () => {
             });
 
             it("should throw an error if setting as a default export within a namespace", () => {
-                const { firstChild } = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
+                const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace Identifier { class Identifier {} }");
                 const innerChild = firstChild.getClasses()[0];
                 expect(() => innerChild.setIsDefaultExport(true)).to.throw(errors.InvalidOperationError);
             });
@@ -75,7 +75,7 @@ describe(nameof(ExportableNode), () => {
         }
 
         function doInnerTest(text: string, value: boolean, expected: string) {
-            const { sourceFile, firstChild } = getInfoFromText<NamespaceDeclaration>(text);
+            const { sourceFile, firstChild } = getInfoFromText<ModuleDeclaration>(text);
             const innerChild = firstChild.getClasses()[0];
             innerChild.setIsExported(value);
             expect(sourceFile.getText()).to.equal(expected);

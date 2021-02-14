@@ -44,7 +44,7 @@ describe(nameof(StatementedNode), () => {
 
         it("should have the expected text adding to non-source file", () => {
             const { sourceFile } = getInfoFromText("namespace Identifier {\n}\n");
-            const namespaceDec = sourceFile.getNamespaces()[0];
+            const namespaceDec = sourceFile.getModules()[0];
             namespaceDec.insertTypeAliases(0, [{
                 name: "Identifier",
                 type: "string",

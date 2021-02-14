@@ -2,7 +2,7 @@ import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../../manipulation";
-import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
+import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, ModuleDeclarationStructure,
     OptionalKind, StatementedNodeStructure, StatementStructures, Structure, TypeAliasDeclarationStructure,
     VariableStatementStructure } from "../../../structures";
 import { Constructor, WriterFunction } from "../../../types";
@@ -15,7 +15,7 @@ import { EnumDeclaration } from "../enum";
 import { FunctionDeclaration } from "../function";
 import { InterfaceDeclaration } from "../interface";
 import { ImplementedKindToNodeMappings } from "../kindToNodeMappings";
-import { NamespaceDeclaration } from "../module";
+import { ModuleDeclaration } from "../module";
 import { CommentStatement, Statement, VariableStatement } from "../statement";
 import { TypeAliasDeclaration } from "../type";
 import { ExtendedParser, StatementContainerNodes } from "../utils";
@@ -278,51 +278,51 @@ export interface StatementedNode {
      */
     getInterfaceOrThrow(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration;
     /**
-     * Adds a namespace declaration as a child.
+     * Adds a module declaration as a child.
      * @param structure - Structure of the namespace declaration to add.
      */
-    addNamespace(structure: OptionalKind<NamespaceDeclarationStructure>): NamespaceDeclaration;
+    addModule(structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
     /**
-     * Adds namespace declarations as a child.
+     * Adds module declarations as a child.
      * @param structures - Structures of the namespace declarations to add.
      */
-    addNamespaces(structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[];
+    addModules(structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
     /**
-     * Inserts an namespace declaration as a child.
+     * Inserts a module declaration as a child.
      * @param index - Child index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
-    insertNamespace(index: number, structure: OptionalKind<NamespaceDeclarationStructure>): NamespaceDeclaration;
+    insertModule(index: number, structure: OptionalKind<ModuleDeclarationStructure>): ModuleDeclaration;
     /**
-     * Inserts namespace declarations as a child.
+     * Inserts module declarations as children.
      * @param index - Child index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
-    insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[];
+    insertModules(index: number, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[];
     /**
-     * Gets the direct namespace declaration children.
+     * Gets the module declaration children.
      */
-    getNamespaces(): NamespaceDeclaration[];
+    getModules(): ModuleDeclaration[];
     /**
-     * Gets a namespace.
+     * Gets a module declaration child by name.
      * @param name - Name of the namespace.
      */
-    getNamespace(name: string): NamespaceDeclaration | undefined;
+    getModule(name: string): ModuleDeclaration | undefined;
     /**
-     * Gets a namespace.
+     * Gets a module declaration child by condition.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespace(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration | undefined;
+    getModule(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration | undefined;
     /**
-     * Gets a namespace or throws if it doesn't exist.
+     * Gets a module declaration child by name or throws if it doesn't exist.
      * @param name - Name of the namespace.
      */
-    getNamespaceOrThrow(name: string): NamespaceDeclaration;
+    getModuleOrThrow(name: string): ModuleDeclaration;
     /**
-     * Gets a namespace or throws if it doesn't exist.
+     * Gets a module declaration child by condition or throws if it doesn't exist.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespaceOrThrow(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration;
+    getModuleOrThrow(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration;
     /**
      * Adds a type alias declaration as a child.
      * @param structure - Structure of the type alias declaration to add.
@@ -742,48 +742,48 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Namespaces */
 
-        addNamespace(structure: OptionalKind<NamespaceDeclarationStructure>) {
-            return this.addNamespaces([structure])[0];
+        addModule(structure: OptionalKind<ModuleDeclarationStructure>) {
+            return this.addModules([structure])[0];
         }
 
-        addNamespaces(structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>) {
-            return this.insertNamespaces(this._getCompilerStatementsWithComments().length, structures);
+        addModules(structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>) {
+            return this.insertModules(this._getCompilerStatementsWithComments().length, structures);
         }
 
-        insertNamespace(index: number, structure: OptionalKind<NamespaceDeclarationStructure>) {
-            return this.insertNamespaces(index, [structure])[0];
+        insertModule(index: number, structure: OptionalKind<ModuleDeclarationStructure>) {
+            return this.insertModules(index, [structure])[0];
         }
 
-        insertNamespaces(index: number, structures: ReadonlyArray<OptionalKind<NamespaceDeclarationStructure>>): NamespaceDeclaration[] {
-            return this._insertChildren<NamespaceDeclaration>({
+        insertModules(index: number, structures: ReadonlyArray<OptionalKind<ModuleDeclarationStructure>>): ModuleDeclaration[] {
+            return this._insertChildren<ModuleDeclaration>({
                 expectedKind: SyntaxKind.ModuleDeclaration,
                 index,
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this._context.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) })
+                        this._context.structurePrinterFactory.forModuleDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) })
                             .printTexts(writer, structures);
                     });
                 },
             });
         }
 
-        getNamespaces(): NamespaceDeclaration[] {
-            return this.getStatements().filter(Node.isNamespaceDeclaration);
+        getModules(): ModuleDeclaration[] {
+            return this.getStatements().filter(Node.isModuleDeclaration);
         }
 
-        getNamespace(name: string): NamespaceDeclaration | undefined;
-        getNamespace(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration | undefined;
-        getNamespace(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration | undefined;
-        getNamespace(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration | undefined {
-            return getNodeByNameOrFindFunction(this.getNamespaces(), nameOrFindFunction);
+        getModule(name: string): ModuleDeclaration | undefined;
+        getModule(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration | undefined;
+        getModule(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration | undefined;
+        getModule(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration | undefined {
+            return getNodeByNameOrFindFunction(this.getModules(), nameOrFindFunction);
         }
 
-        getNamespaceOrThrow(name: string): NamespaceDeclaration;
-        getNamespaceOrThrow(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration;
-        getNamespaceOrThrow(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration {
+        getModuleOrThrow(name: string): ModuleDeclaration;
+        getModuleOrThrow(findFunction: (declaration: ModuleDeclaration) => boolean): ModuleDeclaration;
+        getModuleOrThrow(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration {
             return errors.throwIfNullOrUndefined(
-                this.getNamespace(nameOrFindFunction),
+                this.getModule(nameOrFindFunction),
                 () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction),
             );
         }
@@ -962,12 +962,16 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         _getCompilerStatementsContainer(): StatementContainerNodes | undefined {
             if (Node.isSourceFile(this) || Node.isCaseClause(this) || Node.isDefaultClause(this))
                 return this.compilerNode;
-            else if (Node.isNamespaceDeclaration(this)) {
+            else if (Node.isModuleDeclaration(this)) {
                 // need to get the inner-most body for namespaces
-                return (this._getInnerBody().compilerNode as ts.Block);
+                const body = this._getInnerBody();
+                if (body == null)
+                    return undefined;
+                else
+                    return body.compilerNode as ts.Block;
             }
             else if (Node.isBodyableNode(this) || Node.isBodiedNode(this))
-                return (this.getBody()?.compilerNode as any);
+                return this.getBody()?.compilerNode as ts.Block | undefined;
             else if (Node.isBlock(this) || Node.isModuleBlock(this))
                 return this.compilerNode;
             else

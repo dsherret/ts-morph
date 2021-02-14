@@ -7,14 +7,14 @@ import { AmbientableNode, ExportableNode, JSDocableNode, ModifierableNode, Named
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common";
-import { NamespaceChildableNode } from "../module";
+import { ModuleChildableNode } from "../module";
 import { Statement } from "../statement";
 import { ExtendedParser } from "../utils";
 import { CommentEnumMember } from "./CommentEnumMember";
 import { EnumMember } from "./EnumMember";
 
 const createBase = <T extends typeof Statement>(ctor: T) =>
-    TextInsertableNode(NamespaceChildableNode(JSDocableNode(
+    TextInsertableNode(ModuleChildableNode(JSDocableNode(
         AmbientableNode(ExportableNode(ModifierableNode(NamedNode(ctor)))),
     )));
 export const EnumDeclarationBase = createBase(Statement);

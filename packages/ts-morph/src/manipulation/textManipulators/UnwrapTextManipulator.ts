@@ -25,12 +25,16 @@ function getReplacementText(node: Node) {
     }).trim();
 
     function getInnerBraceRange() {
-        const bodyNode = getBodyNode();
+        const bodyNode = getBodyNodeOrThrow();
         return [bodyNode.getStart() + 1, bodyNode.getEnd() - 1] as const;
 
-        function getBodyNode() {
-            if (Node.isNamespaceDeclaration(node))
-                return node._getInnerBody();
+        function getBodyNodeOrThrow() {
+            if (Node.isModuleDeclaration(node)) {
+                const bodyNode = node._getInnerBody();
+                if (bodyNode == null)
+                    throw new errors.InvalidOperationError("This operation requires the module to have a body.");
+                return bodyNode;
+            }
             else if (Node.isBodiedNode(node))
                 return node.getBody();
             else if (Node.isBodyableNode(node))
