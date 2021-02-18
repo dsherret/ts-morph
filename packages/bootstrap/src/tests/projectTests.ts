@@ -1,4 +1,4 @@
-import { InMemoryFileSystemHost, ts } from "@ts-morph/common";
+import { getLibFiles, InMemoryFileSystemHost, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { EOL } from "os";
 import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";
@@ -225,14 +225,27 @@ describe(nameof(Project), () => {
             describe(nameof<ProjectOptions>(o => o.skipLoadingLibFiles), () => {
                 it("should not skip loading lib files when empty", async () => {
                     const project = await create({ useInMemoryFileSystem: true });
-                    project.createSourceFile("test.ts", "const t: String = '';");
-                    expect(ts.getPreEmitDiagnostics(project.createProgram()).length).to.equal(0);
+                    const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
+                    const program = project.createProgram();
+                    expect(ts.getPreEmitDiagnostics(program).length).to.equal(0);
+
+                    const typeChecker = program.getTypeChecker();
+                    const varDecl = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];
+                    const varDeclType = typeChecker.getTypeAtLocation(varDecl.type!);
+                    const stringDec = varDeclType.getSymbol()!.declarations[0];
+                    expect(stringDec.getSourceFile().fileName).to.equal("/node_modules/typescript/lib/lib.es5.d.ts");
                 });
 
                 it("should skip loading lib files when true", async () => {
                     const project = await create({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
-                    project.createSourceFile("test.ts", "const t: String = '';");
-                    expect(ts.getPreEmitDiagnostics(project.createProgram()).length).to.equal(10);
+                    const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
+                    const program = project.createProgram();
+                    expect(ts.getPreEmitDiagnostics(program).length).to.equal(10);
+
+                    const typeChecker = program.getTypeChecker();
+                    const varDecl = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];
+                    const varDeclType = typeChecker.getTypeAtLocation(varDecl.type!);
+                    expect(varDeclType.getSymbol()).to.be.undefined;
                 });
 
                 it("should throw when providing skipLoadingLibFiles and a libFolderPath", async () => {
@@ -242,6 +255,24 @@ describe(nameof(Project), () => {
                     } catch (err) {
                         expect(err.message).to.equal("Cannot set skipLoadingLibFiles to true when libFolderPath is provided.");
                     }
+                });
+            });
+
+            describe(nameof<ProjectOptions>(o => o.libFolderPath), () => {
+                it("should support specifying a different folder for the lib files", async () => {
+                    const fileSystem = new InMemoryFileSystemHost();
+                    for (const file of getLibFiles())
+                        fileSystem.writeFileSync(`/other/${file.fileName}`, file.text);
+                    const project = await create({ fileSystem, libFolderPath: "/other" });
+                    const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
+                    const program = project.createProgram();
+                    expect(ts.getPreEmitDiagnostics(program).length).to.equal(0);
+
+                    const typeChecker = program.getTypeChecker();
+                    const varDecl = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];
+                    const varDeclType = typeChecker.getTypeAtLocation(varDecl.type!);
+                    const stringDec = varDeclType.getSymbol()!.declarations[0];
+                    expect(stringDec.getSourceFile().fileName).to.equal("/other/lib.es5.d.ts");
                 });
             });
         }

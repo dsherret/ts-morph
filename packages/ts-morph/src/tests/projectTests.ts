@@ -1,4 +1,4 @@
-import { CompilerOptions, errors, InMemoryFileSystemHost, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
+import { CompilerOptions, errors, getLibFiles, InMemoryFileSystemHost, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { EOL } from "os";
@@ -215,19 +215,41 @@ describe(nameof(Project), () => {
         describe(nameof<ProjectOptions>(o => o.skipLoadingLibFiles), () => {
             it("should not skip loading lib files when empty", () => {
                 const project = new Project({ useInMemoryFileSystem: true });
-                project.createSourceFile("test.ts", "const t: String = '';");
+                const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
                 expect(project.getPreEmitDiagnostics().length).to.equal(0);
+
+                const varDeclType = sourceFile.getVariableDeclarationOrThrow("t").getType();
+                const stringDec = varDeclType.getSymbolOrThrow().getDeclarations()[0];
+                expect(stringDec.getSourceFile().getFilePath()).to.equal("/node_modules/typescript/lib/lib.es5.d.ts");
             });
 
             it("should skip loading lib files when true", () => {
                 const project = new Project({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
-                project.createSourceFile("test.ts", "const t: String = '';");
+                const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
                 expect(project.getPreEmitDiagnostics().length).to.equal(10);
+
+                const varDeclType = sourceFile.getVariableDeclarationOrThrow("t").getType();
+                expect(varDeclType.getSymbol()).to.be.undefined;
             });
 
             it("should throw when providing skipLoadingLibFiles and a libFolderPath", async () => {
                 expect(() => new Project({ skipLoadingLibFiles: true, libFolderPath: "/" }))
                     .to.throw("Cannot set skipLoadingLibFiles to true when libFolderPath is provided.");
+            });
+        });
+
+        describe(nameof<ProjectOptions>(o => o.libFolderPath), () => {
+            it("should support specifying a different folder for the lib files", () => {
+                const fileSystem = new InMemoryFileSystemHost();
+                for (const file of getLibFiles())
+                    fileSystem.writeFileSync(`/other/${file.fileName}`, file.text);
+                const project = new Project({ fileSystem, libFolderPath: "/other" });
+                const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
+                expect(project.getPreEmitDiagnostics().length).to.equal(0);
+
+                const varDeclType = sourceFile.getVariableDeclarationOrThrow("t").getType();
+                const stringDec = varDeclType.getSymbolOrThrow().getDeclarations()[0];
+                expect(stringDec.getSourceFile().getFilePath()).to.equal("/other/lib.es5.d.ts");
             });
         });
     });
