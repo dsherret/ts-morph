@@ -75,9 +75,8 @@ export interface FileSystemHost {
 export declare class InMemoryFileSystemHost implements FileSystemHost {
     /**
      * Constructor.
-     * @param options - Options for creating the file system.
      */
-    constructor(options?: InMemoryFileSystemHostOptions);
+    constructor();
     /** @inheritdoc */
     isCaseSensitive(): boolean;
     /** @inheritdoc */
@@ -122,14 +121,6 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     glob(patterns: ReadonlyArray<string>): Promise<string[]>;
     /** @inheritdoc */
     globSync(patterns: ReadonlyArray<string>): string[];
-}
-
-export interface InMemoryFileSystemHostOptions {
-    /**
-     * Set this to true to not load the /node_modules/typescript/lib files on construction.
-     * @default false
-     */
-    skipLoadingLibFiles?: boolean;
 }
 
 /** Host for implementing custom module and/or type reference directive resolution. */
@@ -194,8 +185,16 @@ export interface ProjectOptions {
     skipAddingFilesFromTsConfig?: boolean;
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
     skipFileDependencyResolution?: boolean;
-    /** Skip loading the lib files when using an in-memory file system. @default false */
+    /**
+     * Skip loading the lib files. Unlike the compiler API, ts-morph does not load these
+     * from the node_modules folder, but instead loads them from some other JS code
+     * and uses a fake path for their existence. If you want to use a custom lib files
+     * folder path, then provide one using the libFolderPath options.
+     * @default false
+     */
     skipLoadingLibFiles?: boolean;
+    /** The folder to use for loading lib files. */
+    libFolderPath?: string;
     /** Whether to use an in-memory file system. */
     useInMemoryFileSystem?: boolean;
     /**

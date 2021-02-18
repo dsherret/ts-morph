@@ -1,4 +1,4 @@
-import { InMemoryFileSystemHost, ts } from "@ts-morph/common";
+import { getLibFiles, InMemoryFileSystemHost, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { EOL } from "os";
 import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";
@@ -10,32 +10,46 @@ describe(nameof(Project), () => {
 
         function doTestsForProject(create: (options: ProjectOptions) => Promise<Project>) {
             it("should add the files from tsconfig.json by default with the target in the tsconfig.json", async () => {
-                const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+                const fileSystem = new InMemoryFileSystemHost();
                 fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"] }`);
                 fileSystem.writeFileSync("/otherFile.ts", "");
                 fileSystem.writeFileSync("/test/file.ts", "");
                 fileSystem.writeFileSync("/test/test2/file2.ts", "");
-                const project = await create({ tsConfigFilePath: "tsconfig.json", fileSystem });
+                const project = await create({
+                    tsConfigFilePath: "tsconfig.json",
+                    fileSystem,
+                    skipLoadingLibFiles: true,
+                });
                 expect(project.getSourceFiles().map(s => s.fileName).sort()).to.deep.equal(["/test/file.ts", "/test/test2/file2.ts"].sort());
                 expect(project.getSourceFiles().map(s => s.languageVersion)).to.deep.equal([ts.ScriptTarget.ES5, ts.ScriptTarget.ES5]);
             });
 
             it("should add the files from tsconfig.json by default and also take into account the passed in compiler options", async () => {
-                const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+                const fileSystem = new InMemoryFileSystemHost();
                 fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "target": "ES5" } }`);
                 fileSystem.writeFileSync("/otherFile.ts", "");
                 fileSystem.writeFileSync("/test/file.ts", "");
                 fileSystem.writeFileSync("/test/test2/file2.ts", "");
-                const project = await create({ tsConfigFilePath: "tsconfig.json", compilerOptions: { rootDir: "/test/test2" }, fileSystem });
+                const project = await create({
+                    tsConfigFilePath: "tsconfig.json",
+                    compilerOptions: { rootDir: "/test/test2" },
+                    fileSystem,
+                    skipLoadingLibFiles: true,
+                });
                 expect(project.getSourceFiles().map(s => s.fileName).sort()).to.deep.equal(["/otherFile.ts", "/test/file.ts", "/test/test2/file2.ts"].sort());
             });
 
             it("should not add the files from tsconfig.json when specifying not to", async () => {
-                const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+                const fileSystem = new InMemoryFileSystemHost();
                 fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
                 fileSystem.writeFileSync("/test/file.ts", "");
                 fileSystem.writeFileSync("/test/test2/file2.ts", "");
-                const project = await create({ tsConfigFilePath: "tsconfig.json", skipAddingFilesFromTsConfig: true, fileSystem });
+                const project = await create({
+                    tsConfigFilePath: "tsconfig.json",
+                    skipAddingFilesFromTsConfig: true,
+                    fileSystem,
+                    skipLoadingLibFiles: true,
+                });
                 expect(project.getSourceFiles().map(s => s.fileName).sort()).to.deep.equal([]);
             });
 
@@ -211,22 +225,54 @@ describe(nameof(Project), () => {
             describe(nameof<ProjectOptions>(o => o.skipLoadingLibFiles), () => {
                 it("should not skip loading lib files when empty", async () => {
                     const project = await create({ useInMemoryFileSystem: true });
-                    const result = project.fileSystem.readDirSync("/node_modules/typescript/lib");
-                    expect(result.some(r => r.includes("lib.d.ts"))).to.be.true;
+                    const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
+                    const program = project.createProgram();
+                    expect(ts.getPreEmitDiagnostics(program).length).to.equal(0);
+
+                    const typeChecker = program.getTypeChecker();
+                    const varDecl = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];
+                    const varDeclType = typeChecker.getTypeAtLocation(varDecl.type!);
+                    const stringDec = varDeclType.getSymbol()!.declarations[0];
+                    expect(stringDec.getSourceFile().fileName).to.equal("/node_modules/typescript/lib/lib.es5.d.ts");
                 });
 
-                it("should not skip loading lib files when true", async () => {
+                it("should skip loading lib files when true", async () => {
                     const project = await create({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
-                    expect(project.fileSystem.directoryExistsSync("/node_modules")).to.be.false;
+                    const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
+                    const program = project.createProgram();
+                    expect(ts.getPreEmitDiagnostics(program).length).to.equal(10);
+
+                    const typeChecker = program.getTypeChecker();
+                    const varDecl = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];
+                    const varDeclType = typeChecker.getTypeAtLocation(varDecl.type!);
+                    expect(varDeclType.getSymbol()).to.be.undefined;
                 });
 
-                it("should throw when providing skipLoadingLibFiles without using n in-memory file system", async () => {
+                it("should throw when providing skipLoadingLibFiles and a libFolderPath", async () => {
                     try {
-                        await create({ skipLoadingLibFiles: true });
+                        await create({ skipLoadingLibFiles: true, libFolderPath: "" });
                         expect.fail("should have thrown");
                     } catch (err) {
-                        expect(err.message).to.equal("The skipLoadingLibFiles option can only be true when useInMemoryFileSystem is true.");
+                        expect(err.message).to.equal("Cannot set skipLoadingLibFiles to true when libFolderPath is provided.");
                     }
+                });
+            });
+
+            describe(nameof<ProjectOptions>(o => o.libFolderPath), () => {
+                it("should support specifying a different folder for the lib files", async () => {
+                    const fileSystem = new InMemoryFileSystemHost();
+                    for (const file of getLibFiles())
+                        fileSystem.writeFileSync(`/other/${file.fileName}`, file.text);
+                    const project = await create({ fileSystem, libFolderPath: "/other" });
+                    const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
+                    const program = project.createProgram();
+                    expect(ts.getPreEmitDiagnostics(program).length).to.equal(0);
+
+                    const typeChecker = program.getTypeChecker();
+                    const varDecl = (sourceFile.statements[0] as ts.VariableStatement).declarationList.declarations[0];
+                    const varDeclType = typeChecker.getTypeAtLocation(varDecl.type!);
+                    const stringDec = varDeclType.getSymbol()!.declarations[0];
+                    expect(stringDec.getSourceFile().fileName).to.equal("/other/lib.es5.d.ts");
                 });
             });
         }
@@ -376,14 +422,14 @@ describe(nameof(Project), () => {
             });
 
             it("should add the files from tsconfig.json", async () => {
-                const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+                const fileSystem = new InMemoryFileSystemHost();
                 fileSystem.writeFileSync("tsconfig.json",
                     `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"], "exclude": ["/test/exclude"] }`);
                 fileSystem.writeFileSync("/otherFile.ts", "");
                 fileSystem.writeFileSync("/test/file.ts", "");
                 fileSystem.writeFileSync("/test/test2/file2.ts", "");
                 fileSystem.writeFileSync("/test/exclude/file.ts", "");
-                const project = await createProject({ fileSystem });
+                const project = await createProject({ fileSystem, skipLoadingLibFiles: true });
                 expect(project.getSourceFiles()).to.deep.equal([]);
                 const returnedFiles = await action(project, "tsconfig.json");
                 const expectedFiles = ["/test/file.ts", "/test/test2/file2.ts"].sort();
@@ -401,12 +447,12 @@ describe(nameof(Project), () => {
 
         function doTestsForMethod(action: (project: Project, globs: string | readonly string[]) => Promise<ts.SourceFile[]>) {
             it("should add the source files based on a file glob", async () => {
-                const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+                const fileSystem = new InMemoryFileSystemHost();
                 fileSystem.writeFileSync("/otherFile.ts", "");
                 fileSystem.writeFileSync("/test/file.ts", "");
                 fileSystem.writeFileSync("/test/test2/file2.ts", "");
                 fileSystem.writeFileSync("/test/other/file.ts", "");
-                const project = await createProject({ fileSystem });
+                const project = await createProject({ fileSystem, skipLoadingLibFiles: true });
                 expect(project.getSourceFiles()).to.deep.equal([]);
                 const returnedFiles = await action(project, "/test/**/*.ts");
                 const expectedFiles = ["/test/file.ts", "/test/test2/file2.ts", "/test/other/file.ts"].sort();
@@ -427,7 +473,7 @@ describe(nameof(Project), () => {
     });
 
     async function fileDependencyResolutionSetup(options: ProjectOptions = {}, create: (options: ProjectOptions) => Promise<Project>) {
-        const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+        const fileSystem = new InMemoryFileSystemHost();
 
         fileSystem.writeFileSync("/package.json", `{ "name": "testing", "version": "0.0.1" }`);
         fileSystem.writeFileSync("/node_modules/library/package.json",
@@ -443,7 +489,7 @@ describe(nameof(Project), () => {
         fileSystem.writeFileSync("/other/referenced-file.d.ts", "declare function nameof(): void;");
         fileSystem.writeFileSync("/tsconfig.json", `{ "files": ["src/main.ts"] }`);
 
-        const project = await create({ tsConfigFilePath: "tsconfig.json", fileSystem, ...options });
+        const project = await create({ tsConfigFilePath: "tsconfig.json", fileSystem, ...options, skipLoadingLibFiles: true });
         return {
             project,
             initialFiles: ["/src/main.ts"],
@@ -560,7 +606,6 @@ describe(nameof(Project), () => {
             expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
                 "/dir1",
                 "/dir2",
-                "/node_modules",
             ]);
         });
 
@@ -573,7 +618,6 @@ describe(nameof(Project), () => {
                 "/dir1",
                 "/dir2",
                 "/dir3",
-                "/node_modules",
             ]);
         });
 

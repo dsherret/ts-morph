@@ -13,7 +13,7 @@ const writeProject = new tsMorph.Project({
 const declarationFile = writeProject.addSourceFileAtPath("lib/ts-morph-common.d.ts");
 
 const writer = declarationProject.createWriter();
-writer.write(`import * as ts from `).quote("typescript").write(";").newLine();
+writer.write(`import * as ts from `).quote("./typescript").write(";").newLine();
 
 const tsNames: string[] = [];
 
@@ -37,7 +37,7 @@ for (const [name, declarations] of emitMainFile.getExportedDeclarations()) {
 }
 
 writer.blankLineIfLastNot();
-writer.writeLine(`import { ${tsNames.join(", ")} } from "typescript";`);
+writer.writeLine(`import { ${tsNames.join(", ")} } from "./typescript";`);
 writer.writeLine(`export { ts, ${tsNames.join(", ")} };`);
 
 // todo: format using dprint

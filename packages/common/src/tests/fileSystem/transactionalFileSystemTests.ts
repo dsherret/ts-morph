@@ -9,7 +9,7 @@ describe(nameof(TransactionalFileSystem), () => {
     }
 
     function setup(): SetupObjects {
-        const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+        const fileSystem = new InMemoryFileSystemHost();
         return { fileSystem, wrapper: new TransactionalFileSystem(fileSystem) };
     }
 

@@ -67,11 +67,8 @@ export interface FileSystemHost {
 
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
-    /**
-     * Constructor.
-     * @param options - Options for creating the file system.
-     */
-    constructor(options?: InMemoryFileSystemHostOptions);
+    /** Constructor. */
+    constructor();
     /** @inheritdoc */
     isCaseSensitive(): boolean;
     /** @inheritdoc */
@@ -116,14 +113,6 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     glob(patterns: ReadonlyArray<string>): Promise<string[]>;
     /** @inheritdoc */
     globSync(patterns: ReadonlyArray<string>): string[];
-}
-
-export interface InMemoryFileSystemHostOptions {
-    /**
-     * Set this to true to not load the /node_modules/typescript/lib files on construction.
-     * @default false
-     */
-    skipLoadingLibFiles?: boolean;
 }
 
 /** Host for implementing custom module and/or type reference directive resolution. */
@@ -717,8 +706,16 @@ export interface ProjectOptions {
     skipAddingFilesFromTsConfig?: boolean;
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
     skipFileDependencyResolution?: boolean;
-    /** Skip loading the lib files when using an in-memory file system. @default false */
+    /**
+     * Skip loading the lib files. Unlike the compiler API, ts-morph does not load these
+     * from the node_modules folder, but instead loads them from some other JS code
+     * and uses a fake path for their existence. If you want to use a custom lib files
+     * folder path, then provide one using the libFolderPath options.
+     * @default false
+     */
     skipLoadingLibFiles?: boolean;
+    /** The folder to use for loading lib files. */
+    libFolderPath?: string;
     /** Manipulation settings */
     manipulationSettings?: Partial<ManipulationSettings>;
     /** Whether to use an in-memory file system. @default false */
@@ -1603,7 +1600,7 @@ export interface ReferenceFindableNode {
 }
 
 declare type ReferenceFindableNodeExtensionType = Node<ts.Node & {
-        name?: ts.PropertyName | ts.BindingName | ts.DeclarationName;
+        name?: ts.PropertyName | ts.BindingName | ts.DeclarationName | ts.StringLiteral;
     }>;
 export declare function RenameableNode<T extends Constructor<RenameableNodeExtensionType>>(Base: T): Constructor<RenameableNode> & T;
 
@@ -3080,6 +3077,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isMethodSignature: (node: Node | undefined) => node is MethodSignature;
     /** Gets if the node is a ModuleBlock. */
     static readonly isModuleBlock: (node: Node | undefined) => node is ModuleBlock;
+    /** Gets if the node is a ModuleDeclaration. */
+    static readonly isModuleDeclaration: (node: Node | undefined) => node is ModuleDeclaration;
     /** Gets if the node is a NamedExports. */
     static readonly isNamedExports: (node: Node | undefined) => node is NamedExports;
     /** Gets if the node is a NamedImports. */
@@ -4083,6 +4082,16 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isModifierableNode<T extends Node>(node: T | undefined): node is ModifierableNode & ModifierableNodeExtensionType & T;
     /**
+     * Gets if the node is a ModuleChildableNode.
+     * @param node - Node to check.
+     */
+    static isModuleChildableNode<T extends Node>(node: T | undefined): node is ModuleChildableNode & ModuleChildableNodeExtensionType & T;
+    /**
+     * Gets if the node is a ModuleNamedNode.
+     * @param node - Node to check.
+     */
+    static isModuleNamedNode<T extends Node>(node: T | undefined): node is ModuleNamedNode & ModuleNamedNodeExtensionType & T;
+    /**
      * Gets if the node is a ModuledNode.
      * @param node - Node to check.
      */
@@ -4097,16 +4106,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isNamedNode<T extends Node>(node: T | undefined): node is NamedNode & NamedNodeExtensionType & T;
-    /**
-     * Gets if the node is a NamespaceChildableNode.
-     * @param node - Node to check.
-     */
-    static isNamespaceChildableNode<T extends Node>(node: T | undefined): node is ModuleChildableNode & NamespaceChildableNodeExtensionType & T;
-    /**
-     * Gets if the node is a ModuleDeclaration.
-     * @param node - Node to check.
-     */
-    static isModuleDeclaration(node: Node | undefined): node is ModuleDeclaration;
     /**
      * Gets if the node is a NullLiteral.
      * @param node - Node to check.
@@ -7047,7 +7046,7 @@ export declare class ModuleBlock extends ModuleBlockBase<ts.ModuleBlock> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.ModuleBlock>>;
 }
 
-export declare function ModuleChildableNode<T extends Constructor<NamespaceChildableNodeExtensionType>>(Base: T): Constructor<ModuleChildableNode> & T;
+export declare function ModuleChildableNode<T extends Constructor<ModuleChildableNodeExtensionType>>(Base: T): Constructor<ModuleChildableNode> & T;
 
 export interface ModuleChildableNode {
     /** Gets the parent module declaration or undefined if it doesn't exist. */
@@ -7056,7 +7055,7 @@ export interface ModuleChildableNode {
     getParentModuleOrThrow(): ModuleDeclaration;
 }
 
-declare type NamespaceChildableNodeExtensionType = Node;
+declare type ModuleChildableNodeExtensionType = Node;
 declare const ModuleDeclarationBase: Constructor<ModuledNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<BodyableNode> & Constructor<ModuleChildableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<ModuleNamedNode> & typeof Statement;
 
 export declare class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaration> {
@@ -9822,6 +9821,10 @@ export interface BindingNamedNodeStructure {
     name: string;
 }
 
+export interface ModuleNamedNodeStructure {
+    name: string;
+}
+
 export interface NameableNodeStructure {
     name?: string;
 }
@@ -10175,7 +10178,7 @@ interface ImportSpecifierSpecificStructure extends KindedStructure<StructureKind
     alias?: string;
 }
 
-export interface ModuleDeclarationStructure extends Structure, NamedNodeStructure, ModuleDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure {
+export interface ModuleDeclarationStructure extends Structure, ModuleNamedNodeStructure, ModuleDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure {
 }
 
 interface ModuleDeclarationSpecificStructure extends KindedStructure<StructureKind.Module> {
@@ -10476,7 +10479,7 @@ export declare const Structure: {
             kind: StructureKind;
         }) => structure is ImportSpecifierStructure;
         /** Gets if the provided structure is a ModuleDeclarationStructure. */
-        readonly isNamespace: (structure: Structure & {
+        readonly isModule: (structure: Structure & {
             kind: StructureKind;
         }) => structure is ModuleDeclarationStructure;
         /** Gets if the provided structure is a SourceFileStructure. */

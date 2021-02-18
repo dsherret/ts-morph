@@ -10,7 +10,7 @@ import { ConsoleLogger, LazyReferenceCoordinator } from "./utils";
 import { createWrappedNode } from "./utils/compiler/createWrappedNode";
 
 /** @internal */
-export interface ProjectContextCreationData {
+export interface ProjectContextCreationParams {
     project: Project | undefined;
     fileSystemWrapper: TransactionalFileSystem;
     compilerOptionsContainer: CompilerOptionsContainer;
@@ -18,6 +18,8 @@ export interface ProjectContextCreationData {
     createLanguageService: boolean;
     resolutionHost?: ResolutionHostFactory;
     typeChecker?: ts.TypeChecker;
+    skipLoadingLibFiles: boolean | undefined;
+    libFolderPath: string | undefined;
 }
 
 /**
@@ -45,27 +47,29 @@ export class ProjectContext {
     readonly compilerFactory: CompilerFactory;
     readonly inProjectCoordinator: InProjectCoordinator;
 
-    constructor(opts: ProjectContextCreationData) {
-        this._project = opts.project;
-        this.fileSystemWrapper = opts.fileSystemWrapper;
-        this._compilerOptions = opts.compilerOptionsContainer;
+    constructor(params: ProjectContextCreationParams) {
+        this._project = params.project;
+        this.fileSystemWrapper = params.fileSystemWrapper;
+        this._compilerOptions = params.compilerOptionsContainer;
         this.compilerFactory = new CompilerFactory(this);
         this.inProjectCoordinator = new InProjectCoordinator(this.compilerFactory);
         this.structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
         this.lazyReferenceCoordinator = new LazyReferenceCoordinator(this.compilerFactory);
-        this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, opts.fileSystemWrapper);
-        this._languageService = opts.createLanguageService
+        this.directoryCoordinator = new DirectoryCoordinator(this.compilerFactory, params.fileSystemWrapper);
+        this._languageService = params.createLanguageService
             ? new LanguageService({
                 context: this,
-                configFileParsingDiagnostics: opts.configFileParsingDiagnostics,
-                resolutionHost: opts.resolutionHost && opts.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get()),
+                configFileParsingDiagnostics: params.configFileParsingDiagnostics,
+                resolutionHost: params.resolutionHost && params.resolutionHost(this.getModuleResolutionHost(), () => this.compilerOptions.get()),
+                skipLoadingLibFiles: params.skipLoadingLibFiles,
+                libFolderPath: params.libFolderPath,
             })
             : undefined;
 
-        if (opts.typeChecker != null) {
-            errors.throwIfTrue(opts.createLanguageService, "Cannot specify a type checker and create a language service.");
+        if (params.typeChecker != null) {
+            errors.throwIfTrue(params.createLanguageService, "Cannot specify a type checker and create a language service.");
             this._customTypeChecker = new TypeChecker(this);
-            this._customTypeChecker._reset(() => opts.typeChecker!);
+            this._customTypeChecker._reset(() => params.typeChecker!);
         }
     }
 
@@ -172,6 +176,14 @@ export class ProjectContext {
             },
             addOrGetSourceFileFromFilePathSync: (filePath, opts) => {
                 return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, opts)?.compilerNode;
+            },
+            addLibFileToCacheByText: (filePath, fileText, scriptKind) => {
+                return this.compilerFactory.documentRegistry.createOrUpdateSourceFile(
+                    filePath,
+                    this.compilerOptions.get(),
+                    ts.ScriptSnapshot.fromString(fileText),
+                    scriptKind,
+                );
             },
             containsDirectoryAtPath: dirPath => this.compilerFactory.containsDirectoryAtPath(dirPath),
             containsSourceFileAtPath: filePath => this.compilerFactory.containsSourceFileAtPath(filePath),

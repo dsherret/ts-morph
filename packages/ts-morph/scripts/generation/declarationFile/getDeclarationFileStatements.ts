@@ -12,11 +12,14 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
     });
 
     for (const [name, declarations] of mainFile.getExportedDeclarations()) {
+        if (name === "ts")
+            continue;
+
         for (const declaration of declarations) {
             const sourceFile = declaration.getSourceFile();
             if (sourceFile.isInNodeModules()) {
                 const filePath = sourceFile.getFilePath();
-                if (filePath.includes("node_modules/typescript/")) {
+                if (filePath.includes("/typescript.d.ts")) {
                     if (name !== "ts")
                         tsNames.push(name);
                     continue;

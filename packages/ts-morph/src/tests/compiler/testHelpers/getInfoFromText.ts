@@ -29,36 +29,10 @@ function getCompilerLibFolder(version: string) {
     }
 }
 
-const libFileNames = [
-    "lib.d.ts",
-    "lib.dom.d.ts",
-    "lib.scripthost.d.ts",
-    "lib.webworker.importscripts.d.ts",
-    "lib.es2017.full.d.ts",
-    "lib.es2017.object.d.ts",
-    "lib.es2017.sharedmemory.d.ts",
-    "lib.es2017.string.d.ts",
-    "lib.es2017.intl.d.ts",
-    "lib.es2016.d.ts",
-    "lib.es2015.d.ts",
-    "lib.es2015.core.d.ts",
-    "lib.es2015.collection.d.ts",
-    "lib.es2015.generator.d.ts",
-    "lib.es2015.promise.d.ts",
-    "lib.es2015.iterable.d.ts",
-    "lib.es2015.proxy.d.ts",
-    "lib.es2015.reflect.d.ts",
-    "lib.es2015.symbol.d.ts",
-    "lib.es2015.symbol.wellknown.d.ts",
-    "lib.es5.d.ts",
-];
-const libFiles = libFileNames.map(name => getTextForLibFile(name));
-
 export interface GetInfoFromTextOptions {
     isDefinitionFile?: boolean;
     filePath?: string;
     host?: FileSystemHost;
-    disableErrorCheck?: boolean;
     compilerOptions?: CompilerOptions;
     includeLibDts?: boolean;
     isJsx?: boolean;
@@ -107,18 +81,12 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
         isDefinitionFile = false,
         isJsx = false,
         filePath = undefined,
-        host = new InMemoryFileSystemHost({ skipLoadingLibFiles: true }),
-        disableErrorCheck = false,
+        host = new InMemoryFileSystemHost(),
         compilerOptions = undefined,
         includeLibDts = false,
     } = opts || {};
 
-    if (includeLibDts) {
-        for (const libFile of libFiles)
-            host.writeFileSync(libFile.filePath, libFile.text);
-    }
-
-    const project = new Project({ compilerOptions, fileSystem: host });
+    const project = new Project({ compilerOptions, fileSystem: host, skipLoadingLibFiles: !includeLibDts });
     const sourceFile = project.createSourceFile(getFilePath(), text);
 
     return { project, sourceFile };

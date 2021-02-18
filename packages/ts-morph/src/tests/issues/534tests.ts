@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { Project } from "../../Project";
 describe("tests for issue #534", () => {
     it("should use the tsconfig.json file path for type reference directive resolution", () => {
-        const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+        const fileSystem = new InMemoryFileSystemHost();
         fileSystem.mkdirSync("/dir");
         fileSystem.mkdirSync("/dir/node_modules");
         fileSystem.mkdirSync("/dir/node_modules/@types");
@@ -44,6 +44,7 @@ import { myExport } from "my-package";
         const project = new Project({
             fileSystem,
             tsConfigFilePath: "/dir/tsconfig.json",
+            skipLoadingLibFiles: true,
         });
 
         const diagnostics = project.getPreEmitDiagnostics().filter(d => d.getCode() !== 2318);

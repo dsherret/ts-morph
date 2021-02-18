@@ -1,5 +1,4 @@
-import { CompilerOptions, createHosts, EditorSettings, errors, FileUtils, ObjectUtils, RealFileSystemHost, ResolutionHost, ScriptTarget, ts,
-    TsSourceFileContainer } from "@ts-morph/common";
+import { createHosts, EditorSettings, errors, ObjectUtils, ResolutionHost, ts } from "@ts-morph/common";
 import { getTextFromTextChanges } from "../../manipulation";
 import { ProjectContext } from "../../ProjectContext";
 import { fillDefaultEditorSettings, fillDefaultFormatCodeSettings } from "../../utils";
@@ -11,10 +10,12 @@ import { CodeFixAction, CombinedCodeActions, DefinitionInfo, DiagnosticWithLocat
     RenameLocation, TextChange } from "./results";
 
 /** @internal */
-export interface LanguageServiceCreationData {
+export interface LanguageServiceCreationParams {
     context: ProjectContext;
     configFileParsingDiagnostics: ts.Diagnostic[];
     resolutionHost?: ResolutionHost;
+    skipLoadingLibFiles: boolean | undefined;
+    libFolderPath: string | undefined;
 }
 
 export class LanguageService {
@@ -37,8 +38,8 @@ export class LanguageService {
     }
 
     /** @private */
-    constructor(opts: LanguageServiceCreationData) {
-        this._context = opts.context;
+    constructor(params: LanguageServiceCreationParams) {
+        this._context = params.context;
 
         const { languageServiceHost, compilerHost } = createHosts({
             transactionalFileSystem: this._context.fileSystemWrapper,
@@ -46,7 +47,9 @@ export class LanguageService {
             compilerOptions: this._context.compilerOptions,
             getNewLine: () => this._context.manipulationSettings.getNewLineKindAsString(),
             getProjectVersion: () => `${this._projectVersion}`,
-            resolutionHost: opts.resolutionHost ?? {},
+            resolutionHost: params.resolutionHost ?? {},
+            libFolderPath: params.libFolderPath,
+            skipLoadingLibFiles: params.skipLoadingLibFiles,
         });
 
         this._compilerHost = compilerHost;
@@ -55,7 +58,7 @@ export class LanguageService {
             context: this._context,
             rootNames: Array.from(this._context.compilerFactory.getSourceFilePaths()),
             host: this._compilerHost,
-            configFileParsingDiagnostics: opts.configFileParsingDiagnostics,
+            configFileParsingDiagnostics: params.configFileParsingDiagnostics,
         });
 
         this._context.compilerFactory.onSourceFileAdded(() => this._reset());

@@ -38,6 +38,16 @@ export interface TsSourceFileContainer {
         scriptKind: ScriptKind | undefined;
     }): ts.SourceFile | undefined;
     /**
+     * Adds a lib file whose existence is virtual to the cache.
+     * @param filePath - File path to get.
+     * @param scriptKind - Script kind of the source file.
+     */
+    addLibFileToCacheByText(
+        filePath: StandardizedFilePath,
+        fileText: string,
+        scriptKind: ScriptKind | undefined,
+    ): ts.SourceFile;
+    /**
      * Gets the source file version of the specified source file.
      * @param sourceFile - Source file to inspect.
      */

@@ -1,8 +1,8 @@
 /// <reference path="typings/index.d.ts" />
 import { errors } from "@ts-morph/common";
-export { CompilerOptions, CompilerOptionsContainer, DiagnosticCategory, EditorSettings, EmitHint, FileSystemHost, InMemoryFileSystemHost,
-    InMemoryFileSystemHostOptions, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHost,
-    ResolutionHostFactory, ScriptKind, ScriptTarget, SettingsContainer, SymbolFlags, SyntaxKind, ts, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
+export { CompilerOptions, CompilerOptionsContainer, DiagnosticCategory, EditorSettings, EmitHint, FileSystemHost, InMemoryFileSystemHost, LanguageVariant,
+    ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ResolutionHost, ResolutionHostFactory, ScriptKind, ScriptTarget, SettingsContainer,
+    SymbolFlags, SyntaxKind, ts, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
 export * from "./codeBlockWriter";
 export * from "./compiler";
 const { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, BaseError,

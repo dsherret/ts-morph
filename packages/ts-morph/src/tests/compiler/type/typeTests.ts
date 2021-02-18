@@ -6,7 +6,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(Type), () => {
     function getInfoFromTextWithTypeChecking<T extends Node>(text: string) {
         return getInfoFromText<T>(text, {
-            host: new InMemoryFileSystemHost({ skipLoadingLibFiles: true }),
+            host: new InMemoryFileSystemHost(),
             includeLibDts: true,
             compilerOptions: { strictNullChecks: true },
         });

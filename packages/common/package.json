@@ -14,15 +14,14 @@
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha",
     "test:ci": "yarn test",
     "test:debug": "yarn test --inspect-brk",
-    "rollup": "rollup --config"
+    "rollup": "rollup --config && ts-node scripts/bundleLocalTs.ts"
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
     "fast-glob": "^3.2.5",
     "is-negated-glob": "^1.0.0",
     "mkdirp": "^1.0.4",
-    "multimatch": "^5.0.0",
-    "typescript": "~4.1.3"
+    "multimatch": "^5.0.0"
   },
   "devDependencies": {
     "@ts-morph/scripts": "~0.2.0",
@@ -43,7 +42,8 @@
     "ts-morph": "npm:ts-morph@9.0.0",
     "ts-nameof": "^5.0.0",
     "ts-node": "^9.1.1",
-    "ttypescript": "^1.5.12"
+    "ttypescript": "^1.5.12",
+    "typescript": "~4.1.3"
   },
   "publishConfig": {
     "access": "public"
