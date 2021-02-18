@@ -37,7 +37,7 @@ for (const [name, declarations] of emitMainFile.getExportedDeclarations()) {
 }
 
 writer.blankLineIfLastNot();
-writer.writeLine(`import { ${tsNames.join(", ")} } from "typescript";`);
+writer.writeLine(`import { ${tsNames.join(", ")} } from "./typescript";`);
 writer.writeLine(`export { ts, ${tsNames.join(", ")} };`);
 
 // todo: format using dprint

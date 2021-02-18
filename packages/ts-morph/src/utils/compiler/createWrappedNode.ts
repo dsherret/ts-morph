@@ -33,6 +33,8 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: Cr
         createLanguageService: false,
         typeChecker,
         configFileParsingDiagnostics: [],
+        skipLoadingLibFiles: true,
+        libFolderPath: undefined,
     });
     const wrappedSourceFile = projectContext.compilerFactory.getSourceFile(getSourceFileNode(), { markInProject: true });
 

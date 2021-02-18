@@ -37,25 +37,6 @@ The current working directory on this file system will be `/`.
 
 This file system can also be imported and created via the `InMemoryFileSystemHost` export.
 
-#### `lib.d.ts` files
-
-Since ts-morph 6.0, the in memory file system will have the [`lib.d.ts` files](https://github.com/Microsoft/TypeScript/tree/master/lib) loaded into the `/node_modules/typescript/lib` folder by default.
-
-If you want the old behaviour, you can specify to skip loading them by providing a `skipLoadingLibFiles` option:
-
-```ts ignore-error: 1109
-import { Project, FileSystemHost } from "ts-morph";
-
-const project = new Project({
-    useInMemoryFileSystem: true,
-    skipLoadingLibFiles: true
-});
-
-console.log(project.getFileSystem().directoryExistsSync("/node_modules")); // false
-```
-
-When using a non-default file system, the library will search for these files in `path.join(fs.getCurrentDirectory(), "node_modules/typescript/lib"))`.
-
 ### Custom File System
 
 It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Project` instance:

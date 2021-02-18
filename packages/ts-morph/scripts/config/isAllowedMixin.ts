@@ -5,7 +5,7 @@ export function isAllowedMixin(name: string) {
         case "PropertyNamedNode":
         case "BindingNamedNode":
         case "HeritageClauseableNode":
-        case "NamespaceChildableNode":
+        case "ModuleChildableNode":
         case "OverloadableNode":
         case "TextInsertableNode":
         case "UnwrappableNode":
