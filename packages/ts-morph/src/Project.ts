@@ -18,8 +18,16 @@ export interface ProjectOptions {
     skipAddingFilesFromTsConfig?: boolean;
     /** Skip resolving file dependencies when providing a ts config file path and adding the files from tsconfig. @default false */
     skipFileDependencyResolution?: boolean;
-    /** Skip loading the lib files when using an in-memory file system. @default false */
+    /**
+     * Skip loading the lib files. Unlike the compiler API, ts-morph does not load these
+     * from the node_modules folder, but instead loads them from some other JS code
+     * and uses a fake path for their existence. If you want to use a custom lib files
+     * folder path, then provide one using the libFolderPath options.
+     * @default false
+     */
     skipLoadingLibFiles?: boolean;
+    /** The folder to use for loading lib files. */
+    libFolderPath?: string;
     /** Manipulation settings */
     manipulationSettings?: Partial<ManipulationSettings>;
     /** Whether to use an in-memory file system. @default false */
@@ -82,6 +90,8 @@ export class Project {
             createLanguageService: true,
             resolutionHost: options.resolutionHost,
             configFileParsingDiagnostics: tsConfigResolver?.getErrors() ?? [],
+            skipLoadingLibFiles: options.skipLoadingLibFiles,
+            libFolderPath: options.libFolderPath,
         });
 
         // initialize manipulation settings
@@ -99,16 +109,11 @@ export class Project {
         function verifyOptions() {
             if (options.fileSystem != null && options.useInMemoryFileSystem)
                 throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use an in-memory file system.");
-            if (options.skipLoadingLibFiles && !options.useInMemoryFileSystem) {
-                throw new errors.InvalidOperationError(
-                    `The ${nameof(options.skipLoadingLibFiles)} option can only be true when ${nameof(options.useInMemoryFileSystem)} is true.`,
-                );
-            }
         }
 
         function getFileSystem() {
             if (options.useInMemoryFileSystem)
-                return new InMemoryFileSystemHost({ skipLoadingLibFiles: options.skipLoadingLibFiles });
+                return new InMemoryFileSystemHost();
             return options.fileSystem ?? new RealFileSystemHost();
         }
 

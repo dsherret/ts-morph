@@ -1,5 +1,4 @@
 import { errors } from "../errors";
-import { getLibFiles } from "../getLibFiles";
 import { FileSystemHost } from "./FileSystemHost";
 import { FileUtils } from "./FileUtils";
 import { matchGlobs } from "./matchGlobs";
@@ -10,14 +9,6 @@ interface VirtualDirectory {
     files: Map<StandardizedFilePath, string>;
 }
 
-export interface InMemoryFileSystemHostOptions {
-    /**
-     * Set this to true to not load the /node_modules/typescript/lib files on construction.
-     * @default false
-     */
-    skipLoadingLibFiles?: boolean;
-}
-
 /** An implementation of a file system that exists in memory only. */
 export class InMemoryFileSystemHost implements FileSystemHost {
     /** @internal */
@@ -25,16 +16,9 @@ export class InMemoryFileSystemHost implements FileSystemHost {
 
     /**
      * Constructor.
-     * @param options - Options for creating the file system.
      */
-    constructor(options?: InMemoryFileSystemHostOptions) {
+    constructor() {
         this.getOrCreateDir("/" as StandardizedFilePath);
-
-        if (!options?.skipLoadingLibFiles) {
-            const libFiles = getLibFiles();
-            for (const libFile of libFiles)
-                this._writeFileSync(`/node_modules/typescript/lib/${libFile.fileName}`, libFile.text);
-        }
     }
 
     /** @inheritdoc */

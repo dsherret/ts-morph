@@ -4,7 +4,7 @@ import { SourceFile } from "../../compiler";
 import { Project } from "../../Project";
 describe("tests for issue #394", () => {
     it("should get the original source file with correct casing when the module specifier has incorrect casing and using a case insensitive file system", () => {
-        const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+        const fileSystem = new InMemoryFileSystemHost();
         const sourceFiles: SourceFile[] = [];
         fileSystem.fileExistsSync = filePath => sourceFiles.some(s => s.getFilePath().toLowerCase() === filePath.toLowerCase());
         fileSystem.readFileSync = filePath => {
@@ -13,7 +13,7 @@ describe("tests for issue #394", () => {
         };
         fileSystem.isCaseSensitive = () => false;
 
-        const project = new Project({ fileSystem });
+        const project = new Project({ fileSystem, skipLoadingLibFiles: true });
         const interfaceSourceFile = project.createSourceFile("/folder/MyInterface.ts", "export interface MyInterface {}");
         const sourceFile = project.createSourceFile("/folder/main.ts", "import { MyInterface } from './myInterface';\n\nlet myVar: MyInterface;");
         sourceFiles.push(interfaceSourceFile, sourceFile);

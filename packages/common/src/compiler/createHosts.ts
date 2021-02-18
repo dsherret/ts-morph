@@ -1,6 +1,8 @@
-import { FileUtils, RealFileSystemHost, StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
+import { errors } from "../errors";
+import { StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
+import { getLibFiles, libFolderInMemoryPath } from "../getLibFiles";
 import { CompilerOptionsContainer } from "../options";
-import { CompilerOptions, ScriptTarget, ts } from "../typescript";
+import { ScriptTarget, ts } from "../typescript";
 import { ResolutionHost } from "./ResolutionHost";
 import { TsSourceFileContainer } from "./TsSourceFileContainer";
 
@@ -22,6 +24,16 @@ export interface CreateHostsOptions {
      * changed. Provide this for a performance improvement. */
     getProjectVersion?: () => string;
     isKnownTypesPackageName?: ts.LanguageServiceHost["isKnownTypesPackageName"];
+    /**
+     * Set this to true to not load the typescript lib files.
+     * @default false
+     */
+    skipLoadingLibFiles?: boolean;
+    /**
+     * Specify this to use a custom folder to load the lib files from.
+     * @remarks skipLoadingLibFiles cannot be explicitly false if this is set.
+     */
+    libFolderPath?: string;
 }
 
 /**
@@ -31,6 +43,9 @@ export interface CreateHostsOptions {
 export function createHosts(options: CreateHostsOptions) {
     const { transactionalFileSystem, sourceFileContainer, compilerOptions, getNewLine, resolutionHost, getProjectVersion, isKnownTypesPackageName } = options;
     let version = 0;
+    const libFolderPath = transactionalFileSystem.getStandardizedAbsolutePath(getLibFolderPath());
+    const libFileMap = getLibFileMap();
+
     const fileExistsSync = (path: StandardizedFilePath) =>
         sourceFileContainer.containsSourceFileAtPath(path)
         || transactionalFileSystem.fileExistsSync(path);
@@ -48,8 +63,15 @@ export function createHosts(options: CreateHostsOptions) {
         },
         getScriptSnapshot: fileName => {
             const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
-            if (!fileExistsSync(filePath))
+            if (!fileExistsSync(filePath)) {
+                if (libFileMap != null) {
+                    const libFileText = libFileMap.get(filePath);
+                    if (libFileText != null)
+                        return ts.ScriptSnapshot.fromString(libFileText);
+                }
+
                 return undefined;
+            }
             return ts.ScriptSnapshot.fromString(sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
                 markInProject: false,
                 scriptKind: undefined,
@@ -57,24 +79,25 @@ export function createHosts(options: CreateHostsOptions) {
         },
         getCurrentDirectory: () => transactionalFileSystem.getCurrentDirectory(),
         getDefaultLibFileName: options => {
-            if (transactionalFileSystem.getFileSystem() instanceof RealFileSystemHost)
-                return ts.getDefaultLibFilePath(options);
-            else {
-                return FileUtils.pathJoin(
-                    transactionalFileSystem.getCurrentDirectory(),
-                    "node_modules/typescript/lib/" + ts.getDefaultLibFileName(options),
-                );
-            }
+            return libFolderPath + "/" + ts.getDefaultLibFileName(options);
         },
         isKnownTypesPackageName,
         useCaseSensitiveFileNames: () => true,
         readFile: (path, encoding) => {
             const standardizedPath = transactionalFileSystem.getStandardizedAbsolutePath(path);
+            if (libFileMap != null) {
+                const libFileText = libFileMap.get(standardizedPath);
+                if (libFileText != null)
+                    return libFileText;
+            }
             if (sourceFileContainer.containsSourceFileAtPath(standardizedPath))
                 return sourceFileContainer.getSourceFileFromCacheFromFilePath(standardizedPath)!.getFullText();
             return transactionalFileSystem.readFileSync(standardizedPath, encoding);
         },
-        fileExists: fileExistsSync,
+        fileExists: filePath => {
+            const standardizedFilePath = transactionalFileSystem.getStandardizedAbsolutePath(filePath);
+            return fileExistsSync(standardizedFilePath) || libFileMap != null && libFileMap.has(standardizedFilePath);
+        },
         directoryExists: dirName => {
             const dirPath = transactionalFileSystem.getStandardizedAbsolutePath(dirName);
             return sourceFileContainer.containsDirectoryAtPath(dirPath)
@@ -88,8 +111,23 @@ export function createHosts(options: CreateHostsOptions) {
 
     const compilerHost: ts.CompilerHost = {
         getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
-            // todo: use languageVersion here?
             const filePath = transactionalFileSystem.getStandardizedAbsolutePath(fileName);
+            if (libFileMap != null) {
+                const libFileText = libFileMap.get(filePath);
+                if (libFileText != null) {
+                    let sourceFile = sourceFileContainer.getSourceFileFromCacheFromFilePath(filePath);
+                    if (sourceFile == null) {
+                        sourceFile = sourceFileContainer.addLibFileToCacheByText(
+                            filePath,
+                            libFileText,
+                            ts.ScriptKind.TS,
+                        );
+                    }
+                    return sourceFile;
+                }
+            }
+
+            // todo: use languageVersion here? But how?
             return sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
                 markInProject: false,
                 scriptKind: undefined,
@@ -117,4 +155,32 @@ export function createHosts(options: CreateHostsOptions) {
     };
 
     return { languageServiceHost, compilerHost };
+
+    function getLibFolderPath() {
+        if (options.libFolderPath != null) {
+            if (options.skipLoadingLibFiles === true) {
+                throw new errors.InvalidOperationError(
+                    `Cannot set ${nameof(options.skipLoadingLibFiles)} to true when ${nameof(options.libFolderPath)} is provided.`,
+                );
+            }
+            return options.libFolderPath;
+        }
+        return libFolderInMemoryPath;
+    }
+
+    function getLibFileMap() {
+        if (options.skipLoadingLibFiles || options.libFolderPath != null)
+            return undefined;
+
+        const libFilesMap = new Map<StandardizedFilePath, string>();
+        const libFiles = getLibFiles();
+        for (const libFile of libFiles) {
+            libFilesMap.set(
+                transactionalFileSystem.getStandardizedAbsolutePath(libFolderPath + "/" + libFile.fileName),
+                libFile.text,
+            );
+        }
+
+        return libFilesMap;
+    }
 }

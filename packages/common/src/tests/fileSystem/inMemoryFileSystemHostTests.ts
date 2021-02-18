@@ -1,24 +1,12 @@
 import { expect } from "chai";
 import { errors } from "../../errors";
 import { InMemoryFileSystemHost } from "../../fileSystem";
-import { getLibFiles } from "../../getLibFiles";
 
 describe(nameof(InMemoryFileSystemHost), () => {
     describe("constructor", () => {
         it("should have the main directory after being constructed", () => {
-            expect(new InMemoryFileSystemHost().directoryExistsSync("/")).to.be.true;
-        });
-
-        it("should load the lib files by default", () => {
             const fileSystem = new InMemoryFileSystemHost();
-            expect(fileSystem.readDirSync("/")).to.deep.equal(["/node_modules"]);
-            expect(fileSystem.readDirSync("/node_modules/typescript/lib")).to.deep.equal(getLibFiles().map(file => {
-                return `/node_modules/typescript/lib/${file.fileName}`;
-            }));
-        });
-
-        it("should not load the lib files when specifying not to", () => {
-            const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+            expect(fileSystem.directoryExistsSync("/")).to.be.true;
             expect(fileSystem.readDirSync("/")).to.deep.equal([]);
         });
     });

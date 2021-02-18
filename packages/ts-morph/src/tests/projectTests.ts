@@ -26,7 +26,7 @@ describe(nameof(Project), () => {
         });
 
         it("should add the files from tsconfig.json by default with the target in the tsconfig.json", () => {
-            const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+            const fileSystem = new InMemoryFileSystemHost();
             fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"] }`);
             fileSystem.writeFileSync("/otherFile.ts", "");
             fileSystem.writeFileSync("/test/file.ts", "");
@@ -37,7 +37,7 @@ describe(nameof(Project), () => {
         });
 
         it("should add the files from tsconfig.json by default and also take into account the passed in compiler options", () => {
-            const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+            const fileSystem = new InMemoryFileSystemHost();
             fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "target": "ES5" } }`);
             fileSystem.writeFileSync("/otherFile.ts", "");
             fileSystem.writeFileSync("/test/file.ts", "");
@@ -47,7 +47,7 @@ describe(nameof(Project), () => {
         });
 
         it("should not add the files from tsconfig.json when specifying not to", () => {
-            const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+            const fileSystem = new InMemoryFileSystemHost();
             fileSystem.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
             fileSystem.writeFileSync("/test/file.ts", "");
             fileSystem.writeFileSync("/test/test2/file2.ts", "");
@@ -161,7 +161,7 @@ describe(nameof(Project), () => {
 
         describe("custom type reference directive resolution", () => {
             function setup() {
-                const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+                const fileSystem = new InMemoryFileSystemHost();
                 const testFilePath = "/other/test.d.ts";
                 fileSystem.writeFileSync("/dir/tsconfig.json", `{ "compilerOptions": { "target": "ES5" } }`);
                 fileSystem.writeFileSync("/dir/main.ts", `/// <reference types="../other/testasdf" />\n\nconst test = new Test();`);
@@ -190,6 +190,7 @@ describe(nameof(Project), () => {
                         }
                     },
                     tsConfigFilePath: "/dir/tsconfig.json",
+                    skipLoadingLibFiles: true,
                 });
 
                 const mainFile = project.getSourceFileOrThrow("main.ts");
@@ -214,18 +215,19 @@ describe(nameof(Project), () => {
         describe(nameof<ProjectOptions>(o => o.skipLoadingLibFiles), () => {
             it("should not skip loading lib files when empty", () => {
                 const project = new Project({ useInMemoryFileSystem: true });
-                const result = project.getFileSystem().readDirSync("/node_modules/typescript/lib");
-                expect(result.some(r => r.includes("lib.d.ts"))).to.be.true;
+                project.createSourceFile("test.ts", "const t: String = '';");
+                expect(project.getPreEmitDiagnostics().length).to.equal(0);
             });
 
-            it("should not skip loading lib files when true", () => {
+            it("should skip loading lib files when true", () => {
                 const project = new Project({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
-                expect(project.getFileSystem().directoryExistsSync("/node_modules")).to.be.false;
+                project.createSourceFile("test.ts", "const t: String = '';");
+                expect(project.getPreEmitDiagnostics().length).to.equal(10);
             });
 
-            it("should throw when providing skipLoadingLibFiles without using n in-memory file system", () => {
-                expect(() => new Project({ skipLoadingLibFiles: true }))
-                    .to.throw("The skipLoadingLibFiles option can only be true when useInMemoryFileSystem is true.");
+            it("should throw when providing skipLoadingLibFiles and a libFolderPath", async () => {
+                expect(() => new Project({ skipLoadingLibFiles: true, libFolderPath: "/" }))
+                    .to.throw("Cannot set skipLoadingLibFiles to true when libFolderPath is provided.");
             });
         });
     });
@@ -294,13 +296,13 @@ describe(nameof(Project), () => {
         });
 
         it("should ignore handle nested node_modules directories", () => {
-            const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+            const fileSystem = new InMemoryFileSystemHost();
             fileSystem.writeFileSync("/node_modules/first.d.ts", "");
             fileSystem.writeFileSync("/node_modules/library/node_modules/second.d.ts", "");
             fileSystem.writeFileSync("/main.ts",
                 "/// <reference path='node_modules/first.d.ts' />\n/// <reference path='node_modules/library/node_modules/second.d.ts' />");
 
-            const project = new Project({ fileSystem });
+            const project = new Project({ fileSystem, skipLoadingLibFiles: true });
             project.addSourceFileAtPath("/main.ts");
             project.resolveSourceFileDependencies();
             assertHasSourceFiles(project, ["/main.ts"]);
@@ -322,7 +324,7 @@ describe(nameof(Project), () => {
     });
 
     function fileDependencyResolutionSetup(options: ProjectOptions = {}) {
-        const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+        const fileSystem = new InMemoryFileSystemHost();
 
         fileSystem.writeFileSync("/package.json", `{ "name": "testing", "version": "0.0.1" }`);
         fileSystem.writeFileSync("/node_modules/library/package.json",
@@ -338,7 +340,12 @@ describe(nameof(Project), () => {
         fileSystem.writeFileSync("/other/referenced-file.d.ts", "declare function nameof(): void;");
         fileSystem.writeFileSync("/tsconfig.json", `{ "files": ["src/main.ts"] }`);
 
-        const project = new Project({ tsConfigFilePath: "tsconfig.json", fileSystem, ...options });
+        const project = new Project({
+            tsConfigFilePath: "tsconfig.json",
+            fileSystem,
+            skipLoadingLibFiles: true,
+            ...options,
+        });
         return {
             project,
             initialFiles: ["/src/main.ts"],
@@ -661,13 +668,13 @@ describe(nameof(Project), () => {
 
     describe(nameof<Project>(project => project.addSourceFilesFromTsConfig), () => {
         it("should throw if the tsconfig doesn't exist", () => {
-            const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
-            const project = new Project({ fileSystem });
+            const fileSystem = new InMemoryFileSystemHost();
+            const project = new Project({ fileSystem, skipLoadingLibFiles: true });
             expect(() => project.addSourceFilesFromTsConfig("tsconfig.json")).to.throw(errors.FileNotFoundError);
         });
 
         it("should add the files from tsconfig.json", () => {
-            const fileSystem = new InMemoryFileSystemHost({ skipLoadingLibFiles: true });
+            const fileSystem = new InMemoryFileSystemHost();
             // todo: why did I need a slash at the start of `/test/exclude`?
             fileSystem.writeFileSync("tsconfig.json",
                 `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "include": ["test"], "exclude": ["/test/exclude"] }`);
@@ -676,7 +683,7 @@ describe(nameof(Project), () => {
             fileSystem.writeFileSync("/test/test2/file2.ts", "");
             fileSystem.writeFileSync("/test/exclude/file.ts", "");
             fileSystem.mkdirSync("/test/emptyDir");
-            const project = new Project({ fileSystem });
+            const project = new Project({ fileSystem, skipLoadingLibFiles: true });
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([].sort());
             expect(project.getDirectories().map(s => s.getPath()).sort()).to.deep.equal([].sort());
             const returnedFiles = project.addSourceFilesFromTsConfig("tsconfig.json");
@@ -1540,7 +1547,6 @@ describe(nameof(Project), () => {
             expect(moduleResolutionHost.getDirectories!("/")).to.deep.equal([
                 "/dir1",
                 "/dir2",
-                "/node_modules",
             ]);
         });
 
@@ -1553,7 +1559,6 @@ describe(nameof(Project), () => {
                 "/dir1",
                 "/dir2",
                 "/dir3",
-                "/node_modules",
             ]);
         });
 

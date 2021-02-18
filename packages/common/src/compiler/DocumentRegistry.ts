@@ -116,7 +116,7 @@ export class DocumentRegistry implements ts.DocumentRegistry {
     }
 
     /** @inheritdoc */
-    getSourceFileVersion(sourceFile: ts.SourceFile) {
+    getSourceFileVersion(sourceFile: ts.SourceFile): string {
         return (sourceFile as any).version || "0";
     }
 

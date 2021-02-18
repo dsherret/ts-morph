@@ -193,6 +193,16 @@ export interface CreateHostsOptions {
      * changed. Provide this for a performance improvement. */
     getProjectVersion?: () => string;
     isKnownTypesPackageName?: ts.LanguageServiceHost["isKnownTypesPackageName"];
+    /**
+     * Set this to true to not load the typescript lib files.
+     * @default false
+     */
+    skipLoadingLibFiles?: boolean;
+    /**
+     * Specify this to use a custom folder to load the lib files from.
+     * @remarks skipLoadingLibFiles cannot be explicitly false if this is set.
+     */
+    libFolderPath?: string;
 }
 
 /**
@@ -255,7 +265,7 @@ export declare class DocumentRegistry implements ts.DocumentRegistry {
     /** @inheritdoc */
     reportStats(): string;
     /** @inheritdoc */
-    getSourceFileVersion(sourceFile: ts.SourceFile): any;
+    getSourceFileVersion(sourceFile: ts.SourceFile): string;
     private getNextSourceFileVersion;
     private updateSourceFile;
 }
@@ -309,6 +319,12 @@ export interface TsSourceFileContainer {
         markInProject: boolean;
         scriptKind: ScriptKind | undefined;
     }): ts.SourceFile | undefined;
+    /**
+     * Adds a lib file whose existence is virtual to the cache.
+     * @param filePath - File path to get.
+     * @param scriptKind - Script kind of the source file.
+     */
+    addLibFileToCacheByText(filePath: StandardizedFilePath, fileText: string, scriptKind: ScriptKind | undefined): ts.SourceFile;
     /**
      * Gets the source file version of the specified source file.
      * @param sourceFile - Source file to inspect.
@@ -615,21 +631,12 @@ export declare class FileUtils {
     static isNegatedGlob(glob: string): boolean;
 }
 
-export interface InMemoryFileSystemHostOptions {
-    /**
-     * Set this to true to not load the /node_modules/typescript/lib files on construction.
-     * @default false
-     */
-    skipLoadingLibFiles?: boolean;
-}
-
 /** An implementation of a file system that exists in memory only. */
 export declare class InMemoryFileSystemHost implements FileSystemHost {
     /**
      * Constructor.
-     * @param options - Options for creating the file system.
      */
-    constructor(options?: InMemoryFileSystemHostOptions);
+    constructor();
     /** @inheritdoc */
     isCaseSensitive(): boolean;
     /** @inheritdoc */
