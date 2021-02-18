@@ -1,7 +1,7 @@
 # @ts-morph/bootstrap
 
 [![npm version](https://badge.fury.io/js/%40ts-morph%2Fbootstrap.svg)](https://badge.fury.io/js/%40ts-morph%2Fbootstrap)
-[![Build Status](https://travis-ci.org/dsherret/ts-morph.svg?branch=latest)](https://travis-ci.org/dsherret/ts-morph)
+[![CI](https://github.com/dsherret/ts-morph/workflows/CI/badge.svg)](https://github.com/dsherret/ts-morph/actions?query=workflow%3ACI)
 
 A library for quickly getting set up with the [TypeScript](https://github.com/Microsoft/TypeScript) Compiler API.
 

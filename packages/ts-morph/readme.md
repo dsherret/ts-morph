@@ -1,7 +1,7 @@
 ﻿# ts-morph
 
 [![npm version](https://badge.fury.io/js/ts-morph.svg)](https://badge.fury.io/js/ts-morph)
-[![Build Status](https://travis-ci.org/dsherret/ts-morph.svg?branch=latest)](https://travis-ci.org/dsherret/ts-morph)
+[![CI](https://github.com/dsherret/ts-morph/workflows/CI/badge.svg)](https://github.com/dsherret/ts-morph/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/dsherret/ts-morph/badge.svg?branch=latest&service=github)](https://coveralls.io/github/dsherret/ts-morph?branch=latest)
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 

@@ -1,6 +1,6 @@
 # ts-morph
 
-[![Build Status](https://travis-ci.org/dsherret/ts-morph.svg?branch=latest)](https://travis-ci.org/dsherret/ts-morph)
+[![CI](https://github.com/dsherret/ts-morph/workflows/CI/badge.svg)](https://github.com/dsherret/ts-morph/actions?query=workflow%3ACI)
 
 Monorepo for [ts-morph](packages/ts-morph) and related projects.
 
