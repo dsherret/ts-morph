@@ -1658,16 +1658,16 @@ interface I {
     });
 
     describe(nameof<SourceFile>(l => l.fixUnusedIdentifiers), () => {
-        function doTest(code: string, expected: string) {
-            const { sourceFile, project } = getInfoFromText(code);
-            sourceFile.fixUnusedIdentifiers();
-            sourceFile.fixUnusedIdentifiers();
-            expect(sourceFile.getText().trim()).to.equals(expected.trim());
-            return { sourceFile, project };
-        }
-
         it("should remove unused import declarations, import names, and default imports", () => {
-            doTest(`
+            const project = new Project({ useInMemoryFileSystem: true });
+            project.createSourceFile("test.d.ts", `
+declare module "foo";
+declare module "a";
+declare module "b";
+declare module "bar";
+`);
+            const sourceFile = project.createSourceFile("/test.ts", `
+/// <reference path="./test.d.ts" />
 import {foo} from 'foo'
 import * as a from 'a'
 import b from 'b'
@@ -1675,7 +1675,7 @@ import {used, unused} from 'bar'
 export const c = used + 1
 export function f(...args: any[]) {
     var a
-    const c
+    const c = 5;
     const {x, y, z} = {x: 1, y: 1, z: 1}
     return y + c
 }
@@ -1686,22 +1686,28 @@ export class C<T> {
     private a = 1
     protected n({a, b, c}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
 }
-export type T<S, V> = V extends string ? : never : any
-            `, `
+export type T<S, V> = V extends string ? never : any
+            `);
+            expect(project.getPreEmitDiagnostics().map(d => d.getMessageText())).to.deep.equal([]);
+            sourceFile.fixUnusedIdentifiers();
+            sourceFile.fixUnusedIdentifiers();
+            expect(sourceFile.getFullText().trim()).to.equals(`
+/// <reference path="./test.d.ts" />
 import {used} from 'bar'
 export const c = used + 1
 export function f() {
-    const c
+    const c = 5;
     const {y} = {x: 1, y: 1, z: 1}
     return y + c
 }
 export class C {
-    private constructor(b: Date) { this.b = b }
+    private constructor(a: number, b: Date) { this.a = a; this.b = b }
     private b: Date
+    private a = 1
     protected n({a}: {a: number, b: string, c: boolean}) { return this.b.getTime() + a }
 }
-export type T<V> = V extends string ? : never : any
-            `);
+export type T<V> = V extends string ? never : any
+                        `.trim());
         });
     });
 });

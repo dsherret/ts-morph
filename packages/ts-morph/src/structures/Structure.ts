@@ -6,7 +6,8 @@ import { NameableNodeStructure, AsyncableNodeStructure, ImplementsClauseableNode
     PropertyNamedNodeStructure, StaticableNodeStructure, TypeParameteredNodeStructure, GeneratorableNodeStructure, QuestionTokenableNodeStructure,
     TypedNodeStructure, ExclamationTokenableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, NamedNodeStructure,
     BindingNamedNodeStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeElementMemberedNodeStructure,
-    DecoratableNodeStructure } from "./base";
+    DecoratableNodeStructure, 
+    ModuleNamedNodeStructure} from "./base";
 import { ClassDeclarationStructure, ClassLikeDeclarationBaseStructure, ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure,
     GetAccessorDeclarationStructure, MethodDeclarationStructure, MethodDeclarationOverloadStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure } from "./class";
@@ -447,7 +448,6 @@ export const Structure = {
             case StructureKind.Enum:
             case StructureKind.Interface:
             case StructureKind.JsxAttribute:
-            case StructureKind.Module:
             case StructureKind.TypeAlias:
             case StructureKind.TypeParameter:
             case StructureKind.ShorthandPropertyAssignment:
@@ -564,6 +564,10 @@ export const Structure = {
     },
     /** Gets if the provided structure is a ModuleDeclarationStructure. */
     isModule(structure: Structure & { kind: StructureKind; }): structure is ModuleDeclarationStructure {
+        return structure.kind === StructureKind.Module;
+    },
+    /** Gets if the provided structure is a ModuleNamedNodeStructure. */
+    isModuleNamed<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & ModuleNamedNodeStructure {
         return structure.kind === StructureKind.Module;
     },
     /** Gets if the provided structure is a SourceFileStructure. */

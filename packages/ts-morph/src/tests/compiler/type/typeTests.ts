@@ -318,8 +318,9 @@ let unknownType: unknown;
                 doTest("enumIncompleteUnionType", false);
             });
 
-            it("should be when a union of all the enum values", () => {
-                doTest("enumCompleteUnionType", true);
+            it("should not be when a union of all the enum values", () => {
+                // no longer true in TS 4.2+
+                doTest("enumCompleteUnionType", false);
             });
 
             it("should get when it's not an enum type", () => {

@@ -2152,6 +2152,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.SetAccessor:
+            case SyntaxKind.ConstructorType:
                 return true;
             default:
                 return false;
@@ -3316,6 +3317,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.PropertySignature:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.VariableStatement:
+            case SyntaxKind.ConstructorType:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableDeclarationList:
                 return true;

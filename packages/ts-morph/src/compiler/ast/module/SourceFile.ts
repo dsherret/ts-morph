@@ -875,6 +875,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     fixUnusedIdentifiers(formatSettings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
         this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_delete", formatSettings, userPreferences).applyChanges();
+        this._context.languageService.getCombinedCodeFix(this, "unusedIdentifier_deleteImports", formatSettings, userPreferences).applyChanges();
         return this;
     }
 
