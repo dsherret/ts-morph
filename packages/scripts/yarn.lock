@@ -426,10 +426,10 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-"ts-morph@npm:ts-morph@10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-10.0.0.tgz#a85ae031ccca101505a1793a9250ac88ff0069d5"
-  integrity sha512-FWEvc2gO4JkEvw5fJKF6Pm8/6kNPGPxQ5yceGWHzybte+bEcai4Ghswl9vbl/K/AyzHD4S7pcUtIzkl+qS9PtQ==
+"ts-morph@npm:ts-morph@10.0.1":
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-10.0.1.tgz#5a620cc4ef85e3e6d161989e690f44d0a0f723b0"
+  integrity sha512-T1zufImtp5goTLTFhzi7XuKR1y/f+Jwz1gSULzB045LFjXuoqVlR87sfkpyWow8u2JwgusCJrhOnwmHCFNutTQ==
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
     "@ts-morph/common" "~0.8.0"
