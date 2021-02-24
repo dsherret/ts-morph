@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.0.1"></a>
+## [10.0.1](https://github.com/dsherret/ts-morph/compare/10.0.0...10.0.1) (2021-02-24)
+
+
+### Bug Fixes
+
+* Fix ts-morph declaration file. ([e51eb0a](https://github.com/dsherret/ts-morph/commit/e51eb0a))
+
+
+
 <a name="10.0.0"></a>
 # [10.0.0](https://github.com/dsherret/ts-morph/compare/9.1.0...10.0.0) (2021-02-24)
 
