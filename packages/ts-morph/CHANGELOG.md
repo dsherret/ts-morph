@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.0.0"></a>
+# [10.0.0](https://github.com/dsherret/ts-morph/compare/9.1.0...10.0.0) (2021-02-24)
+
+
+### Bug Fixes
+
+* [#889](https://github.com/dsherret/ts-morph/issues/889) - Fix internal root directory check to work on windows. ([6b2963c](https://github.com/dsherret/ts-morph/commit/6b2963c))
+* [#926](https://github.com/dsherret/ts-morph/issues/926) - `ExportedDeclarations` should include `SourceFile` and fixed handling of namespace exports. ([b6bda27](https://github.com/dsherret/ts-morph/commit/b6bda27))
+
+
+### Features
+
+* [#916](https://github.com/dsherret/ts-morph/issues/916) - Type  - Add literal related helper properties. ([fd0acc8](https://github.com/dsherret/ts-morph/commit/fd0acc8))
+* [#924](https://github.com/dsherret/ts-morph/issues/924) - NamespaceDeclaration -> ModuleDeclaration ([3dd5c72](https://github.com/dsherret/ts-morph/commit/3dd5c72))
+* Add `Node#getFlags()`. ([b9769c2](https://github.com/dsherret/ts-morph/commit/b9769c2))
+* Add isKnownTypesPackageName option ([#909](https://github.com/dsherret/ts-morph/issues/909)) ([398d946](https://github.com/dsherret/ts-morph/commit/398d946))
+* Bundle typescript package in ts-morph/common ([#934](https://github.com/dsherret/ts-morph/issues/934)) ([1cccd02](https://github.com/dsherret/ts-morph/commit/1cccd02))
+* Upgrade to TS 4.2 ([8dacc4f](https://github.com/dsherret/ts-morph/commit/8dacc4f))
+
+
+### BREAKING CHANGES
+
+* Upgraded to TS 4.2 (see TypeScript blog for breaking changes).
+* ts-morph did not properly support some ambient and all shorthand ambient module declarations. Now `NamespaceDeclaration` is `ModuleDeclaration`. You will need to rename anything that references "Namespace" and change it to "Module".
+* The `ExportedDeclarations` union type now properly includes `SourceFile`. It previously could have done that anyway and your code might not have handled it.
+* TypeScript is now bundled with ts-morph. You may still access TypeScript via `import { ts } from "ts-morph"` as you should have been doing anyway.
+* The lib files/lib.d.ts files are now served from memory regardless of the file system host. If you want the old behaviour, specify a `libFolderPath` in the `Project` constructor's options.
+
+
 <a name="9.1.0"></a>
 # [9.1.0](https://github.com/dsherret/ts-morph/compare/9.0.0...9.1.0) (2020-11-26)
 
