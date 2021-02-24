@@ -8333,11 +8333,7 @@ export declare class ConditionalTypeNode extends TypeNode<ts.ConditionalTypeNode
     getParentOrThrow(): NonNullable<NodeParentType<ts.ConditionalTypeNode>>;
 }
 
-export declare class ConstructorTypeNode extends FunctionOrConstructorTypeNodeBase<ts.ConstructorTypeNode> {
-    /** @inheritdoc **/
-    getParent(): NodeParentType<ts.ConstructorTypeNode>;
-    /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.ConstructorTypeNode>>;
+export declare class ConstructorTypeNode extends ConstructorTypeNodeBase<ts.ConstructorTypeNode> {
 }
 
 declare const ExpressionWithTypeArgumentsBase: Constructor<LeftHandSideExpressionedNode> & typeof TypeNode;
@@ -10482,6 +10478,10 @@ export declare const Structure: {
         readonly isModule: (structure: Structure & {
             kind: StructureKind;
         }) => structure is ModuleDeclarationStructure;
+        /** Gets if the provided structure is a ModuleNamedNodeStructure. */
+        readonly isModuleNamed: <T_32 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_32) => structure is T_32 & ModuleNamedNodeStructure;
         /** Gets if the provided structure is a SourceFileStructure. */
         readonly isSourceFile: (structure: Structure & {
             kind: StructureKind;
@@ -10515,9 +10515,9 @@ export declare const Structure: {
             kind: StructureKind;
         }) => structure is SpreadAssignmentStructure;
         /** Gets if the provided structure is a ExpressionedNodeStructure. */
-        readonly isExpressioned: <T_32 extends Structure & {
+        readonly isExpressioned: <T_33 extends Structure & {
             kind: StructureKind;
-        }>(structure: T_32) => structure is T_32 & ExpressionedNodeStructure;
+        }>(structure: T_33) => structure is T_33 & ExpressionedNodeStructure;
     };
 
 export interface KindedStructure<TKind extends StructureKind> {
