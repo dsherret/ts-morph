@@ -1,6 +1,7 @@
 import { errors, ts } from "@ts-morph/common";
 import { IndexSignatureDeclarationSpecificStructure, IndexSignatureDeclarationStructure, StructureKind } from "../../../structures";
 import { Type } from "../../types";
+import { BindingName } from "../aliases";
 import { ChildOrderableNode, JSDocableNode, ModifierableNode, ReadonlyableNode, ReturnTypedNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
@@ -35,7 +36,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
     /**
      * Gets the key name node.
      */
-    getKeyNameNode() {
+    getKeyNameNode(): BindingName {
         const param = this.compilerNode.parameters[0];
         return this._getNodeFromCompilerNode(param.name);
     }

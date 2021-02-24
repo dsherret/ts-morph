@@ -2198,7 +2198,7 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
      *
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNode(): Identifier | NumericLiteral | StringLiteral | PrivateIdentifier | ComputedPropertyName | undefined;
+    getPropertyNameNode(): PropertyName | undefined;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.BindingElement>;
     /** @inheritdoc **/
@@ -5305,14 +5305,14 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Note: If you only want to add a property assignment, then it might be more convenient to use #addPropertyAssignment.
      * @structure - The structure to add.
      */
-    addProperty(structure: string | WriterFunction | ObjectLiteralExpressionPropertyStructures): CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment;
+    addProperty(structure: string | WriterFunction | ObjectLiteralExpressionPropertyStructures): CommentObjectLiteralElement | ObjectLiteralElementLike;
     /**
      * Adds the specified properties to the object literal expression.
      *
      * Note: If you only want to add property assignments, then it might be more convenient to use #addPropertyAssignments.
      * @structures - The structures to add.
      */
-    addProperties(structures: string | WriterFunction | ReadonlyArray<string | WriterFunction | ObjectLiteralExpressionPropertyStructures>): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
+    addProperties(structures: string | WriterFunction | ReadonlyArray<string | WriterFunction | ObjectLiteralExpressionPropertyStructures>): (CommentObjectLiteralElement | ObjectLiteralElementLike)[];
     /**
      * Inserts the specified property to the object literal expression.
      *
@@ -5320,7 +5320,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * @index - The index to insert at.
      * @structure - The structure to insert.
      */
-    insertProperty(index: number, structure: string | WriterFunction | ObjectLiteralExpressionPropertyStructures): CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment;
+    insertProperty(index: number, structure: string | WriterFunction | ObjectLiteralExpressionPropertyStructures): CommentObjectLiteralElement | ObjectLiteralElementLike;
     /**
      * Inserts the specified properties to the object literal expression.
      *
@@ -5328,7 +5328,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * @index - The index to insert at.
      * @structures - The structures to insert.
      */
-    insertProperties(index: number, structures: string | WriterFunction | ReadonlyArray<string | WriterFunction | ObjectLiteralExpressionPropertyStructures>): (CommentObjectLiteralElement | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment)[];
+    insertProperties(index: number, structures: string | WriterFunction | ReadonlyArray<string | WriterFunction | ObjectLiteralExpressionPropertyStructures>): (CommentObjectLiteralElement | ObjectLiteralElementLike)[];
     /**
      * Adds a property assignment.
      * @param structure - Structure that represents the property assignment to add.
@@ -8333,7 +8333,13 @@ export declare class ConditionalTypeNode extends TypeNode<ts.ConditionalTypeNode
     getParentOrThrow(): NonNullable<NodeParentType<ts.ConditionalTypeNode>>;
 }
 
+declare const ConstructorTypeNodeBase: Constructor<AbstractableNode> & Constructor<ModifierableNode> & typeof FunctionOrConstructorTypeNodeBase;
+
 export declare class ConstructorTypeNode extends ConstructorTypeNodeBase<ts.ConstructorTypeNode> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.ConstructorTypeNode>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.ConstructorTypeNode>>;
 }
 
 declare const ExpressionWithTypeArgumentsBase: Constructor<LeftHandSideExpressionedNode> & typeof TypeNode;

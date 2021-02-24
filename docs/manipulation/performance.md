@@ -156,27 +156,27 @@ It won't be updated when manipulation happens again. Note that after doing this,
 It's possible to make sure all created nodes within a block are forgotten:
 
 ```ts
-import { ClassDeclaration, InterfaceDeclaration, NamespaceDeclaration, Project } from "ts-morph";
+import { ClassDeclaration, InterfaceDeclaration, ModuleDeclaration, Project } from "ts-morph";
 
 const project = new Project();
 const text = "namespace Namespace { interface Interface {} class Class {} }";
 const sourceFile = project.createSourceFile("file.ts", text);
 
-let namespaceDeclaration: NamespaceDeclaration;
+let moduleDeclaration: ModuleDeclaration;
 let interfaceDeclaration: InterfaceDeclaration;
 let classDeclaration: ClassDeclaration;
 
 project.forgetNodesCreatedInBlock(remember => {
-    namespaceDeclaration = sourceFile.getNamespaceOrThrow("Namespace");
-    interfaceDeclaration = namespaceDeclaration.getInterfaceOrThrow("Interface");
-    classDeclaration = namespaceDeclaration.getClassOrThrow("Class");
+    moduleDeclaration = sourceFile.getModuleOrThrow("Namespace");
+    interfaceDeclaration = moduleDeclaration.getInterfaceOrThrow("Interface");
+    classDeclaration = moduleDeclaration.getClassOrThrow("Class");
 
     // you can mark nodes to remember outside the scope of this block...
     // this will remember the specified node and all its ancestors
     remember(interfaceDeclaration); // or pass in multiple nodes
 });
 
-namespaceDeclaration.getText(); // ok, child was marked to remember
+moduleDeclaration.getText(); // ok, child was implicitly marked to remember
 interfaceDeclaration.getText(); // ok, was explicitly marked to remember
 classDeclaration.getText(); // throws, was forgotten
 
@@ -194,19 +194,19 @@ Also, do not be concerned about nesting forget blocks. That is perfectly fine to
 
 ```ts
 project.forgetNodesCreatedInBlock(() => {
-    namespaceDeclaration = sourceFile.getNamespaceOrThrow("Namespace");
-    interfaceDeclaration = namespaceDeclaration.getInterfaceOrThrow("Interface");
+    moduleDeclaration = sourceFile.getModuleOrThrow("Namespace");
+    interfaceDeclaration = moduleDeclaration.getInterfaceOrThrow("Interface");
 
     project.forgetNodesCreatedInBlock(remember => {
-        classDeclaration = namespaceDeclaration.getClassOrThrow("Class");
-        remember(namespaceDeclaration);
+        classDeclaration = moduleDeclaration.getClassOrThrow("Class");
+        remember(moduleDeclaration);
     });
 
     classDeclaration.getText(); // throws, was forgotten outside the block above
     interfaceDeclaration.getText(); // ok, hasn't been forgotten yet
 });
 
-namespaceDeclaration.getText(); // ok, was marked to remember in one of the blocks
+moduleDeclaration.getText(); // ok, was marked to remember in one of the blocks
 interfaceDeclaration.getText(); // throws, was forgotten
 classDeclaration.getText(); // throws, was forgotten
 ```

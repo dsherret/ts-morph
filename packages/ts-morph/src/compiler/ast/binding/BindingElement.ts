@@ -1,4 +1,5 @@
 import { errors, ts } from "@ts-morph/common";
+import { PropertyName } from "../aliases";
 import { BindingNamedNode, DotDotDotTokenableNode, InitializerExpressionableNode } from "../base";
 import { Node } from "../common";
 
@@ -10,7 +11,7 @@ export class BindingElement extends BindingElementBase<ts.BindingElement> {
      *
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNodeOrThrow() {
+    getPropertyNameNodeOrThrow(): PropertyName {
         return errors.throwIfNullOrUndefined(this.getPropertyNameNode(), "Expected to find a property name node.");
     }
 
@@ -19,7 +20,7 @@ export class BindingElement extends BindingElementBase<ts.BindingElement> {
      *
      * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNode() {
+    getPropertyNameNode(): PropertyName | undefined {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.propertyName);
     }
 }

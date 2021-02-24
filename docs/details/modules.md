@@ -6,7 +6,7 @@ title: Module / Namespace Declarations
 
 Module declarations may look like any of the following:
 
-```ts
+```ts ignore-error: 2664
 namespace MyNamespace {
 }
 

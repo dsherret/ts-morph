@@ -1,7 +1,7 @@
 import { ts } from "@ts-morph/common";
 import { replaceNodeText } from "../../../../manipulation";
+import { TemplateLiteral } from "../../aliases";
 import { LiteralExpression } from "../../expression";
-import { TemplateExpression } from "./TemplateExpression";
 
 export const NoSubstitutionTemplateLiteralBase = LiteralExpression;
 export class NoSubstitutionTemplateLiteral extends NoSubstitutionTemplateLiteralBase<ts.NoSubstitutionTemplateLiteral> {
@@ -30,6 +30,6 @@ export class NoSubstitutionTemplateLiteral extends NoSubstitutionTemplateLiteral
             newText: value,
         });
 
-        return parent.getChildAtIndex(childIndex) as (NoSubstitutionTemplateLiteral | TemplateExpression);
+        return parent.getChildAtIndex(childIndex) as TemplateLiteral;
     }
 }

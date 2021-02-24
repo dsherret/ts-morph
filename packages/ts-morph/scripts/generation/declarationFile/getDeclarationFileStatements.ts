@@ -17,18 +17,16 @@ export function getDeclarationFileStatements(mainFile: tsMorph.SourceFile) {
 
         for (const declaration of declarations) {
             const sourceFile = declaration.getSourceFile();
-            if (sourceFile.isInNodeModules()) {
-                const filePath = sourceFile.getFilePath();
-                if (filePath.includes("/typescript.d.ts")) {
-                    if (name !== "ts")
-                        tsNames.push(name);
-                    continue;
-                }
-                else if (filePath.includes("node_modules/code-block-writer/"))
-                    continue;
-                else if (!filePath.includes("node_modules/@ts-morph/common/"))
-                    throw new Error(`Unexpected scenario where source file was from: ${filePath}`);
+            const filePath = sourceFile.getFilePath();
+            if (filePath.includes("common/lib/typescript.d.ts")) {
+                if (name !== "ts")
+                    tsNames.push(name);
+                continue;
             }
+            else if (filePath.includes("node_modules/code-block-writer/"))
+                continue;
+            else if (sourceFile.isInNodeModules() && !filePath.includes("node_modules/@ts-morph/common/"))
+                throw new Error(`Unexpected scenario where source file was from: ${filePath}`);
 
             if (tsMorph.Node.isVariableDeclaration(declaration)) {
                 statements.push({
