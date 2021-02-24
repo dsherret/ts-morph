@@ -179,10 +179,18 @@ function getStructureInfos(inspector: TsMorphInspector) {
                 const arrayElementType = arrayType.getArrayElementTypeOrThrow();
                 for (const unionElementType of getTypeOrUnionElementTypes(arrayElementType)) {
                     const kindProperty = getTypeKindProperty(unionElementType);
-                    if (kindProperty != null)
-                        kinds.push(getStructureKind(kindProperty.getTypeAtLocation(property.getTypeNodeOrThrow())));
-                    else
+                    if (kindProperty != null) {
+                        const kind = getStructureKind(kindProperty.getTypeAtLocation(property.getTypeNodeOrThrow()));
+                        // todo: investigate. This is a hack. Cause is bug in ts compiler? Started doing this in TS 4.2
+                        // todo: Try removing this in the future and see if it still does this.
+                        if (kind === "NonNullable<TKind>" && property.getTypeNodeOrThrow().getText().includes("ConstructorDeclarationStructure"))
+                            kinds.push("Constructor");
+                        else
+                            kinds.push(kind);
+                    }
+                    else {
                         allStructure = false;
+                    }
                 }
             }
 
