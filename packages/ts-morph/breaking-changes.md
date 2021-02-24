@@ -2,6 +2,25 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 10
+
+- Upgraded to TS 4.2.
+- TypeScript is now bundled with ts-morph. You may still access TypeScript via `import { ts } from "ts-morph"` as you should have been doing anyway.
+- The lib files/lib.d.ts files are now served from memory regardless of the file system host. If you want the old behaviour, specify a `libFolderPath` in the `Project` constructor's options.
+- `NamespaceDeclaration` and similar names are now called `ModuleDeclaration`. See [#924](https://github.com/dsherret/ts-morph/issues/924) for why this was done. In most cases you can just do a search for `Namespace` and replace with `Module` to do the upgrade. Note that this node now has an optional body as it should have had in the first place.
+- The `ExportedDeclarations` union type now properly includes `SourceFile`. It previously could have done that anyway and your code might not have handled it.
+
+## Version 9
+
+- Upgraded to TS 4.1.
+- `addFilesFromTsConfig` is now inverted to `skipAddingFilesFromTsConfig`. Default behaviour is the same. This was done to make the option align with the other options.
+- `BooleanLiteral` is now a type alias of `TrueLiteral` and `FalseLiteral`. This was done to match the same change made in the compiler API.
+
+## Version 8
+
+- Upgraded to TypeScript 4.0
+- `TupleTypeNode#getElementTypeNodes()` is now `getElements()` to match the change in the compiler API.
+
 ## Version 7
 
 - Only Node 10+ has full support. Some functionality might not work on older versions of Node.

@@ -80,3 +80,15 @@ const project = new Project({
     },
 });
 ```
+
+### `libFolderPath`
+
+By default, ts-morph uses a fake folder path at `/node_modules/typescript/lib` to serve the TypeScript lib.d.ts files from memory.
+
+If you do not want this behaviour, you may specify an actual folder to get the lib files from the file system from:
+
+```ts
+const project = new Project({
+    libFolderPath: "./node_modules/typescript/lib",
+});
+```
