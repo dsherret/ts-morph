@@ -50,6 +50,17 @@ const project = new Project({
 });
 ```
 
+Note that if you want to include all the lib files, which is similar to the previous behaviour, you may specify `lib.esnext.full.d.ts` as a `lib` option:
+
+```ts
+const project = new Project({
+    useInMemoryFileSystem: true,
+    compilerOptions: {
+        lib: ["lib.esnext.full.d.ts"],
+    },
+});
+```
+
 ## Version 9
 
 - Upgraded to TS 4.1.

@@ -79,6 +79,17 @@ const project = new Project({
 console.log(mySetDecl.getType().getText()); // Set<string>, good
 ```
 
+Note that if you want to include all the lib files, you may specify `lib.esnext.full.d.ts` as a `lib` option:
+
+```ts
+const project = new Project({
+    useInMemoryFileSystem: true,
+    compilerOptions: {
+        lib: ["lib.esnext.full.d.ts"],
+    },
+});
+```
+
 ### Custom File System
 
 It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Project` instance:
