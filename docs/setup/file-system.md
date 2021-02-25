@@ -37,6 +37,48 @@ The current working directory on this file system will be `/`.
 
 This file system can also be imported and created via the `InMemoryFileSystemHost` export.
 
+#### Remember: The Default Script Target is `ES5`
+
+You may wonder why certain standard types are `any` when using an in memory file system:
+
+```ts
+const project = new Project({ useInMemoryFileSystem: true });
+const sourceFile = project.createSourceFile(
+    "index.ts",
+    `const mySet = new Set<string>();`,
+);
+const mySetDecl = sourceFile.getVariableDeclarationOrThrow("mySet");
+console.log(mySetDecl.getType().getText()); // any
+```
+
+This is because, the `lib` compiler option must be specified, similar to when you use `tsc`:
+
+```ts
+const project = new Project({
+    useInMemoryFileSystem: true,
+    compilerOptions: {
+        lib: ["lib.es2015.d.ts"],
+    },
+});
+/// ...omitted... same as above...
+console.log(mySetDecl.getType().getText()); // Set<string>, good
+```
+
+Or you may specify a target that will implicitly load in the lib files that you need:
+
+```ts
+import { Project, ts } from "ts-morph";
+
+const project = new Project({
+    useInMemoryFileSystem: true,
+    compilerOptions: {
+        target: ts.ScriptTarget.ES2015,
+    },
+});
+/// ...omitted... same as above...
+console.log(mySetDecl.getType().getText()); // Set<string>, good
+```
+
 ### Custom File System
 
 It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Project` instance:
