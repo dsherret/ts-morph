@@ -2,6 +2,7 @@ import { errors } from "../errors";
 import { StandardizedFilePath, TransactionalFileSystem } from "../fileSystem";
 import { getLibFiles, libFolderInMemoryPath } from "../getLibFiles";
 import { CompilerOptionsContainer } from "../options";
+import { runtime } from "../runtimes";
 import { ScriptTarget, ts } from "../typescript";
 import { ResolutionHost } from "./ResolutionHost";
 import { TsSourceFileContainer } from "./TsSourceFileContainer";
@@ -147,7 +148,7 @@ export function createHosts(options: CreateHostsOptions) {
         getCanonicalFileName: (fileName: string) => transactionalFileSystem.getStandardizedAbsolutePath(fileName),
         useCaseSensitiveFileNames: languageServiceHost.useCaseSensitiveFileNames!,
         getNewLine: languageServiceHost.getNewLine!,
-        getEnvironmentVariable: (name: string) => process.env[name],
+        getEnvironmentVariable: (name: string) => runtime.getEnvVar(name),
         directoryExists: dirName => languageServiceHost.directoryExists!(dirName),
         resolveModuleNames: resolutionHost.resolveModuleNames,
         resolveTypeReferenceDirectives: resolutionHost.resolveTypeReferenceDirectives,

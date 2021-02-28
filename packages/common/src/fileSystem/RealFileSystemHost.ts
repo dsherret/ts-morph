@@ -1,32 +1,25 @@
-import * as nodePath from "path";
 import { errors } from "../errors";
+import { runtime } from "../runtimes";
 import { FileSystemHost } from "./FileSystemHost";
 import { FileUtils } from "./FileUtils";
 
+const fs = runtime.fs;
+
 /** An implementation of a file host that interacts with the actual file system. */
 export class RealFileSystemHost implements FileSystemHost {
-    // Prevent these from being loaded in environments that don't support it (ex. browsers).
-    // This means if someone specifies to use an in-memory file system then it won't load this.
-    private fs: typeof import("fs") = require("fs");
-    private fastGlob: typeof import("fast-glob") = require("fast-glob");
-    private mkdirp: typeof import("mkdirp") = require("mkdirp");
-
     /** @inheritdoc */
-    delete(path: string) {
-        return new Promise<void>((resolve, reject) => {
-            this.fs.unlink(path, err => {
-                if (err)
-                    reject(this.getFileNotFoundErrorIfNecessary(err, path));
-                else
-                    resolve();
-            });
-        });
+    async delete(path: string) {
+        try {
+            await fs.delete(path);
+        } catch (err) {
+            throw this.getFileNotFoundErrorIfNecessary(err, path);
+        }
     }
 
     /** @inheritdoc */
     deleteSync(path: string) {
         try {
-            this.fs.unlinkSync(path);
+            fs.deleteSync(path);
         } catch (err) {
             throw this.getFileNotFoundErrorIfNecessary(err, path);
         }
@@ -35,28 +28,25 @@ export class RealFileSystemHost implements FileSystemHost {
     /** @inheritdoc */
     readDirSync(dirPath: string) {
         try {
-            return this.fs.readdirSync(dirPath).map(name => FileUtils.pathJoin(dirPath, name));
+            return fs.readDirSync(dirPath).map(name => FileUtils.pathJoin(dirPath, name));
         } catch (err) {
             throw this.getDirectoryNotFoundErrorIfNecessary(err, dirPath);
         }
     }
 
     /** @inheritdoc */
-    readFile(filePath: string, encoding = "utf-8") {
-        return new Promise<string>((resolve, reject) => {
-            this.fs.readFile(filePath, encoding, (err, data) => {
-                if (err)
-                    reject(this.getFileNotFoundErrorIfNecessary(err, filePath));
-                else
-                    resolve(data);
-            });
-        });
+    async readFile(filePath: string, encoding = "utf-8") {
+        try {
+            return await fs.readFile(filePath, encoding);
+        } catch (err) {
+            throw this.getFileNotFoundErrorIfNecessary(err, filePath);
+        }
     }
 
     /** @inheritdoc */
     readFileSync(filePath: string, encoding = "utf-8") {
         try {
-            return this.fs.readFileSync(filePath, encoding as "utf-8"); // todo: fix this...
+            return fs.readFileSync(filePath, encoding);
         } catch (err) {
             throw this.getFileNotFoundErrorIfNecessary(err, filePath);
         }
@@ -64,138 +54,87 @@ export class RealFileSystemHost implements FileSystemHost {
 
     /** @inheritdoc */
     async writeFile(filePath: string, fileText: string) {
-        await new Promise<void>((resolve, reject) => {
-            this.fs.writeFile(filePath, fileText, err => {
-                if (err)
-                    reject(err);
-                else
-                    resolve();
-            });
-        });
+        return fs.writeFile(filePath, fileText);
     }
 
     /** @inheritdoc */
     writeFileSync(filePath: string, fileText: string) {
-        this.fs.writeFileSync(filePath, fileText);
+        fs.writeFileSync(filePath, fileText);
     }
 
     /** @inheritdoc */
-    async mkdir(dirPath: string) {
-        await this.mkdirp(dirPath);
+    mkdir(dirPath: string) {
+        return fs.mkdir(dirPath);
     }
 
     /** @inheritdoc */
     mkdirSync(dirPath: string) {
-        this.mkdirp.sync(dirPath);
+        fs.mkdirSync(dirPath);
     }
 
     /** @inheritdoc */
     move(srcPath: string, destPath: string) {
-        return new Promise<void>((resolve, reject) => {
-            this.fs.rename(srcPath, destPath, err => {
-                if (err)
-                    reject(err);
-                else
-                    resolve();
-            });
-        });
+        return fs.move(srcPath, destPath);
     }
 
     /** @inheritdoc */
     moveSync(srcPath: string, destPath: string) {
-        this.fs.renameSync(srcPath, destPath);
+        fs.moveSync(srcPath, destPath);
     }
 
     /** @inheritdoc */
     copy(srcPath: string, destPath: string) {
-        return new Promise<void>((resolve, reject) => {
-            // this overwrites by default
-            this.fs.copyFile(srcPath, destPath, err => {
-                if (err)
-                    reject(err);
-                else
-                    resolve();
-            });
-        });
+        return fs.copy(srcPath, destPath);
     }
 
     /** @inheritdoc */
     copySync(srcPath: string, destPath: string) {
-        this.fs.copyFileSync(srcPath, destPath);
+        fs.copySync(srcPath, destPath);
     }
 
     /** @inheritdoc */
     fileExists(filePath: string) {
-        return new Promise<boolean>(resolve => {
-            this.fs.stat(filePath, (err, stat) => {
-                if (err)
-                    resolve(false);
-                else
-                    resolve(stat.isFile());
-            });
-        });
+        return fs.fileExists(filePath);
     }
 
     /** @inheritdoc */
     fileExistsSync(filePath: string) {
-        try {
-            return this.fs.statSync(filePath).isFile();
-        } catch (err) {
-            return false;
-        }
+        return fs.fileExistsSync(filePath);
     }
 
     /** @inheritdoc */
     directoryExists(dirPath: string) {
-        return new Promise<boolean>(resolve => {
-            this.fs.stat(dirPath, (err, stat) => {
-                if (err)
-                    resolve(false);
-                else
-                    resolve(stat.isDirectory());
-            });
-        });
+        return fs.directoryExists(dirPath);
     }
 
     /** @inheritdoc */
     directoryExistsSync(dirPath: string) {
-        try {
-            return this.fs.statSync(dirPath).isDirectory();
-        } catch (err) {
-            return false;
-        }
+        return fs.directoryExistsSync(dirPath);
     }
 
     /** @inheritdoc */
     realpathSync(path: string) {
-        return this.fs.realpathSync(path);
+        return fs.realpathSync(path);
     }
 
     /** @inheritdoc */
     getCurrentDirectory(): string {
-        return FileUtils.standardizeSlashes(nodePath.resolve());
+        return FileUtils.standardizeSlashes(fs.getCurrentDirectory());
     }
 
     /** @inheritdoc */
     glob(patterns: ReadonlyArray<string>) {
-        return this.fastGlob(backSlashesToForward(patterns), {
-            cwd: this.getCurrentDirectory(),
-            absolute: true,
-        });
+        return fs.glob(backSlashesToForward(patterns));
     }
 
     /** @inheritdoc */
     globSync(patterns: ReadonlyArray<string>) {
-        return this.fastGlob.sync(backSlashesToForward(patterns), {
-            cwd: this.getCurrentDirectory(),
-            absolute: true,
-        });
+        return fs.globSync(backSlashesToForward(patterns));
     }
 
     /** @inheritdoc */
     isCaseSensitive() {
-        const platform = process.platform;
-        return platform !== "win32" && platform !== "darwin";
+        return fs.isCaseSensitive();
     }
 
     private getDirectoryNotFoundErrorIfNecessary(err: any, path: string) {

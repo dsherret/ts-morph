@@ -1,10 +1,11 @@
-import * as path from "path";
+import { runtime } from "../runtimes";
 import { ArrayUtils, StringUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 import { StandardizedFilePath } from "./StandardizedFilePath";
 import { TransactionalFileSystem } from "./TransactionalFileSystem";
 
-const isWindowsRootDirRegex = /^[A-Z]+:\/$/i;
+const isWindowsRootDirRegex = /^[a-z]+:[\\\/]$/i;
+const path = runtime.path;
 
 /** Utilities for working with files. */
 export class FileUtils {
@@ -45,7 +46,7 @@ export class FileUtils {
      * @param fileOrDirPath - File or directory path.
      */
     static pathIsAbsolute(fileOrDirPath: string) {
-        return path.isAbsolute(fileOrDirPath);
+        return isAbsolutePath(fileOrDirPath);
     }
 
     /**
@@ -58,8 +59,7 @@ export class FileUtils {
         return FileUtils.standardizeSlashes(path.normalize(getAbsolutePath())) as StandardizedFilePath;
 
         function getAbsolutePath() {
-            const isAbsolutePath = path.isAbsolute(fileOrDirPath);
-            if (isAbsolutePath)
+            if (isAbsolutePath(fileOrDirPath))
                 return fileOrDirPath;
             if (!fileOrDirPath.startsWith("./") && relativeBase != null)
                 return path.join(relativeBase, fileOrDirPath);
@@ -316,8 +316,9 @@ function isAbsolutePath(filePath: string) {
     return filePath.startsWith("/") || isWindowsAbsolutePath(filePath);
 }
 
+const isWindowsAbsolutePathRegex = /^[a-z]+:[\\\/]/i;
 function isWindowsAbsolutePath(filePath: string) {
-    return isWindowsRootDirRegex.test(filePath) || isAzureAbsolutePath(filePath) || isUncPath(filePath);
+    return isWindowsAbsolutePathRegex.test(filePath) || isAzureAbsolutePath(filePath) || isUncPath(filePath);
 }
 
 function isAzureAbsolutePath(filePath: string) {

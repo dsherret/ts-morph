@@ -688,9 +688,6 @@ export declare function matchGlobs(paths: ReadonlyArray<string>, patterns: Reado
 
 /** An implementation of a file host that interacts with the actual file system. */
 export declare class RealFileSystemHost implements FileSystemHost {
-    private fs;
-    private fastGlob;
-    private mkdirp;
     /** @inheritdoc */
     delete(path: string): Promise<void>;
     /** @inheritdoc */
