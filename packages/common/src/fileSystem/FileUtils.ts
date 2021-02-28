@@ -1,5 +1,4 @@
 import toAbsoluteGlob from "@dsherret/to-absolute-glob";
-import isNegatedGlob from "is-negated-glob";
 import * as path from "path";
 import { ArrayUtils, StringUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
@@ -271,6 +270,7 @@ export class FileUtils {
      * @param glob - Glob.
      */
     static isNegatedGlob(glob: string) {
-        return isNegatedGlob(glob).negated;
+        // https://github.com/micromatch/is-negated-glob/blob/master/index.js
+        return glob[0] === "!" && glob[1] !== "(";
     }
 }

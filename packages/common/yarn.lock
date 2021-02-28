@@ -79,10 +79,6 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
-"@types/is-negated-glob@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@types/is-negated-glob/-/is-negated-glob-1.0.0.tgz#ffa7a2d5200609b6fb28dba41896d70071176e8b"
-
 "@types/minimatch@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
