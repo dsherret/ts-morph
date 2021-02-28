@@ -1,4 +1,3 @@
-import toAbsoluteGlob from "@dsherret/to-absolute-glob";
 import * as path from "path";
 import { ArrayUtils, StringUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
@@ -262,7 +261,33 @@ export class FileUtils {
      * @param cwd - Current working directory.
      */
     static toAbsoluteGlob(glob: string, cwd: string) {
-        return toAbsoluteGlob(glob, { cwd });
+        // adapted from https://github.com/micromatch/to-absolute-glob
+        // trim starting ./ from glob patterns
+        if (glob.slice(0, 2) === "./")
+            glob = glob.slice(2);
+
+        // when the glob pattern is only a . use an empty string
+        if (glob.length === 1 && glob === ".")
+            glob = "";
+
+        // store last character before glob is modified
+        const suffix = glob.slice(-1);
+
+        // check to see if glob is negated (and not a leading negated-extglob)
+        const isNegated = FileUtils.isNegatedGlob(glob);
+        if (isNegated)
+            glob = glob.slice(1); // remove the leading "!"
+
+        // make glob absolute
+        if (!isAbsolutePath(glob) || glob.slice(0, 1) === "\\")
+            glob = globJoin(cwd, glob);
+
+        // if glob had a trailing `/`, re-add it now in case it was removed
+        if (suffix === "/" && glob.slice(-1) !== "/")
+            glob += "/";
+
+        // re-add leading `!` if it was removed
+        return isNegated ? "!" + glob : glob;
     }
 
     /**
@@ -273,4 +298,35 @@ export class FileUtils {
         // https://github.com/micromatch/is-negated-glob/blob/master/index.js
         return glob[0] === "!" && glob[1] !== "(";
     }
+}
+
+function globJoin(dir: string, glob: string) {
+    // from https://github.com/micromatch/to-absolute-glob
+    if (dir.charAt(dir.length - 1) === "/")
+        dir = dir.slice(0, -1);
+    if (glob.charAt(0) === "/")
+        glob = glob.slice(1);
+    if (!glob)
+        return dir;
+    return dir + "/" + glob;
+}
+
+// Code adapted from https://github.com/jonschlinkert/is-absolute/blob/master/index.js
+function isAbsolutePath(filePath: string) {
+    return filePath.startsWith("/") || isWindowsAbsolutePath(filePath);
+}
+
+function isWindowsAbsolutePath(filePath: string) {
+    return isWindowsRootDirRegex.test(filePath) || isAzureAbsolutePath(filePath) || isUncPath(filePath);
+}
+
+function isAzureAbsolutePath(filePath: string) {
+    // Microsoft Azure absolute filepath apparently
+    return filePath.startsWith("\\\\");
+}
+
+// https://github.com/regexhq/unc-path-regex/blob/master/index.js
+const uncPathRegex = /^[\\\/]{2,}[^\\\/]+[\\\/]+[^\\\/]+/;
+function isUncPath(filePath: string) {
+    return uncPathRegex.test(filePath);
 }

@@ -17,7 +17,6 @@
     "rollup": "rollup --config && ts-node scripts/bundleLocalTs.ts"
   },
   "dependencies": {
-    "@dsherret/to-absolute-glob": "^2.0.2",
     "fast-glob": "^3.2.5",
     "mkdirp": "^1.0.4",
     "multimatch": "^5.0.0"
