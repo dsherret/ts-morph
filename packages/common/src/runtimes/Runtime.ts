@@ -3,6 +3,7 @@ export interface Runtime {
     path: RuntimePath;
 
     getEnvVar(name: string): string | undefined;
+    getPathMatchesPattern(path: string, pattern: string): boolean;
 }
 
 export interface RuntimeFileSystem {
@@ -60,10 +61,6 @@ export interface RuntimePath {
     join(...paths: string[]): string;
     /** Normalizes the provided path. */
     normalize(path: string): string;
-    /** Returns the directory name of a path. */
-    dirname(path: string): string;
-    /** Returns the last portion of the path. */
-    basename(path: string): string;
     /** Returns the relative path from `from` to `to`. */
     relative(from: string, to: string): string;
 }

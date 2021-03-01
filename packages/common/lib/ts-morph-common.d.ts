@@ -612,7 +612,7 @@ export declare class FileUtils {
      * Gets if the path is for the root directory.
      * @param path - Path.
      */
-    static isRootDirPath(dirOrFilePath: StandardizedFilePath): boolean;
+    static isRootDirPath(dirOrFilePath: string): boolean;
     /**
      * Gets the descendant directories of the specified directory.
      * @param dirPath - Directory path.
@@ -684,7 +684,7 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
 }
 
 /** Checks the specified file paths to see if the match any of the specified patterns. */
-export declare function matchGlobs(paths: ReadonlyArray<string>, patterns: ReadonlyArray<string> | string, cwd: string): string[];
+export declare function matchGlobs(paths: ReadonlyArray<string>, patterns: string | ReadonlyArray<string>, cwd: string): string[];
 
 /** An implementation of a file host that interacts with the actual file system. */
 export declare class RealFileSystemHost implements FileSystemHost {

@@ -72,7 +72,13 @@ export class FileUtils {
      * @param fileOrDirPath - Path to get the directory name from.
      */
     static getDirPath<T extends string>(fileOrDirPath: T): T {
-        return FileUtils.standardizeSlashes(path.dirname(fileOrDirPath)) as T;
+        fileOrDirPath = FileUtils.standardizeSlashes(fileOrDirPath);
+
+        const lastIndexOfSlash = fileOrDirPath.lastIndexOf("/");
+        if (lastIndexOfSlash === -1)
+            return "." as T;
+
+        return FileUtils.standardizeSlashes(fileOrDirPath.substring(0, lastIndexOfSlash + 1) as T);
     }
 
     /**
@@ -80,7 +86,9 @@ export class FileUtils {
      * @param fileOrDirPath - Path to get the base name from.
      */
     static getBaseName(fileOrDirPath: StandardizedFilePath) {
-        return path.basename(fileOrDirPath);
+        const lastIndexOfSlash = fileOrDirPath.lastIndexOf("/");
+        // when -1 this will be 0
+        return fileOrDirPath.substring(lastIndexOfSlash + 1);
     }
 
     /**
@@ -107,7 +115,8 @@ export class FileUtils {
      */
     static standardizeSlashes<T extends string>(fileOrDirPath: T): T {
         let result = fileOrDirPath.replace(this.standardizeSlashesRegex, "/");
-        if (result !== "/" && !isWindowsRootDirRegex.test(result) && result.endsWith("/"))
+        // remove the last slash
+        if (!FileUtils.isRootDirPath(result) && result.endsWith("/"))
             result = result.substring(0, result.length - 1);
         return result as T;
     }
@@ -229,16 +238,16 @@ export class FileUtils {
      * @param absolutePathTo - Absolute path to.
      */
     static getRelativePathTo(absoluteDirPathFrom: StandardizedFilePath, absolutePathTo: StandardizedFilePath) {
-        const relativePath = path.relative(absoluteDirPathFrom, path.dirname(absolutePathTo));
-        return FileUtils.standardizeSlashes(path.join(relativePath, path.basename(absolutePathTo))) as StandardizedFilePath;
+        const relativePath = path.relative(absoluteDirPathFrom, FileUtils.getDirPath(absolutePathTo));
+        return FileUtils.standardizeSlashes(path.join(relativePath, FileUtils.getBaseName(absolutePathTo))) as StandardizedFilePath;
     }
 
     /**
      * Gets if the path is for the root directory.
      * @param path - Path.
      */
-    static isRootDirPath(dirOrFilePath: StandardizedFilePath) {
-        return dirOrFilePath === FileUtils.getDirPath(dirOrFilePath);
+    static isRootDirPath(dirOrFilePath: string) {
+        return dirOrFilePath === "/" || isWindowsRootDirRegex.test(dirOrFilePath);
     }
 
     /**

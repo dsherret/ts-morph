@@ -19,14 +19,14 @@
   "dependencies": {
     "fast-glob": "^3.2.5",
     "mkdirp": "^1.0.4",
-    "multimatch": "^5.0.0"
+    "minimatch": "^3.0.4"
   },
   "devDependencies": {
     "@ts-morph/scripts": "~0.2.0",
     "@types/chai": "^4.2.14",
     "@types/mkdirp": "^1.0.1",
     "@types/mocha": "^8.2.0",
-    "@types/multimatch": "^4.0.0",
+    "@types/minimatch": "^3.0.3",
     "@types/node": "^14.14.22",
     "@types/ts-nameof": "^4.2.1",
     "chai": "^4.2.0",

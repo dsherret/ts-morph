@@ -1,11 +1,17 @@
 import { Runtime, RuntimeFileSystem, RuntimePath } from "./Runtime";
 
 export class NodeRuntime implements Runtime {
+    private readonly minimatch: typeof import("minimatch") = require("minimatch");
+
     fs = new NodeRuntimeFileSystem();
     path = new NodeRuntimePath();
 
     getEnvVar(name: string) {
         return process.env[name];
+    }
+
+    getPathMatchesPattern(path: string, pattern: string) {
+        return this.minimatch(path, pattern);
     }
 }
 
@@ -18,14 +24,6 @@ class NodeRuntimePath implements RuntimePath {
 
     normalize(path: string) {
         return this.path.normalize(path);
-    }
-
-    dirname(path: string) {
-        return this.path.dirname(path);
-    }
-
-    basename(path: string) {
-        return this.path.basename(path);
     }
 
     relative(from: string, to: string) {
