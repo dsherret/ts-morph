@@ -3,6 +3,7 @@ export interface Runtime {
     path: RuntimePath;
 
     getEnvVar(name: string): string | undefined;
+    getEndOfLine(): string;
     getPathMatchesPattern(path: string, pattern: string): boolean;
 }
 

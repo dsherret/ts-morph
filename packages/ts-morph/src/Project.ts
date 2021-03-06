@@ -1,5 +1,5 @@
 import { CompilerOptions, CompilerOptionsContainer, errors, FileSystemHost, FileUtils, InMemoryFileSystemHost, IterableUtils, matchGlobs, RealFileSystemHost,
-    ResolutionHostFactory, ScriptKind, StandardizedFilePath, TransactionalFileSystem, ts, TsConfigResolver } from "@ts-morph/common";
+    ResolutionHostFactory, runtime, ScriptKind, StandardizedFilePath, TransactionalFileSystem, ts, TsConfigResolver } from "@ts-morph/common";
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import { Directory, DirectoryAddOptions } from "./fileSystem";
@@ -662,7 +662,7 @@ export class Project {
         return ts.formatDiagnosticsWithColorAndContext(diagnostics.map(d => d.compilerObject), {
             getCurrentDirectory: () => this._context.fileSystemWrapper.getCurrentDirectory(),
             getCanonicalFileName: fileName => fileName,
-            getNewLine: () => opts.newLineChar ?? require("os").EOL,
+            getNewLine: () => opts.newLineChar ?? runtime.getEndOfLine(),
         });
     }
 

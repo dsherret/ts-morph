@@ -1,8 +1,9 @@
+import * as libFiles from "./data/libFiles";
 import { StandardizedFilePath } from "./fileSystem";
 
-/** Loads the lib files that are stored in a separate module. */
+/** Gets the lib files. */
 export function getLibFiles() {
-    const libFiles: typeof import("./data/libFiles") = require("./data/libFiles");
+    // these were previously stored in a different module
     return libFiles.libFiles;
 }
 

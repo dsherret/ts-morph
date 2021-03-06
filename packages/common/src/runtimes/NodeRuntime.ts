@@ -10,6 +10,10 @@ export class NodeRuntime implements Runtime {
         return process.env[name];
     }
 
+    getEndOfLine() {
+        return require("os").EOL;
+    }
+
     getPathMatchesPattern(path: string, pattern: string) {
         return this.minimatch(path, pattern);
     }

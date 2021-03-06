@@ -31,7 +31,15 @@ for (const [name, declarations] of emitMainFile.getExportedDeclarations()) {
             if (writer.getLength() > 0)
                 writer.newLine();
 
-            writer.writeLine(declaration.getText(true));
+            if (tsMorph.Node.isVariableDeclaration(declaration)) {
+                const statement = declaration.getVariableStatementOrThrow();
+                if (statement.getDeclarations().length !== 1)
+                    throw new Error("Only var decls in a statement with a single decl are supported.");
+                writer.writeLine(statement.getText(true));
+            }
+            else {
+                writer.writeLine(declaration.getText(true));
+            }
         }
     }
 }

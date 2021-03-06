@@ -1,5 +1,5 @@
 import { CompilerOptionsContainer, createHosts, createModuleResolutionHost, errors, FileSystemHost, FileUtils, InMemoryFileSystemHost, Memoize,
-    RealFileSystemHost, ResolutionHostFactory, StandardizedFilePath, TransactionalFileSystem, ts, TsConfigResolver } from "@ts-morph/common";
+    RealFileSystemHost, ResolutionHostFactory, runtime, StandardizedFilePath, TransactionalFileSystem, ts, TsConfigResolver } from "@ts-morph/common";
 import { SourceFileCache } from "./SourceFileCache";
 
 /** Options for creating a project. */
@@ -557,7 +557,7 @@ export class Project {
         return ts.formatDiagnosticsWithColorAndContext(diagnostics, {
             getCurrentDirectory: () => this._fileSystemWrapper.getCurrentDirectory(),
             getCanonicalFileName: fileName => fileName,
-            getNewLine: () => opts.newLineChar || require("os").EOL,
+            getNewLine: () => opts.newLineChar || runtime.getEndOfLine(),
         });
     }
 
