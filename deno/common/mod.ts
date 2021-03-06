@@ -1,2 +1,2 @@
-/// <deno-types path="./ts-morph-common.d.ts" />
-export * from "./ts-morph-common.js";
+/// <deno-types path="./ts_morph_common.d.ts" />
+export * from "./ts_morph_common.js";

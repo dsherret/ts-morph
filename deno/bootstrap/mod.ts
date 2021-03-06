@@ -1,2 +1,2 @@
-/// <deno-types path="./ts-morph-bootstrap.d.ts" />
-export * from "./ts-morph-bootstrap.js";
+/// <deno-types path="./ts_morph_bootstrap.d.ts" />
+export * from "./ts_morph_bootstrap.js";

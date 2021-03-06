@@ -6,12 +6,12 @@ const fileSystem = project.getFileSystem();
 const destPath = "../../deno/bootstrap";
 
 fileSystem.mkdirSync(destPath);
-fileSystem.copySync("./dist-deno/ts-morph-bootstrap.js", `${destPath}/ts-morph-bootstrap.js`);
-fileSystem.copySync("./lib/ts-morph-bootstrap.d.ts", `${destPath}/ts-morph-bootstrap.d.ts`);
-fileSystem.writeFileSync(`${destPath}/mod.ts`, `/// <deno-types path="./ts-morph-bootstrap.d.ts" />\nexport * from "./ts-morph-bootstrap.js";\n`);
+fileSystem.copySync("./dist-deno/ts-morph-bootstrap.js", `${destPath}/ts_morph_bootstrap.js`);
+fileSystem.copySync("./lib/ts-morph-bootstrap.d.ts", `${destPath}/ts_morph_bootstrap.d.ts`);
+fileSystem.writeFileSync(`${destPath}/mod.ts`, `/// <deno-types path="./ts_morph_bootstrap.d.ts" />\nexport * from "./ts_morph_bootstrap.js";\n`);
 
-updateCommonImportsExports(project.addSourceFileAtPath(`${destPath}/ts-morph-bootstrap.js`)).saveSync();
-updateCommonImportsExports(project.addSourceFileAtPath(`${destPath}/ts-morph-bootstrap.d.ts`)).saveSync();
+updateCommonImportsExports(project.addSourceFileAtPath(`${destPath}/ts_morph_bootstrap.js`)).saveSync();
+updateCommonImportsExports(project.addSourceFileAtPath(`${destPath}/ts_morph_bootstrap.d.ts`)).saveSync();
 
 function updateCommonImportsExports(file: tsMorph.SourceFile) {
     for (const statement of file.getStatements()) {

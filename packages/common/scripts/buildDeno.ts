@@ -36,17 +36,17 @@ commonFile.saveSync();
 const copyDirPath = "../../deno/common/";
 fileSystem.mkdirSync(copyDirPath);
 fileSystem.mkdirSync(`${copyDirPath}/data`);
-fileSystem.copySync(`${folderPath}/ts-morph-common.js`, `${copyDirPath}/ts-morph-common.js`);
+fileSystem.copySync(`${folderPath}/ts-morph-common.js`, `${copyDirPath}/ts_morph_common.js`);
 fileSystem.copySync(`${folderPath}/DenoRuntime.ts`, `${copyDirPath}/DenoRuntime.ts`);
 fileSystem.copySync(`${folderPath}/data/libFiles.js`, `${copyDirPath}/data/libFiles.js`);
 
 const typeScriptSourceFile = fileSystem.readFileSync("node_modules/typescript/lib/typescript.js");
 fileSystem.writeFileSync(`${copyDirPath}/typescript.js`, typeScriptSourceFile + "\nexport { ts };\n");
 fileSystem.copySync("node_modules/typescript/lib/typescript.d.ts", `${copyDirPath}/typescript.d.ts`);
-fileSystem.copySync(`./lib/ts-morph-common.d.ts`, `${copyDirPath}/ts-morph-common.d.ts`);
-fileSystem.writeFileSync(`${copyDirPath}/mod.ts`, `/// <deno-types path="./ts-morph-common.d.ts" />\nexport * from "./ts-morph-common.js";\n`);
+fileSystem.copySync(`./lib/ts-morph-common.d.ts`, `${copyDirPath}/ts_morph_common.d.ts`);
+fileSystem.writeFileSync(`${copyDirPath}/mod.ts`, `/// <deno-types path="./ts_morph_common.d.ts" />\nexport * from "./ts_morph_common.js";\n`);
 
-const finalDeclFile = project.addSourceFileAtPath(`${copyDirPath}/ts-morph-common.d.ts`);
+const finalDeclFile = project.addSourceFileAtPath(`${copyDirPath}/ts_morph_common.d.ts`);
 updateTypeScriptImportsExports(finalDeclFile);
 finalDeclFile.saveSync();
 
