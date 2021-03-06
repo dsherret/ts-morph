@@ -1,5 +1,5 @@
 /// <deno-types path="./typescript.d.ts" />
-import * as ts from "./typescript.js";
+import { ts } from "./typescript.js";
 
 export interface CompilerOptionsFromTsConfigOptions {
     encoding?: string;

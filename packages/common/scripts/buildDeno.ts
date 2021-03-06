@@ -51,7 +51,7 @@ updateTypeScriptImportsExports(finalDeclFile);
 finalDeclFile.saveSync();
 
 function updateTypeScriptImportsExports(file: tsMorph.SourceFile) {
-    const importedNames = new Set<string>();
+    const localNames = new Set<string>();
     for (const statement of file.getStatements()) {
         if (!Node.isExportDeclaration(statement) && !Node.isImportDeclaration(statement))
             continue;
@@ -59,6 +59,7 @@ function updateTypeScriptImportsExports(file: tsMorph.SourceFile) {
         if (moduleSpecifierValue === "typescript" || moduleSpecifierValue === "./typescript") {
             statement.setModuleSpecifier("./typescript.js");
 
+            // support ES modules
             if (Node.isImportDeclaration(statement)) {
                 if (statement.getNamespaceImport() != null) {
                     // move this to the top
@@ -67,37 +68,40 @@ function updateTypeScriptImportsExports(file: tsMorph.SourceFile) {
                     continue;
                 }
 
+                // inline the named imports
                 const namedImports = statement.getNamedImports();
-                if (namedImports.length > 0) {
-                    // replace the named imports with variable declarations
-                    file.insertStatements(statement.getChildIndex(), writer => {
-                        for (const namedImport of namedImports) {
-                            const importedName = namedImport.getAliasNode()?.getText() ?? namedImport.getName();
-                            if (!importedNames.has(importedName)) {
-                                importedNames.add(importedName);
-                                writer.writeLine(`const ${importedName} = ts.${namedImport.getName()};`);
-                            }
-                        }
-                    });
-                    statement.remove();
-                }
-                else {
-                    file.insertStatements(statement.getChildIndex(), `/// <deno-types path="./typescript.d.ts" />`);
-                }
+                // replace the named imports with variable declarations
+                file.insertStatements(statement.getChildIndex(), writer => {
+                    for (const namedImport of namedImports) {
+                        writeImportAsVarStmt(writer, {
+                            localName: namedImport.getAliasNode()?.getText() ?? namedImport.getName(),
+                            name: namedImport.getName(),
+                        });
+                    }
+                });
+                statement.remove();
             }
             else {
+                // make the export declaration have some leading variable declarations, then remove the module specifier
                 const namedExports = statement.getNamedExports();
                 file.insertStatements(statement.getChildIndex(), writer => {
                     for (const namedExport of namedExports) {
-                        const importedName = namedExport.getName();
-                        if (!importedNames.has(importedName)) {
-                            importedNames.add(importedName);
-                            writer.writeLine(`const ${importedName} = ts.${namedExport.getName()};`);
-                        }
+                        writeImportAsVarStmt(writer, {
+                            localName: namedExport.getName(),
+                            name: namedExport.getName(),
+                        });
                     }
                 });
                 statement.removeModuleSpecifier();
             }
         }
+    }
+
+    function writeImportAsVarStmt(writer: tsMorph.CodeBlockWriter, importDecl: { localName: string; name: string; }) {
+        if (localNames.has(importDecl.localName))
+            return;
+
+        localNames.add(importDecl.localName);
+        writer.writeLine(`const ${importDecl.localName} = ts.${importDecl.name};`);
     }
 }
