@@ -818,7 +818,7 @@ export declare class TransactionalFileSystem {
     private removeMkDirOperationsForDir;
 }
 
-/** Gets the lib files. */
+/** Loads the lib files that are stored in a separate module. */
 export declare function getLibFiles(): {
     fileName: string;
     text: string;

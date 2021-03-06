@@ -2,12 +2,10 @@
 import * as stdFs from "https://deno.land/std@0.89.0/fs/mod.ts";
 // @ts-ignore
 import * as stdPath from "https://deno.land/std@0.89.0/path/mod.ts";
-// @ts-ignore
-import { Runtime, RuntimeFileSystem, RuntimePath } from "./Runtime.ts";
 
 declare var Deno: any;
 
-export class DenoRuntime implements Runtime {
+export class DenoRuntime {
     fs = new DenoRuntimeFileSystem();
     path = new DenoRuntimePath();
 
@@ -16,7 +14,7 @@ export class DenoRuntime implements Runtime {
     }
 
     getEndOfLine() {
-        return Deno.build.os === "win" ? "\r\n" : "\n";
+        return Deno.build.os === "windows" ? "\r\n" : "\n";
     }
 
     getPathMatchesPattern(path: string, pattern: string) {
@@ -28,7 +26,7 @@ export class DenoRuntime implements Runtime {
     }
 }
 
-class DenoRuntimePath implements RuntimePath {
+class DenoRuntimePath {
     join(...paths: string[]) {
         return stdPath.join(...paths);
     }
@@ -42,7 +40,7 @@ class DenoRuntimePath implements RuntimePath {
     }
 }
 
-class DenoRuntimeFileSystem implements RuntimeFileSystem {
+class DenoRuntimeFileSystem {
     delete(path: string) {
         return Deno.remove(path);
     }
@@ -53,7 +51,7 @@ class DenoRuntimeFileSystem implements RuntimeFileSystem {
 
     readDirSync(dirPath: string) {
         // @ts-ignore
-        return Deno.readDirSync(dirPath).map(entry => entry.name);
+        return Array.from(Deno.readDirSync(dirPath)).map(entry => entry.name);
     }
 
     readFile(filePath: string, _encoding = "utf-8") {
@@ -141,7 +139,7 @@ class DenoRuntimeFileSystem implements RuntimeFileSystem {
     glob(patterns: ReadonlyArray<string>) {
         const { excludePatterns, pattern } = globPatternsToPattern(patterns);
         return stdFs.expandGlob(pattern, {
-            cwd: this.getCurrentDirectory(),
+            root: this.getCurrentDirectory(),
             extended: true,
             globstar: true,
             exclude: excludePatterns,
@@ -160,7 +158,7 @@ class DenoRuntimeFileSystem implements RuntimeFileSystem {
 
     isCaseSensitive() {
         const platform = Deno.build.os;
-        return platform !== "win" && platform !== "darwin";
+        return platform !== "windows" && platform !== "darwin";
     }
 }
 

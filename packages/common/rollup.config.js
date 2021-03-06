@@ -1,11 +1,14 @@
 import typescript from "rollup-plugin-typescript2";
+const isDeno = process.env.BUILD === "deno";
+const outputFolder = isDeno ? "./dist-deno" : "./dist";
+const moduleKind = isDeno ? "es" : "cjs";
 
 export default [{
     input: ["./src/index.ts"],
     external: [],
     output: {
-        file: "./dist/ts-morph-common.js",
-        format: "cjs",
+        file: outputFolder + "/ts-morph-common.js",
+        format: moduleKind,
     },
     plugins: [
         typescript({
@@ -16,8 +19,8 @@ export default [{
 }, {
     input: ["./src/data/libFiles.ts"],
     output: {
-        file: "./dist/data/libFiles.js",
-        format: "cjs",
+        file: outputFolder + "/data/libFiles.js",
+        format: moduleKind,
     },
     plugins: [
         typescript({

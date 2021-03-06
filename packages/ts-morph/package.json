@@ -6,7 +6,9 @@
   "typings": "lib/ts-morph.d.ts",
   "scripts": {
     "dopublish": "yarn type-check-docs && yarn package && yarn publish-code-verification && echo \"Run: npm publish --otp\"",
-    "build": "rimraf dist && rollup --config && yarn build:declarations",
+    "build": "yarn build:declarations && yarn build:deno && yarn build:node",
+    "build:node": "rimraf dist && rollup -c ",
+    "build:deno": "rimraf dist-deno && rollup -c --environment BUILD:deno && ts-node scripts/buildDeno.ts",
     "build:declarations": "ts-node --transpile-only scripts/generation/main create-declaration-file",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha",
     "test:debug": "yarn test --inspect-brk",

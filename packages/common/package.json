@@ -8,13 +8,15 @@
   "repository": "git+https://github.com/dsherret/ts-morph.git",
   "typings": "lib/ts-morph-common.d.ts",
   "scripts": {
-    "build": "rimraf dist && yarn createLibFile && yarn rollup && yarn build:declarations",
+    "build": "yarn build:declarations && yarn build:node && yarn build:deno",
+    "build:node": "rimraf dist && yarn createLibFile && yarn rollup && ts-node scripts/bundleLocalTs.ts",
+    "build:deno": "rimraf ../../deno/common && rimraf dist-deno && yarn rollup --environment BUILD:deno && yarn build:declarations && ts-node scripts/buildDeno.ts",
     "build:declarations": "ts-node --compiler ttypescript --project scripts/tsconfig.json --transpile-only scripts/buildDeclarations.ts",
     "createLibFile": "ts-node scripts/createLibFile.ts",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha",
     "test:ci": "yarn test",
     "test:debug": "yarn test --inspect-brk",
-    "rollup": "rollup --config && ts-node scripts/bundleLocalTs.ts"
+    "rollup": "rollup --config"
   },
   "dependencies": {
     "fast-glob": "^3.2.5",

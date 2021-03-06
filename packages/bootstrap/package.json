@@ -9,13 +9,15 @@
   "license": "MIT",
   "repository": "git+https://github.com/dsherret/ts-morph.git",
   "scripts": {
-    "build": "rimraf dist && yarn rollup && yarn build:declarations",
+    "build": "yarn build:declarations && yarn build:node && yarn build:deno",
+    "build:node": "rimraf dist && yarn rollup",
+    "build:deno": "rimraf dist-deno && yarn rollup --environment BUILD:deno && ts-node scripts/buildDeno.ts",
     "build:declarations": "ts-node --compiler ttypescript --project scripts/tsconfig.json --transpile-only scripts/buildDeclarations.ts",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha",
     "test:ci": "yarn test",
     "test:debug": "yarn test --inspect-brk",
     "test:ts-versions": "ts-node --transpile-only scripts/test/testTypeScriptVersions",
-    "rollup": "rollup --config"
+    "rollup": "rollup -c"
   },
   "dependencies": {
     "@ts-morph/common": "~0.8.1"
