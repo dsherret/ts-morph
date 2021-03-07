@@ -1,7 +1,7 @@
 import { libFiles } from "./data/libFiles.js";
 import { DenoRuntime } from "./DenoRuntime.ts";
 
-/// <deno-types path="./typescript.d.ts" />
+// @deno-types="./typescript.d.ts"
 import { ts } from "./typescript.js";
 const matchFiles$1 = ts.matchFiles;
 const getFileMatcherPatterns$1 = ts.getFileMatcherPatterns;
@@ -12,6 +12,7 @@ const ScriptTarget = ts.ScriptTarget;
 const ScriptSnapshot = ts.ScriptSnapshot;
 const getDefaultLibFileName = ts.getDefaultLibFileName;
 const ScriptKind = ts.ScriptKind;
+const resolveModuleName = ts.resolveModuleName;
 const parseJsonConfigFileContent = ts.parseJsonConfigFileContent;
 const parseConfigFileTextToJson = ts.parseConfigFileTextToJson;
 export { ts };
@@ -2310,6 +2311,29 @@ class DocumentRegistry {
 }
 DocumentRegistry.initialVersion = "0";
 
+const denoResolutionHostFactory = (moduleResolutionHost, getCompilerOptions) => {
+    return {
+        resolveModuleNames: (moduleNames, containingFile) => {
+            const compilerOptions = getCompilerOptions();
+            const resolvedModules = [];
+            for (const moduleName of moduleNames.map(removeTsExtension)) {
+                const result = resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
+                if (result.resolvedModule)
+                    resolvedModules.push(result.resolvedModule);
+            }
+            return resolvedModules;
+        },
+    };
+    function removeTsExtension(moduleName) {
+        if (moduleName.slice(-3).toLowerCase() === ".ts")
+            return moduleName.slice(0, -3);
+        return moduleName;
+    }
+};
+const ResolutionHosts = {
+    deno: denoResolutionHostFactory,
+};
+
 function Memoize(target, propertyName, descriptor) {
     if (descriptor.value != null)
         descriptor.value = getNewFunction(descriptor.value);
@@ -2519,4 +2543,4 @@ function getCompilerOptionsFromTsConfig(filePath, options = {}) {
     };
 }
 
-export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, runtime };
+export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, ResolutionHosts, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, runtime };

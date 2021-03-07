@@ -283,6 +283,11 @@ export interface ResolutionHost {
  */
 export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 
+/** Collection of reusable resolution hosts. */
+export declare const ResolutionHosts: {
+    deno: ResolutionHostFactory;
+};
+
 /**
  * A container of source files.
  */

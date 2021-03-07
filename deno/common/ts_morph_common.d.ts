@@ -1,5 +1,5 @@
-/// <deno-types path="./typescript.d.ts" />
-import { ts } from "./typescript.js";
+// @deno-types="./typescript.d.ts"
+import * as ts from "./typescript.js";
 
 export interface CompilerOptionsFromTsConfigOptions {
     encoding?: string;
@@ -283,6 +283,11 @@ export interface ResolutionHost {
  * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
  */
 export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
+
+/** Collection of reusable resolution hosts. */
+export declare const ResolutionHosts: {
+    deno: ResolutionHostFactory;
+};
 
 /**
  * A container of source files.
@@ -1061,20 +1066,7 @@ export declare class StringUtils {
         isInStringAtPos: (pos: number) => boolean;
     }): string;
 }
-const CompilerOptions = ts.CompilerOptions;
-const DiagnosticCategory = ts.DiagnosticCategory;
-const EditorSettings = ts.EditorSettings;
-const EmitHint = ts.EmitHint;
-const LanguageVariant = ts.LanguageVariant;
-const ModuleKind = ts.ModuleKind;
-const ModuleResolutionKind = ts.ModuleResolutionKind;
-const NewLineKind = ts.NewLineKind;
-const NodeFlags = ts.NodeFlags;
-const ObjectFlags = ts.ObjectFlags;
-const ScriptKind = ts.ScriptKind;
-const ScriptTarget = ts.ScriptTarget;
-const SymbolFlags = ts.SymbolFlags;
-const SyntaxKind = ts.SyntaxKind;
-const TypeFlags = ts.TypeFlags;
-const TypeFormatFlags = ts.TypeFormatFlags;
+// @deno-types="./typescript.d.ts"
+
+import { CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags } from "./typescript.js";
 export { ts, CompilerOptions, DiagnosticCategory, EditorSettings, EmitHint, LanguageVariant, ModuleKind, ModuleResolutionKind, NewLineKind, NodeFlags, ObjectFlags, ScriptKind, ScriptTarget, SymbolFlags, SyntaxKind, TypeFlags, TypeFormatFlags };

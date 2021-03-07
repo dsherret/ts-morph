@@ -44,10 +44,10 @@ const typeScriptSourceFile = fileSystem.readFileSync("node_modules/typescript/li
 fileSystem.writeFileSync(`${copyDirPath}/typescript.js`, typeScriptSourceFile + "\nexport { ts };\n");
 fileSystem.copySync("node_modules/typescript/lib/typescript.d.ts", `${copyDirPath}/typescript.d.ts`);
 fileSystem.copySync(`./lib/ts-morph-common.d.ts`, `${copyDirPath}/ts_morph_common.d.ts`);
-fileSystem.writeFileSync(`${copyDirPath}/mod.ts`, `/// <deno-types path="./ts_morph_common.d.ts" />\nexport * from "./ts_morph_common.js";\n`);
+fileSystem.writeFileSync(`${copyDirPath}/mod.ts`, `// @deno-types="./ts_morph_common.d.ts"\nexport * from "./ts_morph_common.js";\n`);
 
 const finalDeclFile = project.addSourceFileAtPath(`${copyDirPath}/ts_morph_common.d.ts`);
-updateTypeScriptImportsExports(finalDeclFile);
+updateOnlyModuleSpecifiers(finalDeclFile);
 finalDeclFile.saveSync();
 
 function updateTypeScriptImportsExports(file: tsMorph.SourceFile) {
@@ -63,7 +63,7 @@ function updateTypeScriptImportsExports(file: tsMorph.SourceFile) {
             if (Node.isImportDeclaration(statement)) {
                 if (statement.getNamespaceImport() != null) {
                     // move this to the top
-                    file.insertStatements(0, `/// <deno-types path="./typescript.d.ts" />\nimport { ts } from "./typescript.js";`);
+                    file.insertStatements(0, `// @deno-types="./typescript.d.ts"\nimport { ts } from "./typescript.js";`);
                     statement.remove();
                     continue;
                 }
@@ -103,5 +103,17 @@ function updateTypeScriptImportsExports(file: tsMorph.SourceFile) {
 
         localNames.add(importDecl.localName);
         writer.writeLine(`const ${importDecl.localName} = ts.${importDecl.name};`);
+    }
+}
+
+function updateOnlyModuleSpecifiers(file: tsMorph.SourceFile) {
+    for (const statement of file.getStatements()) {
+        if (!Node.isExportDeclaration(statement) && !Node.isImportDeclaration(statement))
+            continue;
+        const moduleSpecifierValue = statement.getModuleSpecifierValue();
+        if (moduleSpecifierValue === "typescript" || moduleSpecifierValue === "./typescript") {
+            statement.setModuleSpecifier("./typescript.js");
+            file.insertStatements(statement.getChildIndex(), `// @deno-types="./typescript.d.ts"`);
+        }
     }
 }

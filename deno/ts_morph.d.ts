@@ -127,6 +127,10 @@ export interface ResolutionHost {
  * @remarks The compiler options are retrieved via a function in order to get the project's current compiler options.
  */
 export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
+/** Collection of reusable resolution hosts. */
+export declare const ResolutionHosts: {
+        deno: ResolutionHostFactory;
+    };
 
 export declare abstract class SettingsContainer<T extends object> {
     protected _settings: T;

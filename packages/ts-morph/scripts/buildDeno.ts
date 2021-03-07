@@ -9,7 +9,7 @@ const codeBlockWriterVersion = getCodeBlockWriterVersion();
 fileSystem.mkdirSync(destPath);
 fileSystem.copySync("./dist-deno/ts-morph.js", `${destPath}/ts_morph.js`);
 fileSystem.copySync("./lib/ts-morph.d.ts", `${destPath}/ts_morph.d.ts`);
-fileSystem.writeFileSync(`${destPath}/mod.ts`, `/// <deno-types path="./ts_morph.d.ts" />\nexport * from "./ts_morph.js";\n`);
+fileSystem.writeFileSync(`${destPath}/mod.ts`, `// @deno-types="./ts_morph.d.ts"\nexport * from "./ts_morph.js";\n`);
 
 updateImportsExports(project.addSourceFileAtPath(`${destPath}/ts_morph.js`)).saveSync();
 updateImportsExports(project.addSourceFileAtPath(`${destPath}/ts_morph.d.ts`)).saveSync();
