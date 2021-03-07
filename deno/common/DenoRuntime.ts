@@ -1,6 +1,4 @@
-
 import * as stdFs from "https://deno.land/std@0.89.0/fs/mod.ts";
-
 import * as stdPath from "https://deno.land/std@0.89.0/path/mod.ts";
 
 export class DenoRuntime {
@@ -48,7 +46,6 @@ class DenoRuntimeFileSystem {
     }
 
     readDirSync(dirPath: string) {
-        
         return Array.from(Deno.readDirSync(dirPath)).map(entry => entry.name);
     }
 

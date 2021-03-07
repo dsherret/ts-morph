@@ -24,7 +24,7 @@ commonFile.getClassOrThrow("NodeRuntimeFileSystem").remove();
 
 const runtimeFileDestinationPath = `${folderPath}/DenoRuntime.ts`;
 const runtimeFullText = fileSystem.readFileSync("./src/runtimes/DenoRuntime.ts");
-fileSystem.writeFileSync(runtimeFileDestinationPath, runtimeFullText.replace(/\/\/ @ts\-ignore(\w|\n)*/g, ""));
+fileSystem.writeFileSync(runtimeFileDestinationPath, runtimeFullText.replace(/\/\/ @ts\-ignore(\s|(\r?\n))*/g, ""));
 const runtimeSourceFile = project.addSourceFileAtPath(runtimeFileDestinationPath);
 runtimeSourceFile.getVariableDeclarationOrThrow("Deno").remove();
 runtimeSourceFile.saveSync();
