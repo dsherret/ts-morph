@@ -131,24 +131,36 @@ class DenoRuntimeFileSystem {
         return Deno.cwd();
     }
 
-    glob(patterns: ReadonlyArray<string>) {
+    async glob(patterns: ReadonlyArray<string>) {
         const { excludePatterns, pattern } = globPatternsToPattern(patterns);
-        return stdFs.expandGlob(pattern, {
+        const result: string[] = [];
+        const globEntries = stdFs.expandGlob(pattern, {
             root: this.getCurrentDirectory(),
             extended: true,
             globstar: true,
             exclude: excludePatterns,
         });
+        for await (const globEntry of globEntries) {
+            if (globEntry.isFile)
+                result.push(globEntry.path);
+        }
+        return result;
     }
 
     globSync(patterns: ReadonlyArray<string>) {
         const { excludePatterns, pattern } = globPatternsToPattern(patterns);
-        return stdFs.expandGlobSync(pattern, {
+        const result: string[] = [];
+        const globEntries = stdFs.expandGlobSync(pattern, {
             root: this.getCurrentDirectory(),
             extended: true,
             globstar: true,
             exclude: excludePatterns,
         });
+        for (const globEntry of globEntries) {
+            if (globEntry.isFile)
+                result.push(globEntry.path);
+        }
+        return result;
     }
 
     isCaseSensitive() {
