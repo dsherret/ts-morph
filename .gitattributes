@@ -9,3 +9,6 @@
 
 *.jpg binary
 *.png binary
+
+# exclude deno.land build files from GitHub language stats
+deno/* linguist-vendored
