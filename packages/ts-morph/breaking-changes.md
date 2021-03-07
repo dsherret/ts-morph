@@ -10,7 +10,7 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 - `NamespaceDeclaration` and similar names are now called `ModuleDeclaration`. See [#924](https://github.com/dsherret/ts-morph/issues/924) for why this was done. In most cases you can just do a search for `Namespace` and replace with `Module` to do the upgrade. Note that this node now has an optional body as it should have had in the first place.
 - The `ExportedDeclarations` union type now properly includes `SourceFile`. It previously could have done that anyway and your code might not have handled it.
 
-### Lib types no longer existing for `useInMemoryFileSystemHost: true`
+### Lib types no longer existing for `useInMemoryFileSystem: true`
 
 Previously when using an in memory file system host, ts-morph had all the TypeScript "lib files"/"lib.d.ts files" at `/node_modules/TypeScript/lib`. This meant if you wrote the following code, it would give you the `Set<string>` type:
 
