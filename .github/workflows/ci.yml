@@ -19,8 +19,6 @@ jobs:
         yarn bootstrap
         yarn build
         npx lerna run ensure-no-project-compile-errors
-        echo Checking for git changes...
-        git diff --no-ext-diff --exit-code
     - name: Test
       run: |
         npx lerna run test:ci
