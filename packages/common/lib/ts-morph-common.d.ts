@@ -283,6 +283,11 @@ export interface ResolutionHost {
  */
 export declare type ResolutionHostFactory = (moduleResolutionHost: ts.ModuleResolutionHost, getCompilerOptions: () => ts.CompilerOptions) => ResolutionHost;
 
+/** Collection of reusable resolution hosts. */
+export declare const ResolutionHosts: {
+    deno: ResolutionHostFactory;
+};
+
 /**
  * A container of source files.
  */
@@ -818,7 +823,7 @@ export declare class TransactionalFileSystem {
     private removeMkDirOperationsForDir;
 }
 
-/** Gets the lib files. */
+/** Loads the lib files that are stored in a separate module. */
 export declare function getLibFiles(): {
     fileName: string;
     text: string;

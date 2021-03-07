@@ -11,6 +11,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "stripInternal": true,
+    "newLine": "lf",
     "importHelpers": false
   },
   "compileOnSave": false

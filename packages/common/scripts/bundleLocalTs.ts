@@ -1,8 +1,11 @@
-import { Node, Project } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
+const { Node, Project } = tsMorph;
 
 const project = new Project();
+const folderPath = "./dist";
+const fileSystem = project.getFileSystem();
 
-const commonFile = project.addSourceFileAtPath("./dist/ts-morph-common.js");
+const commonFile = project.addSourceFileAtPath(`${folderPath}/ts-morph-common.js`);
 
 for (const varDecl of commonFile.getVariableDeclarations()) {
     const initializer = varDecl.getInitializer();
@@ -16,5 +19,5 @@ for (const varDecl of commonFile.getVariableDeclarations()) {
 
 commonFile.saveSync();
 
-project.getFileSystem().copySync("node_modules/typescript/lib/typescript.js", "./dist/typescript.js");
-project.getFileSystem().copySync("node_modules/typescript/lib/typescript.d.ts", "./lib/typescript.d.ts");
+fileSystem.copySync("node_modules/typescript/lib/typescript.js", "./dist/typescript.js");
+fileSystem.copySync("node_modules/typescript/lib/typescript.d.ts", "./lib/typescript.d.ts");

@@ -12,6 +12,7 @@ jobs:
       with:
         node-version: '10'
         check-latest: true
+    - uses: bvm/gh-action@v1.0.1
     - name: Build
       run: |
         yarn install
@@ -22,6 +23,8 @@ jobs:
       run: |
         npx lerna run test:ci
         npx lerna run test:ts-versions
+    - name: Deno Test
+      run: deno test --allow-read --unstable deno
     - name: Code Verification
       run: |
         npx lerna run code-verification
