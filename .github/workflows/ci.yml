@@ -12,7 +12,7 @@ jobs:
       with:
         node-version: '10'
         check-latest: true
-    - uses: bvm/gh-action@v1.0.1
+    - uses: bvm/gh-action@v1.1.0
     - name: Build
       run: |
         yarn install
