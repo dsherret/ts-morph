@@ -2,16 +2,17 @@ import { Runtime, RuntimeFileSystem, RuntimePath } from "./Runtime";
 
 export class NodeRuntime implements Runtime {
     private readonly minimatch: typeof import("minimatch") = require("minimatch");
+    private readonly os: typeof import("os") = require("os");
 
     fs = new NodeRuntimeFileSystem();
     path = new NodeRuntimePath();
 
     getEnvVar(name: string) {
-        return process.env[name];
+        return process?.env[name];
     }
 
     getEndOfLine() {
-        return require("os").EOL;
+        return this.os.EOL;
     }
 
     getPathMatchesPattern(path: string, pattern: string) {
@@ -192,7 +193,7 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
     }
 
     isCaseSensitive() {
-        const platform = process.platform;
+        const platform = process?.platform;
         return platform !== "win32" && platform !== "darwin";
     }
 }

@@ -53,7 +53,7 @@ console.log(mySetDecl.getType().getText()); // any
 
 This is because, the `lib` compiler option must be specified, similar to when you use `tsc`:
 
-```ts
+```ts setup: let mySetDecl: Node;
 const project = new Project({
     useInMemoryFileSystem: true,
     compilerOptions: {
@@ -66,7 +66,7 @@ console.log(mySetDecl.getType().getText()); // Set<string>, good
 
 Or you may specify a target that will implicitly load in the lib files that you need:
 
-```ts
+```ts setup: let mySetDecl: Node;
 import { Project, ts } from "ts-morph";
 
 const project = new Project({

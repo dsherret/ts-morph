@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.0.2"></a>
+## [10.0.2](https://github.com/dsherret/ts-morph/compare/10.0.1...10.0.2) (2021-03-22)
+
+* Reduce dependencies.
+
+
+
 <a name="10.0.1"></a>
 ## [10.0.1](https://github.com/dsherret/ts-morph/compare/10.0.0...10.0.1) (2021-02-24)
 
