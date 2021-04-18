@@ -3251,6 +3251,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets if the node is a MappedTypeNode.
+     * @param node - Node to check.
+     */
+    static isMappedTypeNode(node: compiler.Node | undefined): node is compiler.MappedTypeNode {
+        return node?.getKind() === SyntaxKind.MappedType;
+    }
+
+    /**
      * Gets if the node is a MemberExpression.
      * @param node - Node to check.
      */
@@ -4099,6 +4107,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.InferType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
+            case SyntaxKind.MappedType:
             case SyntaxKind.NamedTupleMember:
             case SyntaxKind.ParenthesizedType:
             case SyntaxKind.TemplateLiteralType:

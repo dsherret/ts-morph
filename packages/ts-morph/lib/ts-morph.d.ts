@@ -4076,6 +4076,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isLiteralTypeNode(node: Node | undefined): node is LiteralTypeNode;
     /**
+     * Gets if the node is a MappedTypeNode.
+     * @param node - Node to check.
+     */
+    static isMappedTypeNode(node: Node | undefined): node is MappedTypeNode;
+    /**
      * Gets if the node is a MemberExpression.
      * @param node - Node to check.
      */
@@ -6291,6 +6296,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JsxText]: JsxText;
     [SyntaxKind.LabeledStatement]: LabeledStatement;
     [SyntaxKind.LiteralType]: LiteralTypeNode;
+    [SyntaxKind.MappedType]: MappedTypeNode;
     [SyntaxKind.MetaProperty]: MetaProperty;
     [SyntaxKind.MethodDeclaration]: MethodDeclaration;
     [SyntaxKind.MethodSignature]: MethodSignature;
@@ -8444,6 +8450,17 @@ export declare class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {
     getParent(): NodeParentType<ts.LiteralTypeNode>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.LiteralTypeNode>>;
+}
+
+export declare class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
+    /** Gets the mapped type node's type name if any. */
+    getNameTypeNode(): TypeNode | undefined;
+    /** Gets the mapped type node's type parameter if any. */
+    getTypeParameter(): TypeParameterDeclaration | undefined;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.MappedTypeNode>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.MappedTypeNode>>;
 }
 
 declare const NamedTupleMemberBase: Constructor<TypedNode> & Constructor<QuestionTokenableNode> & Constructor<DotDotDotTokenableNode> & Constructor<JSDocableNode> & Constructor<NamedNode> & typeof TypeNode;
