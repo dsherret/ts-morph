@@ -65,7 +65,7 @@ export class Project {
      * Initializes a new instance.
      * @param options - Optional options.
      */
-    constructor(options: ProjectOptions = {}) {
+    constructor(readonly options: ProjectOptions = {}) {
         verifyOptions();
 
         // setup file system
