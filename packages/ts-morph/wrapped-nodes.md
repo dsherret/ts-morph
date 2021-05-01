@@ -277,11 +277,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [LiteralTypeNode](src/compiler/ast/type/LiteralTypeNode.ts)
     * :heavy_check_mark: literal
 * [MappedTypeNode](src/compiler/ast/type/MappedTypeNode.ts)
-    * :x: readonlyToken
+    * :heavy_check_mark: readonlyToken
     * :heavy_check_mark: typeParameter
     * :heavy_check_mark: nameType
-    * :x: questionToken
-    * :x: type
+    * :heavy_check_mark: questionToken
+    * :heavy_check_mark: type
 * [MemberExpression](src/compiler/ast/expression/MemberExpression.ts)
 * [MetaProperty](src/compiler/ast/expression/MetaProperty.ts)
     * :heavy_check_mark: keywordToken

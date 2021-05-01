@@ -8453,10 +8453,24 @@ export declare class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {
 }
 
 export declare class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
-    /** Gets the mapped type node's type name if any. */
+    /** Gets the mapped type node's name type node if any. */
     getNameTypeNode(): TypeNode | undefined;
+    /** Gets the mapped type node's name type node or throws if it doesn't exist. */
+    getNameTypeNodeOrThrow(): TypeNode;
+    /** Gets the mapped type's readonly token. */
+    getReadonlyToken(): Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken> | undefined;
+    /** Gets the mapped type's readonly token or throws if not exist. */
+    getReadonlyTokenOrThrow(): Node<ts.ReadonlyKeyword> | Node<ts.PlusToken> | Node<ts.MinusToken>;
+    /** Gets the mapped type's question token. */
+    getQuestionToken(): Node<ts.QuestionToken> | Node<ts.PlusToken> | Node<ts.MinusToken> | undefined;
+    /** Gets the mapped type's question token or throws if not exist. */
+    getQuestionTokenOrThrow(): Node<ts.QuestionToken> | Node<ts.PlusToken> | Node<ts.MinusToken>;
     /** Gets the mapped type node's type parameter. */
     getTypeParameter(): TypeParameterDeclaration;
+    /** Gets the mapped type node's type node if it exists or returns undefined when not. */
+    getTypeNode(): TypeNode | undefined;
+    /** Gets the mapped type node's type node if it exists or throws when undefined. */
+    getTypeNodeOrThrow(): TypeNode;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.MappedTypeNode>;
     /** @inheritdoc **/

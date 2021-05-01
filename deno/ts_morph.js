@@ -14818,8 +14818,29 @@ class MappedTypeNode extends TypeNode {
     getNameTypeNode() {
         return this._getNodeFromCompilerNodeIfExists(this.compilerNode.nameType);
     }
+    getNameTypeNodeOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getNameTypeNode(), "Type did not exist.");
+    }
+    getReadonlyToken() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.readonlyToken);
+    }
+    getReadonlyTokenOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getReadonlyToken(), "Readonly token did not exist.");
+    }
+    getQuestionToken() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.questionToken);
+    }
+    getQuestionTokenOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getQuestionToken(), "Question token did not exist.");
+    }
     getTypeParameter() {
         return this._getNodeFromCompilerNode(this.compilerNode.typeParameter);
+    }
+    getTypeNode() {
+        return this._getNodeFromCompilerNodeIfExists(this.compilerNode.type);
+    }
+    getTypeNodeOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getTypeNode(), "Type did not exist, but was expected to exist.");
     }
 }
 
