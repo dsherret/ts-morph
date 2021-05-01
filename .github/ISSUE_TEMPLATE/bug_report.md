@@ -10,16 +10,14 @@ about: Create a report to help us improve
 
 Version: X.X.X
 
-<!-- A clear and concise description of what the bug is. -->
+<!-- A description of what the bug is. -->
 
 **To Reproduce**
 
-<!-- Clearly identify the problem and submit some reproduction code. Prune the reproduction code to remove needless details. State the actual behaviour. -->
+<!-- Identify the problem and submit some reproduction code. Prune the reproduction code to remove needless details. State the actual behaviour. -->
 
 ```ts
-import { Project, ts } from "ts-morph";
-
-console.log(ts.version); // x.x.x <-- provide this
+import { Project } from "ts-morph";
 
 const project = new Project();
 const sourceFile = project.createSourceFile("test.ts", ``);
@@ -29,4 +27,4 @@ const sourceFile = project.createSourceFile("test.ts", ``);
 
 **Expected behavior**
 
-<!-- A clear and concise description of what you expected to happen. -->
+<!-- A description of what you expected to happen. -->
