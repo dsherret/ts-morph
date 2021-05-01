@@ -21,7 +21,8 @@
   "dependencies": {
     "fast-glob": "^3.2.5",
     "mkdirp": "^1.0.4",
-    "minimatch": "^3.0.4"
+    "minimatch": "^3.0.4",
+    "path-browserify": "^1.0.1"
   },
   "devDependencies": {
     "@ts-morph/scripts": "~0.2.0",

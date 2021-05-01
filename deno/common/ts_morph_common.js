@@ -826,7 +826,6 @@ function getLibFiles() {
     return libFiles;
 }
 const libFolderInMemoryPath = "/node_modules/typescript/lib";
-
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 

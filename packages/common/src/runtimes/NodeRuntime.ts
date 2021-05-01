@@ -1,9 +1,12 @@
+import fastGlob from "fast-glob";
+import * as fs from "fs";
+import minimatch from "minimatch";
+import mkdirp from "mkdirp";
+import * as os from "os";
+import * as path from "path";
 import { Runtime, RuntimeFileSystem, RuntimePath } from "./Runtime";
 
 export class NodeRuntime implements Runtime {
-    private readonly minimatch: typeof import("minimatch") = require("minimatch");
-    private readonly os: typeof import("os") = require("os");
-
     fs = new NodeRuntimeFileSystem();
     path = new NodeRuntimePath();
 
@@ -12,41 +15,32 @@ export class NodeRuntime implements Runtime {
     }
 
     getEndOfLine() {
-        return this.os.EOL;
+        return os.EOL;
     }
 
     getPathMatchesPattern(path: string, pattern: string) {
-        return this.minimatch(path, pattern);
+        return minimatch(path, pattern);
     }
 }
 
 class NodeRuntimePath implements RuntimePath {
-    private path: typeof import("path") = require("path");
-
     join(...paths: string[]) {
-        return this.path.join(...paths);
+        return path.join(...paths);
     }
 
-    normalize(path: string) {
-        return this.path.normalize(path);
+    normalize(pathToNormalize: string) {
+        return path.normalize(pathToNormalize);
     }
 
     relative(from: string, to: string) {
-        return this.path.relative(from, to);
+        return path.relative(from, to);
     }
 }
 
 class NodeRuntimeFileSystem implements RuntimeFileSystem {
-    // Prevent these from being loaded in environments that don't support it (ex. browsers or Deno).
-    // This means if someone specifies to use an in-memory file system then it won't load this.
-    private fs: typeof import("fs") = require("fs");
-    private fastGlob: typeof import("fast-glob") = require("fast-glob");
-    private mkdirp: typeof import("mkdirp") = require("mkdirp");
-    private path: typeof import("path") = require("path");
-
     delete(path: string) {
         return new Promise<void>((resolve, reject) => {
-            this.fs.unlink(path, err => {
+            fs.unlink(path, err => {
                 if (err)
                     reject(err);
                 else
@@ -56,16 +50,16 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
     }
 
     deleteSync(path: string) {
-        this.fs.unlinkSync(path);
+        fs.unlinkSync(path);
     }
 
     readDirSync(dirPath: string) {
-        return this.fs.readdirSync(dirPath);
+        return fs.readdirSync(dirPath);
     }
 
     readFile(filePath: string, encoding = "utf-8") {
         return new Promise<string>((resolve, reject) => {
-            this.fs.readFile(filePath, encoding, (err, data) => {
+            fs.readFile(filePath, encoding, (err, data) => {
                 if (err)
                     reject(err);
                 else
@@ -75,12 +69,12 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
     }
 
     readFileSync(filePath: string, encoding = "utf-8") {
-        return this.fs.readFileSync(filePath, encoding as "utf-8"); // todo: fix this...
+        return fs.readFileSync(filePath, encoding as "utf-8"); // todo: fix this...
     }
 
     async writeFile(filePath: string, fileText: string) {
         await new Promise<void>((resolve, reject) => {
-            this.fs.writeFile(filePath, fileText, err => {
+            fs.writeFile(filePath, fileText, err => {
                 if (err)
                     reject(err);
                 else
@@ -90,20 +84,20 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
     }
 
     writeFileSync(filePath: string, fileText: string) {
-        this.fs.writeFileSync(filePath, fileText);
+        fs.writeFileSync(filePath, fileText);
     }
 
     async mkdir(dirPath: string) {
-        await this.mkdirp(dirPath);
+        await mkdirp(dirPath);
     }
 
     mkdirSync(dirPath: string) {
-        this.mkdirp.sync(dirPath);
+        mkdirp.sync(dirPath);
     }
 
     move(srcPath: string, destPath: string) {
         return new Promise<void>((resolve, reject) => {
-            this.fs.rename(srcPath, destPath, err => {
+            fs.rename(srcPath, destPath, err => {
                 if (err)
                     reject(err);
                 else
@@ -113,13 +107,13 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
     }
 
     moveSync(srcPath: string, destPath: string) {
-        this.fs.renameSync(srcPath, destPath);
+        fs.renameSync(srcPath, destPath);
     }
 
     copy(srcPath: string, destPath: string) {
         return new Promise<void>((resolve, reject) => {
             // this overwrites by default
-            this.fs.copyFile(srcPath, destPath, err => {
+            fs.copyFile(srcPath, destPath, err => {
                 if (err)
                     reject(err);
                 else
@@ -129,12 +123,12 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
     }
 
     copySync(srcPath: string, destPath: string) {
-        this.fs.copyFileSync(srcPath, destPath);
+        fs.copyFileSync(srcPath, destPath);
     }
 
     fileExists(filePath: string) {
         return new Promise<boolean>(resolve => {
-            this.fs.stat(filePath, (err, stat) => {
+            fs.stat(filePath, (err, stat) => {
                 if (err)
                     resolve(false);
                 else
@@ -145,7 +139,7 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
 
     fileExistsSync(filePath: string) {
         try {
-            return this.fs.statSync(filePath).isFile();
+            return fs.statSync(filePath).isFile();
         } catch (err) {
             return false;
         }
@@ -153,7 +147,7 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
 
     directoryExists(dirPath: string) {
         return new Promise<boolean>(resolve => {
-            this.fs.stat(dirPath, (err, stat) => {
+            fs.stat(dirPath, (err, stat) => {
                 if (err)
                     resolve(false);
                 else
@@ -164,29 +158,29 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
 
     directoryExistsSync(dirPath: string) {
         try {
-            return this.fs.statSync(dirPath).isDirectory();
+            return fs.statSync(dirPath).isDirectory();
         } catch (err) {
             return false;
         }
     }
 
     realpathSync(path: string) {
-        return this.fs.realpathSync(path);
+        return fs.realpathSync(path);
     }
 
     getCurrentDirectory(): string {
-        return this.path.resolve();
+        return path.resolve();
     }
 
     glob(patterns: ReadonlyArray<string>) {
-        return this.fastGlob(patterns as string[], {
+        return fastGlob(patterns as string[], {
             cwd: this.getCurrentDirectory(),
             absolute: true,
         });
     }
 
     globSync(patterns: ReadonlyArray<string>) {
-        return this.fastGlob.sync(patterns as string[], {
+        return fastGlob.sync(patterns as string[], {
             cwd: this.getCurrentDirectory(),
             absolute: true,
         });
