@@ -22,20 +22,24 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
         name: "KindToNodeMappings",
         extends: ["ImplementedKindToNodeMappings"],
     }));
-    interfaceStructures.push(withDefaultIndexSignature(getTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression"))));
+    interfaceStructures.push(
+        withDefaultIndexSignature(getTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression"))),
+    );
 
     // add imports
     kindToNodeMappingsFile.removeText();
     kindToNodeMappingsFile.addStatements([
-        writer => writer
-            .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts")
-            .writeLine("// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead."),
+        writer =>
+            writer
+                .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts")
+                .writeLine("// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead."),
         {
-                kind: tsMorph.StructureKind.ImportDeclaration,
+            kind: tsMorph.StructureKind.ImportDeclaration,
             namedImports: ["SyntaxKind", "ts"],
             moduleSpecifier: "@ts-morph/common",
-        }, {
-                kind: tsMorph.StructureKind.ImportDeclaration,
+        },
+        {
+            kind: tsMorph.StructureKind.ImportDeclaration,
             namespaceImport: "compiler",
             moduleSpecifier: kindToNodeMappingsFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/compiler/ast/index.ts")),
         },
@@ -84,12 +88,10 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
 
     function withDefaultIndexSignature(interfaceStructure: tsMorph.InterfaceDeclarationStructure) {
         interfaceStructure.indexSignatures = [{
-                keyName: "kind",
-                keyType: "number",
-                returnType: "compiler.Node",
-            },
-            ...interfaceStructure.indexSignatures ?? []
-        ];
+            keyName: "kind",
+            keyType: "number",
+            returnType: "compiler.Node",
+        }, ...interfaceStructure.indexSignatures ?? []];
         return interfaceStructure;
     }
 }

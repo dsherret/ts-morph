@@ -3,7 +3,6 @@ import { TypeNode } from "./TypeNode";
 import { TypeParameterDeclaration } from "./TypeParameterDeclaration";
 
 export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
-
     /**
      * Gets the mapped type node's type name if any.
      */
@@ -12,7 +11,7 @@ export class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
     }
 
     /**
-     * Gets the mapped type node's type parameter if any.
+     * Gets the mapped type node's type parameter.
      */
     getTypeParameter(): TypeParameterDeclaration {
         return this._getNodeFromCompilerNode(this.compilerNode.typeParameter);

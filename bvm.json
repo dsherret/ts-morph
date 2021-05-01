@@ -4,6 +4,11 @@
       "path": "https://bvm.land/deno/1.8.0.json",
       "checksum": "9a25bbee6ac0f588c47cec372e58acedbf48fc0d6141884c1a81dadf230e6ecf",
       "version": "1.8.0"
+    },
+    {
+      "path": "https://github.com/dprint/dprint/releases/download/0.13.0/bvm.json",
+      "checksum": "77ac9b469c980c3c484bc937570b7aeb673ec2818cbdc996c659672f9d1f44a6",
+      "version": "0.13.0"
     }
   ]
 }

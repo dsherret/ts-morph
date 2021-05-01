@@ -3,7 +3,6 @@ import { expect } from "chai";
 import { MappedTypeNode } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-
 describe(nameof(MappedTypeNode), () => {
     function getNode(text: string) {
         return getInfoFromTextWithDescendant<MappedTypeNode>(text, SyntaxKind.MappedType);

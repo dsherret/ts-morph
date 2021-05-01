@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 196
+**Total:** 197
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -164,6 +164,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: moduleSpecifier
 * [ImportEqualsDeclaration](src/compiler/ast/module/ImportEqualsDeclaration.ts)
     * :heavy_check_mark: name
+    * :x: isTypeOnly
     * :heavy_check_mark: moduleReference
 * [ImportExpression](src/compiler/ast/expression/ImportExpression.ts)
 * [ImportSpecifier](src/compiler/ast/module/ImportSpecifier.ts)
@@ -275,6 +276,12 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [LiteralExpression](src/compiler/ast/expression/LiteralExpression.ts)
 * [LiteralTypeNode](src/compiler/ast/type/LiteralTypeNode.ts)
     * :heavy_check_mark: literal
+* [MappedTypeNode](src/compiler/ast/type/MappedTypeNode.ts)
+    * :x: readonlyToken
+    * :heavy_check_mark: typeParameter
+    * :heavy_check_mark: nameType
+    * :x: questionToken
+    * :x: type
 * [MemberExpression](src/compiler/ast/expression/MemberExpression.ts)
 * [MetaProperty](src/compiler/ast/expression/MetaProperty.ts)
     * :heavy_check_mark: keywordToken
@@ -286,6 +293,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: name
 * [ModuleBlock](src/compiler/ast/module/ModuleBlock.ts)
     * :heavy_check_mark: statements
+* [ModuleDeclaration](src/compiler/ast/module/ModuleDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: body
 * NamedDeclaration - Implemented via mixin.
 * [NamedExports](src/compiler/ast/module/NamedExports.ts)
     * :heavy_check_mark: elements
@@ -296,9 +306,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: name
     * :heavy_check_mark: questionToken
     * :heavy_check_mark: type
-* [NamespaceDeclaration](src/compiler/ast/module/NamespaceDeclaration.ts)
-    * :heavy_check_mark: name
-    * :heavy_check_mark: body
 * [NamespaceExport](src/compiler/ast/module/NamespaceExport.ts)
     * :heavy_check_mark: name
 * [NamespaceImport](src/compiler/ast/module/NamespaceImport.ts)
@@ -490,7 +497,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 57
+**Total:** 56
 
 * Bundle
 * CallChain
@@ -519,10 +526,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * KeywordToken
 * KeywordTypeNode
 * LiteralLikeNode
-* MappedTypeNode
 * MissingDeclaration
 * ModifierToken
-* ModuleDeclaration
+* NamespaceDeclaration
 * NamespaceExportDeclaration
 * NodeWithTypeArguments
 * NonNullChain

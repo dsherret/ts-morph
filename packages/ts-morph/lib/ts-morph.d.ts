@@ -8455,8 +8455,8 @@ export declare class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {
 export declare class MappedTypeNode extends TypeNode<ts.MappedTypeNode> {
     /** Gets the mapped type node's type name if any. */
     getNameTypeNode(): TypeNode | undefined;
-    /** Gets the mapped type node's type parameter if any. */
-    getTypeParameter(): TypeParameterDeclaration | undefined;
+    /** Gets the mapped type node's type parameter. */
+    getTypeParameter(): TypeParameterDeclaration;
     /** @inheritdoc **/
     getParent(): NodeParentType<ts.MappedTypeNode>;
     /** @inheritdoc **/
