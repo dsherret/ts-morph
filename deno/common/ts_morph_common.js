@@ -3,18 +3,7 @@ import { DenoRuntime } from "./DenoRuntime.ts";
 
 // @deno-types="./typescript.d.ts"
 import { ts } from "./typescript.js";
-const matchFiles$1 = ts.matchFiles;
-const getFileMatcherPatterns$1 = ts.getFileMatcherPatterns;
-const getEmitModuleResolutionKind$1 = ts.getEmitModuleResolutionKind;
-const SyntaxKind = ts.SyntaxKind;
-const createLanguageServiceSourceFile = ts.createLanguageServiceSourceFile;
 const ScriptTarget = ts.ScriptTarget;
-const ScriptSnapshot = ts.ScriptSnapshot;
-const getDefaultLibFileName = ts.getDefaultLibFileName;
-const ScriptKind = ts.ScriptKind;
-const resolveModuleName = ts.resolveModuleName;
-const parseJsonConfigFileContent = ts.parseJsonConfigFileContent;
-const parseConfigFileTextToJson = ts.parseConfigFileTextToJson;
 export { ts };
 const DiagnosticCategory = ts.DiagnosticCategory;
 const EmitHint = ts.EmitHint;
@@ -24,7 +13,9 @@ const ModuleResolutionKind = ts.ModuleResolutionKind;
 const NewLineKind = ts.NewLineKind;
 const NodeFlags = ts.NodeFlags;
 const ObjectFlags = ts.ObjectFlags;
+const ScriptKind = ts.ScriptKind;
 const SymbolFlags = ts.SymbolFlags;
+const SyntaxKind = ts.SyntaxKind;
 const TypeFlags = ts.TypeFlags;
 const TypeFormatFlags = ts.TypeFormatFlags;
 
@@ -322,13 +313,13 @@ class ObjectUtils {
 }
 
 function matchFiles(path, extensions, excludes, includes, useCaseSensitiveFileNames, currentDirectory, depth, getEntries, realpath) {
-    return matchFiles$1.apply(this, arguments);
+    return ts.matchFiles.apply(this, arguments);
 }
 function getFileMatcherPatterns(path, excludes, includes, useCaseSensitiveFileNames, currentDirectory) {
-    return getFileMatcherPatterns$1.apply(this, arguments);
+    return ts.getFileMatcherPatterns.apply(this, arguments);
 }
 function getEmitModuleResolutionKind(compilerOptions) {
-    return getEmitModuleResolutionKind$1.apply(this, arguments);
+    return ts.getEmitModuleResolutionKind.apply(this, arguments);
 }
 
 function getSyntaxKindName(kind) {
@@ -339,8 +330,8 @@ function getKindCache() {
     if (kindCache != null)
         return kindCache;
     kindCache = {};
-    for (const name of Object.keys(SyntaxKind).filter(k => isNaN(parseInt(k, 10)))) {
-        const value = SyntaxKind[name];
+    for (const name of Object.keys(ts.SyntaxKind).filter(k => isNaN(parseInt(k, 10)))) {
+        const value = ts.SyntaxKind[name];
         if (kindCache[value] == null)
             kindCache[value] = name;
     }
@@ -760,7 +751,7 @@ class WeakCache {
 }
 
 function createCompilerSourceFile(filePath, scriptSnapshot, scriptTarget, version, setParentNodes, scriptKind) {
-    return createLanguageServiceSourceFile(filePath, scriptSnapshot, scriptTarget !== null && scriptTarget !== void 0 ? scriptTarget : ScriptTarget.Latest, version, setParentNodes, scriptKind);
+    return ts.createLanguageServiceSourceFile(filePath, scriptSnapshot, scriptTarget !== null && scriptTarget !== void 0 ? scriptTarget : ScriptTarget.Latest, version, setParentNodes, scriptKind);
 }
 
 function createDocumentCache(files) {
@@ -904,18 +895,18 @@ function createHosts(options) {
                 if (libFileMap != null) {
                     const libFileText = libFileMap.get(filePath);
                     if (libFileText != null)
-                        return ScriptSnapshot.fromString(libFileText);
+                        return ts.ScriptSnapshot.fromString(libFileText);
                 }
                 return undefined;
             }
-            return ScriptSnapshot.fromString(sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
+            return ts.ScriptSnapshot.fromString(sourceFileContainer.addOrGetSourceFileFromFilePathSync(filePath, {
                 markInProject: false,
                 scriptKind: undefined,
             }).getFullText());
         },
         getCurrentDirectory: () => transactionalFileSystem.getCurrentDirectory(),
         getDefaultLibFileName: options => {
-            return libFolderPath + "/" + getDefaultLibFileName(options);
+            return libFolderPath + "/" + ts.getDefaultLibFileName(options);
         },
         isKnownTypesPackageName,
         useCaseSensitiveFileNames: () => true,
@@ -952,7 +943,7 @@ function createHosts(options) {
                 if (libFileText != null) {
                     let sourceFile = sourceFileContainer.getSourceFileFromCacheFromFilePath(filePath);
                     if (sourceFile == null) {
-                        sourceFile = sourceFileContainer.addLibFileToCacheByText(filePath, libFileText, ScriptKind.TS);
+                        sourceFile = sourceFileContainer.addLibFileToCacheByText(filePath, libFileText, ts.ScriptKind.TS);
                     }
                     return sourceFile;
                 }
@@ -2316,7 +2307,7 @@ const denoResolutionHostFactory = (moduleResolutionHost, getCompilerOptions) => 
             const compilerOptions = getCompilerOptions();
             const resolvedModules = [];
             for (const moduleName of moduleNames.map(removeTsExtension)) {
-                const result = resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
+                const result = ts.resolveModuleName(moduleName, containingFile, compilerOptions, moduleResolutionHost);
                 if (result.resolvedModule)
                     resolvedModules.push(result.resolvedModule);
             }
@@ -2506,12 +2497,12 @@ class TsConfigResolver {
     }
     parseJsonConfigFileContent() {
         this.host.clearDirectories();
-        const result = parseJsonConfigFileContent(this.getTsConfigFileJson(), this.host, this.tsConfigDirPath, undefined, this.tsConfigFilePath);
+        const result = ts.parseJsonConfigFileContent(this.getTsConfigFileJson(), this.host, this.tsConfigDirPath, undefined, this.tsConfigFilePath);
         return Object.assign(Object.assign({}, result), { directories: this.host.getDirectories() });
     }
     getTsConfigFileJson() {
         const text = this.fileSystem.readFileSync(this.tsConfigFilePath, this.encoding);
-        const parseResult = parseConfigFileTextToJson(this.tsConfigFilePath, text);
+        const parseResult = ts.parseConfigFileTextToJson(this.tsConfigFilePath, text);
         if (parseResult.error != null)
             throw new Error(parseResult.error.messageText.toString());
         return parseResult.config;

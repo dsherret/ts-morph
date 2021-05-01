@@ -26,24 +26,24 @@
   },
   "devDependencies": {
     "@ts-morph/scripts": "~0.2.0",
-    "@types/chai": "^4.2.14",
+    "@types/chai": "^4.2.17",
     "@types/mkdirp": "^1.0.1",
-    "@types/mocha": "^8.2.0",
-    "@types/minimatch": "^3.0.3",
-    "@types/node": "^14.14.22",
+    "@types/mocha": "^8.2.2",
+    "@types/minimatch": "^3.0.4",
+    "@types/node": "^15.0.1",
     "@types/ts-nameof": "^4.2.1",
-    "chai": "^4.2.0",
+    "chai": "^4.3.4",
     "cross-env": "^7.0.3",
     "dts-minify": "^0.2.3",
-    "mocha": "^8.2.1",
+    "mocha": "^8.3.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.38.2",
-    "rollup-plugin-typescript2": "^0.29.0",
+    "rollup": "^2.46.0",
+    "rollup-plugin-typescript2": "^0.30.0",
     "ts-morph": "npm:ts-morph@9.0.0",
     "ts-nameof": "^5.0.0",
     "ts-node": "^9.1.1",
     "ttypescript": "^1.5.12",
-    "typescript": "~4.2.2"
+    "typescript": "~4.2.4"
   },
   "publishConfig": {
     "access": "public"
