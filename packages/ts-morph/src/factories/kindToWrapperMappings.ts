@@ -104,6 +104,7 @@ export const kindToWrapperMappings: { [key: number]: unknown; } = {
     [SyntaxKind.JsxText]: compiler.JsxText,
     [SyntaxKind.LabeledStatement]: compiler.LabeledStatement,
     [SyntaxKind.LiteralType]: compiler.LiteralTypeNode,
+    [SyntaxKind.MappedType]: compiler.MappedTypeNode,
     [SyntaxKind.MetaProperty]: compiler.MetaProperty,
     [SyntaxKind.MethodDeclaration]: compiler.MethodDeclaration,
     [SyntaxKind.MethodSignature]: compiler.MethodSignature,

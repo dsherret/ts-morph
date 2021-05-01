@@ -9,6 +9,7 @@ export * from "./IndexedAccessTypeNode";
 export * from "./InferTypeNode";
 export * from "./IntersectionTypeNode";
 export * from "./LiteralTypeNode";
+export * from "./MappedTypeNode";
 export * from "./NamedTupleMember";
 export * from "./ParenthesizedTypeNode";
 export * from "./TemplateLiteralTypeNode";
