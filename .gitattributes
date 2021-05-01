@@ -12,3 +12,8 @@
 
 # exclude deno.land build files from GitHub language stats
 deno/* linguist-vendored
+deno/ts_morph.js linguist-vendored
+deno/common/ts_morph_common.js linguist-vendored
+deno/common/typescript.js linguist-vendored
+deno/common/data/libFiles.js linguist-vendored
+deno/bootstrap/ts_morph_bootstrap.js linguist-vendored
