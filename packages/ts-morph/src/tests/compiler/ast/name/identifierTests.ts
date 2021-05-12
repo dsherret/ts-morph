@@ -1,6 +1,6 @@
 import { SyntaxKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
-import { FunctionDeclaration, Identifier, InterfaceDeclaration, ModuleDeclaration, PropertyAccessExpression } from "../../../../compiler";
+import { CallExpression, FunctionDeclaration, Identifier, InterfaceDeclaration, ModuleDeclaration, PropertyAccessExpression } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -46,6 +46,17 @@ describe(nameof(Identifier), () => {
 
             expect(definitions.length).to.equal(1);
             expect(definitions[0].getDeclarationNode()).to.equal(firstChild.getFunctions()[0]);
+        });
+
+        it("should get the definition even when near a comma", () => {
+            const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>(
+                "const someConst=23,myFunction=function () {}; \nconst reference = myFunction();",
+            );
+            const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as CallExpression)
+                .getExpressionIfKindOrThrow(SyntaxKind.Identifier).getDefinitions();
+
+            expect(definitions.length).to.equal(1);
+            expect(definitions[0].getDeclarationNode()).to.equal(sourceFile.getVariableDeclarationOrThrow("myFunction"));
         });
     });
 

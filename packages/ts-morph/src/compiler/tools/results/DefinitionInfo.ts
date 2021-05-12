@@ -63,7 +63,7 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
                 return node;
 
             for (const child of node._getChildrenIterator()) {
-                if (child.getPos() <= start && child.getEnd() >= start)
+                if (child.getPos() <= start && child.getEnd() > start)
                     return findIdentifier(child);
             }
 
