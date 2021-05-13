@@ -35,7 +35,8 @@ class BrowserRuntimePath implements RuntimePath {
 }
 
 class BrowserRuntimeFileSystem implements RuntimeFileSystem {
-    private _errorMessage = "Not supported for the browser.";
+    private _errorMessage =
+        "Access to the file system is not supported in the browser. Please use an in-memory file system (specify `useInMemoryFileSystem: true` when creating the project).";
 
     delete(_path: string) {
         return Promise.reject(new Error(this._errorMessage));
