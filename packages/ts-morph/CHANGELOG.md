@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.1.0"></a>
+# [10.1.0](https://github.com/dsherret/ts-morph/compare/10.0.2...10.1.0) (2021-05-15)
+
+
+### Bug Fixes
+
+* Handle comma separated definitions with DefinitionInfo#getDeclarationNode ([#1158](https://github.com/dsherret/ts-morph/issues/1158)) ([a390e94](https://github.com/dsherret/ts-morph/commit/a390e94)) - Thanks [@IgorMinar](https://github.com/IgorMinar)!
+
+
+### Features
+
+* [#1157](https://github.com/dsherret/ts-morph/issues/1157) - Add `Node#asKind(kind: SyntaxKind)` and `Node#asKindOrThrow(kind: SyntaxKind)` methods. ([58bb5cc](https://github.com/dsherret/ts-morph/commit/58bb5cc))
+* Add MappedTypeNode Wrapper - Only navigation methods for now ([#1146](https://github.com/dsherret/ts-morph/issues/1146)) ([f74a9e2](https://github.com/dsherret/ts-morph/commit/f74a9e2)) ([6b6f1f4](https://github.com/dsherret/ts-morph/commit/6b6f1f4)) - Thanks [@nicdard](https://github.com/nicdard)!
+
+
+
 <a name="10.0.2"></a>
 ## [10.0.2](https://github.com/dsherret/ts-morph/compare/10.0.1...10.0.2) (2021-03-22)
 
