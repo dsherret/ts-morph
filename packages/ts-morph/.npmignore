@@ -4,6 +4,7 @@
 /coverage
 /.vscode
 /scripts
+/dist-deno
 /dist-scripts
 /dist/tests
 /src
