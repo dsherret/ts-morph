@@ -16436,7 +16436,7 @@ class DefinitionInfo extends DocumentSpan {
             if (node.getKind() === SyntaxKind.Identifier && node.getStart() === start)
                 return node;
             for (const child of node._getChildrenIterator()) {
-                if (child.getPos() <= start && child.getEnd() >= start)
+                if (child.getPos() <= start && child.getEnd() > start)
                     return findIdentifier(child);
             }
             return undefined;
