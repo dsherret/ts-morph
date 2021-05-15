@@ -3269,6 +3269,16 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     isInStringAtPos(pos: number): boolean;
     /**
+     * Gets the node as the specified kind if it is equal to that kind, otherwise throws.
+     * @param kind - Syntax kind.
+     */
+    asKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+    /**
+     * Gets the node as the specified kind if it is equal to that kind, otherwise returns undefined.
+     * @param kind - Syntax kind.
+     */
+    asKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
+    /**
      * Gets the first child by a condition or throws.
      * @param condition - Condition.
      */

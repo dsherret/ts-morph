@@ -455,7 +455,7 @@ var errors;
     errors.throwIfNullOrUndefined = throwIfNullOrUndefined;
     function throwNotImplementedForNeverValueError(value) {
         const node = value;
-        if (node != null && typeof node.kind === "string")
+        if (node != null && typeof node.kind === "number")
             return throwNotImplementedForSyntaxKindError(node.kind);
         throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);
     }

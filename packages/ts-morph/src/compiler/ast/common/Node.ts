@@ -361,6 +361,29 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the node as the specified kind if it is equal to that kind, otherwise throws.
+     * @param kind - Syntax kind.
+     */
+    asKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
+        return errors.throwIfNullOrUndefined(
+            this.asKind(kind),
+            () => `Expected the node to be of kind ${getSyntaxKindName(kind)}, but it was ${getSyntaxKindName(this.getKind())}.`,
+        );
+    }
+
+    /**
+     * Gets the node as the specified kind if it is equal to that kind, otherwise returns undefined.
+     * @param kind - Syntax kind.
+     */
+    asKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
+        if (this.getKind() === kind) {
+            return this as Node as KindToNodeMappings[TKind];
+        } else {
+            return undefined;
+        }
+    }
+
+    /**
      * Gets the first child by a condition or throws.
      * @param condition - Condition.
      */

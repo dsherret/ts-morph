@@ -2192,4 +2192,17 @@ class MyClass {
             expect(() => node.getProject()).to.throw();
         });
     });
+
+    describe(nameof<Node>(n => n.asKind), () => {
+        it("should get the node if it's the specified syntax kind", () => {
+            const project = new Project({ useInMemoryFileSystem: true });
+            const sourceFile = project.createSourceFile("test.ts", "class Test {}");
+            const statement = sourceFile.getStatements()[0];
+            expect(statement.asKind(SyntaxKind.ClassDeclaration)?.getText()).to.equal("class Test {}");
+            expect(statement.asKind(SyntaxKind.InterfaceDeclaration)).to.be.undefined;
+            expect(statement.asKindOrThrow(SyntaxKind.ClassDeclaration).getText()).to.equal("class Test {}");
+            expect(() => statement.asKindOrThrow(SyntaxKind.InterfaceDeclaration))
+                .to.throw("Expected the node to be of kind InterfaceDeclaration, but it was ClassDeclaration.");
+        });
+    });
 });

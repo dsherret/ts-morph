@@ -3095,6 +3095,17 @@ class Node {
         }
         return ArrayUtils.binarySearch(this._childStringRanges, new InStringRangeComparer()) !== -1;
     }
+    asKindOrThrow(kind) {
+        return errors.throwIfNullOrUndefined(this.asKind(kind), () => `Expected the node to be of kind ${getSyntaxKindName(kind)}, but it was ${getSyntaxKindName(this.getKind())}.`);
+    }
+    asKind(kind) {
+        if (this.getKind() === kind) {
+            return this;
+        }
+        else {
+            return undefined;
+        }
+    }
     getFirstChildOrThrow(condition) {
         return errors.throwIfNullOrUndefined(this.getFirstChild(condition), "Could not find a child that matched the specified condition.");
     }

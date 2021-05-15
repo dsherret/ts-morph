@@ -179,7 +179,7 @@ export namespace errors {
      */
     export function throwNotImplementedForNeverValueError(value: never): never {
         const node = value as any as { kind: number; };
-        if (node != null && typeof node.kind === "string")
+        if (node != null && typeof node.kind === "number")
             return throwNotImplementedForSyntaxKindError(node.kind);
 
         throw new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);

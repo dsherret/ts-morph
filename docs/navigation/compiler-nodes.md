@@ -36,13 +36,13 @@ Sometimes you might want to easily navigate an existing compiler node.
 Do that by using the `createWrappedNode` function:
 
 ```ts ignore-error: 1109
-import { createWrappedNode, ClassDeclaration, ts } from "ts-morph";
+import { createWrappedNode, ClassDeclaration, ts, SyntaxKind } from "ts-morph";
 
 // some code that creates a class declaration using the ts object
 const classNode: ts.ClassDeclaration = ...;
 
 // create and use a wrapped node
-const classDec = createWrappedNode(classNode) as ClassDeclaration;
+const classDec = createWrappedNode(classNode).asKindOrThrow(SyntaxKind.ClassDeclaration);
 const firstProperty = classDec.getProperties()[0];
 
 // ... do more stuff here ...
@@ -61,7 +61,7 @@ const classNode: ts.ClassDeclaration = ...;
 const compilerTypeChecker: ts.TypeChecker = ...;
 
 // create and use a wrapped node
-const classDec = createWrappedNode(classNode, { typeChecker: compilerTypeChecker }) as ClassDeclaration;
+const classDec = createWrappedNode(classNode, { typeChecker: compilerTypeChecker }).asKindOrThrow(SyntaxKind.ClassDeclaration);
 console.log(classDec.getPropertyOrThrow("propName").getType().getText()); // ok, because a type checker was provided
 ```
 
