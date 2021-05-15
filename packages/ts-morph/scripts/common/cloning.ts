@@ -1,7 +1,7 @@
 import { tsMorph } from "@ts-morph/scripts";
 
-export function cloneNamespaces(node: tsMorph.StatementedNode, cloningNamespaces: tsMorph.NamespaceDeclaration[]) {
-    const namespaces = node.addNamespaces(cloningNamespaces.map(n => ({
+export function cloneNamespaces(node: tsMorph.StatementedNode, cloningNamespaces: tsMorph.ModuleDeclaration[]) {
+    const namespaces = node.addModules(cloningNamespaces.map(n => ({
         isExported: true,
         hasDeclareKeyword: true,
         name: n.getName(),

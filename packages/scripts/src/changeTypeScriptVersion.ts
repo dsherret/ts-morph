@@ -1,5 +1,5 @@
 import * as path from "path";
-import { Project, StringLiteral, SyntaxKind } from "ts-morph";
+import { Project, SyntaxKind } from "ts-morph";
 
 export function changeTypeScriptVersion(version: string) {
     setModuleSpecifierValue(`typescript-${version}`);
@@ -21,7 +21,7 @@ function setModuleSpecifierValue(value: string) {
     }
 
     const callExpr = jsFile.getVariableDeclarationOrThrow("ts").getInitializerIfKindOrThrow(SyntaxKind.CallExpression);
-    (callExpr.getArguments()[0] as StringLiteral).setLiteralValue(value);
+    callExpr.getArguments()[0].asKindOrThrow(SyntaxKind.StringLiteral).setLiteralValue(value);
 
     [declarationFile, jsFile].forEach(s => s.saveSync());
 }
