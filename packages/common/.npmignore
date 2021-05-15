@@ -2,7 +2,6 @@
 /scripts
 /src
 /dist-deno
-azure-pipelines.yml
 .mocharc.yml
 .npmignore
 CHANGELOG.md

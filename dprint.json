@@ -25,7 +25,8 @@
     "**/CHANGELOG.md",
     "**/wrapped-nodes.md",
     "packages/ts-morph/src/compiler/ast/common/Node.ts",
-    "./deno"
+    "./deno",
+    "dist-deno"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.35.0.wasm",
