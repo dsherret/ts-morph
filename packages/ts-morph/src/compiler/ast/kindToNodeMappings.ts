@@ -76,6 +76,8 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocFunctionType]: compiler.JSDocFunctionType;
     [SyntaxKind.JSDocImplementsTag]: compiler.JSDocImplementsTag;
     [SyntaxKind.JSDocLink]: compiler.JSDocLink;
+    [SyntaxKind.JSDocMemberName]: compiler.JSDocMemberName;
+    [SyntaxKind.JSDocOverrideTag]: compiler.JSDocOverrideTag;
     [SyntaxKind.JSDocParameterTag]: compiler.JSDocParameterTag;
     [SyntaxKind.JSDocPrivateTag]: compiler.JSDocPrivateTag;
     [SyntaxKind.JSDocPropertyTag]: compiler.JSDocPropertyTag;

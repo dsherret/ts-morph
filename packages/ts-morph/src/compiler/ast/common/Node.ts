@@ -2953,15 +2953,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocFunctionType: (node: compiler.Node | undefined) => node is compiler.JSDocFunctionType = Node.is(SyntaxKind.JSDocFunctionType);
     /** Gets if the node is a JSDocImplementsTag. */
     static readonly isJSDocImplementsTag: (node: compiler.Node | undefined) => node is compiler.JSDocImplementsTag = Node.is(SyntaxKind.JSDocImplementsTag);
-
-    /**
-     * Gets if the node is a JSDocLink.
-     * @param node - Node to check.
-     */
-    static isJSDocLink(node: compiler.Node | undefined): node is compiler.JSDocLink {
-        return node?.getKind() === SyntaxKind.JSDocLink;
-    }
-
+    /** Gets if the node is a JSDocLink. */
+    static readonly isJSDocLink: (node: compiler.Node | undefined) => node is compiler.JSDocLink = Node.is(SyntaxKind.JSDocLink);
+    /** Gets if the node is a JSDocMemberName. */
+    static readonly isJSDocMemberName: (node: compiler.Node | undefined) => node is compiler.JSDocMemberName = Node.is(SyntaxKind.JSDocMemberName);
+    /** Gets if the node is a JSDocOverrideTag. */
+    static readonly isJSDocOverrideTag: (node: compiler.Node | undefined) => node is compiler.JSDocOverrideTag = Node.is(SyntaxKind.JSDocOverrideTag);
     /** Gets if the node is a JSDocParameterTag. */
     static readonly isJSDocParameterTag: (node: compiler.Node | undefined) => node is compiler.JSDocParameterTag = Node.is(SyntaxKind.JSDocParameterTag);
     /** Gets if the node is a JSDocPrivateTag. */
@@ -3009,6 +3006,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JSDocDeprecatedTag:
             case SyntaxKind.JSDocEnumTag:
             case SyntaxKind.JSDocImplementsTag:
+            case SyntaxKind.JSDocOverrideTag:
             case SyntaxKind.JSDocParameterTag:
             case SyntaxKind.JSDocPrivateTag:
             case SyntaxKind.JSDocPropertyTag:
@@ -3030,15 +3028,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a JSDocTemplateTag. */
     static readonly isJSDocTemplateTag: (node: compiler.Node | undefined) => node is compiler.JSDocTemplateTag = Node.is(SyntaxKind.JSDocTemplateTag);
-
-    /**
-     * Gets if the node is a JSDocText.
-     * @param node - Node to check.
-     */
-    static isJSDocText(node: compiler.Node | undefined): node is compiler.JSDocText {
-        return node?.getKind() === SyntaxKind.JSDocText;
-    }
-
+    /** Gets if the node is a JSDocText. */
+    static readonly isJSDocText: (node: compiler.Node | undefined) => node is compiler.JSDocText = Node.is(SyntaxKind.JSDocText);
     /** Gets if the node is a JSDocThisTag. */
     static readonly isJSDocThisTag: (node: compiler.Node | undefined) => node is compiler.JSDocThisTag = Node.is(SyntaxKind.JSDocThisTag);
 

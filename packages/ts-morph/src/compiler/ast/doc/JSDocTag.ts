@@ -38,7 +38,7 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
         return this.set({ tagName });
     }
 
-    /** Gets the tag's comment property. Use `#getCommentText()` to get the text of the JS doc comment if necessary. */
+    /** Gets the tag's comment property. Use `#getCommentText()` to get the text of the JS doc tag comment if necessary. */
     getComment() {
         if (this.compilerNode.comment == null)
             return undefined;
@@ -48,7 +48,7 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends JSDocT
             return this.compilerNode.comment.map(n => this._getNodeFromCompilerNodeIfExists(n));
     }
 
-    /** Gets the text of the JS doc comment (ex. `"Some description."` for `&#64;param value Some description.`). */
+    /** Gets the text of the JS doc tag comment (ex. `"Some description."` for `&#64;param value Some description.`). */
     getCommentText() {
         if (typeof this.compilerNode.comment === "string")
             return this.compilerNode.comment;
