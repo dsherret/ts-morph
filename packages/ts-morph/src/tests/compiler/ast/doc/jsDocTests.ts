@@ -129,7 +129,7 @@ describe(nameof(JSDoc), () => {
 
         it("should return the tags when they exist", () => {
             const text = "/**\n * Description\n * @param test - Test\n * @returns A value\n */function identifier() {}";
-            doTest(text, ["@param test - Test\n * ", "@returns "]);
+            doTest(text, ["@param test - Test\n * ", "@returns A value\n "]);
         });
     });
 

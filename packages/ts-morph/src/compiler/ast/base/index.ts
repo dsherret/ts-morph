@@ -19,6 +19,7 @@ export * from "./LiteralLikeNode";
 export * from "./ModifierableNode";
 export * from "./ModuledNode";
 export * from "./name";
+export * from "./OverrideableNode";
 export * from "./ParameteredNode";
 export * from "./QuestionDotTokenableNode";
 export * from "./QuestionTokenableNode";

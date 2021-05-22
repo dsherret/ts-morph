@@ -11,6 +11,7 @@ export * from "./ImplementsClauseableNodeStructure";
 export * from "./InitializerExpressionableNodeStructure";
 export * from "./JSDocableNodeStructure";
 export * from "./name";
+export * from "./OverrideableNodeStructure";
 export * from "./ParameteredNodeStructure";
 export * from "./QuestionDotTokenableNodeStructure";
 export * from "./QuestionTokenableNodeStructure";

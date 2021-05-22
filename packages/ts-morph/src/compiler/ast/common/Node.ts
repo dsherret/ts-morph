@@ -3500,6 +3500,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets if the node is a OverrideableNode.
+     * @param node - Node to check.
+     */
+    static isOverrideableNode<T extends compiler.Node>(node: T | undefined): node is compiler.OverrideableNode & compiler.OverrideableNodeExtensionType & T {
+        return node?.getKind() === SyntaxKind.MethodDeclaration;
+    }
+
+    /**
      * Gets if the node is a ParameterDeclaration.
      * @param node - Node to check.
      */

@@ -282,6 +282,7 @@ export namespace fillStructures {
         setIfNull(structure, "isStatic", false);
         setIfNull(structure, "isAsync", false);
         setIfNull(structure, "isAbstract", false);
+        setIfNull(structure, "hasOverrideKeyword", false);
         setIfNull(structure, "hasQuestionToken", false);
         setIfNull(structure, "scope", undefined);
         setIfNull(structure, "returnType", undefined);

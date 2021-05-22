@@ -77,6 +77,12 @@ export function fromImplementsClauseableNode(node: compiler.ImplementsClauseable
     };
 }
 
+export function fromOverrideableNode(node: compiler.OverrideableNode): MakeRequired<structures.OverrideableNodeStructure> {
+    return {
+        override: node.hasOverrideKeyword(),
+    };
+}
+
 export function fromQuestionTokenableNode(node: compiler.QuestionTokenableNode): MakeRequired<structures.QuestionTokenableNodeStructure> {
     return {
         hasQuestionToken: node.hasQuestionToken(),

@@ -16,11 +16,11 @@ export interface AsyncableNode {
     /**
      * Gets the async keyword or undefined if none exists.
      */
-    getAsyncKeyword(): Node<ts.Modifier> | undefined;
+    getAsyncKeyword(): Node<ts.AsyncKeyword> | undefined;
     /**
      * Gets the async keyword or throws if none exists.
      */
-    getAsyncKeywordOrThrow(): Node<ts.Modifier>;
+    getAsyncKeywordOrThrow(): Node<ts.AsyncKeyword>;
     /**
      * Sets if the node is async.
      * @param value - If it should be async or not.
@@ -34,11 +34,11 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
             return this.hasModifier(SyntaxKind.AsyncKeyword);
         }
 
-        getAsyncKeyword(): Node<ts.Modifier> | undefined {
-            return this.getFirstModifierByKind(SyntaxKind.AsyncKeyword) as Node<ts.Modifier>;
+        getAsyncKeyword(): Node<ts.AsyncKeyword> | undefined {
+            return this.getFirstModifierByKind(SyntaxKind.AsyncKeyword) as Node<ts.AsyncKeyword> | undefined;
         }
 
-        getAsyncKeywordOrThrow(): Node<ts.Modifier> {
+        getAsyncKeywordOrThrow(): Node<ts.AsyncKeyword> {
             return errors.throwIfNullOrUndefined(this.getAsyncKeyword(), "Expected to find an async keyword.");
         }
 

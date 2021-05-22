@@ -251,6 +251,7 @@ describe(nameof(MethodDeclaration), () => {
                 isAsync: false,
                 isGenerator: false,
                 isStatic: false,
+                hasOverrideKeyword: false,
                 hasQuestionToken: true,
                 name: "method",
                 parameters: [],
@@ -270,6 +271,7 @@ describe(nameof(MethodDeclaration), () => {
                 isAsync: false,
                 isGenerator: false,
                 isStatic: false,
+                hasOverrideKeyword: false,
                 hasQuestionToken: false,
                 name: "method",
                 parameters: [],
@@ -285,9 +287,9 @@ describe(nameof(MethodDeclaration), () => {
             const code = `
 class Test {
     /** overload */
-    protected static async *method<T>(p): string;
+    protected static override async *method<T>(p): string;
     /** implementation */
-    protected static async *method<T>(param): string {
+    protected static override async *method<T>(param): string {
     }
 }
 `;
@@ -300,6 +302,7 @@ class Test {
                 isAsync: true,
                 isGenerator: true,
                 isStatic: true,
+                hasOverrideKeyword: true,
                 hasQuestionToken: false,
                 name: "method",
                 overloads: [{
@@ -308,6 +311,7 @@ class Test {
                     isAsync: true,
                     isGenerator: true,
                     isStatic: true,
+                    hasOverrideKeyword: true,
                     returnType: "string",
                     scope: Scope.Protected,
                     parameters: [{ name: "p" }],

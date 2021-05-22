@@ -3,8 +3,8 @@ import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFu
 import { MethodDeclarationOverloadSpecificStructure, MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure,
     OptionalKind, StructureKind } from "../../../structures";
 import { isNodeAmbientOrInAmbientContext } from "../../../utils";
-import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
-    QuestionTokenableNode, ScopedNode, SignaturedDeclaration, StaticableNode, TextInsertableNode, TypeParameteredNode } from "../base";
+import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, JSDocableNode, ModifierableNode, OverrideableNode,
+    PropertyNamedNode, QuestionTokenableNode, ScopedNode, SignaturedDeclaration, StaticableNode, TextInsertableNode, TypeParameteredNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
@@ -12,17 +12,17 @@ import { AbstractableNode } from "./base";
 import { ClassElement } from "./ClassElement";
 
 const createBase = <T extends typeof ClassElement>(ctor: T) =>
-    ChildOrderableNode(TextInsertableNode(OverloadableNode(
+    ChildOrderableNode(TextInsertableNode(OverrideableNode(OverloadableNode(
         BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(QuestionTokenableNode(StaticableNode(AsyncableNode(
             GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(ctor))),
         ))))))),
-    )));
+    ))));
 export const MethodDeclarationBase = createBase(ClassElement);
 const createOverloadBase = <T extends typeof ClassElement>(ctor: T) =>
     JSDocableNode(ChildOrderableNode(
-        TextInsertableNode(ScopedNode(TypeParameteredNode(AbstractableNode(QuestionTokenableNode(StaticableNode(AsyncableNode(
+        TextInsertableNode(OverrideableNode(ScopedNode(TypeParameteredNode(AbstractableNode(QuestionTokenableNode(StaticableNode(AsyncableNode(
             ModifierableNode(GeneratorableNode(SignaturedDeclaration(ctor))),
-        ))))))),
+        )))))))),
     ));
 export const MethodDeclarationOverloadBase = createOverloadBase(ClassElement);
 
