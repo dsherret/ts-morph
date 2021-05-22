@@ -41,7 +41,7 @@ describe(nameof(PropertyDeclaration), () => {
             };
 
             doTest("class Identifier {\n    prop: string;\n}", structure,
-                "class Identifier {\n    /** test */\n    @dec\n    declare public abstract static readonly newName?: string = 5;\n}");
+                "class Identifier {\n    /** test */\n    @dec\n    declare public static abstract readonly newName?: string = 5;\n}");
         });
     });
 

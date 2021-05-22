@@ -91,9 +91,13 @@ interface MyInterface {
 let t: MyInterface;
 `);
 
-            expect(signature.getJsDocTags().map(c => ({ name: c.getName(), text: c.getText() }))).to.deep.equal([
-                { name: "property", text: "Testing." },
-            ]);
+            expect(signature.getJsDocTags().map(c => ({ name: c.getName(), text: c.getText() }))).to.deep.equal([{
+                name: "property",
+                text: [{
+                    kind: "text",
+                    text: "Testing.",
+                }],
+            }]);
         });
     });
 

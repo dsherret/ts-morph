@@ -39,7 +39,7 @@ describe(nameof(PropertyDeclarationStructurePrinter), () => {
             doTest(structure, [
                 "/** test */",
                 "@dec",
-                "declare public abstract static readonly prop?: number = 5;",
+                "declare public static abstract readonly prop?: number = 5;",
             ].join("\n"));
         });
     });

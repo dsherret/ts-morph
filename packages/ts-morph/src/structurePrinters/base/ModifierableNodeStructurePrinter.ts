@@ -1,4 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { OverrideableNode } from "../../compiler";
 import { AbstractableNodeStructure, AmbientableNodeStructure, AsyncableNodeStructure, ExportableNodeStructure, ReadonlyableNodeStructure,
     ScopeableNodeStructure, ScopedNodeStructure, StaticableNodeStructure } from "../../structures";
 import { Printer } from "../Printer";
@@ -17,10 +18,12 @@ export class ModifierableNodeStructurePrinter extends Printer<ModifierableNodeSt
             writer.write("declare ");
         if (scope != null)
             writer.write(`${scope} `);
-        if ((structure as AbstractableNodeStructure).isAbstract)
-            writer.write("abstract ");
         if ((structure as StaticableNodeStructure).isStatic)
             writer.write("static ");
+        if ((structure as OverrideableNode).hasOverrideKeyword)
+            writer.write("override ");
+        if ((structure as AbstractableNodeStructure).isAbstract)
+            writer.write("abstract ");
         if ((structure as AsyncableNodeStructure).isAsync)
             writer.write("async ");
         if ((structure as ReadonlyableNodeStructure).isReadonly)

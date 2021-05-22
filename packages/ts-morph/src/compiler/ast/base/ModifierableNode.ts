@@ -191,16 +191,16 @@ function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
             return ["export"];
         case "declare":
             return ["export", "default"];
-        case "override":
-            return ["public", "private", "protected"];
         case "static":
-            return ["public", "protected", "private", "override"];
+            return ["public", "protected", "private"];
+        case "override":
+            return ["public", "private", "protected", "override"];
         case "abstract":
-            return ["export", "default", "declare", "public", "private", "protected", "override"];
+            return ["export", "default", "declare", "public", "private", "protected", "static", "override"];
         case "async":
-            return ["export", "default", "declare", "public", "private", "protected", "override", "abstract", "static"];
+            return ["export", "default", "declare", "public", "private", "protected", "static", "override", "abstract"];
         case "readonly":
-            return ["export", "default", "declare", "public", "private", "protected", "override", "abstract", "static"];
+            return ["export", "default", "declare", "public", "private", "protected", "static", "override", "abstract"];
         /* istanbul ignore next */
         default:
             errors.throwNotImplementedForNeverValueError(text);

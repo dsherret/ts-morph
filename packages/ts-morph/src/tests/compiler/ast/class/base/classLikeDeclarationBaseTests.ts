@@ -883,6 +883,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 isAsync: true,
                 isGenerator: true,
                 hasQuestionToken: true,
+                hasOverrideKeyword: true,
                 overloads: [{}, { scope: Scope.Private, isStatic: false, hasQuestionToken: false }],
                 parameters: [{ name: "param" }],
                 returnType: "number",
@@ -890,7 +891,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"],
             };
             doTest("class c {\n}", 0, [structure], "class c {\n    public static myMethod?();\n    private myMethod();\n"
-                + "    /** Test */\n    @dec\n    public static async myMethod?<T>(param): number {\n"
+                + "    /** Test */\n    @dec\n    public static override async myMethod?<T>(param): number {\n"
                 + "        class C {\n        }\n\n        console.log('here');\n"
                 + "    }\n}");
         });

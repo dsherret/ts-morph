@@ -94,7 +94,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     const jsDocComment = ArrayUtils.flatten((p.getParentOrThrow() as ConstructorDeclaration).getJsDocs().map(j => j.getTags()))
                         .filter(Node.isJSDocParameterTag)
                         .filter(t => t.getTagName() === "param" && t.getName() === p.getName() && t.getComment() != null)
-                        .map(t => t.getComment()!.trim())[0];
+                        .map(t => t.getCommentText()!.trim())[0];
                     return {
                         kind: StructureKind.PropertySignature as StructureKind.PropertySignature,
                         docs: jsDocComment == null ? [] : [{ kind: StructureKind.JSDoc, description: jsDocComment }] as JSDocStructure[],

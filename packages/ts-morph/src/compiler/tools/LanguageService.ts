@@ -306,7 +306,7 @@ export class LanguageService {
         formatSettings: FormatCodeSettings = {},
         userPreferences: UserPreferences = {},
     ): FileTextChanges[] {
-        const scope: ts.OrganizeImportsScope = {
+        const scope: ts.OrganizeImportsArgs = {
             type: "file",
             fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile),
         };

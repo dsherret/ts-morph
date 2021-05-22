@@ -28,6 +28,6 @@ export class JSDocTagInfo {
      * Gets the text.
      */
     getText() {
-        return this.compilerObject.text;
+        return this.compilerObject.text ?? [];
     }
 }

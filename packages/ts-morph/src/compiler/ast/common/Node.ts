@@ -2953,6 +2953,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocFunctionType: (node: compiler.Node | undefined) => node is compiler.JSDocFunctionType = Node.is(SyntaxKind.JSDocFunctionType);
     /** Gets if the node is a JSDocImplementsTag. */
     static readonly isJSDocImplementsTag: (node: compiler.Node | undefined) => node is compiler.JSDocImplementsTag = Node.is(SyntaxKind.JSDocImplementsTag);
+
+    /**
+     * Gets if the node is a JSDocLink.
+     * @param node - Node to check.
+     */
+    static isJSDocLink(node: compiler.Node | undefined): node is compiler.JSDocLink {
+        return node?.getKind() === SyntaxKind.JSDocLink;
+    }
+
     /** Gets if the node is a JSDocParameterTag. */
     static readonly isJSDocParameterTag: (node: compiler.Node | undefined) => node is compiler.JSDocParameterTag = Node.is(SyntaxKind.JSDocParameterTag);
     /** Gets if the node is a JSDocPrivateTag. */
@@ -3021,6 +3030,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a JSDocTemplateTag. */
     static readonly isJSDocTemplateTag: (node: compiler.Node | undefined) => node is compiler.JSDocTemplateTag = Node.is(SyntaxKind.JSDocTemplateTag);
+
+    /**
+     * Gets if the node is a JSDocText.
+     * @param node - Node to check.
+     */
+    static isJSDocText(node: compiler.Node | undefined): node is compiler.JSDocText {
+        return node?.getKind() === SyntaxKind.JSDocText;
+    }
+
     /** Gets if the node is a JSDocThisTag. */
     static readonly isJSDocThisTag: (node: compiler.Node | undefined) => node is compiler.JSDocThisTag = Node.is(SyntaxKind.JSDocThisTag);
 
