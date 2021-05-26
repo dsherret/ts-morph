@@ -14172,7 +14172,7 @@ class ClassExpression extends ClassExpressionBase {
 class CommentClassElement extends ClassElement {
 }
 
-const createBase$h = (ctor) => ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(ctor))))));
+const createBase$h = (ctor) => ReferenceFindableNode(ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(ctor)))))));
 const ConstructorDeclarationBase = createBase$h(ClassElement);
 const createOverloadBase = (ctor) => TypeParameteredNode(JSDocableNode(ChildOrderableNode(TextInsertableNode(ScopedNode(ModifierableNode(SignaturedDeclaration(ctor)))))));
 const ConstructorDeclarationOverloadBase = createOverloadBase(ClassElement);

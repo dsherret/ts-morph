@@ -3,7 +3,7 @@ import * as getStructureFuncs from "../../../manipulation/helpers/getStructureFu
 import { ConstructorDeclarationOverloadSpecificStructure, ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure,
     ConstructorDeclarationStructure, OptionalKind, StructureKind } from "../../../structures";
 import { isNodeAmbientOrInAmbientContext } from "../../../utils";
-import { BodyableNode, ChildOrderableNode, JSDocableNode, ModifierableNode, ScopedNode, SignaturedDeclaration, TextInsertableNode,
+import { BodyableNode, ChildOrderableNode, JSDocableNode, ModifierableNode, ReferenceFindableNode, ScopedNode, SignaturedDeclaration, TextInsertableNode,
     TypeParameteredNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
@@ -11,9 +11,9 @@ import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../f
 import { ClassElement } from "./ClassElement";
 
 const createBase = <T extends typeof ClassElement>(ctor: T) =>
-    ChildOrderableNode(TextInsertableNode(OverloadableNode(
+    ReferenceFindableNode(ChildOrderableNode(TextInsertableNode(OverloadableNode(
         ScopedNode(FunctionLikeDeclaration(BodyableNode(ctor))),
-    )));
+    ))));
 export const ConstructorDeclarationBase = createBase(ClassElement);
 const createOverloadBase = <T extends typeof ClassElement>(ctor: T) =>
     TypeParameteredNode(JSDocableNode(
