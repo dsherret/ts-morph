@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.0.0"></a>
+# [11.0.0](https://github.com/dsherret/ts-morph/compare/10.1.0...11.0.0) (2021-05-26)
+
+
+### Features
+
+* [#1156](https://github.com/dsherret/ts-morph/issues/1156) - Add `ReferenceFindableNode` to `ConstructorDeclaration`. ([e192d41](https://github.com/dsherret/ts-morph/commit/e192d41))
+* TypeScript 4.3 Support ([cd426a0](https://github.com/dsherret/ts-morph/commit/cd426a0))
+
+
+### BREAKING CHANGES
+
+* Upgraded to TS 4.3.
+
+
+
 <a name="10.1.0"></a>
 # [10.1.0](https://github.com/dsherret/ts-morph/compare/10.0.2...10.1.0) (2021-05-15)
 
