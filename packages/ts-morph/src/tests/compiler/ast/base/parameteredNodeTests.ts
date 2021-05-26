@@ -134,15 +134,16 @@ describe(nameof(ParameteredNode), () => {
                 isReadonly: true,
                 scope: Scope.Public,
                 isRestParameter: true,
+                hasOverrideKeyword: true,
                 type: "number[]",
             };
-            doTest("function identifier() {}", 0, [structure], "function identifier(@dec public readonly ...param?: number[] = [5]) {}");
+            doTest("function identifier() {}", 0, [structure], "function identifier(@dec public override readonly ...param?: number[] = [5]) {}");
         });
     });
 
     describe(nameof<FunctionDeclaration>(n => n.set), () => {
         function doTest(startingCode: string, structure: ParameteredNodeStructure, expectedCode: string) {
-            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             firstChild.set(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }

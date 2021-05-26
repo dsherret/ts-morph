@@ -16,6 +16,59 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
+    describe(nameof<ImportEqualsDeclaration>(n => n.isTypeOnly), () => {
+        function doTest(text: string, expected: boolean) {
+            const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
+            expect(firstChild.isTypeOnly()).to.equal(expected);
+        }
+
+        it("should get when not", () => {
+            doTest("import test = Namespace.Test;", false);
+        });
+
+        it("should get when is", () => {
+            doTest("import type test = Namespace.Test;", true);
+        });
+    });
+
+    describe(nameof<ImportEqualsDeclaration>(n => n.setIsTypeOnly), () => {
+        function doTest(text: string, value: boolean, expected: string) {
+            const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
+            firstChild.setIsTypeOnly(value);
+            expect(firstChild.getText()).to.equal(expected);
+        }
+
+        it("should set when not", () => {
+            doTest(
+                "import test = Namespace.Test;",
+                true,
+                "import type test = Namespace.Test;",
+            );
+        });
+
+        it("should set as not when is", () => {
+            doTest(
+                "import type test = Namespace.Test;",
+                false,
+                "import test = Namespace.Test;",
+            );
+        });
+
+        it("should not change when equal", () => {
+            doTest(
+                "import type test = Namespace.Test;",
+                true,
+                "import type test = Namespace.Test;",
+            );
+
+            doTest(
+                "import test = Namespace.Test;",
+                false,
+                "import test = Namespace.Test;",
+            );
+        });
+    });
+
     describe(nameof<ImportEqualsDeclaration>(n => n.getModuleReference), () => {
         function doTest(text: string, expected: string) {
             const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);

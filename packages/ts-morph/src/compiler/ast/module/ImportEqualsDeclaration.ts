@@ -1,4 +1,5 @@
 import { errors, ts } from "@ts-morph/common";
+import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ModuleReference } from "../aliases";
 import { JSDocableNode, NamedNode } from "../base";
 import { Node } from "../common";
@@ -8,6 +9,34 @@ import { SourceFile } from "./SourceFile";
 const createBase = <T extends typeof Statement>(ctor: T) => JSDocableNode(NamedNode(ctor));
 export const ImportEqualsDeclarationBase = createBase(Statement);
 export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {
+    /** Gets if this import equals declaration is type only. */
+    isTypeOnly() {
+        return this.compilerNode.isTypeOnly ?? false;
+    }
+
+    /** Sets if this import equals declaration is type only. */
+    setIsTypeOnly(value: boolean) {
+        if (this.isTypeOnly() === value)
+            return this;
+
+        if (value) {
+            insertIntoParentTextRange({
+                parent: this,
+                insertPos: this.getNameNode().getStart(),
+                newText: "type ",
+            });
+        }
+        else {
+            const typeKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.TypeKeyword);
+            removeChildren({
+                children: [typeKeyword],
+                removeFollowingSpaces: true,
+            });
+        }
+
+        return this;
+    }
+
     /**
      * Gets the module reference of the import equals declaration.
      */

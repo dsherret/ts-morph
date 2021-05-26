@@ -2,16 +2,16 @@ import { SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";
-import { BindingNamedNode, DecoratableNode, DotDotDotTokenableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode,
-    ScopeableNode, TypedNode } from "../base";
+import { BindingNamedNode, DecoratableNode, DotDotDotTokenableNode, InitializerExpressionableNode, ModifierableNode, OverrideableNode, QuestionTokenableNode,
+    ReadonlyableNode, ScopeableNode, TypedNode } from "../base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { callBaseSet } from "../callBaseSet";
 import { Node } from "../common/Node";
 
 const createBase = <T extends typeof Node>(ctor: T) =>
-    QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
+    OverrideableNode(QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
         DotDotDotTokenableNode(TypedNode(InitializerExpressionableNode(BindingNamedNode(ctor)))),
-    )))));
+    ))))));
 export const ParameterDeclarationBase = createBase(Node);
 export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
     /**
@@ -22,10 +22,10 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
     }
 
     /**
-     * Gets if this is a property with a scope or readonly keyword (found in class constructors).
+     * Gets if this is a property with a scope, readonly, or override keyword (found in class constructors).
      */
     isParameterProperty() {
-        return this.getScope() != null || this.isReadonly();
+        return this.getScope() != null || this.isReadonly() || this.hasOverrideKeyword();
     }
 
     /**

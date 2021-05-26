@@ -117,7 +117,7 @@ describe(nameof(GetAccessorDeclaration), () => {
 class Identifier {
     /** d */
     @dec
-    public abstract static get asdf<T>(p): string {
+    public static abstract get asdf<T>(p): string {
         class C {
         }
 

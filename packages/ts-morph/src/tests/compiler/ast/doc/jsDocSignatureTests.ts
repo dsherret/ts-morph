@@ -15,7 +15,7 @@ describe(nameof(JSDocSignature), () => {
         }
 
         it("should get when it exists", () => {
-            doTest("/**\n * @callback cb\n * @return {string}\n */\nlet x;", "@return {string}");
+            doTest("/**\n * @callback cb\n * @return {string}\n */\nlet x;", "@return {string}\n ");
         });
 
         it("should be undefined when not exists", () => {

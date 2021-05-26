@@ -36,6 +36,24 @@ export class JSDoc extends JSDocBase<ts.JSDoc> {
         return getTextWithoutStars(this.getText());
     }
 
+    /** Gets the comment property. Use `#getCommentText()` to get the text of the JS doc comment if necessary. */
+    getComment() {
+        if (this.compilerNode.comment == null)
+            return undefined;
+        else if (typeof this.compilerNode.comment === "string")
+            return this.compilerNode.comment;
+        else
+            return this.compilerNode.comment.map(n => this._getNodeFromCompilerNodeIfExists(n));
+    }
+
+    /** Gets the text of the JS doc comment. */
+    getCommentText() {
+        if (typeof this.compilerNode.comment === "string")
+            return this.compilerNode.comment;
+        else
+            return ts.getTextOfJSDocComment(this.compilerNode.comment);
+    }
+
     /**
      * Gets the description from the JS doc comment.
      * @remarks This will contain a leading newline if the jsdoc is multi-line.

@@ -33,6 +33,7 @@ describe(nameof(PropertyDeclaration), () => {
                 docs: ["test"],
                 hasExclamationToken: false,
                 hasQuestionToken: true,
+                hasOverrideKeyword: true,
                 hasDeclareKeyword: true,
                 isAbstract: true,
                 isReadonly: true,
@@ -41,7 +42,7 @@ describe(nameof(PropertyDeclaration), () => {
             };
 
             doTest("class Identifier {\n    prop: string;\n}", structure,
-                "class Identifier {\n    /** test */\n    @dec\n    declare public abstract static readonly newName?: string = 5;\n}");
+                "class Identifier {\n    /** test */\n    @dec\n    declare public static override abstract readonly newName?: string = 5;\n}");
         });
     });
 
@@ -60,6 +61,7 @@ describe(nameof(PropertyDeclaration), () => {
                 hasExclamationToken: false,
                 hasQuestionToken: false,
                 hasDeclareKeyword: false,
+                hasOverrideKeyword: false,
                 initializer: undefined,
                 isAbstract: false,
                 isReadonly: false,
@@ -74,7 +76,7 @@ describe(nameof(PropertyDeclaration), () => {
             const code = `
 class T {
     /** test */
-    @dec public static declare readonly abstract prop?: number = 5;
+    @dec public static declare override readonly abstract prop?: number = 5;
 }
 `;
             doTest(code, {
@@ -84,6 +86,7 @@ class T {
                 hasExclamationToken: false,
                 hasQuestionToken: true,
                 hasDeclareKeyword: true,
+                hasOverrideKeyword: true,
                 initializer: "5",
                 isAbstract: true,
                 isReadonly: true,
@@ -102,6 +105,7 @@ class T {
                 hasExclamationToken: true,
                 hasQuestionToken: false,
                 hasDeclareKeyword: false,
+                hasOverrideKeyword: false,
                 initializer: undefined,
                 isAbstract: false,
                 isReadonly: false,

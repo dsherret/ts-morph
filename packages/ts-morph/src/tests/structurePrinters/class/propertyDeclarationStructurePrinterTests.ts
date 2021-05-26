@@ -27,6 +27,7 @@ describe(nameof(PropertyDeclarationStructurePrinter), () => {
                 hasExclamationToken: false,
                 hasQuestionToken: true,
                 hasDeclareKeyword: true,
+                hasOverrideKeyword: true,
                 initializer: "5",
                 isAbstract: true,
                 isReadonly: true,
@@ -39,7 +40,7 @@ describe(nameof(PropertyDeclarationStructurePrinter), () => {
             doTest(structure, [
                 "/** test */",
                 "@dec",
-                "declare public abstract static readonly prop?: number = 5;",
+                "declare public static override abstract readonly prop?: number = 5;",
             ].join("\n"));
         });
     });

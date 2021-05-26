@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 197
+**Total:** 200
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -164,7 +164,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: moduleSpecifier
 * [ImportEqualsDeclaration](src/compiler/ast/module/ImportEqualsDeclaration.ts)
     * :heavy_check_mark: name
-    * :x: isTypeOnly
+    * :heavy_check_mark: isTypeOnly
     * :heavy_check_mark: moduleReference
 * [ImportExpression](src/compiler/ast/expression/ImportExpression.ts)
 * [ImportSpecifier](src/compiler/ast/module/ImportSpecifier.ts)
@@ -192,7 +192,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: statement
 * [JSDoc](src/compiler/ast/doc/JSDoc.ts)
     * :heavy_check_mark: tags
-    * :x: comment
+    * :heavy_check_mark: comment
 * [JSDocAugmentsTag](src/compiler/ast/doc/JSDocAugmentsTag.ts)
     * :x: class
 * [JSDocAuthorTag](src/compiler/ast/doc/JSDocAuthorTag.ts)
@@ -207,6 +207,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocFunctionType](src/compiler/ast/doc/JSDocFunctionType.ts)
 * [JSDocImplementsTag](src/compiler/ast/doc/JSDocImplementsTag.ts)
     * :x: class
+* [JSDocLink](src/compiler/ast/doc/JSDocLink.ts)
+    * :x: name
+    * :x: text
+* [JSDocOverrideTag](src/compiler/ast/doc/JSDocOverrideTag.ts)
 * [JSDocParameterTag](src/compiler/ast/doc/JSDocParameterTag.ts)
 * [JSDocPrivateTag](src/compiler/ast/doc/JSDocPrivateTag.ts)
 * [JSDocPropertyTag](src/compiler/ast/doc/JSDocPropertyTag.ts)
@@ -227,6 +231,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocTemplateTag](src/compiler/ast/doc/JSDocTemplateTag.ts)
     * :heavy_check_mark: constraint
     * :heavy_check_mark: typeParameters
+* [JSDocText](src/compiler/ast/doc/JSDocText.ts)
+    * :x: text
 * [JSDocThisTag](src/compiler/ast/doc/JSDocThisTag.ts)
     * :heavy_check_mark: typeExpression
 * [JSDocType](src/compiler/ast/doc/JSDocType.ts)

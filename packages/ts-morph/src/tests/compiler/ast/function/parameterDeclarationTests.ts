@@ -56,15 +56,20 @@ describe(nameof(ParameterDeclaration), () => {
             expect(firstParam.isParameterProperty()).to.be.equal(isParameterProperty);
         }
 
+        // wow, I must have been super lazy to do this (should be on a class)...
         it("should be parameter property when has a scope", () => {
             doTest("function func(public param: any){}", true);
+        });
+
+        it("should be parameter property when has an override keyword", () => {
+            doTest("function func(override param: any){}", true);
         });
 
         it("should be parameter property when is readonly", () => {
             doTest("function func(readonly param: any){}", true);
         });
 
-        it("should not be parameter property when not readonly or having a scope", () => {
+        it("should not be parameter property when not readonly, override, or having a scope", () => {
             doTest("function func(param: any){}", false);
         });
     });
@@ -152,6 +157,7 @@ describe(nameof(ParameterDeclaration), () => {
                 type: undefined,
                 hasQuestionToken: false,
                 isRestParameter: false,
+                hasOverrideKeyword: false,
                 scope: undefined,
                 isReadonly: false,
                 decorators: [],
@@ -161,9 +167,10 @@ describe(nameof(ParameterDeclaration), () => {
 
         it("should get for parameter that has everything", () => {
             // not semantically correct, but good enough for testing
-            doTest("function g(@dec public readonly ...matrix?: boolean = true) {}", {
+            doTest("function g(@dec public override readonly ...matrix?: boolean = true) {}", {
                 kind: StructureKind.Parameter,
                 hasQuestionToken: true,
+                hasOverrideKeyword: true,
                 name: "matrix",
                 type: "boolean",
                 scope: Scope.Public,

@@ -7,7 +7,8 @@ import { NameableNodeStructure, AsyncableNodeStructure, ImplementsClauseableNode
     TypedNodeStructure, ExclamationTokenableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, NamedNodeStructure,
     BindingNamedNodeStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeElementMemberedNodeStructure,
     DecoratableNodeStructure, 
-    ModuleNamedNodeStructure} from "./base";
+    ModuleNamedNodeStructure,
+    OverrideableNodeStructure} from "./base";
 import { ClassDeclarationStructure, ClassLikeDeclarationBaseStructure, ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure,
     GetAccessorDeclarationStructure, MethodDeclarationStructure, MethodDeclarationOverloadStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure } from "./class";
@@ -361,6 +362,18 @@ export const Structure = {
             case StructureKind.Parameter:
             case StructureKind.MethodSignature:
             case StructureKind.PropertySignature:
+                return true;
+            default:
+                return false;
+        }
+    },
+    /** Gets if the provided structure is a OverrideableNodeStructure. */
+    isOverrideable<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & OverrideableNodeStructure {
+        switch (structure.kind) {
+            case StructureKind.Method:
+            case StructureKind.MethodOverload:
+            case StructureKind.Property:
+            case StructureKind.Parameter:
                 return true;
             default:
                 return false;

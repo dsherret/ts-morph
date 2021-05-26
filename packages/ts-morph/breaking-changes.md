@@ -2,6 +2,12 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 11
+
+- Upgraded to TS 4.3
+- `JSDoc#getComment()` and `JSDocTag#getComment()` no longer possibly return just a string based on changes in the compiler API. Use `#getCommentText()` instead now to just get the text.
+- Support for the new `override` keyword.
+
 ## Version 10
 
 - Upgraded to TS 4.2.

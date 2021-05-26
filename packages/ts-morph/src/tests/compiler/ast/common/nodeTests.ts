@@ -983,7 +983,7 @@ class MyClass {
                 "/**\n * @return {string}\n */\nfunction test() {}",
                 sourceFile => sourceFile,
                 SyntaxKind.JSDocReturnTag,
-                "@return {string}",
+                "@return {string}\n ",
                 sourceFile => {
                     // todo: in the future it would be better for this to be false and only parse the tokens on JSDoc nodes
                     expect(hasParsedTokens(sourceFile.compilerNode)).to.be.true;

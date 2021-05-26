@@ -1,6 +1,6 @@
 import { ArrayUtils, errors, SymbolFlags, ts } from "@ts-morph/common";
 import { ProjectContext } from "../../ProjectContext";
-import { Node } from "../ast";
+import { JSDocTagInfo, Node } from "../ast";
 import { Type } from "../types";
 
 export class Symbol {
@@ -116,7 +116,7 @@ export class Symbol {
      * Gets the symbol declarations.
      */
     getDeclarations(): Node[] {
-        return (this.compilerSymbol.declarations || [])
+        return (this.compilerSymbol.declarations ?? [])
             .map(d => this._context.compilerFactory.getNodeFromCompilerNode(d, this._context.compilerFactory.getSourceFileForNode(d)));
     }
 
@@ -227,5 +227,11 @@ export class Symbol {
      */
     getFullyQualifiedName() {
         return this._context.typeChecker.getFullyQualifiedName(this);
+    }
+
+    /** Gets the JS doc tag infos of the symbol. */
+    getJsDocTags() {
+        return this.compilerSymbol.getJsDocTags(this._context.typeChecker.compilerObject)
+            .map(info => new JSDocTagInfo(info));
     }
 }

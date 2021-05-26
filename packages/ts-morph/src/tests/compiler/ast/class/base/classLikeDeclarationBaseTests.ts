@@ -484,12 +484,13 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 hasExclamationToken: true, // will favour question token
                 hasQuestionToken: true,
                 hasDeclareKeyword: true,
+                hasOverrideKeyword: true,
                 initializer: "5",
                 isAbstract: false,
                 isReadonly: true,
             };
             doTest("class c {\n}", 0, [structure, { name: "other", hasExclamationToken: true }],
-                "class c {\n    /** Test */\n    @dec\n    declare public static readonly prop?: number = 5;\n    other!;\n"
+                "class c {\n    /** Test */\n    @dec\n    declare public static override readonly prop?: number = 5;\n    other!;\n"
                     + "}");
         });
     });
@@ -883,6 +884,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 isAsync: true,
                 isGenerator: true,
                 hasQuestionToken: true,
+                hasOverrideKeyword: true,
                 overloads: [{}, { scope: Scope.Private, isStatic: false, hasQuestionToken: false }],
                 parameters: [{ name: "param" }],
                 returnType: "number",
@@ -890,7 +892,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 statements: [{ kind: StructureKind.Class, name: "C" }, "console.log('here');"],
             };
             doTest("class c {\n}", 0, [structure], "class c {\n    public static myMethod?();\n    private myMethod();\n"
-                + "    /** Test */\n    @dec\n    public static async myMethod?<T>(param): number {\n"
+                + "    /** Test */\n    @dec\n    public static override async myMethod?<T>(param): number {\n"
                 + "        class C {\n        }\n\n        console.log('here');\n"
                 + "    }\n}");
         });

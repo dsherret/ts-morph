@@ -282,6 +282,7 @@ export namespace fillStructures {
         setIfNull(structure, "isStatic", false);
         setIfNull(structure, "isAsync", false);
         setIfNull(structure, "isAbstract", false);
+        setIfNull(structure, "hasOverrideKeyword", false);
         setIfNull(structure, "hasQuestionToken", false);
         setIfNull(structure, "scope", undefined);
         setIfNull(structure, "returnType", undefined);
@@ -318,6 +319,7 @@ export namespace fillStructures {
         setIfNull(structure, "hasExclamationToken", false);
         setIfNull(structure, "hasQuestionToken", false);
         setIfNull(structure, "hasDeclareKeyword", false);
+        setIfNull(structure, "hasOverrideKeyword", false);
         setIfNull(structure, "initializer", undefined);
         setIfNull(structure, "scope", undefined);
 
@@ -388,6 +390,7 @@ export namespace fillStructures {
         setIfNull(structure, "hasQuestionToken", false);
         setIfNull(structure, "initializer", undefined);
         setIfNull(structure, "isReadonly", false);
+        setIfNull(structure, "hasOverrideKeyword", false);
         setIfNull(structure, "isRestParameter", false);
         setIfNull(structure, "scope", undefined);
         setIfNull(structure, "type", undefined);

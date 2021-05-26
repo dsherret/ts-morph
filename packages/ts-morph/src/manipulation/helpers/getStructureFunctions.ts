@@ -18,6 +18,7 @@ export function fromMethodDeclarationOverload(node: compiler.MethodDeclaration):
     ObjectUtils.assign(structure, getMixinStructureFuncs.fromAbstractableNode(node));
     ObjectUtils.assign(structure, getMixinStructureFuncs.fromScopedNode(node));
     ObjectUtils.assign(structure, getMixinStructureFuncs.fromQuestionTokenableNode(node));
+    ObjectUtils.assign(structure, getMixinStructureFuncs.fromOverrideableNode(node));
     return structure;
 }
 

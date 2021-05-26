@@ -17,6 +17,7 @@ export default {
         typescript({
             typescript: require("ttypescript"),
             tsconfig: "tsconfig.rollup.json",
+            check: false, // todo: re-enable
         }),
     ],
 };

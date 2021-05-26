@@ -5,7 +5,8 @@ import { Node } from "../common";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 
 export type ModifierableNodeExtensionType = Node;
-export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
+export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const"
+    | "override";
 
 export interface ModifierableNode {
     /**
@@ -180,26 +181,28 @@ function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
     switch (text) {
         case "export":
             return [];
-        case "default":
-            return ["export"];
-        case "declare":
-            return ["export", "default"];
-        case "abstract":
-            return ["export", "default", "declare", "public", "private", "protected"];
-        case "readonly":
-            return ["export", "default", "declare", "public", "private", "protected", "abstract", "static"];
         case "public":
         case "protected":
         case "private":
             return [];
-        case "static":
-            return ["public", "protected", "private"];
-        case "async":
-            return ["export", "public", "protected", "private", "static", "abstract"];
+        case "default":
+            return ["export"];
         case "const":
             return ["export"];
+        case "declare":
+            return ["export", "default"];
+        case "static":
+            return ["public", "protected", "private"];
+        case "override":
+            return ["public", "private", "protected", "static"];
+        case "abstract":
+            return ["export", "default", "declare", "public", "private", "protected", "static", "override"];
+        case "async":
+            return ["export", "default", "declare", "public", "private", "protected", "static", "override", "abstract"];
+        case "readonly":
+            return ["export", "default", "declare", "public", "private", "protected", "static", "override", "abstract"];
         /* istanbul ignore next */
         default:
-            throw new errors.NotImplementedError(`Not implemented modifier: ${text}`);
+            errors.throwNotImplementedForNeverValueError(text);
     }
 }

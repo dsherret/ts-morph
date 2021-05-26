@@ -893,13 +893,12 @@ describe(nameof(Project), () => {
         });
 
         it("should be able to specify a script kind", () => {
-            // people should not be using markdown files in here... adding tests anyway...
-            const sourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile("MyFile.md", "# Header", { scriptKind: ScriptKind.External });
-            expect(sourceFile.getScriptKind()).to.equal(ScriptKind.External);
+            const sourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile("MyFile.json", "{}", { scriptKind: ScriptKind.JSON });
+            expect(sourceFile.getScriptKind()).to.equal(ScriptKind.JSON);
 
             // should work after manipulation
-            sourceFile.replaceWithText("# New Header");
-            expect(sourceFile.getScriptKind()).to.equal(ScriptKind.External);
+            sourceFile.replaceWithText("5");
+            expect(sourceFile.getScriptKind()).to.equal(ScriptKind.JSON);
         });
 
         it("", () => {

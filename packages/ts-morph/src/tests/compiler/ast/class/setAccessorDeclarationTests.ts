@@ -117,7 +117,7 @@ describe(nameof(SetAccessorDeclaration), () => {
 class Identifier {
     /** d */
     @dec
-    public abstract static set asdf<T>(p): string {
+    public static abstract set asdf<T>(p): string {
         class C {
         }
 
