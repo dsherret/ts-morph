@@ -2955,8 +2955,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocImplementsTag: (node: compiler.Node | undefined) => node is compiler.JSDocImplementsTag = Node.is(SyntaxKind.JSDocImplementsTag);
     /** Gets if the node is a JSDocLink. */
     static readonly isJSDocLink: (node: compiler.Node | undefined) => node is compiler.JSDocLink = Node.is(SyntaxKind.JSDocLink);
-    /** Gets if the node is a JSDocMemberName. */
-    static readonly isJSDocMemberName: (node: compiler.Node | undefined) => node is compiler.JSDocMemberName = Node.is(SyntaxKind.JSDocMemberName);
     /** Gets if the node is a JSDocOverrideTag. */
     static readonly isJSDocOverrideTag: (node: compiler.Node | undefined) => node is compiler.JSDocOverrideTag = Node.is(SyntaxKind.JSDocOverrideTag);
     /** Gets if the node is a JSDocParameterTag. */
@@ -3513,7 +3511,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param node - Node to check.
      */
     static isOverrideableNode<T extends compiler.Node>(node: T | undefined): node is compiler.OverrideableNode & compiler.OverrideableNodeExtensionType & T {
-        return node?.getKind() === SyntaxKind.MethodDeclaration;
+        switch (node?.getKind()) {
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.Parameter:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

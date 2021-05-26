@@ -23,6 +23,6 @@
   "homepage": "https://github.com/dsherret/ts-morph#readme",
   "devDependencies": {
     "lerna": "^4.0.0",
-    "@types/node": "15.0.1"
+    "@types/node": "15.6.1"
   }
 }

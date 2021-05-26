@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 201
+**Total:** 200
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -164,7 +164,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: moduleSpecifier
 * [ImportEqualsDeclaration](src/compiler/ast/module/ImportEqualsDeclaration.ts)
     * :heavy_check_mark: name
-    * :x: isTypeOnly
+    * :heavy_check_mark: isTypeOnly
     * :heavy_check_mark: moduleReference
 * [ImportExpression](src/compiler/ast/expression/ImportExpression.ts)
 * [ImportSpecifier](src/compiler/ast/module/ImportSpecifier.ts)
@@ -210,9 +210,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocLink](src/compiler/ast/doc/JSDocLink.ts)
     * :x: name
     * :x: text
-* [JSDocMemberName](src/compiler/ast/doc/JSDocMemberName.ts)
-    * :x: left
-    * :x: right
 * [JSDocOverrideTag](src/compiler/ast/doc/JSDocOverrideTag.ts)
 * [JSDocParameterTag](src/compiler/ast/doc/JSDocParameterTag.ts)
 * [JSDocPrivateTag](src/compiler/ast/doc/JSDocPrivateTag.ts)

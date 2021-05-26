@@ -372,6 +372,8 @@ export const Structure = {
         switch (structure.kind) {
             case StructureKind.Method:
             case StructureKind.MethodOverload:
+            case StructureKind.Property:
+            case StructureKind.Parameter:
                 return true;
             default:
                 return false;

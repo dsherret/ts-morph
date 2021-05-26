@@ -9,7 +9,6 @@ export * from "./JSDocEnumTag";
 export * from "./JSDocFunctionType";
 export * from "./JSDocImplementsTag";
 export * from "./JSDocLink";
-export * from "./JSDocMemberName";
 export * from "./JSDocOverrideTag";
 export * from "./JSDocParameterTag";
 export * from "./JSDocPrivateTag";

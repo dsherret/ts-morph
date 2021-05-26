@@ -484,12 +484,13 @@ describe(nameof(ClassLikeDeclarationBase), () => {
                 hasExclamationToken: true, // will favour question token
                 hasQuestionToken: true,
                 hasDeclareKeyword: true,
+                hasOverrideKeyword: true,
                 initializer: "5",
                 isAbstract: false,
                 isReadonly: true,
             };
             doTest("class c {\n}", 0, [structure, { name: "other", hasExclamationToken: true }],
-                "class c {\n    /** Test */\n    @dec\n    declare public static readonly prop?: number = 5;\n    other!;\n"
+                "class c {\n    /** Test */\n    @dec\n    declare public static override readonly prop?: number = 5;\n    other!;\n"
                     + "}");
         });
     });

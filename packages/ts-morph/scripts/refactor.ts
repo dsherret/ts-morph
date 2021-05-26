@@ -6,7 +6,7 @@
  * ----------------------------
  */
 
-import { Node, SourceFile, SyntaxKind } from "ts-morph";
+import { tsMorph } from "@ts-morph/scripts";
 import { InspectorFactory } from "./inspectors";
 
 const factory = new InspectorFactory();

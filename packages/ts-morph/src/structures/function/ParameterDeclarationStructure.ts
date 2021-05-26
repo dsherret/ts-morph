@@ -1,11 +1,11 @@
-import { BindingNamedNodeStructure, DecoratableNodeStructure, InitializerExpressionableNodeStructure, QuestionTokenableNodeStructure, ReadonlyableNodeStructure,
-    ScopeableNodeStructure, TypedNodeStructure } from "../base";
+import { BindingNamedNodeStructure, DecoratableNodeStructure, InitializerExpressionableNodeStructure, OverrideableNodeStructure, QuestionTokenableNodeStructure,
+    ReadonlyableNodeStructure, ScopeableNodeStructure, TypedNodeStructure } from "../base";
 import { KindedStructure, Structure } from "../Structure";
 import { StructureKind } from "../StructureKind";
 
 export interface ParameterDeclarationStructure
     extends Structure, BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure,
-        ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure
+        ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure, OverrideableNodeStructure
 {
 }
 

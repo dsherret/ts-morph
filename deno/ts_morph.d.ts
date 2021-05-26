@@ -2820,7 +2820,7 @@ export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDe
     getParentOrThrow(): NonNullable<NodeParentType<ts.MethodDeclaration>>;
 }
 
-declare const PropertyDeclarationBase: Constructor<ChildOrderableNode> & Constructor<AmbientableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<ExclamationTokenableNode> & Constructor<QuestionTokenableNode> & Constructor<InitializerExpressionableNode> & Constructor<TypedNode> & Constructor<PropertyNamedNode> & Constructor<ModifierableNode> & typeof ClassElement;
+declare const PropertyDeclarationBase: Constructor<ChildOrderableNode> & Constructor<OverrideableNode> & Constructor<AmbientableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<ExclamationTokenableNode> & Constructor<QuestionTokenableNode> & Constructor<InitializerExpressionableNode> & Constructor<TypedNode> & Constructor<PropertyNamedNode> & Constructor<ModifierableNode> & typeof ClassElement;
 
 export declare class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
     /**
@@ -3040,8 +3040,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocImplementsTag: (node: Node | undefined) => node is JSDocImplementsTag;
     /** Gets if the node is a JSDocLink. */
     static readonly isJSDocLink: (node: Node | undefined) => node is JSDocLink;
-    /** Gets if the node is a JSDocMemberName. */
-    static readonly isJSDocMemberName: (node: Node | undefined) => node is JSDocMemberName;
     /** Gets if the node is a JSDocOverrideTag. */
     static readonly isJSDocOverrideTag: (node: Node | undefined) => node is JSDocOverrideTag;
     /** Gets if the node is a JSDocParameterTag. */
@@ -4716,14 +4714,6 @@ export declare class JSDocLink extends Node<ts.JSDocLink> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocLink>>;
 }
 
-/** JS doc member name node. */
-export declare class JSDocMemberName extends Node<ts.JSDocMemberName> {
-    /** @inheritdoc **/
-    getParent(): NodeParentType<ts.JSDocMemberName>;
-    /** @inheritdoc **/
-    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocMemberName>>;
-}
-
 /** JS doc override tag node. */
 export declare class JSDocOverrideTag extends JSDocTag<ts.JSDocOverrideTag> {
     /** @inheritdoc **/
@@ -5868,12 +5858,12 @@ export interface OverloadableNode {
 }
 
 declare type OverloadableNodeExtensionType = Node & BodyableNode;
-declare const ParameterDeclarationBase: Constructor<QuestionTokenableNode> & Constructor<DecoratableNode> & Constructor<ScopeableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & Constructor<DotDotDotTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
+declare const ParameterDeclarationBase: Constructor<OverrideableNode> & Constructor<QuestionTokenableNode> & Constructor<DecoratableNode> & Constructor<ScopeableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & Constructor<DotDotDotTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
 
 export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
     /** Gets if it's a rest parameter. */
     isRestParameter(): boolean;
-    /** Gets if this is a property with a scope or readonly keyword (found in class constructors). */
+    /** Gets if this is a property with a scope, readonly, or override keyword (found in class constructors). */
     isParameterProperty(): boolean;
     /**
      * Sets if it's a rest parameter.
@@ -6347,7 +6337,6 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocFunctionType]: JSDocFunctionType;
     [SyntaxKind.JSDocImplementsTag]: JSDocImplementsTag;
     [SyntaxKind.JSDocLink]: JSDocLink;
-    [SyntaxKind.JSDocMemberName]: JSDocMemberName;
     [SyntaxKind.JSDocOverrideTag]: JSDocOverrideTag;
     [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
     [SyntaxKind.JSDocPrivateTag]: JSDocPrivateTag;
@@ -7057,6 +7046,10 @@ export declare class ImportDeclaration extends ImportDeclarationBase<ts.ImportDe
 declare const ImportEqualsDeclarationBase: Constructor<JSDocableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {
+    /** Gets if this import equals declaration is type only. */
+    isTypeOnly(): boolean;
+    /** Sets if this import equals declaration is type only. */
+    setIsTypeOnly(value: boolean): this;
     /** Gets the module reference of the import equals declaration. */
     getModuleReference(): ModuleReference;
     /** Gets if the external module reference is relative. */
@@ -10072,7 +10065,7 @@ export interface MethodDeclarationOverloadStructure extends Structure, MethodDec
 interface MethodDeclarationOverloadSpecificStructure extends KindedStructure<StructureKind.MethodOverload> {
 }
 
-export interface PropertyDeclarationStructure extends Structure, PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, AmbientableNodeStructure {
+export interface PropertyDeclarationStructure extends Structure, PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, AmbientableNodeStructure, OverrideableNodeStructure {
 }
 
 interface PropertyDeclarationSpecificStructure extends KindedStructure<StructureKind.Property> {
@@ -10175,7 +10168,7 @@ interface FunctionDeclarationOverloadSpecificStructure extends KindedStructure<S
 export interface FunctionLikeDeclarationStructure extends SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, StatementedNodeStructure {
 }
 
-export interface ParameterDeclarationStructure extends Structure, BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure {
+export interface ParameterDeclarationStructure extends Structure, BindingNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure, OverrideableNodeStructure {
 }
 
 interface ParameterDeclarationSpecificStructure extends KindedStructure<StructureKind.Parameter> {

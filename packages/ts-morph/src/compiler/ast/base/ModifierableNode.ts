@@ -194,7 +194,7 @@ function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
         case "static":
             return ["public", "protected", "private"];
         case "override":
-            return ["public", "private", "protected", "override"];
+            return ["public", "private", "protected", "static"];
         case "abstract":
             return ["export", "default", "declare", "public", "private", "protected", "static", "override"];
         case "async":
