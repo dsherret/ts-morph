@@ -15,6 +15,7 @@ export function isAllowedMixin(name: string) {
         case "BodiedNode":
         case "BodyableNode":
         case "ModuledNode":
+        case "ReferenceFindableNode":
             return false;
         default:
             return true;
