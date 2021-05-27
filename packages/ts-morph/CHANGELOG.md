@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.0.1"></a>
+## [11.0.1](https://github.com/dsherret/ts-morph/compare/11.0.0...11.0.1) (2021-05-27)
+
+
+### Bug Fixes
+
+* `Node.isReferenceFindableNode(node)` should return `true` for a constructor declaration. ([b8b0a39](https://github.com/dsherret/ts-morph/commit/b8b0a39))
+
+
+
 <a name="11.0.0"></a>
 # [11.0.0](https://github.com/dsherret/ts-morph/compare/10.1.0...11.0.0) (2021-05-26)
 
