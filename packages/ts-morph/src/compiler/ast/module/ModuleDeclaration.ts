@@ -1,6 +1,7 @@
 import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ModuleDeclarationSpecificStructure, ModuleDeclarationStructure, StructureKind } from "../../../structures";
+import { Constructor } from "../../../types";
 import { RenameOptions } from "../../tools";
 import { AmbientableNode, BodyableNode, ExportableNode, JSDocableNode, ModifierableNode, ModuledNode, ModuleNamedNode, TextInsertableNode,
     UnwrappableNode } from "../base";
@@ -20,7 +21,9 @@ const createBase = <T extends typeof Statement>(ctor: T) =>
             ExportableNode(ModifierableNode(ModuleNamedNode(ctor))),
         )))))),
     ));
-export const ModuleDeclarationBase = createBase(Statement);
+export const ModuleDeclarationBase: Constructor<ModuledNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<BodyableNode>
+    & Constructor<ModuleChildableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode>
+    & Constructor<ModifierableNode> & Constructor<ModuleNamedNode> & typeof Statement = createBase(Statement);
 export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaration> {
     /**
      * Gets the full name of the namespace.

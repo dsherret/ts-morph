@@ -1,4 +1,4 @@
 {
-  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.tsdk": "./packages/scripts/node_modules/typescript/lib",
   "prettier.enable": false
 }
