@@ -348,16 +348,18 @@ export class CompilerFactory {
      */
     getSourceFile(compilerSourceFile: ts.SourceFile, options: { markInProject: boolean; }): SourceFile {
         let wasAdded = false;
-        const sourceFile = this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
-            const createdSourceFile = new SourceFile(this.context, compilerSourceFile);
+        // check the file path cache first in case this source file object is for an old manipulation (see issue 1164)
+        const sourceFile = this.sourceFileCacheByFilePath.get(compilerSourceFile.fileName as StandardizedFilePath)
+            ?? this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
+                const createdSourceFile = new SourceFile(this.context, compilerSourceFile);
 
-            if (!options.markInProject)
-                this.context.inProjectCoordinator.setSourceFileNotInProject(createdSourceFile);
+                if (!options.markInProject)
+                    this.context.inProjectCoordinator.setSourceFileNotInProject(createdSourceFile);
 
-            this.addSourceFileToCache(createdSourceFile);
-            wasAdded = true;
-            return createdSourceFile;
-        });
+                this.addSourceFileToCache(createdSourceFile);
+                wasAdded = true;
+                return createdSourceFile;
+            });
 
         if (options.markInProject)
             sourceFile._markAsInProject();
