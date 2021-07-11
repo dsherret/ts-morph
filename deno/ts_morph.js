@@ -18706,8 +18706,9 @@ class CompilerFactory {
         return this.documentRegistry.createOrUpdateSourceFile(filePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text), scriptKind);
     }
     getSourceFile(compilerSourceFile, options) {
+        var _a;
         let wasAdded = false;
-        const sourceFile = this.nodeCache.getOrCreate(compilerSourceFile, () => {
+        const sourceFile = (_a = this.sourceFileCacheByFilePath.get(compilerSourceFile.fileName)) !== null && _a !== void 0 ? _a : this.nodeCache.getOrCreate(compilerSourceFile, () => {
             const createdSourceFile = new SourceFile(this.context, compilerSourceFile);
             if (!options.markInProject)
                 this.context.inProjectCoordinator.setSourceFileNotInProject(createdSourceFile);
@@ -18715,10 +18716,11 @@ class CompilerFactory {
             wasAdded = true;
             return createdSourceFile;
         });
-        if (options.markInProject)
+        if (options.markInProject) {
             sourceFile._markAsInProject();
-        if (wasAdded)
-            this.sourceFileAddedEventContainer.fire(sourceFile);
+            if (wasAdded)
+                this.sourceFileAddedEventContainer.fire(sourceFile);
+        }
         return sourceFile;
     }
     addSourceFileToCache(sourceFile) {

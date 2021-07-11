@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.0.3"></a>
+## [11.0.3](https://github.com/dsherret/ts-morph/compare/11.0.2...11.0.3) (2021-07-11)
+
+
+### Bug Fixes
+
+* [#1171](https://github.com/dsherret/ts-morph/issues/1171) - Ensure the program is not sometimes reset when inspecting a symbol ([a41b7b5](https://github.com/dsherret/ts-morph/commit/a41b7b5))
+* [#1164](https://github.com/dsherret/ts-morph/issues/1164) - getting a type, manipulating, then inspecting the type may cause source file to no longer exist in project ([d8a651e](https://github.com/dsherret/ts-morph/commit/d8a651e))
+
+
+
 <a name="11.0.1"></a>
 ## [11.0.1](https://github.com/dsherret/ts-morph/compare/11.0.0...11.0.1) (2021-05-27)
 
