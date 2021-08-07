@@ -44,8 +44,6 @@ To match a file from that directory you need to do that relatively to the curren
 const sourceFile = project.getSourceFiles(`${projectDirectory}/**/config/index.ts`)
 ```
 
-Same variable declared above.
-
 You can see more details [here](https://github.com/dsherret/ts-morph/issues/1185#issuecomment-894704303)
 
 ### By file path
