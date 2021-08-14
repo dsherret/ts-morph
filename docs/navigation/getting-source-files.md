@@ -26,25 +26,21 @@ const nonTestSourceFiles = project.getSourceFiles([
 ]);
 ```
 
-Know that the path resolution and matching is done **relatively to the current directory**.
+Note that the path resolution and matching is done relative to the current working directory.
 
-If you load a project from another directory. Like in:
+For example, if you load a project from another directory...
 
 ```ts
-const projectDirectory = '/someDirectory/notCurrent'
-
 const project = new Project({
-    tsConfigFilePath: `${projectConfigFile}/tsconfig.json`
-})
+    tsConfigFilePath: `/someDirectory/notCurrent/tsconfig.json`,
+});
 ```
 
-To match a file from that directory you need to do that relatively to the current directory. Or by an absolute path.
+...to match a file from that directory you need to specify a glob that matches based on the current working directory or absolute path...
 
 ```ts
-const sourceFile = project.getSourceFiles(`${projectDirectory}/**/config/index.ts`)
+const sourceFile = project.getSourceFiles(`/someDirectory/notCurrent/**/config/index.ts`);
 ```
-
-You can see more details [here](https://github.com/dsherret/ts-morph/issues/1185#issuecomment-894704303)
 
 ### By file path
 
