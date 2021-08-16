@@ -1,5 +1,6 @@
-import * as stdFs from "https://deno.land/std@0.89.0/fs/mod.ts";
-import * as stdPath from "https://deno.land/std@0.89.0/path/mod.ts";
+import { ensureDir, ensureDirSync } from "https://deno.land/std@0.104.0/fs/ensure_dir.ts";
+import { expandGlob, expandGlobSync } from "https://deno.land/std@0.104.0/fs/expand_glob.ts";
+import * as stdPath from "https://deno.land/std@0.104.0/path/mod.ts";
 
 export class DenoRuntime {
     fs = new DenoRuntimeFileSystem();
@@ -66,11 +67,11 @@ class DenoRuntimeFileSystem {
     }
 
     async mkdir(dirPath: string) {
-        await stdFs.ensureDir(dirPath);
+        await ensureDir(dirPath);
     }
 
     mkdirSync(dirPath: string) {
-        stdFs.ensureDirSync(dirPath);
+        ensureDirSync(dirPath);
     }
 
     move(srcPath: string, destPath: string) {
@@ -134,7 +135,7 @@ class DenoRuntimeFileSystem {
     async glob(patterns: ReadonlyArray<string>) {
         const { excludePatterns, pattern } = globPatternsToPattern(patterns);
         const result: string[] = [];
-        const globEntries = stdFs.expandGlob(pattern, {
+        const globEntries = expandGlob(pattern, {
             root: this.getCurrentDirectory(),
             extended: true,
             globstar: true,
@@ -150,7 +151,7 @@ class DenoRuntimeFileSystem {
     globSync(patterns: ReadonlyArray<string>) {
         const { excludePatterns, pattern } = globPatternsToPattern(patterns);
         const result: string[] = [];
-        const globEntries = stdFs.expandGlobSync(pattern, {
+        const globEntries = expandGlobSync(pattern, {
             root: this.getCurrentDirectory(),
             extended: true,
             globstar: true,
