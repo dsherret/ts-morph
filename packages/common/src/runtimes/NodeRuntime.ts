@@ -59,11 +59,12 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
 
     readFile(filePath: string, encoding = "utf-8") {
         return new Promise<string>((resolve, reject) => {
-            fs.readFile(filePath, encoding, (err, data) => {
+            // what's up with these types?
+            fs.readFile(filePath, encoding as any, (err, data) => {
                 if (err)
                     reject(err);
                 else
-                    resolve(data);
+                    resolve(data as any as string);
             });
         });
     }

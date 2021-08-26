@@ -1,4 +1,4 @@
-import { DocumentRegistry, ts, StringUtils, FileUtils, TransactionalFileSystem, TsConfigResolver, errors, InMemoryFileSystemHost, RealFileSystemHost, CompilerOptionsContainer, createHosts, runtime, createModuleResolutionHost, Memoize } from '../common/mod.ts';
+import { DocumentRegistry, ts, StringUtils, FileUtils, Memoize, TransactionalFileSystem, TsConfigResolver, errors, InMemoryFileSystemHost, RealFileSystemHost, CompilerOptionsContainer, createHosts, runtime, createModuleResolutionHost } from '../common/mod.ts';
 export { CompilerOptionsContainer, InMemoryFileSystemHost, ResolutionHosts, SettingsContainer, ts } from '../common/mod.ts';
 
 /*! *****************************************************************************
