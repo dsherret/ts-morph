@@ -1,7 +1,7 @@
 // DO NOT EDIT - Automatically maintained by createStructurePrinterFactory.ts
 import { Memoize } from "@ts-morph/common";
-import * as structurePrinters from "../structurePrinters";
 import { SupportedFormatCodeSettings } from "../options";
+import * as structurePrinters from "../structurePrinters";
 
 /** Cached lazy factory for StructurePrinters. */
 export class StructurePrinterFactory {
@@ -40,6 +40,11 @@ export class StructurePrinterFactory {
     @Memoize
     forClassMember(options: { isAmbient: boolean; }): structurePrinters.ClassMemberStructurePrinter {
         return new structurePrinters.ClassMemberStructurePrinter(this, options);
+    }
+
+    @Memoize
+    forClassStaticBlockDeclaration(): structurePrinters.ClassStaticBlockDeclarationStructurePrinter {
+        return new structurePrinters.ClassStaticBlockDeclarationStructurePrinter(this);
     }
 
     @Memoize

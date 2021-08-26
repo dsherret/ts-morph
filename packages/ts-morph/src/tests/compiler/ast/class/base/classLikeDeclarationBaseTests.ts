@@ -1,9 +1,9 @@
 import { SyntaxKind } from "@ts-morph/common";
 import { expect } from "chai";
-import { ClassDeclaration, ClassLikeDeclarationBase, CommentClassElement, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration,
-    MethodDeclaration, Node, ParameterDeclaration, PropertyDeclaration, Scope, SetAccessorDeclaration } from "../../../../../compiler";
-import { ClassMemberStructures, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure, StructureKind } from "../../../../../structures";
+import { ClassDeclaration, ClassLikeDeclarationBase, ClassStaticBlockDeclaration, CommentClassElement, ConstructorDeclaration, ExpressionWithTypeArguments,
+    GetAccessorDeclaration, MethodDeclaration, Node, ParameterDeclaration, PropertyDeclaration, Scope, SetAccessorDeclaration } from "../../../../../compiler";
+import { ClassMemberStructures, ClassStaticBlockDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
+    MethodDeclarationStructure, PropertyDeclarationStructure, SetAccessorDeclarationStructure, StructureKind } from "../../../../../structures";
 import { WriterFunction } from "../../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../../testHelpers";
 
@@ -364,6 +364,91 @@ describe(nameof(ClassLikeDeclarationBase), () => {
             expect(constructors.length).to.equal(2);
             expect(constructors[0]!.getText()).to.equal("constructor(str: string);");
             expect(constructors[1]!.getText()).to.equal("constructor(str: any);");
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.insertStaticBlock), () => {
+        function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<ClassStaticBlockDeclarationStructure>, expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertStaticBlock(insertIndex, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(ClassStaticBlockDeclaration);
+        }
+
+        it("should insert when none exists", () => {
+            doTest("class c {\n}", 0, {}, "class c {\n    static {\n    }\n}");
+        });
+
+        it("should not remove the previous static block when one exists", () => {
+            doTest("class c {\n    static {\n    }\n}", 1, {}, "class c {\n    static {\n    }\n\n    static {\n    }\n}");
+        });
+
+        it("should insert into other members", () => {
+            doTest("class c {\n//1\n    prop1;\n    prop2;\n}", 2, {}, "class c {\n//1\n    prop1;\n\n    static {\n    }\n\n    prop2;\n}");
+        });
+
+        it("should insert all the properties of the structure", () => {
+            const structure: OptionalKindAndTrivia<MakeRequired<ClassStaticBlockDeclarationStructure>> = {
+                docs: [{ description: "Test" }],
+                statements: ["console;"],
+            };
+            doTest("class c {\n}", 0, structure, "class c {\n    static {\n        console;\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.addStaticBlock), () => {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<ClassStaticBlockDeclarationStructure>, expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addStaticBlock(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(ClassStaticBlockDeclaration);
+        }
+
+        it("should add at the end", () => {
+            doTest("class c {\n    prop1;\n}", {}, "class c {\n    prop1;\n\n    static {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.addStaticBlocks), () => {
+        function doTest(startCode: string, structure: OptionalKindAndTrivia<ClassStaticBlockDeclarationStructure>[], expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addStaticBlocks(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structure.length);
+        }
+
+        it("should add at the end", () => {
+            doTest("class c {\n    prop1;\n}", [{}, {}], "class c {\n    prop1;\n\n    static {\n    }\n\n    static {\n    }\n}");
+        });
+
+        it("should print multiple correctly when ambient (does this anyway)", () => {
+            doTest("declare class c {\n}", [{}, { statements: "test;" }], "declare class c {\n    static {\n    }\n\n    static {\n        test;\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.insertStaticBlocks), () => {
+        function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<ClassStaticBlockDeclarationStructure>[], expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertStaticBlocks(index, structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert multiple static blocks", () => {
+            doTest("class c {\n    prop1;\n}", 0, [{}, {}], "class c {\n    static {\n    }\n\n    static {\n    }\n\n    prop1;\n}");
+        });
+    });
+
+    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticBlocks), () => {
+        it("should return nothing when none exists", () => {
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { }");
+            expect(firstChild.getStaticBlocks().length).to.equal(0);
+        });
+
+        it("should return the static block when it exists", () => {
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { static { } static { console; } }");
+            expect(firstChild.getStaticBlocks()[0]!.getText()).to.equal("static { }");
+            expect(firstChild.getStaticBlocks()[1]!.getText()).to.equal("static { console; }");
         });
     });
 

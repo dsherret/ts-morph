@@ -2,8 +2,9 @@ import { ArrayUtils, errors, StringUtils, SyntaxKind, ts } from "@ts-morph/commo
 import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { getEndIndexFromArray, InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren,
     insertIntoBracesOrSourceFileWithGetChildrenWithComments, insertIntoParentTextRange } from "../../../../manipulation";
-import { ClassMemberStructures, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, OptionalKind,
-    PropertyDeclarationStructure, SetAccessorDeclarationStructure, Structure, Structures } from "../../../../structures";
+import { ClassMemberStructures, ClassStaticBlockDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
+    MethodDeclarationStructure, OptionalKind, PropertyDeclarationStructure, SetAccessorDeclarationStructure, Structure,
+    Structures } from "../../../../structures";
 import { Constructor } from "../../../../types";
 import { WriterFunction } from "../../../../types";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, isNodeAmbientOrInAmbientContext } from "../../../../utils";
@@ -15,6 +16,7 @@ import { ParameterDeclaration } from "../../function";
 import { ExpressionWithTypeArguments } from "../../type";
 import { ExtendedParser } from "../../utils";
 import { ClassDeclaration } from "../ClassDeclaration";
+import { ClassStaticBlockDeclaration } from "../ClassStaticBlockDeclaration";
 import { CommentClassElement } from "../CommentClassElement";
 import { ConstructorDeclaration } from "../ConstructorDeclaration";
 import { GetAccessorDeclaration } from "../GetAccessorDeclaration";
@@ -27,8 +29,9 @@ export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | 
 export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
 export type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
 export type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
-export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
-export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
+export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticBlockDeclaration | ClassStaticPropertyTypes;
+export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration
+    | ClassStaticBlockDeclaration;
 
 export type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
 
@@ -115,6 +118,32 @@ export interface ClassLikeDeclarationBaseSpecific {
      * Gets the constructor declarations.
      */
     getConstructors(): ConstructorDeclaration[];
+    /**
+     * Adds a static block.
+     * @param structure - Structure of the static block.
+     */
+    addStaticBlock(structure?: OptionalKind<ClassStaticBlockDeclarationStructure>): ClassStaticBlockDeclaration;
+    /**
+     * Adds static block.
+     * @param structures - Structures of the static block.
+     */
+    addStaticBlocks(structures: ReadonlyArray<OptionalKind<ClassStaticBlockDeclarationStructure>>): ClassStaticBlockDeclaration[];
+    /**
+     * Inserts a static block.
+     * @param index - Child index to insert at.
+     * @param structure - Structure of the static block.
+     */
+    insertStaticBlock(index: number, structure?: OptionalKind<ClassStaticBlockDeclarationStructure>): ClassStaticBlockDeclaration;
+    /**
+     * Inserts static blocks.
+     * @param index - Child index to insert at.
+     * @param structures - Structures of the static blocks.
+     */
+    insertStaticBlocks(index: number, structures: ReadonlyArray<OptionalKind<ClassStaticBlockDeclarationStructure>>): ClassStaticBlockDeclaration[];
+    /**
+     * Gets the static blocks.
+     */
+    getStaticBlocks(): ClassStaticBlockDeclaration[];
     /**
      * Add get accessor.
      * @param structure - Structure representing the get accessor.
@@ -687,6 +716,43 @@ export function ClassLikeDeclarationBaseSpecific<T extends Constructor<ClassLike
             return this.getMembers().filter(m => Node.isConstructorDeclaration(m)) as ConstructorDeclaration[];
         }
 
+        addStaticBlock(structure: OptionalKind<ClassStaticBlockDeclarationStructure> = {}) {
+            return this.insertStaticBlock(getEndIndexFromArray(this.getMembersWithComments()), structure);
+        }
+
+        addStaticBlocks(structures: ReadonlyArray<OptionalKind<ClassStaticBlockDeclarationStructure>>) {
+            return this.insertStaticBlocks(getEndIndexFromArray(this.getMembersWithComments()), structures);
+        }
+
+        insertStaticBlock(index: number, structure: OptionalKind<ClassStaticBlockDeclarationStructure> = {}) {
+            return this.insertStaticBlocks(index, [structure])[0];
+        }
+
+        insertStaticBlocks(index: number, structures: ReadonlyArray<OptionalKind<ClassStaticBlockDeclarationStructure>>): ClassStaticBlockDeclaration[] {
+            const isAmbient = isNodeAmbientOrInAmbientContext(this);
+            return insertChildren<ClassStaticBlockDeclaration>(this, {
+                index,
+                structures,
+                expectedKind: SyntaxKind.ClassStaticBlockDeclaration,
+                write: (writer, info) => {
+                    // might as well do this ambient stuff even though it doesn't make sense
+                    if (!isAmbient && info.previousMember != null && !Node.isCommentNode(info.previousMember))
+                        writer.blankLineIfLastNot();
+                    else
+                        writer.newLineIfLastNot();
+                    this._context.structurePrinterFactory.forClassStaticBlockDeclaration().printTexts(writer, structures);
+                    if (!isAmbient && info.nextMember != null)
+                        writer.blankLineIfLastNot();
+                    else
+                        writer.newLineIfLastNot();
+                },
+            });
+        }
+
+        getStaticBlocks() {
+            return this.getMembers().filter(m => Node.isClassStaticBlockDeclaration(m)) as ClassStaticBlockDeclaration[];
+        }
+
         addGetAccessor(structure: OptionalKind<GetAccessorDeclarationStructure>) {
             return this.addGetAccessors([structure])[0];
         }
@@ -1149,7 +1215,8 @@ function isSupportedClassMember(m: Node) {
         || Node.isPropertyDeclaration(m)
         || Node.isGetAccessorDeclaration(m)
         || Node.isSetAccessorDeclaration(m)
-        || Node.isConstructorDeclaration(m);
+        || Node.isConstructorDeclaration(m)
+        || Node.isClassStaticBlockDeclaration(m);
 }
 
 interface InsertChildrenOptions {

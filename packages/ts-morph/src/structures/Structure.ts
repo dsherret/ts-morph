@@ -11,7 +11,8 @@ import { NameableNodeStructure, AsyncableNodeStructure, ImplementsClauseableNode
     OverrideableNodeStructure} from "./base";
 import { ClassDeclarationStructure, ClassLikeDeclarationBaseStructure, ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure,
     GetAccessorDeclarationStructure, MethodDeclarationStructure, MethodDeclarationOverloadStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure } from "./class";
+    SetAccessorDeclarationStructure, 
+    ClassStaticBlockDeclarationStructure} from "./class";
 import { DecoratorStructure } from "./decorator";
 import { JSDocStructure, JSDocTagStructure } from "./doc";
 import { EnumDeclarationStructure, EnumMemberStructure } from "./enum";
@@ -89,6 +90,7 @@ export const Structure = {
     isTypeParametered<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & TypeParameteredNodeStructure {
         switch (structure.kind) {
             case StructureKind.Class:
+            case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
             case StructureKind.ConstructorOverload:
             case StructureKind.GetAccessor:
@@ -111,6 +113,7 @@ export const Structure = {
     isJSDocable<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & JSDocableNodeStructure {
         switch (structure.kind) {
             case StructureKind.Class:
+            case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
             case StructureKind.ConstructorOverload:
             case StructureKind.GetAccessor:
@@ -183,15 +186,14 @@ export const Structure = {
                 return false;
         }
     },
-    /** Gets if the provided structure is a ConstructorDeclarationStructure. */
-    isConstructor(structure: Structure & { kind: StructureKind; }): structure is ConstructorDeclarationStructure {
-        return structure.kind === StructureKind.Constructor;
+    /** Gets if the provided structure is a ClassStaticBlockDeclarationStructure. */
+    isClassStaticBlock(structure: Structure & { kind: StructureKind; }): structure is ClassStaticBlockDeclarationStructure {
+        return structure.kind === StructureKind.ClassStaticBlock;
     },
-    /** Gets if the provided structure is a ScopedNodeStructure. */
-    isScoped<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & ScopedNodeStructure {
+    /** Gets if the provided structure is a StaticableNodeStructure. */
+    isStaticable<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & StaticableNodeStructure {
         switch (structure.kind) {
-            case StructureKind.Constructor:
-            case StructureKind.ConstructorOverload:
+            case StructureKind.ClassStaticBlock:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
             case StructureKind.MethodOverload:
@@ -205,6 +207,7 @@ export const Structure = {
     /** Gets if the provided structure is a FunctionLikeDeclarationStructure. */
     isFunctionLike<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & FunctionLikeDeclarationStructure {
         switch (structure.kind) {
+            case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
@@ -218,6 +221,7 @@ export const Structure = {
     /** Gets if the provided structure is a SignaturedDeclarationStructure. */
     isSignatured<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & SignaturedDeclarationStructure {
         switch (structure.kind) {
+            case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
             case StructureKind.ConstructorOverload:
             case StructureKind.GetAccessor:
@@ -237,6 +241,7 @@ export const Structure = {
     /** Gets if the provided structure is a ParameteredNodeStructure. */
     isParametered<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & ParameteredNodeStructure {
         switch (structure.kind) {
+            case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
             case StructureKind.ConstructorOverload:
             case StructureKind.GetAccessor:
@@ -256,6 +261,7 @@ export const Structure = {
     /** Gets if the provided structure is a ReturnTypedNodeStructure. */
     isReturnTyped<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & ReturnTypedNodeStructure {
         switch (structure.kind) {
+            case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
             case StructureKind.ConstructorOverload:
             case StructureKind.GetAccessor:
@@ -276,6 +282,7 @@ export const Structure = {
     /** Gets if the provided structure is a StatementedNodeStructure. */
     isStatemented<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & StatementedNodeStructure {
         switch (structure.kind) {
+            case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
@@ -283,6 +290,25 @@ export const Structure = {
             case StructureKind.Function:
             case StructureKind.Module:
             case StructureKind.SourceFile:
+                return true;
+            default:
+                return false;
+        }
+    },
+    /** Gets if the provided structure is a ConstructorDeclarationStructure. */
+    isConstructor(structure: Structure & { kind: StructureKind; }): structure is ConstructorDeclarationStructure {
+        return structure.kind === StructureKind.Constructor;
+    },
+    /** Gets if the provided structure is a ScopedNodeStructure. */
+    isScoped<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & ScopedNodeStructure {
+        switch (structure.kind) {
+            case StructureKind.Constructor:
+            case StructureKind.ConstructorOverload:
+            case StructureKind.GetAccessor:
+            case StructureKind.Method:
+            case StructureKind.MethodOverload:
+            case StructureKind.Property:
+            case StructureKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -307,19 +333,6 @@ export const Structure = {
             case StructureKind.MethodSignature:
             case StructureKind.PropertySignature:
             case StructureKind.PropertyAssignment:
-                return true;
-            default:
-                return false;
-        }
-    },
-    /** Gets if the provided structure is a StaticableNodeStructure. */
-    isStaticable<T extends Structure & { kind: StructureKind; }>(structure: T): structure is T & StaticableNodeStructure {
-        switch (structure.kind) {
-            case StructureKind.GetAccessor:
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.Property:
-            case StructureKind.SetAccessor:
                 return true;
             default:
                 return false;

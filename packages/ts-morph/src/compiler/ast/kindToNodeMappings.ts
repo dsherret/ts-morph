@@ -23,6 +23,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.CatchClause]: compiler.CatchClause;
     [SyntaxKind.ClassDeclaration]: compiler.ClassDeclaration;
     [SyntaxKind.ClassExpression]: compiler.ClassExpression;
+    [SyntaxKind.ClassStaticBlockDeclaration]: compiler.ClassStaticBlockDeclaration;
     [SyntaxKind.ConditionalType]: compiler.ConditionalTypeNode;
     [SyntaxKind.Constructor]: compiler.ConstructorDeclaration;
     [SyntaxKind.ConstructorType]: compiler.ConstructorTypeNode;
@@ -76,6 +77,9 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocFunctionType]: compiler.JSDocFunctionType;
     [SyntaxKind.JSDocImplementsTag]: compiler.JSDocImplementsTag;
     [SyntaxKind.JSDocLink]: compiler.JSDocLink;
+    [SyntaxKind.JSDocLinkCode]: compiler.JSDocLinkCode;
+    [SyntaxKind.JSDocLinkPlain]: compiler.JSDocLinkPlain;
+    [SyntaxKind.JSDocMemberName]: compiler.JSDocMemberName;
     [SyntaxKind.JSDocOverrideTag]: compiler.JSDocOverrideTag;
     [SyntaxKind.JSDocParameterTag]: compiler.JSDocParameterTag;
     [SyntaxKind.JSDocPrivateTag]: compiler.JSDocPrivateTag;

@@ -61,6 +61,11 @@ export class ClassMemberStructurePrinter extends Printer<ClassMemberStructuresAr
                     ensureBlankLine();
                 this.factory.forConstructorDeclaration(this.options).printText(writer, member);
                 break;
+            case StructureKind.ClassStaticBlock:
+                // always does this even in ambient contexts
+                ensureBlankLine();
+                this.factory.forClassStaticBlockDeclaration().printText(writer, member);
+                break;
             default:
                 errors.throwNotImplementedForNeverValueError(member);
         }

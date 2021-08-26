@@ -124,6 +124,15 @@ export class TypeChecker {
     }
 
     /**
+     * Follow a single alias to get the immediately aliased symbol.
+     * @param symbol - Symbol to get the immediate alias symbol of.
+     */
+    getImmediatelyAliasedSymbol(symbol: Symbol): Symbol | undefined {
+        const tsAliasSymbol = this.compilerObject.getImmediateAliasedSymbol(symbol.compilerSymbol);
+        return tsAliasSymbol == null ? undefined : this._context.compilerFactory.getSymbol(tsAliasSymbol);
+    }
+
+    /**
      * Gets the export symbol of a local symbol with a corresponding export symbol. Otherwise returns the input symbol.
      *
      * The following is from the compiler API documentation:

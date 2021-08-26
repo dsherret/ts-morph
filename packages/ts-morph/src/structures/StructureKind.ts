@@ -1,6 +1,7 @@
 export enum StructureKind {
     CallSignature,
     Class,
+    ClassStaticBlock,
     ConstructSignature,
     Constructor,
     ConstructorOverload,

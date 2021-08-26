@@ -11,6 +11,7 @@ export function matchFiles(
     depth: number | undefined,
     getEntries: (path: string) => FileSystemEntries,
     realpath: (path: string) => string,
+    directoryExists: (path: string) => boolean,
 ): string[] {
     return (ts as any).matchFiles.apply(this, arguments);
 }

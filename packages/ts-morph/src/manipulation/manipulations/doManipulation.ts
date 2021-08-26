@@ -17,7 +17,7 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
             sourceFile.getScriptKind(),
         );
         nodeHandler.handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
-    } catch (err) {
+    } catch (err: any) {
         const diagnostics = getSyntacticDiagnostics(sourceFile, newFileText);
         const errorDetails = err.message + "\n\n"
             + `-- Details --\n`

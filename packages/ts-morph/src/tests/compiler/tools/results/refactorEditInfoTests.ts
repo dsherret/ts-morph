@@ -41,7 +41,7 @@ describe(nameof(RefactorEditInfo), () => {
             const node = sourceFile.getImportDeclarations()[0];
             const edits = languageService.getEditsForRefactor(sourceFile, {}, node, "Convert import", "Convert named imports to namespace import", {})!;
             edits.applyChanges();
-            expect(sourceFile.getFullText()).to.equal("import * as a_1 from 'a'; export const c = a_1.a(1) + a_1.a(2)");
+            expect(sourceFile.getFullText()).to.equal("import * as a from 'a'; export const c = a.a(1) + a.a(2)");
         });
     });
 });

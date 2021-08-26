@@ -1,5 +1,6 @@
-import { ClassDeclarationStructure, ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
-    MethodDeclarationOverloadStructure, MethodDeclarationStructure, PropertyDeclarationStructure, SetAccessorDeclarationStructure } from "./class";
+import { ClassDeclarationStructure, ClassStaticBlockDeclarationStructure, ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure,
+    GetAccessorDeclarationStructure, MethodDeclarationOverloadStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
+    SetAccessorDeclarationStructure } from "./class";
 import { DecoratorStructure } from "./decorator";
 import { JSDocStructure, JSDocTagStructure } from "./doc";
 import { EnumDeclarationStructure, EnumMemberStructure } from "./enum";
@@ -18,7 +19,7 @@ export type StatementStructures = ClassDeclarationStructure | EnumDeclarationStr
     | VariableStatementStructure;
 
 export type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure
-    | MethodDeclarationStructure | PropertyDeclarationStructure;
+    | MethodDeclarationStructure | PropertyDeclarationStructure | ClassStaticBlockDeclarationStructure;
 
 export type TypeElementMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure
     | MethodSignatureStructure | PropertySignatureStructure;

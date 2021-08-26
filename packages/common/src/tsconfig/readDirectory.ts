@@ -37,6 +37,7 @@ export function readDirectory(
                 return getFileSystemEntries(standardizedPath, fileSystemWrapper);
             },
             path => fileSystemWrapper.realpathSync(fileSystemWrapper.getStandardizedAbsolutePath(path)),
+            path => fileSystemWrapper.directoryExistsSync(fileSystemWrapper.getStandardizedAbsolutePath(path)),
         ),
         directories,
     };

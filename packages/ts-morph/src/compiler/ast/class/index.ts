@@ -2,6 +2,7 @@ export * from "./base";
 export * from "./ClassDeclaration";
 export * from "./ClassElement";
 export * from "./ClassExpression";
+export * from "./ClassStaticBlockDeclaration";
 export * from "./CommentClassElement";
 export * from "./ConstructorDeclaration";
 export * from "./GetAccessorDeclaration";

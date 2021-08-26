@@ -2318,6 +2318,30 @@ interface ClassLikeDeclarationBaseSpecific {
     /** Gets the constructor declarations. */
     getConstructors(): ConstructorDeclaration[];
     /**
+     * Adds a static block.
+     * @param structure - Structure of the static block.
+     */
+    addStaticBlock(structure?: OptionalKind<ClassStaticBlockDeclarationStructure>): ClassStaticBlockDeclaration;
+    /**
+     * Adds static block.
+     * @param structures - Structures of the static block.
+     */
+    addStaticBlocks(structures: ReadonlyArray<OptionalKind<ClassStaticBlockDeclarationStructure>>): ClassStaticBlockDeclaration[];
+    /**
+     * Inserts a static block.
+     * @param index - Child index to insert at.
+     * @param structure - Structure of the static block.
+     */
+    insertStaticBlock(index: number, structure?: OptionalKind<ClassStaticBlockDeclarationStructure>): ClassStaticBlockDeclaration;
+    /**
+     * Inserts static blocks.
+     * @param index - Child index to insert at.
+     * @param structures - Structures of the static blocks.
+     */
+    insertStaticBlocks(index: number, structures: ReadonlyArray<OptionalKind<ClassStaticBlockDeclarationStructure>>): ClassStaticBlockDeclaration[];
+    /** Gets the static blocks. */
+    getStaticBlocks(): ClassStaticBlockDeclaration[];
+    /**
      * Add get accessor.
      * @param structure - Structure representing the get accessor.
      */
@@ -2675,8 +2699,8 @@ export declare type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclar
 export declare type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
 export declare type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
 export declare type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
-export declare type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
-export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
+export declare type ClassStaticMemberTypes = MethodDeclaration | ClassStaticBlockDeclaration | ClassStaticPropertyTypes;
+export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | ClassStaticBlockDeclaration;
 declare type ClassLikeDeclarationBaseExtensionType = Node<ts.ClassLikeDeclarationBase>;
 declare type ClassLikeDeclarationBaseSpecificExtensionType = Node<ts.ClassLikeDeclarationBase> & HeritageClauseableNode & ModifierableNode & NameableNode;
 declare const ClassDeclarationBase: Constructor<ModuleChildableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ClassLikeDeclarationBase> & typeof Statement;
@@ -2717,6 +2741,32 @@ export declare class ClassExpression extends ClassExpressionBase<ts.ClassExpress
     getParent(): NodeParentType<ts.ClassExpression>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.ClassExpression>>;
+}
+
+declare const ClassStaticBlockDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<StatementedNode> & Constructor<JSDocableNode> & Constructor<BodiedNode> & typeof ClassElement;
+
+export declare class ClassStaticBlockDeclaration extends ClassStaticBlockDeclarationBase<ts.ClassStaticBlockDeclaration> {
+    /**
+     * Method that exists for the sake of making code compile that looks for the name of static members.
+     * This always returns "static".
+     */
+    getName(): "static";
+    /**
+     * Method that exists for the sake of making code compile that looks for this method on class members.
+     * This always returns true.
+     */
+    isStatic(): true;
+    /**
+     * Sets the node from a structure.
+     * @param structure - Structure to set the node with.
+     */
+    set(structure: Partial<ClassStaticBlockDeclarationStructure>): this;
+    /** Gets the structure equivalent to this node. */
+    getStructure(): ClassStaticBlockDeclarationStructure;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.ClassStaticBlockDeclaration>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.ClassStaticBlockDeclaration>>;
 }
 
 export declare class CommentClassElement extends ClassElement<CompilerCommentClassElement> {
@@ -2956,6 +3006,8 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isClassDeclaration: (node: Node | undefined) => node is ClassDeclaration;
     /** Gets if the node is a ClassExpression. */
     static readonly isClassExpression: (node: Node | undefined) => node is ClassExpression;
+    /** Gets if the node is a ClassStaticBlockDeclaration. */
+    static readonly isClassStaticBlockDeclaration: (node: Node | undefined) => node is ClassStaticBlockDeclaration;
     /** Gets if the node is a CommaListExpression. */
     static readonly isCommaListExpression: (node: Node | undefined) => node is CommaListExpression;
     /** Gets if the node is a ComputedPropertyName. */
@@ -3040,6 +3092,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocImplementsTag: (node: Node | undefined) => node is JSDocImplementsTag;
     /** Gets if the node is a JSDocLink. */
     static readonly isJSDocLink: (node: Node | undefined) => node is JSDocLink;
+    /** Gets if the node is a JSDocLinkCode. */
+    static readonly isJSDocLinkCode: (node: Node | undefined) => node is JSDocLinkCode;
+    /** Gets if the node is a JSDocLinkPlain. */
+    static readonly isJSDocLinkPlain: (node: Node | undefined) => node is JSDocLinkPlain;
+    /** Gets if the node is a JSDocMemberName. */
+    static readonly isJSDocMemberName: (node: Node | undefined) => node is JSDocMemberName;
     /** Gets if the node is a JSDocOverrideTag. */
     static readonly isJSDocOverrideTag: (node: Node | undefined) => node is JSDocOverrideTag;
     /** Gets if the node is a JSDocParameterTag. */
@@ -4590,7 +4648,7 @@ export declare class JSDoc extends JSDocBase<ts.JSDoc> {
     /** Gets the JSDoc's text without the surrounding slashes and stars. */
     getInnerText(): string;
     /** Gets the comment property. Use `#getCommentText()` to get the text of the JS doc comment if necessary. */
-    getComment(): string | (JSDocText | JSDocLink | undefined)[] | undefined;
+    getComment(): string | (JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain | undefined)[] | undefined;
     /** Gets the text of the JS doc comment. */
     getCommentText(): string | undefined;
     /**
@@ -4714,6 +4772,30 @@ export declare class JSDocLink extends Node<ts.JSDocLink> {
     getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocLink>>;
 }
 
+/** JS doc link code node. */
+export declare class JSDocLinkCode extends Node<ts.JSDocLinkCode> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocLinkCode>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocLinkCode>>;
+}
+
+/** JS doc link plain node. */
+export declare class JSDocLinkPlain extends Node<ts.JSDocLinkPlain> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocLinkPlain>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocLinkPlain>>;
+}
+
+/** JS doc member name node. */
+export declare class JSDocMemberName extends Node<ts.JSDocMemberName> {
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.JSDocMemberName>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.JSDocMemberName>>;
+}
+
 /** JS doc override tag node. */
 export declare class JSDocOverrideTag extends JSDocTag<ts.JSDocOverrideTag> {
     /** @inheritdoc **/
@@ -4820,7 +4902,7 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
      */
     setTagName(tagName: string): Node<ts.Node>;
     /** Gets the tag's comment property. Use `#getCommentText()` to get the text of the JS doc tag comment if necessary. */
-    getComment(): string | (JSDocText | JSDocLink | undefined)[] | undefined;
+    getComment(): string | (JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain | undefined)[] | undefined;
     /** Gets the text of the JS doc tag comment (ex. `"Some description."` for `&#64;param value Some description.`). */
     getCommentText(): string | undefined;
     /** Removes the JS doc comment. */
@@ -6284,6 +6366,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.CatchClause]: CatchClause;
     [SyntaxKind.ClassDeclaration]: ClassDeclaration;
     [SyntaxKind.ClassExpression]: ClassExpression;
+    [SyntaxKind.ClassStaticBlockDeclaration]: ClassStaticBlockDeclaration;
     [SyntaxKind.ConditionalType]: ConditionalTypeNode;
     [SyntaxKind.Constructor]: ConstructorDeclaration;
     [SyntaxKind.ConstructorType]: ConstructorTypeNode;
@@ -6337,6 +6420,9 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.JSDocFunctionType]: JSDocFunctionType;
     [SyntaxKind.JSDocImplementsTag]: JSDocImplementsTag;
     [SyntaxKind.JSDocLink]: JSDocLink;
+    [SyntaxKind.JSDocLinkCode]: JSDocLinkCode;
+    [SyntaxKind.JSDocLinkPlain]: JSDocLinkPlain;
+    [SyntaxKind.JSDocMemberName]: JSDocMemberName;
     [SyntaxKind.JSDocOverrideTag]: JSDocOverrideTag;
     [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
     [SyntaxKind.JSDocPrivateTag]: JSDocPrivateTag;
@@ -8819,6 +8905,10 @@ export declare class Symbol {
     getEscapedName(): string;
     /** Gets the aliased symbol or throws if it doesn't exist. */
     getAliasedSymbolOrThrow(): Symbol;
+    /** Follows a single alias to get the immediately aliased symbol or returns undefined if it doesn't exist. */
+    getImmediatelyAliasedSymbol(): Symbol | undefined;
+    /** Follows a single alias to get the immediately aliased symbol or throws if it doesn't exist. */
+    getImmediatelyAliasedSymbolOrThrow(): Symbol;
     /** Gets the aliased symbol or returns undefined if it doesn't exist. */
     getAliasedSymbol(): Symbol | undefined;
     /**
@@ -9511,6 +9601,11 @@ export declare class TypeChecker {
      */
     getAliasedSymbol(symbol: Symbol): Symbol | undefined;
     /**
+     * Follow a single alias to get the immediately aliased symbol.
+     * @param symbol - Symbol to get the immediate alias symbol of.
+     */
+    getImmediatelyAliasedSymbol(symbol: Symbol): Symbol | undefined;
+    /**
      * Gets the export symbol of a local symbol with a corresponding export symbol. Otherwise returns the input symbol.
      *
      * The following is from the compiler API documentation:
@@ -9875,7 +9970,7 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
 }
 
 export declare type StatementStructures = ClassDeclarationStructure | EnumDeclarationStructure | FunctionDeclarationStructure | InterfaceDeclarationStructure | ModuleDeclarationStructure | TypeAliasDeclarationStructure | ImportDeclarationStructure | ExportDeclarationStructure | ExportAssignmentStructure | VariableStatementStructure;
-export declare type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure | PropertyDeclarationStructure;
+export declare type ClassMemberStructures = ConstructorDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure | PropertyDeclarationStructure | ClassStaticBlockDeclarationStructure;
 export declare type TypeElementMemberStructures = CallSignatureDeclarationStructure | ConstructSignatureDeclarationStructure | IndexSignatureDeclarationStructure | MethodSignatureStructure | PropertySignatureStructure;
 export declare type InterfaceMemberStructures = TypeElementMemberStructures;
 export declare type ObjectLiteralExpressionPropertyStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure | MethodDeclarationStructure;
@@ -10031,6 +10126,12 @@ export interface ClassDeclarationStructure extends Structure, ClassLikeDeclarati
 }
 
 interface ClassDeclarationSpecificStructure extends KindedStructure<StructureKind.Class> {
+}
+
+export interface ClassStaticBlockDeclarationStructure extends Structure, ClassStaticBlockDeclarationSpecificStructure, JSDocableNodeStructure, StatementedNodeStructure {
+}
+
+interface ClassStaticBlockDeclarationSpecificStructure extends KindedStructure<StructureKind.ClassStaticBlock> {
 }
 
 export interface ConstructorDeclarationStructure extends Structure, ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure {
@@ -10388,14 +10489,14 @@ export declare const Structure: {
         readonly isExportable: <T_9 extends Structure & {
             kind: StructureKind;
         }>(structure: T_9) => structure is T_9 & ExportableNodeStructure;
-        /** Gets if the provided structure is a ConstructorDeclarationStructure. */
-        readonly isConstructor: (structure: Structure & {
+        /** Gets if the provided structure is a ClassStaticBlockDeclarationStructure. */
+        readonly isClassStaticBlock: (structure: Structure & {
             kind: StructureKind;
-        }) => structure is ConstructorDeclarationStructure;
-        /** Gets if the provided structure is a ScopedNodeStructure. */
-        readonly isScoped: <T_10 extends Structure & {
+        }) => structure is ClassStaticBlockDeclarationStructure;
+        /** Gets if the provided structure is a StaticableNodeStructure. */
+        readonly isStaticable: <T_10 extends Structure & {
             kind: StructureKind;
-        }>(structure: T_10) => structure is T_10 & ScopedNodeStructure;
+        }>(structure: T_10) => structure is T_10 & StaticableNodeStructure;
         /** Gets if the provided structure is a FunctionLikeDeclarationStructure. */
         readonly isFunctionLike: <T_11 extends Structure & {
             kind: StructureKind;
@@ -10416,6 +10517,14 @@ export declare const Structure: {
         readonly isStatemented: <T_15 extends Structure & {
             kind: StructureKind;
         }>(structure: T_15) => structure is T_15 & StatementedNodeStructure;
+        /** Gets if the provided structure is a ConstructorDeclarationStructure. */
+        readonly isConstructor: (structure: Structure & {
+            kind: StructureKind;
+        }) => structure is ConstructorDeclarationStructure;
+        /** Gets if the provided structure is a ScopedNodeStructure. */
+        readonly isScoped: <T_16 extends Structure & {
+            kind: StructureKind;
+        }>(structure: T_16) => structure is T_16 & ScopedNodeStructure;
         /** Gets if the provided structure is a ConstructorDeclarationOverloadStructure. */
         readonly isConstructorDeclarationOverload: (structure: Structure & {
             kind: StructureKind;
@@ -10425,13 +10534,9 @@ export declare const Structure: {
             kind: StructureKind;
         }) => structure is GetAccessorDeclarationStructure;
         /** Gets if the provided structure is a PropertyNamedNodeStructure. */
-        readonly isPropertyNamed: <T_16 extends Structure & {
+        readonly isPropertyNamed: <T_17 extends Structure & {
             kind: StructureKind;
-        }>(structure: T_16) => structure is T_16 & PropertyNamedNodeStructure;
-        /** Gets if the provided structure is a StaticableNodeStructure. */
-        readonly isStaticable: <T_17 extends Structure & {
-            kind: StructureKind;
-        }>(structure: T_17) => structure is T_17 & StaticableNodeStructure;
+        }>(structure: T_17) => structure is T_17 & PropertyNamedNodeStructure;
         /** Gets if the provided structure is a MethodDeclarationStructure. */
         readonly isMethod: (structure: Structure & {
             kind: StructureKind;
@@ -10653,44 +10758,45 @@ export interface KindedStructure<TKind extends StructureKind> {
 export declare enum StructureKind {
     CallSignature = 0,
     Class = 1,
-    ConstructSignature = 2,
-    Constructor = 3,
-    ConstructorOverload = 4,
-    Decorator = 5,
-    Enum = 6,
-    EnumMember = 7,
-    ExportAssignment = 8,
-    ExportDeclaration = 9,
-    ExportSpecifier = 10,
-    Function = 11,
-    FunctionOverload = 12,
-    GetAccessor = 13,
-    ImportDeclaration = 14,
-    ImportSpecifier = 15,
-    IndexSignature = 16,
-    Interface = 17,
-    JsxAttribute = 18,
-    JsxSpreadAttribute = 19,
-    JsxElement = 20,
-    JsxSelfClosingElement = 21,
-    JSDoc = 22,
-    JSDocTag = 23,
-    Method = 24,
-    MethodOverload = 25,
-    MethodSignature = 26,
-    Module = 27,
-    Parameter = 28,
-    Property = 29,
-    PropertyAssignment = 30,
-    PropertySignature = 31,
-    SetAccessor = 32,
-    ShorthandPropertyAssignment = 33,
-    SourceFile = 34,
-    SpreadAssignment = 35,
-    TypeAlias = 36,
-    TypeParameter = 37,
-    VariableDeclaration = 38,
-    VariableStatement = 39
+    ClassStaticBlock = 2,
+    ConstructSignature = 3,
+    Constructor = 4,
+    ConstructorOverload = 5,
+    Decorator = 6,
+    Enum = 7,
+    EnumMember = 8,
+    ExportAssignment = 9,
+    ExportDeclaration = 10,
+    ExportSpecifier = 11,
+    Function = 12,
+    FunctionOverload = 13,
+    GetAccessor = 14,
+    ImportDeclaration = 15,
+    ImportSpecifier = 16,
+    IndexSignature = 17,
+    Interface = 18,
+    JsxAttribute = 19,
+    JsxSpreadAttribute = 20,
+    JsxElement = 21,
+    JsxSelfClosingElement = 22,
+    JSDoc = 23,
+    JSDocTag = 24,
+    Method = 25,
+    MethodOverload = 26,
+    MethodSignature = 27,
+    Module = 28,
+    Parameter = 29,
+    Property = 30,
+    PropertyAssignment = 31,
+    PropertySignature = 32,
+    SetAccessor = 33,
+    ShorthandPropertyAssignment = 34,
+    SourceFile = 35,
+    SpreadAssignment = 36,
+    TypeAlias = 37,
+    TypeParameter = 38,
+    VariableDeclaration = 39,
+    VariableStatement = 40
 }
 
 export interface TypeAliasDeclarationStructure extends Structure, TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {

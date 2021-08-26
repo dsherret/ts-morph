@@ -2295,6 +2295,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isBodiedNode<T extends compiler.Node>(node: T | undefined): node is compiler.BodiedNode & compiler.BodiedNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionExpression:
                 return true;
@@ -2350,6 +2351,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isChildOrderableNode<T extends compiler.Node>(node: T | undefined): node is compiler.ChildOrderableNode & compiler.ChildOrderableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -2415,6 +2417,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         }
     }
 
+    /** Gets if the node is a ClassStaticBlockDeclaration. */
+    static readonly isClassStaticBlockDeclaration: (node: compiler.Node | undefined) => node is compiler.ClassStaticBlockDeclaration = Node.is(SyntaxKind.ClassStaticBlockDeclaration);
     /** Gets if the node is a CommaListExpression. */
     static readonly isCommaListExpression: (node: compiler.Node | undefined) => node is compiler.CommaListExpression = Node.is(SyntaxKind.CommaListExpression);
     /** Gets if the node is a ComputedPropertyName. */
@@ -2729,6 +2733,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isFunctionLikeDeclaration<T extends compiler.Node>(node: T | undefined): node is compiler.FunctionLikeDeclaration & compiler.FunctionLikeDeclarationExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -2955,6 +2960,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static readonly isJSDocImplementsTag: (node: compiler.Node | undefined) => node is compiler.JSDocImplementsTag = Node.is(SyntaxKind.JSDocImplementsTag);
     /** Gets if the node is a JSDocLink. */
     static readonly isJSDocLink: (node: compiler.Node | undefined) => node is compiler.JSDocLink = Node.is(SyntaxKind.JSDocLink);
+    /** Gets if the node is a JSDocLinkCode. */
+    static readonly isJSDocLinkCode: (node: compiler.Node | undefined) => node is compiler.JSDocLinkCode = Node.is(SyntaxKind.JSDocLinkCode);
+    /** Gets if the node is a JSDocLinkPlain. */
+    static readonly isJSDocLinkPlain: (node: compiler.Node | undefined) => node is compiler.JSDocLinkPlain = Node.is(SyntaxKind.JSDocLinkPlain);
+    /** Gets if the node is a JSDocMemberName. */
+    static readonly isJSDocMemberName: (node: compiler.Node | undefined) => node is compiler.JSDocMemberName = Node.is(SyntaxKind.JSDocMemberName);
     /** Gets if the node is a JSDocOverrideTag. */
     static readonly isJSDocOverrideTag: (node: compiler.Node | undefined) => node is compiler.JSDocOverrideTag = Node.is(SyntaxKind.JSDocOverrideTag);
     /** Gets if the node is a JSDocParameterTag. */
@@ -3092,6 +3103,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3340,6 +3352,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3535,6 +3548,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isParameteredNode<T extends compiler.Node>(node: T | undefined): node is compiler.ParameteredNode & compiler.ParameteredNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3786,6 +3800,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isReturnTypedNode<T extends compiler.Node>(node: T | undefined): node is compiler.ReturnTypedNode & compiler.ReturnTypedNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3851,6 +3866,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isSignaturedDeclaration<T extends compiler.Node>(node: T | undefined): node is compiler.SignaturedDeclaration & compiler.SignaturedDeclarationExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3926,6 +3942,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isStatementedNode<T extends compiler.Node>(node: T | undefined): node is compiler.StatementedNode & compiler.StatementedNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3951,6 +3968,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isStaticableNode<T extends compiler.Node>(node: T | undefined): node is compiler.StaticableNode & compiler.StaticableNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
@@ -4010,6 +4028,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -4188,6 +4207,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -4389,6 +4409,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static _hasStructure(node: compiler.Node | undefined): node is compiler.Node & { getStructure(): Structure; } {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:

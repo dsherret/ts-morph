@@ -312,7 +312,7 @@ class ObjectUtils {
     }
 }
 
-function matchFiles(path, extensions, excludes, includes, useCaseSensitiveFileNames, currentDirectory, depth, getEntries, realpath) {
+function matchFiles(path, extensions, excludes, includes, useCaseSensitiveFileNames, currentDirectory, depth, getEntries, realpath, directoryExists) {
     return ts.matchFiles.apply(this, arguments);
 }
 function getFileMatcherPatterns(path, excludes, includes, useCaseSensitiveFileNames, currentDirectory) {
@@ -2410,7 +2410,7 @@ function readDirectory(fileSystemWrapper, useCaseSensitiveFileNames, rootDir, ex
             if (includeDir)
                 directories.push(standardizedPath);
             return getFileSystemEntries(standardizedPath, fileSystemWrapper);
-        }, path => fileSystemWrapper.realpathSync(fileSystemWrapper.getStandardizedAbsolutePath(path))),
+        }, path => fileSystemWrapper.realpathSync(fileSystemWrapper.getStandardizedAbsolutePath(path)), path => fileSystemWrapper.directoryExistsSync(fileSystemWrapper.getStandardizedAbsolutePath(path))),
         directories,
     };
     function dirPathMatches(absoluteName) {

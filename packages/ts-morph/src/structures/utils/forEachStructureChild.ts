@@ -5,7 +5,7 @@ import { Structures } from "../aliases";
 import { DecoratableNodeStructure, SignaturedDeclarationStructure, ParameteredNodeStructure, TypeElementMemberedNodeStructure, TypeParameteredNodeStructure,
     JSDocableNodeStructure } from "../base";
 import { ClassDeclarationStructure, GetAccessorDeclarationStructure, SetAccessorDeclarationStructure, ClassLikeDeclarationBaseStructure, ConstructorDeclarationOverloadStructure,
-    MethodDeclarationStructure, MethodDeclarationOverloadStructure, PropertyDeclarationStructure, ConstructorDeclarationStructure } from "../class";
+    MethodDeclarationStructure, MethodDeclarationOverloadStructure, PropertyDeclarationStructure, ConstructorDeclarationStructure, ClassStaticBlockDeclarationStructure } from "../class";
 import { JSDocStructure } from "../doc";
 import { EnumDeclarationStructure, EnumMemberStructure } from "../enum";
 import { FunctionDeclarationStructure, FunctionLikeDeclarationStructure, FunctionDeclarationOverloadStructure, ParameterDeclarationStructure } from "../function";
@@ -44,6 +44,8 @@ export function forEachStructureChild<TStructure>(structure: Structures | Readon
     switch (structure.kind) {
         case StructureKind.Class:
             return forClassDeclaration(structure, callback);
+        case StructureKind.ClassStaticBlock:
+            return forClassStaticBlockDeclaration(structure, callback);
         case StructureKind.Constructor:
             return forConstructorDeclaration(structure, callback);
         case StructureKind.ConstructorOverload:
@@ -136,9 +138,8 @@ function forJSDocableNode<TStructure>(structure: JSDocableNodeStructure, callbac
 }
 
 /** @generated */
-function forConstructorDeclaration<TStructure>(structure: ConstructorDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forFunctionLikeDeclaration(structure, callback)
-        || forAll(structure.overloads, callback, StructureKind.ConstructorOverload);
+function forClassStaticBlockDeclaration<TStructure>(structure: ClassStaticBlockDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
+    return forFunctionLikeDeclaration(structure, callback);
 }
 
 /** @generated */
@@ -162,6 +163,12 @@ function forParameteredNode<TStructure>(structure: ParameteredNodeStructure, cal
 /** @generated */
 function forStatementedNode<TStructure>(structure: StatementedNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
     return forAllUnknownKindIfStructure(structure.statements, callback);
+}
+
+/** @generated */
+function forConstructorDeclaration<TStructure>(structure: ConstructorDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
+    return forFunctionLikeDeclaration(structure, callback)
+        || forAll(structure.overloads, callback, StructureKind.ConstructorOverload);
 }
 
 /** @generated */

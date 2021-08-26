@@ -1620,6 +1620,11 @@ dot-prop@^6.0.1:
   dependencies:
     is-obj "^2.0.0"
 
+dprint@^0.15.4:
+  version "0.15.4"
+  resolved "https://registry.yarnpkg.com/dprint/-/dprint-0.15.4.tgz#1bbf87b893a68acbcc95ac8f9be1c854dd12f894"
+  integrity sha512-VQBDKa7bqYfN1aeVU1BzXp/FUT/jh3nmmQAH8EuDmjZE7Z4lh5H4YjMyUyIicNQxAG5rJF0Z8ZOe2nVzxl+cQg==
+
 duplexer@^0.1.1:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/duplexer/-/duplexer-0.1.2.tgz#3abe43aef3835f8ae077d136ddce0f276b0400e6"

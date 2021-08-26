@@ -950,7 +950,7 @@ export interface RuntimePath {
     relative(from: string, to: string): string;
 }
 
-export declare function matchFiles(this: any, path: string, extensions: ReadonlyArray<string>, excludes: ReadonlyArray<string>, includes: ReadonlyArray<string>, useCaseSensitiveFileNames: boolean, currentDirectory: string, depth: number | undefined, getEntries: (path: string) => FileSystemEntries, realpath: (path: string) => string): string[];
+export declare function matchFiles(this: any, path: string, extensions: ReadonlyArray<string>, excludes: ReadonlyArray<string>, includes: ReadonlyArray<string>, useCaseSensitiveFileNames: boolean, currentDirectory: string, depth: number | undefined, getEntries: (path: string) => FileSystemEntries, realpath: (path: string) => string, directoryExists: (path: string) => boolean): string[];
 
 export declare function getFileMatcherPatterns(this: any, path: string, excludes: ReadonlyArray<string>, includes: ReadonlyArray<string>, useCaseSensitiveFileNames: boolean, currentDirectory: string): FileMatcherPatterns;
 

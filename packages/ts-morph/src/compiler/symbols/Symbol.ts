@@ -53,6 +53,20 @@ export class Symbol {
     }
 
     /**
+     * Follows a single alias to get the immediately aliased symbol or returns undefined if it doesn't exist.
+     */
+    getImmediatelyAliasedSymbol(): Symbol | undefined {
+        return this._context.typeChecker.getImmediatelyAliasedSymbol(this);
+    }
+
+    /**
+     * Follows a single alias to get the immediately aliased symbol or throws if it doesn't exist.
+     */
+    getImmediatelyAliasedSymbolOrThrow(): Symbol {
+        return errors.throwIfNullOrUndefined(this.getImmediatelyAliasedSymbol(), "Expected to find an immediately aliased symbol.");
+    }
+
+    /**
      * Gets the aliased symbol or returns undefined if it doesn't exist.
      */
     getAliasedSymbol(): Symbol | undefined {
