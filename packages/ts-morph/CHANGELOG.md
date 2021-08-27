@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.0.0"></a>
+# [12.0.0](https://github.com/dsherret/ts-morph/compare/11.0.3...12.0.0) (2021-08-27)
+
+
+### Bug Fixes
+
+* **deno:** avoid importing code using unstable APIs ([2a0789c](https://github.com/dsherret/ts-morph/commit/2a0789c)) - Thanks [@wojpawlik](https://github.com/wojpawlik)!
+
+
+### Features
+
+* Typescript 4.4 support ([63c255b](https://github.com/dsherret/ts-morph/commit/63c255b))
+
+### BREAKING CHANGES
+
+* Upgraded to TS 4.4.
+
+
+
 <a name="11.0.3"></a>
 ## [11.0.3](https://github.com/dsherret/ts-morph/compare/11.0.2...11.0.3) (2021-07-11)
 
