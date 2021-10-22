@@ -13,10 +13,23 @@ export class DecoratorStructurePrinter extends NodePrinter<OptionalKind<Decorato
 
     protected printTextInternal(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
         writer.write(`@${structure.name}`);
+        this.printTypeArguments(writer, structure);
         this.printArguments(writer, structure);
     }
 
-    printArguments(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
+    private printTypeArguments(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
+        if (structure.typeArguments == null || structure.typeArguments.length === 0)
+            return;
+
+        writer.write("<");
+        for (let i = 0; i < structure.typeArguments.length; i++) {
+            writer.conditionalWrite(i > 0, ", ");
+            writer.write(this.getTextWithQueuedChildIndentation(writer, structure.typeArguments[i]));
+        }
+        writer.write(">");
+    }
+
+    private printArguments(writer: CodeBlockWriter, structure: OptionalKind<DecoratorStructure>) {
         if (structure.arguments == null)
             return;
 

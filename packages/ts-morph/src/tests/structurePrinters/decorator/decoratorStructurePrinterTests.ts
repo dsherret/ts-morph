@@ -27,5 +27,19 @@ describe(nameof(DecoratorStructurePrinter), () => {
                 doTest({ name: "dec", arguments: writer => writer.writeLine("1,").write("2") }, `@dec(1,\n    2)`);
             });
         });
+
+        describe("type arguments", () => {
+            it("should not write when empty", () => {
+                doTest({ name: "dec", typeArguments: [] }, `@dec`);
+            });
+
+            it("should write", () => {
+                doTest({ name: "dec", typeArguments: ["string"], arguments: ["1"] }, `@dec<string>(1)`);
+            });
+
+            it("should write multiple", () => {
+                doTest({ name: "dec", typeArguments: ["string", "number"] }, `@dec<string, number>`);
+            });
+        });
     });
 });
