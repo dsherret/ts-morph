@@ -163,6 +163,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypeAliasDeclaration]: compiler.TypeAliasDeclaration;
     [SyntaxKind.TypeAssertionExpression]: compiler.TypeAssertion;
     [SyntaxKind.TypeLiteral]: compiler.TypeLiteralNode;
+    [SyntaxKind.TypeOperator]: compiler.TypeOperatorTypeNode;
     [SyntaxKind.TypeParameter]: compiler.TypeParameterDeclaration;
     [SyntaxKind.TypePredicate]: compiler.TypePredicateNode;
     [SyntaxKind.TypeReference]: compiler.TypeReferenceNode;

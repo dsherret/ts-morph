@@ -139,7 +139,19 @@ function forJSDocableNode<TStructure>(structure: JSDocableNodeStructure, callbac
 
 /** @generated */
 function forClassStaticBlockDeclaration<TStructure>(structure: ClassStaticBlockDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forFunctionLikeDeclaration(structure, callback);
+    return forJSDocableNode(structure, callback)
+        || forStatementedNode(structure, callback);
+}
+
+/** @generated */
+function forStatementedNode<TStructure>(structure: StatementedNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
+    return forAllUnknownKindIfStructure(structure.statements, callback);
+}
+
+/** @generated */
+function forConstructorDeclaration<TStructure>(structure: ConstructorDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
+    return forFunctionLikeDeclaration(structure, callback)
+        || forAll(structure.overloads, callback, StructureKind.ConstructorOverload);
 }
 
 /** @generated */
@@ -158,17 +170,6 @@ function forSignaturedDeclaration<TStructure>(structure: SignaturedDeclarationSt
 /** @generated */
 function forParameteredNode<TStructure>(structure: ParameteredNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
     return forAll(structure.parameters, callback, StructureKind.Parameter);
-}
-
-/** @generated */
-function forStatementedNode<TStructure>(structure: StatementedNodeStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forAllUnknownKindIfStructure(structure.statements, callback);
-}
-
-/** @generated */
-function forConstructorDeclaration<TStructure>(structure: ConstructorDeclarationStructure, callback: (structure: Structures) => TStructure | void): TStructure | undefined {
-    return forFunctionLikeDeclaration(structure, callback)
-        || forAll(structure.overloads, callback, StructureKind.ConstructorOverload);
 }
 
 /** @generated */
