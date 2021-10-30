@@ -2171,11 +2171,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
+            case SyntaxKind.ConstructorType:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.SetAccessor:
-            case SyntaxKind.ConstructorType:
                 return true;
             default:
                 return false;
@@ -2189,13 +2189,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isAmbientableNode<T extends compiler.Node>(node: T | undefined): node is compiler.AmbientableNode & compiler.AmbientableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableStatement:
+            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -2243,10 +2243,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isAsyncableNode<T extends compiler.Node>(node: T | undefined): node is compiler.AsyncableNode & compiler.AsyncableNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.MethodDeclaration:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.MethodDeclaration:
                 return true;
             default:
                 return false;
@@ -2295,8 +2295,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isBodiedNode<T extends compiler.Node>(node: T | undefined): node is compiler.BodiedNode & compiler.BodiedNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.ArrowFunction:
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.FunctionExpression:
                 return true;
             default:
@@ -2311,11 +2311,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isBodyableNode<T extends compiler.Node>(node: T | undefined): node is compiler.BodyableNode & compiler.BodyableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.Constructor:
+            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -2350,48 +2350,48 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isChildOrderableNode<T extends compiler.Node>(node: T | undefined): node is compiler.ChildOrderableNode & compiler.ChildOrderableNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
-            case SyntaxKind.IndexSignature:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.ExportAssignment:
-            case SyntaxKind.ExportDeclaration:
-            case SyntaxKind.ImportDeclaration:
-            case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.ModuleBlock:
-            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
+            case SyntaxKind.CallSignature:
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.Constructor:
             case SyntaxKind.ContinueStatement:
             case SyntaxKind.DebuggerStatement:
             case SyntaxKind.DoStatement:
             case SyntaxKind.EmptyStatement:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.ExportAssignment:
+            case SyntaxKind.ExportDeclaration:
             case SyntaxKind.ExpressionStatement:
             case SyntaxKind.ForInStatement:
             case SyntaxKind.ForOfStatement:
             case SyntaxKind.ForStatement:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.GetAccessor:
             case SyntaxKind.IfStatement:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.IndexSignature:
+            case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.LabeledStatement:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.ModuleBlock:
+            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.NotEmittedStatement:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
             case SyntaxKind.ReturnStatement:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.SwitchStatement:
             case SyntaxKind.ThrowStatement:
             case SyntaxKind.TryStatement:
+            case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableStatement:
             case SyntaxKind.WhileStatement:
             case SyntaxKind.WithStatement:
-            case SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -2473,9 +2473,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.ClassExpression:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.Parameter:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.SetAccessor:
-            case SyntaxKind.Parameter:
                 return true;
             default:
                 return false;
@@ -2498,9 +2498,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isDotDotDotTokenableNode<T extends compiler.Node>(node: T | undefined): node is compiler.DotDotDotTokenableNode & compiler.DotDotDotTokenableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.BindingElement:
-            case SyntaxKind.Parameter:
             case SyntaxKind.JsxExpression:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.Parameter:
                 return true;
             default:
                 return false;
@@ -2546,9 +2546,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableStatement:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableDeclaration:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -2569,8 +2569,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableStatement:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -2590,34 +2590,22 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.StringKeyword:
             case SyntaxKind.SymbolKeyword:
             case SyntaxKind.UndefinedKeyword:
-            case SyntaxKind.ClassExpression:
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.ArrowFunction:
             case SyntaxKind.AsExpression:
             case SyntaxKind.AwaitExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.BinaryExpression:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.CommaListExpression:
             case SyntaxKind.ConditionalExpression:
             case SyntaxKind.DeleteExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.OmittedExpression:
-            case SyntaxKind.ParenthesizedExpression:
-            case SyntaxKind.PartiallyEmittedExpression:
-            case SyntaxKind.PostfixUnaryExpression:
-            case SyntaxKind.PrefixUnaryExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SpreadElement:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
-            case SyntaxKind.TypeAssertionExpression:
-            case SyntaxKind.TypeOfExpression:
-            case SyntaxKind.VoidExpression:
-            case SyntaxKind.YieldExpression:
-            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxClosingFragment:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxExpression:
@@ -2625,19 +2613,31 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JsxOpeningElement:
             case SyntaxKind.JsxOpeningFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.NonNullExpression:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
-            case SyntaxKind.RegularExpressionLiteral:
-            case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.OmittedExpression:
+            case SyntaxKind.ParenthesizedExpression:
+            case SyntaxKind.PartiallyEmittedExpression:
+            case SyntaxKind.PostfixUnaryExpression:
+            case SyntaxKind.PrefixUnaryExpression:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.RegularExpressionLiteral:
+            case SyntaxKind.SpreadElement:
+            case SyntaxKind.StringLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
+            case SyntaxKind.TypeAssertionExpression:
+            case SyntaxKind.TypeOfExpression:
+            case SyntaxKind.VoidExpression:
+            case SyntaxKind.YieldExpression:
                 return true;
             default:
                 return false;
@@ -2655,10 +2655,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isExpressionableNode<T extends compiler.Node>(node: T | undefined): node is compiler.ExpressionableNode & compiler.ExpressionableNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.YieldExpression:
-            case SyntaxKind.JsxExpression:
             case SyntaxKind.ExternalModuleReference:
+            case SyntaxKind.JsxExpression:
             case SyntaxKind.ReturnStatement:
+            case SyntaxKind.YieldExpression:
                 return true;
             default:
                 return false;
@@ -2672,25 +2672,25 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isExpressionedNode<T extends compiler.Node>(node: T | undefined): node is compiler.ExpressionedNode & compiler.ExpressionedNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.AsExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.ParenthesizedExpression:
-            case SyntaxKind.PartiallyEmittedExpression:
-            case SyntaxKind.SpreadElement:
-            case SyntaxKind.JsxSpreadAttribute:
-            case SyntaxKind.ExportAssignment:
-            case SyntaxKind.ComputedPropertyName:
             case SyntaxKind.CaseClause:
+            case SyntaxKind.ComputedPropertyName:
             case SyntaxKind.DoStatement:
+            case SyntaxKind.ExportAssignment:
             case SyntaxKind.ExpressionStatement:
             case SyntaxKind.ForInStatement:
             case SyntaxKind.ForOfStatement:
             case SyntaxKind.IfStatement:
+            case SyntaxKind.JsxSpreadAttribute:
+            case SyntaxKind.NonNullExpression:
+            case SyntaxKind.ParenthesizedExpression:
+            case SyntaxKind.PartiallyEmittedExpression:
+            case SyntaxKind.SpreadAssignment:
+            case SyntaxKind.SpreadElement:
             case SyntaxKind.SwitchStatement:
+            case SyntaxKind.TemplateSpan:
             case SyntaxKind.ThrowStatement:
             case SyntaxKind.WhileStatement:
             case SyntaxKind.WithStatement:
-            case SyntaxKind.SpreadAssignment:
-            case SyntaxKind.TemplateSpan:
                 return true;
             default:
                 return false;
@@ -2733,12 +2733,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isFunctionLikeDeclaration<T extends compiler.Node>(node: T | undefined): node is compiler.FunctionLikeDeclaration & compiler.FunctionLikeDeclarationExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ArrowFunction:
             case SyntaxKind.Constructor:
+            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
-            case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
                 return true;
             default:
                 return false;
@@ -2759,10 +2759,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isGeneratorableNode<T extends compiler.Node>(node: T | undefined): node is compiler.GeneratorableNode & compiler.GeneratorableNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.YieldExpression:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.YieldExpression:
                 return true;
             default:
                 return false;
@@ -2874,13 +2874,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isInitializerExpressionGetableNode<T extends compiler.Node>(node: T | undefined): node is compiler.InitializerExpressionGetableNode & compiler.InitializerExpressionGetableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.BindingElement:
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.EnumMember:
             case SyntaxKind.Parameter:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.VariableDeclaration:
             case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
             case SyntaxKind.ShorthandPropertyAssignment:
+            case SyntaxKind.VariableDeclaration:
                 return true;
             default:
                 return false;
@@ -2894,9 +2894,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isInitializerExpressionableNode<T extends compiler.Node>(node: T | undefined): node is compiler.InitializerExpressionableNode & compiler.InitializerExpressionableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.BindingElement:
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.EnumMember:
             case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.PropertySignature:
             case SyntaxKind.VariableDeclaration:
                 return true;
@@ -3025,8 +3025,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.JSDocSeeTag:
             case SyntaxKind.JSDocTemplateTag:
             case SyntaxKind.JSDocThisTag:
-            case SyntaxKind.JSDocTypedefTag:
             case SyntaxKind.JSDocTypeTag:
+            case SyntaxKind.JSDocTypedefTag:
             case SyntaxKind.JSDocTag:
                 return true;
             default:
@@ -3100,32 +3100,32 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isJSDocableNode<T extends compiler.Node>(node: T | undefined): node is compiler.JSDocableNode & compiler.JSDocableNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
-            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.ExpressionStatement:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.IndexSignature:
             case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.ExpressionStatement:
             case SyntaxKind.LabeledStatement:
-            case SyntaxKind.VariableStatement:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -3194,33 +3194,33 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isLeftHandSideExpression(node: compiler.Node | undefined): node is compiler.LeftHandSideExpression {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassExpression:
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.NonNullExpression:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
+            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
                 return true;
             default:
                 return false;
@@ -3233,12 +3233,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isLeftHandSideExpressionedNode<T extends compiler.Node>(node: T | undefined): node is compiler.LeftHandSideExpressionedNode & compiler.LeftHandSideExpressionedNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.Decorator:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.Decorator:
             case SyntaxKind.ElementAccessExpression:
+            case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.NewExpression:
             case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.ExpressionWithTypeArguments:
                 return true;
             default:
                 return false;
@@ -3252,10 +3252,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isLiteralExpression(node: compiler.Node | undefined): node is compiler.LiteralExpression {
         switch (node?.getKind()) {
             case SyntaxKind.BigIntLiteral:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
                 return true;
             default:
                 return false;
@@ -3268,12 +3268,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isLiteralLikeNode<T extends compiler.Node>(node: T | undefined): node is compiler.LiteralLikeNode & compiler.LiteralLikeNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.JsxText:
             case SyntaxKind.BigIntLiteral:
+            case SyntaxKind.JsxText:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.TemplateHead:
             case SyntaxKind.TemplateMiddle:
             case SyntaxKind.TemplateTail:
@@ -3305,31 +3305,31 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isMemberExpression(node: compiler.Node | undefined): node is compiler.MemberExpression {
         switch (node?.getKind()) {
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
+            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
                 return true;
             default:
                 return false;
@@ -3349,26 +3349,26 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isModifierableNode<T extends compiler.Node>(node: T | undefined): node is compiler.ModifierableNode & compiler.ModifierableNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ArrowFunction:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
+            case SyntaxKind.ConstructorType:
             case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.Parameter:
+            case SyntaxKind.GetAccessor:
             case SyntaxKind.IndexSignature:
             case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.PropertySignature:
+            case SyntaxKind.MethodDeclaration:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableStatement:
-            case SyntaxKind.ConstructorType:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableDeclarationList:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -3449,15 +3449,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isNamedNode<T extends compiler.Node>(node: T | undefined): node is compiler.NamedNode & compiler.NamedNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.JsxAttribute:
-            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.MetaProperty:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
-            case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -3509,8 +3509,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isOverloadableNode<T extends compiler.Node>(node: T | undefined): node is compiler.OverloadableNode & compiler.OverloadableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.Constructor:
-            case SyntaxKind.MethodDeclaration:
             case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.MethodDeclaration:
                 return true;
             default:
                 return false;
@@ -3524,8 +3524,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isOverrideableNode<T extends compiler.Node>(node: T | undefined): node is compiler.OverrideableNode & compiler.OverrideableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
                 return true;
             default:
                 return false;
@@ -3546,19 +3546,19 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isParameteredNode<T extends compiler.Node>(node: T | undefined): node is compiler.ParameteredNode & compiler.ParameteredNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionExpression:
             case SyntaxKind.CallSignature:
             case SyntaxKind.ConstructSignature:
-            case SyntaxKind.MethodSignature:
+            case SyntaxKind.Constructor:
             case SyntaxKind.ConstructorType:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -3589,28 +3589,28 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isPrimaryExpression(node: compiler.Node | undefined): node is compiler.PrimaryExpression {
         switch (node?.getKind()) {
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.ClassExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
                 return true;
             default:
                 return false;
@@ -3632,14 +3632,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isPropertyNamedNode<T extends compiler.Node>(node: T | undefined): node is compiler.PropertyNamedNode & compiler.PropertyNamedNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.EnumMember:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.EnumMember:
             case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
             case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -3673,12 +3673,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isQuestionTokenableNode<T extends compiler.Node>(node: T | undefined): node is compiler.QuestionTokenableNode & compiler.QuestionTokenableNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.Parameter:
             case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.Parameter:
             case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
             case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
@@ -3692,9 +3692,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isReadonlyableNode<T extends compiler.Node>(node: T | undefined): node is compiler.ReadonlyableNode & compiler.ReadonlyableNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.Parameter:
             case SyntaxKind.IndexSignature:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.PropertySignature:
                 return true;
             default:
@@ -3712,31 +3712,31 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.JsxAttribute:
-            case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.GetAccessor:
             case SyntaxKind.Identifier:
-            case SyntaxKind.PrivateIdentifier:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PrivateIdentifier:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:
-            case SyntaxKind.PropertyAssignment:
-            case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -3755,33 +3755,33 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.Identifier:
             case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.NamedTupleMember:
             case SyntaxKind.NamespaceExport:
             case SyntaxKind.NamespaceImport:
-            case SyntaxKind.Identifier:
+            case SyntaxKind.Parameter:
             case SyntaxKind.PrivateIdentifier:
-            case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:
-            case SyntaxKind.PropertyAssignment:
-            case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -3797,20 +3797,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isReturnTypedNode<T extends compiler.Node>(node: T | undefined): node is compiler.ReturnTypedNode & compiler.ReturnTypedNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionExpression:
             case SyntaxKind.CallSignature:
             case SyntaxKind.ConstructSignature:
-            case SyntaxKind.IndexSignature:
-            case SyntaxKind.MethodSignature:
+            case SyntaxKind.Constructor:
             case SyntaxKind.ConstructorType:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.IndexSignature:
+            case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -3862,19 +3862,19 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isSignaturedDeclaration<T extends compiler.Node>(node: T | undefined): node is compiler.SignaturedDeclaration & compiler.SignaturedDeclarationExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionExpression:
             case SyntaxKind.CallSignature:
             case SyntaxKind.ConstructSignature:
-            case SyntaxKind.MethodSignature:
+            case SyntaxKind.Constructor:
             case SyntaxKind.ConstructorType:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -3894,37 +3894,37 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isStatement(node: compiler.Node | undefined): node is compiler.Statement {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.ExportAssignment:
-            case SyntaxKind.ExportDeclaration:
-            case SyntaxKind.ImportDeclaration:
-            case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.ModuleBlock:
-            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
+            case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ContinueStatement:
             case SyntaxKind.DebuggerStatement:
             case SyntaxKind.DoStatement:
             case SyntaxKind.EmptyStatement:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.ExportAssignment:
+            case SyntaxKind.ExportDeclaration:
             case SyntaxKind.ExpressionStatement:
             case SyntaxKind.ForInStatement:
             case SyntaxKind.ForOfStatement:
             case SyntaxKind.ForStatement:
+            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.IfStatement:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.LabeledStatement:
+            case SyntaxKind.ModuleBlock:
+            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.NotEmittedStatement:
             case SyntaxKind.ReturnStatement:
             case SyntaxKind.SwitchStatement:
             case SyntaxKind.ThrowStatement:
             case SyntaxKind.TryStatement:
+            case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableStatement:
             case SyntaxKind.WhileStatement:
             case SyntaxKind.WithStatement:
-            case SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -3937,20 +3937,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isStatementedNode<T extends compiler.Node>(node: T | undefined): node is compiler.StatementedNode & compiler.StatementedNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionExpression:
-            case SyntaxKind.ModuleBlock:
-            case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.SourceFile:
             case SyntaxKind.Block:
             case SyntaxKind.CaseClause:
+            case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.Constructor:
             case SyntaxKind.DefaultClause:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.ModuleBlock:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.SourceFile:
                 return true;
             default:
                 return false;
@@ -4020,24 +4020,24 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isTextInsertableNode<T extends compiler.Node>(node: T | undefined): node is compiler.TextInsertableNode & compiler.TextInsertableNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.Block:
+            case SyntaxKind.CaseBlock:
+            case SyntaxKind.CaseClause:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
+            case SyntaxKind.DefaultClause:
             case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.GetAccessor:
             case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.MethodDeclaration:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.SourceFile:
-            case SyntaxKind.Block:
-            case SyntaxKind.CaseBlock:
-            case SyntaxKind.CaseClause:
-            case SyntaxKind.DefaultClause:
                 return true;
             default:
                 return false;
@@ -4092,8 +4092,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static isTypeArgumentedNode<T extends compiler.Node>(node: T | undefined): node is compiler.TypeArgumentedNode & compiler.TypeArgumentedNodeExtensionType & T {
         switch (node?.getKind()) {
             case SyntaxKind.CallExpression:
-            case SyntaxKind.NewExpression:
             case SyntaxKind.ImportType:
+            case SyntaxKind.NewExpression:
                 return true;
             default:
                 return false;
@@ -4153,9 +4153,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isTypeNode(node: compiler.Node | undefined): node is compiler.TypeNode {
         switch (node?.getKind()) {
-            case SyntaxKind.JSDocFunctionType:
-            case SyntaxKind.JSDocSignature:
-            case SyntaxKind.JSDocTypeExpression:
             case SyntaxKind.ArrayType:
             case SyntaxKind.ConditionalType:
             case SyntaxKind.ConstructorType:
@@ -4165,6 +4162,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.IndexedAccessType:
             case SyntaxKind.InferType:
             case SyntaxKind.IntersectionType:
+            case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.JSDocSignature:
+            case SyntaxKind.JSDocTypeExpression:
             case SyntaxKind.LiteralType:
             case SyntaxKind.MappedType:
             case SyntaxKind.NamedTupleMember:
@@ -4208,20 +4208,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isTypeParameteredNode<T extends compiler.Node>(node: T | undefined): node is compiler.TypeParameteredNode & compiler.TypeParameteredNodeExtensionType & T {
         switch (node?.getKind()) {
+            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
@@ -4251,13 +4251,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isTypedNode<T extends compiler.Node>(node: T | undefined): node is compiler.TypedNode & compiler.TypedNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.AsExpression:
-            case SyntaxKind.TypeAssertionExpression:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.PropertySignature:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.TypeAssertionExpression:
             case SyntaxKind.VariableDeclaration:
                 return true;
             default:
@@ -4271,40 +4271,40 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isUnaryExpression(node: compiler.Node | undefined): node is compiler.UnaryExpression {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassExpression:
+            case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.AwaitExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.DeleteExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.PostfixUnaryExpression:
-            case SyntaxKind.PrefixUnaryExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
-            case SyntaxKind.TypeAssertionExpression:
-            case SyntaxKind.TypeOfExpression:
-            case SyntaxKind.VoidExpression:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.NonNullExpression:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
+            case SyntaxKind.PostfixUnaryExpression:
+            case SyntaxKind.PrefixUnaryExpression:
+            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
+            case SyntaxKind.TypeAssertionExpression:
+            case SyntaxKind.TypeOfExpression:
+            case SyntaxKind.VoidExpression:
                 return true;
             default:
                 return false;
@@ -4359,33 +4359,33 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isUpdateExpression(node: compiler.Node | undefined): node is compiler.UpdateExpression {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassExpression:
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.NonNullExpression:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
+            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
                 return true;
             default:
                 return false;
@@ -4410,43 +4410,43 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     static _hasStructure(node: compiler.Node | undefined): node is compiler.Node & { getStructure(): Structure; } {
         switch (node?.getKind()) {
+            case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.Decorator:
-            case SyntaxKind.JSDocComment:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
+            case SyntaxKind.ExportAssignment:
+            case SyntaxKind.ExportDeclaration:
+            case SyntaxKind.ExportSpecifier:
             case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ImportSpecifier:
             case SyntaxKind.IndexSignature:
             case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
+            case SyntaxKind.JSDocComment:
             case SyntaxKind.JsxAttribute:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.JsxSpreadAttribute:
-            case SyntaxKind.ExportAssignment:
-            case SyntaxKind.ExportDeclaration:
-            case SyntaxKind.ExportSpecifier:
-            case SyntaxKind.ImportDeclaration:
-            case SyntaxKind.ImportSpecifier:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.SourceFile:
-            case SyntaxKind.VariableStatement:
+            case SyntaxKind.SpreadAssignment:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:
-            case SyntaxKind.PropertyAssignment:
-            case SyntaxKind.ShorthandPropertyAssignment:
-            case SyntaxKind.SpreadAssignment:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;

@@ -1,5 +1,5 @@
 // DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts
-// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead.
+// Edit factories/kindToWrapperMappings.ts then run npm run code-generate instead.
 import { SyntaxKind, ts } from "@ts-morph/common";
 import * as compiler from "./index";
 

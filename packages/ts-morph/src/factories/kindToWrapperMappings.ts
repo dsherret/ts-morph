@@ -1,6 +1,6 @@
 import { SyntaxKind } from "@ts-morph/common";
 import * as compiler from "../compiler";
-// when changing this, make sure to run `yarn code-generate`.
+// when changing this, make sure to run `npm run code-generate`.
 // that will automatically update all other parts of the application that need to be updated when this changes.
 
 // using an "unknown" type here because I couldn't figure out a way of getting the typescript compiler to understand this

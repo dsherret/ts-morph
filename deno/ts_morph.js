@@ -924,6 +924,12 @@ function fromConstructorDeclarationOverload(node) {
     ObjectUtils.assign(structure, fromScopedNode(node));
     return structure;
 }
+function fromFunctionDeclarationOverload(node) {
+    const structure = {};
+    ObjectUtils.assign(structure, fromAmbientableNode(node));
+    ObjectUtils.assign(structure, fromExportableNode(node));
+    return structure;
+}
 function fromMethodDeclarationOverload(node) {
     const structure = {};
     ObjectUtils.assign(structure, fromStaticableNode(node));
@@ -931,12 +937,6 @@ function fromMethodDeclarationOverload(node) {
     ObjectUtils.assign(structure, fromScopedNode(node));
     ObjectUtils.assign(structure, fromQuestionTokenableNode(node));
     ObjectUtils.assign(structure, fromOverrideableNode(node));
-    return structure;
-}
-function fromFunctionDeclarationOverload(node) {
-    const structure = {};
-    ObjectUtils.assign(structure, fromAmbientableNode(node));
-    ObjectUtils.assign(structure, fromExportableNode(node));
     return structure;
 }
 
@@ -4004,11 +4004,11 @@ class Node {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
+            case SyntaxKind.ConstructorType:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.SetAccessor:
-            case SyntaxKind.ConstructorType:
                 return true;
             default:
                 return false;
@@ -4017,13 +4017,13 @@ class Node {
     static isAmbientableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableStatement:
+            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -4043,10 +4043,10 @@ class Node {
     }
     static isAsyncableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.MethodDeclaration:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.MethodDeclaration:
                 return true;
             default:
                 return false;
@@ -4067,8 +4067,8 @@ class Node {
     }
     static isBodiedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.ArrowFunction:
+            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.FunctionExpression:
                 return true;
             default:
@@ -4078,11 +4078,11 @@ class Node {
     static isBodyableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.Constructor:
+            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -4093,48 +4093,48 @@ class Node {
     }
     static isChildOrderableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
-            case SyntaxKind.IndexSignature:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.ExportAssignment:
-            case SyntaxKind.ExportDeclaration:
-            case SyntaxKind.ImportDeclaration:
-            case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.ModuleBlock:
-            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
+            case SyntaxKind.CallSignature:
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.Constructor:
             case SyntaxKind.ContinueStatement:
             case SyntaxKind.DebuggerStatement:
             case SyntaxKind.DoStatement:
             case SyntaxKind.EmptyStatement:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.ExportAssignment:
+            case SyntaxKind.ExportDeclaration:
             case SyntaxKind.ExpressionStatement:
             case SyntaxKind.ForInStatement:
             case SyntaxKind.ForOfStatement:
             case SyntaxKind.ForStatement:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.GetAccessor:
             case SyntaxKind.IfStatement:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.IndexSignature:
+            case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.LabeledStatement:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.ModuleBlock:
+            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.NotEmittedStatement:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
             case SyntaxKind.ReturnStatement:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.SwitchStatement:
             case SyntaxKind.ThrowStatement:
             case SyntaxKind.TryStatement:
+            case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableStatement:
             case SyntaxKind.WhileStatement:
             case SyntaxKind.WithStatement:
-            case SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -4167,9 +4167,9 @@ class Node {
             case SyntaxKind.ClassExpression:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.Parameter:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.SetAccessor:
-            case SyntaxKind.Parameter:
                 return true;
             default:
                 return false;
@@ -4178,9 +4178,9 @@ class Node {
     static isDotDotDotTokenableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.BindingElement:
-            case SyntaxKind.Parameter:
             case SyntaxKind.JsxExpression:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.Parameter:
                 return true;
             default:
                 return false;
@@ -4202,9 +4202,9 @@ class Node {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableStatement:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableDeclaration:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -4217,8 +4217,8 @@ class Node {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableStatement:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -4233,34 +4233,22 @@ class Node {
             case SyntaxKind.StringKeyword:
             case SyntaxKind.SymbolKeyword:
             case SyntaxKind.UndefinedKeyword:
-            case SyntaxKind.ClassExpression:
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.ArrowFunction:
             case SyntaxKind.AsExpression:
             case SyntaxKind.AwaitExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.BinaryExpression:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.CommaListExpression:
             case SyntaxKind.ConditionalExpression:
             case SyntaxKind.DeleteExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.OmittedExpression:
-            case SyntaxKind.ParenthesizedExpression:
-            case SyntaxKind.PartiallyEmittedExpression:
-            case SyntaxKind.PostfixUnaryExpression:
-            case SyntaxKind.PrefixUnaryExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SpreadElement:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
-            case SyntaxKind.TypeAssertionExpression:
-            case SyntaxKind.TypeOfExpression:
-            case SyntaxKind.VoidExpression:
-            case SyntaxKind.YieldExpression:
-            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxClosingFragment:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxExpression:
@@ -4268,19 +4256,31 @@ class Node {
             case SyntaxKind.JsxOpeningElement:
             case SyntaxKind.JsxOpeningFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.NonNullExpression:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
-            case SyntaxKind.RegularExpressionLiteral:
-            case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.OmittedExpression:
+            case SyntaxKind.ParenthesizedExpression:
+            case SyntaxKind.PartiallyEmittedExpression:
+            case SyntaxKind.PostfixUnaryExpression:
+            case SyntaxKind.PrefixUnaryExpression:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.RegularExpressionLiteral:
+            case SyntaxKind.SpreadElement:
+            case SyntaxKind.StringLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
+            case SyntaxKind.TypeAssertionExpression:
+            case SyntaxKind.TypeOfExpression:
+            case SyntaxKind.VoidExpression:
+            case SyntaxKind.YieldExpression:
                 return true;
             default:
                 return false;
@@ -4288,10 +4288,10 @@ class Node {
     }
     static isExpressionableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.YieldExpression:
-            case SyntaxKind.JsxExpression:
             case SyntaxKind.ExternalModuleReference:
+            case SyntaxKind.JsxExpression:
             case SyntaxKind.ReturnStatement:
+            case SyntaxKind.YieldExpression:
                 return true;
             default:
                 return false;
@@ -4300,25 +4300,25 @@ class Node {
     static isExpressionedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.AsExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.ParenthesizedExpression:
-            case SyntaxKind.PartiallyEmittedExpression:
-            case SyntaxKind.SpreadElement:
-            case SyntaxKind.JsxSpreadAttribute:
-            case SyntaxKind.ExportAssignment:
-            case SyntaxKind.ComputedPropertyName:
             case SyntaxKind.CaseClause:
+            case SyntaxKind.ComputedPropertyName:
             case SyntaxKind.DoStatement:
+            case SyntaxKind.ExportAssignment:
             case SyntaxKind.ExpressionStatement:
             case SyntaxKind.ForInStatement:
             case SyntaxKind.ForOfStatement:
             case SyntaxKind.IfStatement:
+            case SyntaxKind.JsxSpreadAttribute:
+            case SyntaxKind.NonNullExpression:
+            case SyntaxKind.ParenthesizedExpression:
+            case SyntaxKind.PartiallyEmittedExpression:
+            case SyntaxKind.SpreadAssignment:
+            case SyntaxKind.SpreadElement:
             case SyntaxKind.SwitchStatement:
+            case SyntaxKind.TemplateSpan:
             case SyntaxKind.ThrowStatement:
             case SyntaxKind.WhileStatement:
             case SyntaxKind.WithStatement:
-            case SyntaxKind.SpreadAssignment:
-            case SyntaxKind.TemplateSpan:
                 return true;
             default:
                 return false;
@@ -4332,13 +4332,12 @@ class Node {
     }
     static isFunctionLikeDeclaration(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.ArrowFunction:
             case SyntaxKind.Constructor:
+            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
-            case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
                 return true;
             default:
                 return false;
@@ -4349,10 +4348,10 @@ class Node {
     }
     static isGeneratorableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.YieldExpression:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.YieldExpression:
                 return true;
             default:
                 return false;
@@ -4398,13 +4397,13 @@ class Node {
     static isInitializerExpressionGetableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.BindingElement:
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.EnumMember:
             case SyntaxKind.Parameter:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.VariableDeclaration:
             case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
             case SyntaxKind.ShorthandPropertyAssignment:
+            case SyntaxKind.VariableDeclaration:
                 return true;
             default:
                 return false;
@@ -4413,9 +4412,9 @@ class Node {
     static isInitializerExpressionableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.BindingElement:
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.EnumMember:
             case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.PropertySignature:
             case SyntaxKind.VariableDeclaration:
                 return true;
@@ -4470,8 +4469,8 @@ class Node {
             case SyntaxKind.JSDocSeeTag:
             case SyntaxKind.JSDocTemplateTag:
             case SyntaxKind.JSDocThisTag:
-            case SyntaxKind.JSDocTypedefTag:
             case SyntaxKind.JSDocTypeTag:
+            case SyntaxKind.JSDocTypedefTag:
             case SyntaxKind.JSDocTag:
                 return true;
             default:
@@ -4505,32 +4504,32 @@ class Node {
     }
     static isJSDocableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
-            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.ExpressionStatement:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.IndexSignature:
             case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.ExpressionStatement:
             case SyntaxKind.LabeledStatement:
-            case SyntaxKind.VariableStatement:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -4557,33 +4556,33 @@ class Node {
     }
     static isLeftHandSideExpression(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassExpression:
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.NonNullExpression:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
+            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
                 return true;
             default:
                 return false;
@@ -4591,12 +4590,12 @@ class Node {
     }
     static isLeftHandSideExpressionedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.Decorator:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.Decorator:
             case SyntaxKind.ElementAccessExpression:
+            case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.NewExpression:
             case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.ExpressionWithTypeArguments:
                 return true;
             default:
                 return false;
@@ -4605,10 +4604,10 @@ class Node {
     static isLiteralExpression(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.BigIntLiteral:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
                 return true;
             default:
                 return false;
@@ -4616,12 +4615,12 @@ class Node {
     }
     static isLiteralLikeNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.JsxText:
             case SyntaxKind.BigIntLiteral:
+            case SyntaxKind.JsxText:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.TemplateHead:
             case SyntaxKind.TemplateMiddle:
             case SyntaxKind.TemplateTail:
@@ -4638,31 +4637,31 @@ class Node {
     }
     static isMemberExpression(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
+            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
                 return true;
             default:
                 return false;
@@ -4670,27 +4669,26 @@ class Node {
     }
     static isModifierableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.ArrowFunction:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
+            case SyntaxKind.ConstructorType:
             case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.Parameter:
+            case SyntaxKind.GetAccessor:
             case SyntaxKind.IndexSignature:
             case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.PropertySignature:
+            case SyntaxKind.MethodDeclaration:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableStatement:
-            case SyntaxKind.ConstructorType:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableDeclarationList:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -4735,15 +4733,15 @@ class Node {
     static isNamedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.JsxAttribute:
-            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.MetaProperty:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
-            case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -4755,8 +4753,8 @@ class Node {
     static isOverloadableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.Constructor:
-            case SyntaxKind.MethodDeclaration:
             case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.MethodDeclaration:
                 return true;
             default:
                 return false;
@@ -4765,8 +4763,8 @@ class Node {
     static isOverrideableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
                 return true;
             default:
                 return false;
@@ -4777,20 +4775,19 @@ class Node {
     }
     static isParameteredNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionExpression:
             case SyntaxKind.CallSignature:
             case SyntaxKind.ConstructSignature:
-            case SyntaxKind.MethodSignature:
+            case SyntaxKind.Constructor:
             case SyntaxKind.ConstructorType:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -4801,28 +4798,28 @@ class Node {
     }
     static isPrimaryExpression(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.ClassExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
                 return true;
             default:
                 return false;
@@ -4830,14 +4827,14 @@ class Node {
     }
     static isPropertyNamedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.EnumMember:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.EnumMember:
             case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
             case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -4856,12 +4853,12 @@ class Node {
     static isQuestionTokenableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.Parameter:
             case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.Parameter:
             case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
             case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
@@ -4870,9 +4867,9 @@ class Node {
     }
     static isReadonlyableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.Parameter:
             case SyntaxKind.IndexSignature:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.PropertySignature:
                 return true;
             default:
@@ -4885,31 +4882,31 @@ class Node {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.JsxAttribute:
-            case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.GetAccessor:
             case SyntaxKind.Identifier:
-            case SyntaxKind.PrivateIdentifier:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PrivateIdentifier:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:
-            case SyntaxKind.PropertyAssignment:
-            case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -4920,33 +4917,33 @@ class Node {
             case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
-            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.Identifier:
             case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.NamedTupleMember:
             case SyntaxKind.NamespaceExport:
             case SyntaxKind.NamespaceImport:
-            case SyntaxKind.Identifier:
+            case SyntaxKind.Parameter:
             case SyntaxKind.PrivateIdentifier:
-            case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:
-            case SyntaxKind.PropertyAssignment:
-            case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -4954,21 +4951,20 @@ class Node {
     }
     static isReturnTypedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionExpression:
             case SyntaxKind.CallSignature:
             case SyntaxKind.ConstructSignature:
-            case SyntaxKind.IndexSignature:
-            case SyntaxKind.MethodSignature:
+            case SyntaxKind.Constructor:
             case SyntaxKind.ConstructorType:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.IndexSignature:
+            case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -4994,20 +4990,19 @@ class Node {
     }
     static isSignaturedDeclaration(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.JSDocFunctionType:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionExpression:
             case SyntaxKind.CallSignature:
             case SyntaxKind.ConstructSignature:
-            case SyntaxKind.MethodSignature:
+            case SyntaxKind.Constructor:
             case SyntaxKind.ConstructorType:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -5015,37 +5010,37 @@ class Node {
     }
     static isStatement(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.ExportAssignment:
-            case SyntaxKind.ExportDeclaration:
-            case SyntaxKind.ImportDeclaration:
-            case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.ModuleBlock:
-            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.Block:
             case SyntaxKind.BreakStatement:
+            case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ContinueStatement:
             case SyntaxKind.DebuggerStatement:
             case SyntaxKind.DoStatement:
             case SyntaxKind.EmptyStatement:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.ExportAssignment:
+            case SyntaxKind.ExportDeclaration:
             case SyntaxKind.ExpressionStatement:
             case SyntaxKind.ForInStatement:
             case SyntaxKind.ForOfStatement:
             case SyntaxKind.ForStatement:
+            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.IfStatement:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.LabeledStatement:
+            case SyntaxKind.ModuleBlock:
+            case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.NotEmittedStatement:
             case SyntaxKind.ReturnStatement:
             case SyntaxKind.SwitchStatement:
             case SyntaxKind.ThrowStatement:
             case SyntaxKind.TryStatement:
+            case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.VariableStatement:
             case SyntaxKind.WhileStatement:
             case SyntaxKind.WithStatement:
-            case SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -5053,20 +5048,20 @@ class Node {
     }
     static isStatementedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
-            case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.FunctionExpression:
-            case SyntaxKind.ModuleBlock:
-            case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.SourceFile:
             case SyntaxKind.Block:
             case SyntaxKind.CaseClause:
+            case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.Constructor:
             case SyntaxKind.DefaultClause:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.ModuleBlock:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.SourceFile:
                 return true;
             default:
                 return false;
@@ -5074,7 +5069,6 @@ class Node {
     }
     static isStaticableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
@@ -5092,24 +5086,24 @@ class Node {
     }
     static isTextInsertableNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.Block:
+            case SyntaxKind.CaseBlock:
+            case SyntaxKind.CaseClause:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
             case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
+            case SyntaxKind.DefaultClause:
             case SyntaxKind.EnumDeclaration:
-            case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.GetAccessor:
             case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.MethodDeclaration:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.SourceFile:
-            case SyntaxKind.Block:
-            case SyntaxKind.CaseBlock:
-            case SyntaxKind.CaseClause:
-            case SyntaxKind.DefaultClause:
                 return true;
             default:
                 return false;
@@ -5130,8 +5124,8 @@ class Node {
     static isTypeArgumentedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
             case SyntaxKind.CallExpression:
-            case SyntaxKind.NewExpression:
             case SyntaxKind.ImportType:
+            case SyntaxKind.NewExpression:
                 return true;
             default:
                 return false;
@@ -5166,9 +5160,6 @@ class Node {
     }
     static isTypeNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.JSDocFunctionType:
-            case SyntaxKind.JSDocSignature:
-            case SyntaxKind.JSDocTypeExpression:
             case SyntaxKind.ArrayType:
             case SyntaxKind.ConditionalType:
             case SyntaxKind.ConstructorType:
@@ -5178,6 +5169,9 @@ class Node {
             case SyntaxKind.IndexedAccessType:
             case SyntaxKind.InferType:
             case SyntaxKind.IntersectionType:
+            case SyntaxKind.JSDocFunctionType:
+            case SyntaxKind.JSDocSignature:
+            case SyntaxKind.JSDocTypeExpression:
             case SyntaxKind.LiteralType:
             case SyntaxKind.MappedType:
             case SyntaxKind.NamedTupleMember:
@@ -5186,6 +5180,7 @@ class Node {
             case SyntaxKind.ThisType:
             case SyntaxKind.TupleType:
             case SyntaxKind.TypeLiteral:
+            case SyntaxKind.TypeOperator:
             case SyntaxKind.TypePredicate:
             case SyntaxKind.TypeReference:
             case SyntaxKind.UnionType:
@@ -5194,26 +5189,28 @@ class Node {
                 return false;
         }
     }
+    static isTypeOperatorTypeNode(node) {
+        return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeOperator;
+    }
     static isTypeParameterDeclaration(node) {
         return (node === null || node === void 0 ? void 0 : node.getKind()) === SyntaxKind.TypeParameter;
     }
     static isTypeParameteredNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
-            case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.SetAccessor:
-            case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
-            case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
@@ -5228,13 +5225,13 @@ class Node {
     }
     static isTypedNode(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.AsExpression:
-            case SyntaxKind.TypeAssertionExpression:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.PropertySignature:
             case SyntaxKind.NamedTupleMember:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.TypeAssertionExpression:
             case SyntaxKind.VariableDeclaration:
                 return true;
             default:
@@ -5243,40 +5240,40 @@ class Node {
     }
     static isUnaryExpression(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassExpression:
+            case SyntaxKind.ArrayLiteralExpression:
             case SyntaxKind.AwaitExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.DeleteExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.PostfixUnaryExpression:
-            case SyntaxKind.PrefixUnaryExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
-            case SyntaxKind.TypeAssertionExpression:
-            case SyntaxKind.TypeOfExpression:
-            case SyntaxKind.VoidExpression:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.NonNullExpression:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
+            case SyntaxKind.PostfixUnaryExpression:
+            case SyntaxKind.PrefixUnaryExpression:
+            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
+            case SyntaxKind.TypeAssertionExpression:
+            case SyntaxKind.TypeOfExpression:
+            case SyntaxKind.VoidExpression:
                 return true;
             default:
                 return false;
@@ -5308,33 +5305,33 @@ class Node {
     }
     static isUpdateExpression(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
-            case SyntaxKind.ClassExpression:
+            case SyntaxKind.ArrayLiteralExpression:
+            case SyntaxKind.BigIntLiteral:
             case SyntaxKind.CallExpression:
+            case SyntaxKind.ClassExpression:
             case SyntaxKind.ElementAccessExpression:
-            case SyntaxKind.ImportKeyword:
-            case SyntaxKind.MetaProperty:
-            case SyntaxKind.NewExpression:
-            case SyntaxKind.NonNullExpression:
-            case SyntaxKind.PropertyAccessExpression:
-            case SyntaxKind.SuperKeyword:
-            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.FalseKeyword:
             case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.ImportKeyword:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxFragment:
             case SyntaxKind.JsxSelfClosingElement:
-            case SyntaxKind.BigIntLiteral:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.NewExpression:
+            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.NonNullExpression:
             case SyntaxKind.NullKeyword:
             case SyntaxKind.NumericLiteral:
+            case SyntaxKind.ObjectLiteralExpression:
+            case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
-            case SyntaxKind.Identifier:
-            case SyntaxKind.ArrayLiteralExpression:
-            case SyntaxKind.ObjectLiteralExpression:
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
+            case SyntaxKind.SuperKeyword:
             case SyntaxKind.TaggedTemplateExpression:
             case SyntaxKind.TemplateExpression:
+            case SyntaxKind.ThisKeyword:
+            case SyntaxKind.TrueKeyword:
                 return true;
             default:
                 return false;
@@ -5342,43 +5339,43 @@ class Node {
     }
     static _hasStructure(node) {
         switch (node === null || node === void 0 ? void 0 : node.getKind()) {
+            case SyntaxKind.CallSignature:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassStaticBlockDeclaration:
+            case SyntaxKind.ConstructSignature:
             case SyntaxKind.Constructor:
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.Decorator:
-            case SyntaxKind.JSDocComment:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
+            case SyntaxKind.ExportAssignment:
+            case SyntaxKind.ExportDeclaration:
+            case SyntaxKind.ExportSpecifier:
             case SyntaxKind.FunctionDeclaration:
-            case SyntaxKind.Parameter:
-            case SyntaxKind.CallSignature:
-            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ImportSpecifier:
             case SyntaxKind.IndexSignature:
             case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.MethodSignature:
-            case SyntaxKind.PropertySignature:
+            case SyntaxKind.JSDocComment:
             case SyntaxKind.JsxAttribute:
             case SyntaxKind.JsxElement:
             case SyntaxKind.JsxSelfClosingElement:
             case SyntaxKind.JsxSpreadAttribute:
-            case SyntaxKind.ExportAssignment:
-            case SyntaxKind.ExportDeclaration:
-            case SyntaxKind.ExportSpecifier:
-            case SyntaxKind.ImportDeclaration:
-            case SyntaxKind.ImportSpecifier:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
             case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.ShorthandPropertyAssignment:
             case SyntaxKind.SourceFile:
-            case SyntaxKind.VariableStatement:
+            case SyntaxKind.SpreadAssignment:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.VariableDeclaration:
-            case SyntaxKind.PropertyAssignment:
-            case SyntaxKind.ShorthandPropertyAssignment:
-            case SyntaxKind.SpreadAssignment:
+            case SyntaxKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -6524,6 +6521,114 @@ const Structure = {
     hasName(structure) {
         return typeof structure.name === "string";
     },
+    isCallSignature(structure) {
+        return structure.kind === StructureKind.CallSignature;
+    },
+    isJSDocable(structure) {
+        switch (structure.kind) {
+            case StructureKind.CallSignature:
+            case StructureKind.Class:
+            case StructureKind.ClassStaticBlock:
+            case StructureKind.ConstructSignature:
+            case StructureKind.ConstructorOverload:
+            case StructureKind.Constructor:
+            case StructureKind.Enum:
+            case StructureKind.EnumMember:
+            case StructureKind.FunctionOverload:
+            case StructureKind.Function:
+            case StructureKind.GetAccessor:
+            case StructureKind.IndexSignature:
+            case StructureKind.Interface:
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+            case StructureKind.MethodSignature:
+            case StructureKind.Module:
+            case StructureKind.Property:
+            case StructureKind.PropertySignature:
+            case StructureKind.SetAccessor:
+            case StructureKind.TypeAlias:
+            case StructureKind.VariableStatement:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isSignatured(structure) {
+        switch (structure.kind) {
+            case StructureKind.CallSignature:
+            case StructureKind.ConstructSignature:
+            case StructureKind.ConstructorOverload:
+            case StructureKind.Constructor:
+            case StructureKind.FunctionOverload:
+            case StructureKind.Function:
+            case StructureKind.GetAccessor:
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+            case StructureKind.MethodSignature:
+            case StructureKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isParametered(structure) {
+        switch (structure.kind) {
+            case StructureKind.CallSignature:
+            case StructureKind.ConstructSignature:
+            case StructureKind.ConstructorOverload:
+            case StructureKind.Constructor:
+            case StructureKind.FunctionOverload:
+            case StructureKind.Function:
+            case StructureKind.GetAccessor:
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+            case StructureKind.MethodSignature:
+            case StructureKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isReturnTyped(structure) {
+        switch (structure.kind) {
+            case StructureKind.CallSignature:
+            case StructureKind.ConstructSignature:
+            case StructureKind.ConstructorOverload:
+            case StructureKind.Constructor:
+            case StructureKind.FunctionOverload:
+            case StructureKind.Function:
+            case StructureKind.GetAccessor:
+            case StructureKind.IndexSignature:
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+            case StructureKind.MethodSignature:
+            case StructureKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isTypeParametered(structure) {
+        switch (structure.kind) {
+            case StructureKind.CallSignature:
+            case StructureKind.Class:
+            case StructureKind.ConstructSignature:
+            case StructureKind.ConstructorOverload:
+            case StructureKind.Constructor:
+            case StructureKind.FunctionOverload:
+            case StructureKind.Function:
+            case StructureKind.GetAccessor:
+            case StructureKind.Interface:
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+            case StructureKind.MethodSignature:
+            case StructureKind.SetAccessor:
+            case StructureKind.TypeAlias:
+                return true;
+            default:
+                return false;
+        }
+    },
     isClass(structure) {
         return structure.kind === StructureKind.Class;
     },
@@ -6547,60 +6652,9 @@ const Structure = {
             case StructureKind.Class:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
-            case StructureKind.Property:
-            case StructureKind.SetAccessor:
             case StructureKind.Parameter:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isTypeParametered(structure) {
-        switch (structure.kind) {
-            case StructureKind.Class:
-            case StructureKind.ClassStaticBlock:
-            case StructureKind.Constructor:
-            case StructureKind.ConstructorOverload:
-            case StructureKind.GetAccessor:
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.SetAccessor:
-            case StructureKind.Function:
-            case StructureKind.FunctionOverload:
-            case StructureKind.CallSignature:
-            case StructureKind.ConstructSignature:
-            case StructureKind.Interface:
-            case StructureKind.MethodSignature:
-            case StructureKind.TypeAlias:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isJSDocable(structure) {
-        switch (structure.kind) {
-            case StructureKind.Class:
-            case StructureKind.ClassStaticBlock:
-            case StructureKind.Constructor:
-            case StructureKind.ConstructorOverload:
-            case StructureKind.GetAccessor:
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
             case StructureKind.Property:
             case StructureKind.SetAccessor:
-            case StructureKind.Enum:
-            case StructureKind.EnumMember:
-            case StructureKind.Function:
-            case StructureKind.FunctionOverload:
-            case StructureKind.CallSignature:
-            case StructureKind.ConstructSignature:
-            case StructureKind.IndexSignature:
-            case StructureKind.Interface:
-            case StructureKind.MethodSignature:
-            case StructureKind.PropertySignature:
-            case StructureKind.Module:
-            case StructureKind.VariableStatement:
-            case StructureKind.TypeAlias:
                 return true;
             default:
                 return false;
@@ -6610,8 +6664,8 @@ const Structure = {
         switch (structure.kind) {
             case StructureKind.Class:
             case StructureKind.GetAccessor:
-            case StructureKind.Method:
             case StructureKind.MethodOverload:
+            case StructureKind.Method:
             case StructureKind.Property:
             case StructureKind.SetAccessor:
                 return true;
@@ -6622,14 +6676,14 @@ const Structure = {
     isAmbientable(structure) {
         switch (structure.kind) {
             case StructureKind.Class:
-            case StructureKind.Property:
             case StructureKind.Enum:
-            case StructureKind.Function:
             case StructureKind.FunctionOverload:
+            case StructureKind.Function:
             case StructureKind.Interface:
             case StructureKind.Module:
-            case StructureKind.VariableStatement:
+            case StructureKind.Property:
             case StructureKind.TypeAlias:
+            case StructureKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -6639,12 +6693,12 @@ const Structure = {
         switch (structure.kind) {
             case StructureKind.Class:
             case StructureKind.Enum:
-            case StructureKind.Function:
             case StructureKind.FunctionOverload:
+            case StructureKind.Function:
             case StructureKind.Interface:
             case StructureKind.Module:
-            case StructureKind.VariableStatement:
             case StructureKind.TypeAlias:
+            case StructureKind.VariableStatement:
                 return true;
             default:
                 return false;
@@ -6653,100 +6707,36 @@ const Structure = {
     isClassStaticBlock(structure) {
         return structure.kind === StructureKind.ClassStaticBlock;
     },
-    isStaticable(structure) {
-        switch (structure.kind) {
-            case StructureKind.ClassStaticBlock:
-            case StructureKind.GetAccessor:
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.Property:
-            case StructureKind.SetAccessor:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isFunctionLike(structure) {
-        switch (structure.kind) {
-            case StructureKind.ClassStaticBlock:
-            case StructureKind.Constructor:
-            case StructureKind.GetAccessor:
-            case StructureKind.Method:
-            case StructureKind.SetAccessor:
-            case StructureKind.Function:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isSignatured(structure) {
-        switch (structure.kind) {
-            case StructureKind.ClassStaticBlock:
-            case StructureKind.Constructor:
-            case StructureKind.ConstructorOverload:
-            case StructureKind.GetAccessor:
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.SetAccessor:
-            case StructureKind.Function:
-            case StructureKind.FunctionOverload:
-            case StructureKind.CallSignature:
-            case StructureKind.ConstructSignature:
-            case StructureKind.MethodSignature:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isParametered(structure) {
-        switch (structure.kind) {
-            case StructureKind.ClassStaticBlock:
-            case StructureKind.Constructor:
-            case StructureKind.ConstructorOverload:
-            case StructureKind.GetAccessor:
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.SetAccessor:
-            case StructureKind.Function:
-            case StructureKind.FunctionOverload:
-            case StructureKind.CallSignature:
-            case StructureKind.ConstructSignature:
-            case StructureKind.MethodSignature:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isReturnTyped(structure) {
-        switch (structure.kind) {
-            case StructureKind.ClassStaticBlock:
-            case StructureKind.Constructor:
-            case StructureKind.ConstructorOverload:
-            case StructureKind.GetAccessor:
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.SetAccessor:
-            case StructureKind.Function:
-            case StructureKind.FunctionOverload:
-            case StructureKind.CallSignature:
-            case StructureKind.ConstructSignature:
-            case StructureKind.IndexSignature:
-            case StructureKind.MethodSignature:
-                return true;
-            default:
-                return false;
-        }
-    },
     isStatemented(structure) {
         switch (structure.kind) {
             case StructureKind.ClassStaticBlock:
             case StructureKind.Constructor:
+            case StructureKind.Function:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
-            case StructureKind.SetAccessor:
-            case StructureKind.Function:
             case StructureKind.Module:
+            case StructureKind.SetAccessor:
             case StructureKind.SourceFile:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isConstructSignature(structure) {
+        return structure.kind === StructureKind.ConstructSignature;
+    },
+    isConstructorDeclarationOverload(structure) {
+        return structure.kind === StructureKind.ConstructorOverload;
+    },
+    isScoped(structure) {
+        switch (structure.kind) {
+            case StructureKind.ConstructorOverload:
+            case StructureKind.Constructor:
+            case StructureKind.GetAccessor:
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+            case StructureKind.Property:
+            case StructureKind.SetAccessor:
                 return true;
             default:
                 return false;
@@ -6755,151 +6745,20 @@ const Structure = {
     isConstructor(structure) {
         return structure.kind === StructureKind.Constructor;
     },
-    isScoped(structure) {
+    isFunctionLike(structure) {
         switch (structure.kind) {
             case StructureKind.Constructor:
-            case StructureKind.ConstructorOverload:
+            case StructureKind.Function:
             case StructureKind.GetAccessor:
             case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.Property:
             case StructureKind.SetAccessor:
                 return true;
             default:
                 return false;
         }
-    },
-    isConstructorDeclarationOverload(structure) {
-        return structure.kind === StructureKind.ConstructorOverload;
-    },
-    isGetAccessor(structure) {
-        return structure.kind === StructureKind.GetAccessor;
-    },
-    isPropertyNamed(structure) {
-        switch (structure.kind) {
-            case StructureKind.GetAccessor:
-            case StructureKind.Method:
-            case StructureKind.Property:
-            case StructureKind.SetAccessor:
-            case StructureKind.EnumMember:
-            case StructureKind.MethodSignature:
-            case StructureKind.PropertySignature:
-            case StructureKind.PropertyAssignment:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isMethod(structure) {
-        return structure.kind === StructureKind.Method;
-    },
-    isAsyncable(structure) {
-        switch (structure.kind) {
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.Function:
-            case StructureKind.FunctionOverload:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isGeneratorable(structure) {
-        switch (structure.kind) {
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.Function:
-            case StructureKind.FunctionOverload:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isQuestionTokenable(structure) {
-        switch (structure.kind) {
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.Property:
-            case StructureKind.Parameter:
-            case StructureKind.MethodSignature:
-            case StructureKind.PropertySignature:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isOverrideable(structure) {
-        switch (structure.kind) {
-            case StructureKind.Method:
-            case StructureKind.MethodOverload:
-            case StructureKind.Property:
-            case StructureKind.Parameter:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isMethodDeclarationOverload(structure) {
-        return structure.kind === StructureKind.MethodOverload;
-    },
-    isProperty(structure) {
-        return structure.kind === StructureKind.Property;
-    },
-    isTyped(structure) {
-        switch (structure.kind) {
-            case StructureKind.Property:
-            case StructureKind.Parameter:
-            case StructureKind.PropertySignature:
-            case StructureKind.VariableDeclaration:
-            case StructureKind.TypeAlias:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isExclamationTokenable(structure) {
-        switch (structure.kind) {
-            case StructureKind.Property:
-            case StructureKind.VariableDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isReadonlyable(structure) {
-        switch (structure.kind) {
-            case StructureKind.Property:
-            case StructureKind.Parameter:
-            case StructureKind.IndexSignature:
-            case StructureKind.PropertySignature:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isInitializerExpressionable(structure) {
-        switch (structure.kind) {
-            case StructureKind.Property:
-            case StructureKind.EnumMember:
-            case StructureKind.Parameter:
-            case StructureKind.PropertySignature:
-            case StructureKind.VariableDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    },
-    isSetAccessor(structure) {
-        return structure.kind === StructureKind.SetAccessor;
     },
     isDecorator(structure) {
         return structure.kind === StructureKind.Decorator;
-    },
-    isJSDoc(structure) {
-        return structure.kind === StructureKind.JSDoc;
-    },
-    isJSDocTag(structure) {
-        return structure.kind === StructureKind.JSDocTag;
     },
     isEnum(structure) {
         return structure.kind === StructureKind.Enum;
@@ -6909,9 +6768,9 @@ const Structure = {
             case StructureKind.Enum:
             case StructureKind.Interface:
             case StructureKind.JsxAttribute:
+            case StructureKind.ShorthandPropertyAssignment:
             case StructureKind.TypeAlias:
             case StructureKind.TypeParameter:
-            case StructureKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -6920,35 +6779,104 @@ const Structure = {
     isEnumMember(structure) {
         return structure.kind === StructureKind.EnumMember;
     },
-    isFunction(structure) {
-        return structure.kind === StructureKind.Function;
-    },
-    isFunctionDeclarationOverload(structure) {
-        return structure.kind === StructureKind.FunctionOverload;
-    },
-    isParameter(structure) {
-        return structure.kind === StructureKind.Parameter;
-    },
-    isBindingNamed(structure) {
+    isPropertyNamed(structure) {
         switch (structure.kind) {
+            case StructureKind.EnumMember:
+            case StructureKind.GetAccessor:
+            case StructureKind.Method:
+            case StructureKind.MethodSignature:
+            case StructureKind.PropertyAssignment:
+            case StructureKind.Property:
+            case StructureKind.PropertySignature:
+            case StructureKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isInitializerExpressionable(structure) {
+        switch (structure.kind) {
+            case StructureKind.EnumMember:
             case StructureKind.Parameter:
+            case StructureKind.Property:
+            case StructureKind.PropertySignature:
             case StructureKind.VariableDeclaration:
                 return true;
             default:
                 return false;
         }
     },
-    isScopeable(structure) {
-        return structure.kind === StructureKind.Parameter;
+    isExportAssignment(structure) {
+        return structure.kind === StructureKind.ExportAssignment;
     },
-    isCallSignature(structure) {
-        return structure.kind === StructureKind.CallSignature;
+    isExportDeclaration(structure) {
+        return structure.kind === StructureKind.ExportDeclaration;
     },
-    isConstructSignature(structure) {
-        return structure.kind === StructureKind.ConstructSignature;
+    isExportSpecifier(structure) {
+        return structure.kind === StructureKind.ExportSpecifier;
+    },
+    isFunctionDeclarationOverload(structure) {
+        return structure.kind === StructureKind.FunctionOverload;
+    },
+    isAsyncable(structure) {
+        switch (structure.kind) {
+            case StructureKind.FunctionOverload:
+            case StructureKind.Function:
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isGeneratorable(structure) {
+        switch (structure.kind) {
+            case StructureKind.FunctionOverload:
+            case StructureKind.Function:
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isFunction(structure) {
+        return structure.kind === StructureKind.Function;
+    },
+    isGetAccessor(structure) {
+        return structure.kind === StructureKind.GetAccessor;
+    },
+    isStaticable(structure) {
+        switch (structure.kind) {
+            case StructureKind.GetAccessor:
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+            case StructureKind.Property:
+            case StructureKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isImportDeclaration(structure) {
+        return structure.kind === StructureKind.ImportDeclaration;
+    },
+    isImportSpecifier(structure) {
+        return structure.kind === StructureKind.ImportSpecifier;
     },
     isIndexSignature(structure) {
         return structure.kind === StructureKind.IndexSignature;
+    },
+    isReadonlyable(structure) {
+        switch (structure.kind) {
+            case StructureKind.IndexSignature:
+            case StructureKind.Parameter:
+            case StructureKind.Property:
+            case StructureKind.PropertySignature:
+                return true;
+            default:
+                return false;
+        }
     },
     isInterface(structure) {
         return structure.kind === StructureKind.Interface;
@@ -6959,11 +6887,11 @@ const Structure = {
     isTypeElementMembered(structure) {
         return structure.kind === StructureKind.Interface;
     },
-    isMethodSignature(structure) {
-        return structure.kind === StructureKind.MethodSignature;
+    isJSDoc(structure) {
+        return structure.kind === StructureKind.JSDoc;
     },
-    isPropertySignature(structure) {
-        return structure.kind === StructureKind.PropertySignature;
+    isJSDocTag(structure) {
+        return structure.kind === StructureKind.JSDocTag;
     },
     isJsxAttribute(structure) {
         return structure.kind === StructureKind.JsxAttribute;
@@ -6983,20 +6911,38 @@ const Structure = {
     isJsxSpreadAttribute(structure) {
         return structure.kind === StructureKind.JsxSpreadAttribute;
     },
-    isExportAssignment(structure) {
-        return structure.kind === StructureKind.ExportAssignment;
+    isMethodDeclarationOverload(structure) {
+        return structure.kind === StructureKind.MethodOverload;
     },
-    isExportDeclaration(structure) {
-        return structure.kind === StructureKind.ExportDeclaration;
+    isQuestionTokenable(structure) {
+        switch (structure.kind) {
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+            case StructureKind.MethodSignature:
+            case StructureKind.Parameter:
+            case StructureKind.Property:
+            case StructureKind.PropertySignature:
+                return true;
+            default:
+                return false;
+        }
     },
-    isExportSpecifier(structure) {
-        return structure.kind === StructureKind.ExportSpecifier;
+    isOverrideable(structure) {
+        switch (structure.kind) {
+            case StructureKind.MethodOverload:
+            case StructureKind.Method:
+            case StructureKind.Parameter:
+            case StructureKind.Property:
+                return true;
+            default:
+                return false;
+        }
     },
-    isImportDeclaration(structure) {
-        return structure.kind === StructureKind.ImportDeclaration;
+    isMethod(structure) {
+        return structure.kind === StructureKind.Method;
     },
-    isImportSpecifier(structure) {
-        return structure.kind === StructureKind.ImportSpecifier;
+    isMethodSignature(structure) {
+        return structure.kind === StructureKind.MethodSignature;
     },
     isModule(structure) {
         return structure.kind === StructureKind.Module;
@@ -7004,14 +6950,65 @@ const Structure = {
     isModuleNamed(structure) {
         return structure.kind === StructureKind.Module;
     },
+    isParameter(structure) {
+        return structure.kind === StructureKind.Parameter;
+    },
+    isBindingNamed(structure) {
+        switch (structure.kind) {
+            case StructureKind.Parameter:
+            case StructureKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isTyped(structure) {
+        switch (structure.kind) {
+            case StructureKind.Parameter:
+            case StructureKind.Property:
+            case StructureKind.PropertySignature:
+            case StructureKind.TypeAlias:
+            case StructureKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isScopeable(structure) {
+        return structure.kind === StructureKind.Parameter;
+    },
+    isPropertyAssignment(structure) {
+        return structure.kind === StructureKind.PropertyAssignment;
+    },
+    isProperty(structure) {
+        return structure.kind === StructureKind.Property;
+    },
+    isExclamationTokenable(structure) {
+        switch (structure.kind) {
+            case StructureKind.Property:
+            case StructureKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    },
+    isPropertySignature(structure) {
+        return structure.kind === StructureKind.PropertySignature;
+    },
+    isSetAccessor(structure) {
+        return structure.kind === StructureKind.SetAccessor;
+    },
+    isShorthandPropertyAssignment(structure) {
+        return structure.kind === StructureKind.ShorthandPropertyAssignment;
+    },
     isSourceFile(structure) {
         return structure.kind === StructureKind.SourceFile;
     },
-    isVariableDeclaration(structure) {
-        return structure.kind === StructureKind.VariableDeclaration;
+    isSpreadAssignment(structure) {
+        return structure.kind === StructureKind.SpreadAssignment;
     },
-    isVariableStatement(structure) {
-        return structure.kind === StructureKind.VariableStatement;
+    isExpressioned(structure) {
+        return structure.kind === StructureKind.SpreadAssignment;
     },
     isTypeAlias(structure) {
         return structure.kind === StructureKind.TypeAlias;
@@ -7019,17 +7016,11 @@ const Structure = {
     isTypeParameter(structure) {
         return structure.kind === StructureKind.TypeParameter;
     },
-    isPropertyAssignment(structure) {
-        return structure.kind === StructureKind.PropertyAssignment;
+    isVariableDeclaration(structure) {
+        return structure.kind === StructureKind.VariableDeclaration;
     },
-    isShorthandPropertyAssignment(structure) {
-        return structure.kind === StructureKind.ShorthandPropertyAssignment;
-    },
-    isSpreadAssignment(structure) {
-        return structure.kind === StructureKind.SpreadAssignment;
-    },
-    isExpressioned(structure) {
-        return structure.kind === StructureKind.SpreadAssignment;
+    isVariableStatement(structure) {
+        return structure.kind === StructureKind.VariableStatement;
     }
 };
 
@@ -7043,67 +7034,84 @@ function forEachStructureChild(structure, callback) {
         return undefined;
     }
     switch (structure.kind) {
+        case StructureKind.CallSignature:
+            return forCallSignatureDeclaration(structure, callback);
         case StructureKind.Class:
             return forClassDeclaration(structure, callback);
         case StructureKind.ClassStaticBlock:
             return forClassStaticBlockDeclaration(structure, callback);
-        case StructureKind.Constructor:
-            return forConstructorDeclaration(structure, callback);
+        case StructureKind.ConstructSignature:
+            return forConstructSignatureDeclaration(structure, callback);
         case StructureKind.ConstructorOverload:
             return forConstructorDeclarationOverload(structure, callback);
-        case StructureKind.GetAccessor:
-            return forGetAccessorDeclaration(structure, callback);
-        case StructureKind.Method:
-            return forMethodDeclaration(structure, callback);
-        case StructureKind.MethodOverload:
-            return forMethodDeclarationOverload(structure, callback);
-        case StructureKind.Property:
-            return forPropertyDeclaration(structure, callback);
-        case StructureKind.SetAccessor:
-            return forSetAccessorDeclaration(structure, callback);
-        case StructureKind.JSDoc:
-            return forJSDoc(structure, callback);
+        case StructureKind.Constructor:
+            return forConstructorDeclaration(structure, callback);
         case StructureKind.Enum:
             return forEnumDeclaration(structure, callback);
         case StructureKind.EnumMember:
             return forEnumMember(structure, callback);
-        case StructureKind.Function:
-            return forFunctionDeclaration(structure, callback);
+        case StructureKind.ExportDeclaration:
+            return forExportDeclaration(structure, callback);
         case StructureKind.FunctionOverload:
             return forFunctionDeclarationOverload(structure, callback);
-        case StructureKind.Parameter:
-            return forParameterDeclaration(structure, callback);
-        case StructureKind.CallSignature:
-            return forCallSignatureDeclaration(structure, callback);
-        case StructureKind.ConstructSignature:
-            return forConstructSignatureDeclaration(structure, callback);
+        case StructureKind.Function:
+            return forFunctionDeclaration(structure, callback);
+        case StructureKind.GetAccessor:
+            return forGetAccessorDeclaration(structure, callback);
+        case StructureKind.ImportDeclaration:
+            return forImportDeclaration(structure, callback);
         case StructureKind.IndexSignature:
             return forIndexSignatureDeclaration(structure, callback);
         case StructureKind.Interface:
             return forInterfaceDeclaration(structure, callback);
-        case StructureKind.MethodSignature:
-            return forMethodSignature(structure, callback);
-        case StructureKind.PropertySignature:
-            return forPropertySignature(structure, callback);
+        case StructureKind.JSDoc:
+            return forJSDoc(structure, callback);
         case StructureKind.JsxElement:
             return forJsxElement(structure, callback);
         case StructureKind.JsxSelfClosingElement:
             return forJsxSelfClosingElement(structure, callback);
-        case StructureKind.ExportDeclaration:
-            return forExportDeclaration(structure, callback);
-        case StructureKind.ImportDeclaration:
-            return forImportDeclaration(structure, callback);
+        case StructureKind.MethodOverload:
+            return forMethodDeclarationOverload(structure, callback);
+        case StructureKind.Method:
+            return forMethodDeclaration(structure, callback);
+        case StructureKind.MethodSignature:
+            return forMethodSignature(structure, callback);
         case StructureKind.Module:
             return forModuleDeclaration(structure, callback);
+        case StructureKind.Parameter:
+            return forParameterDeclaration(structure, callback);
+        case StructureKind.Property:
+            return forPropertyDeclaration(structure, callback);
+        case StructureKind.PropertySignature:
+            return forPropertySignature(structure, callback);
+        case StructureKind.SetAccessor:
+            return forSetAccessorDeclaration(structure, callback);
         case StructureKind.SourceFile:
             return forSourceFile(structure, callback);
-        case StructureKind.VariableStatement:
-            return forVariableStatement(structure, callback);
         case StructureKind.TypeAlias:
             return forTypeAliasDeclaration(structure, callback);
+        case StructureKind.VariableStatement:
+            return forVariableStatement(structure, callback);
         default:
             return undefined;
     }
+}
+function forCallSignatureDeclaration(structure, callback) {
+    return forJSDocableNode(structure, callback)
+        || forSignaturedDeclaration(structure, callback)
+        || forTypeParameteredNode(structure, callback);
+}
+function forJSDocableNode(structure, callback) {
+    return forAllIfStructure(structure.docs, callback, StructureKind.JSDoc);
+}
+function forSignaturedDeclaration(structure, callback) {
+    return forParameteredNode(structure, callback);
+}
+function forParameteredNode(structure, callback) {
+    return forAll(structure.parameters, callback, StructureKind.Parameter);
+}
+function forTypeParameteredNode(structure, callback) {
+    return forAllIfStructure(structure.typeParameters, callback, StructureKind.TypeParameter);
 }
 function forClassDeclaration(structure, callback) {
     return forClassLikeDeclarationBase(structure, callback);
@@ -7121,63 +7129,32 @@ function forClassLikeDeclarationBase(structure, callback) {
 function forDecoratableNode(structure, callback) {
     return forAll(structure.decorators, callback, StructureKind.Decorator);
 }
-function forTypeParameteredNode(structure, callback) {
-    return forAllIfStructure(structure.typeParameters, callback, StructureKind.TypeParameter);
-}
-function forJSDocableNode(structure, callback) {
-    return forAllIfStructure(structure.docs, callback, StructureKind.JSDoc);
-}
 function forClassStaticBlockDeclaration(structure, callback) {
-    return forFunctionLikeDeclaration(structure, callback);
-}
-function forFunctionLikeDeclaration(structure, callback) {
-    return forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback)
-        || forJSDocableNode(structure, callback)
+    return forJSDocableNode(structure, callback)
         || forStatementedNode(structure, callback);
-}
-function forSignaturedDeclaration(structure, callback) {
-    return forParameteredNode(structure, callback);
-}
-function forParameteredNode(structure, callback) {
-    return forAll(structure.parameters, callback, StructureKind.Parameter);
 }
 function forStatementedNode(structure, callback) {
     return forAllUnknownKindIfStructure(structure.statements, callback);
 }
-function forConstructorDeclaration(structure, callback) {
-    return forFunctionLikeDeclaration(structure, callback)
-        || forAll(structure.overloads, callback, StructureKind.ConstructorOverload);
+function forConstructSignatureDeclaration(structure, callback) {
+    return forJSDocableNode(structure, callback)
+        || forSignaturedDeclaration(structure, callback)
+        || forTypeParameteredNode(structure, callback);
 }
 function forConstructorDeclarationOverload(structure, callback) {
     return forSignaturedDeclaration(structure, callback)
         || forTypeParameteredNode(structure, callback)
         || forJSDocableNode(structure, callback);
 }
-function forGetAccessorDeclaration(structure, callback) {
-    return forDecoratableNode(structure, callback)
-        || forFunctionLikeDeclaration(structure, callback);
+function forConstructorDeclaration(structure, callback) {
+    return forFunctionLikeDeclaration(structure, callback)
+        || forAll(structure.overloads, callback, StructureKind.ConstructorOverload);
 }
-function forMethodDeclaration(structure, callback) {
-    return forDecoratableNode(structure, callback)
-        || forFunctionLikeDeclaration(structure, callback)
-        || forAll(structure.overloads, callback, StructureKind.MethodOverload);
-}
-function forMethodDeclarationOverload(structure, callback) {
+function forFunctionLikeDeclaration(structure, callback) {
     return forSignaturedDeclaration(structure, callback)
         || forTypeParameteredNode(structure, callback)
-        || forJSDocableNode(structure, callback);
-}
-function forPropertyDeclaration(structure, callback) {
-    return forJSDocableNode(structure, callback)
-        || forDecoratableNode(structure, callback);
-}
-function forSetAccessorDeclaration(structure, callback) {
-    return forDecoratableNode(structure, callback)
-        || forFunctionLikeDeclaration(structure, callback);
-}
-function forJSDoc(structure, callback) {
-    return forAll(structure.tags, callback, StructureKind.JSDocTag);
+        || forJSDocableNode(structure, callback)
+        || forStatementedNode(structure, callback);
 }
 function forEnumDeclaration(structure, callback) {
     return forJSDocableNode(structure, callback)
@@ -7186,27 +7163,24 @@ function forEnumDeclaration(structure, callback) {
 function forEnumMember(structure, callback) {
     return forJSDocableNode(structure, callback);
 }
-function forFunctionDeclaration(structure, callback) {
-    return forFunctionLikeDeclaration(structure, callback)
-        || forAll(structure.overloads, callback, StructureKind.FunctionOverload);
+function forExportDeclaration(structure, callback) {
+    return forAllIfStructure(structure.namedExports, callback, StructureKind.ExportSpecifier);
 }
 function forFunctionDeclarationOverload(structure, callback) {
     return forSignaturedDeclaration(structure, callback)
         || forTypeParameteredNode(structure, callback)
         || forJSDocableNode(structure, callback);
 }
-function forParameterDeclaration(structure, callback) {
-    return forDecoratableNode(structure, callback);
+function forFunctionDeclaration(structure, callback) {
+    return forFunctionLikeDeclaration(structure, callback)
+        || forAll(structure.overloads, callback, StructureKind.FunctionOverload);
 }
-function forCallSignatureDeclaration(structure, callback) {
-    return forJSDocableNode(structure, callback)
-        || forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback);
+function forGetAccessorDeclaration(structure, callback) {
+    return forDecoratableNode(structure, callback)
+        || forFunctionLikeDeclaration(structure, callback);
 }
-function forConstructSignatureDeclaration(structure, callback) {
-    return forJSDocableNode(structure, callback)
-        || forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback);
+function forImportDeclaration(structure, callback) {
+    return forAllIfStructure(structure.namedImports, callback, StructureKind.ImportSpecifier);
 }
 function forIndexSignatureDeclaration(structure, callback) {
     return forJSDocableNode(structure, callback);
@@ -7223,13 +7197,8 @@ function forTypeElementMemberedNode(structure, callback) {
         || forAll(structure.methods, callback, StructureKind.MethodSignature)
         || forAll(structure.properties, callback, StructureKind.PropertySignature);
 }
-function forMethodSignature(structure, callback) {
-    return forJSDocableNode(structure, callback)
-        || forSignaturedDeclaration(structure, callback)
-        || forTypeParameteredNode(structure, callback);
-}
-function forPropertySignature(structure, callback) {
-    return forJSDocableNode(structure, callback);
+function forJSDoc(structure, callback) {
+    return forAll(structure.tags, callback, StructureKind.JSDocTag);
 }
 function forJsxElement(structure, callback) {
     return forAllUnknownKindIfStructure(structure.attributes, callback)
@@ -7241,26 +7210,49 @@ function forJsxSelfClosingElement(structure, callback) {
 function forJsxAttributedNode(structure, callback) {
     return forAllUnknownKindIfStructure(structure.attributes, callback);
 }
-function forExportDeclaration(structure, callback) {
-    return forAllIfStructure(structure.namedExports, callback, StructureKind.ExportSpecifier);
+function forMethodDeclarationOverload(structure, callback) {
+    return forSignaturedDeclaration(structure, callback)
+        || forTypeParameteredNode(structure, callback)
+        || forJSDocableNode(structure, callback);
 }
-function forImportDeclaration(structure, callback) {
-    return forAllIfStructure(structure.namedImports, callback, StructureKind.ImportSpecifier);
+function forMethodDeclaration(structure, callback) {
+    return forDecoratableNode(structure, callback)
+        || forFunctionLikeDeclaration(structure, callback)
+        || forAll(structure.overloads, callback, StructureKind.MethodOverload);
+}
+function forMethodSignature(structure, callback) {
+    return forJSDocableNode(structure, callback)
+        || forSignaturedDeclaration(structure, callback)
+        || forTypeParameteredNode(structure, callback);
 }
 function forModuleDeclaration(structure, callback) {
     return forJSDocableNode(structure, callback)
         || forStatementedNode(structure, callback);
 }
+function forParameterDeclaration(structure, callback) {
+    return forDecoratableNode(structure, callback);
+}
+function forPropertyDeclaration(structure, callback) {
+    return forJSDocableNode(structure, callback)
+        || forDecoratableNode(structure, callback);
+}
+function forPropertySignature(structure, callback) {
+    return forJSDocableNode(structure, callback);
+}
+function forSetAccessorDeclaration(structure, callback) {
+    return forDecoratableNode(structure, callback)
+        || forFunctionLikeDeclaration(structure, callback);
+}
 function forSourceFile(structure, callback) {
     return forStatementedNode(structure, callback);
-}
-function forVariableStatement(structure, callback) {
-    return forJSDocableNode(structure, callback)
-        || forAll(structure.declarations, callback, StructureKind.VariableDeclaration);
 }
 function forTypeAliasDeclaration(structure, callback) {
     return forTypeParameteredNode(structure, callback)
         || forJSDocableNode(structure, callback);
+}
+function forVariableStatement(structure, callback) {
+    return forJSDocableNode(structure, callback)
+        || forAll(structure.declarations, callback, StructureKind.VariableDeclaration);
 }
 function forAll(structures, callback, kind) {
     if (structures == null)
@@ -15142,6 +15134,12 @@ const TypeLiteralNodeBase = TypeElementMemberedNode(TypeNode);
 class TypeLiteralNode extends TypeLiteralNodeBase {
 }
 
+class TypeOperatorTypeNode extends TypeNode {
+    getTypeNode() {
+        return this._getNodeFromCompilerNode(this.compilerNode.type);
+    }
+}
+
 const TypeParameterDeclarationBase = NamedNode(Node);
 class TypeParameterDeclaration extends TypeParameterDeclarationBase {
     getConstraint() {
@@ -18631,6 +18629,7 @@ const kindToWrapperMappings = {
     [SyntaxKind.TypeAliasDeclaration]: TypeAliasDeclaration,
     [SyntaxKind.TypeAssertionExpression]: TypeAssertion,
     [SyntaxKind.TypeLiteral]: TypeLiteralNode,
+    [SyntaxKind.TypeOperator]: TypeOperatorTypeNode,
     [SyntaxKind.TypeParameter]: TypeParameterDeclaration,
     [SyntaxKind.TypePredicate]: TypePredicateNode,
     [SyntaxKind.TypeReference]: TypeReferenceNode,
@@ -19986,4 +19985,4 @@ const { InvalidOperationError, FileNotFoundError, ArgumentError, ArgumentNullOrW
 const WriterFunctions = Writers;
 const TypeGuards = Node;
 
-export { AbstractableNode, AmbientableNode, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, ArgumentedNode, ArrayBindingPattern, ArrayDestructuringAssignment, ArrayDestructuringAssignmentBase, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, ArrowFunctionBase, AsExpression, AsExpressionBase, AssignmentExpression, AssignmentExpressionBase, AsyncableNode, AwaitExpression, AwaitExpressionBase, AwaitableNode, BaseError, BaseExpressionedNode, BigIntLiteral, BigIntLiteralBase, BinaryExpression, BinaryExpressionBase, BindingElement, BindingElementBase, BindingNamedNode, Block, BlockBase, BodiedNode, BodyableNode, BreakStatement, CallExpression, CallExpressionBase, CallSignatureDeclaration, CallSignatureDeclarationBase, CaseBlock, CaseBlockBase, CaseClause, CaseClauseBase, CatchClause, CatchClauseBase, ChildOrderableNode, ClassDeclaration, ClassDeclarationBase, ClassElement, ClassExpression, ClassExpressionBase, ClassLikeDeclarationBase, ClassLikeDeclarationBaseSpecific, ClassStaticBlockDeclaration, ClassStaticBlockDeclarationBase, CodeAction, CodeFixAction, CombinedCodeActions, CommaListExpression, CommaListExpressionBase, CommentClassElement, CommentEnumMember, CommentNodeKind, CommentObjectLiteralElement, CommentRange, CommentStatement, CommentTypeElement, CommonIdentifierBase, CompilerCommentClassElement, CompilerCommentEnumMember, CompilerCommentNode, CompilerCommentObjectLiteralElement, CompilerCommentStatement, CompilerCommentTypeElement, ComputedPropertyName, ComputedPropertyNameBase, ConditionalExpression, ConditionalExpressionBase, ConditionalTypeNode, ConstructSignatureDeclaration, ConstructSignatureDeclarationBase, ConstructorDeclaration, ConstructorDeclarationBase, ConstructorDeclarationOverloadBase, ConstructorTypeNode, ConstructorTypeNodeBase, ContinueStatement, DebuggerStatement, DebuggerStatementBase, DecoratableNode, Decorator, DecoratorBase, DefaultClause, DefaultClauseBase, DefinitionInfo, DeleteExpression, DeleteExpressionBase, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, Directory, DirectoryEmitResult, DirectoryNotFoundError, DoStatement, DoStatementBase, DocumentSpan, DotDotDotTokenableNode, ElementAccessExpression, ElementAccessExpressionBase, EmitOutput, EmitResult, EmptyStatement, EmptyStatementBase, EnumDeclaration, EnumDeclarationBase, EnumMember, EnumMemberBase, ExclamationTokenableNode, ExportAssignment, ExportAssignmentBase, ExportDeclaration, ExportDeclarationBase, ExportGetableNode, ExportSpecifier, ExportSpecifierBase, ExportableNode, Expression, ExpressionStatement, ExpressionStatementBase, ExpressionWithTypeArguments, ExpressionWithTypeArgumentsBase, ExpressionableNode, ExpressionedNode, ExtendsClauseableNode, ExternalModuleReference, ExternalModuleReferenceBase, FalseLiteral, FalseLiteralBase, FileNotFoundError, FileReference, FileSystemRefreshResult, FileTextChanges, ForInStatement, ForInStatementBase, ForOfStatement, ForOfStatementBase, ForStatement, ForStatementBase, FunctionDeclaration, FunctionDeclarationBase, FunctionDeclarationOverloadBase, FunctionExpression, FunctionExpressionBase, FunctionLikeDeclaration, FunctionOrConstructorTypeNodeBase, FunctionOrConstructorTypeNodeBaseBase, FunctionTypeNode, FunctionTypeNodeBase, GeneratorableNode, GetAccessorDeclaration, GetAccessorDeclarationBase, HeritageClause, HeritageClauseableNode, Identifier, IdentifierBase, IfStatement, IfStatementBase, ImplementationLocation, ImplementsClauseableNode, ImportClause, ImportClauseBase, ImportDeclaration, ImportDeclarationBase, ImportEqualsDeclaration, ImportEqualsDeclarationBase, ImportExpression, ImportExpressionBase, ImportExpressionedNode, ImportSpecifier, ImportSpecifierBase, ImportTypeNode, ImportTypeNodeBase, IndentationText, IndexSignatureDeclaration, IndexSignatureDeclarationBase, IndexedAccessTypeNode, InferTypeNode, InitializerExpressionGetableNode, InitializerExpressionableNode, InterfaceDeclaration, InterfaceDeclarationBase, IntersectionTypeNode, InvalidOperationError, IterationStatement, JSDoc, JSDocAugmentsTag, JSDocAuthorTag, JSDocBase, JSDocCallbackTag, JSDocClassTag, JSDocDeprecatedTag, JSDocEnumTag, JSDocFunctionType, JSDocFunctionTypeBase, JSDocImplementsTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocMemberName, JSDocOverrideTag, JSDocParameterTag, JSDocParameterTagBase, JSDocPrivateTag, JSDocPropertyLikeTag, JSDocPropertyTag, JSDocPropertyTagBase, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocReturnTagBase, JSDocSeeTag, JSDocSeeTagBase, JSDocSignature, JSDocTag, JSDocTagBase, JSDocTagInfo, JSDocTemplateTag, JSDocTemplateTagBase, JSDocText, JSDocThisTag, JSDocThisTagBase, JSDocType, JSDocTypeExpression, JSDocTypeExpressionableTag, JSDocTypeParameteredTag, JSDocTypeTag, JSDocTypedefTag, JSDocUnknownTag, JSDocableNode, JsxAttribute, JsxAttributeBase, JsxAttributedNode, JsxClosingElement, JsxClosingElementBase, JsxClosingFragment, JsxElement, JsxElementBase, JsxExpression, JsxExpressionBase, JsxFragment, JsxOpeningElement, JsxOpeningElementBase, JsxOpeningFragment, JsxSelfClosingElement, JsxSelfClosingElementBase, JsxSpreadAttribute, JsxSpreadAttributeBase, JsxTagNamedNode, JsxText, JsxTextBase, LabeledStatement, LabeledStatementBase, LanguageService, LeftHandSideExpression, LeftHandSideExpressionedNode, LiteralExpression, LiteralExpressionBase, LiteralLikeNode, LiteralTypeNode, ManipulationError, ManipulationSettingsContainer, MappedTypeNode, MemberExpression, MemoryEmitResult, MetaProperty, MetaPropertyBase, MethodDeclaration, MethodDeclarationBase, MethodDeclarationOverloadBase, MethodSignature, MethodSignatureBase, ModifierableNode, ModuleBlock, ModuleBlockBase, ModuleChildableNode, ModuleDeclaration, ModuleDeclarationBase, ModuleDeclarationKind, ModuleNamedNode, ModuledNode, NameableNode, NamedExports, NamedExportsBase, NamedImports, NamedImportsBase, NamedNode, NamedNodeBase, NamedTupleMember, NamedTupleMemberBase, NamespaceExport, NamespaceExportBase, NamespaceImport, NamespaceImportBase, NewExpression, NewExpressionBase, NoSubstitutionTemplateLiteral, NoSubstitutionTemplateLiteralBase, Node, NonNullExpression, NonNullExpressionBase, NotEmittedStatement, NotEmittedStatementBase, NotImplementedError, NotSupportedError, NullLiteral, NullLiteralBase, NumericLiteral, NumericLiteralBase, ObjectBindingPattern, ObjectDestructuringAssignment, ObjectDestructuringAssignmentBase, ObjectLiteralElement, ObjectLiteralExpression, ObjectLiteralExpressionBase, OmittedExpression, OmittedExpressionBase, OutputFile, OverloadableNode, OverrideableNode, ParameterDeclaration, ParameterDeclarationBase, ParameteredNode, ParenthesizedExpression, ParenthesizedExpressionBase, ParenthesizedTypeNode, PartiallyEmittedExpression, PartiallyEmittedExpressionBase, PathNotFoundError, PostfixUnaryExpression, PostfixUnaryExpressionBase, PrefixUnaryExpression, PrefixUnaryExpressionBase, PrimaryExpression, PrivateIdentifier, PrivateIdentifierBase, Program, Project, PropertyAccessExpression, PropertyAccessExpressionBase, PropertyAssignment, PropertyAssignmentBase, PropertyDeclaration, PropertyDeclarationBase, PropertyNamedNode, PropertySignature, PropertySignatureBase, QualifiedName, QuestionDotTokenableNode, QuestionTokenableNode, QuoteKind, ReadonlyableNode, RefactorEditInfo, ReferenceEntry, ReferenceFindableNode, ReferencedSymbol, ReferencedSymbolDefinitionInfo, RegularExpressionLiteral, RegularExpressionLiteralBase, RenameLocation, RenameableNode, ReturnStatement, ReturnStatementBase, ReturnTypedNode, Scope, ScopeableNode, ScopedNode, SetAccessorDeclaration, SetAccessorDeclarationBase, ShorthandPropertyAssignment, ShorthandPropertyAssignmentBase, Signature, SignaturedDeclaration, SourceFile, SourceFileBase, SpreadAssignment, SpreadAssignmentBase, SpreadElement, SpreadElementBase, Statement, StatementBase, StatementedNode, StaticableNode, StringLiteral, StringLiteralBase, Structure, StructureKind, SuperElementAccessExpression, SuperElementAccessExpressionBase, SuperExpression, SuperExpressionBase, SuperExpressionedNode, SuperPropertyAccessExpression, SuperPropertyAccessExpressionBase, SwitchStatement, SwitchStatementBase, Symbol, SymbolDisplayPart, SyntaxList, TaggedTemplateExpression, TemplateExpression, TemplateExpressionBase, TemplateHead, TemplateHeadBase, TemplateLiteralTypeNode, TemplateMiddle, TemplateMiddleBase, TemplateSpan, TemplateSpanBase, TemplateTail, TemplateTailBase, TextChange, TextInsertableNode, TextRange, TextSpan, ThisExpression, ThisExpressionBase, ThisTypeNode, ThrowStatement, ThrowStatementBase, TrueLiteral, TrueLiteralBase, TryStatement, TryStatementBase, TupleTypeNode, Type, TypeAliasDeclaration, TypeAliasDeclarationBase, TypeArgumentedNode, TypeAssertion, TypeAssertionBase, TypeChecker, TypeElement, TypeElementMemberedNode, TypeGuards, TypeLiteralNode, TypeLiteralNodeBase, TypeNode, TypeOfExpression, TypeOfExpressionBase, TypeParameter, TypeParameterDeclaration, TypeParameterDeclarationBase, TypeParameteredNode, TypePredicateNode, TypeReferenceNode, TypedNode, UnaryExpression, UnaryExpressionedNode, UnionTypeNode, UnwrappableNode, UpdateExpression, VariableDeclaration, VariableDeclarationBase, VariableDeclarationKind, VariableDeclarationList, VariableDeclarationListBase, VariableStatement, VariableStatementBase, VoidExpression, VoidExpressionBase, WhileStatement, WhileStatementBase, WithStatement, WithStatementBase, WriterFunctions, Writers, YieldExpression, YieldExpressionBase, createWrappedNode, forEachStructureChild, getCompilerOptionsFromTsConfig, getScopeForNode, insertOverloads, printNode, setScopeForNode };
+export { AbstractableNode, AmbientableNode, ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, ArgumentedNode, ArrayBindingPattern, ArrayDestructuringAssignment, ArrayDestructuringAssignmentBase, ArrayLiteralExpression, ArrayTypeNode, ArrowFunction, ArrowFunctionBase, AsExpression, AsExpressionBase, AssignmentExpression, AssignmentExpressionBase, AsyncableNode, AwaitExpression, AwaitExpressionBase, AwaitableNode, BaseError, BaseExpressionedNode, BigIntLiteral, BigIntLiteralBase, BinaryExpression, BinaryExpressionBase, BindingElement, BindingElementBase, BindingNamedNode, Block, BlockBase, BodiedNode, BodyableNode, BreakStatement, CallExpression, CallExpressionBase, CallSignatureDeclaration, CallSignatureDeclarationBase, CaseBlock, CaseBlockBase, CaseClause, CaseClauseBase, CatchClause, CatchClauseBase, ChildOrderableNode, ClassDeclaration, ClassDeclarationBase, ClassElement, ClassExpression, ClassExpressionBase, ClassLikeDeclarationBase, ClassLikeDeclarationBaseSpecific, ClassStaticBlockDeclaration, ClassStaticBlockDeclarationBase, CodeAction, CodeFixAction, CombinedCodeActions, CommaListExpression, CommaListExpressionBase, CommentClassElement, CommentEnumMember, CommentNodeKind, CommentObjectLiteralElement, CommentRange, CommentStatement, CommentTypeElement, CommonIdentifierBase, CompilerCommentClassElement, CompilerCommentEnumMember, CompilerCommentNode, CompilerCommentObjectLiteralElement, CompilerCommentStatement, CompilerCommentTypeElement, ComputedPropertyName, ComputedPropertyNameBase, ConditionalExpression, ConditionalExpressionBase, ConditionalTypeNode, ConstructSignatureDeclaration, ConstructSignatureDeclarationBase, ConstructorDeclaration, ConstructorDeclarationBase, ConstructorDeclarationOverloadBase, ConstructorTypeNode, ConstructorTypeNodeBase, ContinueStatement, DebuggerStatement, DebuggerStatementBase, DecoratableNode, Decorator, DecoratorBase, DefaultClause, DefaultClauseBase, DefinitionInfo, DeleteExpression, DeleteExpressionBase, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, Directory, DirectoryEmitResult, DirectoryNotFoundError, DoStatement, DoStatementBase, DocumentSpan, DotDotDotTokenableNode, ElementAccessExpression, ElementAccessExpressionBase, EmitOutput, EmitResult, EmptyStatement, EmptyStatementBase, EnumDeclaration, EnumDeclarationBase, EnumMember, EnumMemberBase, ExclamationTokenableNode, ExportAssignment, ExportAssignmentBase, ExportDeclaration, ExportDeclarationBase, ExportGetableNode, ExportSpecifier, ExportSpecifierBase, ExportableNode, Expression, ExpressionStatement, ExpressionStatementBase, ExpressionWithTypeArguments, ExpressionWithTypeArgumentsBase, ExpressionableNode, ExpressionedNode, ExtendsClauseableNode, ExternalModuleReference, ExternalModuleReferenceBase, FalseLiteral, FalseLiteralBase, FileNotFoundError, FileReference, FileSystemRefreshResult, FileTextChanges, ForInStatement, ForInStatementBase, ForOfStatement, ForOfStatementBase, ForStatement, ForStatementBase, FunctionDeclaration, FunctionDeclarationBase, FunctionDeclarationOverloadBase, FunctionExpression, FunctionExpressionBase, FunctionLikeDeclaration, FunctionOrConstructorTypeNodeBase, FunctionOrConstructorTypeNodeBaseBase, FunctionTypeNode, FunctionTypeNodeBase, GeneratorableNode, GetAccessorDeclaration, GetAccessorDeclarationBase, HeritageClause, HeritageClauseableNode, Identifier, IdentifierBase, IfStatement, IfStatementBase, ImplementationLocation, ImplementsClauseableNode, ImportClause, ImportClauseBase, ImportDeclaration, ImportDeclarationBase, ImportEqualsDeclaration, ImportEqualsDeclarationBase, ImportExpression, ImportExpressionBase, ImportExpressionedNode, ImportSpecifier, ImportSpecifierBase, ImportTypeNode, ImportTypeNodeBase, IndentationText, IndexSignatureDeclaration, IndexSignatureDeclarationBase, IndexedAccessTypeNode, InferTypeNode, InitializerExpressionGetableNode, InitializerExpressionableNode, InterfaceDeclaration, InterfaceDeclarationBase, IntersectionTypeNode, InvalidOperationError, IterationStatement, JSDoc, JSDocAugmentsTag, JSDocAuthorTag, JSDocBase, JSDocCallbackTag, JSDocClassTag, JSDocDeprecatedTag, JSDocEnumTag, JSDocFunctionType, JSDocFunctionTypeBase, JSDocImplementsTag, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocMemberName, JSDocOverrideTag, JSDocParameterTag, JSDocParameterTagBase, JSDocPrivateTag, JSDocPropertyLikeTag, JSDocPropertyTag, JSDocPropertyTagBase, JSDocProtectedTag, JSDocPublicTag, JSDocReadonlyTag, JSDocReturnTag, JSDocReturnTagBase, JSDocSeeTag, JSDocSeeTagBase, JSDocSignature, JSDocTag, JSDocTagBase, JSDocTagInfo, JSDocTemplateTag, JSDocTemplateTagBase, JSDocText, JSDocThisTag, JSDocThisTagBase, JSDocType, JSDocTypeExpression, JSDocTypeExpressionableTag, JSDocTypeParameteredTag, JSDocTypeTag, JSDocTypedefTag, JSDocUnknownTag, JSDocableNode, JsxAttribute, JsxAttributeBase, JsxAttributedNode, JsxClosingElement, JsxClosingElementBase, JsxClosingFragment, JsxElement, JsxElementBase, JsxExpression, JsxExpressionBase, JsxFragment, JsxOpeningElement, JsxOpeningElementBase, JsxOpeningFragment, JsxSelfClosingElement, JsxSelfClosingElementBase, JsxSpreadAttribute, JsxSpreadAttributeBase, JsxTagNamedNode, JsxText, JsxTextBase, LabeledStatement, LabeledStatementBase, LanguageService, LeftHandSideExpression, LeftHandSideExpressionedNode, LiteralExpression, LiteralExpressionBase, LiteralLikeNode, LiteralTypeNode, ManipulationError, ManipulationSettingsContainer, MappedTypeNode, MemberExpression, MemoryEmitResult, MetaProperty, MetaPropertyBase, MethodDeclaration, MethodDeclarationBase, MethodDeclarationOverloadBase, MethodSignature, MethodSignatureBase, ModifierableNode, ModuleBlock, ModuleBlockBase, ModuleChildableNode, ModuleDeclaration, ModuleDeclarationBase, ModuleDeclarationKind, ModuleNamedNode, ModuledNode, NameableNode, NamedExports, NamedExportsBase, NamedImports, NamedImportsBase, NamedNode, NamedNodeBase, NamedTupleMember, NamedTupleMemberBase, NamespaceExport, NamespaceExportBase, NamespaceImport, NamespaceImportBase, NewExpression, NewExpressionBase, NoSubstitutionTemplateLiteral, NoSubstitutionTemplateLiteralBase, Node, NonNullExpression, NonNullExpressionBase, NotEmittedStatement, NotEmittedStatementBase, NotImplementedError, NotSupportedError, NullLiteral, NullLiteralBase, NumericLiteral, NumericLiteralBase, ObjectBindingPattern, ObjectDestructuringAssignment, ObjectDestructuringAssignmentBase, ObjectLiteralElement, ObjectLiteralExpression, ObjectLiteralExpressionBase, OmittedExpression, OmittedExpressionBase, OutputFile, OverloadableNode, OverrideableNode, ParameterDeclaration, ParameterDeclarationBase, ParameteredNode, ParenthesizedExpression, ParenthesizedExpressionBase, ParenthesizedTypeNode, PartiallyEmittedExpression, PartiallyEmittedExpressionBase, PathNotFoundError, PostfixUnaryExpression, PostfixUnaryExpressionBase, PrefixUnaryExpression, PrefixUnaryExpressionBase, PrimaryExpression, PrivateIdentifier, PrivateIdentifierBase, Program, Project, PropertyAccessExpression, PropertyAccessExpressionBase, PropertyAssignment, PropertyAssignmentBase, PropertyDeclaration, PropertyDeclarationBase, PropertyNamedNode, PropertySignature, PropertySignatureBase, QualifiedName, QuestionDotTokenableNode, QuestionTokenableNode, QuoteKind, ReadonlyableNode, RefactorEditInfo, ReferenceEntry, ReferenceFindableNode, ReferencedSymbol, ReferencedSymbolDefinitionInfo, RegularExpressionLiteral, RegularExpressionLiteralBase, RenameLocation, RenameableNode, ReturnStatement, ReturnStatementBase, ReturnTypedNode, Scope, ScopeableNode, ScopedNode, SetAccessorDeclaration, SetAccessorDeclarationBase, ShorthandPropertyAssignment, ShorthandPropertyAssignmentBase, Signature, SignaturedDeclaration, SourceFile, SourceFileBase, SpreadAssignment, SpreadAssignmentBase, SpreadElement, SpreadElementBase, Statement, StatementBase, StatementedNode, StaticableNode, StringLiteral, StringLiteralBase, Structure, StructureKind, SuperElementAccessExpression, SuperElementAccessExpressionBase, SuperExpression, SuperExpressionBase, SuperExpressionedNode, SuperPropertyAccessExpression, SuperPropertyAccessExpressionBase, SwitchStatement, SwitchStatementBase, Symbol, SymbolDisplayPart, SyntaxList, TaggedTemplateExpression, TemplateExpression, TemplateExpressionBase, TemplateHead, TemplateHeadBase, TemplateLiteralTypeNode, TemplateMiddle, TemplateMiddleBase, TemplateSpan, TemplateSpanBase, TemplateTail, TemplateTailBase, TextChange, TextInsertableNode, TextRange, TextSpan, ThisExpression, ThisExpressionBase, ThisTypeNode, ThrowStatement, ThrowStatementBase, TrueLiteral, TrueLiteralBase, TryStatement, TryStatementBase, TupleTypeNode, Type, TypeAliasDeclaration, TypeAliasDeclarationBase, TypeArgumentedNode, TypeAssertion, TypeAssertionBase, TypeChecker, TypeElement, TypeElementMemberedNode, TypeGuards, TypeLiteralNode, TypeLiteralNodeBase, TypeNode, TypeOfExpression, TypeOfExpressionBase, TypeOperatorTypeNode, TypeParameter, TypeParameterDeclaration, TypeParameterDeclarationBase, TypeParameteredNode, TypePredicateNode, TypeReferenceNode, TypedNode, UnaryExpression, UnaryExpressionedNode, UnionTypeNode, UnwrappableNode, UpdateExpression, VariableDeclaration, VariableDeclarationBase, VariableDeclarationKind, VariableDeclarationList, VariableDeclarationListBase, VariableStatement, VariableStatementBase, VoidExpression, VoidExpressionBase, WhileStatement, WhileStatementBase, WithStatement, WithStatementBase, WriterFunctions, Writers, YieldExpression, YieldExpressionBase, createWrappedNode, forEachStructureChild, getCompilerOptionsFromTsConfig, getScopeForNode, insertOverloads, printNode, setScopeForNode };

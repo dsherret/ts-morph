@@ -47,7 +47,7 @@ function updateForEachStructureChild(sourceFile: tsMorph.SourceFile, structureIn
     func.removeStatements([0, func.getStatementsWithComments().length - 1]);
 
     func.addStatements(writer => {
-        writer.writeLine("// automatically generated: run `yarn run code-generate` to update the code in here");
+        writer.writeLine("// automatically generated: run `npm run code-generate` to update the code in here");
         writer.write("if (ArrayUtils.isReadonlyArray(structure))").block(() => {
             writer.write("for (const item of structure)").block(() => {
                 writer.writeLine("const result = callback(item);");

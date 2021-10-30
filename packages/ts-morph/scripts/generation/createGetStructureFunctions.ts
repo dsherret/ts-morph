@@ -19,7 +19,7 @@ export function createGetStructureFunctions(structures: Structure[]) {
     const writer = new tsMorph.CodeBlockWriter({ newLine: "\n" });
 
     writer.writeLine("// dprint-ignore-file");
-    writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: yarn code-generate").newLine();
+    writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: npm run code-generate").newLine();
     writer.writeLine(`import { ObjectUtils } from "@ts-morph/common";`);
     writer.writeLine(`import * as compiler from "../../compiler";`);
     writer.writeLine(`import * as structures from "../../structures";`);

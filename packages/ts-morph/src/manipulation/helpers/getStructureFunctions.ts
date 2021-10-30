@@ -1,5 +1,5 @@
 // dprint-ignore-file
-// DO NOT MANUALLY EDIT!! File generated via: yarn code-generate
+// DO NOT MANUALLY EDIT!! File generated via: npm run code-generate
 
 import { ObjectUtils } from "@ts-morph/common";
 import * as compiler from "../../compiler";
@@ -12,6 +12,13 @@ export function fromConstructorDeclarationOverload(node: compiler.ConstructorDec
     return structure;
 }
 
+export function fromFunctionDeclarationOverload(node: compiler.FunctionDeclaration): structures.FunctionDeclarationOverloadStructure {
+    const structure: structures.FunctionDeclarationOverloadStructure = {} as any;
+    ObjectUtils.assign(structure, getMixinStructureFuncs.fromAmbientableNode(node));
+    ObjectUtils.assign(structure, getMixinStructureFuncs.fromExportableNode(node));
+    return structure;
+}
+
 export function fromMethodDeclarationOverload(node: compiler.MethodDeclaration): structures.MethodDeclarationOverloadStructure {
     const structure: structures.MethodDeclarationOverloadStructure = {} as any;
     ObjectUtils.assign(structure, getMixinStructureFuncs.fromStaticableNode(node));
@@ -19,12 +26,5 @@ export function fromMethodDeclarationOverload(node: compiler.MethodDeclaration):
     ObjectUtils.assign(structure, getMixinStructureFuncs.fromScopedNode(node));
     ObjectUtils.assign(structure, getMixinStructureFuncs.fromQuestionTokenableNode(node));
     ObjectUtils.assign(structure, getMixinStructureFuncs.fromOverrideableNode(node));
-    return structure;
-}
-
-export function fromFunctionDeclarationOverload(node: compiler.FunctionDeclaration): structures.FunctionDeclarationOverloadStructure {
-    const structure: structures.FunctionDeclarationOverloadStructure = {} as any;
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromAmbientableNode(node));
-    ObjectUtils.assign(structure, getMixinStructureFuncs.fromExportableNode(node));
     return structure;
 }

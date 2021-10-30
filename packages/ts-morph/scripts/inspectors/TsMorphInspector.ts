@@ -32,8 +32,10 @@ export class TsMorphInspector {
     getWrappedNodes(): WrappedNode[] {
         const compilerSourceFiles = this.project.getSourceFiles("src/compiler/**/*.ts");
         const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
-
-        return classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrappedNode(c));
+        return ArrayUtils.sortByProperty(
+            classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrappedNode(c)),
+            n => n.getName(),
+        );
     }
 
     @Memoize
@@ -80,6 +82,7 @@ export class TsMorphInspector {
     @Memoize
     getPublicDeclarations(): tsMorph.ExportedDeclarations[] {
         const entries = Array.from(this.project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations().entries());
+        ArrayUtils.sortByProperty(entries, e => e[0]);
         return ArrayUtils.flatten(entries.filter(([name]) => name !== "ts").map(([_, value]) => value));
     }
 
@@ -97,8 +100,8 @@ export class TsMorphInspector {
     getStructures(): Structure[] {
         const compilerSourceFiles = this.project.getSourceFiles("src/structures/**/*.ts");
         const interfaces = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getInterfaces()));
-
-        return interfaces.map(i => this.wrapperFactory.getStructure(i));
+        const result = interfaces.map(i => this.wrapperFactory.getStructure(i));
+        return ArrayUtils.sortByProperty(result, s => s.getName());
     }
 
     @Memoize

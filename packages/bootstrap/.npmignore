@@ -8,6 +8,6 @@ rollup.config.js
 tsconfig.json
 tsconfig.*.json
 yarn-error.log
-# do not include lock files in order to not restrict the typescript version
+# do not include lock files to allow releasing only ts-morph/common
 yarn.lock
 package-lock.json

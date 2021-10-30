@@ -1,6 +1,5 @@
 /docs/Gemfile.lock
 /docs/_site
-package-lock.json
 packages/*/node_modules
 packages/*/temp
 packages/*/dist-cg

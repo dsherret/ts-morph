@@ -32,7 +32,7 @@ export function createKindToNodeMappings(inspector: TsMorphInspector, tsInspecto
         writer =>
             writer
                 .writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts")
-                .writeLine("// Edit factories/kindToWrapperMappings.ts then run yarn code-generate instead."),
+                .writeLine("// Edit factories/kindToWrapperMappings.ts then run npm run code-generate instead."),
         {
             kind: tsMorph.StructureKind.ImportDeclaration,
             namedImports: ["SyntaxKind", "ts"],

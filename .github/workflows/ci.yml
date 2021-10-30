@@ -15,9 +15,9 @@ jobs:
     - uses: bvm/gh-action@v1.1.0
     - name: Build
       run: |
-        yarn install
-        yarn bootstrap
-        yarn build
+        npm install
+        npm run bootstrap
+        npm run build
         npx lerna run ensure-no-project-compile-errors
     - name: Test
       run: |

@@ -4,7 +4,7 @@ Run in root of repo:
 
 ```bash
 # installs, sets up, and builds all the packages for development
-yarn setup
+npm run setup
 ```
 
 # Packages
@@ -18,9 +18,9 @@ yarn setup
 
 ```bash
 # build (run in root dir or per package)
-yarn build
+npm run build
 # run tests (run in root dir or per package)
-yarn test
+npm run test
 # format (this is kind of experimental as it's using a formatter I wrote... let me know if it does anything strange)
-yarn format
+npm run format
 ```
