@@ -17,6 +17,13 @@ export class StraightReplacementNodeHandler implements NodeHandler {
     handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         /* istanbul ignore if */
         if (currentNode.getKind() !== newNode.kind) {
+            // support a private identifier and identifier being swapped
+            const kinds = [currentNode.getKind(), newNode.kind];
+            if (kinds.includes(ts.SyntaxKind.Identifier) && kinds.includes(ts.SyntaxKind.PrivateIdentifier)) {
+                currentNode.forget();
+                return;
+            }
+
             throw new errors.InvalidOperationError(`Error replacing tree! Perhaps a syntax error was inserted `
                 + `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`);
         }
