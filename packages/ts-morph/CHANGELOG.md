@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.1.0"></a>
+# [12.1.0](https://github.com/dsherret/ts-morph/compare/12.0.0...12.1.0) (2021-10-30)
+
+
+### Bug Fixes
+
+* Support renaming a property to a private identifier ([bf377b6](https://github.com/dsherret/ts-morph/commit/bf377b6)), closes [#1198](https://github.com/dsherret/ts-morph/issues/1198)
+* TypeArguments on decorator structure should output type arguments ([ad4fdbd](https://github.com/dsherret/ts-morph/commit/ad4fdbd))
+
+
+### Features
+
+* Wrap TypeOperator node ([#1208](https://github.com/dsherret/ts-morph/issues/1208)) ([4722c29](https://github.com/dsherret/ts-morph/commit/4722c29)) - Thanks [jfangrad](https://github.com/jfangrad)!
+
+
+
 <a name="12.0.0"></a>
 # [12.0.0](https://github.com/dsherret/ts-morph/compare/11.0.3...12.0.0) (2021-08-27)
 

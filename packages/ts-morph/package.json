@@ -1,6 +1,6 @@
 {
   "name": "ts-morph",
-  "version": "12.0.0",
+  "version": "12.1.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/ts-morph.js",
   "typings": "lib/ts-morph.d.ts",
@@ -65,7 +65,7 @@
     "all": true
   },
   "dependencies": {
-    "@ts-morph/common": "~0.11.0",
+    "@ts-morph/common": "~0.11.1",
     "code-block-writer": "^10.1.1"
   },
   "devDependencies": {
