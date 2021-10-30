@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 200
+**Total:** 204
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -61,6 +61,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ClassElement](src/compiler/ast/class/ClassElement.ts)
     * :heavy_check_mark: name
 * [ClassExpression](src/compiler/ast/class/ClassExpression.ts)
+* [ClassStaticBlockDeclaration](src/compiler/ast/class/ClassStaticBlockDeclaration.ts)
+    * :heavy_check_mark: body
 * [CommaListExpression](src/compiler/ast/expression/CommaListExpression.ts)
     * :heavy_check_mark: elements
 * [ComputedPropertyName](src/compiler/ast/name/ComputedPropertyName.ts)
@@ -210,6 +212,15 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JSDocLink](src/compiler/ast/doc/JSDocLink.ts)
     * :x: name
     * :x: text
+* [JSDocLinkCode](src/compiler/ast/doc/JSDocLinkCode.ts)
+    * :x: name
+    * :x: text
+* [JSDocLinkPlain](src/compiler/ast/doc/JSDocLinkPlain.ts)
+    * :x: name
+    * :x: text
+* [JSDocMemberName](src/compiler/ast/doc/JSDocMemberName.ts)
+    * :x: left
+    * :x: right
 * [JSDocOverrideTag](src/compiler/ast/doc/JSDocOverrideTag.ts)
 * [JSDocParameterTag](src/compiler/ast/doc/JSDocParameterTag.ts)
 * [JSDocPrivateTag](src/compiler/ast/doc/JSDocPrivateTag.ts)

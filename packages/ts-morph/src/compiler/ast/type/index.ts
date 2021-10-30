@@ -18,6 +18,7 @@ export * from "./TupleTypeNode";
 export * from "./TypeAliasDeclaration";
 export * from "./TypeLiteralNode";
 export * from "./TypeNode";
+export * from "./TypeOperatorTypeNode";
 export * from "./TypeParameterDeclaration";
 export * from "./TypePredicateNode";
 export * from "./TypeReferenceNode";

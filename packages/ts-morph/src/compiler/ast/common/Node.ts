@@ -2733,7 +2733,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isFunctionLikeDeclaration<T extends compiler.Node>(node: T | undefined): node is compiler.FunctionLikeDeclaration & compiler.FunctionLikeDeclarationExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3352,7 +3351,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3548,7 +3546,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isParameteredNode<T extends compiler.Node>(node: T | undefined): node is compiler.ParameteredNode & compiler.ParameteredNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3800,7 +3797,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isReturnTypedNode<T extends compiler.Node>(node: T | undefined): node is compiler.ReturnTypedNode & compiler.ReturnTypedNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3866,7 +3862,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isSignaturedDeclaration<T extends compiler.Node>(node: T | undefined): node is compiler.SignaturedDeclaration & compiler.SignaturedDeclarationExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -3968,7 +3963,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isStaticableNode<T extends compiler.Node>(node: T | undefined): node is compiler.StaticableNode & compiler.StaticableNodeExtensionType & T {
         switch (node?.getKind()) {
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
@@ -4179,6 +4173,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.ThisType:
             case SyntaxKind.TupleType:
             case SyntaxKind.TypeLiteral:
+            case SyntaxKind.TypeOperator:
             case SyntaxKind.TypePredicate:
             case SyntaxKind.TypeReference:
             case SyntaxKind.UnionType:
@@ -4190,6 +4185,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** Gets if the node is a TypeOfExpression. */
     static readonly isTypeOfExpression: (node: compiler.Node | undefined) => node is compiler.TypeOfExpression = Node.is(SyntaxKind.TypeOfExpression);
+
+    /**
+     * Gets if the node is a TypeOperatorTypeNode.
+     * @param node - Node to check.
+     */
+    static isTypeOperatorTypeNode(node: compiler.Node | undefined): node is compiler.TypeOperatorTypeNode {
+        return node?.getKind() === SyntaxKind.TypeOperator;
+    }
 
     /**
      * Gets if the node is a TypeParameterDeclaration.
@@ -4207,7 +4210,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         switch (node?.getKind()) {
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.ClassExpression:
-            case SyntaxKind.ClassStaticBlockDeclaration:
             case SyntaxKind.Constructor:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:

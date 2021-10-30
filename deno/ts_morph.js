@@ -7618,7 +7618,18 @@ class DecoratorStructurePrinter extends NodePrinter {
     }
     printTextInternal(writer, structure) {
         writer.write(`@${structure.name}`);
+        this.printTypeArguments(writer, structure);
         this.printArguments(writer, structure);
+    }
+    printTypeArguments(writer, structure) {
+        if (structure.typeArguments == null || structure.typeArguments.length === 0)
+            return;
+        writer.write("<");
+        for (let i = 0; i < structure.typeArguments.length; i++) {
+            writer.conditionalWrite(i > 0, ", ");
+            writer.write(this.getTextWithQueuedChildIndentation(writer, structure.typeArguments[i]));
+        }
+        writer.write(">");
     }
     printArguments(writer, structure) {
         if (structure.arguments == null)
