@@ -15135,6 +15135,9 @@ class TypeLiteralNode extends TypeLiteralNodeBase {
 }
 
 class TypeOperatorTypeNode extends TypeNode {
+    getOperator() {
+        return this.compilerNode.operator;
+    }
     getTypeNode() {
         return this._getNodeFromCompilerNode(this.compilerNode.type);
     }

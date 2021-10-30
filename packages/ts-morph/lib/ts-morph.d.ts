@@ -8728,6 +8728,8 @@ export declare class TypeNode<T extends ts.TypeNode = ts.TypeNode> extends Node<
 }
 
 export declare class TypeOperatorTypeNode extends TypeNode<ts.TypeOperatorNode> {
+    /** Gets the operator of the type node. */
+    getOperator(): SyntaxKind.KeyOfKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.UniqueKeyword;
     /** Gets the node within the type operator. */
     getTypeNode(): TypeNode;
     /** @inheritdoc **/
