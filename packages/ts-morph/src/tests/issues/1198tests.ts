@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Project } from "../../Project";
 
-describe.only("tests for issue #1198", () => {
+describe("tests for issue #1198", () => {
     it("should not have issues when renaming private identifier", () => {
         const project = new Project({ useInMemoryFileSystem: true });
         const sourceFile = project.createSourceFile("mod.ts", `class Foo {

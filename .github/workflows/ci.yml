@@ -4,18 +4,18 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: test ubuntu-16.04
-    runs-on: ubuntu-16.04
+    name: test ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
       with:
-        node-version: '12'
+        node-version: '16'
         check-latest: true
     - uses: bvm/gh-action@v1.1.0
     - name: Build
       run: |
-        npm install
+        npm ci
         npm run bootstrap
         npm run build
         npx lerna run ensure-no-project-compile-errors

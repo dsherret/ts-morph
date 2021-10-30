@@ -1411,6 +1411,11 @@ class StraightReplacementNodeHandler {
     }
     handleNode(currentNode, newNode, newSourceFile) {
         if (currentNode.getKind() !== newNode.kind) {
+            const kinds = [currentNode.getKind(), newNode.kind];
+            if (kinds.includes(ts.SyntaxKind.Identifier) && kinds.includes(ts.SyntaxKind.PrivateIdentifier)) {
+                currentNode.forget();
+                return;
+            }
             throw new errors.InvalidOperationError(`Error replacing tree! Perhaps a syntax error was inserted `
                 + `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`);
         }

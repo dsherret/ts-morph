@@ -13,7 +13,7 @@
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" mocha",
     "test:debug": "npm run test --inspect-brk",
     "test:watch": "npm run test --watch-extensions ts --watch",
-    "test:ci": "npm run run test",
+    "test:ci": "npm run test",
     "test:ts-versions": "ts-node --transpile-only scripts/test/testTypeScriptVersions",
     "test:coverage": "cross-env TS_NODE_COMPILER=\"ttypescript\" TS_NODE_TRANSPILE_ONLY=\"true\" nyc --reporter=lcov mocha",
     "test:performance": "npm run build && node ./dist/tests/performance/run.js",
