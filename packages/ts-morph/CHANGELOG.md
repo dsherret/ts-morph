@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.2.0"></a>
+# [12.2.0](https://github.com/dsherret/ts-morph/compare/12.1.0...12.2.0) (2021-11-02)
+
+
+### Features
+
+* Wrap TypeQueryNode ([9d14798](https://github.com/dsherret/ts-morph/commit/9d14798))
+
+
+
 <a name="12.1.0"></a>
 # [12.1.0](https://github.com/dsherret/ts-morph/compare/12.0.0...12.1.0) (2021-10-30)
 
