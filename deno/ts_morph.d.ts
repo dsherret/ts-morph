@@ -4397,6 +4397,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isTypePredicateNode(node: Node | undefined): node is TypePredicateNode;
     /**
+     * Gets if the node is a TypeQueryNode.
+     * @param node - Node to check.
+     */
+    static isTypeQueryNode(node: Node | undefined): node is TypeQueryNode;
+    /**
      * Gets if the node is a TypeReferenceNode.
      * @param node - Node to check.
      */
@@ -6514,6 +6519,7 @@ export interface ImplementedKindToNodeMappings {
     [SyntaxKind.TypeOperator]: TypeOperatorTypeNode;
     [SyntaxKind.TypeParameter]: TypeParameterDeclaration;
     [SyntaxKind.TypePredicate]: TypePredicateNode;
+    [SyntaxKind.TypeQuery]: TypeQueryNode;
     [SyntaxKind.TypeReference]: TypeReferenceNode;
     [SyntaxKind.UnionType]: UnionTypeNode;
     [SyntaxKind.VariableDeclaration]: VariableDeclaration;
@@ -8802,6 +8808,15 @@ export declare class TypePredicateNode extends TypeNode<ts.TypePredicateNode> {
     getParent(): NodeParentType<ts.TypePredicateNode>;
     /** @inheritdoc **/
     getParentOrThrow(): NonNullable<NodeParentType<ts.TypePredicateNode>>;
+}
+
+export declare class TypeQueryNode extends TypeNode<ts.TypeQueryNode> {
+    /** Gets the expression name. */
+    getExprName(): EntityName;
+    /** @inheritdoc **/
+    getParent(): NodeParentType<ts.TypeQueryNode>;
+    /** @inheritdoc **/
+    getParentOrThrow(): NonNullable<NodeParentType<ts.TypeQueryNode>>;
 }
 
 export declare class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {

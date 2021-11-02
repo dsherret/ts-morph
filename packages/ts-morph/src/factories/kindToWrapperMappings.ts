@@ -167,6 +167,7 @@ export const kindToWrapperMappings: { [key: number]: unknown; } = {
     [SyntaxKind.TypeOperator]: compiler.TypeOperatorTypeNode,
     [SyntaxKind.TypeParameter]: compiler.TypeParameterDeclaration,
     [SyntaxKind.TypePredicate]: compiler.TypePredicateNode,
+    [SyntaxKind.TypeQuery]: compiler.TypeQueryNode,
     [SyntaxKind.TypeReference]: compiler.TypeReferenceNode,
     [SyntaxKind.UnionType]: compiler.UnionTypeNode,
     [SyntaxKind.VariableDeclaration]: compiler.VariableDeclaration,

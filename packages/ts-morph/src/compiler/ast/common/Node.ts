@@ -4175,6 +4175,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             case SyntaxKind.TypeLiteral:
             case SyntaxKind.TypeOperator:
             case SyntaxKind.TypePredicate:
+            case SyntaxKind.TypeQuery:
             case SyntaxKind.TypeReference:
             case SyntaxKind.UnionType:
                 return true;
@@ -4235,6 +4236,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     static isTypePredicateNode(node: compiler.Node | undefined): node is compiler.TypePredicateNode {
         return node?.getKind() === SyntaxKind.TypePredicate;
+    }
+
+    /**
+     * Gets if the node is a TypeQueryNode.
+     * @param node - Node to check.
+     */
+    static isTypeQueryNode(node: compiler.Node | undefined): node is compiler.TypeQueryNode {
+        return node?.getKind() === SyntaxKind.TypeQuery;
     }
 
     /**

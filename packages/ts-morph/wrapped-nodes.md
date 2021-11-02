@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 204
+**Total:** 205
 
 * [ArrayBindingPattern](src/compiler/ast/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -486,6 +486,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: assertsModifier
     * :heavy_check_mark: parameterName
     * :heavy_check_mark: type
+* [TypeQueryNode](src/compiler/ast/type/TypeQueryNode.ts)
+    * :heavy_check_mark: exprName
 * [TypeReferenceNode](src/compiler/ast/type/TypeReferenceNode.ts)
     * :heavy_check_mark: typeName
 * [UnaryExpression](src/compiler/ast/expression/UnaryExpression.ts)
@@ -514,7 +516,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 56
+**Total:** 55
 
 * Bundle
 * CallChain
@@ -565,7 +567,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * TransientIdentifier
 * TsConfigSourceFile
 * TypeOperatorNode
-* TypeQueryNode
 * UnparsedPrepend
 * UnparsedPrologue
 * UnparsedSection

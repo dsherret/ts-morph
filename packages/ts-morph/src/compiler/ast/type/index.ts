@@ -21,5 +21,6 @@ export * from "./TypeNode";
 export * from "./TypeOperatorTypeNode";
 export * from "./TypeParameterDeclaration";
 export * from "./TypePredicateNode";
+export * from "./TypeQueryNode";
 export * from "./TypeReferenceNode";
 export * from "./UnionTypeNode";
