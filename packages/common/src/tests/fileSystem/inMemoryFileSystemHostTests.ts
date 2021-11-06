@@ -81,7 +81,17 @@ describe(nameof(InMemoryFileSystemHost), () => {
             fs.writeFileSync("/dir/subDir/file.ts", "");
             fs.writeFileSync("/dir2/file.ts", "");
             fs.writeFileSync("/file.ts", "");
-            expect(fs.readDirSync("/dir")).to.deep.equal(["/dir/subDir", "/dir/file.ts"]);
+            expect(fs.readDirSync("/dir")).to.deep.equal([{
+                name: "/dir/subDir",
+                isDirectory: true,
+                isFile: false,
+                isSymlink: false,
+            }, {
+                name: "/dir/file.ts",
+                isDirectory: false,
+                isFile: true,
+                isSymlink: false,
+            }]);
         });
 
         it("should throw when reading a directory that doesn't exists", () => {

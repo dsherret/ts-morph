@@ -60,10 +60,10 @@ function getFileSystemEntries(path: StandardizedFilePath, fileSystemWrapper: Tra
         const entries = fileSystemWrapper.readDirSync(path);
 
         for (const entry of entries) {
-            if (fileSystemWrapper.fileExistsSync(entry))
-                files.push(entry);
-            else
-                directories.push(entry);
+            if (entry.isFile)
+                files.push(entry.path);
+            else if (entry.isDirectory)
+                directories.push(entry.path);
         }
     } catch (err) {
         if (!FileUtils.isNotExistsError(err))

@@ -1,4 +1,4 @@
-import { ts } from "@ts-morph/common";
+import { RuntimeDirEntry, ts } from "@ts-morph/common";
 
 /**
  * Holds the compiler options.
@@ -32,7 +32,7 @@ export interface FileSystemHost {
      * Reads all the child directories and files.
      * @remarks Implementers should have this return the full file path.
      */
-    readDirSync(dirPath: string): string[];
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** Asynchronously reads a file at the specified path. */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** Synchronously reads a file at the specified path. */
@@ -84,7 +84,7 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     /** @inheritdoc */
     deleteSync(path: string): void;
     /** @inheritdoc */
-    readDirSync(dirPath: string): string[];
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** @inheritdoc */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** @inheritdoc */

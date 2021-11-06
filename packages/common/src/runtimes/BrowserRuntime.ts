@@ -1,5 +1,5 @@
 import minimatch from "minimatch";
-import { Runtime, RuntimeFileSystem, RuntimePath } from "./Runtime";
+import { Runtime, RuntimeDirEntry, RuntimeFileSystem, RuntimePath } from "./Runtime";
 
 const path = require("path-browserify");
 
@@ -46,7 +46,7 @@ class BrowserRuntimeFileSystem implements RuntimeFileSystem {
         throw new Error(this._errorMessage);
     }
 
-    readDirSync(_dirPath: string): string[] {
+    readDirSync(_dirPath: string): RuntimeDirEntry[] {
         throw new Error(this._errorMessage);
     }
 

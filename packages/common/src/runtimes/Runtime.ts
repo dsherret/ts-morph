@@ -7,6 +7,13 @@ export interface Runtime {
     getPathMatchesPattern(path: string, pattern: string): boolean;
 }
 
+export interface RuntimeDirEntry {
+    name: string;
+    isFile: boolean;
+    isDirectory: boolean;
+    isSymlink: boolean;
+}
+
 export interface RuntimeFileSystem {
     /** Gets if this file system is case sensitive. */
     isCaseSensitive(): boolean;
@@ -14,11 +21,8 @@ export interface RuntimeFileSystem {
     delete(path: string): Promise<void>;
     /** Synchronously deletes the specified file or directory */
     deleteSync(path: string): void;
-    /**
-     * Reads all the child directories and files.
-     * @remarks Should return just the directory and file names.
-     */
-    readDirSync(dirPath: string): string[];
+    /** Reads all the child directories and files. */
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** Asynchronously reads a file at the specified path. */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** Synchronously reads a file at the specified path. */

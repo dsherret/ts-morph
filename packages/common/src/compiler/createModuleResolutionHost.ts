@@ -51,7 +51,7 @@ export function createModuleResolutionHost(options: CreateModuleResolutionHostOp
         getCurrentDirectory: () => transactionalFileSystem.getCurrentDirectory(),
         getDirectories: dirName => {
             const dirPath = transactionalFileSystem.getStandardizedAbsolutePath(dirName);
-            const dirs = new Set<StandardizedFilePath>(transactionalFileSystem.readDirSync(dirPath));
+            const dirs = new Set<StandardizedFilePath>(transactionalFileSystem.readDirSync(dirPath).map(e => e.path));
             for (const childDirPath of sourceFileContainer.getChildDirectoriesOfDirectory(dirPath))
                 dirs.add(childDirPath);
             return Array.from(dirs);

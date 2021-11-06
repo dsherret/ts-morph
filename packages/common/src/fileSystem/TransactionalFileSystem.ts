@@ -154,9 +154,15 @@ class Directory {
         }
     }
 
-    *getChildrenPathsIterator() {
-        for (const childDir of this.childDirs.entries())
-            yield childDir.path;
+    *getChildrenEntriesIterator(): Iterable<DirEntry> {
+        for (const childDir of this.childDirs.entries()) {
+            yield {
+                path: childDir.path,
+                isDirectory: true,
+                isFile: false,
+                isSymlink: false,
+            };
+        }
     }
 
     getDescendants() {
@@ -195,6 +201,13 @@ class Directory {
     private removeMatchingOperations(operationMatches: (operation: Operation) => boolean) {
         ArrayUtils.removeAll(this.operations, operationMatches);
     }
+}
+
+export interface DirEntry {
+    path: StandardizedFilePath;
+    isFile: boolean;
+    isDirectory: boolean;
+    isSymlink: boolean;
 }
 
 /**
@@ -601,20 +614,28 @@ export class TransactionalFileSystem {
             throw new errors.InvalidOperationError(`Cannot read file at ${filePath} because one of its ancestor directories was once deleted or moved.`);
     }
 
-    readDirSync(dirPath: StandardizedFilePath) {
+    readDirSync(dirPath: StandardizedFilePath): DirEntry[] {
         const dir = this.getOrCreateDirectory(dirPath);
         if (dir.getIsDeleted())
             throw new errors.InvalidOperationError(`Cannot read directory at ${dirPath} when it is queued for deletion.`);
         if (dir.getWasEverDeleted())
             throw new errors.InvalidOperationError(`Cannot read directory at ${dirPath} because one of its ancestor directories was once deleted or moved.`);
 
-        const uniqueDirPaths = new Set<StandardizedFilePath>(dir.getChildrenPathsIterator());
-        for (const childDirOrFilePath of this.fileSystem.readDirSync(dirPath)) {
-            const standardizedChildDirOrFilePath = this.getStandardizedAbsolutePath(childDirOrFilePath);
-            if (!this.isPathQueuedForDeletion(standardizedChildDirOrFilePath))
-                uniqueDirPaths.add(standardizedChildDirOrFilePath);
+        const uniqueDirPaths = new Map<StandardizedFilePath, DirEntry>();
+        for (const entry of dir.getChildrenEntriesIterator())
+            uniqueDirPaths.set(entry.path, entry);
+        for (const runtimeDirEntry of this.fileSystem.readDirSync(dirPath)) {
+            const standardizedChildDirOrFilePath = this.getStandardizedAbsolutePath(runtimeDirEntry.name);
+            if (!this.isPathQueuedForDeletion(standardizedChildDirOrFilePath)) {
+                uniqueDirPaths.set(standardizedChildDirOrFilePath, {
+                    path: standardizedChildDirOrFilePath,
+                    isDirectory: runtimeDirEntry.isDirectory,
+                    isFile: runtimeDirEntry.isFile,
+                    isSymlink: runtimeDirEntry.isSymlink,
+                });
+            }
         }
-        return Array.from(uniqueDirPaths).sort();
+        return ArrayUtils.sortByProperty(Array.from(uniqueDirPaths.values()), e => e.path);
     }
 
     async *glob(patterns: ReadonlyArray<string>) {
@@ -644,7 +665,7 @@ export class TransactionalFileSystem {
     }
 
     getDirectories(dirPath: StandardizedFilePath) {
-        return this.readDirSync(dirPath).filter(path => this.directoryExistsSync(path));
+        return this.readDirSync(dirPath).filter(entry => entry.isDirectory).map(d => d.path);
     }
 
     realpathSync(path: StandardizedFilePath) {

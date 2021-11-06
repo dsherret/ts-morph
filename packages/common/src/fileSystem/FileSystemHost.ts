@@ -1,3 +1,5 @@
+import { RuntimeDirEntry } from "../runtimes";
+
 /**
  * Represents a file system that can be interacted with.
  */
@@ -12,7 +14,7 @@ export interface FileSystemHost {
      * Reads all the child directories and files.
      * @remarks Implementers should have this return the full file path.
      */
-    readDirSync(dirPath: string): string[];
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** Asynchronously reads a file at the specified path. */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** Synchronously reads a file at the specified path. */

@@ -1,5 +1,5 @@
 import { errors } from "../errors";
-import { runtime } from "../runtimes";
+import { runtime, RuntimeDirEntry } from "../runtimes";
 import { FileSystemHost } from "./FileSystemHost";
 import { FileUtils } from "./FileUtils";
 
@@ -26,9 +26,12 @@ export class RealFileSystemHost implements FileSystemHost {
     }
 
     /** @inheritdoc */
-    readDirSync(dirPath: string) {
+    readDirSync(dirPath: string): RuntimeDirEntry[] {
         try {
-            return fs.readDirSync(dirPath).map(name => FileUtils.pathJoin(dirPath, name));
+            const entries = fs.readDirSync(dirPath);
+            for (const entry of entries)
+                entry.name = FileUtils.pathJoin(dirPath, entry.name);
+            return entries;
         } catch (err) {
             throw this.getDirectoryNotFoundErrorIfNecessary(err, dirPath);
         }

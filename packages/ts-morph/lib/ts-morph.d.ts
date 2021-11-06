@@ -26,7 +26,7 @@ export interface FileSystemHost {
      * Reads all the child directories and files.
      * @remarks Implementers should have this return the full file path.
      */
-    readDirSync(dirPath: string): string[];
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** Asynchronously reads a file at the specified path. */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** Synchronously reads a file at the specified path. */
@@ -76,7 +76,7 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     /** @inheritdoc */
     deleteSync(path: string): void;
     /** @inheritdoc */
-    readDirSync(dirPath: string): string[];
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** @inheritdoc */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** @inheritdoc */
@@ -3869,6 +3869,13 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     static hasBody<T extends Node>(node: T): node is T & {
             getBody(): Node;
+        };
+    /**
+     * Gets if the node has a structure.
+     * @param node - Node to check.
+     */
+    static hasStructure<T extends Node>(node: T): node is T & {
+            getStructure(): Structures;
         };
     /** Creates a type guard for syntax kinds. */
     static is<TKind extends keyof KindToNodeMappings>(kind: TKind): (node: Node | undefined) => node is KindToNodeMappings[TKind];

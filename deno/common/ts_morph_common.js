@@ -1125,11 +1125,11 @@ class FileUtils {
         return dirOrFilePath === "/" || isWindowsRootDirRegex.test(dirOrFilePath);
     }
     static *getDescendantDirectories(fileSystemWrapper, dirPath) {
-        for (const subDirPath of fileSystemWrapper.readDirSync(dirPath)) {
-            if (!fileSystemWrapper.directoryExistsSync(subDirPath))
+        for (const entry of fileSystemWrapper.readDirSync(dirPath)) {
+            if (!entry.isDirectory)
                 continue;
-            yield subDirPath;
-            yield* FileUtils.getDescendantDirectories(fileSystemWrapper, subDirPath);
+            yield entry.path;
+            yield* FileUtils.getDescendantDirectories(fileSystemWrapper, entry.path);
         }
     }
     static toAbsoluteGlob(glob, cwd) {
@@ -1243,12 +1243,23 @@ class InMemoryFileSystemHost {
         const dir = this.directories.get(standardizedDirPath);
         if (dir == null)
             throw new errors.DirectoryNotFoundError(standardizedDirPath);
-        return [...getDirectories(this.directories.keys()), ...dir.files.keys()];
+        return [...getDirectories(this.directories.keys()), ...Array.from(dir.files.keys()).map(name => ({
+                name,
+                isDirectory: false,
+                isFile: true,
+                isSymlink: false,
+            }))];
         function* getDirectories(dirPaths) {
             for (const path of dirPaths) {
                 const parentDir = FileUtils.getDirPath(path);
-                if (parentDir === standardizedDirPath && parentDir !== path)
-                    yield path;
+                if (parentDir === standardizedDirPath && parentDir !== path) {
+                    yield {
+                        name: path,
+                        isDirectory: true,
+                        isFile: false,
+                        isSymlink: false,
+                    };
+                }
             }
         }
     }
@@ -1424,7 +1435,10 @@ class RealFileSystemHost {
     }
     readDirSync(dirPath) {
         try {
-            return fs.readDirSync(dirPath).map(name => FileUtils.pathJoin(dirPath, name));
+            const entries = fs.readDirSync(dirPath);
+            for (const entry of entries)
+                entry.name = FileUtils.pathJoin(dirPath, entry.name);
+            return entries;
         }
         catch (err) {
             throw this.getDirectoryNotFoundErrorIfNecessary(err, dirPath);
@@ -1607,9 +1621,15 @@ class Directory {
             parent = parent.parent;
         }
     }
-    *getChildrenPathsIterator() {
-        for (const childDir of this.childDirs.entries())
-            yield childDir.path;
+    *getChildrenEntriesIterator() {
+        for (const childDir of this.childDirs.entries()) {
+            yield {
+                path: childDir.path,
+                isDirectory: true,
+                isFile: false,
+                isSymlink: false,
+            };
+        }
     }
     getDescendants() {
         const descendants = [];
@@ -2000,13 +2020,21 @@ class TransactionalFileSystem {
             throw new errors.InvalidOperationError(`Cannot read directory at ${dirPath} when it is queued for deletion.`);
         if (dir.getWasEverDeleted())
             throw new errors.InvalidOperationError(`Cannot read directory at ${dirPath} because one of its ancestor directories was once deleted or moved.`);
-        const uniqueDirPaths = new Set(dir.getChildrenPathsIterator());
-        for (const childDirOrFilePath of this.fileSystem.readDirSync(dirPath)) {
-            const standardizedChildDirOrFilePath = this.getStandardizedAbsolutePath(childDirOrFilePath);
-            if (!this.isPathQueuedForDeletion(standardizedChildDirOrFilePath))
-                uniqueDirPaths.add(standardizedChildDirOrFilePath);
+        const uniqueDirPaths = new Map();
+        for (const entry of dir.getChildrenEntriesIterator())
+            uniqueDirPaths.set(entry.path, entry);
+        for (const runtimeDirEntry of this.fileSystem.readDirSync(dirPath)) {
+            const standardizedChildDirOrFilePath = this.getStandardizedAbsolutePath(runtimeDirEntry.name);
+            if (!this.isPathQueuedForDeletion(standardizedChildDirOrFilePath)) {
+                uniqueDirPaths.set(standardizedChildDirOrFilePath, {
+                    path: standardizedChildDirOrFilePath,
+                    isDirectory: runtimeDirEntry.isDirectory,
+                    isFile: runtimeDirEntry.isFile,
+                    isSymlink: runtimeDirEntry.isSymlink,
+                });
+            }
         }
-        return Array.from(uniqueDirPaths).sort();
+        return ArrayUtils.sortByProperty(Array.from(uniqueDirPaths.values()), e => e.path);
     }
     glob(patterns) {
         return __asyncGenerator(this, arguments, function* glob_1() {
@@ -2033,7 +2061,7 @@ class TransactionalFileSystem {
         return this.getStandardizedAbsolutePath(this.fileSystem.getCurrentDirectory());
     }
     getDirectories(dirPath) {
-        return this.readDirSync(dirPath).filter(path => this.directoryExistsSync(path));
+        return this.readDirSync(dirPath).filter(entry => entry.isDirectory).map(d => d.path);
     }
     realpathSync(path) {
         try {
@@ -2235,7 +2263,7 @@ function createModuleResolutionHost(options) {
         getCurrentDirectory: () => transactionalFileSystem.getCurrentDirectory(),
         getDirectories: dirName => {
             const dirPath = transactionalFileSystem.getStandardizedAbsolutePath(dirName);
-            const dirs = new Set(transactionalFileSystem.readDirSync(dirPath));
+            const dirs = new Set(transactionalFileSystem.readDirSync(dirPath).map(e => e.path));
             for (const childDirPath of sourceFileContainer.getChildDirectoriesOfDirectory(dirPath))
                 dirs.add(childDirPath);
             return Array.from(dirs);
@@ -2426,10 +2454,10 @@ function getFileSystemEntries(path, fileSystemWrapper) {
     try {
         const entries = fileSystemWrapper.readDirSync(path);
         for (const entry of entries) {
-            if (fileSystemWrapper.fileExistsSync(entry))
-                files.push(entry);
-            else
-                directories.push(entry);
+            if (entry.isFile)
+                files.push(entry.path);
+            else if (entry.isDirectory)
+                directories.push(entry.path);
         }
     }
     catch (err) {

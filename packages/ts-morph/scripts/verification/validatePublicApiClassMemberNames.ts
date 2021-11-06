@@ -21,6 +21,8 @@ export function validatePublicApiClassMemberNames(inspector: TsMorphInspector, a
             node.getParameters().forEach(validateNode);
             return;
         }
+        if (tsMorph.Node.isClassStaticBlockDeclaration(node))
+            return;
 
         if (node.getScope() === tsMorph.Scope.Protected || node.getScope() === tsMorph.Scope.Private || hasInternalDocTag(node)) {
             if (!node.getName().startsWith("_")) {

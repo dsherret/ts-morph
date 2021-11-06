@@ -805,14 +805,19 @@ describe(nameof(TransactionalFileSystem), () => {
         it("should not read the dir after it was deleted", () => {
             const { wrapper } = setup();
             const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
-            const filePaths = ["/dir/file.ts", "/dir/file2.ts"].map(path => wrapper.getStandardizedAbsolutePath(path));
-            for (const filePath of filePaths)
-                wrapper.writeFileSync(filePath, "");
-            expect(wrapper.readDirSync(dirPath)).to.deep.equal(filePaths);
-            wrapper.queueFileDelete(filePaths[0]);
-            expect(wrapper.readDirSync(dirPath)).to.deep.equal([filePaths[1]]);
+            const filePathEntries = ["/dir/file.ts", "/dir/file2.ts"].map(path => ({
+                path: wrapper.getStandardizedAbsolutePath(path),
+                isDirectory: false,
+                isFile: true,
+                isSymlink: false,
+            }));
+            for (const entry of filePathEntries)
+                wrapper.writeFileSync(entry.path, "");
+            expect(wrapper.readDirSync(dirPath)).to.deep.equal(filePathEntries);
+            wrapper.queueFileDelete(filePathEntries[0].path);
+            expect(wrapper.readDirSync(dirPath)).to.deep.equal([filePathEntries[1]]);
             wrapper.flushSync();
-            expect(wrapper.readDirSync(dirPath)).to.deep.equal([filePaths[1]]);
+            expect(wrapper.readDirSync(dirPath)).to.deep.equal([filePathEntries[1]]);
             wrapper.queueDirectoryDelete(dirPath);
             expect(() => wrapper.readDirSync(dirPath)).to.throw(errors.InvalidOperationError);
             wrapper.flushSync();

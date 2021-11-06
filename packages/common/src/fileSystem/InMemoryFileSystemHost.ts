@@ -1,4 +1,5 @@
 import { errors } from "../errors";
+import { RuntimeDirEntry } from "../runtimes";
 import { FileSystemHost } from "./FileSystemHost";
 import { FileUtils } from "./FileUtils";
 import { matchGlobs } from "./matchGlobs";
@@ -55,19 +56,30 @@ export class InMemoryFileSystemHost implements FileSystemHost {
     }
 
     /** @inheritdoc */
-    readDirSync(dirPath: string): string[] {
+    readDirSync(dirPath: string): RuntimeDirEntry[] {
         const standardizedDirPath = FileUtils.getStandardizedAbsolutePath(this, dirPath);
         const dir = this.directories.get(standardizedDirPath);
         if (dir == null)
             throw new errors.DirectoryNotFoundError(standardizedDirPath);
 
-        return [...getDirectories(this.directories.keys()), ...dir.files.keys()];
+        return [...getDirectories(this.directories.keys()), ...Array.from(dir.files.keys()).map(name => ({
+            name,
+            isDirectory: false,
+            isFile: true,
+            isSymlink: false,
+        }))];
 
-        function* getDirectories(dirPaths: IterableIterator<StandardizedFilePath>) {
+        function* getDirectories(dirPaths: IterableIterator<StandardizedFilePath>): Iterable<RuntimeDirEntry> {
             for (const path of dirPaths) {
                 const parentDir = FileUtils.getDirPath(path);
-                if (parentDir === standardizedDirPath && parentDir !== path)
-                    yield path;
+                if (parentDir === standardizedDirPath && parentDir !== path) {
+                    yield {
+                        name: path,
+                        isDirectory: true,
+                        isFile: false,
+                        isSymlink: false,
+                    };
+                }
             }
         }
     }

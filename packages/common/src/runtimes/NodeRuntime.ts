@@ -54,7 +54,15 @@ class NodeRuntimeFileSystem implements RuntimeFileSystem {
     }
 
     readDirSync(dirPath: string) {
-        return fs.readdirSync(dirPath);
+        const entries = fs.readdirSync(dirPath, {
+            withFileTypes: true,
+        });
+        return entries.map(e => ({
+            name: e.name,
+            isFile: e.isFile(),
+            isDirectory: e.isDirectory(),
+            isSymlink: e.isSymbolicLink(),
+        }));
     }
 
     readFile(filePath: string, encoding = "utf-8") {

@@ -255,12 +255,12 @@ export class FileUtils {
      * @param dirPath - Directory path.
      */
     static *getDescendantDirectories(fileSystemWrapper: TransactionalFileSystem, dirPath: StandardizedFilePath): IterableIterator<StandardizedFilePath> {
-        for (const subDirPath of fileSystemWrapper.readDirSync(dirPath)) {
-            if (!fileSystemWrapper.directoryExistsSync(subDirPath))
+        for (const entry of fileSystemWrapper.readDirSync(dirPath)) {
+            if (!entry.isDirectory)
                 continue;
 
-            yield subDirPath;
-            yield* FileUtils.getDescendantDirectories(fileSystemWrapper, subDirPath);
+            yield entry.path;
+            yield* FileUtils.getDescendantDirectories(fileSystemWrapper, entry.path);
         }
     }
 

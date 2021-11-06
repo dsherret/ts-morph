@@ -52,8 +52,7 @@ class DenoRuntimeFileSystem {
     }
 
     readDirSync(dirPath: string) {
-        // @ts-ignore
-        return Array.from(Deno.readDirSync(dirPath)).map(entry => entry.name);
+        return Array.from(Deno.readDirSync(dirPath));
     }
 
     readFile(filePath: string, _encoding = "utf-8") {

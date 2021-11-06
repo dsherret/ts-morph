@@ -13,7 +13,7 @@ const writeProject = new tsMorph.Project({
 const declarationFile = writeProject.addSourceFileAtPath("lib/ts-morph-bootstrap.d.ts");
 
 const writer = declarationProject.createWriter();
-writer.writeLine(`import { ts } from "@ts-morph/common";`);
+writer.writeLine(`import { RuntimeDirEntry, ts } from "@ts-morph/common";`);
 
 for (const [name, declarations] of emitMainFile.getExportedDeclarations()) {
     if (name === "ts")

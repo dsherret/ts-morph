@@ -3978,6 +3978,9 @@ class Node {
         var _a, _b;
         return ((_b = (_a = node).getBody) === null || _b === void 0 ? void 0 : _b.call(_a)) != null;
     }
+    static hasStructure(node) {
+        return typeof node.getStructure === "function";
+    }
     static is(kind) {
         return (node) => {
             return (node === null || node === void 0 ? void 0 : node.getKind()) == kind;
@@ -11151,7 +11154,7 @@ function StatementedNode(Base) {
             return getNodeByNameOrFindFunction(this.getModules(), nameOrFindFunction);
         }
         getModuleOrThrow(nameOrFindFunction) {
-            return errors.throwIfNullOrUndefined(this.getModule(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction));
+            return errors.throwIfNullOrUndefined(this.getModule(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("module", nameOrFindFunction));
         }
         addTypeAlias(structure) {
             return this.addTypeAliases([structure])[0];

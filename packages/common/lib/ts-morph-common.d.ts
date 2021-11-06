@@ -485,7 +485,7 @@ export interface FileSystemHost {
      * Reads all the child directories and files.
      * @remarks Implementers should have this return the full file path.
      */
-    readDirSync(dirPath: string): string[];
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** Asynchronously reads a file at the specified path. */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** Synchronously reads a file at the specified path. */
@@ -649,7 +649,7 @@ export declare class InMemoryFileSystemHost implements FileSystemHost {
     /** @inheritdoc */
     deleteSync(path: string): void;
     /** @inheritdoc */
-    readDirSync(dirPath: string): string[];
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** @inheritdoc */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** @inheritdoc */
@@ -698,7 +698,7 @@ export declare class RealFileSystemHost implements FileSystemHost {
     /** @inheritdoc */
     deleteSync(path: string): void;
     /** @inheritdoc */
-    readDirSync(dirPath: string): string[];
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** @inheritdoc */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** @inheritdoc */
@@ -745,6 +745,13 @@ export declare class RealFileSystemHost implements FileSystemHost {
 export declare type StandardizedFilePath = string & {
     _standardizedFilePathBrand: undefined;
 };
+
+export interface DirEntry {
+    path: StandardizedFilePath;
+    isFile: boolean;
+    isDirectory: boolean;
+    isSymlink: boolean;
+}
 
 /**
  * FileSystemHost wrapper that allows transactionally queuing operations to the file system.
@@ -795,7 +802,7 @@ export declare class TransactionalFileSystem {
     readFileSync(filePath: StandardizedFilePath, encoding: string | undefined): string;
     readFile(filePath: StandardizedFilePath, encoding: string | undefined): Promise<string>;
     private _verifyCanReadFile;
-    readDirSync(dirPath: StandardizedFilePath): StandardizedFilePath[];
+    readDirSync(dirPath: StandardizedFilePath): DirEntry[];
     glob(patterns: ReadonlyArray<string>): AsyncGenerator<StandardizedFilePath, void, unknown>;
     globSync(patterns: ReadonlyArray<string>): Generator<StandardizedFilePath, void, unknown>;
     getFileSystem(): FileSystemHost;
@@ -890,6 +897,13 @@ export interface Runtime {
     getPathMatchesPattern(path: string, pattern: string): boolean;
 }
 
+export interface RuntimeDirEntry {
+    name: string;
+    isFile: boolean;
+    isDirectory: boolean;
+    isSymlink: boolean;
+}
+
 export interface RuntimeFileSystem {
     /** Gets if this file system is case sensitive. */
     isCaseSensitive(): boolean;
@@ -897,11 +911,8 @@ export interface RuntimeFileSystem {
     delete(path: string): Promise<void>;
     /** Synchronously deletes the specified file or directory */
     deleteSync(path: string): void;
-    /**
-     * Reads all the child directories and files.
-     * @remarks Should return just the directory and file names.
-     */
-    readDirSync(dirPath: string): string[];
+    /** Reads all the child directories and files. */
+    readDirSync(dirPath: string): RuntimeDirEntry[];
     /** Asynchronously reads a file at the specified path. */
     readFile(filePath: string, encoding?: string): Promise<string>;
     /** Synchronously reads a file at the specified path. */
