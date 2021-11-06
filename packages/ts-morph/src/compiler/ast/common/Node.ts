@@ -7,7 +7,7 @@ import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePo
     replaceSourceFileTextForFormatting, replaceSourceFileTextStraight, hasNewLineInRange } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { getParentSyntaxList, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, CharCodes } from "../../../utils";
-import { Structure } from "../../../structures";
+import { Structure, Structures } from "../../../structures";
 import { FormatCodeSettings } from "../../tools";
 import { Symbol } from "../../symbols";
 import { Type } from "../../types";
@@ -2118,6 +2118,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     static hasBody<T extends compiler.Node>(node: T): node is T & { getBody(): compiler.Node; } {
         // this method is manually maintained
         return (node as any).getBody?.() != null;
+    }
+
+    /**
+     * Gets if the node has a structure.
+     * @param node - Node to check.
+     */
+    static hasStructure<T extends compiler.Node>(node: T): node is T & { getStructure(): Structures; } {
+        // this method is manually maintained
+        return typeof (node as any).getStructure === "function";
     }
 
     /** Creates a type guard for syntax kinds. */

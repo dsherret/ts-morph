@@ -784,7 +784,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getModuleOrThrow(nameOrFindFunction: string | ((declaration: ModuleDeclaration) => boolean)): ModuleDeclaration {
             return errors.throwIfNullOrUndefined(
                 this.getModule(nameOrFindFunction),
-                () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("module", nameOrFindFunction),
             );
         }
 

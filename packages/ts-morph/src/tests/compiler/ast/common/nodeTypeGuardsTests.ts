@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
-import { ClassDeclaration, Node } from "../../../../compiler";
+import { ClassDeclaration, ExpressionStatement, Node } from "../../../../compiler";
+import { Structures } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(Node), () => {
@@ -45,6 +46,22 @@ describe(nameof(Node), () => {
         it("should not have a name when it doesn't", () => {
             const { firstChild } = getInfoFromText("func()");
             expect(Node.hasName(firstChild)).to.be.false;
+        });
+    });
+
+    describe(nameof(Node.hasStructure), () => {
+        it("should have a structure when it does", () => {
+            const { firstChild } = getInfoFromText<Node>("class MyClass {}");
+            expect(Node.hasName(firstChild)).to.be.true;
+            if (Node.hasStructure(firstChild)) {
+                assert<IsExact<typeof firstChild, Node & { getStructure(): Structures; }>>(true);
+                expect((firstChild.getStructure() as any).name).to.equal("MyClass");
+            }
+        });
+
+        it("should not have a structure when it doesn't", () => {
+            const { firstChild } = getInfoFromText<ExpressionStatement>("func();");
+            expect(Node.hasStructure(firstChild.getExpression().getChildren()[0])).to.be.false;
         });
     });
 
