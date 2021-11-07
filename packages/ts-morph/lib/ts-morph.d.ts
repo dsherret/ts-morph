@@ -7406,6 +7406,12 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
             column: number;
         };
     /**
+     * Gets the position (1-indexed) at the provided line and column number.
+     * @param line - Line number in the source file.
+     * @param col - Column number in the source file.
+     */
+    getPosAtLineAndColumn(line: number, col: number): number;
+    /**
      * Gets the character count from the start of the line to the provided position.
      * @param pos - Position.
      */

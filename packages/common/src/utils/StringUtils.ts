@@ -95,6 +95,18 @@ export class StringUtils {
         return count + 1; // convert count to line number
     }
 
+    static getPosAtLineNumber(str: string, line: number) {
+        const lines = str.split('\n');
+        errors.throwIfOutOfRange(line, [1, lines.length], nameof(line));
+        let count = 0;
+
+        for (let i = 0; i < line - 1; i++) { // line number is 1-indexed
+            count += lines[i].length + 1; // include newline
+        }
+
+        return count; // convert count to pos
+    }
+
     static getLengthFromLineStartAtPos(str: string, pos: number) {
         errors.throwIfOutOfRange(pos, [0, str.length], nameof(pos));
         return pos - StringUtils.getLineStartFromPos(str, pos);

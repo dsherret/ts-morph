@@ -39,6 +39,57 @@ describe(nameof(StringUtils), () => {
         });
     });
 
+    describe(nameof(StringUtils.getPosAtLineNumber), () => {
+        it("should throw if providing a negative line number", () => {
+            expect(() => StringUtils.getPosAtLineNumber("", -1)).to.throw(errors.ArgumentOutOfRangeError);
+        });
+
+        it("should not throw if providing a line number the amount of lines", () => {
+            expect(() => StringUtils.getPosAtLineNumber("", 1)).to.not.throw();
+        });
+
+        it("should throw if providing a line number greater than the length + 1", () => {
+            expect(() => StringUtils.getPosAtLineNumber("", 2)).to.throw(errors.ArgumentOutOfRangeError);
+        });
+
+        function doTest(newLineType: string) {
+            let str = `testing${newLineType}this${newLineType}out${newLineType}`;
+            const pos = str.length;
+            str += `more and more${newLineType}and more`;
+            expect(StringUtils.getPosAtLineNumber(str, 4)).to.equal(pos);
+        }
+
+        it("should get the pos for the specified line number when using \\n newlines", () => {
+            doTest("\n");
+        });
+
+        it("should get the pos for the specified line number when using \\r\\n newlines", () => {
+            doTest("\r\n");
+        });
+
+        it("should get the pos for the specified line number when right after the newline when mixing newlines", () => {
+            let str = "testing\r\nthis\nout\nmore\r\nandmore\n";
+            const pos = str.length;
+            str += "out\r\nmore and more";
+            expect(StringUtils.getPosAtLineNumber(str, 6)).to.equal(pos);
+        });
+
+        function testSymmetry(newLineType: string) {
+            let str = `testing${newLineType}this${newLineType}out`;
+            const posAtLine = StringUtils.getPosAtLineNumber(str, 2);
+            const lineAtPos = StringUtils.getLineNumberAtPos(str, posAtLine);
+            expect(lineAtPos).to.equal(2);
+        }
+
+        it("should be symmetric with getLineNumberAtPos when using \\n newlines", () => {
+            testSymmetry("\n");
+        });
+
+        it("should be symmetric with getLineNumberAtPos when using \\r\\n newlines", () => {
+            testSymmetry("\r\n");
+        });
+    });
+
     describe(nameof(StringUtils.getLengthFromLineStartAtPos), () => {
         it("should throw if providing a negative pos", () => {
             expect(() => StringUtils.getLengthFromLineStartAtPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);

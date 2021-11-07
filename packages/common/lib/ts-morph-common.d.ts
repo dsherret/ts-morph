@@ -1058,6 +1058,7 @@ export declare class StringUtils {
     static endsWithNewLine(str: string | undefined): boolean;
     static insertAtLastNonWhitespace(str: string, insertText: string): string;
     static getLineNumberAtPos(str: string, pos: number): number;
+    static getPosAtLineNumber(str: string, line: number): number;
     static getLengthFromLineStartAtPos(str: string, pos: number): number;
     static getLineStartFromPos(str: string, pos: number): number;
     static getLineEndFromPos(str: string, pos: number): number;
