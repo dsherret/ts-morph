@@ -4,7 +4,6 @@
     "noEmit": true,
     "declaration": false,
     "rootDirs": ["../scripts", "../src"],
-    "outDir": "../dist-scripts",
-    "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
+    "outDir": "../dist-scripts"
   }
 }

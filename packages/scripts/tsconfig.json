@@ -3,8 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "rootDir": "./src",
-    "outDir": "./dist",
-    "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
+    "outDir": "./dist"
   },
   "exclude": [
     "./dist",

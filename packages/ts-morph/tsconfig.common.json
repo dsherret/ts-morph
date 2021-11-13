@@ -13,10 +13,9 @@
     "noImplicitReturns": true,
     "stripInternal": true,
     "typeRoots": ["node_modules/@types"],
-    "types": ["node", "mocha", "ts-nameof"],
+    "types": ["node", "mocha"],
     "downlevelIteration": true,
-    "importHelpers": false,
-    "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
+    "importHelpers": false
   },
   "compileOnSave": false
 }
