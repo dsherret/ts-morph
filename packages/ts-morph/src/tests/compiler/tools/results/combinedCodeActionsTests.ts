@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { CombinedCodeActions } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("CombinedCodeActions", () => {
     describe(nameof.property<CombinedCodeActions>("applyChanges"), () => {

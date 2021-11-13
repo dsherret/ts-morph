@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ClassDeclaration, HeritageClauseableNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("HeritageClauseableNode", () => {
     describe(nameof.property<HeritageClauseableNode>("getHeritageClauses"), () => {

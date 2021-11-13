@@ -3,6 +3,7 @@ import { FormatCodeSettings } from "../../../compiler";
 import { InitializerExpressionableNodeStructurePrinter } from "../../../structurePrinters";
 import { InitializerExpressionableNodeStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("InitializerExpressionableNodeStructurePrinter", () => {
     interface Options {

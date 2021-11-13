@@ -3,6 +3,7 @@ import { ClassDeclaration, Decorator } from "../../../../compiler";
 import { DecoratorStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("Decorator", () => {
     function getFirstClassDecorator(code: string) {

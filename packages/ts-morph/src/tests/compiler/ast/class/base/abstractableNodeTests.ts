@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { AbstractableNode, ClassDeclaration } from "../../../../../compiler";
 import { AbstractableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("AbstractableNode", () => {
     describe(nameof.property<AbstractableNode>("getAbstractKeyword"), () => {

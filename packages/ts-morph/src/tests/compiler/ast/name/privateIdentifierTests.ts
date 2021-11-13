@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ClassDeclaration, PrivateIdentifier } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 function getInfoFromTextWithFirstProperty(text: string) {
     const obj = getInfoFromText<ClassDeclaration>(text);

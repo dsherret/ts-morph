@@ -1,4 +1,4 @@
-import { ArrayUtils, SyntaxKind } from "@ts-morph/common";
+import { ArrayUtils, SyntaxKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ExportDeclaration, ExportSpecifier } from "../../../../compiler";
 import { Project } from "../../../../Project";

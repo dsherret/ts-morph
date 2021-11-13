@@ -3,6 +3,7 @@ import { FormatCodeSettings } from "../../../compiler";
 import { TypeParameterDeclarationStructurePrinter } from "../../../structurePrinters";
 import { OptionalKind, TypeParameterDeclarationStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("TypeParameterDeclarationStructurePrinter", () => {
     interface Options {

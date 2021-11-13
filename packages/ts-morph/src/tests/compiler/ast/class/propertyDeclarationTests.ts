@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, Scope } from "../../../../compiler";
 import { PropertyDeclarationStructure, StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("PropertyDeclaration", () => {
     function getFirstPropertyWithInfo(code: string) {

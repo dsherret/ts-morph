@@ -4606,6 +4606,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
     removeArgument(index: number): this;
     /** Removes this decorator. */
     remove(): void;
+    _getInnerExpression(): Expression<ts.Expression>;
     /**
      * Sets the node from a structure.
      * @param structure - Structure to set the node with.

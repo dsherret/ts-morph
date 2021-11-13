@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ReturnStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ReturnStatement", () => {
     describe(nameof.property<ReturnStatement>("getExpressionOrThrow"), () => {

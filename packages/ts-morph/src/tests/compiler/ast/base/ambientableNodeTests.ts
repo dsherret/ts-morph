@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { AmbientableNode, ClassDeclaration, ModuleDeclaration, Node } from "../../../../compiler";
 import { AmbientableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("AmbientableNode", () => {
     describe("navigation", () => {

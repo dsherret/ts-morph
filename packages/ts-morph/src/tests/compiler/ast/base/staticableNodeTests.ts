@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Node, PropertyDeclaration, StaticableNode } from "../../../../compiler";
 import { StaticableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("StaticableNode", () => {
     const { sourceFile: mainSourceFile } = getInfoFromText("class MyClass { static prop: string; prop2: string; }");

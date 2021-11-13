@@ -3,6 +3,7 @@ import { FormatCodeSettings } from "../../../compiler";
 import { ExportAssignmentStructurePrinter } from "../../../structurePrinters";
 import { ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ExportAssignmentStructurePrinter", () => {
     interface Options {

@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { CallSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
 import { CallSignatureDeclarationStructure, StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("CallSignatureDeclaration", () => {
     function getFirstCallSignatureWithInfo(code: string) {

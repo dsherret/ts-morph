@@ -1,4 +1,4 @@
-import { ArrayUtils, ts } from "@ts-morph/common";
+import { ArrayUtils, ts, nameof } from "@ts-morph/common";
 import { ScopeableNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { callBaseGetStructure } from "../callBaseGetStructure";

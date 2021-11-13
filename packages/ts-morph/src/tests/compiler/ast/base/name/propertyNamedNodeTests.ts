@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ComputedPropertyName, Identifier, InterfaceDeclaration, NumericLiteral, PropertyNamedNode, StringLiteral } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 function getInfoFromTextWithFirstInterfaceProperty(text: string) {
     const obj = getInfoFromText<InterfaceDeclaration>(text);

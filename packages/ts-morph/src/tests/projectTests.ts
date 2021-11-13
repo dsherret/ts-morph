@@ -1,4 +1,4 @@
-import { CompilerOptions, errors, getLibFiles, InMemoryFileSystemHost, ScriptKind, ScriptTarget, SyntaxKind, ts } from "@ts-morph/common";
+import { CompilerOptions, errors, getLibFiles, InMemoryFileSystemHost, ScriptKind, ScriptTarget, SyntaxKind, ts, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { EOL } from "os";

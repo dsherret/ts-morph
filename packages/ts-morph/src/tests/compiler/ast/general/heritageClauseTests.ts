@@ -1,4 +1,4 @@
-import { ArrayUtils } from "@ts-morph/common";
+import { ArrayUtils, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, HeritageClause } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";

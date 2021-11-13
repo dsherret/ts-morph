@@ -1,4 +1,4 @@
-import { errors, getSyntaxKindName, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, getSyntaxKindName, SyntaxKind, ts, nameof } from "@ts-morph/common";
 import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
     verifyAndGetIndex } from "../../../manipulation";

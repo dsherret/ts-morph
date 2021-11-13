@@ -6,6 +6,7 @@ import { Node } from "../common";
 import { Scope } from "../common/Scope";
 import { ModifierableNode } from "./ModifierableNode";
 import * as scopeableNode from "./ScopeableNode";
+import { nameof } from "@ts-morph/common";
 
 export type ScopedNodeExtensionType = Node & ModifierableNode;
 

@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { InterfaceDeclaration, Node, StatementedNode } from "../../../../../compiler";
 import { InterfaceDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("StatementedNode", () => {
     describe(nameof.property<StatementedNode>("insertInterfaces"), () => {

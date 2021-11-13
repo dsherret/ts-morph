@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, Scope, ScopedNode } from "../../../../compiler";
 import { ScopedNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ScopedNode", () => {
     function getInfoWithFirstPropertyFromText(text: string) {

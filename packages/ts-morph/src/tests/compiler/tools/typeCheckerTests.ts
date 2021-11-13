@@ -1,4 +1,4 @@
-import { SymbolFlags, SyntaxKind } from "@ts-morph/common";
+import { SymbolFlags, SyntaxKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallExpression, NamedNode, Node, SourceFile, TypeChecker } from "../../../compiler";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";

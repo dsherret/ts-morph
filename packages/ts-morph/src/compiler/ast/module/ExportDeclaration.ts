@@ -1,4 +1,4 @@
-import { ArrayUtils, errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { ArrayUtils, errors, StringUtils, SyntaxKind, ts, nameof } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../../manipulation";
 import { ExportDeclarationSpecificStructure, ExportDeclarationStructure, ExportSpecifierStructure, OptionalKind, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";

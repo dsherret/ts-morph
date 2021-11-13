@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, JSDocableNode, Node, VariableStatement } from "../../../../compiler";
 import { JSDocableNodeStructure, JSDocStructure, OptionalKind } from "../../../../structures";

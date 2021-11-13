@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, FunctionExpression, InterfaceDeclaration, NameableNode, VariableStatement } from "../../../../../compiler";
 import { NameableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("NameableNode", () => {
     function getFunctionExpression(startCode: string) {

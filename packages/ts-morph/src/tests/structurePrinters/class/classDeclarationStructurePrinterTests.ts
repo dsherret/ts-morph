@@ -3,6 +3,7 @@ import { FormatCodeSettings, Scope } from "../../../compiler";
 import { ClassDeclarationStructurePrinter } from "../../../structurePrinters";
 import { ClassDeclarationStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ClassDeclarationStructurePrinter", () => {
     interface Options {

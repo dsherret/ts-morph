@@ -3,6 +3,7 @@ import { ExportAssignment } from "../../../../compiler";
 import { ExportAssignmentStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ExportAssignment", () => {
     describe(nameof.property<ExportAssignment>("isExportEquals"), () => {

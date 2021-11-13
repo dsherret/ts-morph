@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ChildOrderableNode, EnumDeclaration } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ChildOrderableNode", () => {
     describe(nameof.property<ChildOrderableNode>("setOrder"), () => {

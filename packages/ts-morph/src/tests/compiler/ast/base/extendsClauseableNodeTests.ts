@@ -3,6 +3,7 @@ import { ExtendsClauseableNode, InterfaceDeclaration } from "../../../../compile
 import { ExtendsClauseableNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ExtendsClauseableNode", () => {
     describe(nameof.property<ExtendsClauseableNode>("getExtends"), () => {

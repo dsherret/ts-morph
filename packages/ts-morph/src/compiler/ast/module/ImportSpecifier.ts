@@ -1,4 +1,4 @@
-import { StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { StringUtils, SyntaxKind, ts, nameof } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { ImportSpecifierSpecificStructure, ImportSpecifierStructure, StructureKind } from "../../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";

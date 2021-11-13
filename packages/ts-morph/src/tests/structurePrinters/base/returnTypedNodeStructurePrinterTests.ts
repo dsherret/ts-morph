@@ -3,6 +3,7 @@ import { FormatCodeSettings } from "../../../compiler";
 import { ReturnTypedNodeStructurePrinter } from "../../../structurePrinters";
 import { ReturnTypedNodeStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ReturnTypedNodeStructurePrinter", () => {
     interface Options {

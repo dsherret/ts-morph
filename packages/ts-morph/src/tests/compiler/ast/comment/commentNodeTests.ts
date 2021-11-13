@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { CommentStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("general comment node tests", () => {
     it("should not forget comments between manipulations", () => {

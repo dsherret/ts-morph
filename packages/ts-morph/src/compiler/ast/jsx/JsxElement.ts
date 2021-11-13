@@ -1,4 +1,4 @@
-import { errors, ts } from "@ts-morph/common";
+import { errors, ts, nameof } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { JsxElementSpecificStructure, JsxElementStructure, StructureKind } from "../../../structures";
 import { WriterFunction } from "../../../types";

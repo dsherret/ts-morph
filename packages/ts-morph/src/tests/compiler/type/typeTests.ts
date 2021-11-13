@@ -1,4 +1,4 @@
-import { InMemoryFileSystemHost, ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "@ts-morph/common";
+import { InMemoryFileSystemHost, ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { FunctionDeclaration, Node, Symbol, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";

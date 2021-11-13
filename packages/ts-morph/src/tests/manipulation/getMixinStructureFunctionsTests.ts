@@ -3,6 +3,7 @@ import * as compiler from "../../compiler";
 import * as getMixinStructureFuncs from "../../manipulation/helpers/getMixinStructureFunctions";
 import * as structures from "../../structures";
 import { getInfoFromText } from "../compiler/testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe(nameof.property(getMixinStructureFuncs, "fromAbstractableNode"), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.AbstractableNodeStructure>) {

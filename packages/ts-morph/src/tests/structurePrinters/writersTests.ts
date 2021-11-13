@@ -3,6 +3,7 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Writers } from "../../structurePrinters/Writers";
 import { TypeElementMemberedNodeStructure } from "../../structures";
 import { WriterFunction } from "../../types";
+import { nameof } from "@ts-morph/common";
 
 describe("Writers", () => {
     function getWriter() {

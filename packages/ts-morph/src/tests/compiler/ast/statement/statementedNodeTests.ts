@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { Block, BodyableNode, CaseClause, ClassDeclaration, DefaultClause, FunctionDeclaration, ModuleDeclaration, Node, SourceFile,

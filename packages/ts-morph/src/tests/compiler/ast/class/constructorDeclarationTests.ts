@@ -3,6 +3,7 @@ import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../../com
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure, ConstructorDeclarationStructure, OptionalKind,
     StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ConstructorDeclaration", () => {
     describe(nameof.property<ConstructorDeclaration>("insertOverloads"), () => {

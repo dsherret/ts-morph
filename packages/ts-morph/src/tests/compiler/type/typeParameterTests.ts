@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { TypeParameter } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("TypeParameter", () => {
     function getTypeParameter(text: string) {

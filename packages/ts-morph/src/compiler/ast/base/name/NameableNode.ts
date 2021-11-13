@@ -1,4 +1,4 @@
-import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, nameof, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../../manipulation";
 import { NameableNodeStructure } from "../../../../structures";
 import { Constructor } from "../../../../types";
@@ -91,7 +91,7 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
             callBaseSet(Base.prototype, this, structure);
 
             if (structure.name != null) {
-                errors.throwIfWhitespaceOrNotString(structure.name, nameof.full(structure.name));
+                errors.throwIfWhitespaceOrNotString(structure.name, "structure.name");
                 const nameNode = this.getNameNode();
                 if (nameNode == null)
                     addNameNode(this, structure.name);

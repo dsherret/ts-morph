@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, ParameterDeclaration, Scope, ScopeableNode } from "../../../../compiler";
 import { ScopeableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ScopeableNode", () => {
     function getFirstParameter(text: string) {

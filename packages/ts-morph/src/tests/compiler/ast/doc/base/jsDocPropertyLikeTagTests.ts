@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { JSDocPropertyLikeTag, Node } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("JSDocPropertyLikeTag", () => {
     function getInfo(text: string) {

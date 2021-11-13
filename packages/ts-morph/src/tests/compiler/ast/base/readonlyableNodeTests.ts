@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, ReadonlyableNode } from "../../../../compiler";
 import { ReadonlyableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ReadonlyableNode", () => {
     function getInfoWithFirstPropertyFromText(text: string) {

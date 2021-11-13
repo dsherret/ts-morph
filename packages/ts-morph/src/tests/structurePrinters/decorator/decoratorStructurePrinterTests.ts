@@ -3,6 +3,7 @@ import { FormatCodeSettings } from "../../../compiler";
 import { DecoratorStructurePrinter } from "../../../structurePrinters";
 import { DecoratorStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("DecoratorStructurePrinter", () => {
     interface Options {

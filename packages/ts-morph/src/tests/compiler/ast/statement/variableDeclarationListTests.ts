@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../../../../compiler";
 import { OptionalKind, VariableDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("VariableDeclarationList", () => {
     describe(nameof.property<VariableDeclarationList>("getDeclarationKind"), () => {

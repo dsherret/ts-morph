@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ClassDeclaration, ExpressionWithTypeArguments } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ExpressionWithTypeArguments", () => {
     function getFirstExpressionWithTypeArgs(text: string) {

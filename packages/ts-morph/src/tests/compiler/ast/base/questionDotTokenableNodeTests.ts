@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ExpressionStatement, QuestionDotTokenableNode } from "../../../../compiler";
 import { QuestionDotTokenableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("QuestionDotTokenableNode", () => {
     function getInfoWithFirstExpr(text: string) {

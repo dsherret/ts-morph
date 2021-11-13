@@ -1,4 +1,4 @@
-import { errors, NewLineKind, SymbolFlags, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, NewLineKind, SymbolFlags, SyntaxKind, ts, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { assert, IsExact, IsNullable } from "conditional-type-checks";
 import { CodeBlockWriter } from "../../../../codeBlockWriter";

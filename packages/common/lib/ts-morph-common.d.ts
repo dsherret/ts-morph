@@ -1036,8 +1036,8 @@ export declare class IterableUtils {
 }
 
 export declare namespace nameof {
-    function property<TObject, TProperty extends keyof TObject>(obj: TObject, key: TProperty): TProperty;
-    function property<TObject, TProperty extends keyof TObject>(key: TProperty): TProperty;
+    function property<TObject>(obj: TObject, key: keyof TObject): string;
+    function property<TObject>(key: keyof TObject): string;
 }
 
 export declare class ObjectUtils {

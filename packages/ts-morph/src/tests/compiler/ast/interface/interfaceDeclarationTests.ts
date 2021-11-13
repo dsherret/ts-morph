@@ -3,6 +3,7 @@ import { InterfaceDeclaration } from "../../../../compiler";
 import { InterfaceDeclarationSpecificStructure, InterfaceDeclarationStructure, OptionalKind, StructureKind,
     TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("InterfaceDeclaration", () => {
     describe(nameof.property<InterfaceDeclaration>("getType"), () => {

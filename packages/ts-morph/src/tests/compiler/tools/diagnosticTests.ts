@@ -1,4 +1,4 @@
-import { DiagnosticCategory } from "@ts-morph/common";
+import { DiagnosticCategory, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { Diagnostic } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";

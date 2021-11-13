@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { TypeAliasDeclaration } from "../../../../compiler";
 import { StructureKind, TypeAliasDeclarationStructure, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("TypeAliasDeclaration", () => {
     describe(nameof.property<TypeAliasDeclaration>("set"), () => {

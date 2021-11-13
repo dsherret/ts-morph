@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration, QuestionTokenableNode } from "../../../../compiler";
 import { QuestionTokenableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("QuestionTokenableNode", () => {
     function getInfoWithFirstMember(text: string) {

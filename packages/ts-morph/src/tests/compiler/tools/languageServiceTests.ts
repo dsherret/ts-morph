@@ -1,4 +1,4 @@
-import { errors, ScriptTarget, ts } from "@ts-morph/common";
+import { errors, ScriptTarget, ts, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { EmitOutput, FileTextChanges, LanguageService, SourceFile, TextChange, TextSpan } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";

@@ -1,4 +1,4 @@
-import { CompilerOptions } from "@ts-morph/common";
+import { CompilerOptions, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { MemoryEmitResult } from "../../../../compiler";
 import { Project } from "../../../../Project";

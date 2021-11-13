@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { UnwrappableNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("UnwrappableNode", () => {
     describe(nameof.property<UnwrappableNode>("unwrap"), () => {

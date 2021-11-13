@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { EnumDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, NamedNode, ObjectLiteralExpression, RenameOptions, ShorthandPropertyAssignment,
     VariableStatement } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("NamedNode", () => {
     describe(nameof.property<NamedNode>("rename"), () => {

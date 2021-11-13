@@ -1,4 +1,4 @@
-import { SymbolFlags } from "@ts-morph/common";
+import { SymbolFlags, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { Symbol, TypeAliasDeclaration } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";

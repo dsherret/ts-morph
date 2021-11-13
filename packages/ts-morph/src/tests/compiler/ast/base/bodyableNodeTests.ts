@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { BodyableNode, ClassDeclaration, FunctionDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("BodyableNode", () => {
     describe(nameof.property<BodyableNode>("setBodyText"), () => {

@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, GeneratorableNode } from "../../../../compiler";
 import { GeneratorableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("GeneratorableNode", () => {
     const { sourceFile: mainSourceFile } = getInfoFromText("function* Identifier() {}\nfunction Identifier2() {}");

@@ -1,4 +1,4 @@
-import { getLibFiles, InMemoryFileSystemHost, ts } from "@ts-morph/common";
+import { getLibFiles, InMemoryFileSystemHost, ts, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { EOL } from "os";
 import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";

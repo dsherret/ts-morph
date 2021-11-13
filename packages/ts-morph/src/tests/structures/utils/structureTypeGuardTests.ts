@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { assert, IsExact } from "conditional-type-checks";
 import { AbstractableNodeStructure, ClassDeclarationStructure, Structure, StructureKind } from "../../../structures";
+import { nameof } from "@ts-morph/common";
 
 // most of this code is not worth testing because it's auto generated
 

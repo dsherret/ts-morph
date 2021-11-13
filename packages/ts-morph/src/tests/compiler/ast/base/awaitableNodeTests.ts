@@ -2,6 +2,8 @@ import { expect } from "chai";
 import { AwaitableNode, ForOfStatement } from "../../../../compiler";
 import { AwaitableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
+
 describe("AwaitableNode", () => {
     const awaitForOfText = "for await (const x of [Promise.resolve(1)]) {}";
     const forOfText = "for (const x of [Promise.resolve(1)]) {}";

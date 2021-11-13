@@ -3,6 +3,7 @@ import { assert, IsExact } from "conditional-type-checks";
 import { ClassDeclaration, ExpressionStatement, Node } from "../../../../compiler";
 import { Structures } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("Node", () => {
     // most of the type guards are not worth the effort to test... it's auto generated from code so it should be close to correct

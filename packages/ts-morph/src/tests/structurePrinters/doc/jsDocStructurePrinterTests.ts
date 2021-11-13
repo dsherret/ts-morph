@@ -3,6 +3,7 @@ import { FormatCodeSettings } from "../../../compiler";
 import { JSDocStructurePrinter } from "../../../structurePrinters";
 import { JSDocStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("JSDocStructurePrinter", () => {
     interface Options {

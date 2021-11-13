@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ParameterDeclarationStructurePrinter } from "../../../structurePrinters";
 import { OptionalKind, ParameterDeclarationStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ParameterDeclarationStructurePrinter", () => {
     describe(nameof.property<ParameterDeclarationStructurePrinter>("printTextsWithParenthesis"), () => {

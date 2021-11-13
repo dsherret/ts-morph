@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, OverloadableNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("OverloadableNode", () => {
     const functionCode = `function myFunction();function myFunction() {}`;

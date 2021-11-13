@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { JSDoc } from "../../../../compiler";
 import { JSDocStructure, JSDocTagStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("JSDoc", () => {
     describe(nameof.property<JSDoc>("isMultiLine"), () => {

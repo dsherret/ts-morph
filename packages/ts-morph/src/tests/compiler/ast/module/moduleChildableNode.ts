@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ModuleChildableNode, ModuleDeclaration } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ModuleChildableNode", () => {
     describe(nameof.property<ModuleChildableNode>("getParentModule"), () => {

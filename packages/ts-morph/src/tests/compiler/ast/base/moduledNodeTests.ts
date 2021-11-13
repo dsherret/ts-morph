@@ -4,6 +4,7 @@ import { ExportAssignment, ExportDeclaration, ExportedDeclarations, ImportDeclar
 import { Project } from "../../../../Project";
 import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, OptionalKind } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ModuledNode", () => {
     describe(nameof.property<ModuledNode>("insertImportDeclarations"), () => {

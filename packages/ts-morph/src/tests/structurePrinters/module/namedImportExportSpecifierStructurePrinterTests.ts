@@ -3,6 +3,7 @@ import { FormatCodeSettings } from "../../../compiler";
 import { NamedImportExportSpecifierStructurePrinter } from "../../../structurePrinters";
 import { ExportSpecifierStructure, ImportSpecifierStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("NamedImportExportSpecifierStructurePrinter", () => {
     interface Options {

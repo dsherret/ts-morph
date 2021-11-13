@@ -4,6 +4,7 @@ import { CommentEnumMember, EnumDeclaration, EnumMember } from "../../../../comp
 import { EnumDeclarationSpecificStructure, EnumDeclarationStructure, EnumMemberStructure, OptionalKind, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("EnumDeclaration", () => {
     describe(nameof.property<EnumDeclaration>("getMember"), () => {

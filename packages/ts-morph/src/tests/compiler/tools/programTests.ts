@@ -1,4 +1,4 @@
-import { errors } from "@ts-morph/common";
+import { errors, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { Program } from "../../../compiler";
 import { getFileSystemHostWithFiles } from "../../testHelpers";

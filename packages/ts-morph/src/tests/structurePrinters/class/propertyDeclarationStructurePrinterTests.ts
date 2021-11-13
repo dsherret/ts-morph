@@ -4,6 +4,7 @@ import { PropertyDeclarationStructurePrinter } from "../../../structurePrinters"
 import { OptionalKind, PropertyDeclarationStructure } from "../../../structures";
 import { OptionalKindAndTrivia } from "../../compiler/testHelpers";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("PropertyDeclarationStructurePrinter", () => {
     interface Options {

@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ClassLikeDeclarationBase, ClassStaticBlockDeclaration, CommentClassElement, ConstructorDeclaration, ExpressionWithTypeArguments,
     GetAccessorDeclaration, MethodDeclaration, Node, ParameterDeclaration, PropertyDeclaration, Scope, SetAccessorDeclaration } from "../../../../../compiler";

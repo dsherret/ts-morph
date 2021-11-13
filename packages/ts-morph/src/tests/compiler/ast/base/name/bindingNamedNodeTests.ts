@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { AssertTrue, IsExact } from "conditional-type-checks";
 import { BindingName, BindingNamedNode, Node, VariableStatement } from "../../../../../compiler";
 import { getInfoFromText } from "../../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 function getInfoFromTextWithFirstVariableDeclaration(text: string) {
     const obj = getInfoFromText<VariableStatement>(text);

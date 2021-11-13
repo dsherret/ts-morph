@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { Node, StatementedNode, TypeAliasDeclaration } from "../../../../../compiler";
 import { TypeAliasDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("StatementedNode", () => {
     describe(nameof.property<StatementedNode>("insertTypeAliases"), () => {

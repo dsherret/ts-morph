@@ -1,4 +1,4 @@
-import { errors, SyntaxKind } from "@ts-morph/common";
+import { errors, SyntaxKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { JsxAttribute, JsxSelfClosingElement } from "../../../../compiler";
 import { JsxAttributeStructure, StructureKind } from "../../../../structures";

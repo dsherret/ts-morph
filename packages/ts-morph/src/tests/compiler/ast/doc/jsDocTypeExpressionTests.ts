@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { JSDocTypeExpression, Node } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("JSDocTypeExpression", () => {
     function getInfo(text: string) {

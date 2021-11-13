@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { NamedImports, Node } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("NamedImports", () => {
     function getInfo(text: string) {

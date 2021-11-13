@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { CommentTypeElement, InterfaceDeclaration } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("CommentTypeElement", () => {
     describe(nameof.property<CommentTypeElement>("remove"), () => {

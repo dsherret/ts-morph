@@ -3,6 +3,7 @@ import { FunctionDeclaration } from "../../../../compiler";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure, FunctionDeclarationStructure, OptionalKind,
     StructureKind } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("FunctionDeclaration", () => {
     describe(nameof.property<FunctionDeclaration>("getName"), () => {

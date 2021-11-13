@@ -1,4 +1,4 @@
-import { SyntaxKind } from "@ts-morph/common";
+import { SyntaxKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { TemplateSpan } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";

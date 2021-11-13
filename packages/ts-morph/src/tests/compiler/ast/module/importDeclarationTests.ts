@@ -1,4 +1,4 @@
-import { errors, ModuleResolutionKind } from "@ts-morph/common";
+import { errors, ModuleResolutionKind, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ImportDeclaration } from "../../../../compiler";
 import { Project } from "../../../../Project";

@@ -1,4 +1,4 @@
-import { SyntaxKind, ts } from "@ts-morph/common";
+import { SyntaxKind, ts, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { CallExpression, FunctionDeclaration, Identifier, InterfaceDeclaration, ModuleDeclaration, PropertyAccessExpression } from "../../../../compiler";
 import { Project } from "../../../../Project";

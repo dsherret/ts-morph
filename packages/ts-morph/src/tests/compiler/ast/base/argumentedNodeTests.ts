@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ArgumentedNode, ClassDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ArgumentedNode", () => {
     describe(nameof.property<ArgumentedNode>("getArguments"), () => {

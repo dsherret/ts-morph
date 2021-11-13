@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { AdvancedIterator } from "../../utils";
+import { nameof } from "@ts-morph/common";
 
 describe("AdvancedIterator", () => {
     function* getNumIterator() {

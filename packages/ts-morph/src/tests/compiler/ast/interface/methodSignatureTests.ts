@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { InterfaceDeclaration, MethodSignature } from "../../../../compiler";
 import { MethodSignatureStructure, StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("MethodSignature", () => {
     function getFirstMethodWithInfo(code: string) {

@@ -1,4 +1,4 @@
-import { SyntaxKind, ts } from "@ts-morph/common";
+import { SyntaxKind, ts, nameof } from "@ts-morph/common";
 import { insertIntoParentTextRange } from "../../../../manipulation";
 import { PropertyAssignmentSpecificStructure, PropertyAssignmentStructure, StructureKind } from "../../../../structures";
 import { WriterFunction } from "../../../../types";

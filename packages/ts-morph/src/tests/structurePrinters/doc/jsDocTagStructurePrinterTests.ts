@@ -3,6 +3,7 @@ import { FormatCodeSettings } from "../../../compiler";
 import { JSDocTagStructurePrinter } from "../../../structurePrinters";
 import { JSDocTagStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("JSDocTagStructurePrinter", () => {
     interface Options {

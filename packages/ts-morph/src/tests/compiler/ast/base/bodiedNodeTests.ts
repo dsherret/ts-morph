@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { BodiedNode, ModuleDeclaration } from "../../../../compiler";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("BodiedNode", () => {
     describe(nameof.property<BodiedNode>("setBodyText"), () => {

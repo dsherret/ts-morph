@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, OverrideableNode } from "../../../../compiler";
 import { OverrideableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("OverrideableNode", () => {
     describe("navigation", () => {

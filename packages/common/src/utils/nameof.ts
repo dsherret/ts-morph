@@ -1,7 +1,5 @@
-export namespace nameof {
-    export function property<TObject, TProperty extends keyof TObject>(obj: TObject, key: TProperty): TProperty;
-    export function property<TObject, TProperty extends keyof TObject>(key: TProperty): TProperty;
-    export function property(key1: any, key2?: any): any {
-        return key2 ?? key1;
-    }
+export function nameof<TObject>(obj: TObject, key: keyof TObject): string;
+export function nameof<TObject>(key: keyof TObject): string;
+export function nameof(key1: any, key2?: any): any {
+    return key2 ?? key1;
 }

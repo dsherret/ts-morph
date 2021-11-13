@@ -3,6 +3,8 @@ import { FunctionDeclaration, Node, ReturnTypedNode } from "../../../../compiler
 import { ReturnTypedNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
+
 describe("ReturnTypedNode", () => {
     const { sourceFile: mainSourceFile } = getInfoFromText("function myImplicit() { return 5; }\nfunction myExplicit(): string { return ''; }");
     const implicitDeclaration = mainSourceFile.getFunctions()[0];

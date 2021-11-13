@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { WriterUtils } from "../../utils";
+import { nameof } from "@ts-morph/common";
 
 describe("WriterUtils", () => {
     describe(nameof.property(WriterUtils, "getLastCharactersToPos"), () => {

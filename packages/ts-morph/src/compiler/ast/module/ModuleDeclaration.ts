@@ -1,4 +1,4 @@
-import { errors, StringUtils, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, StringUtils, SyntaxKind, ts, nameof } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { ModuleDeclarationSpecificStructure, ModuleDeclarationStructure, StructureKind } from "../../../structures";
 import { Constructor } from "../../../types";

@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
-import { errors, ArrayUtils, StoredComparer, getSyntaxKindName, StringUtils, ts, SyntaxKind, SymbolFlags } from "@ts-morph/common";
+import { errors, ArrayUtils, StoredComparer, getSyntaxKindName, StringUtils, ts, SyntaxKind, SymbolFlags, nameof } from "@ts-morph/common";
 import { ProjectContext } from "../../../ProjectContext";
 import { Project } from "../../../Project";
 import * as compiler from "../../../compiler";

@@ -1,4 +1,4 @@
-import { ArrayUtils, KeyValueCache, StringUtils, ts } from "@ts-morph/common";
+import { ArrayUtils, KeyValueCache, StringUtils, ts, nameof } from "@ts-morph/common";
 import { ClassDeclarationSpecificStructure, ClassDeclarationStructure, ClassLikeDeclarationBaseSpecificStructure, ConstructorDeclarationStructure,
     InterfaceDeclarationStructure, JSDocStructure, MethodDeclarationStructure, MethodSignatureStructure, ParameterDeclarationStructure,
     PropertySignatureStructure, StructureKind } from "../../../structures";

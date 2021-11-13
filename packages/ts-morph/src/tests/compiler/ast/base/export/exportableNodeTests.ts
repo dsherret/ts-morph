@@ -1,4 +1,4 @@
-import { errors } from "@ts-morph/common";
+import { errors, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { ClassDeclaration, ExportableNode, FunctionDeclaration, ModuleDeclaration } from "../../../../../compiler";
 import { ExportableNodeStructure } from "../../../../../structures";

@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { Signature } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("Signature", () => {
     function getSignature(text: string) {

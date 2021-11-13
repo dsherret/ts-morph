@@ -3,6 +3,7 @@ import { ClassDeclaration, FunctionDeclaration, TypeParameterDeclaration } from 
 import { StructureKind, TypeParameterDeclarationStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("TypeParameterDeclaration", () => {
     function getTypeParameterFromText(text: string, index = 0) {

@@ -1,4 +1,4 @@
-import { errors } from "@ts-morph/common";
+import { errors, nameof } from "@ts-morph/common";
 import { expect } from "chai";
 import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../../compiler";
 import { IndexSignatureDeclarationStructure, StructureKind } from "../../../../structures";

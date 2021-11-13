@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ExpressionStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ExpressionStatement", () => {
     describe(nameof.property<ExpressionStatement>("getExpression"), () => {

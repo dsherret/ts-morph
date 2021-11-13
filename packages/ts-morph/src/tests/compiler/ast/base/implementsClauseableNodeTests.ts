@@ -3,6 +3,7 @@ import { ClassDeclaration, ImplementsClauseableNode } from "../../../../compiler
 import { ImplementsClauseableNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
+import { nameof } from "@ts-morph/common";
 
 describe("ImplementsClauseableNode", () => {
     describe(nameof.property<ImplementsClauseableNode>("getImplements"), () => {
