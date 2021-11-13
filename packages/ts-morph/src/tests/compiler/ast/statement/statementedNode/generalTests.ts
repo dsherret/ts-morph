@@ -4,7 +4,7 @@ import { getInfoFromText } from "../../../testHelpers";
 
 // todo: make tests in other files reusable for StatementedNode. Then retest everything within namespaces and functions.
 
-describe(nameof(StatementedNode), () => {
+describe("StatementedNode", () => {
     describe("getting a declaration within a namespace", () => {
         const { firstChild } = getInfoFromText<ModuleDeclaration>("namespace Namespace1 {\n    class Class1 {}\n}\n");
         const classes = firstChild.getClasses();

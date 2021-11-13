@@ -3,9 +3,9 @@ import { expect } from "chai";
 import { ClassDeclaration, Node, SourceFile, TextInsertableNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(TextInsertableNode), () => {
-    describe(nameof<TextInsertableNode>(n => n.replaceText), () => {
-        describe(nameof(SourceFile), () => {
+describe("TextInsertableNode", () => {
+    describe(nameof.property<TextInsertableNode>("replaceText"), () => {
+        describe("SourceFile", () => {
             function doTest(startCode: string, range: [number, number], insertCode: string, expectedCode: string) {
                 const { sourceFile } = getInfoFromText(startCode);
                 sourceFile.replaceText(range, insertCode);
@@ -47,7 +47,7 @@ describe(nameof(TextInsertableNode), () => {
             });
         });
 
-        describe(nameof(ClassDeclaration), () => {
+        describe("ClassDeclaration", () => {
             function doTest(startCode: string, range: [number, number], insertCode: string, expectedCode: string) {
                 const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
                 firstChild.replaceText(range, insertCode);
@@ -75,8 +75,8 @@ describe(nameof(TextInsertableNode), () => {
         });
     });
 
-    describe(nameof<TextInsertableNode>(n => n.insertText), () => {
-        describe(nameof(SourceFile), () => {
+    describe(nameof.property<TextInsertableNode>("insertText"), () => {
+        describe("SourceFile", () => {
             function doTest(startCode: string, pos: number, insertCode: string, expectedCode: string) {
                 const { sourceFile } = getInfoFromText(startCode);
                 sourceFile.insertText(pos, insertCode);
@@ -111,8 +111,8 @@ describe(nameof(TextInsertableNode), () => {
         });
     });
 
-    describe(nameof<TextInsertableNode>(n => n.removeText), () => {
-        describe(nameof(SourceFile), () => {
+    describe(nameof.property<TextInsertableNode>("removeText"), () => {
+        describe("SourceFile", () => {
             function doSourceFileTest(startCode: string, expectedCode: string) {
                 const { sourceFile } = getInfoFromText(startCode);
                 sourceFile.removeText();

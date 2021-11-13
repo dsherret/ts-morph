@@ -4,14 +4,14 @@ import { NamedImportExportSpecifierStructurePrinter } from "../../../structurePr
 import { ExportSpecifierStructure, ImportSpecifierStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(NamedImportExportSpecifierStructurePrinter), () => {
+describe("NamedImportExportSpecifierStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
     }
 
     // todo: more tests
 
-    describe(nameof<NamedImportExportSpecifierStructurePrinter>(p => p.printText), () => {
+    describe(nameof.property<NamedImportExportSpecifierStructurePrinter>("printText"), () => {
         function doTest(
             structure: OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>,
             expectedOutput: string,
@@ -35,7 +35,7 @@ describe(nameof(NamedImportExportSpecifierStructurePrinter), () => {
         });
     });
 
-    describe(nameof<NamedImportExportSpecifierStructurePrinter>(p => p.printTextsWithBraces), () => {
+    describe(nameof.property<NamedImportExportSpecifierStructurePrinter>("printTextsWithBraces"), () => {
         function doTest(
             structures: (OptionalKind<ImportSpecifierStructure> | OptionalKind<ExportSpecifierStructure>)[],
             expectedOutput: string,

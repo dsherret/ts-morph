@@ -3,8 +3,8 @@ import { expect } from "chai";
 import { FileTextChanges } from "../../../../compiler";
 import { Project } from "../../../../Project";
 
-describe(nameof(FileTextChanges), () => {
-    describe(nameof<FileTextChanges>(a => a.applyChanges), () => {
+describe("FileTextChanges", () => {
+    describe(nameof.property<FileTextChanges>("applyChanges"), () => {
         function setup() {
             const project = new Project({ useInMemoryFileSystem: true });
             project.createSourceFile("test.ts", "const t; const u;");

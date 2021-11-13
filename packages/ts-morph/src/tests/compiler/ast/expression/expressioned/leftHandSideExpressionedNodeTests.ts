@@ -3,8 +3,8 @@ import { expect } from "chai";
 import { LeftHandSideExpressionedNode, NewExpression } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
 
-describe(nameof(LeftHandSideExpressionedNode), () => {
-    describe(nameof<LeftHandSideExpressionedNode>(n => n.getExpression), () => {
+describe("LeftHandSideExpressionedNode", () => {
+    describe(nameof.property<LeftHandSideExpressionedNode>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const { descendant } = getInfoFromTextWithDescendant<NewExpression>(text, SyntaxKind.NewExpression);
             expect(descendant.getExpression().getText()).to.equal(expectedText);

@@ -4,20 +4,20 @@ import { StructureKind, TypeParameterDeclarationStructure } from "../../../../st
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, OptionalTrivia } from "../../testHelpers";
 
-describe(nameof(TypeParameterDeclaration), () => {
+describe("TypeParameterDeclaration", () => {
     function getTypeParameterFromText(text: string, index = 0) {
         const { firstChild } = getInfoFromText<FunctionDeclaration>(text);
         return firstChild.getTypeParameters()[index];
     }
 
-    describe(nameof<TypeParameterDeclaration>(d => d.getName), () => {
+    describe(nameof.property<TypeParameterDeclaration>("getName"), () => {
         it("should get the name", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
             expect(typeParameterDeclaration.getName()).to.equal("T");
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.getConstraint), () => {
+    describe(nameof.property<TypeParameterDeclaration>("getConstraint"), () => {
         it("should return undefined when there's no constraint", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
             expect(typeParameterDeclaration.getConstraint()).to.be.undefined;
@@ -29,7 +29,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.getConstraintOrThrow), () => {
+    describe(nameof.property<TypeParameterDeclaration>("getConstraintOrThrow"), () => {
         it("should throw when there's no constraint", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
             expect(() => typeParameterDeclaration.getConstraintOrThrow()).to.throw();
@@ -41,7 +41,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.setConstraint), () => {
+    describe(nameof.property<TypeParameterDeclaration>("setConstraint"), () => {
         function doTest(text: string, name: string | WriterFunction, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.setConstraint(name);
@@ -69,7 +69,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.removeConstraint), () => {
+    describe(nameof.property<TypeParameterDeclaration>("removeConstraint"), () => {
         function doTest(text: string, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.removeConstraint();
@@ -89,7 +89,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.getDefault), () => {
+    describe(nameof.property<TypeParameterDeclaration>("getDefault"), () => {
         it("should return undefined when there's no default node", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
             expect(typeParameterDeclaration.getDefault()).to.be.undefined;
@@ -101,7 +101,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.getDefault), () => {
+    describe(nameof.property<TypeParameterDeclaration>("getDefault"), () => {
         it("should throw when there's no default node", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
             expect(() => typeParameterDeclaration.getDefaultOrThrow()).to.throw();
@@ -113,7 +113,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.setDefault), () => {
+    describe(nameof.property<TypeParameterDeclaration>("setDefault"), () => {
         function doTest(text: string, name: string | WriterFunction, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.setDefault(name);
@@ -141,7 +141,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.removeDefault), () => {
+    describe(nameof.property<TypeParameterDeclaration>("removeDefault"), () => {
         function doTest(text: string, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
             typeParameterDeclaration.removeDefault();
@@ -161,7 +161,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.remove), () => {
+    describe(nameof.property<TypeParameterDeclaration>("remove"), () => {
         function doTest(startText: string, indexToRemove: number, expectedText: string) {
             const typeParameterDeclaration = getTypeParameterFromText(startText, indexToRemove);
             const { _sourceFile } = typeParameterDeclaration;
@@ -192,7 +192,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(n => n.set), () => {
+    describe(nameof.property<TypeParameterDeclaration>("set"), () => {
         function doTest(text: string, structure: Partial<TypeParameterDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText<ClassDeclaration>(text);
             sourceFile.getClasses()[0].getTypeParameters()[0].set(structure);
@@ -222,7 +222,7 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(n => n.getStructure), () => {
+    describe(nameof.property<TypeParameterDeclaration>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<TypeParameterDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(text);
             const structure = firstChild.getTypeParameters()[0].getStructure();

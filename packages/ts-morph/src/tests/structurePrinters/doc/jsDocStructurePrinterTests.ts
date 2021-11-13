@@ -4,7 +4,7 @@ import { JSDocStructurePrinter } from "../../../structurePrinters";
 import { JSDocStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(JSDocStructurePrinter), () => {
+describe("JSDocStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
     }
@@ -15,8 +15,8 @@ describe(nameof(JSDocStructurePrinter), () => {
         expect(writer.toString()).to.equal(expectedOutput);
     }
 
-    describe(nameof<JSDocStructurePrinter>(p => p.printText), () => {
-        describe(nameof<JSDocStructure>(s => s.description), () => {
+    describe(nameof.property<JSDocStructurePrinter>("printText"), () => {
+        describe(nameof.property<JSDocStructure>("description"), () => {
             it("should write when single line", () => {
                 doTest({ description: "Test" }, `/** Test */`);
             });
@@ -45,7 +45,7 @@ describe(nameof(JSDocStructurePrinter), () => {
             });
         });
 
-        describe(nameof<JSDocStructure>(s => s.tags), () => {
+        describe(nameof.property<JSDocStructure>("tags"), () => {
             it("should write with single line description and tag", () => {
                 doTest(
                     { description: "Test", tags: [{ tagName: "param", text: "p - Test" }] },

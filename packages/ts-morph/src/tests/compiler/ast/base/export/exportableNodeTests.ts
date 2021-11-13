@@ -4,8 +4,8 @@ import { ClassDeclaration, ExportableNode, FunctionDeclaration, ModuleDeclaratio
 import { ExportableNodeStructure } from "../../../../../structures";
 import { getInfoFromText } from "../../../testHelpers";
 
-describe(nameof(ExportableNode), () => {
-    describe(nameof<ExportableNode>(n => n.setIsDefaultExport), () => {
+describe("ExportableNode", () => {
+    describe(nameof.property<ExportableNode>("setIsDefaultExport"), () => {
         function doTest(text: string, value: boolean, expectedText: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(text);
             firstChild.setIsDefaultExport(value);
@@ -67,7 +67,7 @@ describe(nameof(ExportableNode), () => {
         });
     });
 
-    describe(nameof<ExportableNode>(n => n.setIsExported), () => {
+    describe(nameof.property<ExportableNode>("setIsExported"), () => {
         function doTest(text: string, value: boolean, expected: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(text);
             firstChild.setIsExported(value);
@@ -146,7 +146,7 @@ describe(nameof(ExportableNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.set), () => {
+    describe(nameof.property<FunctionDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: ExportableNodeStructure, expectedCode: string) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             firstChild.set(structure);
@@ -174,7 +174,7 @@ describe(nameof(ExportableNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(f => f.getStructure), () => {
+    describe(nameof.property<FunctionDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, expectedStructure: { isDefaultExport: boolean; isExported: boolean; }) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             const structure = firstChild.getStructure();

@@ -5,7 +5,7 @@ import * as testHelpers from "../../testHelpers";
 
 // Remember, need this function because it's public
 
-describe(nameof(getCompilerOptionsFromTsConfig), () => {
+describe("getCompilerOptionsFromTsConfig", () => {
     // only do a basic test because this is already tested in the shared package
 
     function doTest(host: FileSystemHost, expected: { errorCount: number; options: CompilerOptions; }) {

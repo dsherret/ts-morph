@@ -1,4 +1,4 @@
-import { errors, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, nameof, SyntaxKind, ts } from "@ts-morph/common";
 import { insertIntoParentTextRange, removeChildren } from "../../../../manipulation";
 import { InitializerExpressionableNodeStructure } from "../../../../structures";
 import { Constructor, WriterFunction } from "../../../../types";

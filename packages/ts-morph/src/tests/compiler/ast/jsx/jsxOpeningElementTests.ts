@@ -7,8 +7,8 @@ function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxOpeningElement>(text, SyntaxKind.JsxOpeningElement, { isJsx: true });
 }
 
-describe(nameof(JsxOpeningElement), () => {
-    describe(nameof<JsxOpeningElement>(n => n.getTagNameNode), () => {
+describe("JsxOpeningElement", () => {
+    describe(nameof.property<JsxOpeningElement>("getTagNameNode"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getTagNameNode().getText()).to.equal(expected);

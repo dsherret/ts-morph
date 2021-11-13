@@ -3,7 +3,7 @@ import { EmitResult } from "../../../compiler";
 import { Project } from "../../../Project";
 import * as testHelpers from "../../testHelpers";
 
-describe(nameof(EmitResult), () => {
+describe("EmitResult", () => {
     it("should get the emit result when there are no errors", async () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
         const project = new Project({ compilerOptions: { noLib: true, outDir: "dist" }, fileSystem });

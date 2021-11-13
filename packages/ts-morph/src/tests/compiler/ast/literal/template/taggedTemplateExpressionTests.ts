@@ -7,8 +7,8 @@ function getExpression(text: string) {
     return getInfoFromTextWithDescendant<TaggedTemplateExpression>(text, SyntaxKind.TaggedTemplateExpression).descendant;
 }
 
-describe(nameof(TaggedTemplateExpression), () => {
-    describe(nameof<TaggedTemplateExpression>(n => n.getTag), () => {
+describe("TaggedTemplateExpression", () => {
+    describe(nameof.property<TaggedTemplateExpression>("getTag"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getExpression(text);
             expect(expression.getTag().getText()).to.equal(expectedText);
@@ -19,7 +19,7 @@ describe(nameof(TaggedTemplateExpression), () => {
         });
     });
 
-    describe(nameof<TaggedTemplateExpression>(n => n.getTemplate), () => {
+    describe(nameof.property<TaggedTemplateExpression>("getTemplate"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getExpression(text);
             expect(expression.getTemplate().getText()).to.equal(expectedText);
@@ -30,7 +30,7 @@ describe(nameof(TaggedTemplateExpression), () => {
         });
     });
 
-    describe(nameof<TaggedTemplateExpression>(n => n.removeTag), () => {
+    describe(nameof.property<TaggedTemplateExpression>("removeTag"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getExpression(text);
             const sourceFile = expression._sourceFile;

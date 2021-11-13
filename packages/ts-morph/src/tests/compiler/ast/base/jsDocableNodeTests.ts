@@ -5,15 +5,15 @@ import { JSDocableNodeStructure, JSDocStructure, OptionalKind } from "../../../.
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(JSDocableNode), () => {
-    describe(nameof(VariableStatement), () => {
+describe("JSDocableNode", () => {
+    describe("VariableStatement", () => {
         const { sourceFile } = getInfoFromText("/** Text */\nvar docedComment;\n/** First */\n/** Second */var multiCommented;\nvar nonDocedComment;");
         const statements = sourceFile.getVariableStatements();
         const docedStatement = statements[0];
         const multiDocedStatement = statements[1];
         const nonDocedStatement = statements[2];
 
-        describe(nameof<JSDocableNode>(n => n.getJsDocs), () => {
+        describe(nameof.property<JSDocableNode>("getJsDocs"), () => {
             describe("documentationed node", () => {
                 const nodes = docedStatement.getJsDocs();
                 it("should have the right number of nodes", () => {
@@ -43,7 +43,7 @@ describe(nameof(JSDocableNode), () => {
         });
     });
 
-    describe(nameof(FunctionDeclaration), () => {
+    describe("FunctionDeclaration", () => {
         const { firstChild } = getInfoFromText<FunctionDeclaration>("/**\n * Test.\n * @name - Test\n */\nfunction myFunction(name: string) {}");
         const doc = firstChild.getJsDocs()[0];
 
@@ -52,7 +52,7 @@ describe(nameof(JSDocableNode), () => {
         });
     });
 
-    describe(nameof<JSDocableNode>(n => n.insertJsDocs), () => {
+    describe(nameof.property<JSDocableNode>("insertJsDocs"), () => {
         function doTest(
             startCode: string,
             insertIndex: number,
@@ -118,7 +118,7 @@ describe(nameof(JSDocableNode), () => {
         });
     });
 
-    describe(nameof<JSDocableNode>(n => n.insertJsDoc), () => {
+    describe(nameof.property<JSDocableNode>("insertJsDoc"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKind<JSDocStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertJsDoc(index, structure);
@@ -136,7 +136,7 @@ describe(nameof(JSDocableNode), () => {
         });
     });
 
-    describe(nameof<JSDocableNode>(n => n.addJsDocs), () => {
+    describe(nameof.property<JSDocableNode>("addJsDocs"), () => {
         function doTest(startCode: string, structures: (OptionalKind<JSDocStructure> | string)[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addJsDocs(structures);
@@ -150,7 +150,7 @@ describe(nameof(JSDocableNode), () => {
         });
     });
 
-    describe(nameof<JSDocableNode>(n => n.addJsDoc), () => {
+    describe(nameof.property<JSDocableNode>("addJsDoc"), () => {
         function doTest(startCode: string, structure: OptionalKind<JSDocStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addJsDoc(structure);
@@ -164,7 +164,7 @@ describe(nameof(JSDocableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.set), () => {
+    describe(nameof.property<ClassDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: JSDocableNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.set(structure);
@@ -188,7 +188,7 @@ describe(nameof(JSDocableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
+    describe(nameof.property<ClassDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, docTexts: string[]) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             expect((firstChild.getStructure().docs! as JSDocStructure[]).map(d => d.description)).to.deep.equal(docTexts);

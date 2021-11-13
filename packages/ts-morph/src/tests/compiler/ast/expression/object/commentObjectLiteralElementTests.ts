@@ -3,8 +3,8 @@ import { expect } from "chai";
 import { CommentObjectLiteralElement, ObjectLiteralExpression } from "../../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../../testHelpers";
 
-describe(nameof(CommentObjectLiteralElement), () => {
-    describe(nameof<CommentObjectLiteralElement>(c => c.remove), () => {
+describe("CommentObjectLiteralElement", () => {
+    describe(nameof.property<CommentObjectLiteralElement>("remove"), () => {
         function doTest(startCode: string, index: number, expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(startCode, SyntaxKind.ObjectLiteralExpression);
             descendant.getPropertiesWithComments()[index].remove();

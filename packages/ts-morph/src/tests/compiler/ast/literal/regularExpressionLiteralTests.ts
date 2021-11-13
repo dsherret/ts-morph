@@ -4,10 +4,10 @@ import * as os from "os";
 import { RegularExpressionLiteral } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(RegularExpressionLiteral), () => {
+describe("RegularExpressionLiteral", () => {
     const isWindows = os.platform() === "win32";
 
-    describe(nameof<RegularExpressionLiteral>(n => n.getLiteralValue), () => {
+    describe(nameof.property<RegularExpressionLiteral>("getLiteralValue"), () => {
         function doTest(text: string, pattern: string, flags: string) {
             const { descendant } = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
             const regExpr = descendant.getLiteralValue();
@@ -27,7 +27,7 @@ describe(nameof(RegularExpressionLiteral), () => {
         });
     });
 
-    describe(nameof<RegularExpressionLiteral>(n => n.setLiteralValue), () => {
+    describe(nameof.property<RegularExpressionLiteral>("setLiteralValue"), () => {
         function doObjectTest(text: string, value: RegExp, expectedText: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
             descendant.setLiteralValue(value);

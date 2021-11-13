@@ -7,12 +7,12 @@ function getStatement(text: string) {
     return getInfoFromTextWithDescendant<DoStatement>(text, SyntaxKind.DoStatement).descendant;
 }
 
-describe(nameof(DoStatement), () => {
+describe("DoStatement", () => {
     const statement = "do {}";
     const expression = "x > 0";
     const expressionStatement = `do {} while (${expression});`;
 
-    describe(nameof<DoStatement>(n => n.getExpression), () => {
+    describe(nameof.property<DoStatement>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const doStatement = getStatement(text);
             expect(doStatement.getExpression().getText()).to.equal(expectedText);

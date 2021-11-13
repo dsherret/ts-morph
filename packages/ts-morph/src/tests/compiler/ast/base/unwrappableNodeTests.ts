@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { UnwrappableNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(UnwrappableNode), () => {
-    describe(nameof<UnwrappableNode>(n => n.unwrap), () => {
+describe("UnwrappableNode", () => {
+    describe(nameof.property<UnwrappableNode>("unwrap"), () => {
         function doTest(startCode: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText(startCode);
             const nodeInBody = firstChild.getChildSyntaxListOrThrow().getChildren()[0];

@@ -3,8 +3,8 @@ import { expect } from "chai";
 import { CallExpression } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(CallExpression), () => {
-    describe(nameof<CallExpression>(e => e.getReturnType), () => {
+describe("CallExpression", () => {
+    describe(nameof.property<CallExpression>("getReturnType"), () => {
         function doTest(text: string, expectedTypes: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const callExpressions = sourceFile.getDescendantsOfKind(SyntaxKind.CallExpression);

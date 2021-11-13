@@ -272,6 +272,14 @@ class IterableUtils {
     }
 }
 
+var nameof;
+(function (nameof) {
+    function property(key1, key2) {
+        return key2 !== null && key2 !== void 0 ? key2 : key1;
+    }
+    nameof.property = property;
+})(nameof || (nameof = {}));
+
 class ObjectUtils {
     constructor() {
     }
@@ -975,7 +983,7 @@ function createHosts(options) {
     function getLibFolderPath() {
         if (options.libFolderPath != null) {
             if (options.skipLoadingLibFiles === true) {
-                throw new errors.InvalidOperationError(`Cannot set ${"skipLoadingLibFiles"} to true when ${"libFolderPath"} is provided.`);
+                throw new errors.InvalidOperationError(`Cannot set ${nameof.property(options, "skipLoadingLibFiles")} to true when ${nameof.property(options, "libFolderPath")} is provided.`);
             }
             return options.libFolderPath;
         }
@@ -2561,4 +2569,4 @@ function getCompilerOptionsFromTsConfig(filePath, options = {}) {
     };
 }
 
-export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, ResolutionHosts, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, runtime };
+export { ArrayUtils, ComparerToStoredComparer, CompilerOptionsContainer, DocumentRegistry, EventContainer, FileUtils, InMemoryFileSystemHost, IterableUtils, KeyValueCache, LocaleStringComparer, Memoize, ObjectUtils, PropertyComparer, PropertyStoredComparer, RealFileSystemHost, ResolutionHosts, SettingsContainer, SortedKeyValueArray, StringUtils, TransactionalFileSystem, TsConfigResolver, WeakCache, createDocumentCache, createHosts, createModuleResolutionHost, deepClone, errors, getCompilerOptionsFromTsConfig, getEmitModuleResolutionKind, getFileMatcherPatterns, getLibFiles, getSyntaxKindName, libFolderInMemoryPath, matchFiles, matchGlobs, nameof, runtime };

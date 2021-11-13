@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { ReturnStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ReturnStatement), () => {
-    describe(nameof<ReturnStatement>(d => d.getExpressionOrThrow), () => {
+describe("ReturnStatement", () => {
+    describe(nameof.property<ReturnStatement>("getExpressionOrThrow"), () => {
         it("should get the expression when it exists", () => {
             const { firstChild } = getInfoFromText<ReturnStatement>("return t;");
             expect(firstChild.getExpressionOrThrow().getText()).to.equal("t");
@@ -15,7 +15,7 @@ describe(nameof(ReturnStatement), () => {
         });
     });
 
-    describe(nameof<ReturnStatement>(d => d.getExpression), () => {
+    describe(nameof.property<ReturnStatement>("getExpression"), () => {
         it("should get the expression when it exists", () => {
             const { firstChild } = getInfoFromText<ReturnStatement>("return t;");
             expect(firstChild.getText()).to.equal("return t;");
@@ -28,7 +28,7 @@ describe(nameof(ReturnStatement), () => {
         });
     });
 
-    describe(nameof<ReturnStatement>(d => d.remove), () => {
+    describe(nameof.property<ReturnStatement>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             (sourceFile.getChildSyntaxListOrThrow().getChildren()[index] as ReturnStatement).remove();

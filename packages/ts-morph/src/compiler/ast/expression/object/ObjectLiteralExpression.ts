@@ -1,4 +1,4 @@
-import { errors, SyntaxKind, ts } from "@ts-morph/common";
+import { errors, nameof, SyntaxKind, ts } from "@ts-morph/common";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../../manipulation";
 import { CommaNewLineSeparatedStructuresPrinter, Printer } from "../../../../structurePrinters";
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, ObjectLiteralExpressionPropertyStructures, OptionalKind, PropertyAssignmentStructure,
@@ -49,7 +49,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         let findFunc: (property: ObjectLiteralElementLike) => boolean;
         if (typeof nameOrFindFunction === "string") {
             findFunc = prop => {
-                if ((prop as any)[nameof<PropertyAssignment>(o => o.getName)] == null)
+                if ((prop as any)[nameof.property<PropertyAssignment>("getName")] == null)
                     return false;
                 return (prop as PropertyAssignment).getName() === nameOrFindFunction;
             };

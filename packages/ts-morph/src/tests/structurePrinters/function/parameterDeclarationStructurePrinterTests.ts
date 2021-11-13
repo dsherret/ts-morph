@@ -3,8 +3,8 @@ import { ParameterDeclarationStructurePrinter } from "../../../structurePrinters
 import { OptionalKind, ParameterDeclarationStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(ParameterDeclarationStructurePrinter), () => {
-    describe(nameof<ParameterDeclarationStructurePrinter>(p => p.printTextsWithParenthesis), () => {
+describe("ParameterDeclarationStructurePrinter", () => {
+    describe(nameof.property<ParameterDeclarationStructurePrinter>("printTextsWithParenthesis"), () => {
         function doTest(structures: OptionalKind<ParameterDeclarationStructure>[], expectedOutput: string) {
             const { writer, factory } = getStructureFactoryAndWriter();
             factory.forParameterDeclaration().printTextsWithParenthesis(writer, structures);

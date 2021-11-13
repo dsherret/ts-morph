@@ -3,8 +3,8 @@ import { expect } from "chai";
 import { Statement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(Statement), () => {
-    describe(nameof<Statement>(n => n.remove), () => {
+describe("Statement", () => {
+    describe(nameof.property<Statement>("remove"), () => {
         function doVariableStatementTest(text: string, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             const statement = sourceFile.getVariableStatementOrThrow("foo");

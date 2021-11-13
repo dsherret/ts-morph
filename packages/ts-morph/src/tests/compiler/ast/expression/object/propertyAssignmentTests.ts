@@ -4,8 +4,8 @@ import { ObjectLiteralExpression, PropertyAssignment, ShorthandPropertyAssignmen
 import { PropertyAssignmentStructure, StructureKind } from "../../../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia, OptionalTrivia } from "../../../testHelpers";
 
-describe(nameof(PropertyAssignment), () => {
-    describe(nameof<PropertyAssignment>(p => p.removeInitializer), () => {
+describe("PropertyAssignment", () => {
+    describe(nameof.property<PropertyAssignment>("removeInitializer"), () => {
         it("should remove the property assignment and change into a shorthand property assignment", () => {
             const { sourceFile } = getInfoFromText("const t = { /* test */prop: 5, prop2: 6 };");
             const propAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertyAssignment);
@@ -16,7 +16,7 @@ describe(nameof(PropertyAssignment), () => {
         });
     });
 
-    describe(nameof<PropertyAssignment>(p => p.setInitializer), () => {
+    describe(nameof.property<PropertyAssignment>("setInitializer"), () => {
         it("should set the initializer", () => {
             const { sourceFile } = getInfoFromText("const t = { prop: 5, prop2: 6 };");
             const propAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertyAssignment);
@@ -32,7 +32,7 @@ describe(nameof(PropertyAssignment), () => {
         });
     });
 
-    describe(nameof<PropertyAssignment>(p => p.remove), () => {
+    describe(nameof.property<PropertyAssignment>("remove"), () => {
         function doTest(code: string, propertyToRemove: string, expectedCode: string) {
             const { descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code, SyntaxKind.ObjectLiteralExpression);
 
@@ -81,7 +81,7 @@ describe(nameof(PropertyAssignment), () => {
         });
     });
 
-    describe(nameof<PropertyAssignment>(p => p.set), () => {
+    describe(nameof.property<PropertyAssignment>("set"), () => {
         function test(code: string, structure: Partial<PropertyAssignmentStructure>, expectedText: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<PropertyAssignment>(code, SyntaxKind.PropertyAssignment);
             expect(descendant.set(structure).wasForgotten()).to.be.false;
@@ -106,7 +106,7 @@ describe(nameof(PropertyAssignment), () => {
         });
     });
 
-    describe(nameof<PropertyAssignment>(p => p.getStructure), () => {
+    describe(nameof.property<PropertyAssignment>("getStructure"), () => {
         function test(code: string, expectedStructure: OptionalTrivia<MakeRequired<PropertyAssignmentStructure>>) {
             const { descendant } = getInfoFromTextWithDescendant<PropertyAssignment>(code, SyntaxKind.PropertyAssignment);
             expect(descendant.getStructure()).to.deep.equals(expectedStructure);

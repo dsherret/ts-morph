@@ -7,7 +7,7 @@ function getStatement(text: string) {
     return getInfoFromTextWithDescendant<TryStatement>(text, SyntaxKind.TryStatement).descendant;
 }
 
-describe(nameof(TryStatement), () => {
+describe("TryStatement", () => {
     const tryBlock = "{ let x = 0; }";
     const catchClause = "catch (x) { console.log(x); }";
     const finallyBlock = "{ let x = 1; }";
@@ -16,13 +16,13 @@ describe(nameof(TryStatement), () => {
     const tryStatement = getStatement(statement);
     const emptyTryStatement = getStatement(emptyStatement);
 
-    describe(nameof<TryStatement>(n => n.getTryBlock), () => {
+    describe(nameof.property<TryStatement>("getTryBlock"), () => {
         it("should get the correct try block", () => {
             expect(tryStatement.getTryBlock().getText()).to.equal(tryBlock);
         });
     });
 
-    describe(nameof<TryStatement>(n => n.getCatchClause), () => {
+    describe(nameof.property<TryStatement>("getCatchClause"), () => {
         it("should get the correct catch clause", () => {
             expect(tryStatement.getCatchClause()!.getText()).to.equal(catchClause);
         });
@@ -32,7 +32,7 @@ describe(nameof(TryStatement), () => {
         });
     });
 
-    describe(nameof<TryStatement>(n => n.getCatchClauseOrThrow), () => {
+    describe(nameof.property<TryStatement>("getCatchClauseOrThrow"), () => {
         it("should should return the catch clause", () => {
             expect(tryStatement.getCatchClauseOrThrow().getText()).to.equal(catchClause);
         });
@@ -42,7 +42,7 @@ describe(nameof(TryStatement), () => {
         });
     });
 
-    describe(nameof<TryStatement>(n => n.getFinallyBlock), () => {
+    describe(nameof.property<TryStatement>("getFinallyBlock"), () => {
         it("should get the correct finally block", () => {
             expect(tryStatement.getFinallyBlock()!.getText()).to.equal(finallyBlock);
         });
@@ -52,7 +52,7 @@ describe(nameof(TryStatement), () => {
         });
     });
 
-    describe(nameof<TryStatement>(n => n.getFinallyBlockOrThrow), () => {
+    describe(nameof.property<TryStatement>("getFinallyBlockOrThrow"), () => {
         it("should should return the finally block", () => {
             expect(tryStatement.getFinallyBlockOrThrow().getText()).to.equal(finallyBlock);
         });

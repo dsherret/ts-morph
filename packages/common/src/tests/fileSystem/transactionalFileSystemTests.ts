@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { errors } from "../../errors";
 import { InMemoryFileSystemHost, TransactionalFileSystem } from "../../fileSystem";
 
-describe(nameof(TransactionalFileSystem), () => {
+describe("TransactionalFileSystem", () => {
     interface SetupObjects {
         fileSystem: InMemoryFileSystemHost;
         wrapper: TransactionalFileSystem;
@@ -23,7 +23,7 @@ describe(nameof(TransactionalFileSystem), () => {
         expect(objs.fileSystem.directoryExistsSync(dirPath)).to.equal(state[1], "file system");
     }
 
-    describe(nameof<TransactionalFileSystem>(w => w.queueFileDelete), () => {
+    describe(nameof.property<TransactionalFileSystem>("queueFileDelete"), () => {
         it("should queue a file for delete", () => {
             const objs = setup();
             const { wrapper } = objs;
@@ -39,7 +39,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.removeFileDelete), () => {
+    describe(nameof.property<TransactionalFileSystem>("removeFileDelete"), () => {
         it("should remove a file from being deleted", async () => {
             const objs = setup();
             const { wrapper } = objs;
@@ -77,7 +77,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.queueDirectoryDelete), () => {
+    describe(nameof.property<TransactionalFileSystem>("queueDirectoryDelete"), () => {
         it("should queue a directory for delete", () => {
             const objs = setup();
             const { wrapper } = objs;
@@ -89,7 +89,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.queueMoveDirectory), () => {
+    describe(nameof.property<TransactionalFileSystem>("queueMoveDirectory"), () => {
         it("should queue a directory for moving", () => {
             const objs = setup();
             const { wrapper } = objs;
@@ -102,7 +102,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.queueCopyDirectory), () => {
+    describe(nameof.property<TransactionalFileSystem>("queueCopyDirectory"), () => {
         it("should queue a directory for copying", () => {
             const objs = setup();
             const { wrapper } = objs;
@@ -115,7 +115,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.queueMkdir), () => {
+    describe(nameof.property<TransactionalFileSystem>("queueMkdir"), () => {
         it("should queue a directory for being made", () => {
             const objs = setup();
             const { wrapper } = objs;
@@ -127,7 +127,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.flush), () => {
+    describe(nameof.property<TransactionalFileSystem>("flush"), () => {
         function doTests(flush: (wrapper: TransactionalFileSystem, runChecks: () => void) => void) {
             it("should queue files for delete then flush them", () => {
                 const objs = setup();
@@ -201,7 +201,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.moveFileImmediately), () => {
+    describe(nameof.property<TransactionalFileSystem>("moveFileImmediately"), () => {
         function doTests(
             moveFile: (wrapper: TransactionalFileSystem, fileFrom: string, fileTo: string, text: string, runChecks: (error?: any) => void) => void,
         ) {
@@ -273,7 +273,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.deleteFileImmediately), () => {
+    describe(nameof.property<TransactionalFileSystem>("deleteFileImmediately"), () => {
         function doTests(deleteFile: (wrapper: TransactionalFileSystem, filePath: string, runChecks: (error?: any) => void) => void) {
             it("should delete a file immediately", async () => {
                 const objs = setup();
@@ -341,7 +341,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.copyDirectoryImmediately), () => {
+    describe(nameof.property<TransactionalFileSystem>("copyDirectoryImmediately"), () => {
         function doTests(copyDirectory: (wrapper: TransactionalFileSystem, fileFrom: string, fileTo: string, runChecks: (error?: any) => void) => void) {
             it("should copy a directory immediately to a new directory", () => {
                 const objs = setup();
@@ -403,7 +403,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.moveDirectoryImmediately), () => {
+    describe(nameof.property<TransactionalFileSystem>("moveDirectoryImmediately"), () => {
         function doTests(moveDirectory: (wrapper: TransactionalFileSystem, fileFrom: string, fileTo: string, runChecks: (error?: any) => void) => void) {
             it("should move a directory immediately to a new directory", () => {
                 const objs = setup();
@@ -462,7 +462,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.deleteDirectoryImmediately), () => {
+    describe(nameof.property<TransactionalFileSystem>("deleteDirectoryImmediately"), () => {
         function doTests(deleteDir: (wrapper: TransactionalFileSystem, dirPath: string, runChecks: (error?: any) => void) => void) {
             it("should delete a child file that was queued for delete when immediately deleting a parent dir", () => {
                 const objs = setup();
@@ -564,7 +564,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.clearDirectoryImmediately), () => {
+    describe(nameof.property<TransactionalFileSystem>("clearDirectoryImmediately"), () => {
         function doTests(clearDir: (wrapper: TransactionalFileSystem, dirPath: string, runChecks: (error?: any) => void) => void) {
             it("should delete a child file that was queued for delete when immediately clearing a parent dir", () => {
                 const objs = setup();
@@ -666,7 +666,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.fileExistsSync), () => {
+    describe(nameof.property<TransactionalFileSystem>("fileExistsSync"), () => {
         it("should not exist after queued for delete", () => {
             const { wrapper } = setup();
             const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
@@ -743,7 +743,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.directoryExistsSync), () => {
+    describe(nameof.property<TransactionalFileSystem>("directoryExistsSync"), () => {
         it("should not exist after queued for delete", () => {
             const { wrapper } = setup();
             const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
@@ -775,7 +775,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.readFileSync), () => {
+    describe(nameof.property<TransactionalFileSystem>("readFileSync"), () => {
         it("should not read the file after it was deleted", () => {
             const { wrapper } = setup();
             const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
@@ -801,7 +801,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.readDirSync), () => {
+    describe(nameof.property<TransactionalFileSystem>("readDirSync"), () => {
         it("should not read the dir after it was deleted", () => {
             const { wrapper } = setup();
             const dirPath = wrapper.getStandardizedAbsolutePath("/dir");
@@ -837,7 +837,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.globSync), () => {
+    describe(nameof.property<TransactionalFileSystem>("globSync"), () => {
         it("should not read the dir after it was deleted", () => {
             const { wrapper } = setup();
             const dirGlob = "/dir/**/*.ts";
@@ -852,7 +852,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.readFileOrNotExistsSync), () => {
+    describe(nameof.property<TransactionalFileSystem>("readFileOrNotExistsSync"), () => {
         it("should return false after it was deleted", () => {
             const { wrapper } = setup();
             const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
@@ -866,7 +866,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.readFileOrNotExists), () => {
+    describe(nameof.property<TransactionalFileSystem>("readFileOrNotExists"), () => {
         it("should return false after it was deleted", async () => {
             const { wrapper } = setup();
             const filePath = wrapper.getStandardizedAbsolutePath("/file.ts");
@@ -880,7 +880,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.writeFile), () => {
+    describe(nameof.property<TransactionalFileSystem>("writeFile"), () => {
         function doTests(writeFile: (wrapper: TransactionalFileSystem, filePath: string, text: string, runChecks: (error?: any) => void) => void) {
             it("should undo the queued deletion when writing", () => {
                 const objs = setup();
@@ -920,7 +920,7 @@ describe(nameof(TransactionalFileSystem), () => {
         });
     });
 
-    describe(nameof<TransactionalFileSystem>(w => w.getStandardizedAbsolutePath), () => {
+    describe(nameof.property<TransactionalFileSystem>("getStandardizedAbsolutePath"), () => {
         it("should use the casing provided for case sensitive file systems", () => {
             const fileSystem = new InMemoryFileSystemHost();
             const wrapper = new TransactionalFileSystem(fileSystem);

@@ -5,12 +5,12 @@ import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 declare function BigInt(value: any): any;
 
-describe(nameof(BigIntLiteral), typeof BigInt === "undefined" ? () => {} : () => {
+describe("BigIntLiteral", typeof BigInt === "undefined" ? () => {} : () => {
     function getDescendant(text: string) {
         return getInfoFromTextWithDescendant<BigIntLiteral>(text, SyntaxKind.BigIntLiteral);
     }
 
-    describe(nameof<BigIntLiteral>(n => n.getLiteralValue), () => {
+    describe(nameof.property<BigIntLiteral>("getLiteralValue"), () => {
         function doTest(text: string, expectedValue: number) {
             const { descendant } = getDescendant(text);
             expect(descendant.getLiteralValue()).to.equal(expectedValue);
@@ -21,7 +21,7 @@ describe(nameof(BigIntLiteral), typeof BigInt === "undefined" ? () => {} : () =>
         });
     });
 
-    describe(nameof<BigIntLiteral>(n => n.setLiteralValue), () => {
+    describe(nameof.property<BigIntLiteral>("setLiteralValue"), () => {
         function doTest(text: string, value: any, expectedText: string) {
             const { descendant, sourceFile } = getDescendant(text);
             descendant.setLiteralValue(value);

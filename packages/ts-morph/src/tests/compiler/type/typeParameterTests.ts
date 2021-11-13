@@ -2,14 +2,14 @@ import { expect } from "chai";
 import { TypeParameter } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
-describe(nameof(TypeParameter), () => {
+describe("TypeParameter", () => {
     function getTypeParameter(text: string) {
         const { sourceFile } = getInfoFromText(text);
         const type = sourceFile.getVariableDeclarations()[0].getType();
         return type.getCallSignatures()[0].getTypeParameters()[0];
     }
 
-    describe(nameof<TypeParameter>(s => s.getConstraint), () => {
+    describe(nameof.property<TypeParameter>("getConstraint"), () => {
         it("should be undefined when there isn't one", () => {
             const typeParam = getTypeParameter("let t: <T>() => void;");
             expect(typeParam.getConstraint()).to.be.undefined;
@@ -21,7 +21,7 @@ describe(nameof(TypeParameter), () => {
         });
     });
 
-    describe(nameof<TypeParameter>(s => s.getConstraintOrThrow), () => {
+    describe(nameof.property<TypeParameter>("getConstraintOrThrow"), () => {
         it("should throw when there isn't one", () => {
             const typeParam = getTypeParameter("let t: <T>() => void;");
             expect(() => typeParam.getConstraintOrThrow()).to.throw();
@@ -33,7 +33,7 @@ describe(nameof(TypeParameter), () => {
         });
     });
 
-    describe(nameof<TypeParameter>(s => s.getDefault), () => {
+    describe(nameof.property<TypeParameter>("getDefault"), () => {
         it("should be undefined when there isn't one", () => {
             const typeParam = getTypeParameter("let t: <T>() => void;");
             expect(typeParam.getDefault()).to.be.undefined;
@@ -45,7 +45,7 @@ describe(nameof(TypeParameter), () => {
         });
     });
 
-    describe(nameof<TypeParameter>(s => s.getDefaultOrThrow), () => {
+    describe(nameof.property<TypeParameter>("getDefaultOrThrow"), () => {
         it("should throw when there isn't one", () => {
             const typeParam = getTypeParameter("let t: <T>() => void;");
             expect(() => typeParam.getDefaultOrThrow()).to.throw();

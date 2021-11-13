@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { FileUtils, InMemoryFileSystemHost } from "../../fileSystem";
 
-describe(nameof(FileUtils), () => {
+describe("FileUtils", () => {
     describe(nameof.property(FileUtils, "getStandardizedAbsolutePath"), () => {
         const fileSystem = new InMemoryFileSystemHost();
 

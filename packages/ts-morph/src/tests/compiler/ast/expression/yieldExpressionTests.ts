@@ -8,14 +8,14 @@ function getInfoFromTextWithYieldExpression(text: string) {
     return { ...info, yieldExpression: info.descendant };
 }
 
-describe(nameof(YieldExpression), () => {
+describe("YieldExpression", () => {
     const expression = "x";
     const expr = `yield ${expression}`;
     const emptyExpr = "function*() { yield; }";
     const { yieldExpression } = getInfoFromTextWithYieldExpression(expr);
     const { yieldExpression: emptyYieldExpression } = getInfoFromTextWithYieldExpression(emptyExpr);
 
-    describe(nameof<YieldExpression>(n => n.getExpression), () => {
+    describe(nameof.property<YieldExpression>("getExpression"), () => {
         it("should get the correct expression", () => {
             expect(yieldExpression.getExpression()!.getText()).to.equal(expression);
         });
@@ -25,7 +25,7 @@ describe(nameof(YieldExpression), () => {
         });
     });
 
-    describe(nameof<YieldExpression>(n => n.getExpressionOrThrow), () => {
+    describe(nameof.property<YieldExpression>("getExpressionOrThrow"), () => {
         it("should should return the expression", () => {
             expect(yieldExpression.getExpressionOrThrow().getText()).to.equal(expression);
         });

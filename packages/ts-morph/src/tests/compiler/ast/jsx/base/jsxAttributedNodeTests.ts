@@ -12,8 +12,8 @@ function getInfoFromSelfClosing(text: string) {
     return getInfoFromTextWithDescendant<JsxAttributedNode & Node>(text, SyntaxKind.JsxSelfClosingElement, { isJsx: true });
 }
 
-describe(nameof(JsxAttributedNode), () => {
-    describe(nameof<JsxAttributedNode>(n => n.getAttributes), () => {
+describe("JsxAttributedNode", () => {
+    describe(nameof.property<JsxAttributedNode>("getAttributes"), () => {
         function doTest(text: string, expected: string[]) {
             const { descendant } = getInfo(text);
             expect(descendant.getAttributes().map(c => c.getText())).to.deep.equal(expected);
@@ -24,7 +24,7 @@ describe(nameof(JsxAttributedNode), () => {
         });
     });
 
-    describe(nameof<JsxAttributedNode>(n => n.getAttribute), () => {
+    describe(nameof.property<JsxAttributedNode>("getAttribute"), () => {
         function doNameTest(text: string, name: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             const attrib = descendant.getAttribute(name);
@@ -54,7 +54,7 @@ describe(nameof(JsxAttributedNode), () => {
         });
     });
 
-    describe(nameof<JsxAttributedNode>(n => n.getAttributeOrThrow), () => {
+    describe(nameof.property<JsxAttributedNode>("getAttributeOrThrow"), () => {
         function doNameTest(text: string, name: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             if (expected == null)
@@ -72,7 +72,7 @@ describe(nameof(JsxAttributedNode), () => {
         });
     });
 
-    describe(nameof<JsxAttributedNode>(n => n.insertAttributes), () => {
+    describe(nameof.property<JsxAttributedNode>("insertAttributes"), () => {
         describe("element", () => {
             function doTest(text: string, index: number, structures: (OptionalKind<JsxAttributeStructure> | JsxSpreadAttributeStructure)[], expected: string) {
                 const { descendant } = getInfo(text);
@@ -116,7 +116,7 @@ describe(nameof(JsxAttributedNode), () => {
         });
     });
 
-    describe(nameof<JsxAttributedNode>(n => n.insertAttribute), () => {
+    describe(nameof.property<JsxAttributedNode>("insertAttribute"), () => {
         function doTest(text: string, index: number, structure: OptionalKind<JsxAttributeStructure>, expected: string) {
             const { descendant } = getInfo(text);
             descendant.insertAttribute(index, structure);
@@ -128,7 +128,7 @@ describe(nameof(JsxAttributedNode), () => {
         });
     });
 
-    describe(nameof<JsxAttributedNode>(n => n.addAttributes), () => {
+    describe(nameof.property<JsxAttributedNode>("addAttributes"), () => {
         function doTest(text: string, structures: OptionalKind<JsxAttributeStructure>[], expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.addAttributes(structures).length).to.equal(structures.length);
@@ -140,7 +140,7 @@ describe(nameof(JsxAttributedNode), () => {
         });
     });
 
-    describe(nameof<JsxAttributedNode>(n => n.addAttribute), () => {
+    describe(nameof.property<JsxAttributedNode>("addAttribute"), () => {
         function doTest(text: string, structure: OptionalKind<JsxAttributeStructure>, expected: string) {
             const { descendant } = getInfo(text);
             descendant.addAttribute(structure);

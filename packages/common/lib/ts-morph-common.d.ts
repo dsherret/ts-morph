@@ -1035,6 +1035,11 @@ export declare class IterableUtils {
     static find<T>(items: IterableIterator<T>, condition: (item: T) => boolean): T | undefined;
 }
 
+export declare namespace nameof {
+    function property<TObject, TProperty extends keyof TObject>(obj: TObject, key: TProperty): TProperty;
+    function property<TObject, TProperty extends keyof TObject>(key: TProperty): TProperty;
+}
+
 export declare class ObjectUtils {
     private constructor();
     static clone<T>(obj: T): T;

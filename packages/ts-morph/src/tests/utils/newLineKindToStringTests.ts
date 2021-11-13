@@ -2,7 +2,7 @@ import { NewLineKind } from "@ts-morph/common";
 import { expect } from "chai";
 import { newLineKindToString } from "../../utils";
 
-describe(nameof(newLineKindToString), () => {
+describe("newLineKindToString", () => {
     it("should return carriage return line feed for like", () => {
         expect(newLineKindToString(NewLineKind.CarriageReturnLineFeed)).to.equal("\r\n");
     });

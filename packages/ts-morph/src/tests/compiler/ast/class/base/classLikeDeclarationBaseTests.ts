@@ -7,7 +7,7 @@ import { ClassMemberStructures, ClassStaticBlockDeclarationStructure, Constructo
 import { WriterFunction } from "../../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant, OptionalKindAndTrivia } from "../../../testHelpers";
 
-describe(nameof(ClassLikeDeclarationBase), () => {
+describe("ClassLikeDeclarationBase", () => {
     function getInfoFromTextForClassLike(text: string) {
         const info = getInfoFromText(text);
         return {
@@ -18,7 +18,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         };
     }
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getExtends), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getExtends"), () => {
         function doTest(text: string, expected: boolean) {
             const { classNode } = getInfoFromTextForClassLike(text);
             const extendsNode = classNode.getExtends();
@@ -41,7 +41,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getExtendsOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getExtendsOrThrow"), () => {
         it("should throw when no extends clause exists", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { }");
             expect(() => firstChild.getExtendsOrThrow()).to.throw();
@@ -53,7 +53,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.setExtends), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("setExtends"), () => {
         function doTest(startCode: string, extendsText: string | WriterFunction, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.setExtends(extendsText);
@@ -89,7 +89,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.removeExtends), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("removeExtends"), () => {
         function doTest(startCode: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.removeExtends();
@@ -109,7 +109,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addMember), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addMember"), () => {
         function doTest(startCode: string, member: string | WriterFunction | ClassMemberStructures, expectedCode: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMember(member);
@@ -126,7 +126,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addMembers), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addMembers"), () => {
         type MembersType = string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[];
         function doTest(startCode: string, members: MembersType, expectedCode: string, expectedResultCount: number) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
@@ -147,7 +147,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertMember), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertMember"), () => {
         function doTest(startCode: string, insertIndex: number, member: string | WriterFunction | ClassMemberStructures, expectedCode: string) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertMember(insertIndex, member);
@@ -164,7 +164,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertMembers), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertMembers"), () => {
         type MembersType = string | WriterFunction | (string | WriterFunction | ClassMemberStructures)[];
         function doTest(startCode: string, insertIndex: number, members: MembersType, expectedCode: string, expectedResultCount: number) {
             const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
@@ -237,7 +237,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertConstructor), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertConstructor"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<ConstructorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertConstructor(insertIndex, structure);
@@ -296,7 +296,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addConstructor), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addConstructor"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<ConstructorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addConstructor(structure);
@@ -309,7 +309,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addConstructors), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addConstructors"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<ConstructorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addConstructors(structure);
@@ -327,7 +327,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertConstructors), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertConstructors"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<ConstructorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertConstructors(index, structure);
@@ -340,7 +340,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getConstructors), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getConstructors"), () => {
         it("should return undefined when no constructor exists", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { }");
             expect(firstChild.getConstructors().length).to.equal(0);
@@ -367,7 +367,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertStaticBlock), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertStaticBlock"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<ClassStaticBlockDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertStaticBlock(insertIndex, structure);
@@ -396,7 +396,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addStaticBlock), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addStaticBlock"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<ClassStaticBlockDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addStaticBlock(structure);
@@ -409,7 +409,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addStaticBlocks), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addStaticBlocks"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<ClassStaticBlockDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addStaticBlocks(structure);
@@ -426,7 +426,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertStaticBlocks), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertStaticBlocks"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<ClassStaticBlockDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertStaticBlocks(index, structures);
@@ -439,7 +439,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticBlocks), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticBlocks"), () => {
         it("should return nothing when none exists", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { }");
             expect(firstChild.getStaticBlocks().length).to.equal(0);
@@ -452,7 +452,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertGetAccessors), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertGetAccessors"), () => {
         function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<GetAccessorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertGetAccessors(insertIndex, structures);
@@ -492,7 +492,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertGetAccessor), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertGetAccessor"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<GetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertGetAccessor(insertIndex, structure);
@@ -506,7 +506,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addGetAccessors), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addGetAccessors"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<GetAccessorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addGetAccessors(structures);
@@ -520,7 +520,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addGetAccessor), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addGetAccessor"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<GetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addGetAccessor(structure);
@@ -533,7 +533,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertProperties), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertProperties"), () => {
         function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<PropertyDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertProperties(insertIndex, structures);
@@ -580,7 +580,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertProperty), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertProperty"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<PropertyDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertProperty(insertIndex, structure);
@@ -593,7 +593,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addProperties), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addProperties"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<PropertyDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addProperties(structures);
@@ -606,7 +606,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addProperty), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addProperty"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<PropertyDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addProperty(structure);
@@ -619,7 +619,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getProperty), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getProperty"), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
@@ -632,7 +632,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getPropertyOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getPropertyOrThrow"), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
@@ -645,7 +645,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getGetAccessor), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getGetAccessor"), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
@@ -658,7 +658,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getGetAccessorOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getGetAccessorOrThrow"), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
@@ -671,7 +671,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getSetAccessor), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getSetAccessor"), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
@@ -684,7 +684,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getSetAccessorOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getSetAccessorOrThrow"), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
@@ -697,7 +697,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertSetAccessors), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertSetAccessors"), () => {
         function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<SetAccessorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertSetAccessors(insertIndex, structures);
@@ -737,7 +737,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertSetAccessor), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertSetAccessor"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<SetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertSetAccessor(insertIndex, structure);
@@ -751,7 +751,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addSetAccessors), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addSetAccessors"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<SetAccessorDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addSetAccessors(structures);
@@ -765,7 +765,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addSetAccessor), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addSetAccessor"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<SetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addSetAccessor(structure);
@@ -778,7 +778,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceProperties), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getInstanceProperties"), () => {
         describe("no properties", () => {
             it("should not have any properties", () => {
                 const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
@@ -821,7 +821,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceProperty), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getInstanceProperty"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method1() {}\n"
@@ -841,7 +841,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getInstancePropertyOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getInstancePropertyOrThrow"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method1() {}\n"
@@ -865,7 +865,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticProperty), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticProperty"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method1() {}\n"
@@ -885,7 +885,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticPropertyOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticPropertyOrThrow"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method1() {}\n"
@@ -909,7 +909,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticProperties), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticProperties"), () => {
         describe("no static properties", () => {
             it("should not have any properties", () => {
                 const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
@@ -941,7 +941,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertMethods), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertMethods"), () => {
         function doTest(startCode: string, insertIndex: number, structures: OptionalKindAndTrivia<MethodDeclarationStructure>[], expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ClassDeclaration>(startCode, SyntaxKind.ClassDeclaration);
             const result = descendant.insertMethods(insertIndex, structures);
@@ -991,7 +991,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.insertMethod), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("insertMethod"), () => {
         function doTest(startCode: string, insertIndex: number, structure: OptionalKindAndTrivia<MethodDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertMethod(insertIndex, structure);
@@ -1005,7 +1005,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addMethods), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addMethods"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<MethodDeclarationStructure>[], expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMethods(structures);
@@ -1019,7 +1019,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.addMethod), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("addMethod"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<MethodDeclarationStructure>, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMethod(structure);
@@ -1032,7 +1032,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getMethod), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getMethod"), () => {
         const code = "class Identifier { get member() {} set member() {} static member: string; member() {} }\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
@@ -1045,7 +1045,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getMethodOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getMethodOrThrow"), () => {
         const code = "class Identifier { get member() {} set member() {} static member: string; member() {} }\n";
         const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
@@ -1058,7 +1058,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMethods), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getInstanceMethods"), () => {
         describe("no methods", () => {
             it("should not have any methods", () => {
                 const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
@@ -1086,7 +1086,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMethod), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getInstanceMethod"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1106,7 +1106,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMethodOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getInstanceMethodOrThrow"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1130,7 +1130,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMethods), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticMethods"), () => {
         describe("no static methods", () => {
             it("should not have any static methods", () => {
                 const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
@@ -1153,7 +1153,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMethod), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticMethod"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1173,7 +1173,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMethodOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticMethodOrThrow"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1197,7 +1197,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMembers), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getInstanceMembers"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>(
             "class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
                 + "prop2: number;method1() {}\n}\n",
@@ -1207,7 +1207,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMember), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getInstanceMember"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1232,7 +1232,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getInstanceMemberOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getInstanceMemberOrThrow"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1256,7 +1256,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMembers), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticMembers"), () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>(
             "class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n"
                 + "prop2: number;method1() {}\n}\n",
@@ -1266,7 +1266,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMember), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticMember"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1286,7 +1286,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getStaticMemberOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getStaticMemberOrThrow"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1310,7 +1310,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getMembers), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getMembers"), () => {
         it("should get the right number of instance, static, and constructor members in a non-ambient context", () => {
             const code = "class Identifier {\nconstructor();constructor(public param) {}\nstatic prop2: string;\nstatic method();"
                 + "static method() { }\nabstract abstractMethod(): void; \n"
@@ -1334,7 +1334,7 @@ describe(nameof(ClassLikeDeclarationBase), () => {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getMembersWithComments), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getMembersWithComments"), () => {
         it("should get any class element comments in an empty class", () => {
             const code = "class C {\n  //a\n  /*b*/\n}";
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
@@ -1421,7 +1421,7 @@ class c {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getMember), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getMember"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1439,7 +1439,7 @@ class c {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getMemberOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getMemberOrThrow"), () => {
         const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n"
             + "constructor(param: string, public param2: string, readonly param3: string) {}\n"
             + "instanceProp: string;\nprop2: number;method() {}\n"
@@ -1461,7 +1461,7 @@ class c {
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getBaseTypes), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getBaseTypes"), () => {
         function doTest(text: string, className: string, expectedNames: string[]) {
             const { sourceFile } = getInfoFromText(text, {
                 includeLibDts: true, // need to include the lib files... see TS issue #34963
@@ -1503,7 +1503,7 @@ class Child extends Mixin(Base) {}
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getBaseClass), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getBaseClass"), () => {
         function doTest(text: string, className: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(text, {
                 includeLibDts: true, // need to include the lib files... see TS issue #34963
@@ -1543,7 +1543,7 @@ class Child extends Mixin(Base) {}
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getBaseClassOrThrow), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getBaseClassOrThrow"), () => {
         function doTest(text: string, className: string, expectedName: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             if (typeof expectedName === "undefined")
@@ -1561,7 +1561,7 @@ class Child extends Mixin(Base) {}
         });
     });
 
-    describe(nameof<ClassLikeDeclarationBase>(d => d.getDerivedClasses), () => {
+    describe(nameof.property<ClassLikeDeclarationBase>("getDerivedClasses"), () => {
         function doTest(text: string, className: string, expectedNames: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const classes = sourceFile.getClassOrThrow(className).getDerivedClasses();

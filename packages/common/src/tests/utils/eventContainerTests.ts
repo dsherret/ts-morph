@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { EventContainer } from "../../utils";
 
-describe(nameof(EventContainer), () => {
+describe("EventContainer", () => {
     it("should support subscribing", () => {
         let firedCount = 0;
         const container = new EventContainer();

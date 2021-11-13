@@ -2,14 +2,14 @@ import { expect } from "chai";
 import { AwaitableNode, ForOfStatement } from "../../../../compiler";
 import { AwaitableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
-describe(nameof(AwaitableNode), () => {
+describe("AwaitableNode", () => {
     const awaitForOfText = "for await (const x of [Promise.resolve(1)]) {}";
     const forOfText = "for (const x of [Promise.resolve(1)]) {}";
     const { sourceFile: mainSourceFile } = getInfoFromText(`${awaitForOfText}\n${forOfText}`);
     const awaitForOf = mainSourceFile.getStatements()[0] as ForOfStatement;
     const forOf = mainSourceFile.getStatements()[1] as ForOfStatement;
 
-    describe(nameof<AwaitableNode>(n => n.isAwaited), () => {
+    describe(nameof.property<AwaitableNode>("isAwaited"), () => {
         it("should be a await when so", () => {
             expect(awaitForOf.isAwaited()).to.be.true;
         });
@@ -19,7 +19,7 @@ describe(nameof(AwaitableNode), () => {
         });
     });
 
-    describe(nameof<AwaitableNode>(n => n.getAwaitKeyword), () => {
+    describe(nameof.property<AwaitableNode>("getAwaitKeyword"), () => {
         it("should have an await token when awaited", () => {
             expect(awaitForOf.getAwaitKeyword()!.getText()).to.equal("await");
         });
@@ -29,7 +29,7 @@ describe(nameof(AwaitableNode), () => {
         });
     });
 
-    describe(nameof<AwaitableNode>(n => n.getAwaitKeywordOrThrow), () => {
+    describe(nameof.property<AwaitableNode>("getAwaitKeywordOrThrow"), () => {
         it("should have an await token when awaited", () => {
             expect(awaitForOf.getAwaitKeywordOrThrow().getText()).to.equal("await");
         });
@@ -39,7 +39,7 @@ describe(nameof(AwaitableNode), () => {
         });
     });
 
-    describe(nameof<AwaitableNode>(n => n.setIsAwaited), () => {
+    describe(nameof.property<AwaitableNode>("setIsAwaited"), () => {
         describe("For of", () => {
             it("should set as await when not a await", () => {
                 const { firstChild, sourceFile } = getInfoFromText<ForOfStatement>(forOfText);

@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { ExtendedParser } from "../../../../compiler/ast/utils";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ExtendedParser), () => {
+describe("ExtendedParser", () => {
     // todo: more tests
     describe(nameof.property(ExtendedParser, "getCompilerForEachChildren"), () => {
         it("should include comment nodes", () => {

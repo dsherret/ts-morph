@@ -7,8 +7,8 @@ function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxText>(text, SyntaxKind.JsxText, { isJsx: true });
 }
 
-describe(nameof(JsxText), () => {
-    describe(nameof<JsxText>(n => n.containsOnlyTriviaWhiteSpaces), () => {
+describe("JsxText", () => {
+    describe(nameof.property<JsxText>("containsOnlyTriviaWhiteSpaces"), () => {
         function doTest(text: string, value: boolean) {
             const { descendant } = getInfo(text);
             expect(descendant.containsOnlyTriviaWhiteSpaces()).to.equal(value);

@@ -16,8 +16,8 @@ function getInfoFromTextWithSyntax<T extends Node>(text: string, kind?: SyntaxKi
     return { ...obj, firstChild };
 }
 
-describe(nameof(StatementedNode), () => {
-    describe(nameof<StatementedNode>(s => s.getStatements), () => {
+describe("StatementedNode", () => {
+    describe(nameof.property<StatementedNode>("getStatements"), () => {
         it("should get the statements of a source file", () => {
             const { sourceFile } = getInfoFromText("var t; var m;");
             expect(sourceFile.getStatements().map(s => s.getText())).to.deep.equal(["var t;", "var m;"]);
@@ -61,7 +61,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(s => s.getStatement), () => {
+    describe(nameof.property<StatementedNode>("getStatement"), () => {
         it("should get the statement when it exists", () => {
             const { sourceFile } = getInfoFromText("var t; class T {}");
             const statement = sourceFile.getStatement(Node.isClassDeclaration);
@@ -75,7 +75,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(s => s.getStatementOrThrow), () => {
+    describe(nameof.property<StatementedNode>("getStatementOrThrow"), () => {
         it("should get the statement when it exists", () => {
             const { sourceFile } = getInfoFromText("var t; class T {}");
             const statement = sourceFile.getStatementOrThrow(Node.isClassDeclaration);
@@ -89,7 +89,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(s => s.getStatementByKind), () => {
+    describe(nameof.property<StatementedNode>("getStatementByKind"), () => {
         function doTest(text: string, kind: SyntaxKind, expectedNodeText: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const node = sourceFile.getStatementByKind(kind);
@@ -113,7 +113,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(s => s.getStatementByKindOrThrow), () => {
+    describe(nameof.property<StatementedNode>("getStatementByKindOrThrow"), () => {
         function doTest(text: string, kind: SyntaxKind, expectedNodeText: string | undefined) {
             const { sourceFile } = getInfoFromText(text);
             const func = () => sourceFile.getStatementByKindOrThrow(kind);
@@ -132,7 +132,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(s => s.insertStatements), () => {
+    describe(nameof.property<StatementedNode>("insertStatements"), () => {
         function doSourceFileTest(
             code: string,
             index: number,
@@ -351,7 +351,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(s => s.addStatements), () => {
+    describe(nameof.property<StatementedNode>("addStatements"), () => {
         function doSourceFileTest(code: string, statements: string, expectedLength: number, expectedCode: string) {
             const { sourceFile } = getInfoFromText(code);
             const nodes = sourceFile.addStatements(statements);
@@ -370,7 +370,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(s => s.removeStatements), () => {
+    describe(nameof.property<StatementedNode>("removeStatements"), () => {
         function doSourceFileTest(code: string, range: [number, number], expectedCode: string) {
             const { sourceFile } = getInfoFromText(code);
             sourceFile.removeStatements(range);
@@ -442,7 +442,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(s => s.removeStatement), () => {
+    describe(nameof.property<StatementedNode>("removeStatement"), () => {
         function doSourceFileTest(code: string, index: number, expectedCode: string) {
             const { sourceFile } = getInfoFromText(code);
             sourceFile.removeStatement(index);
@@ -459,14 +459,14 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
-        describe(nameof(BodyableNode), () => {
+    describe(nameof.property<FunctionDeclaration>("getStructure"), () => {
+        describe("BodyableNode", () => {
             function doBodyableTest(startCode: string, statements: StatementStructures[] | undefined) {
                 const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
                 const structure = firstChild.getStructure() as StatementedNodeStructure;
 
                 if (statements == null)
-                    expect(structure.hasOwnProperty(nameof<StatementedNodeStructure>(s => s.statements))).to.be.true;
+                    expect(structure.hasOwnProperty(nameof.property<StatementedNodeStructure>("statements"))).to.be.true;
 
                 expect(structure.statements).to.deep.equal(statements);
             }
@@ -492,7 +492,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<SourceFile>(s => s.set), () => {
+    describe(nameof.property<SourceFile>("set"), () => {
         function doTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
             sourceFile.set(structure);
@@ -531,7 +531,7 @@ describe(nameof(StatementedNode), () => {
             doTest("", { statements: writer => writer.write("1;") }, "1;\n");
         });
 
-        describe(nameof(BodyableNode), () => {
+        describe("BodyableNode", () => {
             function doBodyableTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
                 const { sourceFile, firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
                 firstChild.set(structure);

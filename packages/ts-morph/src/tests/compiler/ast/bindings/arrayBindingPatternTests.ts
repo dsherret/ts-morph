@@ -8,8 +8,8 @@ function getInfoFromTextWithBindingPattern(text: string) {
     return { ...info, bindingPattern: info.descendant };
 }
 
-describe(nameof(ArrayBindingPattern), () => {
-    describe(nameof<ArrayBindingPattern>(n => n.getElements), () => {
+describe("ArrayBindingPattern", () => {
+    describe(nameof.property<ArrayBindingPattern>("getElements"), () => {
         function doTest(text: string, expectedTexts: string[]) {
             const { bindingPattern } = getInfoFromTextWithBindingPattern(text);
             expect(bindingPattern.getElements().map(e => e.getText())).to.deep.equal(expectedTexts);

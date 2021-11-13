@@ -3,13 +3,13 @@ import { ClassDeclaration, MethodDeclaration, OverrideableNode } from "../../../
 import { OverrideableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(OverrideableNode), () => {
+describe("OverrideableNode", () => {
     describe("navigation", () => {
         const { firstChild } = getInfoFromText<ClassDeclaration>("class C { override method1() {} method2() {} }");
         const overrideMethod = firstChild.getMethods()[0];
         const nonOverrideMethod = firstChild.getMethods()[1];
 
-        describe(nameof<OverrideableNode>(n => n.hasOverrideKeyword), () => {
+        describe(nameof.property<OverrideableNode>("hasOverrideKeyword"), () => {
             it("should be when is", () => {
                 expect(overrideMethod.hasOverrideKeyword()).to.be.true;
             });
@@ -19,7 +19,7 @@ describe(nameof(OverrideableNode), () => {
             });
         });
 
-        describe(nameof<OverrideableNode>(n => n.getOverrideKeyword), () => {
+        describe(nameof.property<OverrideableNode>("getOverrideKeyword"), () => {
             it("should have one when does", () => {
                 expect(overrideMethod.getOverrideKeyword()!.getText()).to.equal("override");
                 expect(overrideMethod.getOverrideKeywordOrThrow().getText()).to.equal("override");
@@ -32,7 +32,7 @@ describe(nameof(OverrideableNode), () => {
         });
     });
 
-    describe(nameof<OverrideableNode>(n => n.setHasOverrideKeyword), () => {
+    describe(nameof.property<OverrideableNode>("setHasOverrideKeyword"), () => {
         function doTest(text: string, value: boolean, expected: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
             firstChild.getMethods()[0].setHasOverrideKeyword(value);
@@ -48,7 +48,7 @@ describe(nameof(OverrideableNode), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(n => n.getStructure), () => {
+    describe(nameof.property<MethodDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, hasOverrideKeyword: boolean) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             expect(firstChild.getMethods()[0].getStructure().hasOverrideKeyword).to.equal(hasOverrideKeyword);
@@ -63,7 +63,7 @@ describe(nameof(OverrideableNode), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(n => n.set), () => {
+    describe(nameof.property<MethodDeclaration>("set"), () => {
         function doTest(startCode: string, structure: OverrideableNodeStructure, expectedCode: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.getMethods()[0].set(structure);

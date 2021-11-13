@@ -4,8 +4,8 @@ import { ExtendsClauseableNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ExtendsClauseableNode), () => {
-    describe(nameof<ExtendsClauseableNode>(n => n.getExtends), () => {
+describe("ExtendsClauseableNode", () => {
+    describe(nameof.property<ExtendsClauseableNode>("getExtends"), () => {
         function doTest(text: string, expectedLength: number) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(text);
             const extendsExpressions = firstChild.getExtends();
@@ -21,7 +21,7 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
     });
 
-    describe(nameof<ExtendsClauseableNode>(n => n.addExtends), () => {
+    describe(nameof.property<ExtendsClauseableNode>("addExtends"), () => {
         function doTest(code: string, extendsTextOrArray: string | WriterFunction | (string | WriterFunction)[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             if (extendsTextOrArray instanceof Array || extendsTextOrArray instanceof Function) {
@@ -68,7 +68,7 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
     });
 
-    describe(nameof<ExtendsClauseableNode>(n => n.insertExtends), () => {
+    describe(nameof.property<ExtendsClauseableNode>("insertExtends"), () => {
         function doTest(code: string, index: number, extendsTextOrArray: string | WriterFunction | (string | WriterFunction)[], expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(code);
             if (extendsTextOrArray instanceof Array || extendsTextOrArray instanceof Function) {
@@ -103,7 +103,7 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
     });
 
-    describe(nameof<ExtendsClauseableNode>(n => n.removeExtends), () => {
+    describe(nameof.property<ExtendsClauseableNode>("removeExtends"), () => {
         function doTest(startingCode: string, index: number, expectedCode: string) {
             doIndexTest();
             doNodeTest();
@@ -148,7 +148,7 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
     });
 
-    describe(nameof<InterfaceDeclaration>(n => n.set), () => {
+    describe(nameof.property<InterfaceDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: ExtendsClauseableNodeStructure, expectedCode: string) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.set(structure);
@@ -176,7 +176,7 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
     });
 
-    describe(nameof<InterfaceDeclaration>(n => n.getStructure), () => {
+    describe(nameof.property<InterfaceDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, extendsTexts: string[]) {
             const { firstChild } = getInfoFromText<InterfaceDeclaration>(startingCode);
             expect(firstChild.getStructure().extends).to.deep.equal(extendsTexts);

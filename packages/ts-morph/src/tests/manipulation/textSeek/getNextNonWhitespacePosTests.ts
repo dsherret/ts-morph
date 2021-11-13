@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { getNextNonWhitespacePos } from "../../../manipulation/textSeek";
 
-describe(nameof(getNextNonWhitespacePos), () => {
+describe("getNextNonWhitespacePos", () => {
     function doTest(fileText: string, pos: number, expectedPos: number) {
         expect(getNextNonWhitespacePos(fileText, pos)).to.equal(expectedPos);
     }

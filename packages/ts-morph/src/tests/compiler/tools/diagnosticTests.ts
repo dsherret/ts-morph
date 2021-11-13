@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { Diagnostic } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
-describe(nameof(Diagnostic), () => {
+describe("Diagnostic", () => {
     const { project, sourceFile } = getInfoFromText("const a: string;", { includeLibDts: true });
     project.createSourceFile("file.ts", "interface MyInterface { declare prop: string; }");
     const diagnostics = project.getPreEmitDiagnostics();
@@ -20,49 +20,49 @@ describe(nameof(Diagnostic), () => {
         });
     });
 
-    describe(nameof<Diagnostic>(d => d.getMessageText), () => {
+    describe(nameof.property<Diagnostic>("getMessageText"), () => {
         it("should get the message text", () => {
             expect(constError.getMessageText()).to.equal(`'const' declarations must be initialized.`);
         });
     });
 
-    describe(nameof<Diagnostic>(d => d.getCategory), () => {
+    describe(nameof.property<Diagnostic>("getCategory"), () => {
         it("should get the category", () => {
             expect(constError.getCategory()).to.equal(DiagnosticCategory.Error);
         });
     });
 
-    describe(nameof<Diagnostic>(d => d.getCode), () => {
+    describe(nameof.property<Diagnostic>("getCode"), () => {
         it("should get the code", () => {
             expect(constError.getCode()).to.equal(1155);
         });
     });
 
-    describe(nameof<Diagnostic>(d => d.getStart), () => {
+    describe(nameof.property<Diagnostic>("getStart"), () => {
         it("should get the start", () => {
             expect(constError.getStart()).to.equal(6);
         });
     });
 
-    describe(nameof<Diagnostic>(d => d.getLineNumber), () => {
+    describe(nameof.property<Diagnostic>("getLineNumber"), () => {
         it("should get the line number", () => {
             expect(constError.getLineNumber()).to.equal(1);
         });
     });
 
-    describe(nameof<Diagnostic>(d => d.getLength), () => {
+    describe(nameof.property<Diagnostic>("getLength"), () => {
         it("should get the length", () => {
             expect(constError.getLength()).to.equal(1);
         });
     });
 
-    describe(nameof<Diagnostic>(d => d.getSource), () => {
+    describe(nameof.property<Diagnostic>("getSource"), () => {
         it("should get the source", () => {
             expect(constError.getSource()).to.be.undefined;
         });
     });
 
-    describe(nameof<Diagnostic>(d => d.getSourceFile), () => {
+    describe(nameof.property<Diagnostic>("getSourceFile"), () => {
         it("should get the source file", () => {
             expect(constError.getSourceFile()!.getFilePath()).to.equal(sourceFile.getFilePath());
         });

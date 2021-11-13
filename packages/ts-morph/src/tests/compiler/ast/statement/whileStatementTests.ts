@@ -7,11 +7,11 @@ function getStatement(text: string) {
     return getInfoFromTextWithDescendant<WhileStatement>(text, SyntaxKind.WhileStatement).descendant;
 }
 
-describe(nameof(WhileStatement), () => {
+describe("WhileStatement", () => {
     const expression = "x <= 10";
     const statement = `while (${expression}) {}`;
 
-    describe(nameof<WhileStatement>(n => n.getExpression), () => {
+    describe(nameof.property<WhileStatement>("getExpression"), () => {
         function doTest(text: string, expectedText?: string) {
             const whileStatement = getStatement(text);
             expect(whileStatement.getExpression().getText()).to.equal(expectedText);

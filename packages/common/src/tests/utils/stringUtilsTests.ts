@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { errors } from "../../errors";
 import { nameof, StringUtils } from "../../utils";
 
-describe(nameof(StringUtils), () => {
+describe("StringUtils", () => {
     describe(nameof.property(StringUtils, "getLineNumberAtPos"), () => {
         it("should throw if providing a negative pos", () => {
             expect(() => StringUtils.getLineNumberAtPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);

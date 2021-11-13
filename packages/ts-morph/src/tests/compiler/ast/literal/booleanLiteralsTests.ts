@@ -12,8 +12,8 @@ function getInfoFromTextWithBooleanLiteral(text: string) {
     return { ...obj, literal };
 }
 
-describe(nameof<BooleanLiteral>(), () => {
-    describe(nameof<BooleanLiteral>(n => n.getLiteralValue), () => {
+describe("BooleanLiteral", () => {
+    describe(nameof.property<BooleanLiteral>("getLiteralValue"), () => {
         function doTest(text: string, expectedValue: boolean) {
             const { literal } = getInfoFromTextWithBooleanLiteral(text);
             expect(literal.getLiteralValue()).to.equal(expectedValue);
@@ -28,7 +28,7 @@ describe(nameof<BooleanLiteral>(), () => {
         });
     });
 
-    describe(nameof<BooleanLiteral>(n => n.setLiteralValue), () => {
+    describe(nameof.property<BooleanLiteral>("setLiteralValue"), () => {
         function doTest(text: string, value: boolean, expectedText: string) {
             const { literal, sourceFile } = getInfoFromTextWithBooleanLiteral(text);
             literal.setLiteralValue(value);

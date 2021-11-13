@@ -7,8 +7,8 @@ function getDefaultClause(text: string) {
     return getInfoFromTextWithDescendant<DefaultClause>(text, SyntaxKind.DefaultClause).descendant;
 }
 
-describe(nameof(DefaultClause), () => {
-    describe(nameof<DefaultClause>(n => n.getStatementsWithComments), () => {
+describe("DefaultClause", () => {
+    describe(nameof.property<DefaultClause>("getStatementsWithComments"), () => {
         function doTest(text: string, expectedTexts: string[]) {
             const defaultClause = getDefaultClause(text);
             expect(defaultClause.getStatementsWithComments().map(s => s.getText())).to.deep.equal(expectedTexts);

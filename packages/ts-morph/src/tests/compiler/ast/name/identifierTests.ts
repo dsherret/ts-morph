@@ -4,8 +4,8 @@ import { CallExpression, FunctionDeclaration, Identifier, InterfaceDeclaration, 
 import { Project } from "../../../../Project";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(Identifier), () => {
-    describe(nameof<Identifier>(n => n.rename), () => {
+describe("Identifier", () => {
+    describe(nameof.property<Identifier>("rename"), () => {
         it("should rename", () => {
             const text = "function myFunction() {} const reference = myFunction;";
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(text);
@@ -23,7 +23,7 @@ describe(nameof(Identifier), () => {
         });
     });
 
-    describe(nameof<Identifier>(n => n.getDefinitions), () => {
+    describe(nameof.property<Identifier>("getDefinitions"), () => {
         it("should get the definition", () => {
             const sourceFileText = "function myFunction() {}\nconst reference = myFunction;";
             const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>(sourceFileText);
@@ -60,7 +60,7 @@ describe(nameof(Identifier), () => {
         });
     });
 
-    describe(nameof<Identifier>(n => n.getImplementations), () => {
+    describe(nameof.property<Identifier>("getImplementations"), () => {
         it("should get the implementations", () => {
             const sourceFileText = "interface MyInterface {}\nexport class Class1 implements MyInterface {}\nclass Class2 implements MyInterface {}";
             const { firstChild, sourceFile, project } = getInfoFromText<InterfaceDeclaration>(sourceFileText);
@@ -71,7 +71,7 @@ describe(nameof(Identifier), () => {
         });
     });
 
-    describe(nameof<Identifier>(n => n.findReferences), () => {
+    describe(nameof.property<Identifier>("findReferences"), () => {
         it("should find all the references", () => {
             const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
@@ -138,7 +138,7 @@ const t = MyNamespace.MyClass;
         });
     });
 
-    describe(nameof<Identifier>(n => n.findReferencesAsNodes), () => {
+    describe(nameof.property<Identifier>("findReferencesAsNodes"), () => {
         it("should find all the references and exclude the definition", () => {
             const { firstChild, sourceFile, project } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
@@ -149,7 +149,7 @@ const t = MyNamespace.MyClass;
         });
     });
 
-    describe(nameof<Identifier>(n => n.getDefinitionNodes), () => {
+    describe(nameof.property<Identifier>("getDefinitionNodes"), () => {
         it("should get the definition nodes", () => {
             const { sourceFile } = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const definitionNodes = sourceFile.getVariableDeclarationOrThrow("reference")
@@ -169,7 +169,7 @@ const t = MyNamespace.MyClass;
         });
     });
 
-    describe(nameof<Identifier>(n => n.getType), () => {
+    describe(nameof.property<Identifier>("getType"), () => {
         function doTest(text: string, expectedTypes: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier);

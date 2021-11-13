@@ -4,7 +4,7 @@ import { ExportAssignmentStructurePrinter } from "../../../structurePrinters";
 import { ExportAssignmentStructure, OptionalKind } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(ExportAssignmentStructurePrinter), () => {
+describe("ExportAssignmentStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
     }
@@ -17,7 +17,7 @@ describe(nameof(ExportAssignmentStructurePrinter), () => {
 
     // todo: more tests
 
-    describe(nameof<ExportAssignmentStructurePrinter>(p => p.printText), () => {
+    describe(nameof.property<ExportAssignmentStructurePrinter>("printText"), () => {
         describe("expression", () => {
             it("should write with a string", () => {
                 doTest({ expression: "testing" }, `export = testing;`);

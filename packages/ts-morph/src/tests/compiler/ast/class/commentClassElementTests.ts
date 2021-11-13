@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { ClassDeclaration, CommentClassElement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(CommentClassElement), () => {
-    describe(nameof<CommentClassElement>(c => c.remove), () => {
+describe("CommentClassElement", () => {
+    describe(nameof.property<CommentClassElement>("remove"), () => {
         function doTest(startCode: string, index: number, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.getMembersWithComments()[index].remove();

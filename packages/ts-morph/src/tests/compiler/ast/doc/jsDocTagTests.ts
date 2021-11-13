@@ -3,27 +3,27 @@ import { JSDocTag, Node } from "../../../../compiler";
 import { JSDocTagStructure } from "../../../../structures";
 import { fillStructures, getInfoFromText, OptionalKindAndTrivia } from "../../testHelpers";
 
-describe(nameof(JSDocTag), () => {
+describe("JSDocTag", () => {
     function getInfo(text: string) {
         const info = getInfoFromText(text);
         return { descendant: info.sourceFile.getFirstDescendantOrThrow(Node.isJSDocTag), ...info };
     }
 
-    describe(nameof<JSDocTag>(d => d.getTagName), () => {
+    describe(nameof.property<JSDocTag>("getTagName"), () => {
         it("should get the tag name", () => {
             const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");
             expect(descendant.getTagName()).to.equal("param");
         });
     });
 
-    describe(nameof<JSDocTag>(d => d.getTagNameNode), () => {
+    describe(nameof.property<JSDocTag>("getTagNameNode"), () => {
         it("should get the tag name node", () => {
             const { descendant } = getInfo("/** @param t - String */\nfunction test() {}");
             expect(descendant.getTagNameNode().getText()).to.equal("param");
         });
     });
 
-    describe(nameof<JSDocTag>(d => d.setTagName), () => {
+    describe(nameof.property<JSDocTag>("setTagName"), () => {
         it("should set the tag name", () => {
             const { sourceFile, descendant } = getInfo("/** @param t - String */\nfunction test() {}");
             descendant.setTagName("other");
@@ -39,7 +39,7 @@ describe(nameof(JSDocTag), () => {
         });
     });
 
-    describe(nameof<JSDocTag>(d => d.getComment), () => {
+    describe(nameof.property<JSDocTag>("getComment"), () => {
         function doTest(text: string, expected: string | undefined) {
             const { descendant } = getInfo(text);
             expect(descendant.getComment()).to.equal(expected);
@@ -54,7 +54,7 @@ describe(nameof(JSDocTag), () => {
         });
     });
 
-    describe(nameof<JSDocTag>(n => n.remove), () => {
+    describe(nameof.property<JSDocTag>("remove"), () => {
         function doTest(text: string, index: number, expected: string) {
             const { sourceFile } = getInfoFromText(text);
             const descendant = sourceFile.getDescendants().filter(Node.isJSDocTag)[index];
@@ -161,7 +161,7 @@ describe(nameof(JSDocTag), () => {
         });
     });
 
-    describe(nameof<JSDocTag>(d => d.set), () => {
+    describe(nameof.property<JSDocTag>("set"), () => {
         function doTest(text: string, structure: Partial<JSDocTagStructure>, expectedText: string) {
             const { sourceFile, descendant } = getInfo(text);
             descendant.set(structure);
@@ -229,7 +229,7 @@ describe(nameof(JSDocTag), () => {
         });
     });
 
-    describe(nameof<JSDocTag>(d => d.getStructure), () => {
+    describe(nameof.property<JSDocTag>("getStructure"), () => {
         function doTest(text: string, expected: OptionalKindAndTrivia<MakeRequired<JSDocTagStructure>>) {
             const { descendant } = getInfo(text);
             expect(descendant.getStructure()).to.deep.equal(fillStructures.jsDocTag(expected));

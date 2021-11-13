@@ -7,8 +7,8 @@ function getStringLiteral(text: string) {
     return getInfoFromTextWithDescendant<StringLiteral>(text, SyntaxKind.StringLiteral).descendant;
 }
 
-describe(nameof(StringLiteral), () => {
-    describe(nameof<StringLiteral>(n => n.getLiteralValue), () => {
+describe("StringLiteral", () => {
+    describe(nameof.property<StringLiteral>("getLiteralValue"), () => {
         function doTest(text: string, expectedValue: string) {
             const literal = getStringLiteral(text);
             expect(literal.getLiteralValue()).to.equal(expectedValue);
@@ -19,7 +19,7 @@ describe(nameof(StringLiteral), () => {
         });
     });
 
-    describe(nameof<StringLiteral>(n => n.setLiteralValue), () => {
+    describe(nameof.property<StringLiteral>("setLiteralValue"), () => {
         function doTest(text: string, newValue: string, expectedText: string, expectedLiteralText?: string) {
             const literal = getStringLiteral(text);
             const sourceFile = literal._sourceFile;
@@ -43,7 +43,7 @@ describe(nameof(StringLiteral), () => {
         });
     });
 
-    describe(nameof<StringLiteral>(n => n.isTerminated), () => {
+    describe(nameof.property<StringLiteral>("isTerminated"), () => {
         function doTest(text: string, expectedValue: boolean) {
             const literal = getStringLiteral(text);
             expect(literal.isTerminated()).to.equal(expectedValue);
@@ -58,7 +58,7 @@ describe(nameof(StringLiteral), () => {
         });
     });
 
-    describe(nameof<StringLiteral>(n => n.hasExtendedUnicodeEscape), () => {
+    describe(nameof.property<StringLiteral>("hasExtendedUnicodeEscape"), () => {
         function doTest(text: string, expectedValue: boolean) {
             const literal = getStringLiteral(text);
             expect(literal.hasExtendedUnicodeEscape()).to.equal(expectedValue);
@@ -73,7 +73,7 @@ describe(nameof(StringLiteral), () => {
         });
     });
 
-    describe(nameof<StringLiteral>(n => n.getQuoteKind), () => {
+    describe(nameof.property<StringLiteral>("getQuoteKind"), () => {
         function doTest(text: string, quoteKind: QuoteKind) {
             const literal = getStringLiteral(text);
             expect(literal.getQuoteKind()).to.equal(quoteKind);

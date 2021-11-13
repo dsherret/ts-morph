@@ -3,8 +3,8 @@ import { expect } from "chai";
 import { ExpressionedNode, ParenthesizedExpression } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(ExpressionedNode), () => {
-    describe(nameof<ExpressionedNode>(n => n.getExpression), () => {
+describe("ExpressionedNode", () => {
+    describe(nameof.property<ExpressionedNode>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const { descendant } = getInfoFromTextWithDescendant<ParenthesizedExpression>(text, SyntaxKind.ParenthesizedExpression);
             expect(descendant.getExpression().getText()).to.equal(expectedText);

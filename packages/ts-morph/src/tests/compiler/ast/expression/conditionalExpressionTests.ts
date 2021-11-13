@@ -8,14 +8,14 @@ function getInfoFromTextWithExpression(text: string) {
     return { ...info, expression: info.descendant };
 }
 
-describe(nameof(ConditionalExpression), () => {
+describe("ConditionalExpression", () => {
     const condition = "x > 0";
     const questionToken = "?";
     const whenTrue = "0";
     const colonToken = ":";
     const whenFalse = "x";
     const conditional = `${condition} ${questionToken} ${whenTrue} ${colonToken} ${whenFalse}`;
-    describe(nameof<ConditionalExpression>(n => n.getCondition), () => {
+    describe(nameof.property<ConditionalExpression>("getCondition"), () => {
         function doTest(text: string, expectedText: string) {
             const { expression } = getInfoFromTextWithExpression(text);
             expect(expression.getCondition().getText()).to.equal(expectedText);
@@ -26,7 +26,7 @@ describe(nameof(ConditionalExpression), () => {
         });
     });
 
-    describe(nameof<ConditionalExpression>(n => n.getQuestionToken), () => {
+    describe(nameof.property<ConditionalExpression>("getQuestionToken"), () => {
         function doTest(text: string, expectedText: string) {
             const { expression } = getInfoFromTextWithExpression(text);
             expect(expression.getQuestionToken().getText()).to.equal(expectedText);
@@ -37,7 +37,7 @@ describe(nameof(ConditionalExpression), () => {
         });
     });
 
-    describe(nameof<ConditionalExpression>(n => n.getWhenTrue), () => {
+    describe(nameof.property<ConditionalExpression>("getWhenTrue"), () => {
         function doTest(text: string, expectedText: string) {
             const { expression } = getInfoFromTextWithExpression(text);
             expect(expression.getWhenTrue().getText()).to.equal(expectedText);
@@ -48,7 +48,7 @@ describe(nameof(ConditionalExpression), () => {
         });
     });
 
-    describe(nameof<ConditionalExpression>(n => n.getColonToken), () => {
+    describe(nameof.property<ConditionalExpression>("getColonToken"), () => {
         function doTest(text: string, expectedText: string) {
             const { expression } = getInfoFromTextWithExpression(text);
             expect(expression.getColonToken().getText()).to.equal(expectedText);
@@ -59,7 +59,7 @@ describe(nameof(ConditionalExpression), () => {
         });
     });
 
-    describe(nameof<ConditionalExpression>(n => n.getWhenFalse), () => {
+    describe(nameof.property<ConditionalExpression>("getWhenFalse"), () => {
         function doTest(text: string, expectedText: string) {
             const { expression } = getInfoFromTextWithExpression(text);
             expect(expression.getWhenFalse().getText()).to.equal(expectedText);

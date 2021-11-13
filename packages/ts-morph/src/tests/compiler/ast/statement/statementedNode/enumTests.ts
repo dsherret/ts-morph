@@ -3,8 +3,8 @@ import { EnumDeclaration, Node, StatementedNode } from "../../../../../compiler"
 import { EnumDeclarationStructure } from "../../../../../structures";
 import { getInfoFromText, OptionalKindAndTrivia } from "../../../testHelpers";
 
-describe(nameof(StatementedNode), () => {
-    describe(nameof<StatementedNode>(n => n.insertEnums), () => {
+describe("StatementedNode", () => {
+    describe(nameof.property<StatementedNode>("insertEnums"), () => {
         function doTest(startCode: string, index: number, structures: OptionalKindAndTrivia<EnumDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertEnums(index, structures);
@@ -62,7 +62,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.insertEnum), () => {
+    describe(nameof.property<StatementedNode>("insertEnum"), () => {
         function doTest(startCode: string, index: number, structure: OptionalKindAndTrivia<EnumDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.insertEnum(index, structure);
@@ -75,7 +75,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.addEnums), () => {
+    describe(nameof.property<StatementedNode>("addEnums"), () => {
         function doTest(startCode: string, structures: OptionalKindAndTrivia<EnumDeclarationStructure>[], expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addEnums(structures);
@@ -88,7 +88,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.addEnum), () => {
+    describe(nameof.property<StatementedNode>("addEnum"), () => {
         function doTest(startCode: string, structure: OptionalKindAndTrivia<EnumDeclarationStructure>, expectedText: string) {
             const { sourceFile } = getInfoFromText(startCode);
             const result = sourceFile.addEnum(structure);
@@ -101,7 +101,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getEnums), () => {
+    describe(nameof.property<StatementedNode>("getEnums"), () => {
         const { sourceFile } = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
         const enums = sourceFile.getEnums();
 
@@ -119,7 +119,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getEnum), () => {
+    describe(nameof.property<StatementedNode>("getEnum"), () => {
         const { sourceFile } = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
 
         it("should get an enum by a name", () => {
@@ -135,7 +135,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getEnumOrThrow), () => {
+    describe(nameof.property<StatementedNode>("getEnumOrThrow"), () => {
         const { sourceFile } = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
 
         it("should get an enum by a name", () => {

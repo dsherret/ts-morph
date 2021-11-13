@@ -2,20 +2,20 @@ import { expect } from "chai";
 import { ClassDeclaration, ExpressionWithTypeArguments } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ExpressionWithTypeArguments), () => {
+describe("ExpressionWithTypeArguments", () => {
     function getFirstExpressionWithTypeArgs(text: string) {
         const { firstChild } = getInfoFromText<ClassDeclaration>(text);
         return firstChild.getExtends()!;
     }
 
-    describe(nameof<ExpressionWithTypeArguments>(d => d.getExpression), () => {
+    describe(nameof.property<ExpressionWithTypeArguments>("getExpression"), () => {
         it("should get the compiler expression", () => {
             const expression = getFirstExpressionWithTypeArgs("class MyClass extends MyOtherClass {}");
             expect(expression.getExpression().getText()).to.equal("MyOtherClass");
         });
     });
 
-    describe(nameof<ExpressionWithTypeArguments>(d => d.getTypeArguments), () => {
+    describe(nameof.property<ExpressionWithTypeArguments>("getTypeArguments"), () => {
         it("should return an empty array when there's no type arguments", () => {
             const expression = getFirstExpressionWithTypeArgs("class MyClass extends MyOtherClass {}");
             expect(expression.getTypeArguments().length).to.equal(0);

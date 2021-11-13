@@ -3,13 +3,13 @@ import { ExpressionStatement, QuestionDotTokenableNode } from "../../../../compi
 import { QuestionDotTokenableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(QuestionDotTokenableNode), () => {
+describe("QuestionDotTokenableNode", () => {
     function getInfoWithFirstExpr(text: string) {
         const result = getInfoFromText<ExpressionStatement>(text);
         return { ...result, expr: result.firstChild.getExpression() as any as QuestionDotTokenableNode };
     }
 
-    describe(nameof<QuestionDotTokenableNode>(d => d.hasQuestionDotToken), () => {
+    describe(nameof.property<QuestionDotTokenableNode>("hasQuestionDotToken"), () => {
         function doTest(text: string, value: boolean) {
             const { expr: firstMember } = getInfoWithFirstExpr(text);
             expect(firstMember.hasQuestionDotToken()).to.equal(value);
@@ -32,7 +32,7 @@ describe(nameof(QuestionDotTokenableNode), () => {
         });
     });
 
-    describe(nameof<QuestionDotTokenableNode>(d => d.getQuestionDotTokenNode), () => {
+    describe(nameof.property<QuestionDotTokenableNode>("getQuestionDotTokenNode"), () => {
         it("should get it", () => {
             const { expr: firstMember } = getInfoWithFirstExpr("call?.()");
             expect(firstMember.getQuestionDotTokenNode()!.getText()).to.equal("?.");
@@ -44,7 +44,7 @@ describe(nameof(QuestionDotTokenableNode), () => {
         });
     });
 
-    describe(nameof<QuestionDotTokenableNode>(d => d.getQuestionDotTokenNodeOrThrow), () => {
+    describe(nameof.property<QuestionDotTokenableNode>("getQuestionDotTokenNodeOrThrow"), () => {
         it("should get it", () => {
             const { expr: firstMember } = getInfoWithFirstExpr("call?.()");
             expect(firstMember.getQuestionDotTokenNodeOrThrow()!.getText()).to.equal("?.");
@@ -56,7 +56,7 @@ describe(nameof(QuestionDotTokenableNode), () => {
         });
     });
 
-    describe(nameof<QuestionDotTokenableNode>(d => d.setHasQuestionDotToken), () => {
+    describe(nameof.property<QuestionDotTokenableNode>("setHasQuestionDotToken"), () => {
         function doTest(startText: string, value: boolean, expected: string) {
             const { expr: firstMember, sourceFile } = getInfoWithFirstExpr(startText);
             firstMember.setHasQuestionDotToken(value);

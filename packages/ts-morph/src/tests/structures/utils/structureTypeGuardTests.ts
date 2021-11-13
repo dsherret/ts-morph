@@ -4,7 +4,7 @@ import { AbstractableNodeStructure, ClassDeclarationStructure, Structure, Struct
 
 // most of this code is not worth testing because it's auto generated
 
-describe(nameof(Structure), () => {
+describe("Structure", () => {
     describe(nameof.property(Structure, "hasName"), () => {
         it("should be true when it has a name", () => {
             const structure: ClassDeclarationStructure = { kind: StructureKind.Class, name: "test" };

@@ -4,7 +4,7 @@ import { Writers } from "../../structurePrinters/Writers";
 import { TypeElementMemberedNodeStructure } from "../../structures";
 import { WriterFunction } from "../../types";
 
-describe(nameof<Writers>(), () => {
+describe("Writers", () => {
     function getWriter() {
         return new CodeBlockWriter();
     }

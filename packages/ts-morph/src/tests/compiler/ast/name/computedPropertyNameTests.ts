@@ -8,8 +8,8 @@ function getInfoFromTextWithFirstInterfaceProperty(text: string) {
     return { ...obj, firstProp };
 }
 
-describe(nameof(ComputedPropertyName), () => {
-    describe(nameof<ComputedPropertyName>(n => n.getExpression), () => {
+describe("ComputedPropertyName", () => {
+    describe(nameof.property<ComputedPropertyName>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const { firstProp } = getInfoFromTextWithFirstInterfaceProperty(text);
             const computedPropertyName = (firstProp.getNameNode() as ComputedPropertyName);

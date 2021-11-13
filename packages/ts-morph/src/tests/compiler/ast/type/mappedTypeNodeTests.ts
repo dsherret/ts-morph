@@ -3,12 +3,12 @@ import { expect } from "chai";
 import { MappedTypeNode } from "../../../../compiler";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(MappedTypeNode), () => {
+describe("MappedTypeNode", () => {
     function getNode(text: string) {
         return getInfoFromTextWithDescendant<MappedTypeNode>(text, SyntaxKind.MappedType);
     }
 
-    describe(nameof<MappedTypeNode>(d => d.getNameTypeNode), () => {
+    describe(nameof.property<MappedTypeNode>("getNameTypeNode"), () => {
         it("should get undefined where there's no name", () => {
             const { descendant } = getNode("type MappedExample<T> = { -readonly [Prop in keyof T]: T[Prop]; };");
             expect(descendant.getNameTypeNode()).to.be.undefined;
@@ -22,7 +22,7 @@ describe(nameof(MappedTypeNode), () => {
         });
     });
 
-    describe(nameof<MappedTypeNode>(d => d.getTypeParameter), () => {
+    describe(nameof.property<MappedTypeNode>("getTypeParameter"), () => {
         it("should get the name of the type parameter", () => {
             const { descendant } = getNode("type MappedExample<T> = { -readonly [Prop in keyof T]: T[Prop]; };");
             expect(descendant.getTypeParameter().getText()).to.equal("Prop in keyof T");
@@ -30,7 +30,7 @@ describe(nameof(MappedTypeNode), () => {
         });
     });
 
-    describe(nameof<MappedTypeNode>(d => d.getTypeNode), () => {
+    describe(nameof.property<MappedTypeNode>("getTypeNode"), () => {
         it("should get the type", () => {
             const { descendant } = getNode("type MappedExample<T> = { [Prop in keyof T]: T[Prop]; };");
             expect(descendant.getTypeNode()!.getText()).to.equal("T[Prop]");
@@ -44,7 +44,7 @@ describe(nameof(MappedTypeNode), () => {
         });
     });
 
-    describe(nameof<MappedTypeNode>(d => d.getReadonlyToken), () => {
+    describe(nameof.property<MappedTypeNode>("getReadonlyToken"), () => {
         it("should get the readonly token", () => {
             const { descendant } = getNode("type MappedExample<T> = { -readonly [Prop in keyof T]?: T[Prop]; };");
             expect(descendant.getReadonlyToken()!.getText()).to.equal("-");
@@ -58,7 +58,7 @@ describe(nameof(MappedTypeNode), () => {
         });
     });
 
-    describe(nameof<MappedTypeNode>(d => d.getQuestionToken), () => {
+    describe(nameof.property<MappedTypeNode>("getQuestionToken"), () => {
         it("should get the readonly token", () => {
             const { descendant } = getNode("type MappedExample<T> = { -readonly [Prop in keyof T]?: T[Prop]; };");
             expect(descendant.getQuestionToken()!.getText()).to.equal("?");

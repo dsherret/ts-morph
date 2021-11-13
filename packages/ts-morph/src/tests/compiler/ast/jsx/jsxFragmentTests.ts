@@ -7,8 +7,8 @@ function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxFragment>(text, SyntaxKind.JsxFragment, { isJsx: true });
 }
 
-describe(nameof(JsxFragment), () => {
-    describe(nameof<JsxFragment>(n => n.getOpeningFragment), () => {
+describe("JsxFragment", () => {
+    describe(nameof.property<JsxFragment>("getOpeningFragment"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getOpeningFragment().getText()).to.equal(expected);
@@ -19,7 +19,7 @@ describe(nameof(JsxFragment), () => {
         });
     });
 
-    describe(nameof<JsxFragment>(n => n.getClosingFragment), () => {
+    describe(nameof.property<JsxFragment>("getClosingFragment"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getClosingFragment().getText()).to.equal(expected);
@@ -30,7 +30,7 @@ describe(nameof(JsxFragment), () => {
         });
     });
 
-    describe(nameof<JsxFragment>(n => n.getJsxChildren), () => {
+    describe(nameof.property<JsxFragment>("getJsxChildren"), () => {
         function doTest(text: string, expected: string[]) {
             const { descendant } = getInfo(text);
             expect(descendant.getJsxChildren().map(c => c.getText())).to.deep.equal(expected);

@@ -8,8 +8,8 @@ function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxElement>(text, SyntaxKind.JsxElement, { isJsx: true });
 }
 
-describe(nameof(JsxElement), () => {
-    describe(nameof<JsxElement>(n => n.getOpeningElement), () => {
+describe("JsxElement", () => {
+    describe(nameof.property<JsxElement>("getOpeningElement"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getOpeningElement().getText()).to.equal(expected);
@@ -20,7 +20,7 @@ describe(nameof(JsxElement), () => {
         });
     });
 
-    describe(nameof<JsxElement>(n => n.getClosingElement), () => {
+    describe(nameof.property<JsxElement>("getClosingElement"), () => {
         function doTest(text: string, expected: string) {
             const { descendant } = getInfo(text);
             expect(descendant.getClosingElement().getText()).to.equal(expected);
@@ -31,7 +31,7 @@ describe(nameof(JsxElement), () => {
         });
     });
 
-    describe(nameof<JsxElement>(n => n.getJsxChildren), () => {
+    describe(nameof.property<JsxElement>("getJsxChildren"), () => {
         function doTest(text: string, expected: string[]) {
             const { descendant } = getInfo(text);
             expect(descendant.getJsxChildren().map(c => c.getText())).to.deep.equal(expected);
@@ -42,7 +42,7 @@ describe(nameof(JsxElement), () => {
         });
     });
 
-    describe(nameof<JsxElement>(n => n.setBodyText), () => {
+    describe(nameof.property<JsxElement>("setBodyText"), () => {
         function doTest(text: string, bodyText: string, expected: string) {
             const { descendant, sourceFile } = getInfo(text);
             descendant.setBodyText(bodyText);
@@ -66,7 +66,7 @@ describe(nameof(JsxElement), () => {
         });
     });
 
-    describe(nameof<JsxElement>(n => n.setBodyTextInline), () => {
+    describe(nameof.property<JsxElement>("setBodyTextInline"), () => {
         function doTest(text: string, bodyText: string, expected: string) {
             const { descendant, sourceFile } = getInfo(text);
             descendant.setBodyTextInline(bodyText);
@@ -90,7 +90,7 @@ describe(nameof(JsxElement), () => {
         });
     });
 
-    describe(nameof<JsxElement>(n => n.set), () => {
+    describe(nameof.property<JsxElement>("set"), () => {
         function doTest(text: string, structure: Partial<JsxElementStructure>, expected: string) {
             const { descendant, sourceFile } = getInfo(text);
             descendant.set(structure);
@@ -113,7 +113,7 @@ describe(nameof(JsxElement), () => {
         });
     });
 
-    describe(nameof<JsxElement>(n => n.getStructure), () => {
+    describe(nameof.property<JsxElement>("getStructure"), () => {
         function doTest(text: string, expectedStructure: OptionalTrivia<MakeRequired<JsxElementStructure>>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();

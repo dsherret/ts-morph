@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { WriterUtils } from "../../utils";
 
-describe(nameof(WriterUtils), () => {
+describe("WriterUtils", () => {
     describe(nameof.property(WriterUtils, "getLastCharactersToPos"), () => {
         it("should get the last characters to the provided position when at the start", () => {
             const writer = new CodeBlockWriter();

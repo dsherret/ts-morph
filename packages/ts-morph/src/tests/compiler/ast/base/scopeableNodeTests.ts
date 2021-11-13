@@ -3,13 +3,13 @@ import { ClassDeclaration, ParameterDeclaration, Scope, ScopeableNode } from "..
 import { ScopeableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ScopeableNode), () => {
+describe("ScopeableNode", () => {
     function getFirstParameter(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
         return { ...result, firstParam: result.firstChild.getConstructors()[0].getParameters()[0] };
     }
 
-    describe(nameof<ScopeableNode>(d => d.getScope), () => {
+    describe(nameof.property<ScopeableNode>("getScope"), () => {
         it("should return undefined when there's no scope", () => {
             const { firstParam } = getFirstParameter("class Identifier { constructor(param: string) {} }");
             expect(firstParam.getScope()).to.be.undefined;
@@ -41,7 +41,7 @@ describe(nameof(ScopeableNode), () => {
         });
     });
 
-    describe(nameof<ScopeableNode>(d => d.hasScopeKeyword), () => {
+    describe(nameof.property<ScopeableNode>("hasScopeKeyword"), () => {
         it("should not have one when there's no scope", () => {
             const { firstParam } = getFirstParameter("class Identifier { constructor(param: string) {} }");
             expect(firstParam.hasScopeKeyword()).to.be.false;
@@ -58,7 +58,7 @@ describe(nameof(ScopeableNode), () => {
         });
     });
 
-    describe(nameof<ScopeableNode>(d => d.setScope), () => {
+    describe(nameof.property<ScopeableNode>("setScope"), () => {
         it("should set to public when set to public", () => {
             const { firstChild, firstParam } = getFirstParameter("class Identifier { constructor(param: string) {} }");
             firstParam.setScope(Scope.Public);
@@ -84,7 +84,7 @@ describe(nameof(ScopeableNode), () => {
         });
     });
 
-    describe(nameof<ParameterDeclaration>(p => p.set), () => {
+    describe(nameof.property<ParameterDeclaration>("set"), () => {
         function doTest(startCode: string, structure: ScopeableNodeStructure, expectedCode: string) {
             const { firstParam, sourceFile } = getFirstParameter(startCode);
             firstParam.set(structure);
@@ -108,7 +108,7 @@ describe(nameof(ScopeableNode), () => {
         });
     });
 
-    describe(nameof<ParameterDeclaration>(p => p.getStructure), () => {
+    describe(nameof.property<ParameterDeclaration>("getStructure"), () => {
         function doTest(startCode: string, scope: Scope | undefined) {
             const { firstParam, sourceFile } = getFirstParameter(startCode);
             expect(firstParam.getStructure().scope).to.equal(scope);

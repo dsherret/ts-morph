@@ -4,7 +4,7 @@ import { InitializerExpressionableNodeStructurePrinter } from "../../../structur
 import { InitializerExpressionableNodeStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(InitializerExpressionableNodeStructurePrinter), () => {
+describe("InitializerExpressionableNodeStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
     }
@@ -15,7 +15,7 @@ describe(nameof(InitializerExpressionableNodeStructurePrinter), () => {
         expect(writer.toString()).to.equal(expectedOutput);
     }
 
-    describe(nameof<InitializerExpressionableNodeStructurePrinter>(p => p.printText), () => {
+    describe(nameof.property<InitializerExpressionableNodeStructurePrinter>("printText"), () => {
         it("should not write when undefined", () => {
             doTest({ initializer: undefined }, ``);
         });

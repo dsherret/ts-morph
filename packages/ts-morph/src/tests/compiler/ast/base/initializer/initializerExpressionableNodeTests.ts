@@ -5,13 +5,13 @@ import { InitializerExpressionableNodeStructure } from "../../../../../structure
 import { WriterFunction } from "../../../../../types";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../../testHelpers";
 
-describe(nameof(InitializerExpressionableNode), () => {
+describe("InitializerExpressionableNode", () => {
     function getEnumMemberFromText(text: string) {
         const result = getInfoFromText<EnumDeclaration>(text);
         return { member: result.firstChild.getMembers()[0], ...result };
     }
 
-    describe(nameof<InitializerExpressionableNode>(n => n.removeInitializer), () => {
+    describe(nameof.property<InitializerExpressionableNode>("removeInitializer"), () => {
         describe("enum", () => {
             function doTest(startCode: string, expectedCode: string) {
                 const { member, sourceFile } = getEnumMemberFromText(startCode);
@@ -45,7 +45,7 @@ describe(nameof(InitializerExpressionableNode), () => {
         });
     });
 
-    describe(nameof<InitializerExpressionableNode>(n => n.setInitializer), () => {
+    describe(nameof.property<InitializerExpressionableNode>("setInitializer"), () => {
         describe("enum member", () => {
             function doThrowTest(initializerText: any) {
                 const { member } = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
@@ -154,7 +154,7 @@ describe(nameof(InitializerExpressionableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.set), () => {
+    describe(nameof.property<ClassDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: InitializerExpressionableNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const firstProperty = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
@@ -179,7 +179,7 @@ describe(nameof(InitializerExpressionableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
+    describe(nameof.property<ClassDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, initializer: string | undefined) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startingCode);
             const firstProperty = firstChild.getInstanceProperties()[0] as PropertyDeclaration;

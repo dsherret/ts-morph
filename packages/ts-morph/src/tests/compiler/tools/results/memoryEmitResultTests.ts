@@ -2,7 +2,7 @@ import { CompilerOptions } from "@ts-morph/common";
 import { expect } from "chai";
 import { MemoryEmitResult } from "../../../../compiler";
 import { Project } from "../../../../Project";
-describe(nameof(MemoryEmitResult), () => {
+describe("MemoryEmitResult", () => {
     function emitSetup(compilerOptions: CompilerOptions) {
         const project = new Project({ compilerOptions, useInMemoryFileSystem: true });
         const fileSystem = project.getFileSystem();
@@ -12,7 +12,7 @@ describe(nameof(MemoryEmitResult), () => {
         return { project, fileSystem };
     }
 
-    describe(nameof<MemoryEmitResult>(r => r.saveFiles), () => {
+    describe(nameof.property<MemoryEmitResult>("saveFiles"), () => {
         it("should save multiple files asynchronously", async () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
             const result = project.emitToMemory();
@@ -32,7 +32,7 @@ describe(nameof(MemoryEmitResult), () => {
         });
     });
 
-    describe(nameof<MemoryEmitResult>(r => r.saveFilesSync), () => {
+    describe(nameof.property<MemoryEmitResult>("saveFilesSync"), () => {
         it("should save multiple files synchronously", () => {
             const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
             const result = project.emitToMemory();

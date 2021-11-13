@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Memoize } from "../../decorators";
 
-describe(nameof(Memoize), () => {
+describe("Memoize", () => {
     let val = 0;
     let argIncrement = 0;
     class MyClass {

@@ -10,8 +10,8 @@ function getGetAccessorInfo(text: string) {
     return { ...result, getAccessor };
 }
 
-describe(nameof(GetAccessorDeclaration), () => {
-    describe(nameof<GetAccessorDeclaration>(d => d.getSetAccessor), () => {
+describe("GetAccessorDeclaration", () => {
+    describe(nameof.property<GetAccessorDeclaration>("getSetAccessor"), () => {
         it("should return undefined if no corresponding get accessor exists", () => {
             const { getAccessor } = getGetAccessorInfo(`class Identifier { get identifier(): string { return "" } }`);
             expect(getAccessor.getSetAccessor()).to.be.undefined;
@@ -43,7 +43,7 @@ describe(nameof(GetAccessorDeclaration), () => {
         });
     });
 
-    describe(nameof<GetAccessorDeclaration>(d => d.getSetAccessorOrThrow), () => {
+    describe(nameof.property<GetAccessorDeclaration>("getSetAccessorOrThrow"), () => {
         it("should throw if no corresponding get accessor exists", () => {
             const { getAccessor } = getGetAccessorInfo(`class Identifier { get identifier(): string { return "" } }`);
             expect(() => getAccessor.getSetAccessorOrThrow()).to.throw();
@@ -57,7 +57,7 @@ describe(nameof(GetAccessorDeclaration), () => {
         });
     });
 
-    describe(nameof<GetAccessorDeclaration>(n => n.remove), () => {
+    describe(nameof.property<GetAccessorDeclaration>("remove"), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(code);
             (firstChild.getInstanceProperty(nameToRemove)! as GetAccessorDeclaration).remove();
@@ -88,7 +88,7 @@ describe(nameof(GetAccessorDeclaration), () => {
         });
     });
 
-    describe(nameof<GetAccessorDeclaration>(c => c.set), () => {
+    describe(nameof.property<GetAccessorDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: Partial<GetAccessorDeclarationStructure>, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.getGetAccessors()[0].set(structure);
@@ -134,7 +134,7 @@ class Identifier {
         });
     });
 
-    describe(nameof<GetAccessorDeclaration>(n => n.getStructure), () => {
+    describe(nameof.property<GetAccessorDeclaration>("getStructure"), () => {
         function doTest(code: string, expectedStructure: OptionalTrivia<MakeRequired<GetAccessorDeclarationStructure>>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getGetAccessors()[0].getStructure();

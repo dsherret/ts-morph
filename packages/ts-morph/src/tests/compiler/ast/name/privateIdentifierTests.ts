@@ -8,8 +8,8 @@ function getInfoFromTextWithFirstProperty(text: string) {
     return { ...obj, firstProp };
 }
 
-describe(nameof(PrivateIdentifier), () => {
-    describe(nameof<PrivateIdentifier>(n => n.getText), () => {
+describe("PrivateIdentifier", () => {
+    describe(nameof.property<PrivateIdentifier>("getText"), () => {
         function doTest(text: string, expectedText: string) {
             const { firstProp } = getInfoFromTextWithFirstProperty(text);
             const identifier = (firstProp.getNameNode() as PrivateIdentifier);
@@ -21,7 +21,7 @@ describe(nameof(PrivateIdentifier), () => {
         });
     });
 
-    describe(nameof<PrivateIdentifier>(n => n.rename), () => {
+    describe(nameof.property<PrivateIdentifier>("rename"), () => {
         function doTest(text: string, newName: string, expectedText: string) {
             const { sourceFile, firstProp } = getInfoFromTextWithFirstProperty(text);
             const identifier = (firstProp.getNameNode() as PrivateIdentifier);

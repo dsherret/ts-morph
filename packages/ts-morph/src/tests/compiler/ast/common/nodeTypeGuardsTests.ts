@@ -4,7 +4,7 @@ import { ClassDeclaration, ExpressionStatement, Node } from "../../../../compile
 import { Structures } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(Node), () => {
+describe("Node", () => {
     // most of the type guards are not worth the effort to test... it's auto generated from code so it should be close to correct
 
     describe(nameof.property(Node, "hasExpression"), () => {

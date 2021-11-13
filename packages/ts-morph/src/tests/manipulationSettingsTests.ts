@@ -2,7 +2,7 @@ import { EditorSettings, NewLineKind, ts } from "@ts-morph/common";
 import { expect } from "chai";
 import { QuoteKind, UserPreferences } from "../compiler";
 import { IndentationText, ManipulationSettings, ManipulationSettingsContainer } from "../options";
-describe(nameof(IndentationText), () => {
+describe("IndentationText", () => {
     // ensure this enum is correct. It's hard to read all the spaces since string enums can't use computed values
 
     it("should have a tab when has a tab", () => {
@@ -22,7 +22,7 @@ describe(nameof(IndentationText), () => {
     });
 });
 
-describe(nameof(ManipulationSettingsContainer), () => {
+describe("ManipulationSettingsContainer", () => {
     function checkSettings(settings: ManipulationSettingsContainer, settingsSettings: ManipulationSettings) {
         expect(settings.get()).to.deep.equal(settingsSettings);
     }
@@ -75,7 +75,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
         });
     });
 
-    describe(nameof<ManipulationSettingsContainer>(c => c.getEditorSettings), () => {
+    describe(nameof.property<ManipulationSettingsContainer>("getEditorSettings"), () => {
         function doTest(actual: EditorSettings, expected: EditorSettings) {
             expect(actual).is.deep.equal(expected);
         }
@@ -108,7 +108,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
         });
     });
 
-    describe(nameof<ManipulationSettingsContainer>(c => c.getUserPreferences), () => {
+    describe(nameof.property<ManipulationSettingsContainer>("getUserPreferences"), () => {
         function doTest(actual: UserPreferences, expected: UserPreferences) {
             expect(actual).is.deep.equal(expected);
         }

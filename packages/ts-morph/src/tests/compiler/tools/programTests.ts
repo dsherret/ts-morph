@@ -4,8 +4,8 @@ import { Program } from "../../../compiler";
 import { getFileSystemHostWithFiles } from "../../testHelpers";
 import { getInfoFromText } from "../testHelpers";
 
-describe(nameof(Program), () => {
-    describe(nameof<Program>(p => p.getGlobalDiagnostics), () => {
+describe("Program", () => {
+    describe(nameof.property<Program>("getGlobalDiagnostics"), () => {
         it("should get the global diagnostics when not including a the lib.d.ts files", () => {
             const { project } = getInfoFromText("const t: string;");
             expect(project.getProgram().getGlobalDiagnostics().length).to.equal(8);
@@ -17,7 +17,7 @@ describe(nameof(Program), () => {
         });
     });
 
-    describe(nameof<Program>(p => p.emit), () => {
+    describe(nameof.property<Program>("emit"), () => {
         it("should throw if specifying a writeCallback", async () => {
             let error: any;
             const { project } = getInfoFromText("const t: string;", { includeLibDts: true });
@@ -30,14 +30,14 @@ describe(nameof(Program), () => {
         });
     });
 
-    describe(nameof<Program>(p => p.emitSync), () => {
+    describe(nameof.property<Program>("emitSync"), () => {
         it("should not throw if specifying a writeCallback", () => {
             const { project } = getInfoFromText("const t: string;", { includeLibDts: true });
             expect(() => project.getProgram().emitSync({ writeFile: () => {} })).to.not.throw();
         });
     });
 
-    describe(nameof<Program>(p => p.isSourceFileFromExternalLibrary), () => {
+    describe(nameof.property<Program>("isSourceFileFromExternalLibrary"), () => {
         it("should not be when not", () => {
             const { project, sourceFile } = getInfoFromText("");
             expect(project.getProgram().isSourceFileFromExternalLibrary(sourceFile)).to.be.false;

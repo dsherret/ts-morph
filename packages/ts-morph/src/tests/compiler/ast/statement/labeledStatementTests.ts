@@ -7,12 +7,12 @@ function getStatement(text: string) {
     return getInfoFromTextWithDescendant<LabeledStatement>(text, SyntaxKind.LabeledStatement).descendant;
 }
 
-describe(nameof(LabeledStatement), () => {
+describe("LabeledStatement", () => {
     const statement = "let x = 1 + 2";
     const label = "foo";
     const labeled = `${label}: ${statement}`;
 
-    describe(nameof<LabeledStatement>(n => n.getLabel), () => {
+    describe(nameof.property<LabeledStatement>("getLabel"), () => {
         function doTest(text: string, expectedText: string) {
             const labeledStatement = getStatement(text);
             expect(labeledStatement.getLabel().getText()).to.equal(expectedText);
@@ -23,7 +23,7 @@ describe(nameof(LabeledStatement), () => {
         });
     });
 
-    describe(nameof<LabeledStatement>(n => n.getStatement), () => {
+    describe(nameof.property<LabeledStatement>("getStatement"), () => {
         function doTest(text: string, expectedText: string) {
             const labeledStatement = getStatement(text);
             expect(labeledStatement.getStatement().getText()).to.equal(expectedText);

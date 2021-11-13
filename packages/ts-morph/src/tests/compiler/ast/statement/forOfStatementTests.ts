@@ -7,11 +7,11 @@ function getStatement(text: string) {
     return getInfoFromTextWithDescendant<ForOfStatement>(text, SyntaxKind.ForOfStatement).descendant;
 }
 
-describe(nameof(ForOfStatement), () => {
+describe("ForOfStatement", () => {
     const expression = "{}";
     const initializer = "x";
     const statement = `for (${initializer} of ${expression}) {}`;
-    describe(nameof<ForOfStatement>(n => n.getExpression), () => {
+    describe(nameof.property<ForOfStatement>("getExpression"), () => {
         function doTest(text: string, expectedText: string) {
             const forOfStatement = getStatement(text);
             expect(forOfStatement.getExpression().getText()).to.equal(expectedText);
@@ -22,7 +22,7 @@ describe(nameof(ForOfStatement), () => {
         });
     });
 
-    describe(nameof<ForOfStatement>(n => n.getInitializer), () => {
+    describe(nameof.property<ForOfStatement>("getInitializer"), () => {
         function doTest(text: string, expectedText: string) {
             const forOfStatement = getStatement(text);
             expect(forOfStatement.getInitializer().getText()).to.equal(expectedText);

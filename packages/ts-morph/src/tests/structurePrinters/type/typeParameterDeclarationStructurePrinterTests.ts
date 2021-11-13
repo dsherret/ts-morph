@@ -4,13 +4,13 @@ import { TypeParameterDeclarationStructurePrinter } from "../../../structurePrin
 import { OptionalKind, TypeParameterDeclarationStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
+describe("TypeParameterDeclarationStructurePrinter", () => {
     interface Options {
         formatCodeSettings?: FormatCodeSettings;
     }
 
     // todo: more tests
-    describe(nameof<TypeParameterDeclarationStructurePrinter>(p => p.printTextsWithBrackets), () => {
+    describe(nameof.property<TypeParameterDeclarationStructurePrinter>("printTextsWithBrackets"), () => {
         function doTest(structures: (OptionalKind<TypeParameterDeclarationStructure> | string)[], expectedOutput: string, options: Options = {}) {
             const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
             factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structures);
@@ -27,7 +27,7 @@ describe(nameof(TypeParameterDeclarationStructurePrinter), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclarationStructurePrinter>(p => p.printText), () => {
+    describe(nameof.property<TypeParameterDeclarationStructurePrinter>("printText"), () => {
         function doTest(structure: OptionalKind<TypeParameterDeclarationStructure> | string, expectedOutput: string, options: Options = {}) {
             const { writer, factory } = getStructureFactoryAndWriter(options.formatCodeSettings);
             factory.forTypeParameterDeclaration().printText(writer, structure);

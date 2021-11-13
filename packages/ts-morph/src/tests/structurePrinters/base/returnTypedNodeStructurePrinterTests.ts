@@ -4,7 +4,7 @@ import { ReturnTypedNodeStructurePrinter } from "../../../structurePrinters";
 import { ReturnTypedNodeStructure } from "../../../structures";
 import { getStructureFactoryAndWriter } from "../../testHelpers";
 
-describe(nameof(ReturnTypedNodeStructurePrinter), () => {
+describe("ReturnTypedNodeStructurePrinter", () => {
     interface Options {
         alwaysWrite?: boolean;
         formatCodeSettings?: FormatCodeSettings;
@@ -16,7 +16,7 @@ describe(nameof(ReturnTypedNodeStructurePrinter), () => {
         expect(writer.toString()).to.equal(expectedOutput);
     }
 
-    describe(nameof<ReturnTypedNodeStructurePrinter>(p => p.printText), () => {
+    describe(nameof.property<ReturnTypedNodeStructurePrinter>("printText"), () => {
         it("should not write when undefined", () => {
             doTest({ returnType: undefined }, ``);
         });

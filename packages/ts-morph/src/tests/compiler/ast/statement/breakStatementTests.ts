@@ -7,11 +7,11 @@ function getBreakStatement(text: string) {
     return getInfoFromTextWithDescendant<BreakStatement>(text, SyntaxKind.BreakStatement).descendant;
 }
 
-describe(nameof(BreakStatement), () => {
+describe("BreakStatement", () => {
     const label = "foo";
     const statement = `break ${label};`;
     const emptyStatement = "break;";
-    describe(nameof<BreakStatement>(n => n.getLabel), () => {
+    describe(nameof.property<BreakStatement>("getLabel"), () => {
         function doTest(text: string, expectedText?: string) {
             const breakStatement = getBreakStatement(text);
             const value = breakStatement.getLabel();
@@ -27,7 +27,7 @@ describe(nameof(BreakStatement), () => {
         });
     });
 
-    describe(nameof<BreakStatement>(n => n.getLabelOrThrow), () => {
+    describe(nameof.property<BreakStatement>("getLabelOrThrow"), () => {
         function doTest(text: string, expectedText?: string) {
             const breakStatement = getBreakStatement(text);
             if (expectedText == null)

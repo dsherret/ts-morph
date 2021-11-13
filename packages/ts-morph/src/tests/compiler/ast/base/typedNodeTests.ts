@@ -4,13 +4,13 @@ import { ClassDeclaration, FunctionDeclaration, Node, PropertyDeclaration, TypeA
 import { TypedNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(TypedNode), () => {
+describe("TypedNode", () => {
     const { sourceFile: mainSourceFile } = getInfoFromText("var myImplicitVar = 1; var myExplicitVar: string; type TypeAlias1 = string;");
     const implicitVarDeclaration = mainSourceFile.getVariableStatements()[0].getDeclarations()[0];
     const explicitVarDeclaration = mainSourceFile.getVariableStatements()[1].getDeclarations()[0];
     const typeAliasDeclaration = mainSourceFile.getTypeAliases()[0];
 
-    describe(nameof<Node>(n => n.getType), () => {
+    describe(nameof.property<Node>("getType"), () => {
         it("should get the expected implicit type", () => {
             expect(implicitVarDeclaration.getType().getText()).to.equal("number");
         });
@@ -24,7 +24,7 @@ describe(nameof(TypedNode), () => {
         });
     });
 
-    describe(nameof<TypedNode>(n => n.getTypeNode), () => {
+    describe(nameof.property<TypedNode>("getTypeNode"), () => {
         it("should return undefined when no type node exists", () => {
             expect(implicitVarDeclaration.getTypeNode()).to.be.undefined;
         });
@@ -38,7 +38,7 @@ describe(nameof(TypedNode), () => {
         });
     });
 
-    describe(nameof<TypedNode>(n => n.getTypeNodeOrThrow), () => {
+    describe(nameof.property<TypedNode>("getTypeNodeOrThrow"), () => {
         it("should get the type node when it exists", () => {
             expect(explicitVarDeclaration.getTypeNodeOrThrow().getText()).to.equal("string");
         });
@@ -48,7 +48,7 @@ describe(nameof(TypedNode), () => {
         });
     });
 
-    describe(nameof<TypedNode>(n => n.setType), () => {
+    describe(nameof.property<TypedNode>("setType"), () => {
         describe("class properties", () => {
             function doTest(startText: string, type: string, expectedText: string) {
                 const { firstChild } = getInfoFromText<ClassDeclaration>(startText);
@@ -170,7 +170,7 @@ describe(nameof(TypedNode), () => {
         });
     });
 
-    describe(nameof<TypedNode>(n => n.removeType), () => {
+    describe(nameof.property<TypedNode>("removeType"), () => {
         function doTest(startText: string, expectedText: string) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(startText);
             const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
@@ -192,7 +192,7 @@ describe(nameof(TypedNode), () => {
         });
     });
 
-    describe(nameof<TypeAliasDeclaration>(t => t.set), () => {
+    describe(nameof.property<TypeAliasDeclaration>("set"), () => {
         function doTest(startingCode: string, structure: TypedNodeStructure, expectedCode: string) {
             const { sourceFile } = getInfoFromText(startingCode);
             const firstTyped = sourceFile.getFirstDescendant(Node.isTypedNode);
@@ -222,7 +222,7 @@ describe(nameof(TypedNode), () => {
         });
     });
 
-    describe(nameof<FunctionDeclaration>(t => t.getStructure), () => {
+    describe(nameof.property<FunctionDeclaration>("getStructure"), () => {
         function doTest(startingCode: string, typeText: string | undefined) {
             const { firstChild } = getInfoFromText<FunctionDeclaration>(startingCode);
             expect(firstChild.getParameters()[0].getStructure().type).to.deep.equal(typeText);

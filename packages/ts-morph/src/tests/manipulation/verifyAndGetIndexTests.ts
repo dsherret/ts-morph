@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { verifyAndGetIndex } from "../../manipulation";
 
-describe(nameof(verifyAndGetIndex), () => {
+describe("verifyAndGetIndex", () => {
     it("should get the index when zero and length is zero", () => {
         expect(verifyAndGetIndex(0, 0)).to.equal(0);
     });

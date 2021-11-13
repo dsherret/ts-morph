@@ -8,12 +8,12 @@ function getInfoFromTextWithElementAccessExpression(text: string) {
     return { ...info, elementAccessExpression: info.descendant };
 }
 
-describe(nameof(ElementAccessExpression), () => {
+describe("ElementAccessExpression", () => {
     const emptyExpr = "x[]";
     const { elementAccessExpression } = getInfoFromTextWithElementAccessExpression("x[1]");
     const { elementAccessExpression: emptyElementAccessExpression } = getInfoFromTextWithElementAccessExpression(emptyExpr);
 
-    describe(nameof<ElementAccessExpression>(n => n.getArgumentExpression), () => {
+    describe(nameof.property<ElementAccessExpression>("getArgumentExpression"), () => {
         it("should get the correct argument expression", () => {
             expect(elementAccessExpression.getArgumentExpression()!.getText()).to.equal("1");
         });
@@ -24,7 +24,7 @@ describe(nameof(ElementAccessExpression), () => {
         });
     });
 
-    describe(nameof<ElementAccessExpression>(n => n.getArgumentExpressionOrThrow), () => {
+    describe(nameof.property<ElementAccessExpression>("getArgumentExpressionOrThrow"), () => {
         it("should should return the argument expression", () => {
             expect(elementAccessExpression.getArgumentExpressionOrThrow().getText()).to.equal("1");
         });

@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { Comparer, ComparerToStoredComparer } from "../../comparers";
 import { ArrayUtils } from "../../utils";
 
-describe(nameof(ArrayUtils), () => {
+describe("ArrayUtils", () => {
     class NumberComparer implements Comparer<number> {
         compareTo(a: number, b: number) {
             if (a < b)

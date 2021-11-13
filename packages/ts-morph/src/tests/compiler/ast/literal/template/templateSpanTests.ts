@@ -7,13 +7,13 @@ function getTemplateSpan(text: string) {
     return getInfoFromTextWithDescendant<TemplateSpan>(text, SyntaxKind.TemplateSpan).descendant;
 }
 
-describe(nameof(TemplateSpan), () => {
+describe("TemplateSpan", () => {
     const templateHead = "`foo${";
     const templateSpanExpression = "test";
     const templateSpanLiteral = "}abc`";
     const expr = `${templateHead}${templateSpanExpression}${templateSpanLiteral}`;
 
-    describe(nameof<TemplateSpan>(n => n.getLiteral), () => {
+    describe(nameof.property<TemplateSpan>("getLiteral"), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getTemplateSpan(text);
             expect(expression.getLiteral().getText()).to.equal(expectedText);

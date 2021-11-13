@@ -3,7 +3,7 @@ import { errors } from "../../errors";
 import { FileSystemHost, InMemoryFileSystemHost, TransactionalFileSystem } from "../../fileSystem";
 import { TsConfigResolver } from "../../tsconfig";
 
-describe(nameof(TsConfigResolver), () => {
+describe("TsConfigResolver", () => {
     function getResolver(fileSystem: FileSystemHost) {
         const fileSystemWrapper = new TransactionalFileSystem(fileSystem);
         return new TsConfigResolver(
@@ -13,7 +13,7 @@ describe(nameof(TsConfigResolver), () => {
         );
     }
 
-    describe(nameof<TsConfigResolver>(r => r.getCompilerOptions), () => {
+    describe(nameof.property<TsConfigResolver>("getCompilerOptions"), () => {
         function getCompilerOptions(fileSystem: FileSystemHost) {
             return getResolver(fileSystem).getCompilerOptions();
         }
@@ -49,7 +49,7 @@ describe(nameof(TsConfigResolver), () => {
         });
     });
 
-    describe(nameof<TsConfigResolver>(r => r.getErrors), () => {
+    describe(nameof.property<TsConfigResolver>("getErrors"), () => {
         function getErrors(fileSystem: FileSystemHost) {
             return getResolver(fileSystem).getErrors();
         }
@@ -69,7 +69,7 @@ describe(nameof(TsConfigResolver), () => {
         });
     });
 
-    describe(nameof<TsConfigResolver>(r => r.getPaths), () => {
+    describe(nameof.property<TsConfigResolver>("getPaths"), () => {
         function getPaths(fileSystem: FileSystemHost) {
             return getResolver(fileSystem).getPaths();
         }

@@ -1,5 +1,5 @@
 import { DiagnosticMessageChain } from "../../../compiler";
 
-describe(nameof(DiagnosticMessageChain), () => {
+describe("DiagnosticMessageChain", () => {
     // todo: I don't know how to test this...
 });

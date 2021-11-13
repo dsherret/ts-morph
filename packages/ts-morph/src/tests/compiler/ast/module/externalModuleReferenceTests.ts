@@ -4,28 +4,28 @@ import { ExternalModuleReference } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
-describe(nameof(ExternalModuleReference), () => {
+describe("ExternalModuleReference", () => {
     function getNode(text: string) {
         return getInfoFromTextWithDescendant<ExternalModuleReference>(text, SyntaxKind.ExternalModuleReference);
     }
 
     // I'm not sure how to make expression null
 
-    describe(nameof<ExternalModuleReference>(n => n.getExpression), () => {
+    describe(nameof.property<ExternalModuleReference>("getExpression"), () => {
         it("should get the expression", () => {
             const { descendant } = getNode("import test = require('expression');");
             expect(descendant.getExpression()!.getText()).to.equal("'expression'");
         });
     });
 
-    describe(nameof<ExternalModuleReference>(n => n.getExpressionOrThrow), () => {
+    describe(nameof.property<ExternalModuleReference>("getExpressionOrThrow"), () => {
         it("should get the expression", () => {
             const { descendant } = getNode("import test = require('expression');");
             expect(descendant.getExpressionOrThrow().getText()).to.equal("'expression'");
         });
     });
 
-    describe(nameof<ExternalModuleReference>(n => n.isRelative), () => {
+    describe(nameof.property<ExternalModuleReference>("isRelative"), () => {
         function doTest(text: string, expected: boolean) {
             const { descendant } = getNode(text);
             expect(descendant.isRelative()).to.equal(expected);
@@ -56,7 +56,7 @@ describe(nameof(ExternalModuleReference), () => {
         });
     });
 
-    describe(nameof<ExternalModuleReference>(n => n.getReferencedSourceFile), () => {
+    describe(nameof.property<ExternalModuleReference>("getReferencedSourceFile"), () => {
         it("should get the referenced source file", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
@@ -73,7 +73,7 @@ describe(nameof(ExternalModuleReference), () => {
         });
     });
 
-    describe(nameof<ExternalModuleReference>(n => n.getReferencedSourceFileOrThrow), () => {
+    describe(nameof.property<ExternalModuleReference>("getReferencedSourceFileOrThrow"), () => {
         it("should get the referenced source file", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);

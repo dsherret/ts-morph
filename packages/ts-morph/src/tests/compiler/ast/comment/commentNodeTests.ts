@@ -11,7 +11,7 @@ describe("general comment node tests", () => {
         expect(statements.some(s => s.wasForgotten())).to.be.false;
     });
 
-    describe(nameof<CommentStatement>(c => c.getLeadingCommentRanges), () => {
+    describe(nameof.property<CommentStatement>("getLeadingCommentRanges"), () => {
         function doTest(text: string, index: number, expectedComments: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const secondComment = sourceFile.getStatementsWithComments()[index];
@@ -28,7 +28,7 @@ describe("general comment node tests", () => {
         });
     });
 
-    describe(nameof<CommentStatement>(c => c.getTrailingCommentRanges), () => {
+    describe(nameof.property<CommentStatement>("getTrailingCommentRanges"), () => {
         function doTest(text: string, index: number, expectedComments: string[]) {
             const { sourceFile } = getInfoFromText(text);
             const secondComment = sourceFile.getStatementsWithComments()[index];

@@ -4,8 +4,8 @@ import { ImportEqualsDeclaration } from "../../../../compiler";
 import { Project } from "../../../../Project";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(ImportEqualsDeclaration), () => {
-    describe(nameof<ImportEqualsDeclaration>(n => n.getName), () => {
+describe("ImportEqualsDeclaration", () => {
+    describe(nameof.property<ImportEqualsDeclaration>("getName"), () => {
         function doTest(text: string, expected: string) {
             const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             expect(firstChild.getName()).to.equal(expected);
@@ -16,7 +16,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportEqualsDeclaration>(n => n.isTypeOnly), () => {
+    describe(nameof.property<ImportEqualsDeclaration>("isTypeOnly"), () => {
         function doTest(text: string, expected: boolean) {
             const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             expect(firstChild.isTypeOnly()).to.equal(expected);
@@ -31,7 +31,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportEqualsDeclaration>(n => n.setIsTypeOnly), () => {
+    describe(nameof.property<ImportEqualsDeclaration>("setIsTypeOnly"), () => {
         function doTest(text: string, value: boolean, expected: string) {
             const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             firstChild.setIsTypeOnly(value);
@@ -69,7 +69,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportEqualsDeclaration>(n => n.getModuleReference), () => {
+    describe(nameof.property<ImportEqualsDeclaration>("getModuleReference"), () => {
         function doTest(text: string, expected: string) {
             const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             expect(firstChild.getModuleReference().getText()).to.equal(expected);
@@ -84,7 +84,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportEqualsDeclaration>(n => n.isExternalModuleReferenceRelative), () => {
+    describe(nameof.property<ImportEqualsDeclaration>("isExternalModuleReferenceRelative"), () => {
         function doTest(text: string, expected: boolean) {
             const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             expect(firstChild.isExternalModuleReferenceRelative()).to.equal(expected);
@@ -119,7 +119,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportEqualsDeclaration>(n => n.setExternalModuleReference), () => {
+    describe(nameof.property<ImportEqualsDeclaration>("setExternalModuleReference"), () => {
         function doTest(text: string, externalModuleReference: string, expected: string) {
             const { firstChild } = getInfoFromText<ImportEqualsDeclaration>(text);
             firstChild.setExternalModuleReference(externalModuleReference);
@@ -145,7 +145,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportEqualsDeclaration>(d => d.remove), () => {
+    describe(nameof.property<ImportEqualsDeclaration>("remove"), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const { sourceFile } = getInfoFromText(text);
             (sourceFile.getStatements()[index] as ImportEqualsDeclaration).remove();
@@ -157,7 +157,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportEqualsDeclaration>(n => n.getExternalModuleReferenceSourceFile), () => {
+    describe(nameof.property<ImportEqualsDeclaration>("getExternalModuleReferenceSourceFile"), () => {
         it("should get the referenced source file", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);
@@ -182,7 +182,7 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportEqualsDeclaration>(n => n.getExternalModuleReferenceSourceFileOrThrow), () => {
+    describe(nameof.property<ImportEqualsDeclaration>("getExternalModuleReferenceSourceFileOrThrow"), () => {
         it("should get the referenced source file", () => {
             const project = new Project({ useInMemoryFileSystem: true });
             const mainSourceFile = project.createSourceFile("main.ts", `import test = require('./class');`);

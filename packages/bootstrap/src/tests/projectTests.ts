@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { EOL } from "os";
 import { createProject, createProjectSync, Project, ProjectOptions } from "../Project";
 
-describe(nameof(Project), () => {
+describe("Project", () => {
     describe("constructor", () => {
         describe("async ctor", () => doTestsForProject(opts => createProject(opts)));
         describe("sync ctor", () => doTestsForProject(opts => Promise.resolve(createProjectSync(opts))));
@@ -222,7 +222,7 @@ describe(nameof(Project), () => {
                 });
             });
 
-            describe(nameof<ProjectOptions>(o => o.skipLoadingLibFiles), () => {
+            describe(nameof.property<ProjectOptions>("skipLoadingLibFiles"), () => {
                 it("should not skip loading lib files when empty", async () => {
                     const project = await create({ useInMemoryFileSystem: true });
                     const sourceFile = project.createSourceFile("test.ts", "const t: String = '';");
@@ -258,7 +258,7 @@ describe(nameof(Project), () => {
                 });
             });
 
-            describe(nameof<ProjectOptions>(o => o.libFolderPath), () => {
+            describe(nameof.property<ProjectOptions>("libFolderPath"), () => {
                 it("should support specifying a different folder for the lib files", async () => {
                     const fileSystem = new InMemoryFileSystemHost();
                     for (const file of getLibFiles())
@@ -278,7 +278,7 @@ describe(nameof(Project), () => {
         }
     });
 
-    describe(nameof<Project>(p => p.createSourceFile), () => {
+    describe(nameof.property<Project>("createSourceFile"), () => {
         it("should create the specified source files", () => {
             const project = createProjectSync({ useInMemoryFileSystem: true, skipLoadingLibFiles: true });
             const sourceFiles = [
@@ -290,7 +290,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.removeSourceFile), () => {
+    describe(nameof.property<Project>("removeSourceFile"), () => {
         it("should remove the specified source files by source file object", () => {
             const { project } = setup();
             const sourceFiles = [
@@ -313,7 +313,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.updateSourceFile), () => {
+    describe(nameof.property<Project>("updateSourceFile"), () => {
         it("should update a source file", () => {
             const { project } = setup();
             project.createSourceFile("/test.ts", "class Test {}");
@@ -350,7 +350,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.addSourceFileAtPath), () => {
+    describe(nameof.property<Project>("addSourceFileAtPath"), () => {
         describe("async", () => doTestsForMethod((project, filePath, options) => project.addSourceFileAtPath(filePath, options)));
         describe("sync", () => doTestsForMethod((project, filePath, options) => Promise.resolve(project.addSourceFileAtPath(filePath, options))));
 
@@ -379,7 +379,7 @@ describe(nameof(Project), () => {
         }
     });
 
-    describe(nameof<Project>(p => p.addSourceFileAtPathIfExists), () => {
+    describe(nameof.property<Project>("addSourceFileAtPathIfExists"), () => {
         describe("async", () => doTestsForMethod((project, filePath, options) => project.addSourceFileAtPathIfExists(filePath, options)));
         describe("sync", () => doTestsForMethod((project, filePath, options) => Promise.resolve(project.addSourceFileAtPathIfExists(filePath, options))));
 
@@ -405,7 +405,7 @@ describe(nameof(Project), () => {
         }
     });
 
-    describe(nameof<Project>(project => project.addSourceFilesFromTsConfig), () => {
+    describe(nameof.property<Project>("addSourceFilesFromTsConfig"), () => {
         describe("async", () => doTestsForMethod((project, filePath) => project.addSourceFilesFromTsConfig(filePath)));
         describe("sync", () => doTestsForMethod((project, filePath) => Promise.resolve(project.addSourceFilesFromTsConfigSync(filePath))));
 
@@ -441,7 +441,7 @@ describe(nameof(Project), () => {
         }
     });
 
-    describe(nameof<Project>(p => p.addSourceFilesByPaths), () => {
+    describe(nameof.property<Project>("addSourceFilesByPaths"), () => {
         describe("async", () => doTestsForMethod((project, globs) => project.addSourceFilesByPaths(globs)));
         describe("sync", () => doTestsForMethod((project, globs) => Promise.resolve(project.addSourceFilesByPathsSync(globs))));
 
@@ -462,7 +462,7 @@ describe(nameof(Project), () => {
         }
     });
 
-    describe(nameof<Project>(p => p.resolveSourceFileDependencies), () => {
+    describe(nameof.property<Project>("resolveSourceFileDependencies"), () => {
         it("should resolve file dependencies once specified and include those in the node_modules folder", async () => {
             const { project, initialFiles, resolvedFiles, nodeModuleFiles } = await fileDependencyResolutionSetup({ skipFileDependencyResolution: true },
                 createProject);
@@ -501,7 +501,7 @@ describe(nameof(Project), () => {
         };
     }
 
-    describe(nameof<Project>(p => p.formatDiagnosticsWithColorAndContext), () => {
+    describe(nameof.property<Project>("formatDiagnosticsWithColorAndContext"), () => {
         function setup() {
             const project = createProjectSync({ useInMemoryFileSystem: true });
             project.createSourceFile("test.ts", "const t; const u;");
@@ -538,7 +538,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.getModuleResolutionHost), () => {
+    describe(nameof.property<Project>("getModuleResolutionHost"), () => {
         function setup() {
             const project = createProjectSync({ useInMemoryFileSystem: true });
             const moduleResolutionHost = project.getModuleResolutionHost();
@@ -637,7 +637,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.createProgram), () => {
+    describe(nameof.property<Project>("createProgram"), () => {
         it("should create a program and get a type checker", () => {
             const { project } = setup();
             const sourceFile = project.createSourceFile("./test.ts", "export const t = 5;");
@@ -649,7 +649,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(p => p.getLanguageService), () => {
+    describe(nameof.property<Project>("getLanguageService"), () => {
         it("should create a language service", () => {
             const { project } = setup();
             const languageSerivce = project.getLanguageService(); // define it first
@@ -667,7 +667,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.getSourceFile), () => {
+    describe(nameof.property<Project>("getSourceFile"), () => {
         it("should get the first match based on the directory structure", () => {
             const project = createProjectSync({ useInMemoryFileSystem: true });
             project.createSourceFile("dir/file.ts");
@@ -711,7 +711,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.getSourceFileOrThrow), () => {
+    describe(nameof.property<Project>("getSourceFileOrThrow"), () => {
         it("should throw when it can't find the source file based on a provided file name", () => {
             const project = createProjectSync({ useInMemoryFileSystem: true });
             expect(() => project.getSourceFileOrThrow("fileName.ts")).to.throw(
@@ -748,7 +748,7 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<ts.Program>(p => p.getConfigFileParsingDiagnostics), () => {
+    describe(nameof.property<ts.Program>("getConfigFileParsingDiagnostics"), () => {
         it("should get the diagnostics found when parsing the tsconfig.json", () => {
             const fileSystem = new InMemoryFileSystemHost();
             fileSystem.writeFileSync("/tsconfig.json", `{ "fies": [] }`);

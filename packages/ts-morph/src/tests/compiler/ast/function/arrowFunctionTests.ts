@@ -8,8 +8,8 @@ function getInfoFromTextWithExpression(text: string) {
     return { ...info, expression: info.descendant };
 }
 
-describe(nameof(ArrowFunction), () => {
-    describe(nameof<ArrowFunction>(n => n.getEqualsGreaterThan), () => {
+describe("ArrowFunction", () => {
+    describe(nameof.property<ArrowFunction>("getEqualsGreaterThan"), () => {
         function doTest(text: string, expectedText: string) {
             const { expression } = getInfoFromTextWithExpression(text);
             expect(expression.getEqualsGreaterThan().getText()).to.equal(expectedText);

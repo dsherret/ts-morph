@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { PropertyAccessExpression } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
-describe(nameof(PropertyAccessExpression), () => {
+describe("PropertyAccessExpression", () => {
     function getPropertyAccessExpression(text: string) {
         const { sourceFile } = getInfoFromText(text);
         return sourceFile.getVariableDeclarations()[0].getInitializerOrThrow() as PropertyAccessExpression;
