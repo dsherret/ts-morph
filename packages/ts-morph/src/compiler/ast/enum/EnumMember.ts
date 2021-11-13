@@ -60,7 +60,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
 
         if (structure.value != null)
             this.setValue(structure.value);
-        else if (structure.hasOwnProperty(nameof(structure.value)) && structure.initializer == null)
+        else if (structure.hasOwnProperty(nameof.property(structure, "value")) && structure.initializer == null)
             this.removeInitializer();
 
         return this;

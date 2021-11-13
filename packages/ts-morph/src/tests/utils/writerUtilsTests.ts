@@ -3,7 +3,7 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { WriterUtils } from "../../utils";
 
 describe(nameof(WriterUtils), () => {
-    describe(nameof(WriterUtils.getLastCharactersToPos), () => {
+    describe(nameof.property(WriterUtils, "getLastCharactersToPos"), () => {
         it("should get the last characters to the provided position when at the start", () => {
             const writer = new CodeBlockWriter();
             writer.write("0123");

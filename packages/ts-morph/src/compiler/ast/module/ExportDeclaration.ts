@@ -332,16 +332,16 @@ export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaratio
             setEmptyNamedExport(this);
             this.addNamedExports(structure.namedExports);
         }
-        else if (structure.hasOwnProperty(nameof(structure.namedExports)) && structure.moduleSpecifier == null) {
+        else if (structure.hasOwnProperty(nameof.property(structure, "namedExports")) && structure.moduleSpecifier == null) {
             this.toNamespaceExport();
         }
 
         if (structure.moduleSpecifier != null)
             this.setModuleSpecifier(structure.moduleSpecifier);
-        else if (structure.hasOwnProperty(nameof(structure.moduleSpecifier)))
+        else if (structure.hasOwnProperty(nameof.property(structure, "moduleSpecifier")))
             this.removeModuleSpecifier();
 
-        if (structure.namedExports == null && structure.hasOwnProperty(nameof(structure.namedExports)))
+        if (structure.namedExports == null && structure.hasOwnProperty(nameof.property(structure, "namedExports")))
             this.toNamespaceExport();
 
         if (structure.namespaceExport != null)

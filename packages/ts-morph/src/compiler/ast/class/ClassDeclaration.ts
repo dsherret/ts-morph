@@ -31,7 +31,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         if (structure.extends != null)
             this.setExtends(structure.extends);
-        else if (structure.hasOwnProperty(nameof(structure.extends)))
+        else if (structure.hasOwnProperty(nameof.property(structure, "extends")))
             this.removeExtends();
 
         if (structure.ctors != null) {

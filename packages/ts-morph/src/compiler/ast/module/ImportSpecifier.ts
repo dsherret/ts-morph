@@ -155,7 +155,7 @@ export class ImportSpecifier extends ImportSpecifierBase<ts.ImportSpecifier> {
 
         if (structure.alias != null)
             this.setAlias(structure.alias);
-        else if (structure.hasOwnProperty(nameof(structure.alias)))
+        else if (structure.hasOwnProperty(nameof.property(structure, "alias")))
             this.removeAlias();
 
         return this;

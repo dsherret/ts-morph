@@ -140,12 +140,12 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
 
         if (structure.constraint != null)
             this.setConstraint(structure.constraint);
-        else if (structure.hasOwnProperty(nameof(structure.constraint)))
+        else if (structure.hasOwnProperty(nameof.property(structure, "constraint")))
             this.removeConstraint();
 
         if (structure.default != null)
             this.setDefault(structure.default);
-        else if (structure.hasOwnProperty(nameof(structure.default)))
+        else if (structure.hasOwnProperty(nameof.property(structure, "default")))
             this.removeDefault();
 
         return this;

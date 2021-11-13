@@ -932,7 +932,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         set(structure: Partial<StatementedNodeStructure>) {
             // todo: I don't think it's necessary to do this in two steps anymore and this could probably
             // be changed to set the body text in one go instead (for performance reasons)
-            if (Node.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof(structure.statements)))
+            if (Node.isBodyableNode(this) && structure.statements == null && structure.hasOwnProperty(nameof.property(structure, "statements")))
                 this.removeBody();
             else if (structure.statements != null) {
                 const statementCount = this._getCompilerStatementsWithComments().length;

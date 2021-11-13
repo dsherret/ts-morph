@@ -91,7 +91,7 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
 
         if (structure.initializer != null)
             this.setInitializer(structure.initializer);
-        else if (structure.hasOwnProperty(nameof(structure.initializer)))
+        else if (structure.hasOwnProperty(nameof.property(structure, "initializer")))
             this.removeInitializer();
 
         return this;

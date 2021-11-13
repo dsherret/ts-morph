@@ -104,7 +104,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionTy
 
             if (structure.returnType != null)
                 this.setReturnType(structure.returnType);
-            else if (structure.hasOwnProperty(nameof(structure.returnType)))
+            else if (structure.hasOwnProperty(nameof.property(structure, "returnType")))
                 this.removeReturnType();
 
             return this;

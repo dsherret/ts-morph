@@ -75,7 +75,7 @@ export class ModuleDeclaration extends ModuleDeclarationBase<ts.ModuleDeclaratio
         if (nameNodes instanceof Array) {
             if (nameNodes.length > 1) {
                 throw new errors.NotSupportedError(
-                    `Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`,
+                    `Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof.property(this, "getNameNodes")}()`,
                 );
             }
             if (newName !== "global")

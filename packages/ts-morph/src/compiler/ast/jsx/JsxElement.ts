@@ -78,7 +78,7 @@ export class JsxElement extends JsxElementBase<ts.JsxElement> {
 
         if (structure.bodyText != null)
             this.setBodyText(structure.bodyText);
-        else if (structure.hasOwnProperty(nameof(structure.bodyText)))
+        else if (structure.hasOwnProperty(nameof.property(structure, "bodyText")))
             this.setBodyTextInline("");
 
         if (structure.name != null) {

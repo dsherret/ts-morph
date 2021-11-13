@@ -124,8 +124,8 @@ export class Program {
      */
     async emit(options: ProgramEmitOptions = {}) {
         if (options.writeFile) {
-            const message = `Cannot specify a ${nameof(options.writeFile)} option when emitting asynchrously. `
-                + `Use ${nameof(this.emitSync)}() instead.`;
+            const message = `Cannot specify a ${nameof.property(options, "writeFile")} option when emitting asynchrously. `
+                + `Use ${nameof.property(this, "emitSync")}() instead.`;
             throw new errors.InvalidOperationError(message);
         }
 

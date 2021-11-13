@@ -98,7 +98,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
 
             if (structure.type != null)
                 this.setType(structure.type);
-            else if (structure.hasOwnProperty(nameof(structure.type)))
+            else if (structure.hasOwnProperty(nameof.property(structure, "type")))
                 this.removeType();
 
             return this;

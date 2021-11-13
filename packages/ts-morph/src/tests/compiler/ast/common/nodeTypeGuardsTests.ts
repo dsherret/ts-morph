@@ -7,7 +7,7 @@ import { getInfoFromText } from "../../testHelpers";
 describe(nameof(Node), () => {
     // most of the type guards are not worth the effort to test... it's auto generated from code so it should be close to correct
 
-    describe(nameof(Node.hasExpression), () => {
+    describe(nameof.property(Node, "hasExpression"), () => {
         it("should have an expression when it's a function call", () => {
             const { firstChild } = getInfoFromText("funcCall()");
             expect(Node.hasExpression(firstChild)).to.be.true;
@@ -33,7 +33,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof(Node.hasName), () => {
+    describe(nameof.property(Node, "hasName"), () => {
         it("should have a name when it does", () => {
             const { firstChild } = getInfoFromText<ClassDeclaration>("class MyClass {}");
             expect(Node.hasName(firstChild)).to.be.true;
@@ -49,7 +49,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof(Node.hasStructure), () => {
+    describe(nameof.property(Node, "hasStructure"), () => {
         it("should have a structure when it does", () => {
             const { firstChild } = getInfoFromText<Node>("class MyClass {}");
             expect(Node.hasName(firstChild)).to.be.true;
@@ -65,7 +65,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof(Node.isNode), () => {
+    describe(nameof.property(Node, "isNode"), () => {
         const { firstChild, project } = getInfoFromText("class MyClass {}");
 
         it("should get when it is", () => {

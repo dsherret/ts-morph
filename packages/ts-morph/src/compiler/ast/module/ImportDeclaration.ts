@@ -409,15 +409,15 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
 
         if (structure.defaultImport != null)
             this.setDefaultImport(structure.defaultImport);
-        else if (structure.hasOwnProperty(nameof(structure.defaultImport)))
+        else if (structure.hasOwnProperty(nameof.property(structure, "defaultImport")))
             this.removeDefaultImport();
 
-        if (structure.hasOwnProperty(nameof(structure.namedImports)))
+        if (structure.hasOwnProperty(nameof.property(structure, "namedImports")))
             this.removeNamedImports();
 
         if (structure.namespaceImport != null)
             this.setNamespaceImport(structure.namespaceImport);
-        else if (structure.hasOwnProperty(nameof(structure.namespaceImport)))
+        else if (structure.hasOwnProperty(nameof.property(structure, "namespaceImport")))
             this.removeNamespaceImport();
 
         if (structure.namedImports != null) {

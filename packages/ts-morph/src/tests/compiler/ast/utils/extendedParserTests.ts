@@ -5,7 +5,7 @@ import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ExtendedParser), () => {
     // todo: more tests
-    describe(nameof(ExtendedParser.getCompilerForEachChildren), () => {
+    describe(nameof.property(ExtendedParser, "getCompilerForEachChildren"), () => {
         it("should include comment nodes", () => {
             const { sourceFile } = getInfoFromText("//a\nclass Test {} //b\n/*c*/\n/*d*/interface Interface {}\n//e");
             const result = ExtendedParser.getCompilerForEachChildren(sourceFile.compilerNode, sourceFile.compilerNode);
